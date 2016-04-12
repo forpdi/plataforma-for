@@ -1,0 +1,15 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "mysqlDS": {
+    "host": "localhost",
+    "port": 3306,
+    "database": "forpdi_db",
+    "password": "",
+    "name": "mysqlDS",
+    "user": "root",
+    "connector": "mysql"
+  }
+}
