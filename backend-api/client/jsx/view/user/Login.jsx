@@ -3,6 +3,7 @@ import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/widget/form/Form.jsx";
 import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import LoadingGauge from "forpdi/jsx/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/widget/Modal.jsx";
 
 import AppLogo from "forpdi/img/logo.png";
@@ -12,6 +13,7 @@ var VerticalForm = Form.VerticalForm;
 export default React.createClass({
 	getInitialState() {
 		return {
+			loaded: !UserSession.get("loading"),
 			fields: [{
 				name: "email",
 				type: "email",
@@ -32,20 +34,27 @@ export default React.createClass({
 		});
 	},
 	componentWillMount() {
+		var me = this;
 		UserSession.on("login", model => {
-			location.assign("#/challenges");
-		}, this);
+			location.assign("#/home");
+		}, me);
+		UserSession.on("loaded", () => {
+			me.setState({loaded: true});
+		}, me);
 
 	},
 	componentDidMount() {
 		if (!!UserSession.get("logged")) {
-			location.assign("#/challenges");
+			location.assign("#/home");
 		}
 	},
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 	},
 	render() {
+		if (!this.state.loaded) {
+			return <LoadingGauge />;
+		}
 		return (
 			<div className="container-fluid">
 				<div className="row">

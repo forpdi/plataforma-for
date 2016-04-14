@@ -14,7 +14,8 @@
     ]
   },
   "User": {
-    "dataSource": "db"
+    "dataSource": "db",
+    "public": false
   },
   "AccessToken": {
     "dataSource": "db",
@@ -37,11 +38,11 @@
     "public": true
   },
   "PersonEmail": {
-    "dataSource": "mongoDS",
-    "public": true
+    "dataSource": "mysqlDS",
+    "public": false
   },
   "Person": {
-    "dataSource": "mongoDS",
+    "dataSource": "mysqlDS",
     "public": true
   }
 }

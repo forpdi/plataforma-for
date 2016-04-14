@@ -26,11 +26,6 @@
   },
   "validations": [],
   "relations": {
-    "personEmails": {
-      "type": "hasMany",
-      "model": "PersonEmail",
-      "foreignKey": "companyId"
-    }
   },
   "acls": [],
   "methods": {}

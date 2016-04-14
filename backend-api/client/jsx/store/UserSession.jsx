@@ -1,4 +1,5 @@
 
+import _ from "underscore";
 import Backbone from "backbone";
 import {Dispatcher} from "flux";
 
@@ -9,7 +10,7 @@ var UserSession = Backbone.Model.extend({
 	ACTION_UPDATE_PROFILE: 'updateProfile',
 
 	BACKEND_URL: BACKEND_URL,
-	url: BACKEND_URL + "user/session",
+	url: BACKEND_URL + "persons",
 	$dispatcher: new Dispatcher(),
 	dispatch(payload) {
 		this.$dispatcher.dispatch(payload);
@@ -21,7 +22,18 @@ var UserSession = Backbone.Model.extend({
 	},
 	initialize() {
 		this.dispatchToken = this.$dispatcher.register(this.dispatchCallback.bind(this));
-		this.refreshStatus(true);
+		if (localStorage.token && (localStorage.token != "")) {
+			$.ajaxSetup({
+				headers: {
+					"Authorization": localStorage.token
+				}
+			});
+			this.set({loading: true});
+			this.refreshStatus(true);
+		} else {
+			this.set({loading: false});
+			_.defer(() => { location.assign("#/") });
+		}
 	},
 
 	parse(response, opts) {
@@ -33,35 +45,49 @@ var UserSession = Backbone.Model.extend({
 		};
 	},
 
+	clearStorage() {
+		localStorage.removeItem("token");
+		localStorage.removeItem("userId");
+	},
+	putStorage(token, userId) {
+		localStorage.token = token;
+		localStorage.userId = userId;
+	},
+
 	refreshStatus(initial) {
-		this.fetch({
-			success(model, response, options) {
-				if (model.get("logged")) {
-					model.trigger("login", model);
-				} else  {
-					if (initial !== true)
-						model.trigger("logout");
-					location.assign("#/");
+		var me = this;
+		$.ajax({
+			method: "GET",
+			url: BACKEND_URL + "persons/"+localStorage.userId,
+			dataType: 'json',
+			success(data, status, opts) {
+				if (!data.error) {
+					me.set({
+						"logged": true,
+						"user": data
+					});
+					me.trigger("login", me);
+				} else {
+					me.trigger("fail", data.error.message);
+				}
+				if (me.get("loading")) {
+					me.set({loading: false});
+					me.trigger("loaded", true);
 				}
 			},
-			error(model, response, options) {
-				console.error("Failed to fetch user session: ", response);
+			error(opts, status, errorMsg) {
+				if (me.get("loading")) {
+					me.set({loading: false});
+				}
+				me.clearStorage();
+				location.assign("#/");
 			}
 		});
 	},
 
 	handleRequestErrors(collection, opts) {
-		if (opts.status == 400) {
-			// Validation errors
-			var resp;
-			try {
-				resp = JSON.parse(opts.responseText);
-			} catch (err) {
-				resp = {
-					message: "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseText
-				};
-			}
-			this.trigger("fail", resp.message);
+		if (opts.status == 401) {
+			this.trigger("fail", "Dados de login inválidos.");
 		} else if (opts.status == 409) {
 			// Validation errors
 			try {
@@ -73,7 +99,7 @@ var UserSession = Backbone.Model.extend({
 			}
 			this.trigger("fail", resp.message);
 		} else {
-			this.trigger("fail", "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseText);
+			this.trigger("fail", "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseJSON.error.message);
 		}
 	},
 
@@ -92,18 +118,21 @@ var UserSession = Backbone.Model.extend({
 		} else {
 			$.ajax({
 				method: "POST",
-				url: BACKEND_URL + "user/login",
+				url: BACKEND_URL + "persons/login",
 				dataType: 'json',
 				data: data,
 				success(data, status, opts) {
-					if (data.success) {
-						me.set({
-							"logged": true,
-							"user": data.data
+					console.log(data);
+					if (!data.error) {
+						$.ajaxSetup({
+							headers: {
+								"Authorization": data.id
+							}
 						});
-						me.trigger("login", me);
+						me.putStorage(data.id, data.userId);
+						me.refreshStatus();
 					} else {
-						me.trigger("fail", data.message);
+						me.trigger("fail", data.error.message);
 					}
 				},
 				error(opts, status, errorMsg) {
@@ -114,10 +143,25 @@ var UserSession = Backbone.Model.extend({
 	},
 	logout() {
 		var me = this;
-		$.post(BACKEND_URL + "user/logout",(resp, status, xhr) => {
-			me.set({logged: false});
-			me.trigger("logout");
-			location.assign("#/");
+		$.ajax({
+			method: "POST",
+			url: BACKEND_URL + "persons/logout",
+			dataType: 'json',
+			success(data, status, opts) {
+				console.log(data);
+				me.set({logged: false, user: null});
+				$.ajaxSetup({
+					headers: {
+						"Authorization": null
+					}
+				});
+				me.clearStorage();
+				me.trigger("logout");
+				location.assign("#/");
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
 		});
 	},
 	updateProfile(data) {

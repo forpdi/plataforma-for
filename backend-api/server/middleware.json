@@ -1,7 +1,5 @@
 {
-  "initial:before": {
-    "loopback#favicon": {}
-  },
+  "initial:before": {},
   "initial": {
     "compression": {},
     "cors": {

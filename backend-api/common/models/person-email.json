@@ -24,11 +24,6 @@
   },
   "validations": [],
   "relations": {
-    "company": {
-      "type": "belongsTo",
-      "model": "Company",
-      "foreignKey": "companyId"
-    },
     "person": {
       "type": "belongsTo",
       "model": "Person",
@@ -45,7 +40,7 @@
     {
       "accessType": "READ",
       "principalType": "ROLE",
-      "principalId": "$everyone",
+      "principalId": "$owner",
       "permission": "ALLOW"
     },
     {
