@@ -1,0 +1,78 @@
+.cmp-profile {
+
+	.cmp-profile-header {
+		padding-top: 40px;
+		padding-bottom: 40px;
+
+		.cmp-profile-header-picture {
+			display: inline-block;
+			width: 60px;
+			height: 60px;
+			border-radius: 3px;
+			margin-right: 20px;
+			vertical-align: top;
+		}
+
+		.cmp-profile-header-details {
+			display: inline-block;
+			position: relative;
+		}
+
+		.cmp-profile-header-text {
+			display: block;
+			color: #6c6c6c;
+			font-size: 20px;
+			margin: 0;
+			padding: 0;
+		}
+
+		.cmp-profile-header-subtext {
+			color: rgba(0,0,0,.35);
+			display: block;
+			font-weight: 600;
+			line-height: 18px;
+		}
+
+		.cmp-profile-header-text + .cmp-profile-header-subtext {
+			margin-top: 5px;
+			margin-bottom: 10px;
+		}
+	}
+
+	.cmp-profile-header-centered {
+		padding-top: 40px;
+		padding-bottom: 20px;
+		text-align: center;
+
+		.cmp-profile-header-picture {
+			display: block;
+			width: 60px;
+			height: 60px;
+			border-radius: 3px;
+			margin: 0 auto 15px;
+		}
+
+		.cmp-profile-header-details {
+			display: block;
+		}
+
+		.cmp-profile-header-text {
+			display: block;
+			color: #6c6c6c;
+			font-size: 20px;
+			margin: 0;
+			padding: 0;
+		}
+
+		.cmp-profile-header-subtext {
+			color: rgba(0,0,0,.35);
+			display: block;
+			font-weight: 600;
+			line-height: 18px;
+		}
+
+		.cmp-profile-header-text + .cmp-profile-header-subtext {
+			margin-top: 5px;
+		}
+	}
+}

@@ -11,5 +11,14 @@
     "name": "mysqlDS",
     "user": "root",
     "connector": "mysql"
+  },
+  "mongoDS": {
+    "host": "localhost",
+    "port": 27017,
+    "database": "forpdi_db",
+    "password": "",
+    "name": "mongoDS",
+    "user": "root",
+    "connector": "mongodb"
   }
 }

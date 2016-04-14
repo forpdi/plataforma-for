@@ -1,0 +1,52 @@
+.cmp-toolbar {
+	padding-top: 12px;
+	padding-bottom: 11px;
+	background-color: rgba(255,255,255,.6);
+	border-bottom: 1px solid rgba(0,0,0,.06);
+
+	& .cmp-toolbar-text {
+		display: inline-block;
+		font-size: 16px;
+		font-weight: 600;
+	}
+
+	& .cmp-toolbar-action-bar {
+		display: inline-block;
+		margin: 0 0 0 8px;
+
+		& .cmp-toolbar-action {
+			background-color: #eee;
+			border-radius: 3px;
+			color: #777;
+			display: inline-block;
+			margin-left: 5px;
+			padding: 5px 10px 6px;
+			position: relative;
+			text-decoration: none;
+			font-size: 13px;
+			font-weight: 600;
+
+			&:hover {
+				background-color: #ddd;
+				border-radius: 3px;
+			}
+		}
+
+		& .cmp-card-toolbar-action-icon {
+			left: 6px;
+			position: absolute;
+			top: 8px;
+		}
+	}
+}
+
+@media only screen and (max-width : 480px) {
+	.cmp-toolbar {
+		& .cmp-toolbar-action-bar {
+			display: block;
+			margin: 0;
+			padding-top: 10px;
+			float: left !important;
+		}
+	}
+}

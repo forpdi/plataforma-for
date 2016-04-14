@@ -1,0 +1,144 @@
+#main-body {
+	margin: 0;
+	padding: 0;
+}
+
+/* 
+ * DEPRECATED
+ * To use this container set the 'main' tag class on 'AppSetup.jsx' to .cmp-app-container.
+ */
+.cmp-app-container {
+  position: absolute;
+  @include flexbox;
+  @include flex-dir(row);
+	z-index: 1;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+/* 
+ * DEPRECATED
+ * To use this container set the 'main' tag class on 'AppSetup.jsx' to .cmp-app-container
+ * and then set the 'div' tag class before the '<router>' element to .cmp-app-content.
+ */
+.cmp-app-content {
+  overflow-y: auto;
+  overflow-x: hidden;
+  @include flex(1);
+	height: 100%;
+  background-color: #fcfcfc; //#F5F6F8; #E9EFF2; #F5F6F8;
+}
+
+.cmp-app-panel {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.cmp-app-sidebar-sm {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  @include flexbox;
+  @include flex-dir(column);
+	height: 100%;
+  min-width: 50px;
+  width: 50px;
+  max-width: 50px;
+  padding: 0px;
+  font-size: 25px;
+  text-align: center;
+  background-color: #000;
+  color: #FFF;
+  > span, > a {
+  	display: block;
+  	height: 50px;
+  	width: 50px;
+  	line-height: 50px;
+  	margin: 0px auto;
+  	cursor: pointer;
+  	&:hover {
+  		background-color: #FFF;
+  		color: #000;
+  	}
+  }
+}
+
+.cmp-app-sidebar {
+  position: absolute;
+  overflow-y: auto;
+  overflow-x: hidden;
+  @include flexbox;
+  @include flex-dir(column);
+	height: 100%;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  min-width: 200px;
+  width: 200px;
+  max-width: 200px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #0b253b;
+  color: #FFF;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  margin: 0px;
+  padding: 0px;
+
+  > .nav {
+    padding: 15px 10px;
+  }
+  > .nav > li > a {
+      color: $navbar-inverse-link-color;
+      opacity: .9;
+
+      &:hover,
+      &:focus {
+        background-color: rgba(0,0,0,0.1);
+        opacity: 1;
+        border-radius: 3px;
+      }
+      & .cmp-nav-icon {
+        margin-right: 10px;
+      }
+  }
+  > .nav > .active > a {
+      &,
+      &:hover,
+      &:focus {
+        color: #fff;
+        background-color: $brand-primary;
+      }
+  }
+  > .nav > .disabled > a {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-inverse-link-disabled-color;
+        background-color: $navbar-inverse-link-disabled-bg;
+      }
+  }
+  > .nav > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        background-color: $navbar-inverse-link-active-bg;
+        color: $navbar-inverse-link-active-color;
+      }
+  }
+  & .cmp-sidebar-brand {
+    height: 50px;
+    border-bottom: 1px solid rgba(0,0,0,0.2);
+    padding: 15px;
+
+    > img {
+      height: 20px;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+}
