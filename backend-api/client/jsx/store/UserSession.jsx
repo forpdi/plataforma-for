@@ -7,6 +7,7 @@ var UserSession = Backbone.Model.extend({
 	ACTION_REFRESH: 'refreshStatus',
 	ACTION_LOGIN: 'login',
 	ACTION_LOGOUT: 'logout',
+	ACTION_RECOVER_PASSWORD: 'recoverPassword',
 	ACTION_UPDATE_PROFILE: 'updateProfile',
 
 	BACKEND_URL: BACKEND_URL,
@@ -158,6 +159,22 @@ var UserSession = Backbone.Model.extend({
 				me.clearStorage();
 				me.trigger("logout");
 				location.assign("#/");
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+	recoverPassword(params) {
+		var me = this;
+		$.ajax({
+			method: "POST",
+			url: BACKEND_URL + "persons/reset",
+			dataType: 'json',
+			data: params,
+			success(data, status, opts) {
+				console.log("Done:", data);
+				me.trigger("recoverpassword", data);
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);

@@ -2,7 +2,7 @@
 import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/widget/form/Form.jsx";
-import UserStore from "forpdi/jsx/store/User.jsx";
+import UserSession from "forpdi/jsx/store/UserSession.jsx";
 
 import AppLogo from "forpdi/img/logo.png";
 
@@ -20,18 +20,19 @@ export default React.createClass({
 		};
 	},
 	onSubmit(data) {
-		UserStore.dispatch({
-			action: UserStore.ACTION_RECOVER_PASSWORD,
+		UserSession.dispatch({
+			action: UserSession.ACTION_RECOVER_PASSWORD,
 			data: data
 		});
 	},
 	componentWillMount() {
-		UserStore.on("sync", model => {
+		UserSession.on("recoverpassword", model => {
+			Modal.info("E-mail de recuperação de senha enviado com sucesso.");
 			location.assign("#/");
 		}, this);
 	},
 	componentWillUnmount() {
-		UserStore.off(null, null, this);
+		UserSession.off(null, null, this);
 	},
 	render() {
 		return (
@@ -53,7 +54,7 @@ export default React.createClass({
 									<VerticalForm
 										onSubmit={this.onSubmit}
 										fields={this.state.fields}
-										store={UserStore}
+										store={UserSession}
 										submitLabel="Enviar email de recuperação"
 										blockButtons={true}
 									/>

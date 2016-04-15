@@ -6,15 +6,33 @@
   "options": {
     "validateUpsert": true
   },
-  "properties": {},
-  "validations": [],
-  "relations": {
-    "personEmails": {
-      "type": "hasMany",
-      "model": "PersonEmail",
-      "foreignKey": "personId"
+  "properties": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "cellphone": {
+      "type": "string",
+      "required": true
+    },
+    "birthdate": {
+      "type": "date",
+      "required": true
+    },
+    "phone": {
+      "type": "string"
+    },
+    "department": {
+      "type": "string"
+    },
+    "deleted": {
+      "type": "boolean",
+      "required": true,
+      "default": false
     }
   },
+  "validations": [],
+  "relations": {},
   "acls": [],
   "methods": {}
 }

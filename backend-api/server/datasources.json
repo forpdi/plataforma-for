@@ -12,13 +12,18 @@
     "user": "root",
     "connector": "mysql"
   },
-  "mongoDS": {
-    "host": "localhost",
-    "port": 27017,
-    "database": "forpdi_db",
-    "password": "",
-    "name": "mongoDS",
-    "user": "root",
-    "connector": "mongodb"
+  "emailDS": {
+    "name": "emailDS",
+    "connector": "mail",
+    "transports": [{
+         "type": "smtp",
+         "host": "localhost",
+         "secure": false,
+         "port": 25,
+         "tls": {
+           "rejectUnauthorized": false
+         },
+         "auth": false
+    }]
   }
 }
