@@ -1,0 +1,72 @@
+//
+// Navbar Styling
+//
+
+// Bootstrap Navbar Overrides
+
+.navbar {
+  min-height: $navbar-height;
+  font-size: 13px;
+}
+
+.navbar-static-top {
+  margin-bottom: 0;
+}
+
+.navbar-toggle {
+  padding: 0;
+  margin: 10px 15px;
+
+  .navbar-default & {
+    border-color: transparent;
+  }
+
+  & img {
+    height: 28px;
+    border-radius: 2px;
+  } 
+}
+
+.navbar-btn {
+  font-size: inherit;
+}
+
+.navbar-nav > li {
+  & > a {
+    padding-top: 14px;
+    padding-bottom: 16px;
+    line-height: 20px;
+  }
+
+  &.active > a,
+  & > a:hover {
+  	background-color: $gray-lighter;
+  }
+}
+
+.navbar-right {
+  margin-right: 0;
+}
+
+.navbar-brand {
+  padding-top: 11px;//$navbar-padding-top + 3;
+  padding-bottom: 11px;//$navbar-padding-bottom + 3;
+
+  & > img {
+    height: 28px;
+  }
+}
+
+.cmp-navbar-page-title {
+  font-size: 15px;
+  font-weight: $font-weight-semibold;
+  margin-left: 0;
+}
+
+// Body Padding for Navbar Fixed Style
+
+.cmp-navbar-body-reset {
+  margin-bottom: $navbar-height;
+}
+
+.pagination li span { cursor: pointer; }

@@ -1,0 +1,452 @@
+/*!
+ * Bootstrap Effects Resets
+ * Author: Henrique Fiorini
+ * Removes base Bootstrap gradients and shadows for components
+ */
+
+.btn-default,
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-warning,
+.btn-danger {
+  text-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.btn-default:active,
+.btn-primary:active,
+.btn-success:active,
+.btn-info:active,
+.btn-warning:active,
+.btn-danger:active,
+.btn-default.active,
+.btn-primary.active,
+.btn-success.active,
+.btn-info.active,
+.btn-warning.active,
+.btn-danger.active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.btn-default.disabled,
+.btn-primary.disabled,
+.btn-success.disabled,
+.btn-info.disabled,
+.btn-warning.disabled,
+.btn-danger.disabled,
+.btn-default[disabled],
+.btn-primary[disabled],
+.btn-success[disabled],
+.btn-info[disabled],
+.btn-warning[disabled],
+.btn-danger[disabled],
+fieldset[disabled] .btn-default,
+fieldset[disabled] .btn-primary,
+fieldset[disabled] .btn-success,
+fieldset[disabled] .btn-info,
+fieldset[disabled] .btn-warning,
+fieldset[disabled] .btn-danger {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.btn-default .badge,
+.btn-primary .badge,
+.btn-success .badge,
+.btn-info .badge,
+.btn-warning .badge,
+.btn-danger .badge {
+  text-shadow: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+}
+.btn-default {
+  background-image: none;
+  filter: none;
+  background-repeat: none;
+  text-shadow: none;
+}
+.btn-default:hover,
+.btn-default:focus {
+  background-position: 0;
+}
+.btn-default:active,
+.btn-default.active {
+	
+}
+.btn-default.disabled,
+.btn-default[disabled],
+fieldset[disabled] .btn-default,
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+fieldset[disabled] .btn-default:hover,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+fieldset[disabled] .btn-default:focus,
+.btn-default.disabled.focus,
+.btn-default[disabled].focus,
+fieldset[disabled] .btn-default.focus,
+.btn-default.disabled:active,
+.btn-default[disabled]:active,
+fieldset[disabled] .btn-default:active,
+.btn-default.disabled.active,
+.btn-default[disabled].active,
+fieldset[disabled] .btn-default.active {
+  background-image: none;
+}
+.btn-primary {
+  background-image: none;
+  filter: none;
+  background-repeat: none;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-position: 0;
+}
+.btn-primary:active,
+.btn-primary.active {
+
+}
+.btn-primary.disabled,
+.btn-primary[disabled],
+fieldset[disabled] .btn-primary,
+.btn-primary.disabled:hover,
+.btn-primary[disabled]:hover,
+fieldset[disabled] .btn-primary:hover,
+.btn-primary.disabled:focus,
+.btn-primary[disabled]:focus,
+fieldset[disabled] .btn-primary:focus,
+.btn-primary.disabled.focus,
+.btn-primary[disabled].focus,
+fieldset[disabled] .btn-primary.focus,
+.btn-primary.disabled:active,
+.btn-primary[disabled]:active,
+fieldset[disabled] .btn-primary:active,
+.btn-primary.disabled.active,
+.btn-primary[disabled].active,
+fieldset[disabled] .btn-primary.active {
+
+}
+.btn-success {
+  background-image: -none;
+  filter: none;
+  background-repeat: none;
+}
+.btn-success:hover,
+.btn-success:focus {
+  background-position: 0;
+}
+.btn-success:active,
+.btn-success.active {
+
+}
+.btn-success.disabled,
+.btn-success[disabled],
+fieldset[disabled] .btn-success,
+.btn-success.disabled:hover,
+.btn-success[disabled]:hover,
+fieldset[disabled] .btn-success:hover,
+.btn-success.disabled:focus,
+.btn-success[disabled]:focus,
+fieldset[disabled] .btn-success:focus,
+.btn-success.disabled.focus,
+.btn-success[disabled].focus,
+fieldset[disabled] .btn-success.focus,
+.btn-success.disabled:active,
+.btn-success[disabled]:active,
+fieldset[disabled] .btn-success:active,
+.btn-success.disabled.active,
+.btn-success[disabled].active,
+fieldset[disabled] .btn-success.active {
+  background-image: none;
+}
+.btn-info {
+  background-image: none;
+  filter: none;
+  background-repeat: none;
+}
+.btn-info:hover,
+.btn-info:focus {
+  background-position: 0;
+}
+.btn-info:active,
+.btn-info.active {
+	
+}
+.btn-info.disabled,
+.btn-info[disabled],
+fieldset[disabled] .btn-info,
+.btn-info.disabled:hover,
+.btn-info[disabled]:hover,
+fieldset[disabled] .btn-info:hover,
+.btn-info.disabled:focus,
+.btn-info[disabled]:focus,
+fieldset[disabled] .btn-info:focus,
+.btn-info.disabled.focus,
+.btn-info[disabled].focus,
+fieldset[disabled] .btn-info.focus,
+.btn-info.disabled:active,
+.btn-info[disabled]:active,
+fieldset[disabled] .btn-info:active,
+.btn-info.disabled.active,
+.btn-info[disabled].active,
+fieldset[disabled] .btn-info.active {
+  background-image: none;
+}
+.btn-warning {
+  background-image: none;
+  filter: none;
+  background-repeat: none;
+}
+.btn-warning:hover,
+.btn-warning:focus {
+  background-position: 0 -15px;
+}
+.btn-warning:active,
+.btn-warning.active {
+
+}
+.btn-warning.disabled,
+.btn-warning[disabled],
+fieldset[disabled] .btn-warning,
+.btn-warning.disabled:hover,
+.btn-warning[disabled]:hover,
+fieldset[disabled] .btn-warning:hover,
+.btn-warning.disabled:focus,
+.btn-warning[disabled]:focus,
+fieldset[disabled] .btn-warning:focus,
+.btn-warning.disabled.focus,
+.btn-warning[disabled].focus,
+fieldset[disabled] .btn-warning.focus,
+.btn-warning.disabled:active,
+.btn-warning[disabled]:active,
+fieldset[disabled] .btn-warning:active,
+.btn-warning.disabled.active,
+.btn-warning[disabled].active,
+fieldset[disabled] .btn-warning.active {
+  background-image: none;
+}
+.btn-danger {
+  background-image: none;
+  filter: none;
+  background-repeat: none;
+}
+.btn-danger:hover,
+.btn-danger:focus {
+  background-position: 0 -15px;
+}
+.btn-danger:active,
+.btn-danger.active {
+
+}
+.btn-danger.disabled,
+.btn-danger[disabled],
+fieldset[disabled] .btn-danger,
+.btn-danger.disabled:hover,
+.btn-danger[disabled]:hover,
+fieldset[disabled] .btn-danger:hover,
+.btn-danger.disabled:focus,
+.btn-danger[disabled]:focus,
+fieldset[disabled] .btn-danger:focus,
+.btn-danger.disabled.focus,
+.btn-danger[disabled].focus,
+fieldset[disabled] .btn-danger.focus,
+.btn-danger.disabled:active,
+.btn-danger[disabled]:active,
+fieldset[disabled] .btn-danger:active,
+.btn-danger.disabled.active,
+.btn-danger[disabled].active,
+fieldset[disabled] .btn-danger.active {
+  background-image: none;
+}
+.thumbnail,
+.img-thumbnail {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.navbar-default {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .active > a {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.navbar-brand,
+.navbar-nav > li > a {
+  text-shadow: none;
+}
+.navbar-inverse {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .active > a {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.navbar-inverse .navbar-brand,
+.navbar-inverse .navbar-nav > li > a {
+  text-shadow: none;
+}
+.navbar-static-top,
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+
+}
+@media (max-width: 767px) {
+  .navbar .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar .navbar-nav .open .dropdown-menu > .active > a:focus {
+    background-image: none;
+    background-repeat: none;
+    filter: none;
+  }
+}
+.alert {
+  text-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.alert-success {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.alert-info {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.alert-warning {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.alert-danger {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar-success {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar-info {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar-warning {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar-danger {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.progress-bar-striped {
+  background-image: none;
+}
+.list-group {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.list-group-item.active,
+.list-group-item.active:hover,
+.list-group-item.active:focus {
+  text-shadow: none;
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.list-group-item.active .badge,
+.list-group-item.active:hover .badge,
+.list-group-item.active:focus .badge {
+  text-shadow: none;
+}
+.panel {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.panel-default > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.panel-primary > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.panel-success > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.panel-info > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.panel-warning > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.panel-danger > .panel-heading {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+}
+.well {
+  background-image: none;
+  background-repeat: none;
+  filter: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.form-control,
+.form-control:focus {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}

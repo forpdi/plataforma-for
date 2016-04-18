@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+                                         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+  		<property name="org.hibernate">true</property>
+		
+		<property name="connection.url">jdbc:mysql://localhost/${db.name}</property>		
+		<property name="connection.username">${db.username}</property>
+		<property name="connection.password">${db.password}</property>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+		<property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
+		
+		<!-- Configuração Propriedades Hibernate -->
+		<property name="hibernate.hbm2ddl.auto">update</property>
+		<property name="hibernate.show_sql">false</property>
+		<property name="hibernate.format_sql">false</property>
+		<!--
+		<property name="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</property>
+		<property name="hibernate.c3p0.unreturnedConnectionTimeout">300</property>
+		-->
+		
+		<property name="hibernate.current_session_context_class">thread</property>
+		<property name="hibernate.order_updates">true</property>
+		<property name="hibernate.max_fetch_depth">6</property>
+		<property name="hibernate.transaction.auto_close_session">false</property>
+		<property name="hibernate.c3p0.acquireRetryAttempts">5</property>
+		<property name="hibernate.c3p0.acquireIncrement">4</property>
+		<property name="hibernate.c3p0.idleConnectionTestPeriod">60</property>
+		<property name="hibernate.c3p0.initialPoolSize">10</property>
+		<property name="hibernate.c3p0.minPoolSize">10</property>
+		<property name="hibernate.c3p0.maxPoolSize">32</property>
+		<property name="hibernate.c3p0.maxIdleTime">150</property>
+		<property name="hibernate.c3p0.checkoutTimeout">25000</property>
+		<property name="hibernate.c3p0.maxStatements">10000</property>
+		
+		<!-- Cache configurations -->
+		<property name="hibernate.cache.use_second_level_cache">true</property>
+		<property name="hibernate.cache.use_query_cache">false</property>
+		<property name="hibernate.cache.region_prefix">hibernate.ehcacheregion</property>
+		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+
+  		<mapping class="org.forpdi.core.company.Company"/>
+  		<mapping class="org.forpdi.core.user.User"/>
+  		
+	</session-factory>
+</hibernate-configuration>

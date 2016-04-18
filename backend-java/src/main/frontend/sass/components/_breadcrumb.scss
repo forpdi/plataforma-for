@@ -1,0 +1,18 @@
+//
+// Breadcrumb
+//
+
+// Bootstrap Breadcrumb Overrides
+.breadcrumb {
+  margin-bottom: 0;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  //padding-top: 4px;
+  //padding-bottom: 4px;
+  //font-size: 1.125rem !important;
+}
+
+.breadcrumb > .active {
+  color: $color-bluescale-darkest;
+  font-weight: $font-weight-semibold;
+}

@@ -1,0 +1,11 @@
+@font-face {
+  font-family: '#{$mdi-font-name}';
+  src: url('#{$mdi-font-path}/#{$mdi-filename}-webfont.eot');
+  src: url('#{$mdi-font-path}/#{$mdi-filename}-webfont.eot') format('embedded-opentype'),
+    url('#{$mdi-font-path}/#{$mdi-filename}-webfont.woff2') format('woff2'),
+    url('#{$mdi-font-path}/#{$mdi-filename}-webfont.woff') format('woff'),
+    url('#{$mdi-font-path}/#{$mdi-filename}-webfont.ttf') format('truetype'),
+    url('#{$mdi-font-path}/#{$mdi-filename}-webfont.svg') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}

@@ -1,0 +1,458 @@
+// Card list section
+
+.cmp-card-list-section {
+	margin-bottom: 15px;
+
+	&:first-child {
+		margin-top: 30px;
+	}
+
+	& .cmp-card-list-section-header {
+		margin-bottom: 20px;
+	}
+
+	& .cmp-card-list-section-header-text {
+		display: inline-block;
+		color: #6c6c6c;
+		font-size: 20px;
+		margin: 0;
+		padding: 4px 0;
+		vertical-align: bottom;
+	}
+}
+
+
+// Card list section action bar
+
+.cmp-card-list-section-action-bar {
+	display: inline-block;
+	margin-left: 8px;
+
+	& .cmp-card-list-section-action {
+		background-color: transparent;
+		color: #777;
+		display: inline-block;
+		margin-left: 5px;
+		padding: 5px 10px 6px;
+		position: relative;
+		text-decoration: none;
+		font-size: 13px;
+		font-weight: 600;
+
+		&.has-icon {
+			padding: 5px 10px 6px 28px;
+		}
+
+		&:hover {
+			background-color: #ddd;
+			border-radius: 3px;
+		}
+	}
+
+	& .cmp-card-list-section-action + .cmp-card-list-section-action {
+		margin-left: 8px;
+	}
+
+	& .cmp-card-list-section-action-icon {
+		left: 6px;
+		position: absolute;
+		top: 8px;
+	}
+}
+
+
+// Card list
+
+.cmp-card-list {
+	margin-bottom: 15px;
+	display: flex;
+	flex-wrap: wrap;
+	@extend .list-unstyled;
+
+	& li {
+		margin-bottom: 15px;
+		position: relative;
+		width: 25%;
+
+		.cmp-card-item {
+			margin-right: 15px;
+			display: block;
+			position: relative;
+		}
+
+		a.cmp-card-item-wrapper,
+		span.cmp-card-item-wrapper {
+			background-color: #fff;
+			background-size: cover;
+			background-position: center center;
+			border: 1px solid rgba(0,0,0,.1);
+			border-radius: 3px;
+			display: block;
+			margin: 0 15px 0 0;
+			padding: 12px 16px;
+			position: relative;
+			text-decoration: none;
+			z-index: 0;
+
+			&.cmp-card-item-add {
+				background-color: #edeff0;
+				border-color: #edeff0;
+				color: #8c8c8c;
+				font-weight: 400;
+				line-height: 64px;
+				text-align: center;
+
+				&.cmp-card-item-add-lg {
+					line-height: 98px;
+				}
+			}
+
+			&.cmp-card-item-add:hover {
+				background-color: #e2e4e6;
+			}
+		}
+
+		a.cmp-card-item-wrapper:hover {
+			background-color: #fafbfd;
+		}
+
+		.details {
+			display: block;
+			min-height: 60px;
+			position: relative;
+
+			&.details-lg {
+				min-height: 100px;
+			}
+		}
+
+		/* TO-DO - It's already styled but needs some JS coding*/
+		.options {
+			position: absolute;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: 3;
+			height: 44px;
+			font-size: 14px;
+			padding: 14px 10px;
+			color: rgba(0,0,0,.5);
+			/*opacity: 0;
+
+			&:hover {
+				opacity: 1;
+			}*/
+		}
+
+		.cmp-card-item-name {
+			color: #4c4c4c;
+			font-size: 14px;
+			font-weight: 400;
+			line-height: 20px;
+		}
+
+		.cmp-card-item-sub-name {
+			color: rgba(0,0,0,.35);
+			display: block;
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 18px;
+			margin-top: 3px;
+		}
+
+		.cmp-card-item-action-bar {
+			display: block;
+			margin-top: 5px;		
+
+			.cmp-card-item-action {
+				display: inline-block;
+				background-color: #eee;
+				padding: 5px 10px;
+				border-radius: 3px;
+				font-size: 12px;
+				font-weight: 600;
+				margin-bottom: 5px;
+
+				.cmp-action-animated-icon { display: none; }
+				.cmp-action-animated-icon:before { font-size: 12px; }
+
+				&:hover {
+					background-color: #e2e2e2;
+				}
+				&.cmp-card-item-action-icon {
+					padding: 5px 6px;
+
+					& .mdi::before {
+						color: #999;
+						font-size: 15px;
+					}
+				}
+
+				.cmp-card-item-action-label {
+					color: #4a4a4a;
+				}
+
+				// Status Action Buttons
+				&.finish:hover,
+				&.completed {
+					background-color: $brand-success; 
+				}
+
+				&.finish:hover,
+				&.completed {
+					& .cmp-card-item-action-label { color: #fff; }
+					.cmp-action-animated-icon { display: inline-block; }
+				}
+			}
+
+			.cmp-card-item-action + .cmp-card-item-action {
+				margin-left: 5px;
+			}
+		}
+
+		.cmp-card-item-due-date {
+			color: rgba(0,0,0,.35);
+			font-size: 13px;
+			font-weight: 600;
+			line-height: 18px;
+			margin-top: 3px;
+			float: left;
+		}
+
+		.cmp-card-item-members {
+			float: right;
+
+			.cmp-card-item-member img {
+				height: 23px;
+				border-radius: 3px;
+			}
+
+			.cmp-card-item-member + .cmp-card-item-member {
+				margin-left: 8px;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width : 992px) {
+	.cmp-card-list li {
+		width: 33%;
+	}
+}
+
+@media only screen and (max-width : 768px) {
+	.cmp-card-list li {
+		width: 50%;
+	}
+}
+
+@media only screen and (max-width : 480px) {
+	.cmp-card-list li {
+		width: 100%;
+
+		& a.cmp-card-item-wrapper,
+		& span.cmp-card-item-wrapper {
+			margin: 0;
+
+			& .cmp-card-item {
+				margin-right: 0;
+			}
+		}
+	}
+
+	.cmp-card-list-section {
+		& .cmp-card-list-section-action-bar {
+			display: block;
+			margin-left: 0;
+			padding-top: 10px;
+
+			& .cmp-card-list-section-action {
+				background-color: #eee;
+			}
+
+			& .cmp-card-list-section-action:first-of-type {
+				margin-left: 0;
+			}
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.cmp-card {
+  display: block;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,.1);
+  //box-shadow: 0px 0px 0px 1px rgba(51,64,73,0.05),0px 1px 2px 0px rgba(51,64,73,0.1);
+  padding: 20px;
+  border-radius: 2px;
+  margin-bottom: 20px;
+
+  .mdi {
+  	vertical-align: middle;
+  }
+  .mdi:not(:last-child) {
+    margin-right: 5px;
+  }
+  &.cmp-card-invisible {
+  	background-color: transparent;
+  	box-shadow: none;
+  	border: 1px solid transparent;
+  }
+  &.cmp-card-ghost {
+  	background-color: rgba(255,255,255,.3);
+  	box-shadow: none;
+  	border: 1px solid #d8dee2;
+  }
+
+  &.cmp-card-info-green {
+  	color: darken($brand-success, 10%);
+  	background-color: rgba(79, 215, 146, .1);
+  	box-shadow: none;
+  	border: 1px solid rgba(79, 215, 146, .4);
+
+  	& a { color: inherit; font-weight: $font-weight-semibold; }
+  }
+
+  &.cmp-card-info-yellow {
+  	color: darken($brand-warning, 20%);
+  	background-color: rgba(255, 204, 102, .1);
+  	box-shadow: none;
+  	border: 1px solid rgba(255, 204, 102, .4);
+
+  	& a { color: inherit; font-weight: $font-weight-semibold; }
+  }
+
+  &:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+.cmp-card-challenge {
+	@include flexbox;
+  	@include flex-dir(column);
+	color: $text-color;
+	cursor: pointer;
+	height: 160px;
+	max-height: 160px;
+	&:hover {
+		color: $text-color;
+		background-color: #fafbfd;
+	}
+
+	.cmp-card-title {
+		font-size: $font-size-base;
+		font-weight: $headings-font-weight;
+		margin-bottom: 10px;
+	}
+	.fill-parent {
+		@include flex(1);
+	}
+
+	.cmp-card-info {
+		color: $gray-light;
+		font-size: $font-size-small;
+		font-weight: 400;
+		margin: 0px;
+		.cmp-progress {
+			@include flexbox;
+  			@include flex-dir(row);
+  			.cmp-progress-bar {
+  				@include flex(1);
+  				.progress {
+  					margin: 6px 0px 0px 0px;
+  				}
+  				&:not(:last-child) {
+		          margin-right: 5px;
+			    }
+  			}
+		}
+	}
+
+	.cmp-challenge-end {
+		display: inline-block;
+		color: #fff;
+		font-size: $font-size-small;
+		background-color: $brand-primary;
+		border-radius: 2px;
+		padding: 5px;
+
+		& span.mdi::before {
+			font-size: $font-size-small;
+			line-height: 100%;
+		}
+
+	    &.warning { background-color: $brand-warning; }
+	    &.late { background-color: $brand-danger; }
+	}
+
+	&.cmp-card-add {
+		text-align: center;
+		color: #8c8c8c;
+		background-color: #edeff0; //#e2e4e6
+		border-color: #edeff0;
+
+		&:hover {
+			background-color: #e2e4e6; //#d6dadc rgba(0,0,0,.02)
+		}
+	}
+}
+
+.cmp-card-task {
+	@include flexbox;
+  	@include flex-dir(column);
+	color: $text-color;
+	height: 200px;
+	max-height: 200px;
+
+	.cmp-card-title {
+		font-size: $font-size-base;
+		font-weight: $headings-font-weight;
+		margin-bottom: 10px;
+	}
+	.fill-parent {
+		@include flex(1);
+	}
+
+	.cmp-task-end {
+		display: inline-block;
+		color: #fff;
+		font-size: $font-size-small;
+		background-color: $brand-primary;
+		border-radius: 2px;
+		padding: 5px;
+
+		& span.mdi::before {
+			font-size: $font-size-small;
+			line-height: 100%;
+		}
+
+	    &.warning { background-color: $brand-warning; }
+	    &.late { background-color: $brand-danger; }
+	}
+
+	.cmp-task-status {
+		cursor: pointer;
+		.not-started {
+			border-color: $brand-warning;
+		}
+		.finished {
+			border-color: $brand-success;
+		}
+	}
+
+	.cmp-task-toolbox {
+
+	}
+}
