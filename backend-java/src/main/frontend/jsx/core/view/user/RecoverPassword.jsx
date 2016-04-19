@@ -1,8 +1,8 @@
 
 import React from "react";
 import {Link} from "react-router";
-import Form from "forpdi/jsx/widget/form/Form.jsx";
-import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import Form from "forpdi/jsx/core/widget/form/Form.jsx";
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 import AppLogo from "forpdi/img/logo.png";
 
@@ -39,8 +39,8 @@ export default React.createClass({
 			<div className="container-fluid">
 				<div className="row">
 					<div className="col-md-4 col-md-offset-4 text-center">
-						<div className="cmp-login-header">
-							<img className="cmp-login-brand" src={AppLogo} alt="ForPDI Logo" />
+						<div className="fpdi-login-header">
+							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
 							<h1>Recupere sua senha</h1>
 							<p>Informe o endereço de e-mail cadastrado que enviaremos um link para você recuperar sua senha de acesso.</p>
 						</div>
@@ -48,9 +48,9 @@ export default React.createClass({
 				</div>
 				<div className="row">
 					<div className="col-md-4 col-md-offset-4">
-						<div className="cmp-card">
-							<div className="cmp-login">
-								<div className="cmp-login-body">
+						<div className="fpdi-card">
+							<div className="fpdi-login">
+								<div className="fpdi-login-body">
 									<VerticalForm
 										onSubmit={this.onSubmit}
 										fields={this.state.fields}

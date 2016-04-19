@@ -1,8 +1,8 @@
 
 import _ from "underscore";
 import React from "react";
-import Form from "forpdi/jsx/widget/form/Form.jsx";
-import ContactStore from "forpdi/jsx/store/Contact.jsx";
+import Form from "forpdi/jsx/core/widget/form/Form.jsx";
+import ContactStore from "forpdi/jsx/core/store/Contact.jsx";
 
 var VerticalForm = Form.VerticalForm;
 

@@ -1,6 +1,6 @@
 
-import Fluxbone from "forpdi/jsx/store/Fluxbone.jsx";
-import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 
 var URL = Fluxbone.BACKEND_URL+"user";

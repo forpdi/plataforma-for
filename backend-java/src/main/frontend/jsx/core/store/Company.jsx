@@ -1,5 +1,5 @@
 
-import Fluxbone from "forpdi/jsx/store/Fluxbone.jsx";
+import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 
 var URL = Fluxbone.BACKEND_URL+"company";
 

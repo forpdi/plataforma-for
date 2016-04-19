@@ -1,10 +1,12 @@
 import React from 'react';
 
+import LoadingGif from 'forpdi/img/loading.gif';
+
 export default React.createClass({
 	render() {
 		return (<div className="center-block"
 				style={{
-					backgroundImage: 'url(img/loading.gif)',
+					backgroundImage: 'url('+LoadingGif+')',
 					backgroundPosition: 'center center',
 					backgroundRepeat: 'no-repeat',
 					width:'175px',

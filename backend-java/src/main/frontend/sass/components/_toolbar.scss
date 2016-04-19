@@ -1,20 +1,20 @@
-.cmp-toolbar {
+.fpdi-toolbar {
 	padding-top: 12px;
 	padding-bottom: 11px;
 	background-color: rgba(255,255,255,.6);
 	border-bottom: 1px solid rgba(0,0,0,.06);
 
-	& .cmp-toolbar-text {
+	& .fpdi-toolbar-text {
 		display: inline-block;
 		font-size: 16px;
 		font-weight: 600;
 	}
 
-	& .cmp-toolbar-action-bar {
+	& .fpdi-toolbar-action-bar {
 		display: inline-block;
 		margin: 0 0 0 8px;
 
-		& .cmp-toolbar-action {
+		& .fpdi-toolbar-action {
 			background-color: #eee;
 			border-radius: 3px;
 			color: #777;
@@ -32,7 +32,7 @@
 			}
 		}
 
-		& .cmp-card-toolbar-action-icon {
+		& .fpdi-card-toolbar-action-icon {
 			left: 6px;
 			position: absolute;
 			top: 8px;
@@ -41,8 +41,8 @@
 }
 
 @media only screen and (max-width : 480px) {
-	.cmp-toolbar {
-		& .cmp-toolbar-action-bar {
+	.fpdi-toolbar {
+		& .fpdi-toolbar-action-bar {
 			display: block;
 			margin: 0;
 			padding-top: 10px;

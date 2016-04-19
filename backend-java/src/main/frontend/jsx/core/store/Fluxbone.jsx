@@ -2,7 +2,7 @@
 import {Dispatcher} from "flux";
 import _ from 'underscore';
 import Backbone from "backbone";
-import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 var Model = Backbone.Model.extend({
 	parse(response, opts) {

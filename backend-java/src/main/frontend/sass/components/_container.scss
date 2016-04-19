@@ -5,9 +5,9 @@
 
 /* 
  * DEPRECATED
- * To use this container set the 'main' tag class on 'AppSetup.jsx' to .cmp-app-container.
+ * To use this container set the 'main' tag class on 'AppSetup.jsx' to .fpdi-app-container.
  */
-.cmp-app-container {
+.fpdi-app-container {
   position: absolute;
   @include flexbox;
   @include flex-dir(row);
@@ -23,10 +23,10 @@
 
 /* 
  * DEPRECATED
- * To use this container set the 'main' tag class on 'AppSetup.jsx' to .cmp-app-container
- * and then set the 'div' tag class before the '<router>' element to .cmp-app-content.
+ * To use this container set the 'main' tag class on 'AppSetup.jsx' to .fpdi-app-container
+ * and then set the 'div' tag class before the '<router>' element to .fpdi-app-content.
  */
-.cmp-app-content {
+.fpdi-app-content {
   overflow-y: auto;
   overflow-x: hidden;
   @include flex(1);
@@ -34,12 +34,12 @@
   background-color: #fcfcfc; //#F5F6F8; #E9EFF2; #F5F6F8;
 }
 
-.cmp-app-panel {
+.fpdi-app-panel {
   padding-top: 50px;
   padding-bottom: 20px;
 }
 
-.cmp-app-sidebar-sm {
+.fpdi-app-sidebar-sm {
   overflow-y: hidden;
   overflow-x: hidden;
   @include flexbox;
@@ -67,7 +67,7 @@
   }
 }
 
-.cmp-app-sidebar {
+.fpdi-app-sidebar {
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
@@ -102,7 +102,7 @@
         opacity: 1;
         border-radius: 3px;
       }
-      & .cmp-nav-icon {
+      & .fpdi-nav-icon {
         margin-right: 10px;
       }
   }
@@ -130,7 +130,7 @@
         color: $navbar-inverse-link-active-color;
       }
   }
-  & .cmp-sidebar-brand {
+  & .fpdi-sidebar-brand {
     height: 50px;
     border-bottom: 1px solid rgba(0,0,0,0.2);
     padding: 15px;

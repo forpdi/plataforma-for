@@ -1,17 +1,17 @@
 // Card list section
 
-.cmp-card-list-section {
+.fpdi-card-list-section {
 	margin-bottom: 15px;
 
 	&:first-child {
 		margin-top: 30px;
 	}
 
-	& .cmp-card-list-section-header {
+	& .fpdi-card-list-section-header {
 		margin-bottom: 20px;
 	}
 
-	& .cmp-card-list-section-header-text {
+	& .fpdi-card-list-section-header-text {
 		display: inline-block;
 		color: #6c6c6c;
 		font-size: 20px;
@@ -24,11 +24,11 @@
 
 // Card list section action bar
 
-.cmp-card-list-section-action-bar {
+.fpdi-card-list-section-action-bar {
 	display: inline-block;
 	margin-left: 8px;
 
-	& .cmp-card-list-section-action {
+	& .fpdi-card-list-section-action {
 		background-color: transparent;
 		color: #777;
 		display: inline-block;
@@ -49,11 +49,11 @@
 		}
 	}
 
-	& .cmp-card-list-section-action + .cmp-card-list-section-action {
+	& .fpdi-card-list-section-action + .fpdi-card-list-section-action {
 		margin-left: 8px;
 	}
 
-	& .cmp-card-list-section-action-icon {
+	& .fpdi-card-list-section-action-icon {
 		left: 6px;
 		position: absolute;
 		top: 8px;
@@ -63,7 +63,7 @@
 
 // Card list
 
-.cmp-card-list {
+.fpdi-card-list {
 	margin-bottom: 15px;
 	display: flex;
 	flex-wrap: wrap;
@@ -74,14 +74,14 @@
 		position: relative;
 		width: 25%;
 
-		.cmp-card-item {
+		.fpdi-card-item {
 			margin-right: 15px;
 			display: block;
 			position: relative;
 		}
 
-		a.cmp-card-item-wrapper,
-		span.cmp-card-item-wrapper {
+		a.fpdi-card-item-wrapper,
+		span.fpdi-card-item-wrapper {
 			background-color: #fff;
 			background-size: cover;
 			background-position: center center;
@@ -94,7 +94,7 @@
 			text-decoration: none;
 			z-index: 0;
 
-			&.cmp-card-item-add {
+			&.fpdi-card-item-add {
 				background-color: #edeff0;
 				border-color: #edeff0;
 				color: #8c8c8c;
@@ -102,17 +102,17 @@
 				line-height: 64px;
 				text-align: center;
 
-				&.cmp-card-item-add-lg {
+				&.fpdi-card-item-add-lg {
 					line-height: 98px;
 				}
 			}
 
-			&.cmp-card-item-add:hover {
+			&.fpdi-card-item-add:hover {
 				background-color: #e2e4e6;
 			}
 		}
 
-		a.cmp-card-item-wrapper:hover {
+		a.fpdi-card-item-wrapper:hover {
 			background-color: #fafbfd;
 		}
 
@@ -144,14 +144,14 @@
 			}*/
 		}
 
-		.cmp-card-item-name {
+		.fpdi-card-item-name {
 			color: #4c4c4c;
 			font-size: 14px;
 			font-weight: 400;
 			line-height: 20px;
 		}
 
-		.cmp-card-item-sub-name {
+		.fpdi-card-item-sub-name {
 			color: rgba(0,0,0,.35);
 			display: block;
 			font-size: 13px;
@@ -160,11 +160,11 @@
 			margin-top: 3px;
 		}
 
-		.cmp-card-item-action-bar {
+		.fpdi-card-item-action-bar {
 			display: block;
 			margin-top: 5px;		
 
-			.cmp-card-item-action {
+			.fpdi-card-item-action {
 				display: inline-block;
 				background-color: #eee;
 				padding: 5px 10px;
@@ -173,13 +173,13 @@
 				font-weight: 600;
 				margin-bottom: 5px;
 
-				.cmp-action-animated-icon { display: none; }
-				.cmp-action-animated-icon:before { font-size: 12px; }
+				.fpdi-action-animated-icon { display: none; }
+				.fpdi-action-animated-icon:before { font-size: 12px; }
 
 				&:hover {
 					background-color: #e2e2e2;
 				}
-				&.cmp-card-item-action-icon {
+				&.fpdi-card-item-action-icon {
 					padding: 5px 6px;
 
 					& .mdi::before {
@@ -188,7 +188,7 @@
 					}
 				}
 
-				.cmp-card-item-action-label {
+				.fpdi-card-item-action-label {
 					color: #4a4a4a;
 				}
 
@@ -200,17 +200,17 @@
 
 				&.finish:hover,
 				&.completed {
-					& .cmp-card-item-action-label { color: #fff; }
-					.cmp-action-animated-icon { display: inline-block; }
+					& .fpdi-card-item-action-label { color: #fff; }
+					.fpdi-action-animated-icon { display: inline-block; }
 				}
 			}
 
-			.cmp-card-item-action + .cmp-card-item-action {
+			.fpdi-card-item-action + .fpdi-card-item-action {
 				margin-left: 5px;
 			}
 		}
 
-		.cmp-card-item-due-date {
+		.fpdi-card-item-due-date {
 			color: rgba(0,0,0,.35);
 			font-size: 13px;
 			font-weight: 600;
@@ -219,15 +219,15 @@
 			float: left;
 		}
 
-		.cmp-card-item-members {
+		.fpdi-card-item-members {
 			float: right;
 
-			.cmp-card-item-member img {
+			.fpdi-card-item-member img {
 				height: 23px;
 				border-radius: 3px;
 			}
 
-			.cmp-card-item-member + .cmp-card-item-member {
+			.fpdi-card-item-member + .fpdi-card-item-member {
 				margin-left: 8px;
 			}
 		}
@@ -235,42 +235,42 @@
 }
 
 @media only screen and (max-width : 992px) {
-	.cmp-card-list li {
+	.fpdi-card-list li {
 		width: 33%;
 	}
 }
 
 @media only screen and (max-width : 768px) {
-	.cmp-card-list li {
+	.fpdi-card-list li {
 		width: 50%;
 	}
 }
 
 @media only screen and (max-width : 480px) {
-	.cmp-card-list li {
+	.fpdi-card-list li {
 		width: 100%;
 
-		& a.cmp-card-item-wrapper,
-		& span.cmp-card-item-wrapper {
+		& a.fpdi-card-item-wrapper,
+		& span.fpdi-card-item-wrapper {
 			margin: 0;
 
-			& .cmp-card-item {
+			& .fpdi-card-item {
 				margin-right: 0;
 			}
 		}
 	}
 
-	.cmp-card-list-section {
-		& .cmp-card-list-section-action-bar {
+	.fpdi-card-list-section {
+		& .fpdi-card-list-section-action-bar {
 			display: block;
 			margin-left: 0;
 			padding-top: 10px;
 
-			& .cmp-card-list-section-action {
+			& .fpdi-card-list-section-action {
 				background-color: #eee;
 			}
 
-			& .cmp-card-list-section-action:first-of-type {
+			& .fpdi-card-list-section-action:first-of-type {
 				margin-left: 0;
 			}
 		}
@@ -290,7 +290,7 @@
 
 
 
-.cmp-card {
+.fpdi-card {
   display: block;
   background-color: #fff;
   border: 1px solid rgba(0,0,0,.1);
@@ -305,18 +305,18 @@
   .mdi:not(:last-child) {
     margin-right: 5px;
   }
-  &.cmp-card-invisible {
+  &.fpdi-card-invisible {
   	background-color: transparent;
   	box-shadow: none;
   	border: 1px solid transparent;
   }
-  &.cmp-card-ghost {
+  &.fpdi-card-ghost {
   	background-color: rgba(255,255,255,.3);
   	box-shadow: none;
   	border: 1px solid #d8dee2;
   }
 
-  &.cmp-card-info-green {
+  &.fpdi-card-info-green {
   	color: darken($brand-success, 10%);
   	background-color: rgba(79, 215, 146, .1);
   	box-shadow: none;
@@ -325,7 +325,7 @@
   	& a { color: inherit; font-weight: $font-weight-semibold; }
   }
 
-  &.cmp-card-info-yellow {
+  &.fpdi-card-info-yellow {
   	color: darken($brand-warning, 20%);
   	background-color: rgba(255, 204, 102, .1);
   	box-shadow: none;
@@ -339,7 +339,7 @@
   }
 }
 
-.cmp-card-challenge {
+.fpdi-card-challenge {
 	@include flexbox;
   	@include flex-dir(column);
 	color: $text-color;
@@ -351,7 +351,7 @@
 		background-color: #fafbfd;
 	}
 
-	.cmp-card-title {
+	.fpdi-card-title {
 		font-size: $font-size-base;
 		font-weight: $headings-font-weight;
 		margin-bottom: 10px;
@@ -360,15 +360,15 @@
 		@include flex(1);
 	}
 
-	.cmp-card-info {
+	.fpdi-card-info {
 		color: $gray-light;
 		font-size: $font-size-small;
 		font-weight: 400;
 		margin: 0px;
-		.cmp-progress {
+		.fpdi-progress {
 			@include flexbox;
   			@include flex-dir(row);
-  			.cmp-progress-bar {
+  			.fpdi-progress-bar {
   				@include flex(1);
   				.progress {
   					margin: 6px 0px 0px 0px;
@@ -380,7 +380,7 @@
 		}
 	}
 
-	.cmp-challenge-end {
+	.fpdi-challenge-end {
 		display: inline-block;
 		color: #fff;
 		font-size: $font-size-small;
@@ -397,7 +397,7 @@
 	    &.late { background-color: $brand-danger; }
 	}
 
-	&.cmp-card-add {
+	&.fpdi-card-add {
 		text-align: center;
 		color: #8c8c8c;
 		background-color: #edeff0; //#e2e4e6
@@ -409,14 +409,14 @@
 	}
 }
 
-.cmp-card-task {
+.fpdi-card-task {
 	@include flexbox;
   	@include flex-dir(column);
 	color: $text-color;
 	height: 200px;
 	max-height: 200px;
 
-	.cmp-card-title {
+	.fpdi-card-title {
 		font-size: $font-size-base;
 		font-weight: $headings-font-weight;
 		margin-bottom: 10px;
@@ -425,7 +425,7 @@
 		@include flex(1);
 	}
 
-	.cmp-task-end {
+	.fpdi-task-end {
 		display: inline-block;
 		color: #fff;
 		font-size: $font-size-small;
@@ -442,7 +442,7 @@
 	    &.late { background-color: $brand-danger; }
 	}
 
-	.cmp-task-status {
+	.fpdi-task-status {
 		cursor: pointer;
 		.not-started {
 			border-color: $brand-warning;
@@ -452,7 +452,7 @@
 		}
 	}
 
-	.cmp-task-toolbox {
+	.fpdi-task-toolbox {
 
 	}
 }

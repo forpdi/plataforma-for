@@ -63,7 +63,7 @@
 
 // Navbar Profile Information Dropdown
 
-.navbar-nav .cmp-dropdown-profile .dropdown-menu {
+.navbar-nav .fpdi-dropdown-profile .dropdown-menu {
 
   & > li.copyright {
     color: $color-bluescale-light;
@@ -73,7 +73,7 @@
   }
 }
 
-.navbar-nav li.cmp-dropdown-profile > a {
+.navbar-nav li.fpdi-dropdown-profile > a {
   padding-top: ($navbar-padding-top/2) + 4;
   padding-bottom: ($navbar-padding-bottom/2) + 4;
   padding-right: 0;

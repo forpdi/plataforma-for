@@ -1,7 +1,9 @@
 
 import React from "react";
 import {Link} from "react-router";
-import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
+
+import WhiteLogo from 'forpdi/img/logo.png';
 
 export default React.createClass({
     getInitialState() {
@@ -37,20 +39,20 @@ export default React.createClass({
     if (!this.state.logged) {
         return <div style={{display: 'none'}} />;
     }
-    return (<div className='cmp-app-sidebar hidden'>
-        <div className="cmp-sidebar-brand">
-    	   <img alt="Salesfox Logo" src="img/brand-white.svg" />
+    return (<div className='fpdi-app-sidebar hidden'>
+        <div className="fpdi-sidebar-brand">
+    	   <img alt="ForPDI Logo" src={WhiteLogo} />
         </div>
 	    <ul className="nav nav-stacked">
 			<li>
                 <a href="#/challenges">
-                    <span className="cmp-nav-icon mdi mdi-format-list-bulleted"
-                    	></span> Desafios
+                    <span className="fpdi-nav-icon mdi mdi-format-list-bulleted"
+                    	></span> Planos
                 </a>
             </li>
 			<li>
                 <a href="#/sysadmin">
-                    <span className="cmp-nav-icon mdi mdi-settings"
+                    <span className="fpdi-nav-icon mdi mdi-settings"
                     	></span> Administração
                 </a>
             </li>

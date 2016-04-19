@@ -1,8 +1,8 @@
 
 import _ from "underscore";
 import React from "react";
-import Form from "forpdi/jsx/widget/form/Form.jsx";
-import ContactStore from "forpdi/jsx/store/Contact.jsx";
+import Form from "forpdi/jsx/core/widget/form/Form.jsx";
+import ContactStore from "forpdi/jsx/core/store/Contact.jsx";
 
 var VerticalForm = Form.VerticalForm;
 
@@ -16,10 +16,10 @@ export default React.createClass({
 				name: "screen",
 				type: "select",
 				options: [
-					{'screen': "Cadastro de Ações"},
+					{'screen': "Dashboard"},
 					{'screen': "Cadastro de Desafios"},
-					{'screen': "Desafios"},
-					{'screen': "Detalhes do Desafio"}
+					{'screen': "Planos"},
+					{'screen': "Configurações"}
 				],
 				valueField: 'screen',
 				displayField: 'screen',

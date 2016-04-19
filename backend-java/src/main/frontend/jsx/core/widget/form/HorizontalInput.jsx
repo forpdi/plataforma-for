@@ -17,55 +17,17 @@ export default React.createClass({
 		};
 	},
 	getInitialState() {
-		if (this.props.fieldDef.type == 'custom') {
-			return {
-				fieldId: this.props.fieldDef.id
-			};
-		}
 		return {
 			fieldId: "field-"+this.props.fieldDef.name.replace(/\./g, "-")
 		};
 	},
 	getValue() {
-		var el = this.refs[this.state.fieldId];
-		if (el == undefined)
-			return el;
-		if (el.type == 'checkbox')
-			return el.checked;
-		if (el.type == 'date')
-			return el.valueAsDate;
-		if (el.type == 'number')
-			return el.valueAsNumber;
-		return el.value;
+		if (this.refs[this.state.fieldId].type == 'checkbox')
+			return this.refs[this.state.fieldId].checked;
+		return this.refs[this.state.fieldId].value;
 	},
 	getInputNode() {
 		return this.refs[this.state.fieldId];
-	},
-	componentDidMount() {
-		if (this.props.fieldDef.type == 'date') {
-			$(this.getInputNode()).daterangepicker({
-				autoApply: true,
-				autoUpdateInput: true,
-				locale: {
-		            format: 'DD/MM/YYYY'
-		        },
-		        opens: 'right',
-		        drops: 'down',
-		        showDropdowns: true,
-		        singleDatePicker: true
-			});
-		} else if (this.props.fieldDef.type == 'daterange') {
-			$(this.getInputNode()).daterangepicker({
-				autoApply: true,
-				autoUpdateInput: true,
-				locale: {
-		            format: 'DD/MM/YYYY'
-		        },
-		        opens: 'right',
-		        drops: 'down',
-		        showDropdowns: true
-			});
-		}
 	},
 	render() {
 		var fieldEl;
@@ -108,40 +70,12 @@ export default React.createClass({
 						<option value="">{this.props.fieldDef.placeholder}</option>
 						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
 							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx}
-								value={opt.get ? opt.get(this.props.fieldDef.valueField):opt[this.props.fieldDef.valueField]}>
-									{ this.props.fieldDef.renderDisplay ?
-										this.props.fieldDef.renderDisplay(opt)
-										:
-										(opt.get ? opt.get(this.props.fieldDef.displayField):opt[this.props.fieldDef.displayField])
-									}
+								value={opt.get(this.props.fieldDef.valueField)}>
+									{opt.get(this.props.fieldDef.displayField)}
 							</option>);
 						}):''}
 				</select>
 			);
-		} else if (this.props.fieldDef.type == 'date') {
-			fieldEl = (<input
-				className="form-control"
-				type='text'
-				name={this.props.fieldDef.name}
-				defaultValue={this.props.fieldDef.value}
-				id={this.state.fieldId}
-				ref={this.state.fieldId}
-				placeholder={this.props.fieldDef.placeholder}
-				onChange={this.props.fieldDef.onChange || _.noop}
-			/>);
-		} else if (this.props.fieldDef.type == 'daterange') {
-			fieldEl = (<input
-				className="form-control"
-				type='text'
-				name={this.props.fieldDef.name}
-				defaultValue={this.props.fieldDef.value}
-				id={this.state.fieldId}
-				ref={this.state.fieldId}
-				placeholder={this.props.fieldDef.placeholder}
-				onChange={this.props.fieldDef.onChange || _.noop}
-			/>);
-		} else if (this.props.fieldDef.type == 'custom') {
-			return this.props.fieldDef.el;
 		} else {
 			fieldEl = (<input
 				className="form-control"
@@ -156,11 +90,13 @@ export default React.createClass({
 		}
 		return (
 			<div className="form-group form-group-sm">
-				<label htmlFor={this.state.fieldId} className="cmp-text-label">
+				<label htmlFor={this.state.fieldId} className="col-sm-2 fpdi-text-label">
 					{this.props.fieldDef.label}
 				</label>
-				{fieldEl}
-				{this.props.fieldDef.helpBox}
+				<div className="col-sm-10">
+					{fieldEl}
+					{this.props.fieldDef.helpBox}
+				</div>
 			</div>
 		);
 	}

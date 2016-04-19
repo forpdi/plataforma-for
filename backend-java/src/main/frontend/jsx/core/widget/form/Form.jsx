@@ -1,7 +1,7 @@
 
 import React from "react";
-import HorizontalInput from "forpdi/jsx/widget/form/HorizontalInput.jsx";
-import VerticalInput from "forpdi/jsx/widget/form/VerticalInput.jsx";
+import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
+import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 
 var VerticalForm =  React.createClass({
 	getDefaultProps() {

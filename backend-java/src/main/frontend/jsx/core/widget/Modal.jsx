@@ -4,8 +4,8 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import FeedbackPost from "forpdi/jsx/widget/contact/FeedbackPost.jsx";
-import ReportProblem from "forpdi/jsx/widget/contact/ReportProblem.jsx";
+import FeedbackPost from "forpdi/jsx/core/widget/contact/FeedbackPost.jsx";
+import ReportProblem from "forpdi/jsx/core/widget/contact/ReportProblem.jsx";
 
 var EL = document.getElementById("main-global-modal");
 
@@ -64,14 +64,14 @@ var DeleteConfirmModal = React.createClass({
 		return (
 			<div className="modal-dialog modal-sm">
 				<div className="modal-content">
-					<div className="modal-header cmp-modal-header">
+					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        			<h4 className="modal-title" id="myModalLabel">Atenção</h4>
 	      			</div>
-	      			<div className="modal-body cmp-modal-body">
+	      			<div className="modal-body fpdi-modal-body">
 	        			<p>{this.props.text}</p>
 	      			</div>
-	      			<div className="modal-footer cmp-modal-footer">
+	      			<div className="modal-footer fpdi-modal-footer">
 	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{this.props.declineText}</button>
 	        			<button type="button" className="btn btn-sm btn-primary" onClick={this.props.onConfirm}>{this.props.confirmText}</button>
 	      			</div>
@@ -145,11 +145,11 @@ var MediumModal = React.createClass({
 		return (
 			<div className="modal-dialog modal-md">
 				<div className="modal-content">
-					<div className="modal-header cmp-modal-header">
+					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
-	      			<div className="modal-body cmp-modal-body">
+	      			<div className="modal-body fpdi-modal-body">
 	        			{this.props.children}
 	      			</div>
 				</div>
@@ -205,18 +205,6 @@ var Modal = {
 	readText(title, msg, cb) {
 		ReactDOM.render((
 			<ReadTextModal title={title} message={msg} onConfirm={cb} />
-		),this.$el);
-		$(this.$el).modal('show');
-	},
-
-	cancelTaskConfirm(cb) {
-		ReactDOM.render((
-			<DeleteConfirmModal
-				onConfirm={cb}
-				text={"Tem certeza que deseja cancelar esta ação?"}
-				confirmText={"Sim"}
-				declineText={"Não"}
-			/>
 		),this.$el);
 		$(this.$el).modal('show');
 	},

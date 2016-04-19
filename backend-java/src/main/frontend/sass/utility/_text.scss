@@ -3,43 +3,43 @@
 //
 
 // Text Label Base
-.cmp-text-label {
+.fpdi-text-label {
   @include text-label-variant($color-grayscale-lighter, $font-weight-normal, uppercase);
   //letter-spacing: .0625em;
 
 }
-a.cmp-text-label:hover,
-a.cmp-text-label:focus {
+a.fpdi-text-label:hover,
+a.fpdi-text-label:focus {
   color: $color-grayscale-base;
 }
 
 // Text Label for Danger Tags
-.cmp-text-label-blue {
+.fpdi-text-label-blue {
   @include text-label-variant($color-brand-blue, $font-weight-normal, normal);
 }
 
 // Text Label for Danger Tags
-.cmp-text-label-red {
+.fpdi-text-label-red {
   @include text-label-variant($color-brand-red, $font-weight-normal, normal);
 }
 
 // Text Label for Money Tags
-.cmp-text-label-green {
+.fpdi-text-label-green {
   @include text-label-variant($color-brand-green, $font-weight-normal, normal);
 }
 
 // Text Label for Score Tags
-.cmp-text-label-orange {
+.fpdi-text-label-orange {
   @include text-label-variant($color-brand-orange, $font-weight-normal, normal);
 }
 
 // Text Label for Initiation Tags
-.cmp-text-label-purple {
+.fpdi-text-label-purple {
   @include text-label-variant($color-brand-purple, $font-weight-normal, normal);
 }
 
 // Text Label for Form Tips
-.cmp-text-label-tip {
+.fpdi-text-label-tip {
   @include text-label-variant($color-grayscale-lighter, $font-weight-normal, none);
 
   label + & {
@@ -48,12 +48,12 @@ a.cmp-text-label:focus {
 }
 
 // Text Label for Required Fields in Forms
-.cmp-text-label-required::after {
+.fpdi-text-label-required::after {
   content:"*";
   @include text-label-variant($color-brand-red, $font-weight-extrabold, uppercase);
 }
 
-.cmp-text-title-page {
+.fpdi-text-title-page {
   font-size: 1.125rem;
   margin-top: 7px;
   margin-bottom: 7px;

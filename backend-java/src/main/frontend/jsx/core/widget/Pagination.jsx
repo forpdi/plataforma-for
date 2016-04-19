@@ -1,7 +1,7 @@
 
 import _ from 'underscore';
 import React from "react";
-import {Store} from 'forpdi/jsx/store/Fluxbone.jsx';
+import {Store} from 'forpdi/jsx/core/store/Fluxbone.jsx';
 
 export default React.createClass({
 	getDefaultProps() {

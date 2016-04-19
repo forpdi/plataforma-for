@@ -1,8 +1,8 @@
 
 import React from "react";
-import UserSession from "forpdi/jsx/store/UserSession.jsx";
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
-import Modal from "forpdi/jsx/widget/Modal.jsx";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	getInitialState() {
@@ -69,7 +69,7 @@ export default React.createClass({
 				<div className="collapse navbar-collapse" id="mainNavbar">
 					<ul className="nav navbar-nav navbar-right">
 						<li className="hidden">
-				            <form onSubmit={this.onSearch} className="cmp-search-form navbar-form">
+				            <form onSubmit={this.onSearch} className="fpdi-search-form navbar-form">
 				                <div className="form-group form-group-sm has-feedback">
 				            		<label htmlFor="navbar-global-search" className="sr-only">Search</label>
 				            		<input
@@ -90,7 +90,7 @@ export default React.createClass({
 								Enviar feedback
 							</button>
 						</li>
-						<li className="dropdown cmp-dropdown-profile hidden-xs">
+						<li className="dropdown fpdi-dropdown-profile hidden-xs">
 							<a
 								className="dropdown-toggle"
 								data-toggle="dropdown"

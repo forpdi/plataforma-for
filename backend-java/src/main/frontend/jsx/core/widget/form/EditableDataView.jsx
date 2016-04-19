@@ -83,30 +83,30 @@ export default React.createClass({
 	render() {
 		if (this.state.editing) {
 			if (this.props.type === 'textarea') {
-				return (<div className="cmp-editable-data-input-group input-group input-group-sm">
+				return (<div className="fpdi-editable-data-input-group input-group input-group-sm">
 					<textarea
 						ref="data-input"
 						rows="3"
-						className="cmp-editable-data-textarea form-control"
+						className="fpdi-editable-data-textarea form-control"
 						defaultValue={this.state.value}
 						onBlur={this.saveValue}
 						onKeyUp={this.onKeyPress} />
 				</div>);
 			} else if (this.props.type === 'date') {
-				return (<div className="cmp-editable-data-input-group input-group input-group-sm">
+				return (<div className="fpdi-editable-data-input-group input-group input-group-sm">
 					<input
 						ref="data-input"
 						type="text"
-						className="cmp-editable-data-input form-control"
+						className="fpdi-editable-data-input form-control"
 						defaultValue={this.state.value}
 						onKeyUp={this.onKeyPress} />
 				</div>);
 			}
-			return (<div className="cmp-editable-data-input-group input-group input-group-sm">
+			return (<div className="fpdi-editable-data-input-group input-group input-group-sm">
 				<input
 					ref="data-input"
 					type={this.props.type}
-					className="cmp-editable-data-input form-control"
+					className="fpdi-editable-data-input form-control"
 					defaultValue={this.state.value}
 					onBlur={this.saveValue}
 					onKeyUp={this.onKeyPress} />
@@ -114,7 +114,7 @@ export default React.createClass({
 		}
 		return (<div
 			ref="data-view"
-			className={"cmp-editable-data-view "+this.props.className}
+			className={"fpdi-editable-data-view "+this.props.className}
 			style={this.props.style}
 			onClick={this.toggleEdit}>
 				{this.props.displayRenderer ?

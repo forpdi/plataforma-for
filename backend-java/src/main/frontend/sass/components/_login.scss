@@ -3,11 +3,11 @@
 //
 
 // Login Container Base
-.cmp-login {
+.fpdi-login {
 }
 
 // Login Container Header
-.cmp-login-header {
+.fpdi-login-header {
 
   & h1 {
     font-size: 1.4rem;
@@ -19,17 +19,17 @@
 }
 
 // Generic Properties
-.cmp-login-header {
+.fpdi-login-header {
   @include content-spacing-margin-y($margin-sm, $margin-lg);
   text-align: center;    
 }
 
-.cmp-login-footer {
+.fpdi-login-footer {
   margin-top: 20px;
 }
 
 // Login brand
-.cmp-login-brand {
+.fpdi-login-brand {
   max-height: 48px;
   @include content-spacing-margin-y($margin-xx-lg, $margin-sm);
 }
