@@ -16,6 +16,9 @@ import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletContext;
 
 import org.forpdi.core.properties.SystemConfigs;
+import org.forpdi.core.user.User;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
@@ -59,6 +62,20 @@ public class ApplicationSetup {
 		} catch (GeneralSecurityException ex) {
 			System.out.println("N�o consegui sobrescrever o SSLContext.");
 			ex.printStackTrace();
+		}
+		
+		Criteria criteria =
+			dao.newCriteria(User.class)
+			.add(Restrictions.eq("email", "admin@forpdi.org"))
+		;
+		User user = (User) criteria.uniqueResult();
+		if (user == null) {
+			user = new User();
+			user.setCpf("00000000000");
+			user.setEmail("admin@forpdi.org");
+			user.setName("Administrador ForPDI");
+			user.setPassword(CryptManager.passwordHash("12345"));
+			dao.persist(user);
 		}
 		
 		LOG.info("Application setup completed.");

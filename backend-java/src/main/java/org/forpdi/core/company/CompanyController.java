@@ -22,7 +22,7 @@ import org.forpdi.core.user.UserRole;
 public class CompanyController extends AbstractController {
 	@Inject private CompanyBS bs;
 	
-	@Post("/company")
+	@Post("/api/company")
 	@Consumes
 	@NoCache
 	@Permissioned(UserRole.SYSTEM_ADMIN)
@@ -37,7 +37,7 @@ public class CompanyController extends AbstractController {
 		}
 	}
 	
-	@Get("/company/{id}")
+	@Get("/api/company/{id}")
 	@NoCache
 	@Permissioned(UserRole.SYSTEM_ADMIN)
 	public void retrieveCompany(Long id){
@@ -54,7 +54,7 @@ public class CompanyController extends AbstractController {
 		}
 	}
 	
-	@Get("/company")
+	@Get("/api/company")
 	@NoCache
 	@Permissioned(UserRole.SYSTEM_ADMIN)
 	public void listCompanies(Integer page){

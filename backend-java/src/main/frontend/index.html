@@ -16,10 +16,9 @@
 
 
     <script type="text/javascript">
-        var apiPath = "/api";
-        var urlBase = location.origin;
-        var BACKEND_URL = urlBase+apiPath+"/";
-        console.log(BACKEND_URL);
+    	var apiPath = "api/";
+        var urlBase = location.origin+location.pathname;
+        var BACKEND_URL = urlBase+apiPath;
     </script>
     <script type="text/javascript" src="app.js" charset="utf-8"></script>
 

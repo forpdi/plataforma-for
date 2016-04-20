@@ -28,7 +28,7 @@ public class IndexController extends AbstractController {
 		this.fail(errors);
 	}
 	
-	@Get("/session")
+	@Get("/api/session")
 	public void sessionInfo() {
 		StringBuilder body = new StringBuilder();
 		body.append("SessionInfo={");

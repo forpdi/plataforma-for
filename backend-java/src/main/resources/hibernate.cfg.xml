@@ -43,6 +43,7 @@
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
 
   		<mapping class="org.forpdi.core.company.Company"/>
+  		<mapping class="org.forpdi.core.session.UserAccessToken"/>
   		<mapping class="org.forpdi.core.user.User"/>
   		
 	</session-factory>

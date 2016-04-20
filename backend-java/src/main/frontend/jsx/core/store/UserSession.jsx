@@ -11,7 +11,7 @@ var UserSession = Backbone.Model.extend({
 	ACTION_UPDATE_PROFILE: 'updateProfile',
 
 	BACKEND_URL: BACKEND_URL,
-	url: BACKEND_URL + "persons",
+	url: BACKEND_URL + "user",
 	$dispatcher: new Dispatcher(),
 	dispatch(payload) {
 		this.$dispatcher.dispatch(payload);
@@ -19,6 +19,8 @@ var UserSession = Backbone.Model.extend({
 	dispatchCallback(payload) {
 		if (payload.action) {
 			this[payload.action](payload.data);
+		} else {
+			console.warn("Unknown dispatching action at UserSession:",payload);
 		}
 	},
 	initialize() {
@@ -59,17 +61,17 @@ var UserSession = Backbone.Model.extend({
 		var me = this;
 		$.ajax({
 			method: "GET",
-			url: BACKEND_URL + "persons/"+localStorage.userId,
+			url: BACKEND_URL + "user/session",
 			dataType: 'json',
 			success(data, status, opts) {
-				if (!data.error) {
+				if (data.success) {
 					me.set({
 						"logged": true,
-						"user": data
+						"user": data.data.user
 					});
 					me.trigger("login", me);
 				} else {
-					me.trigger("fail", data.error.message);
+					me.trigger("fail", data.message);
 				}
 				if (me.get("loading")) {
 					me.set({loading: false});
@@ -87,8 +89,8 @@ var UserSession = Backbone.Model.extend({
 	},
 
 	handleRequestErrors(collection, opts) {
-		if (opts.status == 401) {
-			this.trigger("fail", "Dados de login inválidos.");
+		if (opts.status == 400) {
+			this.trigger("fail", opts.responseJSON.message);
 		} else if (opts.status == 409) {
 			// Validation errors
 			try {
@@ -100,7 +102,7 @@ var UserSession = Backbone.Model.extend({
 			}
 			this.trigger("fail", resp.message);
 		} else {
-			this.trigger("fail", "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseJSON.error.message);
+			this.trigger("fail", "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseJSON.message);
 		}
 	},
 
@@ -119,21 +121,25 @@ var UserSession = Backbone.Model.extend({
 		} else {
 			$.ajax({
 				method: "POST",
-				url: BACKEND_URL + "persons/login",
+				url: BACKEND_URL + "user/login",
 				dataType: 'json',
 				data: data,
 				success(data, status, opts) {
 					console.log(data);
-					if (!data.error) {
+					if (data.success) {
 						$.ajaxSetup({
 							headers: {
-								"Authorization": data.id
+								"Authorization": data.data.token
 							}
 						});
-						me.putStorage(data.id, data.userId);
-						me.refreshStatus();
+						me.putStorage(data.data.token, data.data.user.id);
+						me.set({
+							"logged": true,
+							"user": data.data.user
+						});
+						me.trigger("login", me);
 					} else {
-						me.trigger("fail", data.error.message);
+						me.trigger("fail", data.message);
 					}
 				},
 				error(opts, status, errorMsg) {
@@ -146,10 +152,9 @@ var UserSession = Backbone.Model.extend({
 		var me = this;
 		$.ajax({
 			method: "POST",
-			url: BACKEND_URL + "persons/logout",
+			url: BACKEND_URL + "user/logout",
 			dataType: 'json',
 			success(data, status, opts) {
-				console.log(data);
 				me.set({logged: false, user: null});
 				$.ajaxSetup({
 					headers: {
@@ -169,7 +174,7 @@ var UserSession = Backbone.Model.extend({
 		var me = this;
 		$.ajax({
 			method: "POST",
-			url: BACKEND_URL + "persons/reset",
+			url: BACKEND_URL + "user/recover",
 			dataType: 'json',
 			data: params,
 			success(data, status, opts) {

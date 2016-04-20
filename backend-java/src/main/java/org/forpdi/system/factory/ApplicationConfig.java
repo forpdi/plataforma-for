@@ -26,7 +26,7 @@ public class ApplicationConfig extends ApplicationConfiguration {
 	
 	@Override
 	public String getApplicationPath() {
-		return URL.replaceAll("/$", "");
+		return URL.replaceAll("/api/$", "");
 	}
 
 }

@@ -4,6 +4,8 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
+import Logo from 'forpdi/img/logo.png';
+
 export default React.createClass({
 	getInitialState() {
 		return {
@@ -53,17 +55,17 @@ export default React.createClass({
 			return <div style={{display: 'none'}} />;
 		}
 		return (<nav className="navbar navbar-default navbar-fixed-top">
-			<div className="container">
+			<div className="container-fluid">
 				<div className="navbar-header">
 					<button type="button"
 						className="navbar-toggle collapsed"
 						data-toggle="collapse"
 						data-target="#mainNavbar"
 						aria-expanded="false">
-							<img src="img/user-profile-empty.svg" alt="Foto de perfil"/>
+							<span className="mdi mdi-account" />
 					</button>
 					<a className="navbar-brand" href="#/">
-						<img alt="Salesfox Logo" src="img/brand-symbol.svg"/>
+						<img alt="ForPDI Logo" src={Logo} />
 					</a>
 				</div>
 				<div className="collapse navbar-collapse" id="mainNavbar">
@@ -84,12 +86,6 @@ export default React.createClass({
 				            	</div>
 				            </form>
 						</li>
-						<li className="hidden-xs">
-							<button className="btn btn-sm btn-default navbar-btn btn-feedback" type="button" onClick={this.openFeedback}>
-								<span className="mdi mdi-heart"></span>
-								Enviar feedback
-							</button>
-						</li>
 						<li className="dropdown fpdi-dropdown-profile hidden-xs">
 							<a
 								className="dropdown-toggle"
@@ -97,9 +93,8 @@ export default React.createClass({
 								role="button"
 								aria-haspopup="true"
 								aria-expanded="false">
-									<img
-										src="img/user-profile-empty.svg" alt="Foto de perfil"
-									/> {this.state.user.name} <span
+									<span className="mdi mdi-account"/>
+									{this.state.user.name} <span
 										className="caret" />
 							</a>
 							<ul className="dropdown-menu">
