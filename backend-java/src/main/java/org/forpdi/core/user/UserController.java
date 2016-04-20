@@ -144,6 +144,59 @@ public class UserController extends AbstractController {
 		}
 	}
 	
+	@Post("/api/user/recover")
+	@Consumes
+	@NoCache
+	public void requestRecover(String email) {
+		try {
+			User user = this.bs.existsByEmail(email);
+			if (user == null) {
+				this.fail("Este e-mail não está cadastrado no sistema.");
+			} else {
+				UserRecoverRequest req = this.bs.requestRecover(user);
+				LOGGER.debugf("Recover requested with token: %s", req.getToken());
+				this.success();
+			}
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
+		}
+	}
+	
+	@Post("/api/user/reset/{token}")
+	@Consumes
+	@NoCache
+	public void resetUserPassword(String password, String token) {
+		try {
+			if (GeneralUtils.isEmpty(password)) {
+				this.fail("A senha não pode ser vazia.");
+			} else if (this.bs.resetPassword(password, token)) {
+				this.success();
+			} else {
+				this.fail("Token de recuperação inválida ou expirada.");
+			}
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
+		}
+	}
+
+	@Get("/api/user/reset/{token}")
+	@NoCache
+	public void canReset(String token) {
+		try {
+			UserRecoverRequest req = this.bs.retrieveRecoverRequest(token);
+			if (req == null) {
+				this.fail("Token de recuperação inválida ou expirada.");
+			} else {
+				this.success();
+			}
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
+		}
+	}
+	
 	@Get("/api/user")
 	@NoCache
 	@Permissioned(UserRole.SYSTEM_ADMIN)

@@ -6,9 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 
-import org.forpdi.core.company.CompanyBS;
 import org.forpdi.core.session.UserAccessToken;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -25,8 +23,6 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
  */
 @RequestScoped
 public class UserBS extends HibernateBusiness {
-	
-	@Inject private CompanyBS companyBS;
 	
 	public void save(User user) {
 		if (this.existsByEmail(user.getEmail()) != null) {
@@ -98,6 +94,44 @@ public class UserBS extends HibernateBusiness {
 		results.setList(this.dao.findByCriteria(criteria, User.class));
 		results.setTotal((Long) counting.uniqueResult());
 		return results;
+	}
+	
+	public UserRecoverRequest requestRecover(User user) {
+		if (user == null)
+			return null;
+		UserRecoverRequest req = new UserRecoverRequest();
+		req.setUser(user);
+		req.setCreation(new Date());
+		req.setCreationIp(this.request.getRemoteAddr());
+		req.setExpiration(new Date(System.currentTimeMillis()+1800000L));
+		req.setToken(CryptManager.digest(
+			Math.random() + "@" +System.currentTimeMillis()
+			+ "#" + user.getEmail()
+		));
+		this.dao.persist(req);
+		// TODO Send the recovering email.
+		return req;
+	}
+	
+	public boolean resetPassword(String password, String token) {
+		UserRecoverRequest req = this.retrieveRecoverRequest(token);
+		if (req == null)
+			return false;
+		User user = req.getUser();
+		user.setPassword(CryptManager.passwordHash(password));
+		this.dao.persist(user);
+		return true;
+	}
+	
+	public UserRecoverRequest retrieveRecoverRequest(String token) {
+		UserRecoverRequest req = this.dao.exists(token, UserRecoverRequest.class);
+		if (req == null)
+			return null;
+		if (req.getExpiration().getTime() < System.currentTimeMillis())
+			return null;
+		if (req.isUsed())
+			return null;
+		return req;
 	}
 	
 	public int updateUsersActivationState() {

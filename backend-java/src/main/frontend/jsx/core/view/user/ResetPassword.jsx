@@ -2,7 +2,6 @@
 import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 import AppLogo from "forpdi/img/logo.png";
@@ -28,7 +27,7 @@ export default React.createClass({
 	},
 	componentWillMount() {
 		UserSession.on("recoverpassword", model => {
-			Modal.alert("Sucesso", "E-mail de recuperação de senha enviado com sucesso.");
+			Modal.info("E-mail de recuperação de senha enviado com sucesso.");
 			location.assign("#/");
 		}, this);
 	},

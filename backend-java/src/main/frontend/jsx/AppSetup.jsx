@@ -10,6 +10,7 @@ import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
 import Login from "forpdi/jsx/core/view/user/Login.jsx";
 import RecoverPassword from "forpdi/jsx/core/view/user/RecoverPassword.jsx";
+import ResetPassword from "forpdi/jsx/core/view/user/ResetPassword.jsx";
 
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
 Numeral.language("pt-br");
@@ -22,6 +23,7 @@ ReactDOM.render((
 				<Route path="/" component={Login} />
 			  	<Route path="/login" component={Login} />
 				<Route path="/recover-password" component={RecoverPassword} />
+				<Route path="/reset-password/:token" component={ResetPassword} />
 
 				<Route path="*" component={NotFound} />
 			</Router>
