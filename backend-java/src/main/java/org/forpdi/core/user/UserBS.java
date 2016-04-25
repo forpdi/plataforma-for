@@ -120,6 +120,10 @@ public class UserBS extends HibernateBusiness {
 		User user = req.getUser();
 		user.setPassword(CryptManager.passwordHash(password));
 		this.dao.persist(user);
+		req.setRecover(new Date());
+		req.setRecoverIp(this.request.getRemoteAddr());
+		req.setUsed(true);
+		this.dao.persist(req);
 		return true;
 	}
 	

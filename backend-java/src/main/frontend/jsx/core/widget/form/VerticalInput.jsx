@@ -155,7 +155,7 @@ export default React.createClass({
 			/>);
 		}
 		return (
-			<div className="form-group form-group-sm">
+			<div className={"form-group form-group-sm" + (this.props.fieldDef.type == 'hidden' ? " hidden":"")}>
 				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 					{this.props.fieldDef.label}
 				</label>

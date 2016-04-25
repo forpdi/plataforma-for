@@ -8,6 +8,8 @@ var UserSession = Backbone.Model.extend({
 	ACTION_LOGIN: 'login',
 	ACTION_LOGOUT: 'logout',
 	ACTION_RECOVER_PASSWORD: 'recoverPassword',
+	ACTION_CHECK_RECOVER_TOKEN: 'checkRecoverToken',
+	ACTION_RESET_PASSWORD: 'resetPassword',
 	ACTION_UPDATE_PROFILE: 'updateProfile',
 
 	BACKEND_URL: BACKEND_URL,
@@ -18,9 +20,14 @@ var UserSession = Backbone.Model.extend({
 	},
 	dispatchCallback(payload) {
 		if (payload.action) {
-			this[payload.action](payload.data);
+			var method = this[payload.action];
+			if (typeof method === 'function') {
+				method.call(this, payload.data);
+			} else {
+				console.warn("UserSession: The action (method)",payload.action,"is not defined.");
+			}
 		} else {
-			console.warn("Unknown dispatching action at UserSession:",payload);
+			console.warn("UserSession: The dispatching action must be defined.\n",payload);
 		}
 	},
 	initialize() {
@@ -35,7 +42,6 @@ var UserSession = Backbone.Model.extend({
 			this.refreshStatus(true);
 		} else {
 			this.set({loading: false});
-			_.defer(() => { location.assign("#/") });
 		}
 	},
 
@@ -170,6 +176,7 @@ var UserSession = Backbone.Model.extend({
 			}
 		});
 	},
+
 	recoverPassword(params) {
 		var me = this;
 		$.ajax({
@@ -186,44 +193,46 @@ var UserSession = Backbone.Model.extend({
 			}
 		});
 	},
-	updateProfile(data) {
-		var me = this,
-			errors = [];
-		if (!(data.name) || (data.name == '')) {
-			errors.push("Digite seu nome.");
+	checkRecoverToken(token) {
+		var me = this;
+		if (typeof token !== 'string') {
+			console.warn("UserSession: You must provide a string token to be checked.\n",token);
+			return;
 		}
-		if (!(data.lastName) || (data.lastName == '')) {
-			errors.push("Digite seu sobrenome.");
-		}
-		if (!(data.email) || (data.email == '')) {
-			errors.push("Digite seu e-mail.");
-		}
-
-		if (errors.length > 0) {
-			me.trigger("fail", errors);
-		} else {
-			$.ajax({
-				method: "POST",
-				url: BACKEND_URL + "user/profile",
-				dataType: 'json',
-				data: data,
-				success(data, status, opts) {
-					if (data.success) {
-						me.set({
-							"logged": true,
-							"user": data.data
-						});
-						me.trigger("updated", me);
-					} else {
-						me.trigger("fail", data.message);
-					}
-				},
-				error(opts, status, errorMsg) {
-					me.handleRequestErrors([], opts);
-				}
-			});
-		}
+		$.ajax({
+			method: "GET",
+			url: BACKEND_URL + "user/reset/"+token,
+			dataType: 'json',
+			success(data, status, opts) {
+				me.trigger("recovertoken", true);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("recovertoken", false);
+			}
+		});
 	},
+	resetPassword(params) {
+		var me = this;
+		if (params.password !== params.passwordconfirm) {
+			me.trigger("fail", "As senhas digitadas não são iguais.");
+			return;
+		}
+		$.ajax({
+			method: "POST",
+			url: BACKEND_URL + "user/reset/"+params.token,
+			dataType: 'json',
+			data: {
+				password: params.password
+			},
+			success(data, status, opts) {
+				me.trigger("resetpassword", data);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
 });
 
 export default new UserSession();
