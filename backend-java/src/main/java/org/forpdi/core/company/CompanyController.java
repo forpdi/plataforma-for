@@ -4,16 +4,16 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.permission.AccessLevels;
+import org.forpdi.core.permission.Permissioned;
+
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
-
-import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.permission.Permissioned;
-import org.forpdi.core.user.UserRole;
 
 /**
  * @author Renato R. R. de Oliveira
@@ -25,7 +25,7 @@ public class CompanyController extends AbstractController {
 	@Post("/api/company")
 	@Consumes
 	@NoCache
-	@Permissioned(UserRole.SYSTEM_ADMIN)
+	@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Company company) {
 		try {
 			company.setId(null);
@@ -39,7 +39,7 @@ public class CompanyController extends AbstractController {
 	
 	@Get("/api/company/{id}")
 	@NoCache
-	@Permissioned(UserRole.SYSTEM_ADMIN)
+	@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void retrieveCompany(Long id){
 		try {
 			Company company = this.bs.exists(id, Company.class);
@@ -56,7 +56,7 @@ public class CompanyController extends AbstractController {
 	
 	@Get("/api/company")
 	@NoCache
-	@Permissioned(UserRole.SYSTEM_ADMIN)
+	@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void listCompanies(Integer page){
 		if (page == null)
 			page = 0;

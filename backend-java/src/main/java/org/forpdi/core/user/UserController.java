@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.bean.SessionInfo;
+import org.forpdi.core.permission.AccessLevels;
 import org.forpdi.core.permission.Permissioned;
 import org.forpdi.core.session.UserAccessToken;
 import org.forpdi.core.session.UserSession;
@@ -199,7 +200,7 @@ public class UserController extends AbstractController {
 	
 	@Get("/api/user")
 	@NoCache
-	@Permissioned(UserRole.SYSTEM_ADMIN)
+	@Permissioned(AccessLevels.COMPANY_ADMIN)
 	public void listUsers(Integer page){
 		if (page == null)
 			page = 0;
@@ -214,7 +215,7 @@ public class UserController extends AbstractController {
 
 	@Delete("/api/user/{id}")
 	@NoCache
-	@Permissioned(UserRole.SYSTEM_ADMIN)
+	@Permissioned(AccessLevels.COMPANY_ADMIN)
 	public void blockUser(Long id){
 		if (id == null) {
 			this.result.notFound();

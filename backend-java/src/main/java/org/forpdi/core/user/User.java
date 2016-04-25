@@ -8,6 +8,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.forpdi.core.permission.AccessLevels;
+
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
@@ -52,6 +54,7 @@ public class User extends SimpleLogicalDeletableEntity {
 	private Date creation = new Date();
 
 	private boolean active = false;
+	private int accessLevel = AccessLevels.NONE.getLevel();
 	
 	public String getEmail() {
 		return email;
@@ -131,6 +134,14 @@ public class User extends SimpleLogicalDeletableEntity {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public int getAccessLevel() {
+		return accessLevel;
+	}
+
+	public void setAccessLevel(int accessLevel) {
+		this.accessLevel = accessLevel;
 	}
 	
 }

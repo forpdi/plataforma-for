@@ -1,11 +1,14 @@
-package org.forpdi.core.company;
+package org.forpdi.core.permission;
 
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
-public abstract class CompanyTheme {
+public abstract class Permission {
 
 	public abstract String getDisplayName();
-	public abstract String getCSSFile();
+	
+	public int getRequiredAccessLevel() {
+		return AccessLevels.AUTHENTICATED.getLevel();
+	}
 
 	public final String getId() {
 		return this.getClass().getCanonicalName();
@@ -20,7 +23,7 @@ public abstract class CompanyTheme {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		CompanyTheme other = (CompanyTheme) obj;
+		Permission other = (Permission) obj;
 		if (GeneralUtils.isEmpty(this.getId())) {
 			throw new IllegalArgumentException("A company theme must have a non-empty ID.");
 		}

@@ -5,11 +5,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.forpdi.core.user.UserRole;
-
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Permissioned {
-
-	UserRole value() default UserRole.NORMAL;
+	AccessLevels value() default AccessLevels.AUTHENTICATED;
+	Class<? extends Permission>[] permissions() default {};
 }
