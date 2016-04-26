@@ -1,7 +1,12 @@
 package org.forpdi.core.event;
 
-import org.forpdi.core.session.UserAccessToken;
+import org.forpdi.core.user.auth.UserAccessToken;
 
+/**
+ * 
+ * @author Renato R. R. de Oliveira
+ *
+ */
 public class AuthEvent {
 
 	private UserAccessToken token;

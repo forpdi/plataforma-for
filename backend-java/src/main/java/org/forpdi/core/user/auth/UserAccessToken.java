@@ -1,4 +1,4 @@
-package org.forpdi.core.session;
+package org.forpdi.core.user.auth;
 
 import java.io.Serializable;
 import java.util.Date;

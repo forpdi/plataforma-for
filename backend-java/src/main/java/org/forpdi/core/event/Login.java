@@ -11,6 +11,11 @@ import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
+/**
+ * 
+ * @author Renato R. R. de Oliveira
+ *
+ */
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({TYPE, METHOD, FIELD, PARAMETER})

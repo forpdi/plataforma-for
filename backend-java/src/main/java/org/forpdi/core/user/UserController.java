@@ -6,10 +6,10 @@ import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.bean.SessionInfo;
-import org.forpdi.core.permission.AccessLevels;
-import org.forpdi.core.permission.Permissioned;
-import org.forpdi.core.session.UserAccessToken;
-import org.forpdi.core.session.UserSession;
+import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.auth.UserSession;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.IndexController;
 import org.hibernate.validator.constraints.NotEmpty;
 

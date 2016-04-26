@@ -44,9 +44,13 @@
 
   		<mapping class="org.forpdi.core.company.Company"/>
   		<mapping class="org.forpdi.core.company.CompanyDomain"/>
-  		<mapping class="org.forpdi.core.session.UserAccessToken"/>
+  		<mapping class="org.forpdi.core.company.CompanyUser"/>
   		<mapping class="org.forpdi.core.user.User"/>
   		<mapping class="org.forpdi.core.user.UserRecoverRequest"/>
+  		<mapping class="org.forpdi.core.user.auth.UserAccessToken"/>
+  		<mapping class="org.forpdi.core.user.authz.Role"/>
+  		<mapping class="org.forpdi.core.user.authz.RolePermission"/>
+  		<mapping class="org.forpdi.core.user.authz.UserPermission"/>
   		
 	</session-factory>
 </hibernate-configuration>

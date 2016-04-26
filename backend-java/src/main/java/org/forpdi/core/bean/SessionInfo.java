@@ -2,9 +2,9 @@ package org.forpdi.core.bean;
 
 import java.io.Serializable;
 
-import org.forpdi.core.session.UserAccessToken;
-import org.forpdi.core.session.UserSession;
 import org.forpdi.core.user.User;
+import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.auth.UserSession;
 
 /**
  * 

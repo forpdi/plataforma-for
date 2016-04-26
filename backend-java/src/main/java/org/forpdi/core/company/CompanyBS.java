@@ -5,6 +5,7 @@ import javax.enterprise.context.RequestScoped;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -14,6 +15,14 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
  */
 @RequestScoped
 public class CompanyBS extends HibernateBusiness {
+	
+	public CompanyDomain currentDomain() {
+		Criteria criteria = 
+			this.dao.newCriteria(CompanyDomain.class)
+			.add(Restrictions.eq("host", this.request.getHeader("Host")))
+		;
+		return (CompanyDomain) criteria.uniqueResult();
+	}
 	
 	public void save(Company company) {
 		company.setDeleted(false);

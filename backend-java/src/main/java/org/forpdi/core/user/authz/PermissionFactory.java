@@ -1,4 +1,4 @@
-package org.forpdi.core.permission;
+package org.forpdi.core.user.authz;
 
 import java.util.LinkedList;
 

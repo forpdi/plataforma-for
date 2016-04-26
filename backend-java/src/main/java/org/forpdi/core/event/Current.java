@@ -19,6 +19,6 @@ import javax.inject.Qualifier;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target({TYPE, METHOD, FIELD, PARAMETER})
-public @interface Logout {
+public @interface Current {
 
 }

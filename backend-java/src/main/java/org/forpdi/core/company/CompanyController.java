@@ -5,8 +5,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.permission.AccessLevels;
-import org.forpdi.core.permission.Permissioned;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;

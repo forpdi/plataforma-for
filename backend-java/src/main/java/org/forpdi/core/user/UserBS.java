@@ -6,8 +6,13 @@ import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
-import org.forpdi.core.session.UserAccessToken;
+import org.forpdi.core.company.CompanyDomain;
+import org.forpdi.core.company.CompanyUser;
+import org.forpdi.core.event.Current;
+import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.authz.UserPermission;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -23,6 +28,9 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
  */
 @RequestScoped
 public class UserBS extends HibernateBusiness {
+	
+	@Inject @Current
+	private CompanyDomain domain;
 	
 	public void save(User user) {
 		if (this.existsByEmail(user.getEmail()) != null) {
@@ -78,6 +86,28 @@ public class UserBS extends HibernateBusiness {
 			.add(Restrictions.eq("email", email))
 		;
 		return (User) criteria.uniqueResult();
+	}
+	
+	public List<UserPermission> retrievePermissions(User user) {
+		Criteria criteria =
+			this.dao.newCriteria(UserPermission.class)
+			.add(Restrictions.eq("user", user))
+			.add(Restrictions.eq("company", domain.getCompany()))
+		;
+		return this.dao.findByCriteria(criteria, UserPermission.class);
+	}
+	
+	public int retrieveAccessLevel(User user) {
+		Criteria criteria =
+			this.dao.newCriteria(CompanyUser.class)
+			.add(Restrictions.eq("user", user))
+			.add(Restrictions.eq("company", domain.getCompany()))
+		;
+		CompanyUser companyUser = (CompanyUser) criteria.uniqueResult();
+		if (companyUser == null) {
+			return user.getAccessLevel();
+		}
+		return Math.max(user.getAccessLevel(), companyUser.getAccessLevel());
 	}
 	
 	public PaginatedList<User> list(int page) {
