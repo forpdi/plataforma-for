@@ -1,6 +1,7 @@
 package org.forpdi.core.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.auth.UserAccessToken;
@@ -17,12 +18,16 @@ public class SessionInfo implements Serializable {
 	private User user;
 	private String token;
 	private long ttl;
+	private List<String> permissions;
+	private int accessLevel;
 	
 	public SessionInfo(UserSession session) {
 		UserAccessToken accessToken = session.getToken();
 		this.user = accessToken.getUser();
 		this.token = accessToken.getToken();
 		this.ttl = (accessToken.getTtl()*1000L) - (System.currentTimeMillis()-accessToken.getCreation().getTime());
+		this.permissions = session.getPermissions();
+		this.accessLevel = session.getAccessLevel();
 		
 	}
 	
@@ -43,6 +48,22 @@ public class SessionInfo implements Serializable {
 	}
 	public void setTtl(long ttl) {
 		this.ttl = ttl;
+	}
+
+	public List<String> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(List<String> permissions) {
+		this.permissions = permissions;
+	}
+
+	public int getAccessLevel() {
+		return accessLevel;
+	}
+
+	public void setAccessLevel(int accessLevel) {
+		this.accessLevel = accessLevel;
 	}
 	
 	

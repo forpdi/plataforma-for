@@ -12,7 +12,7 @@ export default React.createClass({
             logged: !!UserSession.get("logged")
         };
     },
-    componentWillMount() {
+    componentDidMount() {
         var me = this;
         UserSession.on("login", session => {
             me.setState({
@@ -39,24 +39,49 @@ export default React.createClass({
     if (!this.state.logged) {
         return <div style={{display: 'none'}} />;
     }
-    return (<div className='fpdi-app-sidebar hidden'>
+    return (<div className='fpdi-app-sidebar'>
         <div className="fpdi-sidebar-brand">
     	   <img alt="ForPDI Logo" src={WhiteLogo} />
         </div>
 	    <ul className="nav nav-stacked">
 			<li>
-                <a href="#/challenges">
-                    <span className="fpdi-nav-icon mdi mdi-format-list-bulleted"
+                <a href="#/home">
+                    <span className="fpdi-nav-icon mdi mdi-view-dashboard"
+                        ></span> Painel de Bordo
+                </a>
+            </li>
+            <li>
+                <a href="#/plans">
+                    <span className="fpdi-nav-icon mdi mdi-note-text"
                     	></span> Planos
                 </a>
             </li>
+            <li>
+                <a href="#/plans">
+                    <span className="fpdi-nav-icon mdi mdi-star"
+                        ></span> Favoritos
+                </a>
+            </li>
+            <li>
+                <a href="#/plans">
+                    <span className="fpdi-nav-icon mdi mdi-account-multiple"
+                        ></span> Usuários
+                </a>
+            </li>
 			<li>
-                <a href="#/sysadmin">
+                <a href="#/settings">
                     <span className="fpdi-nav-icon mdi mdi-settings"
-                    	></span> Administração
+                    	></span> Configurações
+                </a>
+            </li>
+            <li>
+                <a href="#/system/general">
+                    <span className="fpdi-nav-icon mdi mdi-chemical-weapon"
+                        ></span> Sistema
                 </a>
             </li>
 		</ul>
+        <span className="fpdi-fill" />
    	</div>);
   }
 });

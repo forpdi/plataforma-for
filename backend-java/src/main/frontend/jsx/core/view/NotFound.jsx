@@ -5,7 +5,6 @@ import TopBar from "forpdi/jsx/core/widget/TopBar.jsx";
 export default React.createClass({
 	render() {
 		return (<div>
-			<TopBar pageTitle="Página não encontrada" />
 			<div className="fpdi-error-404">
 				<div className="container-fluid">
 					<div className="row">

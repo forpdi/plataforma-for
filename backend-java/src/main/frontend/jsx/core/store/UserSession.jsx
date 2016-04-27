@@ -48,7 +48,9 @@ var UserSession = Backbone.Model.extend({
 	parse(response, opts) {
 		return response.data ? {
 			logged: true,
-			user: response.data
+			user: response.data.user,
+			accessLevel: response.data.accessLevel,
+			permissions: response.data.permissions
 		}:{
 			logged: false
 		};
@@ -73,7 +75,9 @@ var UserSession = Backbone.Model.extend({
 				if (data.success) {
 					me.set({
 						"logged": true,
-						"user": data.data.user
+						"user": data.data.user,
+						"accessLevel": data.data.accessLevel,
+						"permissions": data.data.permissions
 					});
 					me.trigger("login", me);
 				} else {
@@ -141,7 +145,9 @@ var UserSession = Backbone.Model.extend({
 						me.putStorage(data.data.token, data.data.user.id);
 						me.set({
 							"logged": true,
-							"user": data.data.user
+							"user": data.data.user,
+							"accessLevel": data.data.accessLevel,
+							"permissions": data.data.permissions
 						});
 						me.trigger("login", me);
 					} else {

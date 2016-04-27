@@ -2,6 +2,7 @@ package org.forpdi.core.user;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -89,6 +90,9 @@ public class UserBS extends HibernateBusiness {
 	}
 	
 	public List<UserPermission> retrievePermissions(User user) {
+		if (domain == null) {
+			return new ArrayList<UserPermission>();
+		}
 		Criteria criteria =
 			this.dao.newCriteria(UserPermission.class)
 			.add(Restrictions.eq("user", user))
@@ -98,6 +102,9 @@ public class UserBS extends HibernateBusiness {
 	}
 	
 	public int retrieveAccessLevel(User user) {
+		if (domain == null) {
+			return user.getAccessLevel();
+		}
 		Criteria criteria =
 			this.dao.newCriteria(CompanyUser.class)
 			.add(Restrictions.eq("user", user))

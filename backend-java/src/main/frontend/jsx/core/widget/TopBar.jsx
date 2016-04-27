@@ -54,113 +54,14 @@ export default React.createClass({
 		if (!this.state.logged) {
 			return <div style={{display: 'none'}} />;
 		}
-		return (<nav className="navbar navbar-default navbar-fixed-top">
-			<div className="container-fluid">
-				<div className="navbar-header">
-					<button type="button"
-						className="navbar-toggle collapsed"
-						data-toggle="collapse"
-						data-target="#mainNavbar"
-						aria-expanded="false">
-							<span className="mdi mdi-account" />
-					</button>
-					<a className="navbar-brand" href="#/">
-						<img alt="ForPDI Logo" src={Logo} />
-					</a>
-				</div>
-				<div className="collapse navbar-collapse" id="mainNavbar">
-					<ul className="nav navbar-nav navbar-right">
-						<li className="hidden">
-				            <form onSubmit={this.onSearch} className="fpdi-search-form navbar-form">
-				                <div className="form-group form-group-sm has-feedback">
-				            		<label htmlFor="navbar-global-search" className="sr-only">Search</label>
-				            		<input
-				            			type="text"
-			            				className="form-control"
-			            				name="search"
-			            				ref="search"
-			            				id="navbar-global-search"
-			            				placeholder="Buscar desafios, metas ou ações..."
-		            				/>
-				            		<span className="mdi mdi-magnify form-control-feedback"></span>
-				            	</div>
-				            </form>
-						</li>
-						<li className="dropdown fpdi-dropdown-profile hidden-xs">
-							<a
-								className="dropdown-toggle"
-								data-toggle="dropdown"
-								role="button"
-								aria-haspopup="true"
-								aria-expanded="false">
-									<span className="mdi mdi-account"/>
-									{this.state.user.name} <span
-										className="caret" />
-							</a>
-							<ul className="dropdown-menu">
-								{this.state.user.accessLevel >= 100 ? (
-									<li>
-										<a href="#/sysadmin">
-											Administração
-										</a>
-									</li>
-								):""}
-								<li>
-									<a href="#/profile">
-										Editar perfil
-									</a>
-								</li>
-								<li>
-									<a onClick={this.openFeedback}>
-										<span className="glyphicon glyphicon-exclamation-sign hidden"></span>
-										Enviar feedback
-									</a>
-								</li>
-								<li>
-									<a onClick={this.openReportProblem}>
-										<span className="glyphicon glyphicon-exclamation-sign hidden"></span>
-										Reportar problema
-									</a>
-								</li>
-								<li>
-									<a onClick={this.onLogout}>
-										<span className="glyphicon glyphicon-log-out hidden"></span>
-										Sair
-									</a>
-								</li>
-							</ul>
-						</li>
-
-						{this.state.user.accessLevel >= 100 ? (
-							<li className="visible-xs">
-								<a href="#/sysadmin">
-									Administração
-								</a>
-							</li>
-						):""}
-						<li className="visible-xs">
-							<a href="#/profile">
-								Editar perfil
-							</a>
-						</li>
-						<li className="visible-xs">
-							<a onClick={this.openFeedback}>
-								Enviar feedback
-							</a>
-						</li>
-						<li className="visible-xs">
-							<a onClick={this.openReportProblem}>
-								Reportar problema
-							</a>
-						</li>
-						<li className="visible-xs">
-							<a onClick={this.onLogout}>
-								Sair
-							</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>);
+		return (<div className="fpdi-top-bar">
+			<span className="fpdi-fill" />
+			<span className="mdi mdi-account-circle" style={{marginRight: '5px'}} />
+			<span>{this.state.user.name}</span>
+			<span title="Notificações" className="mdi mdi-bell" />
+			<a onClick={this.onLogout}>
+				<span title="Sair" className="mdi mdi-logout" />
+			</a>
+		</div>);
 	  }
 	});

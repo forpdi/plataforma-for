@@ -29,9 +29,9 @@
 .fpdi-app-content {
   overflow-y: auto;
   overflow-x: hidden;
-  @include flex(1);
+  @include flex(7);
 	height: 100%;
-  background-color: #fcfcfc; //#F5F6F8; #E9EFF2; #F5F6F8;
+  background-color: #F0F4F6; //#F5F6F8; #E9EFF2; #F5F6F8;
 }
 
 .fpdi-app-panel {
@@ -68,26 +68,21 @@
 }
 
 .fpdi-app-sidebar {
-  position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
   @include flexbox;
   @include flex-dir(column);
-	height: 100%;
-  border-right: 1px solid rgba(0,0,0,0.08);
-  min-width: 200px;
-  width: 200px;
-  max-width: 200px;
+  @include flex(3);
+  border: none;
+  max-width: 300px;
   font-size: 13px;
   font-weight: 600;
-  background-color: #0b253b;
+  background-color: mix(#000, $brand-primary, 40%);
   color: #FFF;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  left: 0px;
-  margin: 0px;
-  padding: 0px;
+
+  &.light {
+    background-color: mix(#000, $brand-primary, 30%);
+  }
 
   > .nav {
     padding: 15px 10px;
@@ -131,14 +126,48 @@
       }
   }
   & .fpdi-sidebar-brand {
-    height: 50px;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-    padding: 15px;
+    height: 70px;
+    border: none;
+    padding: 10px;
+    background-color: #FFFFFF;
 
     > img {
-      height: 20px;
+      height: 50px;
       display: block;
       margin: 0 auto;
     }
   }
+}
+
+.fpdi-top-bar {
+  background-color: $brand-primary;
+  color: #FFFFFF;
+  height: 70px;
+  margin: 0px;
+  padding: 10px 20px;
+  width: 100%;
+  @include flexbox;
+  @include flex-dir(row);
+
+  & .mdi {
+    font-size: 24px;
+    &::before {
+      font-size: 24px;
+    }
+  }
+  & > * {
+    background-color: transparent;
+    color: #F0F0F0;
+    margin: auto;
+    &:hover {
+      color: #FFFFFF;
+    }
+  }
+  & > *:not(:last-child) {
+    margin-right: 25px;
+  }
+}
+
+.fpdi-fill {
+  @include flex(1);
 }

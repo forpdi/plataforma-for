@@ -1,0 +1,28 @@
+.fpdi-tabs {
+	.fpdi-tabs-nav {
+		display: block;
+		background-color: #CCCCCC;
+		margin: 0px;
+		padding: 5px 5px 0px 10px;
+		@include flexbox;
+  		@include flex-dir(row);
+  		&::after {
+  			@include flex(1);
+  		}
+		& > li {
+			list-style: none;
+			background-color: #DFDFDF;
+			padding: 5px 10px;
+			margin: 0px 5px 0px 0px;
+			cursor: pointer;
+			@include border-radius(3px 3px 0px 0px);
+			&.active {
+				background-color: #FFFFFF;
+				margin-bottom: -1px;
+			}
+		}
+	}
+	.fpdi-tabs-content {
+		background: #FFFFFF;
+	}
+}
