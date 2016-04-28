@@ -24,5 +24,9 @@
 	}
 	.fpdi-tabs-content {
 		background: #FFFFFF;
+		border: 1px solid #CCCCCC;
+		border-top: none;
+		min-height: 250px;
+		@include border-radius(0px 0px 3px 3px);
 	}
 }
