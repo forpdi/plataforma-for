@@ -9,7 +9,7 @@
   		&::after {
   			@include flex(1);
   		}
-		& > li {
+		& > * {
 			list-style: none;
 			background-color: #DFDFDF;
 			padding: 5px 10px;
@@ -28,5 +28,45 @@
 		border-top: none;
 		min-height: 250px;
 		@include border-radius(0px 0px 3px 3px);
+	}
+}
+
+.fpdi-tabs-stacked {
+	.fpdi-tabs-nav {
+		display: block;
+		background-color: transparent;
+		color: inherit;
+		margin: 0px;
+		padding: 0px;
+		@include flexbox;
+  		@include flex-dir(column);
+  		&::after {
+  			@include flex(1);
+  		}
+		& > * {
+			list-style: none;
+			background-color: transparent;
+			color: inherit;
+			padding: 10px 20px;
+			margin: 0px;
+			cursor: pointer;
+			line-height: 100%;
+			&.active {
+				background-color: $brand-primary;
+				color: #FFFFFF;
+			}
+			&:hover {
+				background-color: $brand-primary;
+				color: #FFFFFF;
+			}
+			& .mdi::before {
+				font-size: 24px;
+				line-height: 24px;
+				margin-right: 10px;
+			}
+			& .mdi {
+				vertical-align: middle;
+			}
+		}
 	}
 }

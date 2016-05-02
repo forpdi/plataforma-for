@@ -81,7 +81,7 @@ export default React.createClass({
 							<div className="fpdi-login-footer">
 								<div className="row">
 									<div className="col-md-12 text-center">
-										<a href="#/recover-password">Esqueceu sua senha?</a>
+										<Link to="/recover-password">Esqueceu sua senha?</Link>
 									</div>
 									<br/>
 								</div>

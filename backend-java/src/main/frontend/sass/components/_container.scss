@@ -77,11 +77,11 @@
   max-width: 300px;
   font-size: 13px;
   font-weight: 600;
-  background-color: mix(#000, $brand-primary, 40%);
-  color: #FFF;
+  background-color: mix($brand-primary, #111, 40%);
+  color: #FFFFFF;
 
   &.light {
-    background-color: mix(#000, $brand-primary, 30%);
+    background-color: mix($brand-primary, #111, 60%);
   }
 
   > .nav {

@@ -39,48 +39,36 @@ export default React.createClass({
     if (!this.state.logged) {
         return <div style={{display: 'none'}} />;
     }
-    return (<div className='fpdi-app-sidebar'>
+    return (<div className='fpdi-app-sidebar fpdi-tabs-stacked'>
         <div className="fpdi-sidebar-brand">
     	   <img alt="ForPDI Logo" src={WhiteLogo} />
         </div>
-	    <ul className="nav nav-stacked">
-			<li>
-                <a href="#/home">
-                    <span className="fpdi-nav-icon mdi mdi-view-dashboard"
-                        ></span> Painel de Bordo
-                </a>
-            </li>
-            <li>
-                <a href="#/plans">
-                    <span className="fpdi-nav-icon mdi mdi-note-text"
-                    	></span> Planos
-                </a>
-            </li>
-            <li>
-                <a href="#/plans">
-                    <span className="fpdi-nav-icon mdi mdi-star"
-                        ></span> Favoritos
-                </a>
-            </li>
-            <li>
-                <a href="#/plans">
-                    <span className="fpdi-nav-icon mdi mdi-account-multiple"
-                        ></span> Usuários
-                </a>
-            </li>
-			<li>
-                <a href="#/settings">
-                    <span className="fpdi-nav-icon mdi mdi-settings"
-                    	></span> Configurações
-                </a>
-            </li>
-            <li>
-                <a href="#/system/general">
-                    <span className="fpdi-nav-icon mdi mdi-chemical-weapon"
-                        ></span> Sistema
-                </a>
-            </li>
-		</ul>
+	    <div className="fpdi-tabs-nav">
+			<Link to="/home" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-view-dashboard"
+                    ></span> Painel de Bordo
+            </Link>
+            <Link to="/plans" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-note-text"
+                    ></span> Planos
+            </Link>
+            <Link to="/favorites" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-star"
+                    ></span> Favoritos
+            </Link>
+            <Link to="/users" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-account-multiple"
+                    ></span> Usuários
+            </Link>
+            <Link to="/settings" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-settings"
+                    ></span> Configurações
+            </Link>
+            <Link to="/system" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-chemical-weapon"
+                    ></span> Sistema
+            </Link>
+		</div>
         <span className="fpdi-fill" />
    	</div>);
   }
