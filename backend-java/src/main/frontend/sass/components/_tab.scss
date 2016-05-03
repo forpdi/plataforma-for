@@ -2,10 +2,11 @@
 	.fpdi-tabs-nav {
 		display: block;
 		background-color: #CCCCCC;
-		margin: 0px;
-		padding: 5px 5px 0px 10px;
+		margin: 10px 10px 0px 10px;
+		padding: 5px 5px 0px;
 		@include flexbox;
   		@include flex-dir(row);
+  		@include border-radius(5px 5px 0px 0px);
   		&::after {
   			@include flex(1);
   		}
@@ -26,18 +27,18 @@
 		background: #FFFFFF;
 		border: 1px solid #CCCCCC;
 		border-top: none;
-		min-height: 250px;
-		@include border-radius(0px 0px 3px 3px);
+		margin: 0px 10px;
+		padding: 10px;
+		min-height: 300px;
+		@include border-radius(0px 0px 5px 5px);
 	}
 }
 
 .fpdi-tabs-stacked {
 	.fpdi-tabs-nav {
 		display: block;
-		background-color: transparent;
-		color: inherit;
 		margin: 0px;
-		padding: 0px;
+		padding: 10px;
 		@include flexbox;
   		@include flex-dir(column);
   		&::after {
@@ -47,10 +48,11 @@
 			list-style: none;
 			background-color: transparent;
 			color: inherit;
-			padding: 10px 20px;
-			margin: 0px;
+			padding: 8px 15px;
+			margin: 0px 0px 5px 0px;
 			cursor: pointer;
 			line-height: 100%;
+			@include border-radius(5px);
 			&.active {
 				background-color: $brand-primary;
 				color: #FFFFFF;

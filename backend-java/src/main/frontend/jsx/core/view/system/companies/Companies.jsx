@@ -1,5 +1,6 @@
 
 import React from "react";
+import {Link} from 'react-router';
 
 import CompanyStore from "forpdi/jsx/core/store/Company.jsx";
 
@@ -23,13 +24,18 @@ export default React.createClass({
 		CompanyStore.off(null, null, this);
 	},
 
-	onTabClick(tab) {
-		location.assign("#/system/"+tab);
-	},
-
 	render() {
+		if (this.props.children) {
+			return this.props.children;
+		}
 		return (<div className="container-fluid animated fadeIn">
 			<h1>Instituições</h1>
+			<div className="text-right">
+				<Link to="/system/companies/new" className="btn btn-sm btn-primary">
+					<span className="mdi mdi-plus"
+					/> Adicionar instituição
+				</Link>
+			</div>
 			{this.state.loading ? <LoadingGauge />:
 				<div>
 					

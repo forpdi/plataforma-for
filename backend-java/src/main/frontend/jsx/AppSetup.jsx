@@ -13,6 +13,7 @@ import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
 import SystemManagement from 'forpdi/jsx/core/view/system/SystemManagement.jsx';
 import Companies from 'forpdi/jsx/core/view/system/companies/Companies.jsx';
+import CompanyEdit from 'forpdi/jsx/core/view/system/companies/CompanyEdit.jsx';
 
 import Login from "forpdi/jsx/core/view/user/Login.jsx";
 import RecoverPassword from "forpdi/jsx/core/view/user/RecoverPassword.jsx";
@@ -31,7 +32,10 @@ ReactDOM.render((
 
 			<Route path="system" component={SystemManagement}>
 				<IndexRedirect to="general" />
-				<Route path="companies" component={Companies} />
+				<Route path="companies" component={Companies}>
+					<Route path="new" component={CompanyEdit} />
+					<Route path="edit/:modelId" component={CompanyEdit} />
+				</Route>
 				<Route path="*" component={NotFound} />
 			</Route>
 			

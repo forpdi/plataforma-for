@@ -1,5 +1,6 @@
 
 import React from "react";
+import {Link, hashHistory} from "react-router";
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 
@@ -27,7 +28,7 @@ var VerticalForm =  React.createClass({
 		if (typeof this.props.onCancel === 'function') {
 			this.props.onCancel();
 		} else {
-			location.assign(this.props.cancelUrl);
+			this.backWrapper();
 		}
 	},
 	submitWrapper(evt) {
@@ -46,9 +47,9 @@ var VerticalForm =  React.createClass({
 		return data;
 	},
 	backWrapper() {
-		history.back();
+		hashHistory.goBack();
 	},
-	componentWillMount() {
+	componentDidMount() {
 		if (this.props.store) {
 			this.props.store.on("invalid", this.handleValidation, this);
 			this.props.store.on("fail", this.handleFailure, this);
@@ -120,14 +121,19 @@ var VerticalForm =  React.createClass({
 				(<div className="form-group">
 					<button type="submit" className="btn btn-primary btn-block">{this.props.submitLabel}</button>
 					{!this.props.cancelUrl ?
-						"":(
-							<a href={this.props.cancelUrl} className="btn btn-default btn-block">{this.props.cancelLabel}</a>
+						<button className="btn btn-default  btn-block" onClick={this.cancelWrapper}>{this.props.cancelLabel}</button>
+						:(
+							<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.props.cancelLabel}</Link>
 						)}
 				</div>)
 				:
 				(<div className="form-group text-right">
-					<button className="btn btn-default" onClick={this.cancelWrapper}>{this.props.cancelLabel}</button>
-					<button type="submit" className="btn btn-primary">{this.props.submitLabel}</button>
+					{!this.props.cancelUrl ?
+						<button className="btn btn-sm btn-default" onClick={this.cancelWrapper}>{this.props.cancelLabel}</button>
+						:
+						<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.props.cancelLabel}</Link>
+					}
+					<button type="submit" className="btn btn-sm btn-primary">{this.props.submitLabel}</button>
 				</div>)
 			}
 		</form>);

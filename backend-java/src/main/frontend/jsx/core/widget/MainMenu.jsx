@@ -3,7 +3,7 @@ import React from "react";
 import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
-import WhiteLogo from 'forpdi/img/logo.png';
+import WhiteLogo from 'forpdi/img/unifal.gif';
 
 export default React.createClass({
     getInitialState() {

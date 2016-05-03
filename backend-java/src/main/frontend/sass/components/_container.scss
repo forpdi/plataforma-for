@@ -72,15 +72,17 @@
   overflow-x: hidden;
   @include flexbox;
   @include flex-dir(column);
-  @include flex(3);
+  @include flex(2);
   border: none;
-  max-width: 300px;
+  max-width: 260px;
   font-size: 13px;
   font-weight: 600;
-  background-color: mix($brand-primary, #111, 40%);
   color: #FFFFFF;
 
-  &.light {
+  & > * {
+    background-color: mix($brand-primary, #111, 40%);
+  }
+  &.light > * {
     background-color: mix($brand-primary, #111, 60%);
   }
 
@@ -129,7 +131,8 @@
     height: 70px;
     border: none;
     padding: 10px;
-    background-color: #FFFFFF;
+    background-color: #FFF;
+    border-bottom: 1px solid #CCC;
 
     > img {
       height: 50px;
@@ -140,14 +143,15 @@
 }
 
 .fpdi-top-bar {
-  background-color: $brand-primary;
-  color: #FFFFFF;
+  background-color: #FFF;
+  color: $brand-primary;
   height: 70px;
   margin: 0px;
   padding: 10px 20px;
   width: 100%;
   @include flexbox;
   @include flex-dir(row);
+  border-bottom: 1px solid #CCC;
 
   & .mdi {
     font-size: 24px;
@@ -157,10 +161,10 @@
   }
   & > * {
     background-color: transparent;
-    color: #F0F0F0;
+    color: $brand-primary;
     margin: auto;
     &:hover {
-      color: #FFFFFF;
+      color: lighten($brand-primary, 10%);
     }
   }
   & > *:not(:last-child) {
