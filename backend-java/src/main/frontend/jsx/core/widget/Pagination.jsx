@@ -2,6 +2,7 @@
 import _ from 'underscore';
 import React from "react";
 import {Store} from 'forpdi/jsx/core/store/Fluxbone.jsx';
+import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 
 export default React.createClass({
 	getDefaultProps() {
@@ -27,6 +28,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		this.props.store.off(null, null, this);
 	},
+
 	onSync() {
 		var total = this.props.store.total;
 		if (!(total > 0)) {
@@ -51,6 +53,16 @@ export default React.createClass({
 			}, this.props.extraParams)
 		});
 		this.setState({page: page});
+	},
+	reload() {
+		this.props.store.dispatch({
+			action: this.props.customAction || this.props.store.ACTION_FIND,
+			data: _.extend({
+				start: (this.state.page*this.state.pageSize),
+				limit: this.state.pageSize,
+				page: this.state.page
+			}, this.props.extraParams)
+		});
 	},
 	loadPrevious() {
 		if (this.state.page > 0) {

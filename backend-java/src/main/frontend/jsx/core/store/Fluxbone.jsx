@@ -109,15 +109,39 @@ var Store = Backbone.Collection.extend({
 			model.save();
 		}
 	},
+
+	/**
+		# Destroy (backbone docs)
+		
+		Destroys the model on the server by delegating an HTTP DELETE request to Backbone.sync. Returns a jqXHR object,
+		or false if the model isNew. Accepts success and error callbacks in the options hash, which will be passed
+		(model, response, options). Triggers a "destroy" event on the model, which will bubble up through any collections
+		that contain it, a "request" event as it begins the Ajax request to the server, and a "sync" event, after the
+		server has successfully acknowledged the model's deletion. Pass {wait: true} if you'd like to wait for the server
+		to respond before removing the model from the collection.
+		
+		```javascript
+		book.destroy({success: function(model, response) {
+		  ...
+		}});
+		```
+		Events: request, destroy, fail, sync
+	*/
 	destroy(model) {
+		var me = this;
 		if (!model) {
 			console.error("Store: You must pass a model on the payload to request a destroy.");
 		} else {
 			model.destroy({
-				url: this.url + "/" + model.get("id")
+				wait: true,
+				url: me.url + "/" + model.get("id"),
+				error: (model,response,opts) => {
+					me.handleRequestErrors([], response);
+				}
 			});
 		}
 	},
+
 	find(data) {
 		var me = this;
 		me.fetch({

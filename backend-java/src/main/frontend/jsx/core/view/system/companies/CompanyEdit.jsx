@@ -45,7 +45,6 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;
-		console.log(me.props.params.modelId);
 		CompanyStore.on("sync", (model) => {
 			me.context.router.push("/system/companies");
 		}, me);
@@ -67,12 +66,21 @@ export default React.createClass({
 	componentWillUnmount() {
 		CompanyStore.off(null, null, this);
 	},
-
+	
 	onSubmit(data) {
-		CompanyStore.dispatch({
-			action: CompanyStore.ACTION_CREATE,
-			data: data
-		});
+		var me = this;
+		if (me.props.params.modelId) {
+			me.state.model.set(data);
+			CompanyStore.dispatch({
+				action: CompanyStore.ACTION_UPDATE,
+				data: me.state.model
+			});
+		} else {
+			CompanyStore.dispatch({
+				action: CompanyStore.ACTION_CREATE,
+				data: data
+			});
+		}
 	},
 
 	render() {

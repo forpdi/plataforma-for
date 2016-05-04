@@ -28,17 +28,19 @@ public class CompanyBS extends HibernateBusiness {
 		company.setDeleted(false);
 		this.persist(company);
 	}
-	
+
 	public PaginatedList<Company> list(int page) {
 		PaginatedList<Company> results = new PaginatedList<Company>();
 		Criteria criteria =
 			this.dao.newCriteria(Company.class)
 			.setFirstResult(page*10).setMaxResults(10)
+			.add(Restrictions.eq("deleted", false))
 			.addOrder(Order.asc("name"))
 		;
 		Criteria counting =
 			this.dao.newCriteria(Company.class)
 			.setProjection(Projections.countDistinct("id"))
+			.add(Restrictions.eq("deleted", false))
 		;
 		results.setList(this.dao.findByCriteria(criteria, Company.class));
 		results.setTotal((Long) counting.uniqueResult());

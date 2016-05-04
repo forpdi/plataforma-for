@@ -14,15 +14,15 @@ var AlertModal = React.createClass({
 		return (
 			<div className="modal-dialog modal-sm">
 				<div className="modal-content">
-					<div className="modal-header">
+					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
-	      			<div className="modal-body">
-	        			{this.props.message}
+	      			<div className="modal-body fpdi-modal-body">
+	        			<p>{this.props.message}</p>
 	      			</div>
-	      			<div className="modal-footer">
-	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Confirmar</button>
+	      			<div className="modal-footer fpdi-modal-footer">
+	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Ok</button>
 	      			</div>
 				</div>
 			</div>

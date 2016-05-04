@@ -10,10 +10,13 @@ import org.forpdi.core.user.authz.Permissioned;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Delete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Renato R. R. de Oliveira
@@ -31,6 +34,28 @@ public class CompanyController extends AbstractController {
 			company.setId(null);
 			this.bs.save(company);
 			this.success(company);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: "+e.getMessage());
+		}
+	}
+
+	@Put("/api/company")
+	@Consumes
+	@NoCache
+	@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	public void update(@NotNull @Valid Company company) {
+		try {
+			Company existent = this.bs.exists(company.getId(), Company.class);
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
+			existent.setDescription(company.getDescription());
+			existent.setLogo(company.getLogo());
+			existent.setName(company.getName());
+			this.bs.persist(existent);
+			this.success(existent);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: "+e.getMessage());
@@ -66,6 +91,25 @@ public class CompanyController extends AbstractController {
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: "+ex.getMessage());
+		}
+	}
+
+	@Delete("/api/company/{id}")
+	@NoCache
+	@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	public void delete(@NotNull Long id) {
+		try {
+			Company existent = this.bs.exists(id, Company.class);
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
+			existent.setDeleted(true);
+			this.bs.persist(existent);
+			this.success();
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: "+e.getMessage());
 		}
 	}
 	
