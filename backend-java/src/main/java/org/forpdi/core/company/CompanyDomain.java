@@ -33,7 +33,7 @@ public class CompanyDomain extends SimpleEntity {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=false)
-	private Date creation;
+	private Date creation = new Date();
 	
 	@ManyToOne(targetEntity=Company.class, fetch=FetchType.EAGER, optional=false)
 	private Company company;

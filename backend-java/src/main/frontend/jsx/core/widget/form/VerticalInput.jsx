@@ -160,7 +160,10 @@ export default React.createClass({
 					{this.props.fieldDef.label}
 				</label>
 				{fieldEl}
-				{this.props.fieldDef.helpBox}
+				{typeof this.props.fieldDef.helpBox === 'string' ?
+					<p className="help-block">{this.props.fieldDef.helpBox}</p>
+					:this.props.fieldDef.helpBox
+				}
 			</div>
 		);
 	}

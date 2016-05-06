@@ -17,16 +17,8 @@ public final class CompanyThemeFactory {
 	private final LinkedList<CompanyTheme> themes = new LinkedList<CompanyTheme>();
 	
 	private CompanyThemeFactory() {
-		this.themes.add(new CompanyTheme() {
-			@Override
-			public String getDisplayName() {
-				return "Tema Padrão";
-			}
-			@Override
-			public String getCSSFile() {
-				return "default.css";
-			}
-		});
+		this.themes.add(new ThemeDefault());
+		this.themes.add(new ThemeRed());
 	}
 	
 	public int register(CompanyTheme theme) {
@@ -51,6 +43,47 @@ public final class CompanyThemeFactory {
 			}
 		}
 		return null;
+	}
+	
+	public String toJSON() {
+		StringBuilder json = new StringBuilder();
+		json.append("[");
+		for (int t = 0; t < themes.size(); t++) {
+			if (t > 0)
+				json.append(",");
+			CompanyTheme theme = themes.get(t);
+			json
+				.append("{")
+				.append("\"css\":\"").append(theme.getCSSFile()).append("\"")
+				.append(",\"label\":\"").append(theme.getDisplayName()).append("\"")
+				.append(",\"id\":\"").append(theme.getId()).append("\"")
+				.append("}")
+			;
+		}
+		json.append("]");
+		return json.toString();
+	}
+	
+	public class ThemeDefault extends CompanyTheme {
+		@Override
+		public String getDisplayName() {
+			return "Tema Padrão";
+		}
+		@Override
+		public String getCSSFile() {
+			return "theme-default.css";
+		}
+	}
+
+	public class ThemeRed extends CompanyTheme {
+		@Override
+		public String getDisplayName() {
+			return "Tema Vermelho";
+		}
+		@Override
+		public String getCSSFile() {
+			return "theme-red.css";
+		}
 	}
 	
 }
