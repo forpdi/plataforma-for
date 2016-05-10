@@ -31,7 +31,7 @@
   overflow-x: hidden;
   @include flex(7);
 	height: 100%;
-  background-color: #F0F4F6; //#F5F6F8; #E9EFF2; #F5F6F8;
+  background-color: $brand-background;
 }
 
 .fpdi-app-panel {

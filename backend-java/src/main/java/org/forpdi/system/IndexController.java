@@ -2,6 +2,15 @@ package org.forpdi.system;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
+import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.company.CompanyBS;
+import org.forpdi.core.company.CompanyDomain;
+import org.forpdi.core.company.CompanyThemeFactory;
+import org.forpdi.core.properties.CoreMessages;
+import org.forpdi.core.properties.SystemConfigs;
+
 import com.google.gson.Gson;
 
 import br.com.caelum.vraptor.Controller;
@@ -10,11 +19,10 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.validator.MessageList;
 
-import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.properties.SystemConfigs;
-
 @Controller
 public class IndexController extends AbstractController {
+	
+	@Inject private CompanyBS companyBS;
 	
 	@Path(value="/", priority=Path.HIGHEST)
 	@NoCache
@@ -28,21 +36,28 @@ public class IndexController extends AbstractController {
 		this.fail(errors);
 	}
 	
-	@Get("/api/session")
-	public void sessionInfo() {
+	@Get("/environment")
+	public void envInfo() {
 		StringBuilder body = new StringBuilder();
-		body.append("SessionInfo={");
-		if (this.userSession.isLogged()) {
-			Gson gson = this.gsonBuilder.create();
-			String json = gson.toJson(this.userSession.getUser());
-			body
-				.append("'user': ")
-				.append(json)
-			;
+		CompanyDomain domain = this.companyBS.currentDomain();
+		Gson gson = this.gsonBuilder.create();
+		CoreMessages msg = new CoreMessages(CoreMessages.DEFAULT_LOCALE);
+		
+		body.append("EnvInfo={");
+		body.append("'baseUrl': '").append(SystemConfigs.getConfig("sys.baseurl")).append("'");
+		body.append(",'themes': ").append(CompanyThemeFactory.getInstance().toJSON());
+		if (domain == null) {
+			body.append(",'company': null");
+			body.append(",'themeCss': '")
+				.append(CompanyThemeFactory.getDefaultTheme().getCSSFile())
+				.append("'");
 		} else {
-			body.append("'user': undefined");
+			body.append(",'company': ").append(gson.toJson(domain.getCompany()));
+			body.append(",'themeCss': '")
+				.append(CompanyThemeFactory.getInstance().getTheme(domain.getTheme()).getCSSFile())
+				.append("'");
 		}
-		body.append(",'baseUrl': '").append(SystemConfigs.getConfig("sys.baseurl")).append("'");
+		body.append(",'messages':").append(msg.getJSONMessages());
 		body.append("};");
 		try {
 			this.response.setCharacterEncoding("UTF-8");

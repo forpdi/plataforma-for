@@ -2,7 +2,7 @@
 import React from "react";
 import {Link} from 'react-router';
 
-import CompanyDomainStore from "forpdi/jsx/core/store/CompanyDomain.jsx";
+import UserStore from "forpdi/jsx/core/store/User.jsx";
 
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -19,20 +19,20 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;
-		CompanyDomainStore.on('sync', store => {
+		UserStore.on('sync', store => {
 			me.setState({
 				loading: false,
 				models: store.models
 			});
 		}, me);
-		CompanyDomainStore.on("fail", (msg) => {
+		UserStore.on("fail", (msg) => {
 			me.setState({
 				error: msg
 			});
-		}, this);
+		}, me);
 	},
 	componentWillUnmount() {
-		CompanyDomainStore.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
 
 	closeAlert() {
@@ -44,8 +44,8 @@ export default React.createClass({
 		event.preventDefault();
 		Modal.deleteConfirm(() => {
 			Modal.hide();
-			CompanyDomainStore.dispatch({
-				action: CompanyDomainStore.ACTION_DESTROY,
+			UserStore.dispatch({
+				action: UserStore.ACTION_DESTROY,
 				data: model
 			});
 		});
@@ -53,23 +53,21 @@ export default React.createClass({
 
 	renderRecords() {
 		if (!this.state.models || (this.state.models.length <= 0)) {
-			return <p><i>Nenhum domínio cadastrada ainda.</i></p>;
+			return <p><i>Nenhum usuário cadastrado ainda.</i></p>;
 		}
-		return (<div className="row">
+		return (<div className="fpdi-card">
+			<div className="row hidden-xs">
+					<div className="col-sm-4"><b>{Messages.get("label.name")}</b></div>
+					<div className="col-sm-3"><b>{Messages.get("label.email")}</b></div>
+					<div className="col-sm-3"><b>{Messages.get("label.cpf")}</b></div>
+					<div className="col-sm-2"></div>
+			</div>
 			{this.state.models.map((model, idx) => {
-				return (<div key={"companydomain-"+idx} className="col-md-3 col-sm-4 col-xs-6">
-					<div className="fpdi-card fpdi-card-company">
-						<div className="row">
-							<div className="fpdi-card-title col-md-8">
-								<span>{model.get("host")}</span>
-							</div>
-							<div className="text-right col-md-4">
-								<Link to={"/system/domains/edit/"+model.get("id")} className="mdi mdi-pencil-box" title="Editar" />
-								<a onClick={this.deleteRecord.bind(this, model)} className="mdi mdi-delete" title="Excluir" />
-							</div>
-						</div>
-						<div className="fpdi-company-logo" style={{backgroundImage: 'url('+model.get("company").logo+")"}} />
-					</div>
+				return (<div key={"user-"+idx} className="row">
+					<div className="col-sm-4">{model.get("name")}</div>
+					<div className="col-sm-3">{model.get("email")}</div>
+					<div className="col-sm-3">{model.get("cpf")}</div>
+					<div className="col-sm-2"></div>
 				</div>);
 			})}
 		</div>);
@@ -80,11 +78,11 @@ export default React.createClass({
 			return this.props.children;
 		}
 		return (<div className="container-fluid animated fadeIn">
-			<h1>{Messages.get("label.domains")}</h1>
+			<h1>{Messages.get("label.users")}</h1>
 			<ul className="fpdi-action-list text-right">
-				<Link to="/system/domains/new" className="btn btn-sm btn-primary">
+				<Link to="/users/new" className="btn btn-sm btn-primary">
 					<span className="mdi mdi-plus"
-					/> Adicionar domínio
+					/> Adicionar usuário
 				</Link>
 			</ul>
 			{this.state.error ?
@@ -98,7 +96,7 @@ export default React.createClass({
 
 			{this.state.loading ? <LoadingGauge />:this.renderRecords()}
 
-			<Pagination store={CompanyDomainStore} />
+			<Pagination store={UserStore} />
 		</div>);
 	  }
 	});

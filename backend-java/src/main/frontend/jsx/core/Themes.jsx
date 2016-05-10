@@ -20,7 +20,7 @@ function changeTheme(theme) {
 	linkEl.id = "fpdi-theme-styles";
 	linkEl.rel = "stylesheet";
 	linkEl.type = "text/css";
-	linkEl.href = themes.default;
+	linkEl.href = EnvInfo ? EnvInfo.themeCss:themes.default;
 	document.getElementsByTagName("head")[0].appendChild(linkEl);
 }());
 

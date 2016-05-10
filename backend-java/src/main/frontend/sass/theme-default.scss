@@ -2,15 +2,15 @@
 // Dependencies
 //
 
-// Variables and Mixins
-@import "dependencies/mixins";
-@import "dependencies/variables";
 
 // Bootstrap SASS
 @import "dependencies/bootstrap-variables";
 @import 'bootstrap/bootstrap';
 
 //Core CSS
+//Variables and Mixins
+@import "dependencies/mixins";
+@import "dependencies/variables";
 @import "dependencies/scaffolding";
 
 

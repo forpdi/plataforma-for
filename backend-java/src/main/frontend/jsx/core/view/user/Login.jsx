@@ -6,6 +6,8 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 import AppLogo from "forpdi/img/logo.png";
 
 var VerticalForm = Form.VerticalForm;
@@ -18,12 +20,12 @@ export default React.createClass({
 				name: "email",
 				type: "email",
 				placeholder: "",
-				label: "E-mail"
+				label: Messages.get("label.email")
 			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
-				label: "Senha"
+				label: Messages.get("label.password")
 			}]
 		};
 	},

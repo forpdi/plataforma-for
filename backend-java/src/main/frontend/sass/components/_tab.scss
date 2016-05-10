@@ -1,9 +1,9 @@
 .fpdi-tabs {
 	.fpdi-tabs-nav {
 		display: block;
-		background-color: #CCCCCC;
+		background-color: transparent;
 		margin: 10px 10px 0px 10px;
-		padding: 5px 5px 0px;
+		padding: 5px 10px 0px;
 		@include flexbox;
   		@include flex-dir(row);
   		@include border-radius(5px 5px 0px 0px);
@@ -11,6 +11,9 @@
   			@include flex(1);
   		}
 		& > * {
+			border: 1px solid;
+			border-color: $color-brand-border;
+			border-bottom: none;
 			list-style: none;
 			background-color: #DFDFDF;
 			padding: 5px 10px;
@@ -25,12 +28,12 @@
 	}
 	.fpdi-tabs-content {
 		background: #FFFFFF;
-		border: 1px solid #CCCCCC;
-		border-top: none;
+		border: 1px solid;
+		border-color: $color-brand-border;
 		margin: 0px 10px;
 		padding: 10px;
 		min-height: 300px;
-		@include border-radius(0px 0px 5px 5px);
+		@include border-radius(5px);
 	}
 }
 

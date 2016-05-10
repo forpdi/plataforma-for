@@ -1,66 +1,5 @@
 // Card list section
 
-.fpdi-card-list-section {
-	margin-bottom: 15px;
-
-	&:first-child {
-		margin-top: 30px;
-	}
-
-	& .fpdi-card-list-section-header {
-		margin-bottom: 20px;
-	}
-
-	& .fpdi-card-list-section-header-text {
-		display: inline-block;
-		color: #6c6c6c;
-		font-size: 20px;
-		margin: 0;
-		padding: 4px 0;
-		vertical-align: bottom;
-	}
-}
-
-
-// Card list section action bar
-
-.fpdi-card-list-section-action-bar {
-	display: inline-block;
-	margin-left: 8px;
-
-	& .fpdi-card-list-section-action {
-		background-color: transparent;
-		color: #777;
-		display: inline-block;
-		margin-left: 5px;
-		padding: 5px 10px 6px;
-		position: relative;
-		text-decoration: none;
-		font-size: 13px;
-		font-weight: 600;
-
-		&.has-icon {
-			padding: 5px 10px 6px 28px;
-		}
-
-		&:hover {
-			background-color: #ddd;
-			border-radius: 3px;
-		}
-	}
-
-	& .fpdi-card-list-section-action + .fpdi-card-list-section-action {
-		margin-left: 8px;
-	}
-
-	& .fpdi-card-list-section-action-icon {
-		left: 6px;
-		position: absolute;
-		top: 8px;
-	}
-}
-
-
 // Card list
 
 .fpdi-card-list {
@@ -293,13 +232,14 @@
 .fpdi-card {
   display: block;
   background-color: #fff;
-  border: 1px solid rgba(0,0,0,.1);
+  border: 1px solid;
+  border-color: $color-brand-border;
   padding: 15px;
   margin-bottom: 20px;
   @include border-radius(3px);
 
   &.fpdi-card-company {
-  	background-color: mix($brand-primary, #F7F7F7, 2%);
+  	background-color: $brand-background;
   	.fpdi-company-logo {
   		display: block;
   		height: 100px;

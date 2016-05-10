@@ -5,6 +5,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Router, Route, IndexRedirect, IndexRoute, hashHistory } from 'react-router';
 
+import Messages from 'forpdi/jsx/core/util/Messages.jsx';
+
 import Application from 'forpdi/jsx/Application.jsx';
 
 import MainMenu from "forpdi/jsx/core/widget/MainMenu.jsx";
@@ -20,6 +22,9 @@ import CompanyDomainEdit from 'forpdi/jsx/core/view/system/domains/CompanyDomain
 import Login from "forpdi/jsx/core/view/user/Login.jsx";
 import RecoverPassword from "forpdi/jsx/core/view/user/RecoverPassword.jsx";
 import ResetPassword from "forpdi/jsx/core/view/user/ResetPassword.jsx";
+import UserEdit from "forpdi/jsx/core/view/user/UserEdit.jsx";
+import UserInvite from "forpdi/jsx/core/view/user/UserInvite.jsx";
+import Users from "forpdi/jsx/core/view/user/Users.jsx";
 
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
 Numeral.language("pt-br");
@@ -31,6 +36,10 @@ ReactDOM.render((
 			<Route path="login" component={Login} />
 			<Route path="recover-password" component={RecoverPassword} />
 			<Route path="reset-password/:token" component={ResetPassword} />
+			<Route path="users" component={Users}>
+				<Route path="edit/:modelId" component={UserEdit} />
+				<Route path="new" component={UserInvite} />
+			</Route>
 
 			<Route path="system" component={SystemManagement}>
 				<IndexRedirect to="general" />

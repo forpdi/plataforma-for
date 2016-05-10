@@ -8,6 +8,8 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Pagination from "forpdi/jsx/core/widget/Pagination.jsx";
 
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 export default React.createClass({
 	getInitialState() {
 		return {
@@ -78,7 +80,7 @@ export default React.createClass({
 			return this.props.children;
 		}
 		return (<div className="container-fluid animated fadeIn">
-			<h1>Instituições</h1>
+			<h1>{Messages.get("label.institutions")}</h1>
 			<ul className="fpdi-action-list text-right">
 				<Link to="/system/companies/new" className="btn btn-sm btn-primary">
 					<span className="mdi mdi-plus"

@@ -16,7 +16,7 @@ public final class CoreMessages {
 
 	/** Caminho do bundle. */
 	public static final String BUNDLE_NAME = "properties.messages";
-	/** Locale padr�o do sistema. */
+	/** Locale padrão do sistema. */
 	public static final Locale DEFAULT_LOCALE = new Locale("pt", "BR");
 	static {
 		Locale.setDefault(CoreMessages.DEFAULT_LOCALE);

@@ -3,7 +3,9 @@ import React from "react";
 import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
-import WhiteLogo from 'forpdi/img/unifal.gif';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
+import Logo from 'forpdi/img/logo.png';
 
 export default React.createClass({
     getInitialState() {
@@ -41,32 +43,32 @@ export default React.createClass({
     }
     return (<div className='fpdi-app-sidebar fpdi-tabs-stacked'>
         <div className="fpdi-sidebar-brand">
-    	   <img alt="ForPDI Logo" src={WhiteLogo} />
+    	   <img alt="ForPDI Logo" src={EnvInfo.company ? EnvInfo.company.logo:Logo} />
         </div>
 	    <div className="fpdi-tabs-nav">
 			<Link to="/home" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-view-dashboard"
-                    ></span> Painel de Bordo
+                    ></span> {Messages.get("label.dashboard")}
             </Link>
             <Link to="/plans" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-note-text"
-                    ></span> Planos
+                    ></span> {Messages.get("label.plans")}
             </Link>
             <Link to="/favorites" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-star"
-                    ></span> Favoritos
+                    ></span> {Messages.get("label.favorites")}
             </Link>
             <Link to="/users" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-account-multiple"
-                    ></span> Usuários
+                    ></span> {Messages.get("label.users")}
             </Link>
             <Link to="/settings" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-settings"
-                    ></span> Configurações
+                    ></span> {Messages.get("label.settings")}
             </Link>
             <Link to="/system" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-chemical-weapon"
-                    ></span> Sistema
+                    ></span> {Messages.get("label.system")}
             </Link>
 		</div>
         <span className="fpdi-fill" />
