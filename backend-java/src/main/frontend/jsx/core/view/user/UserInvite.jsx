@@ -34,6 +34,7 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		UserStore.on("sync", (model) => {
+			Modal.alert("Sucesso", "Usuário convidado com sucesso. Um e-mail foi enviado para que ele conclua o cadastro.");
 			me.context.router.push("/users");
 		}, me);
 
@@ -45,7 +46,7 @@ export default React.createClass({
 	onSubmit(data) {
 		var me = this;
 		UserStore.dispatch({
-			action: UserStore.ACTION_CREATE,
+			action: UserStore.ACTION_SIGNUP,
 			data: data
 		});
 	},

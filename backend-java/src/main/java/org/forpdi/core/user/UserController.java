@@ -1,8 +1,6 @@
 package org.forpdi.core.user;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.bean.SessionInfo;
@@ -34,10 +32,9 @@ public class UserController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void save(@NotNull @Valid User user) {
+	public void save(@NotEmpty String name, @NotEmpty String email) {
 		try {
-			user.setId(null);
-			this.bs.save(user);
+			User user = this.bs.inviteUser(name, email);
 			this.success(user);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);

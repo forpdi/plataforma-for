@@ -13,6 +13,7 @@ import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.UserPermission;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -79,6 +80,22 @@ public class UserBS extends HibernateBusiness {
 			return token;
 		}
 		return tokens.get(0);
+	}
+	
+	public User inviteUser(String name, String email) {
+		User user = new User();
+		user.setName(name);
+		user.setEmail(email);
+		user.setInviteToken(CryptManager.token("inv-"+user.getId()+"-"+domain.getCompany().getId()));
+		this.dao.persist(user);
+		CompanyUser companyUser = new CompanyUser();
+		companyUser.setAccessLevel(AccessLevels.AUTHENTICATED.getLevel());
+		companyUser.setCompany(domain.getCompany());
+		companyUser.setUser(user);
+		this.dao.persist(companyUser);
+		
+		// TODO Enviar e-mail para o usuário.
+		return user;
 	}
 	
 	public User existsByEmail(String email) {

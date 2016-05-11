@@ -9,21 +9,14 @@ var UserModel = Fluxbone.Model.extend({
 	url: URL,
 	validate(attrs, options) {
 		var errors = [];
+		
 		if (attrs.name == undefined || attrs.name == "") {
-			errors.push("O primeiro nome é obrigatório.");
-		}
-		if (attrs.lastName == undefined || attrs.lastName == "") {
-			errors.push("O sobrenome é obrigatório.");
+			errors.push("O nome é obrigatório.");
 		}
 		if (attrs.email == undefined || attrs.email == "") {
 			errors.push("O e-mail é obrigatório.");
 		}
-		if (attrs.password == undefined || attrs.password == "") {
-			errors.push("A senha é obrigatória.");
-		}
-		if (attrs.password != attrs.passwordconfirm) {
-			errors.push("As senhas digitadas não são iguais.");
-		}
+
 		if (errors.length > 0)
 			return errors;
 	}

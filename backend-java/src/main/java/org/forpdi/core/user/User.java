@@ -36,7 +36,7 @@ public class User extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	private String password;
 	
-	@Column(nullable=true, length=255)
+	@Column(nullable=false, length=255)
 	private String name;
 
 	@Column(nullable=true, length=255)
@@ -52,6 +52,9 @@ public class User extends SimpleLogicalDeletableEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=false)
 	private Date creation = new Date();
+	
+	@Column(nullable=true, length=128, unique=true)
+	private String inviteToken;
 
 	private boolean active = false;
 	private int accessLevel = AccessLevels.NONE.getLevel();
@@ -142,6 +145,14 @@ public class User extends SimpleLogicalDeletableEntity {
 
 	public void setAccessLevel(int accessLevel) {
 		this.accessLevel = accessLevel;
+	}
+
+	public String getInviteToken() {
+		return inviteToken;
+	}
+
+	public void setInviteToken(String inviteToken) {
+		this.inviteToken = inviteToken;
 	}
 	
 }
