@@ -18,6 +18,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.CryptManager;
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
@@ -153,6 +154,50 @@ public class UserController extends AbstractController {
 			} else {
 				UserRecoverRequest req = this.bs.requestRecover(user);
 				LOGGER.debugf("Recover requested with token: %s", req.getToken());
+				this.success();
+			}
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
+		}
+	}
+
+	@Post("/api/user/register/{token}")
+	@Consumes
+	@NoCache
+	public void registerUser(User user, String birthdate, String token) {
+		try {
+			User existent = this.bs.existsByInviteToken(token);
+			if (GeneralUtils.isInvalid(existent)) {
+				this.fail("Token de registro inválida.");
+			} else {
+				existent.setName(user.getName());
+				existent.setCpf(user.getCpf());
+				existent.setCellphone(user.getCellphone());
+				existent.setPhone(user.getPhone());
+				existent.setDepartment(user.getDepartment());
+				existent.setBirthdate(GeneralUtils.parseDate(birthdate));
+				existent.setPassword(CryptManager.passwordHash(user.getPassword()));
+				existent.setActive(true);
+				existent.setInviteToken(null);
+				
+				this.bs.persist(existent);
+				this.success(existent);
+			}
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
+		}
+	}
+
+	@Get("/api/user/register/{token}")
+	@NoCache
+	public void canRegister(String token) {
+		try {
+			User user = this.bs.existsByInviteToken(token);
+			if (user == null) {
+				this.fail("Token de registro inválida.");
+			} else {
 				this.success();
 			}
 		} catch (Throwable ex) {

@@ -105,6 +105,14 @@ public class UserBS extends HibernateBusiness {
 		;
 		return (User) criteria.uniqueResult();
 	}
+
+	public User existsByInviteToken(String token) {
+		Criteria criteria =
+			this.dao.newCriteria(User.class)
+			.add(Restrictions.eq("inviteToken", token))
+		;
+		return (User) criteria.uniqueResult();
+	}
 	
 	public List<UserPermission> retrievePermissions(User user) {
 		if (domain == null) {

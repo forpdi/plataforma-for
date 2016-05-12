@@ -21,6 +21,7 @@ import CompanyDomainEdit from 'forpdi/jsx/core/view/system/domains/CompanyDomain
 
 import Login from "forpdi/jsx/core/view/user/Login.jsx";
 import RecoverPassword from "forpdi/jsx/core/view/user/RecoverPassword.jsx";
+import Register from "forpdi/jsx/core/view/user/Register.jsx";
 import ResetPassword from "forpdi/jsx/core/view/user/ResetPassword.jsx";
 import UserEdit from "forpdi/jsx/core/view/user/UserEdit.jsx";
 import UserInvite from "forpdi/jsx/core/view/user/UserInvite.jsx";
@@ -35,6 +36,7 @@ ReactDOM.render((
 			<IndexRedirect to="login" />
 			<Route path="login" component={Login} />
 			<Route path="recover-password" component={RecoverPassword} />
+			<Route path="register/:token" component={Register} />
 			<Route path="reset-password/:token" component={ResetPassword} />
 			<Route path="users" component={Users}>
 				<Route path="edit/:modelId" component={UserEdit} />

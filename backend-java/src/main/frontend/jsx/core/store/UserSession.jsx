@@ -8,6 +8,8 @@ var UserSession = Backbone.Model.extend({
 	ACTION_LOGIN: 'login',
 	ACTION_LOGOUT: 'logout',
 	ACTION_RECOVER_PASSWORD: 'recoverPassword',
+	ACTION_CHECK_REGISTER_TOKEN: 'checkRegisterToken',
+	ACTION_REGISTER_USER: 'registerUser',
 	ACTION_CHECK_RECOVER_TOKEN: 'checkRecoverToken',
 	ACTION_RESET_PASSWORD: 'resetPassword',
 	ACTION_UPDATE_PROFILE: 'updateProfile',
@@ -199,6 +201,52 @@ var UserSession = Backbone.Model.extend({
 			}
 		});
 	},
+
+	checkRegisterToken(token) {
+		var me = this;
+		if (typeof token !== 'string') {
+			console.warn("UserSession: You must provide a string token to be checked.\n",token);
+			return;
+		}
+		$.ajax({
+			method: "GET",
+			url: BACKEND_URL + "user/register/"+token,
+			dataType: 'json',
+			success(data, status, opts) {
+				me.trigger("registertoken", true);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("registertoken", false);
+			}
+		});
+	},
+	registerUser(params) {
+		var me = this;
+		if (params.password !== params.passwordconfirm) {
+			me.trigger("fail", "As senhas digitadas não são iguais.");
+			return;
+		}
+
+		var birthdate = params.birthdate, token = params.token;
+		delete params.birthdate;
+		delete params.token;
+		$.ajax({
+			method: "POST",
+			url: BACKEND_URL + "user/register/"+token,
+			dataType: 'json',
+			data: {
+				user: params,
+				birthdate: birthdate
+			},
+			success(data, status, opts) {
+				me.trigger("register", data);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
 	checkRecoverToken(token) {
 		var me = this;
 		if (typeof token !== 'string') {
@@ -237,7 +285,7 @@ var UserSession = Backbone.Model.extend({
 				me.handleRequestErrors([], opts);
 			}
 		});
-	},
+	}
 
 });
 
