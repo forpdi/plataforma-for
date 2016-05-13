@@ -1,6 +1,7 @@
 
 import _ from "underscore";
 import React from "react";
+import MaskedInput from 'react-maskedinput';
 
 export default React.createClass({
 	getDefaultProps() {
@@ -36,6 +37,10 @@ export default React.createClass({
 			return el.valueAsDate;
 		if (el.type == 'number')
 			return el.valueAsNumber;
+		if (el.mask) {
+			console.log([el.mask.getRawValue().trim()]);
+			return el.mask.getRawValue();
+		}
 		return el.value;
 	},
 	getInputNode() {
@@ -139,6 +144,31 @@ export default React.createClass({
 				ref={this.state.fieldId}
 				placeholder={this.props.fieldDef.placeholder}
 				onChange={this.props.fieldDef.onChange || _.noop}
+			/>);
+		} else if (this.props.fieldDef.type == 'cpf') {
+			fieldEl = (<MaskedInput
+				mask="111.111.111-11"
+				className="form-control"
+				name={this.props.fieldDef.name}
+				value={this.props.fieldDef.value}
+				id={this.state.fieldId}
+				ref={this.state.fieldId}
+				placeholder={this.props.fieldDef.placeholder}
+				onChange={this.props.fieldDef.onChange || _.noop}
+				placeholderChar=" "
+			/>);
+		} else if (this.props.fieldDef.type == 'tel') {
+			fieldEl = (<MaskedInput
+				mask="(11) 111111111"
+				type="tel"
+				className="form-control"
+				name={this.props.fieldDef.name}
+				value={this.props.fieldDef.value}
+				id={this.state.fieldId}
+				ref={this.state.fieldId}
+				placeholder={this.props.fieldDef.placeholder}
+				onChange={this.props.fieldDef.onChange || _.noop}
+				placeholderChar=" "
 			/>);
 		} else if (this.props.fieldDef.type == 'custom') {
 			return this.props.fieldDef.el;
