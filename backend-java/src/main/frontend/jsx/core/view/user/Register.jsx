@@ -21,17 +21,26 @@ export default React.createClass({
 				name: "name",
 				type: "text",
 				placeholder: "",
+				required: true,
 				label: Messages.get("label.name")
 			},{
 				name: "cpf",
 				type: "cpf",
 				placeholder: "",
+				required: true,
 				label: Messages.get("label.cpf")
 			},{
 				name: "cellphone",
 				type: "tel",
 				placeholder: "",
+				required: true,
 				label: Messages.get("label.cellphone")
+			},{
+				name: "birthdate",
+				type: "date",
+				placeholder: "",
+				required: true,
+				label: Messages.get("label.birthdate")
 			},{
 				name: "phone",
 				type: "tel",
@@ -43,35 +52,21 @@ export default React.createClass({
 				placeholder: "",
 				label: Messages.get("label.department")
 			},{
-				name: "birthdate",
-				type: "date",
-				placeholder: "",
-				label: Messages.get("label.birthdate")
-			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
+				required: true,
 				label: Messages.get("label.password")
 			},{
 				name: "passwordconfirm",
 				type: "password",
 				placeholder: "",
+				required: true,
 				label: Messages.get("label.passwordconfirm")
-			},{
-				name: "token",
-				type: "hidden",
-				placeholder: "",
-				value: this.props.params.token
 			}],
 			loading: true,
 			valid: false
 		};
-	},
-	onSubmit(data) {
-		UserSession.dispatch({
-			action: UserSession.ACTION_REGISTER_USER,
-			data: data
-		});
 	},
 	componentDidMount() {
 		var me = this;
@@ -94,6 +89,14 @@ export default React.createClass({
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 	},
+
+	onSubmit(data) {
+		data.token = this.props.params.token;
+		UserSession.dispatch({
+			action: UserSession.ACTION_REGISTER_USER,
+			data: data
+		});
+	},
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
@@ -115,7 +118,7 @@ export default React.createClass({
 											onSubmit={this.onSubmit}
 											fields={this.state.fields}
 											store={UserSession}
-											submitLabel="Redefinir senha"
+											submitLabel="Finalizar cadastro"
 											blockButtons={true}
 										/>
 									</div>

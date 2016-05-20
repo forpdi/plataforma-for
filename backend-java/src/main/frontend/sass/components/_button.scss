@@ -12,7 +12,7 @@
   }
 }
 
-.btn + .btn {
+.btn:not(.btn-block) + .btn:not(.btn-block) {
   margin-left: 10px;
 }
 

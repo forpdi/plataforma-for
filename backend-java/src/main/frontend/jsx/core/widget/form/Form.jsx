@@ -108,7 +108,6 @@ var VerticalForm =  React.createClass({
 			}
 		}
 		return (<form onSubmit={this.submitWrapper}>
-			{alerts}
 			{this.props.fields.map(field => {
 				return (<VerticalInput
 					fieldDef={field}
@@ -117,6 +116,12 @@ var VerticalForm =  React.createClass({
 					/>
 				);
 			})}
+
+			<p className="help-block">
+				<span className="fpdi-required" /> Campos obrigatórios.
+			</p>
+			{alerts}
+
 			{!!this.props.blockButtons ?
 				(<div className="form-group">
 					<button type="submit" className="btn btn-primary btn-block">{this.props.submitLabel}</button>

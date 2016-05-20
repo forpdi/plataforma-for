@@ -38,8 +38,7 @@ export default React.createClass({
 		if (el.type == 'number')
 			return el.valueAsNumber;
 		if (el.mask) {
-			console.log([el.mask.getRawValue().trim()]);
-			return el.mask.getRawValue();
+			return el.mask.getRawValue().trim();
 		}
 		return el.value;
 	},
@@ -188,6 +187,7 @@ export default React.createClass({
 			<div className={"form-group form-group-sm" + (this.props.fieldDef.type == 'hidden' ? " hidden":"")}>
 				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 					{this.props.fieldDef.label}
+					{this.props.fieldDef.required ? <span className="fpdi-required">&nbsp;</span>:""}
 				</label>
 				{fieldEl}
 				{typeof this.props.fieldDef.helpBox === 'string' ?

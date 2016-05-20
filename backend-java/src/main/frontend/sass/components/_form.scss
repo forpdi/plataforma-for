@@ -1,4 +1,12 @@
 
+.fpdi-required {
+	color: $brand-danger;
+
+	&:after {
+		content: "*";
+	}
+}
+
 // Centralização Óbvia
 input[type=checkbox],
 input[type=radio],

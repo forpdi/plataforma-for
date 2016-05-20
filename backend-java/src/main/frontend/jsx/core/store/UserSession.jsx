@@ -2,6 +2,7 @@
 import _ from "underscore";
 import Backbone from "backbone";
 import {Dispatcher} from "flux";
+import string from 'string';
 
 var UserSession = Backbone.Model.extend({
 	ACTION_REFRESH: 'refreshStatus',
@@ -34,6 +35,10 @@ var UserSession = Backbone.Model.extend({
 	},
 	initialize() {
 		this.dispatchToken = this.$dispatcher.register(this.dispatchCallback.bind(this));
+		$.ajaxSetup({
+			contentType: 'application/json',
+			processData: false
+		});
 		if (localStorage.token && (localStorage.token != "")) {
 			$.ajaxSetup({
 				headers: {
@@ -135,7 +140,7 @@ var UserSession = Backbone.Model.extend({
 				method: "POST",
 				url: BACKEND_URL + "user/login",
 				dataType: 'json',
-				data: data,
+				data: JSON.stringify(data),
 				success(data, status, opts) {
 					console.log(data);
 					if (data.success) {
@@ -191,7 +196,7 @@ var UserSession = Backbone.Model.extend({
 			method: "POST",
 			url: BACKEND_URL + "user/recover",
 			dataType: 'json',
-			data: params,
+			data: JSON.stringify(params),
 			success(data, status, opts) {
 				console.log("Done:", data);
 				me.trigger("recoverpassword", data);
@@ -221,9 +226,31 @@ var UserSession = Backbone.Model.extend({
 		});
 	},
 	registerUser(params) {
-		var me = this;
-		if (params.password !== params.passwordconfirm) {
-			me.trigger("fail", "As senhas digitadas não são iguais.");
+		var me = this,
+			errors = []
+		;
+
+		if (string(params.name).isEmpty()) {
+			errors.push("O nome é obrigatório.");
+		}
+		if (string(params.cpf).isEmpty()) {
+			errors.push("O CPF é obrigatório.");
+		}
+		if (string(params.cellphone).isEmpty()) {
+			errors.push("O celular é obrigatório.");
+		}
+		if (string(params.birthdate).isEmpty()) {
+			errors.push("A data de nascimento é obrigatória.");
+		}
+
+		if (string(params.password).isEmpty()) {
+			errors.push("A senha é obrigatória.");
+		} else if (params.password !== params.passwordconfirm) {
+			errors.push("As senhas digitadas não são iguais.");
+		}
+
+		if (errors.length > 0) {
+			me.trigger("fail", errors);
 			return;
 		}
 
@@ -234,10 +261,10 @@ var UserSession = Backbone.Model.extend({
 			method: "POST",
 			url: BACKEND_URL + "user/register/"+token,
 			dataType: 'json',
-			data: {
+			data: JSON.stringify({
 				user: params,
 				birthdate: birthdate
-			},
+			}),
 			success(data, status, opts) {
 				me.trigger("register", data);
 			},
@@ -275,9 +302,9 @@ var UserSession = Backbone.Model.extend({
 			method: "POST",
 			url: BACKEND_URL + "user/reset/"+params.token,
 			dataType: 'json',
-			data: {
+			data: JSON.stringify({
 				password: params.password
-			},
+			}),
 			success(data, status, opts) {
 				me.trigger("resetpassword", data);
 			},

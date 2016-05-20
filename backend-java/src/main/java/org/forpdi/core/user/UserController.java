@@ -163,7 +163,7 @@ public class UserController extends AbstractController {
 	}
 
 	@Post("/api/user/register/{token}")
-	@Consumes
+	@Consumes("application/json")
 	@NoCache
 	public void registerUser(User user, String birthdate, String token) {
 		try {
