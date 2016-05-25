@@ -2,6 +2,7 @@
     <deployment>
         <dependencies>
       		<module name="org.jboss.logging" />
+      		<module name="org.dom4j" />
       		<module name="org.hibernate" />
       		<module name="org.hibernate.validator" />
       	</dependencies>

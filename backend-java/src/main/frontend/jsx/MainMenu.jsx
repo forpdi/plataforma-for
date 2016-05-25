@@ -54,6 +54,10 @@ export default React.createClass({
                 <span className="fpdi-nav-icon mdi mdi-note-text"
                     ></span> {Messages.get("label.plans")}
             </Link>
+            <Link to="/structures" activeClassName="active">
+                <span className="fpdi-nav-icon mdi mdi-grid"
+                    ></span> {Messages.get("label.structures")}
+            </Link>
             <Link to="/favorites" activeClassName="active">
                 <span className="fpdi-nav-icon mdi mdi-star"
                     ></span> {Messages.get("label.favorites")}

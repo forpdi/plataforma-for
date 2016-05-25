@@ -51,6 +51,9 @@
   		<mapping class="org.forpdi.core.user.authz.Role"/>
   		<mapping class="org.forpdi.core.user.authz.RolePermission"/>
   		<mapping class="org.forpdi.core.user.authz.UserPermission"/>
+  		<mapping class="org.forpdi.planning.attribute.Attribute"/>
+  		<mapping class="org.forpdi.planning.structure.Structure"/>
+  		<mapping class="org.forpdi.planning.structure.StructureLevel"/>
   		
 	</session-factory>
 </hibernate-configuration>

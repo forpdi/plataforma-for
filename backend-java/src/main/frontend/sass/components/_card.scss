@@ -234,10 +234,13 @@
   background-color: #fff;
   border: 1px solid;
   border-color: $color-brand-border;
-  padding: 15px;
+  padding: 10px;
   margin-bottom: 20px;
   @include border-radius(3px);
 
+  &.fpdi-card-level {
+  	margin-bottom: 5px;
+  }
   &.fpdi-card-company {
   	background-color: $brand-background;
   	.fpdi-company-logo {
@@ -263,8 +266,6 @@
 
   .mdi {
   	vertical-align: middle;
-  }
-  .mdi:not(:last-child) {
     margin-right: 5px;
   }
   &.fpdi-card-invisible {

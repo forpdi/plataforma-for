@@ -1,8 +1,8 @@
 package org.forpdi.core.user.authz;
 
-import java.util.LinkedList;
+import org.forpdi.core.abstractions.ComponentFactory;
 
-public final class PermissionFactory {
+public final class PermissionFactory extends ComponentFactory<Permission> {
 
 	private static final PermissionFactory instance = new PermissionFactory();
 	
@@ -10,34 +10,8 @@ public final class PermissionFactory {
 		return instance;
 	}
 	
-	private final LinkedList<Permission> permissions = new LinkedList<Permission>();
-	
 	private PermissionFactory() {
-		this.permissions.add(new SystemAdminPermission());
-	}
-	
-	public int register(Permission perm) {
-		if (perm == null) {
-			throw new IllegalArgumentException("Null permission object passed.");
-		}
-		if (permissions.contains(perm)) {
-			throw new IllegalArgumentException("Duplicate permission registering: "+perm.getId());
-		}
-		this.permissions.add(perm);
-		return this.permissions.size()-1;
-	}
-	
-	public Permission getPermission(int index) {
-		return this.permissions.get(index);
-	}
-	
-	public Permission getPermission(String permId) {
-		for (Permission perm : permissions) {
-			if (perm.getId().equals(permId)) {
-				return perm;
-			}
-		}
-		return null;
+		this.register(new SystemAdminPermission());
 	}
 	
 	public class SystemAdminPermission extends Permission {

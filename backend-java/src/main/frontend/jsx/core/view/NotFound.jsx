@@ -1,6 +1,5 @@
 
 import React from "react";
-import TopBar from "forpdi/jsx/core/widget/TopBar.jsx";
 
 export default React.createClass({
 	render() {

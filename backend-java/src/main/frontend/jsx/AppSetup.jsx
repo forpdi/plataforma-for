@@ -9,8 +9,6 @@ import Messages from 'forpdi/jsx/core/util/Messages.jsx';
 
 import Application from 'forpdi/jsx/Application.jsx';
 
-import MainMenu from "forpdi/jsx/core/widget/MainMenu.jsx";
-import TopBar from "forpdi/jsx/core/widget/TopBar.jsx";
 import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
 import SystemManagement from 'forpdi/jsx/core/view/system/SystemManagement.jsx';
@@ -18,6 +16,9 @@ import Companies from 'forpdi/jsx/core/view/system/companies/Companies.jsx';
 import CompanyEdit from 'forpdi/jsx/core/view/system/companies/CompanyEdit.jsx';
 import CompanyDomains from 'forpdi/jsx/core/view/system/domains/CompanyDomains.jsx';
 import CompanyDomainEdit from 'forpdi/jsx/core/view/system/domains/CompanyDomainEdit.jsx';
+
+import StructureList from 'forpdi/jsx/planning/view/structure/StructureList.jsx';
+import StructurePreview from 'forpdi/jsx/planning/view/structure/StructurePreview.jsx';
 
 import Login from "forpdi/jsx/core/view/user/Login.jsx";
 import RecoverPassword from "forpdi/jsx/core/view/user/RecoverPassword.jsx";
@@ -41,6 +42,10 @@ ReactDOM.render((
 			<Route path="users" component={Users}>
 				<Route path="edit/:modelId" component={UserEdit} />
 				<Route path="new" component={UserInvite} />
+			</Route>
+
+			<Route path="structures" component={StructureList}>
+				<Route path="preview/:modelId" component={StructurePreview} />
 			</Route>
 
 			<Route path="system" component={SystemManagement}>

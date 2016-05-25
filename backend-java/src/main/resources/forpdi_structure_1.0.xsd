@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
+	<xs:simpleType name="DataTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Currency" />
+			<xs:enumeration value="DateField" />
+			<xs:enumeration value="DateTimeField" />
+			<xs:enumeration value="NumberField" />
+			<xs:enumeration value="Percentage" />
+			<xs:enumeration value="TextArea" />
+			<xs:enumeration value="TextField" />
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:complexType name="Attribute">
+		<xs:all>
+			<xs:element name="label" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="type" type="DataTypes" />
+		</xs:all>
+		<xs:attribute name="required" type="xs:boolean" default="false" />
+		<xs:attribute name="visibleInTables" type="xs:boolean" default="true" />
+	</xs:complexType>
+
+	<xs:complexType name="StructureLevel">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="attributes">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="attribute" minOccurs="1" maxOccurs="unbounded"
+							type="Attribute" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="structure">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="structureName" type="xs:string" />
+				<xs:element name="structureDescription" type="xs:string" />
+				<xs:element name="structureLevels">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="level" minOccurs="2" maxOccurs="unbounded"
+								type="StructureLevel" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

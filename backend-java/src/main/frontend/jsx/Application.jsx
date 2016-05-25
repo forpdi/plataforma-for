@@ -1,8 +1,8 @@
 
 import React from "react";
 
-import MainMenu from "forpdi/jsx/core/widget/MainMenu.jsx";
-import TopBar from "forpdi/jsx/core/widget/TopBar.jsx";
+import MainMenu from "forpdi/jsx/MainMenu.jsx";
+import TopBar from "forpdi/jsx/TopBar.jsx";
 
 export default React.createClass({
   	getInitialState() {

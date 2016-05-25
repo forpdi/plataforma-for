@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="forpdi_structure_1.0.xsd">
+	<structureName>PDI Exemplo</structureName>
+	<structureDescription>
+		Estrutura de exemplo de um PDI de uma Universidade.
+	</structureDescription>
+	<structureLevels>
+		<level>
+			<name>Area</name>
+			<description>Nível raiz, define as áreas da universidade.</description>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome da Área</description>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição da Área</description>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Objetivo</name>
+			<description></description>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome do Objetivo</description>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição do Objetivo</description>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Indicador</name>
+			<description></description>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome do Indicador</description>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição do Indicador</description>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Meta</name>
+			<description></description>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome da Meta</description>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição da Meta</description>
+				</attribute>
+			</attributes>
+		</level>
+	</structureLevels>
+</structure>

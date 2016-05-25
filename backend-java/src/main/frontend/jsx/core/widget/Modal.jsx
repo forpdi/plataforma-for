@@ -116,19 +116,19 @@ var FileUploadModal = React.createClass({
 		return (
 			<div className="modal-dialog">
 				<div className="modal-content">
-					<div className="modal-header">
+					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
-	      			<div className="modal-body">
+	      			<div className="modal-body fpdi-modal-body">
 	        			<div>{this.props.message}</div>
 	        			<input type='file' name="file" className='form-control' ref="file-upload-field" id="file-upload-field" />
-	        		</div>
-	        		<div className="panel-footer">
+	      			</div>
+	      			<div className="modal-footer fpdi-modal-footer">
 	        			<div id="file-upload-progress" className="progress" style={{border: '1px solid #ccc'}}>
 		        			<div className="progress-bar progress-bar-success"></div>
 		    			</div>
-	    			</div>
+	      			</div>
 				</div>
 			</div>
 		);
@@ -232,7 +232,7 @@ var Modal = {
 		$(this.$el).modal('show');
 	},
 
-	uploadFile(title, msg, url, cb) {
+	uploadFile(title, msg, url, onSuccess, onFailure) {
 		var me = this;
 		ReactDOM.render((
 			<FileUploadModal title={title} message={msg} />
@@ -242,9 +242,15 @@ var Modal = {
 		$('#file-upload-field').fileupload({
 	        url: url,
 	        dataType: 'json',
-	        done: function (evt, fied) {
-	            if ((evt.type == 'fileuploaddone') && (typeof cb == 'function'))
-	            	cb.call(me);
+	        done: function (evt, opts) {
+	            if (evt.type == 'fileuploaddone') {
+	            	if (typeof onSuccess == 'function')
+	            		onSuccess.call(me,opts.jqXHR.responseJSON);
+	            	else
+	            		console.warn("No success callback passed for file upload window.");
+	            }
+	            else if (typeof onFailure == 'function')
+	            	onFailure.call(me,opts.jqXHR.responseJSON);
 	        },
 	        progressall: function (e, data) {
 	            var progress = parseInt(data.loaded / data.total * 100, 10);

@@ -54,7 +54,7 @@ public class IndexController extends AbstractController {
 		} else {
 			body.append(",'company': ").append(gson.toJson(domain.getCompany()));
 			body.append(",'themeCss': '")
-				.append(CompanyThemeFactory.getInstance().getTheme(domain.getTheme()).getCSSFile())
+				.append(CompanyThemeFactory.getInstance().get(domain.getTheme()).getCSSFile())
 				.append("'");
 		}
 		body.append(",'messages':").append(msg.getJSONMessages());

@@ -1,8 +1,8 @@
 package org.forpdi.core.company;
 
-import java.util.LinkedList;
+import org.forpdi.core.abstractions.ComponentFactory;
 
-public final class CompanyThemeFactory {
+public final class CompanyThemeFactory extends ComponentFactory<CompanyTheme> {
 
 	private static CompanyThemeFactory instance = new CompanyThemeFactory();
 	
@@ -11,47 +11,22 @@ public final class CompanyThemeFactory {
 	}
 	
 	public static CompanyTheme getDefaultTheme() {
-		return instance.themes.get(0);
+		return instance.get(0);
 	}
-	
-	private final LinkedList<CompanyTheme> themes = new LinkedList<CompanyTheme>();
 	
 	private CompanyThemeFactory() {
-		this.themes.add(new ThemeDefault());
-		this.themes.add(new ThemeRed());
+		this.register(new ThemeDefault());
+		this.register(new ThemeRed());
 	}
 	
-	public int register(CompanyTheme theme) {
-		if (theme == null) {
-			throw new IllegalArgumentException("Null theme object passed.");
-		}
-		if (themes.contains(theme)) {
-			throw new IllegalArgumentException("Duplicate theme registering: "+theme.getId());
-		}
-		this.themes.add(theme);
-		return this.themes.size()-1;
-	}
-	
-	public CompanyTheme getTheme(int index) {
-		return this.themes.get(index);
-	}
-	
-	public CompanyTheme getTheme(String themeId) {
-		for (CompanyTheme theme : themes) {
-			if (theme.getId().equals(themeId)) {
-				return theme;
-			}
-		}
-		return null;
-	}
-	
+	@Override
 	public String toJSON() {
 		StringBuilder json = new StringBuilder();
 		json.append("[");
-		for (int t = 0; t < themes.size(); t++) {
+		for (int t = 0; t < this.size(); t++) {
 			if (t > 0)
 				json.append(",");
-			CompanyTheme theme = themes.get(t);
+			CompanyTheme theme = (CompanyTheme) this.get(t);
 			json
 				.append("{")
 				.append("\"css\":\"").append(theme.getCSSFile()).append("\"")

@@ -17,6 +17,8 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 @RequestScoped
 public class CompanyBS extends HibernateBusiness {
 	
+	private static final int PAGESIZE = 12;
+	
 	public CompanyDomain currentDomain() {
 		Criteria criteria = 
 			this.dao.newCriteria(CompanyDomain.class)
@@ -34,7 +36,7 @@ public class CompanyBS extends HibernateBusiness {
 		PaginatedList<Company> results = new PaginatedList<Company>();
 		Criteria criteria =
 			this.dao.newCriteria(Company.class)
-			.setFirstResult(page*10).setMaxResults(12)
+			.setFirstResult(page*PAGESIZE).setMaxResults(PAGESIZE)
 			.add(Restrictions.eq("deleted", false))
 			.addOrder(Order.asc("name"))
 		;
@@ -52,7 +54,7 @@ public class CompanyBS extends HibernateBusiness {
 		PaginatedList<CompanyDomain> results = new PaginatedList<CompanyDomain>();
 		Criteria criteria =
 			this.dao.newCriteria(CompanyDomain.class)
-			.setFirstResult(page*10).setMaxResults(12)
+			.setFirstResult(page*PAGESIZE).setMaxResults(PAGESIZE)
 			.createAlias("company", "company", JoinType.INNER_JOIN)
 			.addOrder(Order.asc("company.name"))
 			.addOrder(Order.asc("host"))
