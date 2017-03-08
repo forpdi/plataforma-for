@@ -37,12 +37,21 @@ export default React.createClass({
 			rootSections: [],
 			hiddenSearch: false,
 			hiddenResultSearch: false,
-			resultSearch: []
+			resultSearch: [],
+			dataInitSearch:null,
+			dataEndSearch:null,
+			levelsSelectSearch:[],
+			ordResultSearch:null,
+			parentIdSearch:null,
+			termsSearch:'',
+			subPlansSelectSearch:[]
 		};
 	},
 	componentDidMount(){
 		var me = this;
 		StructureStore.on('levelAttributeSaved', (model) => {
+			console.log(model);
+			console.log(this.state);
 			//Consulta para encontrar qual nó da árvore está ativo
 			var nodeActive = document.getElementsByClassName("fpdi-node-label active");
 			if(nodeActive.length>0){  // Caso encontre um valor, o texto dele será alterado pelo nome atual do nó
@@ -228,7 +237,17 @@ export default React.createClass({
 		});
 
         PlanStore.on("planFind", (model, data) => {
-        	console.log(data)
+        
+        	this.setState({
+				dataInitSearch:data.dataInit,
+				dataEndSearch:data.dataEnd,
+				levelsSelectSearch:data.levelsSelect,
+				ordResultSearch:data.ordResult,
+				termsSearch:data.terms,
+				parentIdSearch:data.parentId,
+				subPlansSelectSearch:data.subPlansSelect
+			});
+
 			if (model != null && this.isMounted()) {
 				this.setState({
            			resultSearch:model.data
@@ -665,7 +684,21 @@ export default React.createClass({
 							var elemError = document.getElementById("paramError");
 							if(sections=='' || author.trim()=='' || title.trim()==''){
 								elemError.innerHTML = "Erro ao exportar documento. Preencha os campos autor e título, e selecione pelo menos uma seção.";
+								if(author.trim()=='') {
+									document.getElementById("documentAuthor").className = "borderError";
+								}
+								else {
+									document.getElementById("documentAuthor").className = "";
+								}
+								if(title.trim()=='') {
+									document.getElementById("documentTitle").className = "borderError";
+								}
+								else {
+									document.getElementById("documentTitle").className = "";
+								}
 							}else{
+								document.getElementById("documentAuthor").className = "";
+								document.getElementById("documentTitle").className = "";
 								var url = DocumentStore.url + "/exportdocument" + "?title=" + title + "&author=" + author + "&lista=" + lista;
 								url = url.replace(" ", "+");
 								Modal.hide();
@@ -673,6 +706,8 @@ export default React.createClass({
 							}
 						});
 					document.getElementById("paramError").innerHTML = "";
+					document.getElementById("documentAuthor").className = "";
+					document.getElementById("documentTitle").className = "";
 			    }
 			}
 		});
@@ -788,10 +823,17 @@ export default React.createClass({
 				: ""}
 
 				{this.state.hiddenResultSearch ?
-					<SearchResult resultSearch = {this.state.resultSearch} planId= {this.props.plan.get("id")}
-						terms = {this.refs.termPesquisa != undefined ? this.refs.termPesquisa  : ""} parentId = {this.state.parentIdProps}
-						subPlansSelect = {this.state.subplansSelectProps} levelsSelect = {this.state.levelsSelectProps} 
-						dataInit = {this.state.dataInitProps} dataEnd = {this.state.dataEndProps} ordResult = {this.state.ordResultProps} /> 
+					<SearchResult 
+						resultSearch = {this.state.resultSearch}
+						planId = {this.props.plan.get("id")}
+						terms = {this.state.termsSearch}
+						parentId = {this.state.parentIdSearch}
+						subPlansSelect = {this.state.subPlansSelectSearch}
+						levelsSelect = {this.state.levelsSelectSearch}
+						dataInit = {this.state.dataInitSearch}
+						dataEnd = {this.state.dataEndSearch}
+						ordResult = {this.state.ordResultSearch}
+					/> 
 				: 	
 					<div>
 						{this.context.roles.SYSADMIN ? "" : <FavoriteTree />}
