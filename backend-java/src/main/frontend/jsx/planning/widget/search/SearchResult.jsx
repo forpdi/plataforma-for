@@ -69,9 +69,6 @@ export default React.createClass({
 
 	showMoreOccurencesSearches() {
 		var newPage = this.state.page+1;
-		
-		console.log("TERMS");
-		console.log(this.props.terms);
 
 
 		PlanStore.dispatch({
