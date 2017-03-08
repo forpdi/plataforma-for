@@ -1,5 +1,6 @@
 package org.forpdi.planning.document.bootstrap;
 
+import org.forpdi.planning.attribute.types.DateField;
 import org.forpdi.planning.attribute.types.NumberField;
 import org.forpdi.planning.attribute.types.ScheduleField;
 import org.forpdi.planning.attribute.types.SelectField;
@@ -26,48 +27,46 @@ import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.HibernateDAO.TransactionalOperation;
 
 /**
- * Helper que cria o documento estipulado pelo documento de referência do FORPLAD.
- * Ele cria o documento dentro de um plano macro.
+ * Helper que cria o documento estipulado pelo documento de referência do
+ * FORPLAD. Ele cria o documento dentro de um plano macro.
  * 
- * @see https://docs.google.com/document/d/1IJjCoGLbR4bsVM_o-tlyf_5H1efAF24WcaIvoaEouq0/edit#heading=h.fr3x6z3vdjm
+ * @see https://docs.google.com/document/d/1IJjCoGLbR4bsVM_o-
+ *      tlyf_5H1efAF24WcaIvoaEouq0/edit#heading=h.fr3x6z3vdjm
  * @author Renato Oliveira
  *
  */
 public class ForpladHelper {
-	
+
 	private final HibernateDAO dao;
-	
+
 	public ForpladHelper(HibernateDAO dao) {
 		this.dao = dao;
 	}
-	
+
 	public Document initializeDocument(PlanMacro plan) {
 		if (plan == null) {
 			throw new IllegalArgumentException("You must provide a PlanMacro to initialize a Forplad Document.");
 		}
-		
+
 		Document document = this.retrieveByPlan(plan);
 		if (document != null) {
 			throw new IllegalArgumentException("The provided PlanMacro already has a Document.");
 		}
-		
+
 		DocumentCreator creator = new DocumentCreator(plan);
 		this.dao.execute(creator);
-		
+
 		return creator.document;
 	}
-	
+
 	public Document retrieveByPlan(PlanMacro plan) {
-		Criteria criteria =
-			this.dao.newCriteria(Document.class)
-			.add(Restrictions.eq("plan", plan))
-		;
+		Criteria criteria = this.dao.newCriteria(Document.class).add(Restrictions.eq("plan", plan));
 		return (Document) criteria.uniqueResult();
 	}
-	
+
 	/**
-	 * Classe privada que insere a estrutura do documento
-	 * FORPLAD em uma única transação do banco de dados.
+	 * Classe privada que insere a estrutura do documento FORPLAD em uma única
+	 * transação do banco de dados.
 	 * 
 	 * @author Renato Oliveira
 	 *
@@ -75,7 +74,7 @@ public class ForpladHelper {
 	protected class DocumentCreator implements TransactionalOperation {
 
 		public final Document document;
-		
+
 		public DocumentCreator(PlanMacro plan) {
 			this.document = new Document();
 			this.document.setPlan(plan);
@@ -85,7 +84,7 @@ public class ForpladHelper {
 					+ "e às atividades acadêmicas que desenvolve e/ou que pretende desenvolver");
 			this.document.setTitle("Documento - " + plan.getName());
 		}
-		
+
 		@Override
 		public void execute(Session session) throws HibernateException {
 			DocumentSection section, subsection;
@@ -94,9 +93,119 @@ public class ForpladHelper {
 			TableFields tableFields;
 			TableStructure tableStructure;
 			OptionsField optionsField;
-			
+
 			session.persist(this.document);
-			
+
+			// SEÇÕES NÃO NUMERADAS - PRÉ TEXTUAIS
+
+			// Seção 1 - Ficha técnica
+			section = new DocumentSection();
+			section.setDocument(document);
+			section.setName("Ficha técnica");
+			section.setSequence(1); // Número da seção para ordenar na exibição.
+			section.setLeaf(true);
+			section.setPreTextSection(true);
+			session.persist(section);
+
+			attr = new DocumentAttribute();
+			attr.setName("Ficha Técnica");
+			attr.setSection(section);
+			attr.setType(TableField.class.getCanonicalName());
+			attr.setSequence(1); // Ordem do atributo dentro da seção
+			attr.setRequired(false);
+			session.persist(attr);
+
+			tableFields = new TableFields();
+			tableFields.setAttributeId(attr.getId());
+			tableFields.setIsDocument(true);
+			session.persist(tableFields);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Nome");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Cargo");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+
+			// Seção 2 - Histórico de versões
+			section = new DocumentSection();
+			section.setDocument(document);
+			section.setName("Histórico de versões");
+			section.setSequence(2); // Número da seção para ordenar na exibição.
+			section.setLeaf(true);
+			section.setPreTextSection(true);
+			session.persist(section);
+
+			attr = new DocumentAttribute();
+			attr.setName("Histórico de versões");
+			attr.setSection(section);
+			attr.setType(TableField.class.getCanonicalName());
+			attr.setSequence(1); // Ordem do atributo dentro da seção
+			attr.setRequired(false);
+			session.persist(attr);
+
+			tableFields = new TableFields();
+			tableFields.setAttributeId(attr.getId());
+			tableFields.setIsDocument(true);
+			session.persist(tableFields);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Data");
+			tableStructure.setType(DateField.generateId(DateField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Versão");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Descrição");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Autor");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+
+			// Seção 3 - Lista de abreviações
+			section = new DocumentSection();
+			section.setDocument(document);
+			section.setName("Lista de abreviações");
+			section.setSequence(3); // Número da seção para ordenar na exibição.
+			section.setLeaf(true);
+			section.setPreTextSection(true);
+			session.persist(section);
+
+			attr = new DocumentAttribute();
+			attr.setName("Lista de abreviações");
+			attr.setSection(section);
+			attr.setType(TableField.class.getCanonicalName());
+			attr.setSequence(1); // Ordem do atributo dentro da seção
+			attr.setRequired(false);
+			session.persist(attr);
+
+			tableFields = new TableFields();
+			tableFields.setAttributeId(attr.getId());
+			tableFields.setIsDocument(true);
+			session.persist(tableFields);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Sigla");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+			tableStructure = new TableStructure();
+			tableStructure.setLabel("Descrição");
+			tableStructure.setType(TextField.generateId(TextField.class));
+			tableStructure.setTableFields(tableFields);
+			session.persist(tableStructure);
+
+			// SEÇÕES NUMERADAS
+
 			// Seção 1 - Apresentação
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -104,7 +213,7 @@ public class ForpladHelper {
 			section.setSequence(1); // Número da seção para ordenar na exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Apresentação do PDI");
 			attr.setSection(section);
@@ -113,7 +222,6 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			
 			// Seção 2 - Método
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -121,7 +229,7 @@ public class ForpladHelper {
 			section.setSequence(2); // Número da seção para ordenar na exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do método utilizado para a elaboração do PDI");
 			attr.setSection(section);
@@ -130,7 +238,6 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			
 			// Seção 3 - Documentos de referência
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -138,7 +245,7 @@ public class ForpladHelper {
 			section.setSequence(3); // Número da seção para ordenar na exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Documentos de referência mais utilizados para a elaboração do PDI");
 			attr.setSection(section);
@@ -147,7 +254,6 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			
 			// Seção 4 - Resultados do PDI anterior
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -155,7 +261,7 @@ public class ForpladHelper {
 			section.setSequence(4); // Número da seção para ordenar na exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Resultados do PDI anterior");
 			attr.setSection(section);
@@ -164,7 +270,6 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			
 			// Seção 5 - Perfil institucional
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -172,16 +277,17 @@ public class ForpladHelper {
 			section.setSequence(5); // Número da seção para ordenar na exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 5.1 - Histórico da IES
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Histórico da IES");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Análise do histórico de todos os campus da IES");
 			attr.setSection(subsection);
@@ -194,11 +300,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Finalidade");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Finalidade da IES");
 			attr.setSection(subsection);
@@ -211,11 +318,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Missão, visão e valores");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Missão");
 			attr.setSection(subsection);
@@ -239,7 +347,7 @@ public class ForpladHelper {
 			attr.setSequence(3); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Objetivos estratégicos");
 			attr.setSection(subsection);
@@ -247,17 +355,17 @@ public class ForpladHelper {
 			attr.setSequence(4); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
 
 			// Subseção 5.4 - Área(s) de atuação acadêmica
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Área(s) de atuação acadêmica");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Áreas de atuação acadêmica");
 			attr.setSection(subsection);
@@ -266,7 +374,6 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			
 			// Seção 6 - Projeto Pedagógico Institucional (PPI)
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -274,16 +381,17 @@ public class ForpladHelper {
 			section.setSequence(6); // Número da seção para ordenar na exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 6.1 - Inserção regional
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Inserção regional");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição");
 			attr.setSection(subsection);
@@ -292,15 +400,17 @@ public class ForpladHelper {
 			attr.setRequired(false);
 			session.persist(attr);
 
-			// Subseção 6.2 - Princípios filosóficos e técnico-metodológicos gerais
+			// Subseção 6.2 - Princípios filosóficos e técnico-metodológicos
+			// gerais
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Princípios filosóficos e técnico-metodológicos gerais");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição dos princípios que norteiam as práticas acadêmicas da IES");
 			attr.setSection(subsection);
@@ -313,11 +423,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Organização didático-pedagógica da instituição");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Organização didático-pedagógica da instituição");
 			attr.setSection(subsection);
@@ -330,11 +441,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Políticas de ensino");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição das políticas de ensino");
 			attr.setSection(subsection);
@@ -347,11 +459,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Políticas de extensão");
-			subsection.setSequence(5); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(5); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição das políticas de extensão");
 			attr.setSection(subsection);
@@ -364,11 +477,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Políticas de pesquisa");
-			subsection.setSequence(6); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(6); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição das políticas de pesquisa adotadas pela IES");
 			attr.setSection(subsection);
@@ -381,11 +495,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Políticas de gestão");
-			subsection.setSequence(7); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(7); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição das políticas de gestão adotadas pela IES");
 			attr.setSection(subsection);
@@ -398,36 +513,40 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Responsabilidade social da IES");
-			subsection.setSequence(8); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(8); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
-			attr.setName("Descrição da contribuição à inclusão social e ao desenvolvimento econômico e social da região");
+			attr.setName(
+					"Descrição da contribuição à inclusão social e ao desenvolvimento econômico e social da região");
 			attr.setSection(subsection);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Seção 7 - Cronograma de implantação e desenvolvimento da instituição e dos cursos
+
+			// Seção 7 - Cronograma de implantação e desenvolvimento da
+			// instituição e dos cursos
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Cronograma de implantação e desenvolvimento da instituição e dos cursos");
 			section.setSequence(7); // Número da seção para ordenar na exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 7.1 - Descrição da situação atual
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Descrição da situação atual");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição da situação atual");
 			attr.setSection(subsection);
@@ -435,7 +554,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cursos ofertados pela IES");
 			attr.setSection(subsection);
@@ -443,7 +562,7 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			tableFields = new TableFields();
 			tableFields.setAttributeId(attr.getId());
 			tableFields.setIsDocument(true);
@@ -458,7 +577,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -507,7 +626,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -532,7 +651,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -551,7 +670,7 @@ public class ForpladHelper {
 			optionsField.setDocument(true);
 			optionsField.setLabel("Bienal");
 			session.persist(optionsField);
-			//Fim valores do selectfield
+			// Fim valores do selectfield
 			tableStructure = new TableStructure();
 			tableStructure.setLabel("Nº de turmas");
 			tableStructure.setType(NumberField.generateId(NumberField.class));
@@ -597,7 +716,7 @@ public class ForpladHelper {
 			tableStructure.setType(TextField.generateId(TextField.class));
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cursos que serão expandidos ou abertos no futuro");
 			attr.setSection(subsection);
@@ -605,7 +724,7 @@ public class ForpladHelper {
 			attr.setSequence(3); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			tableFields = new TableFields();
 			tableFields.setAttributeId(attr.getId());
 			tableFields.setIsDocument(true);
@@ -620,7 +739,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -669,7 +788,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -694,7 +813,7 @@ public class ForpladHelper {
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			//Valores da habilitação
+			// Valores da habilitação
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
@@ -713,21 +832,21 @@ public class ForpladHelper {
 			optionsField.setDocument(true);
 			optionsField.setLabel("Bienal");
 			session.persist(optionsField);
-			/*tableStructure = new TableStructure();
-			tableStructure.setLabel("Habilitação");
-			tableStructure.setType(TextField.generateId(TextField.class));
-			tableStructure.setTableFields(tableFields);
-			session.persist(tableStructure);
-			tableStructure = new TableStructure();
-			tableStructure.setLabel("Modalidade");
-			tableStructure.setType(TextField.generateId(TextField.class));
-			tableStructure.setTableFields(tableFields);
-			session.persist(tableStructure);
-			tableStructure = new TableStructure();
-			tableStructure.setLabel("Regime de matrícula");
-			tableStructure.setType(TextField.generateId(TextField.class));
-			tableStructure.setTableFields(tableFields);
-			session.persist(tableStructure);*/
+			/*
+			 * tableStructure = new TableStructure();
+			 * tableStructure.setLabel("Habilitação");
+			 * tableStructure.setType(TextField.generateId(TextField.class));
+			 * tableStructure.setTableFields(tableFields);
+			 * session.persist(tableStructure); tableStructure = new
+			 * TableStructure(); tableStructure.setLabel("Modalidade");
+			 * tableStructure.setType(TextField.generateId(TextField.class));
+			 * tableStructure.setTableFields(tableFields);
+			 * session.persist(tableStructure); tableStructure = new
+			 * TableStructure(); tableStructure.setLabel("Regime de matrícula");
+			 * tableStructure.setType(TextField.generateId(TextField.class));
+			 * tableStructure.setTableFields(tableFields);
+			 * session.persist(tableStructure);
+			 */
 			tableStructure.setLabel("Turno de funcionamento");
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
@@ -757,11 +876,13 @@ public class ForpladHelper {
 			optionsField.setDocument(true);
 			optionsField.setLabel("Vespertino");
 			session.persist(optionsField);
-			/*tableStructure = new TableStructure();
-			tableStructure.setLabel("Turno de funcionamento");
-			tableStructure.setType(TextField.generateId(TextField.class));
-			tableStructure.setTableFields(tableFields);
-			session.persist(tableStructure);*/
+			/*
+			 * tableStructure = new TableStructure(); tableStructure.setLabel(
+			 * "Turno de funcionamento");
+			 * tableStructure.setType(TextField.generateId(TextField.class));
+			 * tableStructure.setTableFields(tableFields);
+			 * session.persist(tableStructure);
+			 */
 			tableStructure = new TableStructure();
 			tableStructure.setLabel("Nº de vagas autorizadas");
 			tableStructure.setType(NumberField.generateId(NumberField.class));
@@ -777,7 +898,7 @@ public class ForpladHelper {
 			tableStructure.setType(TextField.generateId(NumberField.class));
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma de expansão");
 			attr.setSection(subsection);
@@ -785,7 +906,7 @@ public class ForpladHelper {
 			attr.setSequence(4); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
@@ -796,11 +917,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Objetivos e metas");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do plano de implantação e desenvolvimento da instituição e dos cursos");
 			attr.setSection(subsection);
@@ -808,7 +930,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Selecione o plano de metas correspondente");
 			attr.setSection(subsection);
@@ -816,7 +938,7 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 8 - Perfil do corpo docente
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -824,16 +946,17 @@ public class ForpladHelper {
 			section.setSequence(8); // Número da seção para ordenar na exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 8.1 - Composição
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Composição");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Evolução no quadro permanente de docentes por classe/ano");
 			attr.setSection(subsection);
@@ -841,7 +964,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			tableFields = new TableFields();
 			tableFields.setAttributeId(attr.getId());
 			tableFields.setIsDocument(true);
@@ -887,7 +1010,7 @@ public class ForpladHelper {
 			tableStructure.setType(TotalField.generateId(TotalField.class));
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Evolução no quadro permanente de docentes por titulação");
 			attr.setSection(subsection);
@@ -895,7 +1018,7 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			tableFields = new TableFields();
 			tableFields.setAttributeId(attr.getId());
 			tableFields.setIsDocument(true);
@@ -940,7 +1063,7 @@ public class ForpladHelper {
 			tableStructure.setType(TotalField.generateId(TotalField.class));
 			tableStructure.setTableFields(tableFields);
 			session.persist(tableStructure);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Evolução no quadro permanente de docentes por regime de trabalho");
 			attr.setSection(subsection);
@@ -948,7 +1071,7 @@ public class ForpladHelper {
 			attr.setSequence(3); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			tableFields = new TableFields();
 			tableFields.setAttributeId(attr.getId());
 			tableFields.setIsDocument(true);
@@ -986,11 +1109,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Plano de carreira");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Plano de carreira");
 			attr.setSection(subsection);
@@ -998,16 +1122,17 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 8.3 - Critérios de seleção e contratação
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Critérios de seleção e contratação");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Critérios de seleção e contratação");
 			attr.setSection(subsection);
@@ -1015,33 +1140,37 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Subseção 8.4 - Procedimentos para substituição (definitiva e eventual) dos professores do quadro
+
+			// Subseção 8.4 - Procedimentos para substituição (definitiva e
+			// eventual) dos professores do quadro
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Procedimentos para substituição (definitiva e eventual) dos professores do quadro");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
-			attr.setName("Procedimentos adotados pela IES, visando recomposição e substituição de professores do quadro");
+			attr.setName(
+					"Procedimentos adotados pela IES, visando recomposição e substituição de professores do quadro");
 			attr.setSection(subsection);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 8.5 - Cronograma
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Cronograma e plano de expansão do corpo docente");
-			subsection.setSequence(5); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(5); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma e plano de expansão do corpo docente");
 			attr.setSection(subsection);
@@ -1049,22 +1178,23 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
 			schedule.setIsDocument(true);
 			session.persist(schedule);
-			
+
 			// Subseção 8.6 - Objetivos e metas
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Objetivos e metas");
-			subsection.setSequence(6); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(6); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do plano de expansão do corpo docente");
 			attr.setSection(subsection);
@@ -1072,7 +1202,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Selecione o plano de metas correspondente");
 			attr.setSection(subsection);
@@ -1080,7 +1210,7 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 9 - Perfil do corpo técnico administrativo
 			section = new DocumentSection();
 			section.setDocument(document);
@@ -1088,16 +1218,17 @@ public class ForpladHelper {
 			section.setSequence(9); // Número da seção para ordenar na exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 9.1 - Composição
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Composição");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Composição");
 			attr.setSection(subsection);
@@ -1110,11 +1241,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Plano de carreira");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Plano de carreira");
 			attr.setSection(subsection);
@@ -1122,16 +1254,17 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 9.3 - Critérios de seleção e contratação
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Critérios de seleção e contratação");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Apresentar os critérios de seleção e contratação de técnicos utilizados pela IES");
 			attr.setSection(subsection);
@@ -1139,33 +1272,38 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Subseção 9.4 - Procedimentos para substituição (definitiva e eventual) dos professores do quadro
+
+			// Subseção 9.4 - Procedimentos para substituição (definitiva e
+			// eventual) dos professores do quadro
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Procedimentos para substituição (definitiva e eventual) dos técnicos do quadro");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
-			attr.setName("Descrição dos procedimentos adotados pela IES, visando recomposição e substituição de técnicos do quadro");
+			attr.setName(
+					"Descrição dos procedimentos adotados pela IES, visando recomposição e substituição de técnicos do quadro");
 			attr.setSection(subsection);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Subseção 9.5 - Cronograma e plano de expansão do corpo técnico administrativo
+
+			// Subseção 9.5 - Cronograma e plano de expansão do corpo técnico
+			// administrativo
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Cronograma e plano de expansão do corpo técnico administrativo");
-			subsection.setSequence(5); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(5); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma");
 			attr.setSection(subsection);
@@ -1173,22 +1311,23 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
 			schedule.setIsDocument(true);
 			session.persist(schedule);
-			
+
 			// Subseção 9.6 - Objetivos e metas
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Objetivos e metas");
-			subsection.setSequence(6); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(6); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do plano de expansão do corpo técnico administrativo");
 			attr.setSection(subsection);
@@ -1196,7 +1335,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Selecione o plano de metas correspondente");
 			attr.setSection(subsection);
@@ -1204,24 +1343,28 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 10 - Organização administrativa da IES
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Organização administrativa da IES");
-			section.setSequence(10); // Número da seção para ordenar na exibição.
+			section.setSequence(10); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
-			// Subseção 10.1 - Estrutura Organizacional, Instâncias de Decisão e Organograma Institucional e Acadêmico
+
+			// Subseção 10.1 - Estrutura Organizacional, Instâncias de Decisão e
+			// Organograma Institucional e Acadêmico
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
-			subsection.setName("Estrutura organizacional, instâncias de decisão e organograma institucional e acadêmico");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection
+					.setName("Estrutura organizacional, instâncias de decisão e organograma institucional e acadêmico");
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrever a estrutura organizacional da IES");
 			attr.setSection(subsection);
@@ -1234,11 +1377,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Órgãos Colegiados");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrever as competências e composição de cada órgão colegiado");
 			attr.setSection(subsection);
@@ -1246,16 +1390,17 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 10.3 - Órgãos de apoio às atividades acadêmicas
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Órgãos de apoio às atividades acadêmicas");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrever as competências e composição de cada órgão de apoio");
 			attr.setSection(subsection);
@@ -1263,24 +1408,27 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 11 - Políticas de atendimento aos discentes
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Políticas de atendimento aos discentes");
-			section.setSequence(11); // Número da seção para ordenar na exibição.
+			section.setSequence(11); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
-			// Subseção 11.1 - Programas de apoio pedagógico e financeiro (bolsas)
+
+			// Subseção 11.1 - Programas de apoio pedagógico e financeiro
+			// (bolsas)
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Programas de apoio pedagógico e financeiro (bolsas)");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição de todos os programas de apoio pedagógico e financeiro");
 			attr.setSection(subsection);
@@ -1293,11 +1441,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Estímulos à permanência");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Estímulos à permanência");
 			attr.setSection(subsection);
@@ -1305,33 +1454,36 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 11.3 - Organização estudantil
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Organização estudantil");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
-			attr.setName("Descrição dos espaços para participação e convivência estudantil, bem como dos órgãos de representatividade discente");
+			attr.setName(
+					"Descrição dos espaços para participação e convivência estudantil, bem como dos órgãos de representatividade discente");
 			attr.setSection(subsection);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 11.4 - Acompanhamento dos egressos
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Acompanhamento dos egressos");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição das formas de relação com os egressos");
 			attr.setSection(subsection);
@@ -1339,16 +1491,17 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 11.5 - Objetivos e metas
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Objetivos e metas");
-			subsection.setSequence(5); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(5); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do plano de atendimento aos discentes");
 			attr.setSection(subsection);
@@ -1356,7 +1509,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Selecione o plano de metas correspondente");
 			attr.setSection(subsection);
@@ -1369,19 +1522,21 @@ public class ForpladHelper {
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Infraestrutura");
-			section.setSequence(12); // Número da seção para ordenar na exibição.
+			section.setSequence(12); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(false);
 			session.persist(section);
-			
+
 			// Subseção 12.1 - Infraestrutura física
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Infraestrutura física");
-			subsection.setSequence(1); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(1); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Detalhar infraestrutura física");
 			attr.setSection(subsection);
@@ -1394,11 +1549,12 @@ public class ForpladHelper {
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Biblioteca");
-			subsection.setSequence(2); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(2); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Informações sobre a biblioteca");
 			attr.setSection(subsection);
@@ -1406,7 +1562,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma de expansão do acervo");
 			attr.setSection(subsection);
@@ -1414,22 +1570,23 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
 			schedule.setIsDocument(true);
 			session.persist(schedule);
-			
+
 			// Subseção 12.3 - Laboratórios
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Laboratórios");
-			subsection.setSequence(3); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(3); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Informações sobre os laboratórios");
 			attr.setSection(subsection);
@@ -1437,16 +1594,17 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Subseção 12.4 - Recursos tecnológicos e de áudio visual
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Recursos tecnológicos e de áudio visual");
-			subsection.setSequence(4); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(4); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrever os recursos presentes na IES, e o planejamento de melhorias nessa área");
 			attr.setSection(subsection);
@@ -1454,16 +1612,19 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Subseção 12.5 - Plano de promoção de acessibilidade e de atendimento diferenciado a portadores de necessidades especiais
+
+			// Subseção 12.5 - Plano de promoção de acessibilidade e de
+			// atendimento diferenciado a portadores de necessidades especiais
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
-			subsection.setName("Plano de promoção de acessibilidade e de atendimento diferenciado a portadores de necessidades especiais");
-			subsection.setSequence(5); // Número da subseção para ordenar na exibição.
+			subsection.setName(
+					"Plano de promoção de acessibilidade e de atendimento diferenciado a portadores de necessidades especiais");
+			subsection.setSequence(5); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Ações planejadas para promover acessibilidade aos portadores de necessidades especiais");
 			attr.setSection(subsection);
@@ -1471,16 +1632,18 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Subseção 12.6 - Cronograma de expansão da infra-estrutura para o período de vigência do PDI
+
+			// Subseção 12.6 - Cronograma de expansão da infra-estrutura para o
+			// período de vigência do PDI
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Cronograma de expansão da infraestrutura para o período de vigência do PDI");
-			subsection.setSequence(6); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(6); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma de implementação das ações voltadas para a infraestrutura");
 			attr.setSection(subsection);
@@ -1488,22 +1651,23 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
 			schedule.setIsDocument(true);
 			session.persist(schedule);
-			
+
 			// Subseção 12.7 - Objetivos e metas
 			subsection = new DocumentSection();
 			subsection.setDocument(document);
 			subsection.setName("Objetivos e metas");
-			subsection.setSequence(7); // Número da subseção para ordenar na exibição.
+			subsection.setSequence(7); // Número da subseção para ordenar na
+										// exibição.
 			subsection.setParent(section);
 			subsection.setLeaf(true);
 			session.persist(subsection);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição do plano de expansão da infraestrutura");
 			attr.setSection(subsection);
@@ -1511,7 +1675,7 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Selecione o plano de metas correspondente");
 			attr.setSection(subsection);
@@ -1519,16 +1683,17 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
-			// Seção 13 - Avaliação e acompanhamento do desenvolvimento institucional
+
+			// Seção 13 - Avaliação e acompanhamento do desenvolvimento
+			// institucional
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Avaliação e acompanhamento do desenvolvimento institucional");
-			section.setSequence(13); // Número da seção para ordenar na exibição.
+			section.setSequence(13); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrever os procedimentos utilizados para a realização da autoavaliação da IES");
 			attr.setSection(section);
@@ -1536,40 +1701,43 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 14 - Gestão financeira e orçamentária
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Gestão financeira e orçamentária");
-			section.setSequence(14); // Número da seção para ordenar na exibição.
+			section.setSequence(14); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
-			
+
 			attr = new DocumentAttribute();
-			attr.setName("Apresentar ações relacionadas à melhoria da gestão financeira da IES, bem como demonstrar a sustentabilidade financeira");
+			attr.setName(
+					"Apresentar ações relacionadas à melhoria da gestão financeira da IES, bem como demonstrar a sustentabilidade financeira");
 			attr.setSection(section);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 15 - Processo de monitoramento, controle e revisão do PDI
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Processo de monitoramento, controle e revisão do PDI");
-			section.setSequence(15); // Número da seção para ordenar na exibição.
+			section.setSequence(15); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-						
+
 			attr = new DocumentAttribute();
-			attr.setName("Apresentar o planejamento das atividades de controle que ocorrerão durante a vigência do PDI");
+			attr.setName(
+					"Apresentar o planejamento das atividades de controle que ocorrerão durante a vigência do PDI");
 			attr.setSection(section);
 			attr.setType(TextArea.generateId(TextArea.class));
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Cronograma de execução");
 			attr.setSection(section);
@@ -1577,21 +1745,22 @@ public class ForpladHelper {
 			attr.setSequence(2); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			schedule = new Schedule();
 			schedule.setPeriodicityEnable(false);
 			schedule.setAttributeId(attr.getId());
 			schedule.setIsDocument(true);
 			session.persist(schedule);
-			
+
 			// Seção 16 - Plano para gestão de riscos
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Plano para gestão de riscos");
-			section.setSequence(16); // Número da seção para ordenar na exibição.
+			section.setSequence(16); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-						
+
 			attr = new DocumentAttribute();
 			attr.setName("Análise de riscos e o plano em caso de ocorrência");
 			attr.setSection(section);
@@ -1599,16 +1768,16 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 17 - Conclusão
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Conclusão");
-			section.setSequence(17); // Número da seção para ordenar na exibição.
+			section.setSequence(17); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Conclusão do documento de PDI");
 			attr.setSection(section);
@@ -1616,16 +1785,16 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 18 - Anexos
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Anexos");
-			section.setSequence(18); // Número da seção para ordenar na exibição.
+			section.setSequence(18); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição dos anexos");
 			attr.setSection(section);
@@ -1633,15 +1802,16 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-			
+
 			// Seção 19 - Apêndice
 			section = new DocumentSection();
 			section.setDocument(document);
 			section.setName("Apêndice");
-			section.setSequence(19); // Número da seção para ordenar na exibição.
+			section.setSequence(19); // Número da seção para ordenar na
+										// exibição.
 			section.setLeaf(true);
 			session.persist(section);
-			
+
 			attr = new DocumentAttribute();
 			attr.setName("Descrição dos apêndices");
 			attr.setSection(section);
@@ -1649,8 +1819,8 @@ public class ForpladHelper {
 			attr.setSequence(1); // Ordem do atributo dentro da seção
 			attr.setRequired(false);
 			session.persist(attr);
-						
+
 		}
-		
+
 	}
 }

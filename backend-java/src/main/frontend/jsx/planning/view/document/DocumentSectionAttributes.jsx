@@ -572,7 +572,7 @@ export default React.createClass({
 					</div>
 					:
 					(((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) ?
+					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') && !this.state.model.preTextSection) ?
 						<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
 							<span className="mdi mdi-plus" /> Adicionar novo campo
 						</button>
