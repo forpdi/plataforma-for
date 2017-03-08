@@ -1,0 +1,26 @@
+.fpdi-error-404 {
+  text-align: center;
+  padding-top: 12vh;
+  padding-bottom: 12vh;
+
+  h1 {
+    color: #3a3a3a;
+    font-size: 28px;
+    font-weight: $font-weight-normal;
+  }
+
+  p {
+    color: #989898;
+    font-size: 14px;
+  }
+
+  img, h1, p {
+  	margin-bottom: 20px;
+  }
+}
+
+.upload-error {
+  color: crimson;
+  margin-top: 10px;
+  font-weight: 600;
+}

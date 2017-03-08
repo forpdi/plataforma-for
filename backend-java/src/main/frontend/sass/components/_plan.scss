@@ -1,0 +1,38 @@
+.fpdi-plan-details {
+  	@include flexbox;
+  	@include flex-dir(row);
+
+    & > .fpdi-plan-tree {
+      @extend .fpdi-card;
+      @include flex(3);
+      max-width: 240px !important;
+      margin-right: 20px;
+
+      & > h1, & > .fpdi-plan-tree-title {
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 100%;
+        margin: 0px 0px 10px 0px;
+      }
+    }
+
+  	& > .fpdi-plan-tabs {
+  		@include flex(7);
+  	}
+}
+
+.fpdi-attributesTitle {
+  margin-bottom: 15px;
+  padding-left: 0px;
+}
+
+.fpdi-indicatorTitle {
+  margin-bottom: 0px;
+  padding-left: 0px;
+}
+
+.fpdi-attributesView {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: darken($brand-primary, 25%);
+}

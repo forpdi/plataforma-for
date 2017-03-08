@@ -1,0 +1,170 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.forpdi</groupId>
+	<artifactId>forpdi</artifactId>
+	<version>1.0.0-alpha1</version>
+	<packaging>war</packaging>
+
+	<parent>
+		<groupId>br.com.progolden</groupId>
+		<artifactId>webapp-parent</artifactId>
+		<version>1.3</version>
+	</parent>
+
+	<name>ForPDI</name>
+	<description>Ferramenta para gestão e controle de Planos de Desenvolvimento Institucional.</description>
+	<url>https://forpdi.org/</url>
+	<scm>
+		<connection>scm:git:git@github.com:forpdi/forpdi.git</connection>
+		<developerConnection>scm:git:git@github.com:forpdi/forpdi.git</developerConnection>
+		<url>https://github.com/forpdi/forpdi</url>
+	</scm>
+
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+		</license>
+	</licenses>
+
+	<properties>
+		<version.vraptor.boilerplate>1.0.0</version.vraptor.boilerplate>
+
+		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
+		<db.name>forpdi_db</db.name>
+		<db.username>root</db.username>
+		<db.password></db.password>
+		<backendUrl>http://localhost:8080/forpdi/</backendUrl>
+		<mail.smtp.url>progolden.com.br</mail.smtp.url>
+		<mail.smtp.port>465</mail.smtp.port>
+		<mail.smtp.username>noreply@forpdi.org</mail.smtp.username>
+		<mail.smtp.password>NoReply@123!</mail.smtp.password>
+		<mail.smtp.ssl>true</mail.smtp.ssl>
+		<war.frontenddir>development</war.frontenddir>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>teste</id>
+			<properties>
+				<db.name>forpdi_teste</db.name>
+				<db.username>root</db.username>
+				<db.password>Adm@ProDb!20</db.password>
+				<backendUrl>http://teste.forpdi.org/</backendUrl>
+				<mail.smtp.url>localhost</mail.smtp.url>
+				<mail.smtp.port>25</mail.smtp.port>
+				<mail.smtp.username></mail.smtp.username>
+				<mail.smtp.password></mail.smtp.password>
+				<mail.smtp.ssl>false</mail.smtp.ssl>
+				<war.frontenddir>production</war.frontenddir>
+			</properties>
+		</profile>
+		<profile>
+			<id>mirror</id>
+			<properties>
+				<db.name>forpdi_db</db.name>
+				<db.username>root</db.username>
+				<db.password>Adm@ProDb!20</db.password>
+				<backendUrl>http://mirror.forpdi.org/</backendUrl>
+				<mail.smtp.url>localhost</mail.smtp.url>
+				<mail.smtp.port>25</mail.smtp.port>
+				<mail.smtp.username></mail.smtp.username>
+				<mail.smtp.password></mail.smtp.password>
+				<mail.smtp.ssl>false</mail.smtp.ssl>
+				<war.frontenddir>production</war.frontenddir>
+			</properties>
+		</profile>
+		<profile>
+			<id>prd</id>
+			<properties>
+				<db.name>forpdi_db</db.name>
+				<db.username>forpdi_admin</db.username>
+				<db.password>@forpdiAdminBD!</db.password>
+				<backendUrl>http://app.forpdi.org/</backendUrl>
+				<mail.smtp.url>localhost</mail.smtp.url>
+				<mail.smtp.port>25</mail.smtp.port>
+				<mail.smtp.username></mail.smtp.username>
+				<mail.smtp.password></mail.smtp.password>
+				<mail.smtp.ssl>false</mail.smtp.ssl>
+				<war.frontenddir>production</war.frontenddir>
+			</properties>
+		</profile>
+	</profiles>
+
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.xml</include>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>**/*.xml</exclude>
+					<exclude>**/*.properties</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+					<resourceEncoding>UTF-8</resourceEncoding>
+					<webResources>
+						<resource>
+							<directory>src/main/frontend/build/${war.frontenddir}</directory>
+							<filtering>false</filtering>
+							<excludes>
+								<exclude>node_modules</exclude>
+								<exclude>index.html</exclude>
+							</excludes>
+						</resource>
+						<resource>
+							<directory>src/main/frontend/build/${war.frontenddir}</directory>
+							<filtering>true</filtering>
+							<includes>
+								<include>index.html</include>
+							</includes>
+						</resource>
+					</webResources>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>br.com.progolden</groupId>
+			<artifactId>vraptor-boilerplate-hibernate</artifactId>
+			<version>${version.vraptor.boilerplate}</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.progolden</groupId>
+			<artifactId>vraptor-boilerplate-core</artifactId>
+			<version>${version.vraptor.boilerplate}</version>
+		</dependency>
+		<dependency>
+			<groupId>br.com.progolden</groupId>
+			<artifactId>vraptor-boilerplate-utils</artifactId>
+			<version>${version.vraptor.boilerplate}</version>
+		</dependency>
+
+
+
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+	</dependencies>
+
+</project>

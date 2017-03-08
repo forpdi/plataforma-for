@@ -1,0 +1,101 @@
+.fpdi-treeview {
+	  & .fpdi-treeview-node {
+		font-size: 13px;
+		line-height: 19px;
+		margin: 0px;
+		padding: 0.25em 0em;
+		color: #333;
+
+		& .fpdi-new-node-label {
+			font-style: italic;
+			color: darken($brand-primary, 12%);
+			font-size: 12px;
+		}
+
+		& .mdi {
+		  font-size: 16px;
+		  line-height: 16px;
+		  vertical-align: middle;
+		  padding: 0px 1px 0px 0px;
+		  margin: -2px 0px 0px;
+		  &:before {
+		  	font-size: 16px;
+			line-height: 16px;
+			vertical-align: middle;
+			padding: 0px 1px 0px 0px;
+			margin: -2px 0px 0px;
+		  }
+		  &.fpdi-new-node-icon:before {
+		  	color: mix($brand-primary, #111, 40%);
+		    font-size: 12px;
+			line-height: 12px;
+			vertical-align: middle;
+			padding: 0px 1px 0px 0px;
+			margin: 0px 0px 0px;
+		  }
+		}
+		& .mdi-blank:before, & .mdi-blank {
+		  color: transparent;
+		}
+
+		& a {
+		  color: #333;
+		}
+		// Correção do margin top do primeiro subitem.
+		& > a + .fpdi-treeview-node {
+		  padding-top: 0.5em;
+		}
+		// Borda delimitadora e margem esquerda dos subitems.
+		& > .fpdi-treeview-node {
+		  padding-left: 1.2em;
+		  border-left: 1px solid #E4E4E4;
+		}
+		&.active > a, & a.active {
+		  font-weight: bold;
+		}
+		&.active > a, & a.active, & a:hover {
+		  //color: #0085D9 !important;
+		  color: darken($brand-primary, 12%);
+		  text-decoration: none;
+		}
+	  }
+}
+
+.fdpi-accepted-new-node{
+	color: #FFF;
+    background-color: #40D17D;
+    padding: 2px !important;
+    font-weight: bold;
+    border-radius: 3px;    
+    width: 20px;
+}
+
+.fdpi-accepted-new-node:hover{
+	background-color: #00742C;
+	cursor: pointer;
+}
+
+
+.fdpi-rejected-new-node{
+	color: #FFF;
+    background-color: #EA5949;
+    padding: 2px !important;
+    font-weight: bold;
+    border-radius: 3px;
+    width: 20px;
+}
+
+.fdpi-rejected-new-node:hover{
+	background-color:#c80f2e;
+	cursor: pointer;
+}
+
+.fpdi-new-node-textarea{
+	width: 100%;
+	height: 60px;
+}
+
+.fpdi-node-label{
+	word-break: break-word;
+}
+

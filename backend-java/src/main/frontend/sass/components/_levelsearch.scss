@@ -1,0 +1,118 @@
+.level-search-keyword input {
+	width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.level-search-checkbox-inputs {
+	overflow-y: scroll;
+    height: 100px;
+    border: 1px solid #ccc !important;
+}
+
+.level-search-checkbox-inputs div {
+    padding: 8px 0 0 8px;
+}
+
+.level-search-checkbox-inputs input {
+    -ms-transform: scale(1.0);
+    -moz-transform: scale(1.0);
+    -webkit-transform: scale(1.0);
+    -o-transform: scale(1.0);
+    padding: 3px;
+    margin-right: 10px;
+}
+
+.level-search-select select {
+	width: 100%;
+    padding: 5px;
+}
+
+.level-search-buttons {
+	padding: 15px 0;
+    margin-top: 15px;
+}
+
+.level-search-button-clear {
+	background-color: #e8e8e8;
+    color: #666;
+    padding: 5px 15px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.level-search-button-clear:hover{
+    background-color: #D6DEEE;
+}
+
+
+.level-search-button-search {
+	background-color: $brand-primary;
+    color: white;
+    padding: 5px 15px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.level-search-button-search:hover{
+    background-color: #0066A6;
+}
+
+.level-search-date {
+    display: flex;
+}
+
+.level-search-date-init {
+	margin-right: 7px;
+}
+
+#fpdi-result-search-level {
+    margin-top: 0.5cm;
+    margin-bottom: 0.5cm;
+}
+
+#fpdi-result-search-title {
+    font-size: 80%;
+}
+
+#fpdi-result-search {
+    margin-top: 0.5cm;
+}
+
+
+.level-search  h1 {
+    font-size: 120%;
+}
+.level-search-keyword h3 {
+    font-size: 100%;    
+}
+
+.level-search-checkbox h3 {
+    font-size: 100%;
+}
+
+.level-search-select h3 {
+    font-size: 100%;
+}
+
+.level-search-date-init .level-search-date-init {
+    font-size: 100%;
+}
+
+.level-search-select select {
+    font-size: 95%;
+}
+
+.level-search-checkbox-inputs {
+    font-size: 80%;
+}
+
+.displayFlex-level-search {
+    float:right;
+}
+.mdi-level-search {
+    color:#D3D3D3
+}

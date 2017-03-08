@@ -1,0 +1,354 @@
+#main-body {
+	margin: 0;
+	padding: 0;
+}
+
+/* 
+ * DEPRECATED
+ * To use this container set the 'main' tag class on 'AppSetup.jsx' to .fpdi-app-container.
+ */
+.fpdi-app-container {
+  position: absolute;
+  @include flexbox;
+  @include flex-dir(column);
+	z-index: 1;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+
+
+.fpdi-app-body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  @include flexbox;
+  @include flex-dir(row);
+  @include flex(1);
+	height: 100%;
+  background-color: $brand-background;
+  .fpdi-app-content {
+    @extend .container-fluid;
+    overflow-y: auto;
+    @include flex(7);
+    background-color: $brand-background;
+    padding-top: 10px;
+    padding-bottom: 30px;
+  }
+}
+
+
+.fpdi-app-sidebar-sm {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  @include flexbox;
+  @include flex-dir(column);
+	height: 100%;
+  min-width: 50px;
+  width: 50px;
+  max-width: 50px;
+  padding: 0px;
+  font-size: 25px;
+  text-align: center;
+  background-color: #000;
+  color: #FFF;
+  > span, > a {
+  	display: block;
+  	height: 50px;
+  	width: 50px;
+  	line-height: 50px;
+  	margin: 0px auto;
+  	cursor: pointer;
+  	&:hover {
+  		background-color: #FFF;
+  		color: #000;
+  	}
+  }
+}
+
+.fpdi-app-sidebar, .fpdi-app-sidebar-hidden {
+  overflow-y: auto;
+  overflow-x: hidden;
+  /*@include flexbox;*/
+  @include flex-dir(column);
+  @include flex(2);
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF;
+  background-color: mix($brand-primary, #111, 40%);
+
+  & > * {
+    background-color: inherit;
+  }
+
+}
+.fpdi-app-sidebar {
+  max-width: 260px;
+  @media (max-width: 900px) {
+    max-width: 55px;
+    & .fpdi-nav-label {
+      display: none;
+    }
+    & .fpdi-nav-hide-btn {
+      display: none !important;
+    }
+  }
+}
+.fpdi-app-sidebar-hidden {
+  max-width: 70px;
+  & .fpdi-nav-label {
+    display: none;
+  }
+}
+
+
+.fpdi-top-bar {
+  background-color: #FFF;
+  color: mix($brand-primary, #000000, 40%);
+  height: 70px;
+  margin: 0px;
+  padding: 10px 20px;
+  @include flexbox;
+  @include flex-dir(row);
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #CCC;
+
+  & .mdi {
+    font-size: 24px;
+    vertical-align: middle;
+    &::before {
+      font-size: 24px;
+    }
+  }
+  & > a, .dropdown-toggle {
+    background-color: transparent;
+    color: mix($brand-primary, #000000, 40%);
+    margin: auto;
+    &:hover {
+      color: $brand-primary;
+    }
+  }
+  & > * {
+    vertical-align: middle;
+  }
+  & > *:not(:last-child) {
+    margin-right: 25px;
+  }
+
+  & .fpdi-top-bar-brand {
+    width: 220px;
+    overflow-x: hidden;
+    border: none;
+    margin: 0px;
+    padding: 0px;
+    background-color: transparent;
+
+    @media (max-width: 640px) {
+      display: none;
+    }
+
+    > img {
+      height: 50px;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+}
+
+.fpdi-fill {
+  @include flex(1);
+}
+
+.form-control{
+  height: auto;
+}
+
+.fpdi-card-full{
+  word-wrap: break-word;
+}
+
+.fdpi-table-container{
+  border: 1px solid #CCC;
+  width: 100%;
+  margin-bottom: 0px;
+  border-radius: 25px;
+}
+
+.fdpi-table-header{
+  border-bottom: 1px solid #CCC;
+  padding: 10px;
+}
+
+.fdpi-table-cell{
+  padding: 10px;
+}
+
+.fdpi-table-cell-center{
+  text-align: center;
+}
+
+.fpdi-duplicate-plan{
+  padding: 10px;
+}
+
+.fpdi-duplicate-checkbox-label{
+  font-size: 12px;
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+.fpdi-indicator-type-ctn {  
+  margin-top: 10px;
+  margin-left: -18px;  
+}
+
+.fpdi-indicator-type-label {
+  margin-left: -30px;
+  margin-right: 22px;
+  font-weight: 100;
+  font-size: small;
+}
+
+.fpdi-indicator-type-value {
+  color: #9E9E9F;
+  font-style: italic;
+  display: none;
+}
+
+.fpdi-indicators-ctn {
+  height: 230px !important;
+  overflow-y: auto; 
+  word-break: break-all;
+  word-wrap: break-word; 
+}
+
+.fpdi-indicators {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.fpdi-indicator-item {
+  padding: 6px 0px 6px 0px;
+  font-size: 15px;  
+  color: #B4B4B4;
+  cursor: pointer;
+  & > span {
+    font-family: "Open Sans";
+  }
+}
+
+.fpdi-indicator-item:hover {
+  color: mix($brand-primary, #000, 70%);
+}
+
+.fpdi-indicator-item-selected {
+  padding: 6px 0px 6px 0px;
+  font-size: 15px;  
+  color: mix($brand-primary, #000, 70%);
+  cursor: pointer;
+  & > span {
+    font-family: "Open Sans";
+  }
+}
+
+.fpdi-indicator-remove {
+  color: #666;
+  font-weight: bold;  
+  float: right;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.fpdi-indicator-weigth-total {
+  color: red;
+  font-weight: bold;
+}
+
+.fpdi-indicator-weigth-total-text{
+  width: 170px;
+  font-size: 12px;
+  color: red;
+  text-align: right;
+  font-weight: bold;
+}
+
+.fpdi-level-type-value {
+  color: #9E9E9F;
+  font-style: italic;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.fpdi-archived-label {
+  font-style: italic;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.fpdi-marginTop20 {
+  margin-top: 20px;
+}
+
+.fpdi-breadcrumb {
+  font-family: "Open Sans";
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.fpdi-selectedOnBreadcrumb {
+  color: #B2B2B2;
+}
+
+.fpdi-breadcrumbDivisor {
+  vertical-align: middle;
+  color: #0085D8;
+}
+
+.fpdi-levelValueBox {
+  float: right;
+  margin-right: 15px;
+  background:darken($brand-primary, 20%);
+  max-width: 100px !important;
+  height: 50px;
+}
+
+.fpdi-containerTitle {
+  float: left;
+}
+
+.fpdi-notifications-number {
+  position: relative;
+  background: #FF5B5B;
+  border-radius: 50%;
+  font-size: 8px;
+  color: #FFF !important;
+  padding: 2px;
+  float: right;
+  margin-left: -10px;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.fpdi-notifications {
+  position: relative;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.fpdi-noNotifications {
+  padding: 10px;
+  font-size: 12px;
+}
+
+.fpdi-userPicture {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}

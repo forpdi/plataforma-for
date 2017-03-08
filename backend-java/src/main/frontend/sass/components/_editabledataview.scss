@@ -1,0 +1,48 @@
+.media, .media-body {
+	overflow: visible !important;
+}
+.fpdi-editable-data-view {
+	& .fpdi-editable-data-view-value {
+		cursor: pointer;
+		word-break: break-all;
+		& > .mdi:before {
+			color: #CCC;
+		}
+	}
+
+	.fpdi-editable-data-input-group {
+		background-color: #FFF;
+		position: absolute;
+		z-index: 99;
+		box-shadow: 0px 0px 10px #000;
+		padding: 5px;
+		margin: 0px;
+		& input, & select, & textarea {
+			width: 350px;
+		}
+		& .btn {
+			padding: 5px;
+			margin: 3px 3px 0px 0px !important;
+			height: auto;
+			width: auto;
+		}
+	}
+	/*&:after {
+		visibility: hidden;
+		margin-left: 5px;
+		content: mdi("pencil");
+		@extend .mdi;
+	}
+	&:hover:after {
+		visibility: visible;
+	}*/
+}
+
+/*.fpdi-editable-data-input-group {
+	.fpdi-editable-data-input {
+
+	}
+	.fpdi-editable-data-textarea {
+
+	}
+}*/

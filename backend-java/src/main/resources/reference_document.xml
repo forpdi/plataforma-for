@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<document xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="document_structure_1.0.xsd">
+	<documentName>Modelo de Documento ForPlad</documentName>
+	<documentDescription>Modelo do documento &#224; ser geradpo pelos
+		planos.
+	</documentDescription>
+	<documentSections>
+		<documentSection>
+			<name>Apresenta&#231;&#227;o</name>
+			<attributes>
+				<attribute required="true">
+					<label>Apresenta&#231;&#227;o do PDI</label>
+					<description></description>
+					<type>TextField</type>
+				</attribute>
+			</attributes>
+		</documentSection>
+		<documentSection>
+			<name>M&#233;todo</name>
+			<attributes>
+				<attribute required="true">
+					<label>Descri&#231;&#227;o do m&#233;todo utilizado para a
+						elabora&#231;&#227;o do PDI</label>
+					<description></description>
+					<type>TextField</type>
+				</attribute>
+			</attributes>
+		</documentSection>
+		<documentSection>
+			<name>Documentos de Refer&#234;ncia</name>
+			<attributes>
+				<attribute required="true">
+					<label>Documentos de refer&#234;ncia mais utilizados para a
+						elabora&#231;&#227;o do PDI
+					</label>
+					<description></description>
+					<type>TextField</type>
+				</attribute>
+			</attributes>
+		</documentSection>
+		<documentSection>
+			<name>Resultados do PDI Anterior</name>
+			<attributes>
+				<attribute required="true">
+					<label>Resultados do PDI anterior</label>
+					<description></description>
+					<type>TextField</type>
+				</attribute>
+			</attributes>
+		</documentSection>
+		<documentSection>
+			<name>Perfil Institucional</name>
+			<subSection>
+				<name>Hist&#243;rico do IES</name>
+				<attributes>
+					<attribute required="true">
+						<label>An&#225;lise do hist&#243;rico de todos os campus da IES
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Finalidade</name>
+				<attributes>
+					<attribute required="true">
+						<label>Finalidade da IES</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Miss&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Miss&#227;o</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					<attribute required="true">
+						<label>Vis&#227;o</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					<attribute required="true">
+						<label>Valores</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>&#193;rea(s) de atua&#231;&#227;o acad&#234;mica</name>
+				<attributes>
+					<attribute required="true">
+						<label>&#193;reas de atua&#231;&#227;o acad&#234;mica</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Projeto Pedag&#243;gico Institucional (PPI)</name>
+			<subSection>
+				<name>Inser&#231;&#227;o regional</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Princ&#237;pios filos&#243;ficos e
+					t&#233;cnico-metodol&#243;gicos gerais</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o dos princ&#237;pios que norteiam as
+							pr&#225;ticas
+							acad&#234;micas da IES
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Organiza&#231;&#227;o did&#225;tico-pedag&#243;gica da
+					institui&#231;&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Organiza&#231;&#227;o did&#225;tico-pedag&#243;gica da
+							institui&#231;&#227;o</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Pol&#237;ticas de Ensino</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o das pol&#237;ticas de ensino</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Pol&#237;ticas de Extens&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o das pol&#237;ticas de extens&#227;o
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Pol&#237;ticas de Pesquisa</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o das pol&#237;ticas de pesquisa</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Pol&#237;ticas de Gest&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o das pol&#237;ticas de gest&#227;o
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Responsabilidade Social da IES</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o da contribui&#231;&#227;o &#224;
+							inclus&#227;o social e ao
+							desenvolvimento econômico e social da
+							regi&#227;o
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Cronograma de Implanta&#231;&#227;o e Desenvolvimento da
+				Institui&#231;&#227;o e
+				dos Cursos
+			</name>
+			<subSection>
+				<name>Descri&#231;&#227;o da situa&#231;&#227;o atual</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o da situa&#231;&#227;o atual</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					<!-- <attribute required="true"> <label>Cursos ofertados pela IES</label> 
+						<description></description> <type>TableField</type> </attribute> -->
+					<!-- <attribute required="true"> <label>Cursos que ser&#227;o expandidos 
+						ou abertos no futuro</label> <description></description> <type>TableField</type> 
+						</attribute> -->
+					<attribute required="true">
+						<label>Cronograma de expans&#227;o</label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Objetivos e metas</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o do plano de implanta&#231;&#227;o e
+							desenvolvimento da
+							institui&#231;&#227;o e dos cursos
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Perfil do Corpo Docente</name>
+			<subSection>
+				<name>Composi&#231;&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+				<!-- <attributes> -->
+				<!-- <attribute required="true"> <label>Evolu&#231;&#227;o no Quadro 
+					Permanente de Docentes por Classe/ano</label> <description></description> 
+					<type>TableField</type> -->
+				<!-- <attribute required="true"> <label>Evolu&#231;&#227;o no Quadro 
+					Permanente de Docentes por Titula&#231;&#227;o</label> <description></description> 
+					<type>TableField</type> </attribute> -->
+				<!-- <attribute required="true"> <label>Evolu&#231;&#227;o no quadro 
+					permanente de docentes por regime de trabalho</label> <description></description> 
+					<type>TableField</type> </attribute> -->
+				<!-- </attributes> -->
+			</subSection>
+			<subSection>
+				<name>Plano de Carreira</name>
+				<attributes>
+					<attribute required="true">
+						<label>Plano de carreira</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Crit&#233;rios de sele&#231;&#227;o e contrata&#231;&#227;o
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Crit&#233;rios de sele&#231;&#227;o e contrata&#231;&#227;o
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Procedimentos para substitui&#231;&#227;o (definitiva e
+					eventual) dos
+					professores do quadro
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Procedimentos adotados pela IES, visando
+							recomposi&#231;&#227;o e
+							substitui&#231;&#227;o de professores do
+							quadro
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Cronograma</name>
+				<attributes>
+					<attribute required="true">
+						<label>Cronograma</label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Objetivos e metas</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o do plano de expans&#227;o do corpo
+							docente</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Perfil do Corpo T&#233;cnico Administrativo</name>
+			<subSection>
+				<name>Composi&#231;&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Composi&#231;&#227;o</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Plano de carreira</name>
+				<attributes>
+					<attribute required="true">
+						<label>Plano de carreira de magist&#233;rio</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Crit&#233;rios de sele&#231;&#227;o e contrata&#231;&#227;o
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Apresentar os crit&#233;rios de sele&#231;&#227;o e
+							contrata&#231;&#227;o de
+							professores utilizados pela IES
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Procedimentos para substitui&#231;&#227;o (definitiva e
+					eventual) dos
+					professores do quadro
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o dos procedimentos adotados pela IES,
+							visando
+							recomposi&#231;&#227;o e substitui&#231;&#227;o de
+							professores do quadro
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Cronograma e plano de expans&#227;o do corpo t&#233;cnico
+					administrativo
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Cronograma </label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Objetivos e metas</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o do plano de expans&#227;o do corpo
+							docente </label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Organiza&#231;&#227;o Administrativa da IES</name>
+			<subSection>
+				<name>Estrutura Organizacional, Instâncias de Decis&#227;o e
+					Organograma
+					Institucional e Acad&#234;mico
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descrever a estrutura organizacional da IES</label>
+						<description></description>
+						<type>TextField</type>
+
+					</attribute>
+					<attribute required="false">
+						<label>Apresentar o organograma</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>&#243;rg&#227;os Colegiados</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descrever as compet&#234;ncias e composi&#231;&#227;o de
+							cada &#243;rg&#227;o
+							colegiado
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>&#243;rg&#227;os de apoio &#224;s atividades acad&#234;micas
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descrever as compet&#234;ncias e composi&#231;&#227;o de
+							cada &#243;rg&#227;o de
+							apoio
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Pol&#237;ticas de Atendimento aos Discentes</name>
+			<subSection>
+				<name>Programas de apoio pedag&#243;gico e financeiro (bolsas)
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o de todos os programas de apoio
+							pedag&#243;gico e
+							financeiro
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Est&#237;mulos &#224; perman&#234;ncia</name>
+				<attributes>
+					<attribute required="true">
+						<label>Est&#237;mulos &#224; perman&#234;ncia</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Organiza&#231;&#227;o estudantil</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o dos espa&#231;os para
+							participa&#231;&#227;o e conviv&#234;ncia
+							estudantil, bem como dos
+							&#243;rg&#227;os de representatividade discente
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Acompanhamento dos egressos</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o das formas de rela&#231;&#227;o com os
+							egressos</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Objetivos e metas</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o do alano de atendimento aos discentes</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Infraestrutura</name>
+			<subSection>
+				<name>Infraestrutura f&#237;sica</name>
+				<attributes>
+					<attribute required="true">
+						<label>Detalhar infraestrutura f&#237;sica</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Biblioteca</name>
+				<attributes>
+					<attribute required="true">
+						<label>Informa&#231;&#245;es sobre a biblioteca</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					<attribute required="true">
+						<label>Cronograma de expans&#227;o do acervo</label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Laborat&#243;rios</name>
+				<attributes>
+					<attribute required="true">
+						<label>Informa&#231;&#245;es sobre os laborat&#243;rios</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Recursos tecnol&#243;gicos e de &#225;udio visual</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descrever os recursos presentes na IES, e o planejamento de
+							melhorias nessa &#225;rea
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Plano de promo&#231;&#227;o de acessibilidade e de atendimento
+					diferenciado a portadores de necessidades especiais
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>A&#231;&#245;es planejadas para promover acessibilidade aos
+							portadores de necessidades especiais
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Cronograma de expans&#227;o da infra-estrutura para o
+					per&#237;odo de
+					vig&#234;ncia do PDI
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Cronograma de implementa&#231;&#227;o das a&#231;&#245;es
+							voltadas para a
+							infraestrutura
+						</label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+			<subSection>
+				<name>Objetivos e metas</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o do plano de expans&#227;o da
+							infraestrutura</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					
+					<attribute required="true">
+						<label>Selecione um plano</label>
+						<type>SelectPlan</type>
+						<description>Escolha um objetivo</description>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Gest&#227;o Financeira e Or&#231;ament&#225;ria</name>
+			<subSection>
+				<name>Gest&#227;o financeira e or&#231;ament&#225;ria</name>
+				<attributes>
+					<attribute required="true">
+						<label>Apresentar a&#231;&#245;es relacionadas &#224; melhoria da
+							gest&#227;o
+							financeira da IES, bem como demonstrar a
+							sustentabilidade
+							financeira
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Processo de Monitoramento, Controle e Revis&#227;o do PDI
+			</name>
+			<subSection>
+				<name>Processo de monitoramento, controle e revis&#227;o do PDI
+				</name>
+				<attributes>
+					<attribute required="true">
+						<label>Apresentar o planejamento das atividades de controle que
+							ocorrer&#227;o durante a vig&#234;ncia do PDI
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+					<attribute required="true">
+						<label>Cronograma de execu&#231;&#227;o</label>
+						<description></description>
+						<type>ScheduleField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Plano para Gest&#227;o de Riscos</name>
+			<subSection>
+				<name>Plano para gest&#227;o de riscos</name>
+				<attributes>
+					<attribute required="true">
+						<label>An&#225;lise de riscos e o plano em caso de ocorr&#234;ncia
+						</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Conclus&#227;o</name>
+			<subSection>
+				<name>Conclus&#227;o</name>
+				<attributes>
+					<attribute required="true">
+						<label>Conclus&#227;o do documento de PDI</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Anexos</name>
+			<subSection>
+				<name>Anexos</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o dos anexos</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+		<documentSection>
+			<name>Ap&#234;ndice</name>
+			<subSection>
+				<name>Ap&#234;ndice</name>
+				<attributes>
+					<attribute required="true">
+						<label>Descri&#231;&#227;o dos ap&#234;ndice</label>
+						<description></description>
+						<type>TextField</type>
+					</attribute>
+				</attributes>
+			</subSection>
+		</documentSection>
+	</documentSections>
+</document>

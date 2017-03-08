@@ -1,0 +1,70 @@
+//
+// Text Label
+//
+
+// Text Label Base
+.fpdi-text-label {
+  @include text-label-variant( $color-grayscale-darkest, $font-weight-semibold, uppercase);
+  //letter-spacing: .5em;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  font-size: 0.750em; 
+}
+
+.pdi-normal-text{
+  color: $color-grayscale-base;
+  font-weight:  $font-weight-normal;
+  padding: 5px;
+  width: 100%;
+}
+
+a.fpdi-text-label:hover,
+a.fpdi-text-label:focus {
+  color: $color-grayscale-base;
+}
+
+// Text Label for Danger Tags
+.fpdi-text-label-blue {
+  @include text-label-variant($color-brand-blue, $font-weight-normal, normal);
+}
+
+// Text Label for Danger Tags
+.fpdi-text-label-red {
+  @include text-label-variant($color-brand-red, $font-weight-normal, normal);
+}
+
+// Text Label for Money Tags
+.fpdi-text-label-green {
+  @include text-label-variant($color-brand-green, $font-weight-normal, normal);
+}
+
+// Text Label for Score Tags
+.fpdi-text-label-orange {
+  @include text-label-variant($color-brand-orange, $font-weight-normal, normal);
+}
+
+// Text Label for Initiation Tags
+.fpdi-text-label-purple {
+  @include text-label-variant($color-brand-purple, $font-weight-normal, normal);
+}
+
+// Text Label for Form Tips
+.fpdi-text-label-tip {
+  @include text-label-variant($color-grayscale-lighter, $font-weight-normal, none);
+
+  label + & {
+  	float: right !important;
+  }
+}
+
+// Text Label for Required Fields in Forms
+.fpdi-text-label-required::after {
+  content:"*";
+  @include text-label-variant($color-brand-red, $font-weight-extrabold, uppercase);
+}
+
+.fpdi-text-title-page {
+  font-size: 1.125rem;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}

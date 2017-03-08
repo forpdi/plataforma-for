@@ -1,0 +1,1633 @@
+<definitions name='WSQuantitativo' targetNamespace='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+ <types>
+  <xs:schema targetNamespace='http://servicoweb.siop.sof.planejamento.gov.br/' version='1.0' xmlns:tns='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+   <xs:element name='cadastrarAcompanhamentoOrcamentario' type='tns:cadastrarAcompanhamentoOrcamentario'/>
+   <xs:element name='cadastrarAcompanhamentoOrcamentarioResponse' type='tns:cadastrarAcompanhamentoOrcamentarioResponse'/>
+   <xs:element name='cadastrarProposta' type='tns:cadastrarProposta'/>
+   <xs:element name='cadastrarPropostaResponse' type='tns:cadastrarPropostaResponse'/>
+   <xs:element name='consultarAcompanhamentoFisicoFinanceiro' type='tns:consultarAcompanhamentoFisicoFinanceiro'/>
+   <xs:element name='consultarAcompanhamentoFisicoFinanceiroResponse' type='tns:consultarAcompanhamentoFisicoFinanceiroResponse'/>
+   <xs:element name='consultarAcompanhamentoOrcamentario' type='tns:consultarAcompanhamentoOrcamentario'/>
+   <xs:element name='consultarAcompanhamentoOrcamentarioResponse' type='tns:consultarAcompanhamentoOrcamentarioResponse'/>
+   <xs:element name='consultarEmendasLocalizador' type='tns:consultarEmendasLocalizador'/>
+   <xs:element name='consultarEmendasLocalizadorResponse' type='tns:consultarEmendasLocalizadorResponse'/>
+   <xs:element name='consultarExecucaoOrcamentaria' type='tns:consultarExecucaoOrcamentaria'/>
+   <xs:element name='consultarExecucaoOrcamentariaEstataisMensal' type='tns:consultarExecucaoOrcamentariaEstataisMensal'/>
+   <xs:element name='consultarExecucaoOrcamentariaEstataisMensalResponse' type='tns:consultarExecucaoOrcamentariaEstataisMensalResponse'/>
+   <xs:element name='consultarExecucaoOrcamentariaMensal' type='tns:consultarExecucaoOrcamentariaMensal'/>
+   <xs:element name='consultarExecucaoOrcamentariaMensalResponse' type='tns:consultarExecucaoOrcamentariaMensalResponse'/>
+   <xs:element name='consultarExecucaoOrcamentariaResponse' type='tns:consultarExecucaoOrcamentariaResponse'/>
+   <xs:element name='consultarNaturezasDisponiveisParaProposta' type='tns:consultarNaturezasDisponiveisParaProposta'/>
+   <xs:element name='consultarNaturezasDisponiveisParaPropostaResponse' type='tns:consultarNaturezasDisponiveisParaPropostaResponse'/>
+   <xs:element name='consultarProposta' type='tns:consultarProposta'/>
+   <xs:element name='consultarPropostaResponse' type='tns:consultarPropostaResponse'/>
+   <xs:element name='excluirProposta' type='tns:excluirProposta'/>
+   <xs:element name='excluirPropostaResponse' type='tns:excluirPropostaResponse'/>
+   <xs:element name='obterAcoesDisponiveisAcompanhamentoOrcamentario' type='tns:obterAcoesDisponiveisAcompanhamentoOrcamentario'/>
+   <xs:element name='obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse' type='tns:obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse'/>
+   <xs:element name='obterDatasCargaSIAFI' type='tns:obterDatasCargaSIAFI'/>
+   <xs:element name='obterDatasCargaSIAFIResponse' type='tns:obterDatasCargaSIAFIResponse'/>
+   <xs:element name='obterInformacaoCaptacaoPLOA' type='tns:obterInformacaoCaptacaoPLOA'/>
+   <xs:element name='obterInformacaoCaptacaoPLOAResponse' type='tns:obterInformacaoCaptacaoPLOAResponse'/>
+   <xs:element name='obterProgramacaoCompletaQuantitativo' type='tns:obterProgramacaoCompletaQuantitativo'/>
+   <xs:element name='obterProgramacaoCompletaQuantitativoResponse' type='tns:obterProgramacaoCompletaQuantitativoResponse'/>
+   <xs:element name='obterTabelasApoioQuantitativo' type='tns:obterTabelasApoioQuantitativo'/>
+   <xs:element name='obterTabelasApoioQuantitativoResponse' type='tns:obterTabelasApoioQuantitativoResponse'/>
+   <xs:complexType name='cadastrarProposta'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='proposta' type='tns:propostaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='credencialDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='perfil' type='xs:int'/>
+       <xs:element name='senha' type='xs:string'/>
+       <xs:element name='usuario' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract='true' name='baseDTO'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='propostaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoEsfera' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoFuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoLocalizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoMomento' type='xs:int'/>
+       <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoPrograma' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoSubFuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoTipoDetalhamento' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoTipoInclusaoAcao' type='xs:int'/>
+       <xs:element minOccurs='0' name='codigoTipoInclusaoLocalizador' type='xs:int'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='expansaoFisicaConcedida' type='xs:long'/>
+       <xs:element minOccurs='0' name='expansaoFisicaSolicitada' type='xs:long'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='financeiros' nillable='true' type='tns:financeiroDTO'/>
+       <xs:element minOccurs='0' name='identificadorUnicoAcao' type='xs:int'/>
+       <xs:element minOccurs='0' name='justificativa' type='xs:string'/>
+       <xs:element minOccurs='0' name='justificativaExpansaoConcedida' type='xs:string'/>
+       <xs:element minOccurs='0' name='justificativaExpansaoSolicitada' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='metaPlanoOrcamentario' nillable='true' type='tns:metaPlanoOrcamentarioDTO'/>
+       <xs:element minOccurs='0' name='quantidadeFisico' type='xs:long'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='receitas' nillable='true' type='tns:receitaDTO'/>
+       <xs:element minOccurs='0' name='snAtual' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='valorFisico' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='financeiroDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoPlanoOrcamentario' type='xs:string'/>
+       <xs:element minOccurs='0' name='expansaoConcedida' type='xs:long'/>
+       <xs:element minOccurs='0' name='expansaoSolicitada' type='xs:long'/>
+       <xs:element minOccurs='0' name='fonte' type='xs:string'/>
+       <xs:element minOccurs='0' name='idOC' type='xs:string'/>
+       <xs:element minOccurs='0' name='idUso' type='xs:string'/>
+       <xs:element minOccurs='0' name='identificadorPlanoOrcamentario' type='xs:int'/>
+       <xs:element minOccurs='0' name='naturezaDespesa' type='xs:string'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioAtual' type='xs:string'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioLei' type='xs:string'/>
+       <xs:element minOccurs='0' name='valor' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='metaPlanoOrcamentarioDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='expansaoFisicaConcedida' type='xs:long'/>
+       <xs:element minOccurs='0' name='expansaoFisicaSolicitada' type='xs:long'/>
+       <xs:element minOccurs='0' name='identificadorUnicoPlanoOrcamentario' type='xs:int'/>
+       <xs:element minOccurs='0' name='quantidadeFisico' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='receitaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='naturezaReceita' type='xs:string'/>
+       <xs:element minOccurs='0' name='valor' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='cadastrarPropostaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoPropostasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoPropostasDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='numeroRegistros' type='xs:int'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='proposta' nillable='true' type='tns:propostaDTO'/>
+       <xs:element minOccurs='0' name='valorTotal' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='retornoDTO'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='mensagensErro' nillable='true' type='xs:string'/>
+     <xs:element name='sucesso' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarProposta'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='proposta' type='tns:propostaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarPropostaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoPropostasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='excluirProposta'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='proposta' type='tns:propostaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='excluirPropostaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoPropostasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterTabelasApoioQuantitativo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element name='retornarNaturezas' type='xs:boolean'/>
+     <xs:element name='retornarIdOcs' type='xs:boolean'/>
+     <xs:element name='retornarIdUsos' type='xs:boolean'/>
+     <xs:element name='retornarFontes' type='xs:boolean'/>
+     <xs:element name='retornarRPs' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='dataHoraReferencia' type='xs:dateTime'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterTabelasApoioQuantitativoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoApoioQuantitativoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoApoioQuantitativoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='idocs'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='idoc' type='tns:idOcDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='idusos'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='iduso' type='tns:idUsoDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='fontes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='fonte' type='tns:fonteDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='resultadosPrimarios'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='resultadoPrimario' type='tns:resultadoPrimarioDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='naturezas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='natureza' type='tns:naturezaDespesaDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='idOcDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoIdOc' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='snAtivo' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='idUsoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoIdUso' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='snAtivo' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='fonteDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoFonte' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='snAtivo' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='resultadoPrimarioDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoResultadoPrimario' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='naturezaDespesaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoNatureza' type='xs:string'/>
+       <xs:element minOccurs='0' name='elementoDescricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='elementoDescricaoAbreviada' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='snAtiva' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='snValorizavel' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='subElementoDescricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='subElementoDescricaoAbreviada' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='obterProgramacaoCompletaQuantitativo'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomento' type='xs:int'/>
+     <xs:element minOccurs='0' name='dataHoraReferencia' type='xs:dateTime'/>
+     <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='paginacaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='pagina' type='xs:int'/>
+       <xs:element minOccurs='0' name='registrosPorPagina' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='obterProgramacaoCompletaQuantitativoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoPropostasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterInformacaoCaptacaoPLOA'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='parametro' type='tns:parametroInformacaoCaptacaoPLOA'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='parametroInformacaoCaptacaoPLOA'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element name='exercicio' type='xs:int'/>
+       <xs:element name='codigoMomento' type='xs:int'/>
+       <xs:element minOccurs='0' name='codigoTipoDetalhamento' type='xs:string'/>
+       <xs:element name='codigoOrgao' type='xs:string'/>
+       <xs:element name='codigoUnidadeOrcamentaria' type='xs:string'/>
+       <xs:element minOccurs='0' name='captados' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='captaveis' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='obterInformacaoCaptacaoPLOAResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoInformacaoCaptacaoPLOADTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoInformacaoCaptacaoPLOADTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='registros'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='registro' type='tns:informacaoCaptacaoPLOADTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='informacaoCaptacaoPLOADTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='codigoMomentoAcao' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomentoJanelaAtual' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomentoLocalizador' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomentoPropostaAtual' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoTipoDetalhamento' type='xs:string'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='funcional' type='xs:string'/>
+     <xs:element minOccurs='0' name='identificadorUnicoAcao' type='xs:int'/>
+     <xs:element minOccurs='0' name='identificadorUnicoLocalizador' type='xs:int'/>
+     <xs:element minOccurs='0' name='podeCaptar' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='porQueNaoPodeCaptar' type='xs:string'/>
+     <xs:element minOccurs='0' name='propostaValida' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='temJanela' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='temProposta' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterAcoesDisponiveisAcompanhamentoOrcamentario'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='periodo' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoAcoesDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoAcoesDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:acaoDTO'/>
+       <xs:element name='acoes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acao' type='tns:acaoDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='acaoDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='identificadorUnico' type='xs:int'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomento' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoProduto' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoTipoInclusaoAcao' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='titulo' type='xs:string'/>
+     <xs:element minOccurs='0' name='baseLegal' type='xs:string'/>
+     <xs:element minOccurs='0' name='finalidade' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+     <xs:element minOccurs='0' name='unidadeResponsavel' type='xs:string'/>
+     <xs:element minOccurs='0' name='detalhamentoImplementacao' type='xs:string'/>
+     <xs:element minOccurs='0' name='formaAcompanhamento' type='xs:string'/>
+     <xs:element minOccurs='0' name='identificacaoSazonalidade' type='xs:string'/>
+     <xs:element minOccurs='0' name='insumosUtilizados' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoPrograma' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoObjetivo' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoIniciativa' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoSubFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoEsfera' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoTipoAcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoUnidadeMedida' type='xs:string'/>
+     <xs:element minOccurs='0' name='especificacaoProduto' type='xs:string'/>
+     <xs:element minOccurs='0' name='beneficiario' type='xs:string'/>
+     <xs:element minOccurs='0' name='snDireta' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snDescentralizada' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snLinhaCredito' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snTransferenciaObrigatoria' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snTransferenciaVoluntaria' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snExclusaoLogica' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snRegionalizarNaExecucao' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snAquisicaoInsumoEstrategico' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snParticipacaoSocial' type='xs:boolean'/>
+     <xs:element minOccurs='0' name='snAcompanhamentoOpcional' type='xs:boolean'/>
+     <xs:element name='localizadores'>
+      <xs:complexType>
+       <xs:sequence>
+        <xs:element maxOccurs='unbounded' minOccurs='0' name='localizador' type='tns:localizadorDTO'/>
+       </xs:sequence>
+      </xs:complexType>
+     </xs:element>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='localizadorDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoLocalizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoMomento' type='xs:int'/>
+       <xs:element minOccurs='0' name='codigoRegiao' type='xs:int'/>
+       <xs:element minOccurs='0' name='codigoTipoInclusao' type='xs:int'/>
+       <xs:element minOccurs='0' name='dataHoraAlteracao' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='descricao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='identificadorUnico' type='xs:int'/>
+       <xs:element minOccurs='0' name='identificadorUnicoAcao' type='xs:int'/>
+       <xs:element minOccurs='0' name='justificativaRepercussao' type='xs:string'/>
+       <xs:element minOccurs='0' name='mesAnoInicio' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='mesAnoTermino' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='municipio' type='xs:string'/>
+       <xs:element minOccurs='0' name='snAcompanhamentoOpcional' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='snExclusaoLogica' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='totalFinanceiro' type='xs:double'/>
+       <xs:element minOccurs='0' name='totalFisico' type='xs:double'/>
+       <xs:element minOccurs='0' name='uf' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='obterDatasCargaSIAFI'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='obterDatasCargaSIAFIResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoInformacaoCargaSiafiDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoInformacaoCargaSiafiDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='informacoesCargaSiafi'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='informacaoCargaSiafi' type='tns:informacaoCargaSiafiDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='informacaoCargaSiafiDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='tipo' type='xs:string'/>
+     <xs:element minOccurs='0' name='dataCompetencia' type='xs:dateTime'/>
+     <xs:element minOccurs='0' name='ultimaCarga' type='xs:dateTime'/>
+     <xs:element minOccurs='0' name='ultimoMesFechado' type='xs:string'/>
+     <xs:element minOccurs='0' name='dataFechamentoUltimoMes' type='xs:dateTime'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='cadastrarAcompanhamentoOrcamentario'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='acompanhamentoAcao' type='tns:acompanhamentoOrcamentarioAcaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='acompanhamentoOrcamentarioAcaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element name='periodoOrdem' type='xs:int'/>
+       <xs:element name='exercicio' type='xs:int'/>
+       <xs:element name='codigoMomento' type='xs:int'/>
+       <xs:element name='esfera' type='xs:string'/>
+       <xs:element name='unidadeOrcamentaria' type='xs:string'/>
+       <xs:element name='funcao' type='xs:string'/>
+       <xs:element name='subFuncao' type='xs:string'/>
+       <xs:element name='programa' type='xs:string'/>
+       <xs:element name='acao' type='xs:string'/>
+       <xs:element name='codigoTipoInclusaoAcao' type='xs:int'/>
+       <xs:element minOccurs='0' name='snPendencia' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='dataHoraAlteracao' type='xs:dateTime'/>
+       <xs:element name='acompanhamentosLocalizadores'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acompanhamentoLocalizador' type='tns:acompanhamentoOrcamentarioLocalizadorDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='acompanhamentoOrcamentarioLocalizadorDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element name='localizador' type='xs:string'/>
+       <xs:element name='codigoTipoInclusaoLocalizador' type='xs:int'/>
+       <xs:element minOccurs='0' name='meta' type='xs:long'/>
+       <xs:element name='reprogramado' type='xs:long'/>
+       <xs:element name='realizadoLOA' type='xs:long'/>
+       <xs:element name='dataApuracaoLOA' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='dotacaoAtual' type='xs:long'/>
+       <xs:element name='limite' type='xs:long'/>
+       <xs:element minOccurs='0' name='empenhado' type='xs:double'/>
+       <xs:element minOccurs='0' name='liquidado' type='xs:double'/>
+       <xs:element name='realizadoRAP' type='xs:long'/>
+       <xs:element name='dataApuracaoRAP' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='rapInscritoLiquido' type='xs:double'/>
+       <xs:element minOccurs='0' name='rapLiquidadoAPagar' type='xs:double'/>
+       <xs:element minOccurs='0' name='rapPago' type='xs:double'/>
+       <xs:element minOccurs='0' name='justificativa' type='xs:string'/>
+       <xs:element name='analisesLocalizador'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='analiseLocalizador' type='tns:analiseAcompanhamentoOrcamentarioDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='comentariosRegionalizacao'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='comentarioRegionalizacao' type='tns:analiseAcompanhamentoOrcamentarioDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='acompanhamentosPlanoOrcamentario'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acompanhamentoPlanoOrcamentario' type='tns:acompanhamentoPlanoOrcamentarioDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='analiseAcompanhamentoOrcamentarioDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='analise' type='xs:string'/>
+       <xs:element minOccurs='0' name='comentarioId' type='xs:int'/>
+       <xs:element minOccurs='0' name='nomeUsuario' type='xs:string'/>
+       <xs:element minOccurs='0' name='periodoOrdem' type='xs:int'/>
+       <xs:element minOccurs='0' name='ultimaModificacao' type='xs:dateTime'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='acompanhamentoPlanoOrcamentarioDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element name='planoOrcamentario' type='xs:string'/>
+       <xs:element name='realizadoLOA' type='xs:long'/>
+       <xs:element name='dataApuracaoLOA' type='xs:dateTime'/>
+       <xs:element name='analisesPlanoOrcamentario'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='analisePlanoOrcamentario' type='tns:analiseAcompanhamentoOrcamentarioDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='cadastrarAcompanhamentoOrcamentarioResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoAcompanhamentoOrcamentarioDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoAcompanhamentoOrcamentarioDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='acompanhamentosAcoes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acompanhamentoAcao' type='tns:acompanhamentoOrcamentarioAcaoDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='alertas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='alerta' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='pendencias'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='pendencia' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarAcompanhamentoOrcamentario'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='periodoOrdem' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoMomento' type='xs:int'/>
+     <xs:element minOccurs='0' name='filtro' type='tns:filtroFuncionalProgramaticaDTO'/>
+     <xs:element minOccurs='0' name='dataHoraReferencia' type='xs:dateTime'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='filtroFuncionalProgramaticaDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoEsfera' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoLocalizador' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoPrograma' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoSubFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoTipoInclusaoAcao' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoTipoInclusaoLocalizador' type='xs:int'/>
+     <xs:element minOccurs='0' name='codigoUO' type='xs:string'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='tipoInclusaoIds' nillable='true' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarAcompanhamentoOrcamentarioResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoAcompanhamentoOrcamentarioDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarEmendasLocalizador'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='localizador' type='tns:localizadorDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarEmendasLocalizadorResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoFinanceiroEmendasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoFinanceiroEmendasDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='financeiros'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='financeiroEmendas' type='tns:financeiroEmendasDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='financeiroEmendasDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:financeiroDTO'>
+      <xs:sequence>
+       <xs:element name='emendas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='emenda' type='tns:emendaDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='emendaDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='codAutor' type='xs:int'/>
+     <xs:element minOccurs='0' name='decisaoParecerId' type='xs:int'/>
+     <xs:element minOccurs='0' name='emendaNumero' type='xs:int'/>
+     <xs:element minOccurs='0' name='emenda' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentaria'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='filtro' type='tns:filtroExecucaoOrcamentariaDTO'/>
+     <xs:element minOccurs='0' name='selecaoRetorno' type='tns:selecaoRetornoExecucaoOrcamentariaDTO'/>
+     <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='filtroExecucaoOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='acoes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acao' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='acompanhamentosPO'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='acompanhamentoPO' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='anoExercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='anoReferencia' type='xs:int'/>
+       <xs:element minOccurs='0' name='categoriasEconomicas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='categoriaEconomicas' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='detalhesAcompanhamentoPO'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='detalheAcompanhamentoPO' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='elementosDespesa'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='elementoDespesa' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='esferas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='esfera' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='estatalDependente' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='fontes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='fonte' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='funcoes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='funcao' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='gruposNatureza'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='grupoNatureza' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='identificadoresAcompanhamentoPO'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='identificadorAcompanhamentoPO' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='idocs'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='idoc' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='idusos'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='iduso' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='localizadores'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='localizador' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='modalidadesAplicacao'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='modalidadeAplicacao' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='naturezasDespesa'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='naturezaDespesa' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='planosInternos'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='planoInterno' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='planosOrcamentarios'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='planoOrcamentario' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='programas'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='programa' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='resultadosPrimariosAtuais'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='resultadoPrimarioAtual' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='resultadosPrimariosLei'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='resultadoPrimarioLei' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='subfuncoes'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='subfuncao' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='tematicasPO'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='tematicaPO' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='tiposCredito'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='tipoCredito' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='tiposApropriacaoPO'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='tipoApropriacaoPO' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='unidadesOrcamentarias'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='unidadeOrcamentaria' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='unidadesGestorasResponsaveis'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='unidadeGestoraResponsavel' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='selecaoRetornoExecucaoOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='acao' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='acompanhamentoPO' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='anoExercicio' type='xs:boolean'/>
+       <xs:element name='anoReferencia' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='autorizado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='bloqueadoRemanejamento' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='bloqueadoSOF' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='categoriaEconomica' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='creditoContidoSOF' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='detalheAcompanhamentoPO' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='disponivel' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='dotAtual' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='dotInicialSiafi' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='dotacaoAntecipada' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='dotacaoInicial' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='elementoDespesa' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='empLiquidado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='empenhadoALiquidar' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='esfera' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='estatalDependente' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='executadoPorInscricaoDeRAP' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='fonte' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='funcao' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='grupoNaturezaDespesa' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='identificadorAcompanhamentoPO' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='idoc' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='iduso' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='indisponivel' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='localizador' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='modalidadeAplicacao' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='natureza' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='numeroptres' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='origem' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='pago' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='planoInterno' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='planoOrcamentario' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='programa' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='projetoLei' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapAPagarNaoProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapAPagarProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapCanceladosNaoProcessados' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapCanceladosProcessados' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapExerciciosAnteriores' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapInscritoNaoProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapInscritoProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoALiquidar' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoBloqueado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoLiquidadoAPagar' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapPagoNaoProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='rapPagoProcessado' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioAtual' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioLei' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='subElementoDespesa' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='subFuncao' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='tematicaPO' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='tipoApropriacaoPO' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='tipoCredito' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='unidadeGestoraResponsavel' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='unidadeOrcamentaria' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentariaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoExecucaoOrcamentariaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoExecucaoOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='dataHoraUltimaCarga' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='execucoesOrcamentarias'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='execucaoOrcamentaria' type='tns:execucaoOrcamentariaDTO'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='acao' type='xs:string'/>
+       <xs:element minOccurs='0' name='acompanhamento' type='xs:string'/>
+       <xs:element minOccurs='0' name='acompanhamentoPO' type='xs:string'/>
+       <xs:element minOccurs='0' name='anoExercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='anoReferencia' type='xs:int'/>
+       <xs:element minOccurs='0' name='autorizado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='bloqueadoRemanejamento' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='bloqueadoSOF' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='categoriaEconomica' type='xs:string'/>
+       <xs:element minOccurs='0' name='credito' type='xs:string'/>
+       <xs:element minOccurs='0' name='creditoContidoSOF' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='detalheAcompanhamento' type='xs:string'/>
+       <xs:element minOccurs='0' name='detalheAcompanhamentoPO' type='xs:string'/>
+       <xs:element minOccurs='0' name='disponivel' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotAntecipada' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotAtual' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotInicial' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotInicialSiafi' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotacaoAntecipada' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotacaoInicial' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='dotacaoOriginal' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='elementoDespesa' type='xs:string'/>
+       <xs:element minOccurs='0' name='empALiquidar' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='empLiqInscrRapNp' type='xs:string'/>
+       <xs:element minOccurs='0' name='empLiquidado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='empenhadoALiquidar' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='esfera' type='xs:string'/>
+       <xs:element minOccurs='0' name='executadoPorInscricaoDeRAP' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='fonte' type='xs:string'/>
+       <xs:element minOccurs='0' name='funcao' type='xs:string'/>
+       <xs:element minOccurs='0' name='grupoNaturezaDespesa' type='xs:string'/>
+       <xs:element minOccurs='0' name='idOc' type='xs:string'/>
+       <xs:element minOccurs='0' name='idUso' type='xs:string'/>
+       <xs:element minOccurs='0' name='identificadorAcompanhamento' type='xs:string'/>
+       <xs:element minOccurs='0' name='identificadorAcompanhamentoPO' type='xs:string'/>
+       <xs:element minOccurs='0' name='indisponivel' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='localizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='mes' type='xs:int'/>
+       <xs:element minOccurs='0' name='modalidadeAplicacao' type='xs:string'/>
+       <xs:element minOccurs='0' name='natureza' type='xs:string'/>
+       <xs:element minOccurs='0' name='numeroptres' type='xs:string'/>
+       <xs:element minOccurs='0' name='origem' type='xs:string'/>
+       <xs:element minOccurs='0' name='pago' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='planoInterno' type='xs:string'/>
+       <xs:element minOccurs='0' name='planoOrcamentario' type='xs:string'/>
+       <xs:element minOccurs='0' name='programa' type='xs:string'/>
+       <xs:element minOccurs='0' name='projetoLei' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapAPagarNaoProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapAPagarProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapCanceladosNaoProcessados' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapCanceladosProcessados' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapExerciciosAnteriores' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapInscritoNaoProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapInscritoProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoALiquidar' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoBloqueado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapNaoProcessadoLiquidadoAPagar' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapPagoNaoProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='rapPagoProcessado' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioAtual' type='xs:string'/>
+       <xs:element minOccurs='0' name='resultadoPrimarioLei' type='xs:string'/>
+       <xs:element minOccurs='0' name='rpAtual' type='xs:string'/>
+       <xs:element minOccurs='0' name='rpLei' type='xs:string'/>
+       <xs:element minOccurs='0' name='subElementoDespesa' type='xs:string'/>
+       <xs:element minOccurs='0' name='subFuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='tematica' type='xs:string'/>
+       <xs:element minOccurs='0' name='tematicaPO' type='xs:string'/>
+       <xs:element minOccurs='0' name='tipoApropriacao' type='xs:string'/>
+       <xs:element minOccurs='0' name='tipoApropriacaoPO' type='xs:string'/>
+       <xs:element minOccurs='0' name='tipoCredito' type='xs:string'/>
+       <xs:element minOccurs='0' name='unidadeGestoraResponsavel' type='xs:string'/>
+       <xs:element minOccurs='0' name='unidadeOrcamentaria' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentariaMensal'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='filtro' type='tns:filtroExecucaoOrcamentariaDTO'/>
+     <xs:element minOccurs='0' name='selecaoRetorno' type='tns:selecaoRetornoExecucaoOrcamentariaDTO'/>
+     <xs:element minOccurs='0' name='mes' type='xs:int'/>
+     <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentariaMensalResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoExecucaoOrcamentariaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentariaEstataisMensal'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='parametros' type='tns:parametrosWebExecucaoOrcamentariaDTO'/>
+     <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='parametrosWebExecucaoOrcamentariaDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='acao' type='xs:string'/>
+     <xs:element minOccurs='0' name='esfera' type='xs:string'/>
+     <xs:element name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='funcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='localizador' type='xs:string'/>
+     <xs:element minOccurs='0' name='orgao' type='xs:string'/>
+     <xs:element minOccurs='0' name='programa' type='xs:string'/>
+     <xs:element minOccurs='0' name='subFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='unidadeOrcamentaria' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoOrcamentariaEstataisMensalResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoExecucaoOrcamentariaMensalDestDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoExecucaoOrcamentariaMensalDestDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:execucaoOrcamentariaMensalDestDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoOrcamentariaMensalDestDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='acao' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricaoFuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='descricaoSubfuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='esfera' type='xs:string'/>
+       <xs:element minOccurs='0' name='estatalDependente' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='estatalIndependente' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='funcao' type='xs:string'/>
+       <xs:element minOccurs='0' name='lei' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='leiMaisCreditos' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='localizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='ppipac' type='xs:boolean'/>
+       <xs:element minOccurs='0' name='programa' type='xs:string'/>
+       <xs:element minOccurs='0' name='realizadaAbril' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaAgosto' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaDezembro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaFevereiro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaJaneiro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaJulho' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaJunho' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaMaio' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaMarco' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaNovembro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaOutubro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadaSetembro' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='regiao' type='xs:string'/>
+       <xs:element minOccurs='0' name='subfuncao' type='xs:string'/>
+       <xs:element minOccurs='0' name='tituloAcao' type='xs:string'/>
+       <xs:element minOccurs='0' name='tituloLocalizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='tituloPrograma' type='xs:string'/>
+       <xs:element minOccurs='0' name='uf' type='xs:string'/>
+       <xs:element minOccurs='0' name='unidadeOrcamentaria' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarAcompanhamentoFisicoFinanceiro'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='periodo' type='xs:int'/>
+     <xs:element minOccurs='0' name='momentoId' type='xs:int'/>
+     <xs:element minOccurs='0' name='tipoCaptacao' type='xs:string'/>
+     <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarAcompanhamentoFisicoFinanceiroResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoAcompanhamentoFisicoFinanceiroDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoAcompanhamentoFisicoFinanceiroDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='dataHoraUltimaCargaSiafi' type='xs:dateTime'/>
+       <xs:element minOccurs='0' name='paginacao' type='tns:paginacaoDTO'/>
+       <xs:element minOccurs='0' name='quantidadeMetaAtual' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='quantidadeMetaLOA' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='quantidadeMetaLOAPO' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadoLOA' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadoPO' type='xs:decimal'/>
+       <xs:element minOccurs='0' name='realizadoRAP' type='xs:decimal'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:acompanhamentoFisicoFinanceiroDTO'/>
+       <xs:element minOccurs='0' name='reprogramadoFisico' type='xs:decimal'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='acompanhamentoFisicoFinanceiroDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='acao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoPO' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoLocalizador' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoOrgao' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoProduto' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoProdutoPO' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoSiorg' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoSubFuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoUnidadeMedida' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoUnidadeMedidaPO' type='xs:string'/>
+     <xs:element minOccurs='0' name='descricaoUo' type='xs:string'/>
+     <xs:element minOccurs='0' name='dotacaoAtual' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='dotacaoAtualPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='dotacaoInicial' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='dotacaoInicialPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='esfera' type='xs:string'/>
+     <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+     <xs:element minOccurs='0' name='funcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='liquidado' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='liquidadoPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='liquidadoRAP' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='liquidadoRAPPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='localizador' type='xs:string'/>
+     <xs:element minOccurs='0' name='momento' type='xs:string'/>
+     <xs:element minOccurs='0' name='momentoId' type='xs:int'/>
+     <xs:element minOccurs='0' name='orgao' type='xs:string'/>
+     <xs:element minOccurs='0' name='orgaoSiorg' type='xs:string'/>
+     <xs:element minOccurs='0' name='pago' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='pagoPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='periodo' type='xs:string'/>
+     <xs:element minOccurs='0' name='produto' type='xs:int'/>
+     <xs:element minOccurs='0' name='produtoPO' type='xs:int'/>
+     <xs:element minOccurs='0' name='programa' type='xs:string'/>
+     <xs:element minOccurs='0' name='quantidadeMetaAtual' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='quantidadeMetaAtualPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='quantidadeMetaLOA' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='quantidadeMetaLOAPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='realizadoLOA' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='realizadoPO' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='realizadoRAP' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='reprogramadoFinanceiro' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='reprogramadoFisico' type='xs:decimal'/>
+     <xs:element minOccurs='0' name='subfuncao' type='xs:string'/>
+     <xs:element minOccurs='0' name='tipoCaptacao' type='xs:string'/>
+     <xs:element minOccurs='0' name='tituloAcao' type='xs:string'/>
+     <xs:element minOccurs='0' name='tituloPO' type='xs:string'/>
+     <xs:element minOccurs='0' name='tituloPrograma' type='xs:string'/>
+     <xs:element minOccurs='0' name='unidadeMedida' type='xs:string'/>
+     <xs:element minOccurs='0' name='unidadeMedidaPO' type='xs:string'/>
+     <xs:element minOccurs='0' name='uo' type='xs:string'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarNaturezasDisponiveisParaProposta'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='filtro' type='tns:filtroNaturezaDespesaDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='filtroNaturezaDespesaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoDetalhamento' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element name='momentoId' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarNaturezasDisponiveisParaPropostaResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoNaturezasDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoNaturezasDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:naturezaDespesaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+  </xs:schema>
+ </types>
+ <message name='WSQuantitativo_cadastrarAcompanhamentoOrcamentario'>
+  <part element='tns:cadastrarAcompanhamentoOrcamentario' name='cadastrarAcompanhamentoOrcamentario'></part>
+ </message>
+ <message name='WSQuantitativo_excluirPropostaResponse'>
+  <part element='tns:excluirPropostaResponse' name='excluirPropostaResponse'></part>
+ </message>
+ <message name='WSQuantitativo_excluirProposta'>
+  <part element='tns:excluirProposta' name='excluirProposta'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentariaResponse'>
+  <part element='tns:consultarExecucaoOrcamentariaResponse' name='consultarExecucaoOrcamentariaResponse'></part>
+ </message>
+ <message name='WSQuantitativo_obterTabelasApoioQuantitativoResponse'>
+  <part element='tns:obterTabelasApoioQuantitativoResponse' name='obterTabelasApoioQuantitativoResponse'></part>
+ </message>
+ <message name='WSQuantitativo_obterProgramacaoCompletaQuantitativoResponse'>
+  <part element='tns:obterProgramacaoCompletaQuantitativoResponse' name='obterProgramacaoCompletaQuantitativoResponse'></part>
+ </message>
+ <message name='WSQuantitativo_obterInformacaoCaptacaoPLOA'>
+  <part element='tns:obterInformacaoCaptacaoPLOA' name='obterInformacaoCaptacaoPLOA'></part>
+ </message>
+ <message name='WSQuantitativo_obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse'>
+  <part element='tns:obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse' name='obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarAcompanhamentoFisicoFinanceiro'>
+  <part element='tns:consultarAcompanhamentoFisicoFinanceiro' name='consultarAcompanhamentoFisicoFinanceiro'></part>
+ </message>
+ <message name='WSQuantitativo_obterInformacaoCaptacaoPLOAResponse'>
+  <part element='tns:obterInformacaoCaptacaoPLOAResponse' name='obterInformacaoCaptacaoPLOAResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarNaturezasDisponiveisParaProposta'>
+  <part element='tns:consultarNaturezasDisponiveisParaProposta' name='consultarNaturezasDisponiveisParaProposta'></part>
+ </message>
+ <message name='WSQuantitativo_obterTabelasApoioQuantitativo'>
+  <part element='tns:obterTabelasApoioQuantitativo' name='obterTabelasApoioQuantitativo'></part>
+ </message>
+ <message name='WSQuantitativo_consultarAcompanhamentoOrcamentarioResponse'>
+  <part element='tns:consultarAcompanhamentoOrcamentarioResponse' name='consultarAcompanhamentoOrcamentarioResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentariaMensal'>
+  <part element='tns:consultarExecucaoOrcamentariaMensal' name='consultarExecucaoOrcamentariaMensal'></part>
+ </message>
+ <message name='WSQuantitativo_cadastrarPropostaResponse'>
+  <part element='tns:cadastrarPropostaResponse' name='cadastrarPropostaResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentaria'>
+  <part element='tns:consultarExecucaoOrcamentaria' name='consultarExecucaoOrcamentaria'></part>
+ </message>
+ <message name='WSQuantitativo_consultarEmendasLocalizador'>
+  <part element='tns:consultarEmendasLocalizador' name='consultarEmendasLocalizador'></part>
+ </message>
+ <message name='WSQuantitativo_consultarAcompanhamentoOrcamentario'>
+  <part element='tns:consultarAcompanhamentoOrcamentario' name='consultarAcompanhamentoOrcamentario'></part>
+ </message>
+ <message name='WSQuantitativo_cadastrarAcompanhamentoOrcamentarioResponse'>
+  <part element='tns:cadastrarAcompanhamentoOrcamentarioResponse' name='cadastrarAcompanhamentoOrcamentarioResponse'></part>
+ </message>
+ <message name='WSQuantitativo_cadastrarProposta'>
+  <part element='tns:cadastrarProposta' name='cadastrarProposta'></part>
+ </message>
+ <message name='WSQuantitativo_consultarEmendasLocalizadorResponse'>
+  <part element='tns:consultarEmendasLocalizadorResponse' name='consultarEmendasLocalizadorResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentariaEstataisMensalResponse'>
+  <part element='tns:consultarExecucaoOrcamentariaEstataisMensalResponse' name='consultarExecucaoOrcamentariaEstataisMensalResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarPropostaResponse'>
+  <part element='tns:consultarPropostaResponse' name='consultarPropostaResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentariaMensalResponse'>
+  <part element='tns:consultarExecucaoOrcamentariaMensalResponse' name='consultarExecucaoOrcamentariaMensalResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarExecucaoOrcamentariaEstataisMensal'>
+  <part element='tns:consultarExecucaoOrcamentariaEstataisMensal' name='consultarExecucaoOrcamentariaEstataisMensal'></part>
+ </message>
+ <message name='WSQuantitativo_obterAcoesDisponiveisAcompanhamentoOrcamentario'>
+  <part element='tns:obterAcoesDisponiveisAcompanhamentoOrcamentario' name='obterAcoesDisponiveisAcompanhamentoOrcamentario'></part>
+ </message>
+ <message name='WSQuantitativo_consultarAcompanhamentoFisicoFinanceiroResponse'>
+  <part element='tns:consultarAcompanhamentoFisicoFinanceiroResponse' name='consultarAcompanhamentoFisicoFinanceiroResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarProposta'>
+  <part element='tns:consultarProposta' name='consultarProposta'></part>
+ </message>
+ <message name='WSQuantitativo_obterDatasCargaSIAFIResponse'>
+  <part element='tns:obterDatasCargaSIAFIResponse' name='obterDatasCargaSIAFIResponse'></part>
+ </message>
+ <message name='WSQuantitativo_consultarNaturezasDisponiveisParaPropostaResponse'>
+  <part element='tns:consultarNaturezasDisponiveisParaPropostaResponse' name='consultarNaturezasDisponiveisParaPropostaResponse'></part>
+ </message>
+ <message name='WSQuantitativo_obterDatasCargaSIAFI'>
+  <part element='tns:obterDatasCargaSIAFI' name='obterDatasCargaSIAFI'></part>
+ </message>
+ <message name='WSQuantitativo_obterProgramacaoCompletaQuantitativo'>
+  <part element='tns:obterProgramacaoCompletaQuantitativo' name='obterProgramacaoCompletaQuantitativo'></part>
+ </message>
+ <portType name='WSQuantitativo'>
+  <operation name='cadastrarAcompanhamentoOrcamentario' parameterOrder='cadastrarAcompanhamentoOrcamentario'>
+   <input message='tns:WSQuantitativo_cadastrarAcompanhamentoOrcamentario'></input>
+   <output message='tns:WSQuantitativo_cadastrarAcompanhamentoOrcamentarioResponse'></output>
+  </operation>
+  <operation name='cadastrarProposta' parameterOrder='cadastrarProposta'>
+   <input message='tns:WSQuantitativo_cadastrarProposta'></input>
+   <output message='tns:WSQuantitativo_cadastrarPropostaResponse'></output>
+  </operation>
+  <operation name='consultarAcompanhamentoFisicoFinanceiro' parameterOrder='consultarAcompanhamentoFisicoFinanceiro'>
+   <input message='tns:WSQuantitativo_consultarAcompanhamentoFisicoFinanceiro'></input>
+   <output message='tns:WSQuantitativo_consultarAcompanhamentoFisicoFinanceiroResponse'></output>
+  </operation>
+  <operation name='consultarAcompanhamentoOrcamentario' parameterOrder='consultarAcompanhamentoOrcamentario'>
+   <input message='tns:WSQuantitativo_consultarAcompanhamentoOrcamentario'></input>
+   <output message='tns:WSQuantitativo_consultarAcompanhamentoOrcamentarioResponse'></output>
+  </operation>
+  <operation name='consultarEmendasLocalizador' parameterOrder='consultarEmendasLocalizador'>
+   <input message='tns:WSQuantitativo_consultarEmendasLocalizador'></input>
+   <output message='tns:WSQuantitativo_consultarEmendasLocalizadorResponse'></output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentaria' parameterOrder='consultarExecucaoOrcamentaria'>
+   <input message='tns:WSQuantitativo_consultarExecucaoOrcamentaria'></input>
+   <output message='tns:WSQuantitativo_consultarExecucaoOrcamentariaResponse'></output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentariaEstataisMensal' parameterOrder='consultarExecucaoOrcamentariaEstataisMensal'>
+   <input message='tns:WSQuantitativo_consultarExecucaoOrcamentariaEstataisMensal'></input>
+   <output message='tns:WSQuantitativo_consultarExecucaoOrcamentariaEstataisMensalResponse'></output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentariaMensal' parameterOrder='consultarExecucaoOrcamentariaMensal'>
+   <input message='tns:WSQuantitativo_consultarExecucaoOrcamentariaMensal'></input>
+   <output message='tns:WSQuantitativo_consultarExecucaoOrcamentariaMensalResponse'></output>
+  </operation>
+  <operation name='consultarNaturezasDisponiveisParaProposta' parameterOrder='consultarNaturezasDisponiveisParaProposta'>
+   <input message='tns:WSQuantitativo_consultarNaturezasDisponiveisParaProposta'></input>
+   <output message='tns:WSQuantitativo_consultarNaturezasDisponiveisParaPropostaResponse'></output>
+  </operation>
+  <operation name='consultarProposta' parameterOrder='consultarProposta'>
+   <input message='tns:WSQuantitativo_consultarProposta'></input>
+   <output message='tns:WSQuantitativo_consultarPropostaResponse'></output>
+  </operation>
+  <operation name='excluirProposta' parameterOrder='excluirProposta'>
+   <input message='tns:WSQuantitativo_excluirProposta'></input>
+   <output message='tns:WSQuantitativo_excluirPropostaResponse'></output>
+  </operation>
+  <operation name='obterAcoesDisponiveisAcompanhamentoOrcamentario' parameterOrder='obterAcoesDisponiveisAcompanhamentoOrcamentario'>
+   <input message='tns:WSQuantitativo_obterAcoesDisponiveisAcompanhamentoOrcamentario'></input>
+   <output message='tns:WSQuantitativo_obterAcoesDisponiveisAcompanhamentoOrcamentarioResponse'></output>
+  </operation>
+  <operation name='obterDatasCargaSIAFI' parameterOrder='obterDatasCargaSIAFI'>
+   <input message='tns:WSQuantitativo_obterDatasCargaSIAFI'></input>
+   <output message='tns:WSQuantitativo_obterDatasCargaSIAFIResponse'></output>
+  </operation>
+  <operation name='obterInformacaoCaptacaoPLOA' parameterOrder='obterInformacaoCaptacaoPLOA'>
+   <input message='tns:WSQuantitativo_obterInformacaoCaptacaoPLOA'></input>
+   <output message='tns:WSQuantitativo_obterInformacaoCaptacaoPLOAResponse'></output>
+  </operation>
+  <operation name='obterProgramacaoCompletaQuantitativo' parameterOrder='obterProgramacaoCompletaQuantitativo'>
+   <input message='tns:WSQuantitativo_obterProgramacaoCompletaQuantitativo'></input>
+   <output message='tns:WSQuantitativo_obterProgramacaoCompletaQuantitativoResponse'></output>
+  </operation>
+  <operation name='obterTabelasApoioQuantitativo' parameterOrder='obterTabelasApoioQuantitativo'>
+   <input message='tns:WSQuantitativo_obterTabelasApoioQuantitativo'></input>
+   <output message='tns:WSQuantitativo_obterTabelasApoioQuantitativoResponse'></output>
+  </operation>
+ </portType>
+ <binding name='WSQuantitativoBinding' type='tns:WSQuantitativo'>
+  <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
+  <operation name='cadastrarAcompanhamentoOrcamentario'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='cadastrarProposta'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarAcompanhamentoFisicoFinanceiro'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarAcompanhamentoOrcamentario'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarEmendasLocalizador'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentaria'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentariaEstataisMensal'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarExecucaoOrcamentariaMensal'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarNaturezasDisponiveisParaProposta'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarProposta'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='excluirProposta'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='obterAcoesDisponiveisAcompanhamentoOrcamentario'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='obterDatasCargaSIAFI'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='obterInformacaoCaptacaoPLOA'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='obterProgramacaoCompletaQuantitativo'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='obterTabelasApoioQuantitativo'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+ </binding>
+ <service name='WSQuantitativo'>
+  <port binding='tns:WSQuantitativoBinding' name='WSQuantitativoPort'>
+   <soap:address location='https://testews.siop.gov.br:443/services/WSQuantitativo'/>
+  </port>
+ </service>
+</definitions>

@@ -1,0 +1,20 @@
+//
+// Content Spacing With Margins
+//
+
+// Margin
+@mixin content-spacing-margin($margin-top, $margin-right, $margin-bottom, $margin-left) {
+  margin: $margin-top $margin-right $margin-bottom $margin-left;
+}
+
+// Margin Horizontal
+@mixin content-spacing-margin-x($margin-left, $margin-right) {
+  margin-left: $margin-left;
+  margin-right: $margin-right;
+}
+
+// Margin Vertical
+@mixin content-spacing-margin-y($margin-top, $margin-bottom) {
+  margin-top: $margin-top;
+  margin-bottom: $margin-bottom;
+}

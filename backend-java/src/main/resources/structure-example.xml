@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="forpdi_structure_1.0.xsd">
+	<structureName>Plano de Exemplo</structureName>
+	<structureDescription>
+		Estrutura de exemplo de um PDI de uma Universidade.
+	</structureDescription>
+	<structureLevels>
+		<level>
+			<name>Area</name>
+			<description>Nível raiz, define as áreas da universidade.</description>
+			<indicator>false</indicator>
+			<goal>false</goal>
+			<objective>false</objective>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome da Área</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição da Área</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Objetivo</name>
+			<description></description>
+			<indicator>false</indicator>
+			<goal>false</goal>
+			<objective>true</objective>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome do Objetivo</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição do Objetivo</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Indicador</name>
+			<description></description>
+			<indicator>true</indicator>
+			<goal>false</goal>
+			<objective>false</objective>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome do Indicador</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição do Indicador</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+			</attributes>
+		</level>
+		<level>
+			<name>Meta</name>
+			<description></description>
+			<indicator>false</indicator>
+			<goal>true</goal>
+			<objective>false</objective>
+			<attributes>
+				<attribute required="true">
+					<type>TextField</type>
+					<label>Nome</label>
+					<description>Nome da Meta</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+				<attribute required="true">
+					<type>TextArea</type>
+					<label>Descrição</label>
+					<description>Descrição da Meta</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+			</attributes>
+		</level>
+	</structureLevels>
+</structure>

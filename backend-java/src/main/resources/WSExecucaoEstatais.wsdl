@@ -1,0 +1,386 @@
+<definitions name='WSExecucaoEstataisService' targetNamespace='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns='http://schemas.xmlsoap.org/wsdl/' xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/' xmlns:tns='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>
+ <types>
+  <xs:schema targetNamespace='http://servicoweb.siop.sof.planejamento.gov.br/' version='1.0' xmlns:tns='http://servicoweb.siop.sof.planejamento.gov.br/' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+   <xs:element name='consultarExecucao' type='tns:consultarExecucao'/>
+   <xs:element name='consultarExecucaoResponse' type='tns:consultarExecucaoResponse'/>
+   <xs:element name='consultarExecucoes' type='tns:consultarExecucoes'/>
+   <xs:element name='consultarExecucoesResponse' type='tns:consultarExecucoesResponse'/>
+   <xs:element name='incluirExecucao' type='tns:incluirExecucao'/>
+   <xs:element name='incluirExecucaoResponse' type='tns:incluirExecucaoResponse'/>
+   <xs:complexType name='incluirExecucao'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='input' type='tns:inputExecucaoEstataisDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='credencialDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='perfil' type='xs:int'/>
+       <xs:element name='senha' type='xs:string'/>
+       <xs:element name='usuario' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType abstract='true' name='baseDTO'>
+    <xs:sequence/>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoEstataisDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element name='exercicio' type='xs:int'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:inputExecucaoOrgaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoOrgaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='unidadeOrcamentaria' nillable='true' type='tns:inputExecucaoUnidadeOrcamentariaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoUnidadeOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoUnidadeOrcamentaria' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='funcao' nillable='true' type='tns:inputExecucaoFuncaoDTO'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='receita' nillable='true' type='tns:inputExecucaoReceitaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoFuncaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoFuncao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='subFuncao' nillable='true' type='tns:inputExecucaoSubFuncaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoSubFuncaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoSubFuncao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='programa' nillable='true' type='tns:inputExecucaoProgramaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoProgramaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='acao' nillable='true' type='tns:inputExecucaoAcaoDTO'/>
+       <xs:element minOccurs='0' name='codigoPrograma' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoAcaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='localizador' nillable='true' type='tns:inputExecucaoLocalizadorDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoLocalizadorDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoLocalizador' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='execucaoMensal' nillable='true' type='tns:execucaoMensalDTO'/>
+       <xs:element minOccurs='0' name='mensagem' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoMensalDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='financeiro' type='xs:long'/>
+       <xs:element minOccurs='0' name='fisico' type='xs:long'/>
+       <xs:element minOccurs='0' name='mensagem' type='xs:string'/>
+       <xs:element name='mes' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='inputExecucaoReceitaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoNaturezaReceita' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='execucaoMensal' nillable='true' type='tns:execucaoReceitaMensalDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoReceitaMensalDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='financeiro' type='xs:long'/>
+       <xs:element minOccurs='0' name='mensagem' type='xs:string'/>
+       <xs:element name='mes' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='incluirExecucaoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoInputExecucaoEstataisDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoInputExecucaoEstataisDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='exercicio' type='xs:int'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:inputExecucaoOrgaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='retornoDTO'>
+    <xs:sequence>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='mensagensErro' nillable='true' type='xs:string'/>
+     <xs:element name='sucesso' type='xs:boolean'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucao'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+     <xs:element minOccurs='0' name='codigoUnidadeOrcamentaria' type='xs:string'/>
+     <xs:element minOccurs='0' name='ano' type='xs:int'/>
+     <xs:element minOccurs='0' name='mes' type='xs:int'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucaoResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoExecucaoEstataisDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='retornoExecucaoEstataisDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:retornoDTO'>
+      <xs:sequence>
+       <xs:element name='exercicio' type='xs:int'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='registros' nillable='true' type='tns:execucaoOrgaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoOrgaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='unidadeOrcamentaria' nillable='true' type='tns:execucaoUnidadeOrcamentariaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoUnidadeOrcamentariaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoUnidadeOrcamentaria' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='funcao' nillable='true' type='tns:execucaoFuncaoDTO'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='receita' nillable='true' type='tns:execucaoReceitaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoFuncaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoFuncao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='subFuncao' nillable='true' type='tns:execucaoSubFuncaoDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoSubFuncaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoSubFuncao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='programa' nillable='true' type='tns:execucaoProgramaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoProgramaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='acao' nillable='true' type='tns:execucaoAcaoDTO'/>
+       <xs:element minOccurs='0' name='codigoPrograma' type='xs:string'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoAcaoDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoAcao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='localizador' nillable='true' type='tns:execucaoLocalizadorDTO'/>
+       <xs:element minOccurs='0' name='snEmpreendimentoPPIPAC' type='xs:boolean'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoLocalizadorDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoLocalizador' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoRegiao' type='xs:string'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='despesa' nillable='true' type='tns:execucaoDespesaDTO'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoDespesaDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoIdUso' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoModalidade' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoNatureza' type='xs:string'/>
+       <xs:element minOccurs='0' name='codigoRP' type='xs:string'/>
+       <xs:element minOccurs='0' name='dotacaoAtual' type='xs:long'/>
+       <xs:element minOccurs='0' name='dotacaoInicial' type='xs:long'/>
+       <xs:element maxOccurs='unbounded' minOccurs='0' name='execucaoMensal' nillable='true' type='tns:execucaoMensalDTO'/>
+       <xs:element minOccurs='0' name='fisicoAtual' type='xs:long'/>
+       <xs:element minOccurs='0' name='fisicoInicial' type='xs:long'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='execucaoReceitaDTO'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='codigoNaturezaReceita' type='xs:string'/>
+     <xs:element minOccurs='0' name='dotacaoAtual' type='xs:long'/>
+     <xs:element minOccurs='0' name='dotacaoInicial' type='xs:long'/>
+     <xs:element maxOccurs='unbounded' minOccurs='0' name='execucaoMensal' nillable='true' type='tns:execucaoMensalDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucoes'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='credencial' type='tns:credencialDTO'/>
+     <xs:element minOccurs='0' name='execucao' type='tns:execucaoEstataisDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+   <xs:complexType name='execucaoEstataisDTO'>
+    <xs:complexContent>
+     <xs:extension base='tns:baseDTO'>
+      <xs:sequence>
+       <xs:element minOccurs='0' name='codigoOrgao' type='xs:string'/>
+       <xs:element name='codigosUnidadesOrcamentarias'>
+        <xs:complexType>
+         <xs:sequence>
+          <xs:element maxOccurs='unbounded' minOccurs='0' name='codigoUnidadeOrcamentaria' type='xs:string'/>
+         </xs:sequence>
+        </xs:complexType>
+       </xs:element>
+       <xs:element minOccurs='0' name='exercicio' type='xs:int'/>
+       <xs:element minOccurs='0' name='mes' type='xs:int'/>
+      </xs:sequence>
+     </xs:extension>
+    </xs:complexContent>
+   </xs:complexType>
+   <xs:complexType name='consultarExecucoesResponse'>
+    <xs:sequence>
+     <xs:element minOccurs='0' name='return' type='tns:retornoExecucaoEstataisDTO'/>
+    </xs:sequence>
+   </xs:complexType>
+  </xs:schema>
+ </types>
+ <message name='WSExecucaoEstatais_consultarExecucao'>
+  <part element='tns:consultarExecucao' name='consultarExecucao'></part>
+ </message>
+ <message name='WSExecucaoEstatais_consultarExecucoes'>
+  <part element='tns:consultarExecucoes' name='consultarExecucoes'></part>
+ </message>
+ <message name='WSExecucaoEstatais_consultarExecucoesResponse'>
+  <part element='tns:consultarExecucoesResponse' name='consultarExecucoesResponse'></part>
+ </message>
+ <message name='WSExecucaoEstatais_incluirExecucaoResponse'>
+  <part element='tns:incluirExecucaoResponse' name='incluirExecucaoResponse'></part>
+ </message>
+ <message name='WSExecucaoEstatais_consultarExecucaoResponse'>
+  <part element='tns:consultarExecucaoResponse' name='consultarExecucaoResponse'></part>
+ </message>
+ <message name='WSExecucaoEstatais_incluirExecucao'>
+  <part element='tns:incluirExecucao' name='incluirExecucao'></part>
+ </message>
+ <portType name='WSExecucaoEstatais'>
+  <operation name='consultarExecucao' parameterOrder='consultarExecucao'>
+   <input message='tns:WSExecucaoEstatais_consultarExecucao'></input>
+   <output message='tns:WSExecucaoEstatais_consultarExecucaoResponse'></output>
+  </operation>
+  <operation name='consultarExecucoes' parameterOrder='consultarExecucoes'>
+   <input message='tns:WSExecucaoEstatais_consultarExecucoes'></input>
+   <output message='tns:WSExecucaoEstatais_consultarExecucoesResponse'></output>
+  </operation>
+  <operation name='incluirExecucao' parameterOrder='incluirExecucao'>
+   <input message='tns:WSExecucaoEstatais_incluirExecucao'></input>
+   <output message='tns:WSExecucaoEstatais_incluirExecucaoResponse'></output>
+  </operation>
+ </portType>
+ <binding name='WSExecucaoEstataisBinding' type='tns:WSExecucaoEstatais'>
+  <soap:binding style='document' transport='http://schemas.xmlsoap.org/soap/http'/>
+  <operation name='consultarExecucao'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='consultarExecucoes'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+  <operation name='incluirExecucao'>
+   <soap:operation soapAction=''/>
+   <input>
+    <soap:body use='literal'/>
+   </input>
+   <output>
+    <soap:body use='literal'/>
+   </output>
+  </operation>
+ </binding>
+ <service name='WSExecucaoEstataisService'>
+  <port binding='tns:WSExecucaoEstataisBinding' name='WSExecucaoEstataisPort'>
+   <soap:address location='https://testews.siop.gov.br:443/services/WSExecucaoEstatais'/>
+  </port>
+ </service>
+</definitions>

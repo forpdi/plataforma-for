@@ -1,0 +1,419 @@
+.dashboard-select-box{
+	width: auto;
+	display: inline;
+    height: 30px;
+    padding: 0px;
+}
+
+.dashboard-select-box-disabled {
+	background-color: #f5f5f5;
+    color: #aaaaaa;
+}
+
+.dashboard-container{
+    width:100%;
+}
+
+.dashboard-plan-details-header{
+	background-color: #2980B9;
+    color: white;
+    padding: 10px;
+    font-size: 12px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    height: 48px;
+}
+
+.dashboard-plan-details-body{
+	background-color: #3498DB;
+	color:white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 300px !important;
+    padding-top: 40px;
+}
+
+.dashboard-plan-details-body-commmunity {
+    background-color: #3498DB;
+    color:white;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    height: 330px !important;
+    padding-top: 40px;
+}
+
+.dashboard-plan-details-column{
+	text-align: center;
+}
+
+.dashboard-indicator-container{
+    padding-top: 10px;
+    padding-left: 14%;
+    padding-right: 14%;
+    display: flex;
+}
+
+
+.dashboard-indicator-container-commmunity{
+    padding-top: 10px;
+    padding-left: 2%;
+    display: flex;
+}
+
+.dashboard-indicator-number{
+	font-size:22px;
+}
+.dashboard-indicator-header-axis {
+    font-size:13px;
+}
+
+.dashboard-indicator-header{
+	font-size:13px;
+    padding-top:19px;
+}
+
+.dashboard-goals-information{
+	padding: 20px;
+}
+
+.dashboard-goals-information-commmunity {
+    padding-top: 60px;
+    padding-left:7%; 
+    padding-right:7%;
+}
+
+.dashboard-goals-title{
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.dashboard-goals-head{
+    margin-bottom: 8px;
+
+}
+
+.dashboard-objective-information{
+	padding: 0px 20px 20px 20px;
+}
+
+.performance-strategic-graph{
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid;
+    border-color: #F0F0F0 #E8E8E8 #E0E0E0;
+    height: 460px;    
+    
+}
+
+
+.performance-strategic-graph-title{
+	margin-top: 0px;
+	padding-top: 15px;
+	padding-left: 15px;
+}
+
+
+.forpdi-highchart{
+	width:100%;
+}
+
+.dashboard-goals-info-ctn {    
+    border-radius: 5px;
+    background-color: #FFF;    
+}
+
+.dashboard-goal-info {
+    & > h1 {
+       font-size: 30px;
+       color: $brand-primary;
+    }
+    & > h4 {
+       font-size: 10px;
+       color: #000;
+    }
+    & > p {
+       font-size: 11px;
+       color: #7F7F7F;
+    }
+    margin-left: 40px;
+
+}
+
+.dash-board-goals-info-adm {
+    margin-left: 20px !important;
+    padding-top:10px !important;
+    height: 300px;
+}
+
+.budget-graphic-title {
+    flex: 1;
+    padding-top: 5px;
+    font-size: 12px !important;
+}
+
+.dashboard-select-box-graphs {
+    width: auto;
+    display: inline;
+    height: 30px;
+    padding: 0px;
+    font-size: 12px !important;
+}
+    
+.dashboard-panel{
+    margin-top:30px;
+    border:1px solid transparent;
+}
+
+.dashboard-goals-board{
+    text-align: center;
+    width: 200px;
+    border-radius: 3px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+
+
+.dashboard-goals-board-number{
+    font-size: 46px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.7);
+}
+
+.dashboard-goals-board-see-more{
+    text-align: right;
+    margin-right: 10px;
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.dashboard-goal-colaborator-box {
+    /*width: 180px;*/
+    margin-right: 34px;
+    /*box-shadow: 2px 2px 5px #999999;*/
+}
+
+.dashboard-goal-panel-color-red{
+    background-color: #E74C3C;
+}
+
+.dashboard-goal-panel-color-yellow{
+    background-color: #FFCC33;
+}
+
+.dashboard-goal-panel-color-green{
+    background-color: #00A740;
+}
+
+.dashboard-goal-panel-color-blue{
+    background-color: #4EB4FE;
+}
+
+.dashboard-goal-panel-color-gray{
+    background-color: #B5B3B3;
+}
+
+.dashboard-table{
+    width: 100%;
+    font-size: 12px !important;
+    margin-bottom: 0px;
+}
+
+.dashboard-table tbody{    
+    overflow-y: auto;
+    width: 100%;
+    display: block;
+}
+
+.goals-dashboard-table tbody {
+    display: inline-table !important;
+}
+
+#goalsInfoTable th {
+    width: 20%;
+}
+
+.dashboard-panel-title{
+    height: 48px;
+}
+
+.aggregate-indicator-without-goals-legend{
+    background-color: #FFFFFF;
+    text-align: center;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+
+.colaborator-goal-performance-legend{
+    background-color: #FFFFFF;
+    text-align: center;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 25px;
+    padding-bottom: 15px;
+}
+
+.colaborator-goal-performance-legend-manager{
+    background-color: #FFFFFF;
+    text-align: center;
+    padding-right: 20px;
+    padding-left: 20px;
+    padding-top: 25px;
+}
+
+.legend-goals-enough {
+    background-color:#51D466;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+}
+
+.legend-goals-expectedbelow {
+    background-color:#FFCC33;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+}
+
+.legend-goals-minimumbelow {
+    background-color:#E74C3C;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+    margin: 0 auto;
+}
+
+.legend-goals-expectedabove {
+    background-color:#4EB4FE;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+}
+
+.legend-goals-difference {
+    background-color:#CCCCCC;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+}
+
+.legend-goals-difference-expected {
+    background-color:#333333;
+    border: 1px solid transparent;
+    height: 1px;
+    width: 20px;
+    margin: 0 auto;
+}
+
+.legend-item{
+    margin: 10px;
+    font-size: 10px;
+    line-height: 0px;
+}
+
+.dashboard-graph-background{
+    background-color: white;
+    border: 1px solid #ccc;
+    border-top: 0px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.dashboard-next-icon:before{
+    font-size: 18px;
+}
+
+.dashboard-next-icon{
+    background-color: darken($brand-primary, 10%);
+    padding: 3px 2px;
+    border-radius: 17%;
+    color: #FFF;
+    float: right;
+    margin-right:5px;
+    cursor: pointer;
+}
+
+.dashboard-next-icon:hover{
+    color:#dbdbdb;
+    background-color: darken($brand-primary, 20%);
+}
+
+.dashboard-previews-icon:before{
+    font-size: 18px;
+}
+
+.dashboard-previews-icon{
+    background-color: darken($brand-primary, 10%);
+    padding: 3px 2px;
+    border-radius: 17%;
+    color: #FFF;    
+    margin-left:5px;
+    cursor: pointer;
+}
+
+.dashboard-previews-icon:hover{
+    color:#dbdbdb;
+    background-color: darken($brand-primary, 20%);
+}
+
+.dashboard-graph-pagination{    
+    z-index: 1;
+    width: 78px;
+    float: right;
+    position: relative;
+    top: 20px;
+    right: 14%;
+    display: flex;
+}
+
+.dashboard-noCommunity {
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
+    margin-top: 10%;
+}
+
+.dashboard-community-filters {
+    width: 18%;
+    float: left;
+    margin-left: 2%;
+    padding: 13px 0px 10px 10px ;
+}
+
+.dashboard-community-selectBox {
+    width: 175px;
+    margin-top: 18px;
+    margin-left: 15px;
+}
+
+.dashboard-community-text-selectBox {
+    font-size: 12px !important;
+}
+
+.dashboard-community-graphs {
+    margin-right: 2%;
+    margin-left: 2%;
+    padding: 5px 10px 10px 10px;
+}
+
+.goals-board-group {
+    margin-left: 30px;
+}
+
+#aggregate-indicator-goals {
+
+    font-style: italic
+}
+
+.loading-text-goal-board {
+    margin: 40px 0px;
+    font-size: 20px;
+}

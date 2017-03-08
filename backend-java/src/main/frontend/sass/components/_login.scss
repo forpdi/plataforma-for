@@ -1,0 +1,51 @@
+//
+// Login Container
+//
+
+// Login Container Base
+.fpdi-login {
+}
+
+// Login Container Header
+.fpdi-login-header {
+
+  & h1 {
+    font-size: 1.4rem;
+    font-weight: $font-weight-semibold;
+  }
+  & > h1 + p {
+    margin-top: $margin-md;
+  }	
+}
+
+// Generic Properties
+.fpdi-login-header {
+  @include content-spacing-margin-y($margin-sm, $margin-lg);
+  text-align: center;    
+}
+
+.fpdi-login-footer {
+  margin-top: 20px;
+}
+
+// Login brand
+.fpdi-login-brand {
+  max-height: 110px;
+  @include content-spacing-margin-y($margin-xx-lg, $margin-sm);
+}
+
+// Login subtitle
+.fpdi-login-subtitle{
+    line-height: 22px;
+}
+
+.fpdi-recover-password-title{
+    text-align: left;
+    font-weight: 400;
+}
+
+.fpdi-login-title{
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 12px;
+}

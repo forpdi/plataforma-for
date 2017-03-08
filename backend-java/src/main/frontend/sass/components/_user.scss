@@ -1,0 +1,163 @@
+#userNCadastrado {
+	white-space: nowrap;
+}
+
+.user-select-box {
+	width: auto;
+	display: inline;
+	height: 25px;
+	padding: 0px;
+}
+
+
+.senhaUser {
+	text-decoration: underline
+}
+
+.form-profile p {
+	margin-bottom: 30px;
+}
+
+.form-profile {
+	margin-top: 15px;
+	padding: 15px;
+}
+
+#lblUser {
+	display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    margin-left: 7px;
+   	font-weight: normal;
+    font-size: 12px !important;
+}
+
+#lineUser {
+	height:1px; 
+	border:none; 
+	color:#000; 
+	background-color:#ddd; 
+	margin-top: 0px; 
+	margin-bottom: 0px;	
+
+}
+
+.marginLeft130{
+	margin-left: 130px !important;
+}
+
+.marginLeft150{
+	margin-left: 150px !important;
+}
+
+.marginLeft185{
+	margin-left: 185px !important;
+}
+
+.user-permission-list-item {
+	border: 1px solid #F3F6F7;
+    border-right: 0px;
+    border-left: 0px;
+    padding: 7px;
+    font-size: 12px;
+}
+
+.user-permission-checkbox {
+	margin-top: -2px !important;
+    margin-right: 7px !important;
+}
+
+.user-permission-detail {
+	color: #A5A5A5;
+	font-size: smaller;
+	margin-top: 8px;
+}
+
+.user-permission-btn-ctn {
+	padding: 5px;
+	margin-top: 10px;
+}
+
+.user-permission-btn-save {
+	padding-left: 30px;
+    padding-right: 30px;
+}
+
+#notificationIcons::before {
+	font-size: 18px !important;
+}
+
+#notificationIcons{
+	font-size: 12px !important;
+}
+
+.mdi-clock-notification{
+	padding-top: 10px;
+	color: #8C8C8C;
+}
+
+#p-profileUser {
+	margin-bottom: 10px;
+	font-size: 12px;
+}
+
+#p-notificationUser {
+	font-size: 12px;
+}
+
+#p-time-notifications {
+	font-style: italic;
+}
+
+.paddingNotification {
+	padding: 10px 5px 5px 10px;
+}
+
+.backgroundNotification {
+	background: #EBF0F1
+}
+.dropdown-menu-right-notification {
+	left: auto;
+    right: 0;
+}
+.dropdown-menu-notification {	
+    width: 600px;
+    padding:10px;
+}
+
+.dropdown-menu-levels-icons {
+	right: 0;
+}
+
+.dropdown-menu-notification .mdi {
+ 	width: 100px;
+ }
+
+.fpdi-notificationDate {
+	font: 11px "Open Sans", cursive;
+}
+
+.panelNotification {
+	background-color:#FFFFFF;
+}
+
+
+.fpdi-ToolTipNotification {
+	background-color:#FFFFFF;
+	width: 550px;
+	height: 275px;
+	//Removido para alterar o padrão de tooltips
+	//border-color:#DDDDDD;
+	//box-shadow: 10px 10px 10px #CCCCCC;
+}
+
+#TitleSubtitleNotification {
+	color:#19466C;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.notificationSettingsDropdown{
+	font-size: 11px;
+    line-height: 130%;
+}

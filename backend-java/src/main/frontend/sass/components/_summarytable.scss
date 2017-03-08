@@ -1,0 +1,94 @@
+.summary-table {
+	display: block;
+	background-color: #fff;
+	border: 1px solid;
+	border-color: $color-brand-border;
+	margin: 20px auto;
+	padding: 0px;
+	@include border-radius(3px);
+
+	.circle {
+		@include border-radius(5px);
+		color: #333333;
+		padding: 2px;
+		width: 45px;
+		display: inline-block;
+		font-size: 11px;
+		&.blue {
+			background-color: #80C7FB;
+		}
+		&.green {
+			background-color: #51D466;
+		}
+		&.red {
+			background-color: #EB7E73;
+		}
+		&.yellow {
+			background-color: #FFCC33;
+		}
+		&.gray {
+			background-color: #CCCCCC;
+		}
+	}
+	.summary-table-header {
+		border-bottom: 1px solid;
+		border-color: $color-brand-border;
+		background-color: #F4F4F4;
+		padding: 15px 20px;
+		margin: 0px;
+		font-weight: bold;
+		font-size: 13px;
+		& .btn {
+			font-size: 12px;
+			font-weight: 400;
+			float: right;
+			margin: 0px !important;
+			padding: 2px 5px !important;
+			vertical-align: middle;
+		}
+	}
+	& > table {
+		width: 100%;
+		margin: 0px;
+		padding: 0px;
+		border: 0px;
+		border-spacing: 0px;
+		& thead th {
+			padding: 7px 10px;
+			font-weight: 600;
+			font-size: 12px;
+		}
+		& tbody {
+			font-size: 12px;
+			tr {
+				border-top: 1px solid;
+				border-color: $color-brand-border;
+				&:hover {
+					background-color: mix($brand-primary, #F4F4F4, 3%);
+				}
+			}
+			td {
+				padding: 3px;
+				vertical-align: middle;
+			}
+		}
+
+		.summary-table-calendar-cell {
+			width: 560px;
+			max-width: 560px;
+			text-align: center;
+			padding: 0px;
+			margin: 0px;
+			& table {
+				table-layout: fixed;
+				width: 560px;
+				& td {
+					text-align: center;
+					vertical-align: middle;
+					padding: 3px;
+					font-size: 11px;
+				}
+			}
+		}
+	}
+}

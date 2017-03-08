@@ -1,0 +1,109 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	version="1.0">
+
+	<xs:simpleType name="DataTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Currency" />
+			<xs:enumeration value="DateField" />
+			<xs:enumeration value="DateTimeField" />
+			<xs:enumeration value="NumberField" />
+			<xs:enumeration value="Percentage" />
+			<xs:enumeration value="TextArea" />
+			<xs:enumeration value="TextField" />
+			<xs:enumeration value="BudgetField" />
+			<xs:enumeration value="ActionPlanField" />
+			<xs:enumeration value="ScheduleField" />
+			<xs:enumeration value="SelectField" />
+			<xs:enumeration value="TableField" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ScheduleValueTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="String" />
+			<xs:enumeration value="Double" />
+			<xs:enumeration value="Date" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="ScheduleValue">
+		<xs:sequence>
+			<xs:element name="valueLabel" type="xs:string" />
+			<xs:element name="valueType" type="ScheduleValueTypes" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Schedule">
+		<xs:all>
+			<xs:element name="periodicity" type="xs:boolean" default="true" />
+			<xs:element name="scheduleValues">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="scheduleValue" minOccurs="0"
+							maxOccurs="unbounded" type="ScheduleValue" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+
+	<xs:complexType name="OptionLabel">
+		<xs:sequence>
+			<xs:element name="label" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="optionsField" type="OptionLabel" nillable="true" />
+	<xs:element name="scheduleOptions" type="Schedule" nillable="true" />
+
+	<xs:complexType name="Attribute">
+		<xs:sequence>
+			<xs:element name="label" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
+			<xs:element name="type" type="DataTypes" minOccurs="1" maxOccurs="1" />
+			<xs:element name="optionsField" type="OptionLabel"
+				minOccurs="0" maxOccurs="1" />
+			<xs:element name="scheduleOptions" type="Schedule"
+				minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="required" type="xs:boolean" default="false" />
+		<xs:attribute name="visibleInTables" type="xs:boolean"
+			default="true" />
+	</xs:complexType>
+
+	<xs:element name="subSection" type="section" />
+
+	<xs:complexType name="section">
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="attributes" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="attribute" minOccurs="0" maxOccurs="unbounded"
+							type="Attribute" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="subSection" minOccurs="0" maxOccurs="unbounded"
+				type="section" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:element name="document">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="documentName" type="xs:string" />
+				<xs:element name="documentDescription" type="xs:string" />
+				<xs:element name="documentSections">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="documentSection" minOccurs="1"
+								maxOccurs="unbounded" type="section" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

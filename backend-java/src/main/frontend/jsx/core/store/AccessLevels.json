@@ -1,0 +1,46 @@
+{
+	"list": [
+		{
+			"name": "Colaborador",
+			"accessLevel": 15
+		},
+		{
+			"name": "Gerente",
+			"accessLevel": 30
+		},
+		{
+			"name": "Administrador",
+			"accessLevel": 50
+		},
+		{
+			"name": "Administrador de Sistema",
+			"accessLevel": 100
+		}
+	],
+	"listNoSysAdm": [
+		{
+			"name": "Colaborador",
+			"accessLevel": 15
+		},
+		{
+			"name": "Gerente",
+			"accessLevel": 30
+		},
+		{
+			"name": "Administrador",
+			"accessLevel": 50
+		}
+	],
+	"mapped": {
+		"15": "Colaborador",
+		"30": "Gerente",
+		"50": "Administrador",
+		"100": "Administrador de Sistema"
+	},
+	"enum": {
+		"COLABORATOR": 15,
+		"MANAGER": 30,
+		"ADMIN": 50,
+		"SYSADMIN": 100
+	}
+}

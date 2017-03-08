@@ -1,0 +1,164 @@
+.fpdi-tabs {
+	.fpdi-tabs-nav {
+		display: block;
+		background-color: transparent;
+		margin: 10px 10px 0px 10px;
+		padding: 5px 10px 0px;
+		font-size: 13px !important;
+		@include flexbox;
+  		@include flex-dir(row);
+  		@include border-radius(5px 5px 0px 0px);
+  		&::after {
+  			@include flex(1);
+  		}
+  		&.hide-close {
+  			& .mdi {
+  				display: none;
+  			}
+  		}
+  		&.show-close {
+  			& .mdi {
+  				float: right;
+  				margin-top: 3px;
+  			}
+  		}
+		& > * {
+			border: 1px solid;
+			border-color: $color-brand-border;
+			border-bottom: none;
+			list-style: none;
+			background-color: #DFDFDF;
+			padding: 5px 10px;
+			margin: 0px 5px 0px 0px;
+			cursor: pointer;
+			@include border-radius(3px 3px 0px 0px);
+			&.active {
+				background-color: #FFFFFF;
+				margin-bottom: -1px;
+			}
+			&.fpdi-mainTabs {
+				width: 170px !important;
+			}
+		}
+ 		& > .tooltip{
+  			border-color: transparent !important;
+  			background-color: transparent !important;
+  			border:0px;
+  		}
+	}
+	.fpdi-tabs-content {
+		background: #FFFFFF;
+		border: 1px solid;
+		border-color: $color-brand-border;
+		margin: 0px 10px;
+		padding: 20px;
+		min-height: 300px;
+		@include border-radius(5px);
+	}
+	.fpdi-tabs-hidden {
+		position: relative;
+		z-index: 10;
+		float: right;
+		display:flex;
+		width: 50px !important;
+		height: 26px;
+		cursor: pointer;
+		margin: 3px 25px 0px 0px;
+		background: #FFFFFF;
+		&.show-border {
+			border: 1px solid;
+			border-color: #A9A9A9;
+			@include border-radius(3px 3px 0px 0px);
+			border-bottom: none;
+		}
+		&.mdi {
+			float: left;
+		}
+		.tabsNumber {
+			font-size: 13px !important;
+		}
+	}
+	.fpdi-tabsHidden-nav {
+		position: relative;
+		z-index: 5;
+		float: right;
+		margin: 0px 0px 0px 0px;
+		padding-top: 0px;
+		right:-18px;
+		border: 1px solid;
+		background-color: white;
+		border-color: #A9A9A9;
+		max-height: 180px;
+		overflow-y: auto;
+		@include border-radius(3px 3px 0px 0px);
+		&.show-close {
+  			& .mdi {
+  				float: right;
+  				margin-top: 2px;
+  				margin-right: 5px;
+  			}
+  		}
+		& > * {
+			width: 170px !important;
+			display: block;
+			margin: 5px 5px 5px -30px;
+			padding-top: 0px;
+			font-size: 13px !important;
+		}
+	}
+}
+
+.fpdi-tabs-stacked {
+	.fpdi-tabs-nav {
+		display: block;
+		margin: 0px;
+		padding: 5px 0px 0px 5px;
+		@include flexbox;
+  		@include flex-dir(column);
+  		&::after {
+  			@include flex(1);
+  		}
+		& > * {
+			list-style: none;
+			background-color: transparent;
+			color: inherit;
+			padding: 8px 15px;
+			margin: 0px;
+			cursor: pointer;
+			line-height: 100%;
+			@include border-radius(5px 0px 0px 5px);
+			&.active {
+				background-color: #FFFFFF;
+				color: mix($brand-primary, #111, 40%);
+			}
+			&:hover {
+				background-color: #FFFFFF;
+				color: mix($brand-primary, #111, 40%);
+			}
+			&:focus{
+				outline: none;
+			}
+			& .mdi::before {
+				font-size: 24px;
+				line-height: 24px;
+				margin-right: 10px;
+			}
+			& .mdi {
+				vertical-align: middle;
+			}
+		}
+	}
+}
+
+.fpdi-tabsHidden-content{
+	height: 0px;
+	width:0px;
+    position: relative;
+    top: 20px;
+    right: 0px;
+    cursor: default;
+}
+
+.mdi24px::before {
+	font-size: 24px !important;
+}

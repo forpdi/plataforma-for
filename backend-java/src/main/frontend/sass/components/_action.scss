@@ -1,0 +1,49 @@
+.fpdi-action-list {
+	margin-bottom: 10px;
+	& li {
+		margin-right: 5px;
+		margin-bottom: 5px !important;
+	}
+
+	.fpdi-action-item {
+		text-align: left;
+
+		&,
+		&:hover,
+		&:focus,
+		&:active,
+		&:visited {
+			box-shadow: none;
+		}
+
+		&.fpdi-action-item-block {
+			display: block;
+		}
+
+		&.due-date {
+			@extend .btn-primary;
+			border: none;
+
+			&.warning {
+				@extend .btn-warning;
+				border: none;
+			}
+			&.late {
+				@extend .btn-danger;
+				border: none;
+			}
+		}
+
+		& .progress {
+			display: inline-block;
+			margin-bottom: 0;
+			width: 70%;
+
+			& + span {
+				width: 30%;
+				padding-left: 10px;
+				overflow: hidden;
+			}
+		}
+	}
+}

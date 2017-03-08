@@ -1,0 +1,23 @@
+{
+	"ACTION_PLAN_FIELD": "org.forpdi.planning.attribute.types.ActionPlanField",
+	"BUDGET_FIELD": "org.forpdi.planning.attribute.types.BudgetField",
+	"CURRENCY_FIELD": "org.forpdi.planning.attribute.types.Currency",
+	"DATE": "org.forpdi.planning.attribute.types.Date",
+	"DATE_FIELD": "org.forpdi.planning.attribute.types.DateField",
+	"DATE_TIME_FIELD": "org.forpdi.planning.attribute.types.DateTimeField",
+	"INDICATOR_TYPE": "indicator-type",
+	"NUMBER_FIELD": "org.forpdi.planning.attribute.types.NumberField",
+	"PERCENTAGE_FIELD": "org.forpdi.planning.attribute.types.Percentage",
+	"RADIO": "radio",
+	"RESPONSIBLE_FIELD": "org.forpdi.planning.attribute.types.ResponsibleField",
+	"SCHEDULE_FIELD": "org.forpdi.planning.attribute.types.ScheduleField",
+	"SELECT_FIELD": "org.forpdi.planning.attribute.types.SelectField",
+	"SELECT_PLAN_FIELD": "org.forpdi.planning.attribute.types.SelectPlan",
+	"SELECT_STRUCTURE": "select-structure",
+	"STRATEGIC_OBJECTIVE_FIELD": "org.forpdi.planning.attribute.types.StrategicObjective",
+	"TABLE_FIELD": "org.forpdi.planning.attribute.types.TableField",
+	"TEXT_AREA_FIELD": "org.forpdi.planning.attribute.types.TextArea",
+	"TEXT_FIELD": "org.forpdi.planning.attribute.types.TextField",
+	"TOTAL_FIELD": "org.forpdi.planning.attribute.types.TotalField",
+	"ATTACHMENT_FIELD": "org.forpdi.planning.attribute.types.AttachmentField"
+}

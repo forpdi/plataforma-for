@@ -1,0 +1,17 @@
+.progress.progress-sm {
+	height: 8px;
+	border-radius: 5px;
+
+	.progress-bar {
+		box-shadow: none;
+	}
+}
+
+.progressbar-container{
+	background-color: #2C88C4;
+}
+
+.progressbar-progress{
+	background-color: white !important;
+	height: 3px !important;
+}

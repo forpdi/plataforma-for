@@ -1,0 +1,89 @@
+.budget-field-table{
+	width: 100%;
+	font-size: 11px !important;
+	margin-bottom: 0px;
+}
+
+.budget-btns{
+	float: right;
+}
+
+.marginLeft15{
+	margin-left: 15px;
+}
+
+.budget-new-btn{
+	padding: 5px 18px 5px 18px;
+}
+
+.delete-all-btn{
+	padding: 3px 10px 3px 10px;
+    margin-left: 50px;
+    position: absolute;
+}
+
+.delete-all-btn :hover{
+	color: #A9A9A9 !important;
+}
+
+.padding15{
+	padding: 15px;
+}
+
+.btn-height {
+	height: 25px;	
+}
+
+
+.displayFlex{
+	display: flex;
+}
+
+.budget-title{
+	flex: 1;
+	padding-top: 5px;
+	font-size: 14px !important;
+}
+
+.edit-budget-col{
+	display: flex;
+	cursor: pointer;
+	white-space: nowrap
+}
+
+.accepted-budget{
+	background-color: #40D17D;
+	color: #FFF;
+	padding: 4px 2px 3px 3px !important;
+    font-weight: bold;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.reject-budget{
+	color: #FFF;
+    background-color: #EA5949;
+    padding: 4px 2px 3px 3px !important;
+    font-weight: bold;
+    border-radius: 3px;
+    margin-left: 3px;
+    cursor: pointer;
+}
+
+.cursorPointer{
+	cursor: pointer;
+}
+
+.marginRight10{
+	margin-right: 10px;
+}
+
+.budgetCoinIcon{
+    color: green;
+    margin-left: 4px;
+}
+
+.subAction-select-box {
+	width: 100%;
+    padding: 2px;
+}

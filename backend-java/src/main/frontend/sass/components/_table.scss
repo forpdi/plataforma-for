@@ -1,0 +1,104 @@
+//
+// Table Styling
+//
+
+// Bootstrap Table Overrides
+
+.table {
+  border-bottom: 1px solid #e0e0e0;
+
+  & p {
+  	margin-bottom: 0;
+  }
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  vertical-align: middle;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th {
+  border-bottom: 1px;
+}
+
+// Table Header
+
+.table.fpdi-table > thead > tr > th,
+.table.fpdi-table > tbody > tr > th,
+.table.fpdi-table > tfoot > tr > th {
+  color: $gray-dark;
+  font-size: 0.8rem;
+  font-weight: $font-weight-semibold;
+}
+.table.fpdi-table {
+  & tr.danger,
+  & td.danger,
+  & .row.danger {
+    background-color: $brand-danger;
+  }
+  & tr.warning,
+  & td.warning,
+  & .row.warning {
+    background-color: $brand-warning;
+  }
+  & tr.info,
+  & td.info,
+  & .row.info {
+    background-color: $brand-info;
+  }
+}
+
+/*.fpdi-table-actions {
+  visibility: hidden;
+}
+
+.table > tbody > tr:hover .fpdi-table-actions {
+  visibility: visible;
+}*/
+
+
+.table-empty-sons{
+  margin: 15px;
+  font-size: 12px;
+}
+
+.pagination-ctn {
+  padding-top: 8px;
+  padding-right: 8px;
+  padding-bottom: 30px;
+  padding-left: 8px;  
+}
+
+.page_disabled {
+  color: #9F9F9F !important;
+  cursor: default !important;
+}
+
+.page_disabled span {
+  cursor: default !important;
+}
+
+.page-number {
+  position: relative;
+  top: 50%;
+  transform: translateY(50%);
+  color: #808080;
+  font-size: 12px 
+}
+
+.page-size-dropdown {
+  margin-left: 3px;
+  padding: 1px;
+}
+
+.page-nr {
+  transform: translateY(23%);
+  padding: 5px 10px !important;
+  font-size: 12px;
+}

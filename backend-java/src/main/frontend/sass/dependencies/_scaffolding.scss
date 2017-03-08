@@ -1,0 +1,31 @@
+html {
+	font-size: 16px;
+}
+
+body {
+	background-color: #f0f4f6;
+}
+
+a {
+	cursor: pointer;
+}
+
+.bold {
+	font-weight: 700;
+}
+.semibold {
+	font-weight: 600;
+}
+
+.fpdi-no-padding {
+	padding: 0;
+}
+
+// Material design icon size and position adjustments
+
+.mdi::before,
+.nav .mdi::before,
+span.mdi::before {
+	font-size: 12px;
+	top: 2px;
+}

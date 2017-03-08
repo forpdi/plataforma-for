@@ -1,0 +1,6 @@
+{
+	"MANAGE_PLAN_MACRO_PERMISSION":"org.forpdi.planning.permissions.ManagePlanMacroPermission",
+	"MANAGE_DOCUMENT_PERMISSION":"org.forpdi.planning.permissions.ManageDocumentPermission",
+	"MANAGE_PLAN_PERMISSION":"org.forpdi.planning.permissions.ManagePlanPermission",
+	"UPDATE_GOAL_PERMISSION":"org.forpdi.planning.permissions.UpdateGoalPermission"
+}
