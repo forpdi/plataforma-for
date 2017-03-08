@@ -157,7 +157,7 @@ export default React.createClass({
     },
 
 	render() {
-			
+
 		if (!this.state.logged) {
 			return <div style={{display: 'none'}} />;
 		}
@@ -191,7 +191,7 @@ export default React.createClass({
 
 					<a
 						id="top-bar-notification"
-						className="dropdown-toggle mdi mdi-bell fpdi-notifications"
+						className="dropdown-toggle mdi mdi-bell fpdi-notifications icon-link"
 						data-toggle="dropdown"
 						aria-haspopup="true"
 						aria-expanded="true"
@@ -220,12 +220,12 @@ export default React.createClass({
 					title="Menu de Opções"
 					>
 						<span className="sr-only">Menu de Opções</span>
-						<span id="align-top-bar-menu" className="mdi mdi-menu" />
+						<span id="align-top-bar-menu" className="mdi mdi-menu icon-link" />
 				</a>
 				<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
 					<li>
 						<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-							<span className="mdi mdi-account-circle"/> Meu Perfil
+							<span className="mdi mdi-account-circle icon-link"/> Meu Perfil
 						</Link>
 					</li>
 					
@@ -233,7 +233,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company ? <li>
 						<Link to="/users">
-		                	<span className="mdi mdi-account-multiple"
+		                	<span className="mdi mdi-account-multiple icon-link"
 		                    	/> {Messages.get("label.users")}
 		            	</Link>
 		            </li>:""}
@@ -250,14 +250,14 @@ export default React.createClass({
 			        
 			        {this.context.roles.SYSADMIN ? <li>
 						<Link to="/system/companies">
-			                <span className="mdi mdi-chemical-weapon"
+			                <span className="mdi mdi-chemical-weapon icon-link"
 			                    /> {Messages.get("label.system")}
 			            </Link>
 					</li>:""}
 					
 					{this.context.roles.SYSADMIN ? <li>
 						<Link to="/structures">
-			                <span className="mdi mdi-note-text"
+			                <span className="mdi mdi-note-text icon-link"
 			                    /> {Messages.get("label.structures")}
 			            </Link>
 					</li>:""}
@@ -267,7 +267,7 @@ export default React.createClass({
 					<li role="separator" className="divider"></li>
 					<li>
 						<a onClick={this.onLogout}>
-							<span className="mdi mdi-logout" /> Sair
+							<span className="mdi mdi-logout icon-link" /> Sair
 						</a>
 					</li>
 				</ul>
