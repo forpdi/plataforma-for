@@ -43,7 +43,7 @@ export default React.createClass({
 			levelsSelectSearch:[],
 			ordResultSearch:null,
 			parentIdSearch:null,
-			termsSearch:null,
+			termsSearch:'',
 			subPlansSelectSearch:[]
 		};
 	},
@@ -235,6 +235,7 @@ export default React.createClass({
 		});
 
         PlanStore.on("planFind", (model, data) => {
+        
         	this.setState({
 				dataInitSearch:data.dataInit,
 				dataEndSearch:data.dataEnd,

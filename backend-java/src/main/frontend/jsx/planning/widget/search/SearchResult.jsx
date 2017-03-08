@@ -33,13 +33,25 @@ export default React.createClass({
 		
 	
 
-		 PlanStore.on("planFind", (model,data) => {
+		 PlanStore.on("planFind", (model) => {
 
 			if (model != null && this.isMounted()) {
-				this.setState({
+				if (this.state.page == 1) {
+					this.setState({
            				resultSearchMore:model.data
-        			});
-        				
+        			});	
+				} else {	
+					var i;
+					for (i = 0; i < model.data["0"].levelInstances.length; i++) {
+						this.state.resultSearchMore["0"].levelInstances.push(model.data["0"].levelInstances[i]);
+					}
+					
+					this.setState({
+						resultSearchMore:this.state.resultSearchMore
+					});
+				}
+
+				
 			}
 		},this);				
 
@@ -57,6 +69,11 @@ export default React.createClass({
 
 	showMoreOccurencesSearches() {
 		var newPage = this.state.page+1;
+		
+		console.log("TERMS");
+		console.log(this.props.terms);
+
+
 		PlanStore.dispatch({
 			action: PlanStore.ACTION_FIND_TERMS,
 			data: {
@@ -67,7 +84,7 @@ export default React.createClass({
 				dataInit: this.props.dataInit,
 				dataEnd: this.props.dataEnd,
 				ordResult: this.props.ordResult,
-				limit: 10,
+				limit:10,
 				page: newPage
 			},
 			opts: {
