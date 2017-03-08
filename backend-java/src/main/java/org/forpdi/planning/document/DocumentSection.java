@@ -39,6 +39,8 @@ public class DocumentSection extends SimpleLogicalDeletableEntity   {
 	
 	private int sequence;
 	
+	private boolean preTextSection = false;
+	
 	@Transient
 	private List<DocumentAttribute> documentAttributes;
 	
@@ -99,5 +101,13 @@ public class DocumentSection extends SimpleLogicalDeletableEntity   {
 	public void setFilled(boolean filled) {
 		this.filled = filled;
 	}
+	public boolean isPreTextSection() {
+		return preTextSection;
+	}
+	public void setPreTextSection(boolean preTextSection) {
+		this.preTextSection = preTextSection;
+	}
+	
+	
 	
 }
