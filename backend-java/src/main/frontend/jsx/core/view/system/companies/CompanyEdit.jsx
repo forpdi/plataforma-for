@@ -56,9 +56,9 @@ export default React.createClass({
 			name: 'localization',
 			type: 'text',
 			maxLength:255,
-			placeholder: 'Cidade-Estado',
-			label: "Localização",
+			placeholder: 'Cidade/Estado',
 			required:true,
+			label: "Cidade/Estado",
 			value: model ? model.get("localization"):null	
 		},{
 			name: "showDashboard",
@@ -139,11 +139,16 @@ export default React.createClass({
 	},
 	onSubmit(data) {
 		var me = this;
+		console.log(data)
 
 		var msg="";
 
-		if (data.name.trim() =="")  {
+		if ( (data.name.trim() == "") && (data.localization.trim() == "")){
+			msg+= "Os campos nome e cidade/estado estão vazios!";
+		} else if (data.name.trim() == "")  {
 			msg+= "O campo nome está vazio!";
+		} else if(data.localization.trim() == ""){
+			msg+= "O campo de cidade/estado está vazio!";
 		} else if (errorField) {
 			msg+= " Endereço de imagem inválido!";
 		}

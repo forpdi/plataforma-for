@@ -546,15 +546,15 @@ var Modal = {
 	        dataType: 'json',
 	        beforeSend : function(xhr, opts) {	        	
 				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length); 
-	        	/*if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType))) 
-	        			|| this.files[0].type.toLowerCase().match(typesBlocked) || format.toLowerCase().match(typesBlocked)) {
+	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType))) 
+	        			|| format.toLowerCase().match(typesBlocked)) { //|| this.files[0].type.toLowerCase().match(typesBlocked)
 	        		if (!this.files[0].type.toLowerCase().match(fileType) || this.files[0].type.toLowerCase().match(typesBlocked))
 	        			format = this.files[0].type.split("/")[1] || "";
 	        		typeViolation = true;
-					xhr.abort();*/
-				if (!(format.toLowerCase().match(fileType)) || format.toLowerCase().match(typesBlocked)) {
-	        		typeViolation = true;
 					xhr.abort();
+				/*if (!(format.toLowerCase().match(fileType)) || format.toLowerCase().match(typesBlocked)) {
+	        		typeViolation = true;
+					xhr.abort();*/
 				} else if (maxSize && this.files[0].size > maxSize){
 					sizeExceeded = true;
 					xhr.abort();

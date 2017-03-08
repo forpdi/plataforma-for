@@ -13,14 +13,16 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			page: 1,
-			resultSearchMore:this.props.resultSearch,
-			termPesquisaProps:this.props.terms,
-			parentIdProps: this.props.parentId,
-			subPlansSelectProps:this.props.subPlansSelect,
-			levelsSelectProps:this.props.levelsSelect,
-			dataInitProps:this.props.dataInit,
-			dataEndProps:this.props.dataEnd,
-			ordResultProps:this.props.ordResult
+			resultSearchMore:[],
+			termsSearch:this.props.terms,
+			parentIdSearch: this.props.parentId,
+			subPlansSelectSearch:this.props.subPlansSelect,
+			levelsSelectSearch:this.props.levelsSelect,
+			dataInitSearch:this.props.dataInit,
+			dataEndSearch:this.props.dataEnd,
+			ordResultSearch:this.props.ordResult,
+			hideShowMore: false,
+			totalSearchOccurrence:null
 		};
 	},
 
@@ -32,11 +34,24 @@ export default React.createClass({
 	
 
 		 PlanStore.on("planFind", (model) => {
-		 
-			if (model != null) {
-				this.setState({
-           			resultSearchMore:model.data
-        		});		
+
+			if (model != null && this.isMounted()) {
+				if (this.state.page == 1) {
+					this.setState({
+           				resultSearchMore:model.data
+        			});	
+				} else {	
+					var i;
+					for (i = 0; i < model.data["0"].levelInstances.length; i++) {
+						this.state.resultSearchMore["0"].levelInstances.push(model.data["0"].levelInstances[i]);
+					}
+					
+					this.setState({
+						resultSearchMore:this.state.resultSearchMore
+					});
+				}
+
+				
 			}
 		},this);				
 
@@ -48,14 +63,14 @@ export default React.createClass({
 		
 	},
 	componentWillReceiveProps(newProps) {
-		
 	
 		
 	},
 
 	showMoreOccurencesSearches() {
-		
 		var newPage = this.state.page+1;
+
+
 		PlanStore.dispatch({
 			action: PlanStore.ACTION_FIND_TERMS,
 			data: {
@@ -66,7 +81,7 @@ export default React.createClass({
 				dataInit: this.props.dataInit,
 				dataEnd: this.props.dataEnd,
 				ordResult: this.props.ordResult,
-				limit: 10,
+				limit:10,
 				page: newPage
 			},
 			opts: {
@@ -133,7 +148,7 @@ export default React.createClass({
 										})
 										
 									: ""}
-									{model.levelInstances.length > 0 ? 
+									{(model.levelInstances.length > 0  && model.levelInstances.length <= 10) ? 
 										<div className="textAlignCenter marginBottom10">
 	                    					<a onClick={this.showMoreOccurencesSearches}>ver mais...</a>
 	                					</div>
@@ -149,4 +164,3 @@ export default React.createClass({
 	}
 
 });
-

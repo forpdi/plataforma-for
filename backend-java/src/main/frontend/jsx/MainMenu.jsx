@@ -177,7 +177,7 @@ export default React.createClass({
             
             <div className="fpdi-tabs-nav">
     			<Link to="/home" activeClassName="active">
-                    <span className="fpdi-nav-icon mdi mdi-view-dashboard"
+                    <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
                         /> <span className="fpdi-nav-label">
                             {Messages.get("label.dashboard")}
                         </span>
@@ -188,7 +188,7 @@ export default React.createClass({
                 this.state.plans.map((plan, index) => {
                     return <div className="fpdi-tabs-nav" key={"open-plan-"+index}>
                         <Link to={"/plan/"+plan.id+"/"} activeClassName="active">
-                            <span className="fpdi-nav-icon mdi mdi-chart-bar" title = {plan.name}
+                            <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
                                 />  <span className="fpdi-nav-label" title = {plan.name}>
                                     {(plan.name).length <= 24?plan.name:(plan.name).split("",20).concat(" ...")}       
                                 </span>
@@ -202,7 +202,7 @@ export default React.createClass({
                 <div>
                     <div className="fpdi-tabs-nav">
                         <Link to="/plan/new" activeClassName="active">
-                            <span className="fpdi-nav-icon mdi mdi-plus"/> 
+                            <span className="fpdi-nav-icon mdi mdi-plus icon-link"/> 
                                 <span className="fpdi-nav-label">
                                     {Messages.get("label.newplan")}
                                 </span>
@@ -212,11 +212,11 @@ export default React.createClass({
                         <div>
                             <div className="fpdi-tabs-nav">
                                 <a onClick={this.listArchivedPlans}>
-                                    <span className="fpdi-nav-icon mdi mdi-folder-lock"
+                                    <span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
                                         /> <span className="fpdi-nav-label">
                                             Planos arquivados
                                         </span>
-                                        {this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight" : "mdi mdi-chevron-up floatRight"}/>}
+                                        {this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
                                     
                                 </a>
                             </div> 
@@ -224,7 +224,7 @@ export default React.createClass({
                                 this.state.archivedPlans.map((plan, index) => {
                                     return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
                                         <Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
-                                            <span className="fpdi-nav-icon mdi mdi-chart-bar" title = {plan.name}
+                                            <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
                                                 />  <span className="fpdi-nav-label" title = {plan.name}>
                                                     {(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}       
                                                 </span>
@@ -242,7 +242,7 @@ export default React.createClass({
             <div style={{height: "10px"}} />
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
                 <a onClick={this.tweakHidden}>
-                    <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle":"mdi-arrow-left-bold-circle")}
+                    <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
                         /> <span className="fpdi-nav-label">
                             Recolher menu
                         </span>

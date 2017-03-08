@@ -1094,9 +1094,10 @@ public class StructureController extends AbstractController {
 	 */
 	@Post(BASEPATH + "/structure/deleteGoals")
 	@NoCache
-	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManageStructurePermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanPermission.class })
 	@Consumes
 	public void deleteManyGoals(PaginatedList<Double> list) {
+	
 		try {
 			for (int i = 0; i < list.getTotal(); i++) {
 				Long id = list.getList().get(i).longValue();
