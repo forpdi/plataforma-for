@@ -37,7 +37,14 @@ export default React.createClass({
 			rootSections: [],
 			hiddenSearch: false,
 			hiddenResultSearch: false,
-			resultSearch: []
+			resultSearch: [],
+			dataInitSearch:null,
+			dataEndSearch:null,
+			levelsSelectSearch:[],
+			ordResultSearch:null,
+			parentIdSearch:null,
+			termsSearch:null,
+			subPlansSelectSearch:[]
 		};
 	},
 	componentDidMount(){
@@ -228,7 +235,16 @@ export default React.createClass({
 		});
 
         PlanStore.on("planFind", (model, data) => {
-        	console.log(data)
+        	this.setState({
+				dataInitSearch:data.dataInit,
+				dataEndSearch:data.dataEnd,
+				levelsSelectSearch:data.levelsSelect,
+				ordResultSearch:data.ordResult,
+				termsSearch:data.terms,
+				parentIdSearch:data.parentId,
+				subPlansSelectSearch:data.subPlansSelect
+			});
+
 			if (model != null && this.isMounted()) {
 				this.setState({
            			resultSearch:model.data
@@ -788,10 +804,17 @@ export default React.createClass({
 				: ""}
 
 				{this.state.hiddenResultSearch ?
-					<SearchResult resultSearch = {this.state.resultSearch} planId= {this.props.plan.get("id")}
-						terms = {this.refs.termPesquisa != undefined ? this.refs.termPesquisa  : ""} parentId = {this.state.parentIdProps}
-						subPlansSelect = {this.state.subplansSelectProps} levelsSelect = {this.state.levelsSelectProps} 
-						dataInit = {this.state.dataInitProps} dataEnd = {this.state.dataEndProps} ordResult = {this.state.ordResultProps} /> 
+					<SearchResult 
+						resultSearch = {this.state.resultSearch}
+						planId = {this.props.plan.get("id")}
+						terms = {this.state.termsSearch}
+						parentId = {this.state.parentIdSearch}
+						subPlansSelect = {this.state.subPlansSelectSearch}
+						levelsSelect = {this.state.levelsSelectSearch}
+						dataInit = {this.state.dataInitSearch}
+						dataEnd = {this.state.dataEndSearch}
+						ordResult = {this.state.ordResultSearch}
+					/> 
 				: 	
 					<div>
 						{this.context.roles.SYSADMIN ? "" : <FavoriteTree />}
