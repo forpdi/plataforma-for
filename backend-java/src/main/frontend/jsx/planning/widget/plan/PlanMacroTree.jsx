@@ -50,6 +50,8 @@ export default React.createClass({
 	componentDidMount(){
 		var me = this;
 		StructureStore.on('levelAttributeSaved', (model) => {
+			console.log(model);
+			console.log(this.state);
 			//Consulta para encontrar qual nó da árvore está ativo
 			var nodeActive = document.getElementsByClassName("fpdi-node-label active");
 			if(nodeActive.length>0){  // Caso encontre um valor, o texto dele será alterado pelo nome atual do nó
@@ -682,7 +684,21 @@ export default React.createClass({
 							var elemError = document.getElementById("paramError");
 							if(sections=='' || author.trim()=='' || title.trim()==''){
 								elemError.innerHTML = "Erro ao exportar documento. Preencha os campos autor e título, e selecione pelo menos uma seção.";
+								if(author.trim()=='') {
+									document.getElementById("documentAuthor").className = "borderError";
+								}
+								else {
+									document.getElementById("documentAuthor").className = "";
+								}
+								if(title.trim()=='') {
+									document.getElementById("documentTitle").className = "borderError";
+								}
+								else {
+									document.getElementById("documentTitle").className = "";
+								}
 							}else{
+								document.getElementById("documentAuthor").className = "";
+								document.getElementById("documentTitle").className = "";
 								var url = DocumentStore.url + "/exportdocument" + "?title=" + title + "&author=" + author + "&lista=" + lista;
 								url = url.replace(" ", "+");
 								Modal.hide();
@@ -690,6 +706,8 @@ export default React.createClass({
 							}
 						});
 					document.getElementById("paramError").innerHTML = "";
+					document.getElementById("documentAuthor").className = "";
+					document.getElementById("documentTitle").className = "";
 			    }
 			}
 		});
