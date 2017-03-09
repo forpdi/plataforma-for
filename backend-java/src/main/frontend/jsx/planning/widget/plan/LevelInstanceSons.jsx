@@ -1414,18 +1414,20 @@ export default React.createClass({
 	},
 
 	pageChange(page, pageSize){	
+		var me = this;
+		this.refs["all-goals-checkbox"].checked = false;	
+		this.selectAllGoals();
 		this.getLevelSons(this.props.parentId, page, pageSize);
+
+
 		if (this.state.model.data.sons && this.state.model.data.sons.length>0 && this.state.model.data.sons[0].level.goal) {
-			this.state.model.data.sons.list.map((goal, idx) => {
-				this.refs["goal-checkbox-"+idx].checked = false;
-			});
-			this.refs["all-goals-checkbox"].checked = false;	
 			if(this.isMounted()){
 				this.setState({
-					goalChecked: false
+					goalChecked: true
 				});
 			}
 		}
+
 	},
 
 	renderLevelSons(sons) {		
