@@ -75,11 +75,12 @@ public class UserController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
 	public void save(@NotEmpty String name, @NotEmpty String email, Integer accessLevel) {
 		try {
-			int actualAccess = this.bs.retrieveAccessLevel(this.userSession.getUser());
-			if (accessLevel > actualAccess) {
-				this.forbidden();
-				return;
-			}
+			/* int actualAccess = this.bs.retrieveAccessLevel(this.userSession.getUser());
+				if (accessLevel > actualAccess) {
+					this.forbidden();
+					return;
+				}
+			*/
 			User user = this.bs.inviteUser(name, email, accessLevel);
 
 			this.success(user);
