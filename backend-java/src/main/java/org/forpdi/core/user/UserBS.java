@@ -468,22 +468,15 @@ public class UserBS extends HibernateBusiness {
 	 * @return PaginatedList<User> Lista de usuários que contém o nome buscado
 	 *         em alguma parte do nome.
 	 */
-	public PaginatedList<User> listUsersBySearch(String terms, Integer page, Long limit) {
+	public PaginatedList<User> listUsersBySearch(String terms) {
 		PaginatedList<User> results = new PaginatedList<User>();
 		Criteria criteria = this.dao.newCriteria(User.class);
 		criteria.add(Restrictions.eq("deleted", false));
 		
-		if (limit != null) {
-			criteria.setFirstResult((int) ((page - 1) * limit));
-			criteria.setMaxResults(limit.intValue());
-		}
-		
-		
-		
 		Criteria count = this.dao.newCriteria(User.class).add(Restrictions.eq("deleted", false))
 				.setProjection(Projections.countDistinct("id"));
 
-		if (terms != null) {
+		if (terms != null && !terms.isEmpty()) {
 			Disjunction or = Restrictions.disjunction();
 			or.add(Restrictions.like("name", "%" + terms + "%").ignoreCase());
 			criteria.add(or);

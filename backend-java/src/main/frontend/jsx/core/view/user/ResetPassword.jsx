@@ -109,7 +109,6 @@ export default React.createClass({
 						:
 						<div className="col-md-4 col-md-offset-4">
 							<div className="fpdi-login-header">
-								<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
 								<h1>Esta página não está mais disponível.</h1>
 								<p><a className="btn btn-sm btn-primary" href="#/">Retornar à página inicial</a></p>
 							</div>

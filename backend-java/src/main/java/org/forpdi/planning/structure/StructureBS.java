@@ -260,18 +260,16 @@ public class StructureBS extends HibernateBusiness {
 	 * @return results Lista de instâncias dos leveis.
 	 */
 	public List<StructureLevelInstance> listLevelsInstanceTerms(PlanMacro macro, String terms, Long subPlansSelect[],
-			Long levelsSelect[], int ordResult,Integer page, Long limit) {
+			Long levelsSelect[], int ordResult) {
 		List<StructureLevelInstance> results = new ArrayList<StructureLevelInstance>();
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
 				.createAlias("plan", "plan", JoinType.INNER_JOIN).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("plan.parent", macro))
-				.add(Restrictions.like("name", "%" + terms + "%").ignoreCase());
+				.add(Restrictions.eq("plan.parent", macro));
 		
-		if (limit != null) {
-			criteria.setFirstResult((int) ((page - 1) * limit));
-			criteria.setMaxResults(limit.intValue());
+		if (terms != null && !terms.isEmpty()) {
+			criteria.add(Restrictions.like("name", "%" + terms + "%").ignoreCase());
 		}
-
+		
 		if (subPlansSelect != null) {
 			Disjunction or = Restrictions.disjunction();
 			for (int i = 0; i < subPlansSelect.length; i++) {
@@ -313,18 +311,15 @@ public class StructureBS extends HibernateBusiness {
 	 * @return results Lista de instâncias dos atributos.
 	 */
 	public List<AttributeInstance> listAttributesTerms(PlanMacro macro, String terms, Long subPlansSelect[],
-			Long levelsSelect[], int ordResult, Integer page, Long limit) {
+			Long levelsSelect[], int ordResult) {
 		List<AttributeInstance> results = new ArrayList<AttributeInstance>();
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
 				.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
 				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("plan.parent", macro))
-				.add(Restrictions.like("value", "%" + terms + "%").ignoreCase());
-
+				.add(Restrictions.eq("plan.parent", macro));
 		
-		if (limit != null) {
-			criteria.setFirstResult((int) ((page - 1) * limit));
-			criteria.setMaxResults(limit.intValue());
+		if (terms != null && !terms.isEmpty()) {
+			criteria.add(Restrictions.like("value", "%" + terms + "%").ignoreCase());
 		}
 		
 		if (subPlansSelect != null) {
