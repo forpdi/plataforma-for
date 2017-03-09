@@ -139,8 +139,6 @@ export default React.createClass({
 	},
 	onSubmit(data) {
 		var me = this;
-		console.log(data)
-
 		var msg="";
 
 		if ( (data.name.trim() == "") && (data.localization.trim() == "")){

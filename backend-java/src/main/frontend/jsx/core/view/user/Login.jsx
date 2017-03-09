@@ -87,35 +87,39 @@ export default React.createClass({
 
 		    <div className="row">
 				<div className="col-md-4 col-md-offset-4">	
-				<div className="fpdi-card-login">		
-					<div className="panel panel-default">
-					  <div className="panel-heading"><p className="fpdi-login-title">Login</p></div>
-					  <div className="panel-body">
-							<div className="fpdi-login-body">
-								<VerticalForm
-									ref="login"
-									onSubmit={this.onSubmit}
-									fields={this.state.fields}
-									store={UserSession}
-									hideCanel={true}
-									submitLabel="Fazer login"
-									blockButtons={true}
-									confirmKey={13}
-									id="login-form"
-								/>
-							</div>
-							
-							<div className="fpdi-login-footer">
-								<div className="row">
-									<div className="col-md-12 text-center marginBottom10">
-										<Link to="/recover-password">Esqueceu sua senha?</Link>
+					<div className="fpdi-card-login">		
+						<div className="panel panel-default">
+						  <div className="panel-heading"><p className="fpdi-login-title">Login</p></div>
+							  <div className="panel-body">
+									<div className="fpdi-login-body">
+										<VerticalForm
+											ref="login"
+											onSubmit={this.onSubmit}
+											fields={this.state.fields}
+											store={UserSession}
+											hideCanel={true}
+											submitLabel="Fazer login"
+											blockButtons={true}
+											confirmKey={13}
+											id="login-form"
+										/>
 									</div>
-								</div>
-							</div>
-
-					  </div>
+									
+									<div className="fpdi-login-footer">
+										<div className="row">
+											<div className="col-md-12 text-center marginBottom10">
+												<Link to="/recover-password">Esqueceu sua senha?</Link>
+											</div>
+										</div>
+									</div>
+							  </div>
+						</div>
 					</div>
-				</div>
+
+					<div className="fpdi-browsers-info">
+						Para uma melhor experiência utilize os seguintes navegadores:<br/>
+						<i>Mozilla Firefox v52.0 - Google Chrome v56.0 - Opera v43.0</i>
+					</div>
 				</div>
 			</div>
 
