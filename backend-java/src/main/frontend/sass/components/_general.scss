@@ -1291,3 +1291,29 @@ label{
     padding-top: 20px;
     font-size: 11px;
 }
+
+.fpdi-richtext-link-ctn {
+    display: flex;
+    padding: 10px;
+    height: 40px;
+    box-shadow: 0px 1px 1px #888
+}
+
+.fpdi-richtext-link-label {
+	margin-right: 10px;
+    font-size: 13px;
+    font-weight: 100;
+}
+
+.fpdi-richtext-link-btn {
+	margin-left: 5px;
+    color: #A9A9A9;
+    cursor: pointer;
+}
+#fpdi-richtext-link-btn::before {
+	font-size: 16px !important;
+    top: 2px;
+}
+.fpdi-richtext-link-btn:hover {
+	color: darken($brand-primary, 10%);
+}
