@@ -31,46 +31,34 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		
-	
-
-		 PlanStore.on("planFind", (model) => {
-
+		PlanStore.on("planFind", (model, data) => {
 			if (model != null && this.isMounted()) {
-				if (this.state.page == 1) {
+				if (data.page == 1) {
 					this.setState({
-           				resultSearchMore:model.data
+           				resultSearchMore:model.data,
+           				resultSearchTotal:model.total,
+           				page: 1
         			});	
 				} else {	
 					var i;
-					for (i = 0; i < model.data["0"].levelInstances.length; i++) {
-						this.state.resultSearchMore["0"].levelInstances.push(model.data["0"].levelInstances[i]);
+					for (i = 0; i < model.data.length; i++) {
+						this.state.resultSearchMore.push(model.data[i]);
 					}
 					
 					this.setState({
 						resultSearchMore:this.state.resultSearchMore
 					});
 				}
-
-				
 			}
 		},this);				
 
-
-
 	},
 	componentWillUnmount() {
-		
-		
-	},
-	componentWillReceiveProps(newProps) {
-	
-		
+		PlanStore.off(null, null, this);
 	},
 
 	showMoreOccurencesSearches() {
 		var newPage = this.state.page+1;
-
-
 		PlanStore.dispatch({
 			action: PlanStore.ACTION_FIND_TERMS,
 			data: {
@@ -95,69 +83,38 @@ export default React.createClass({
 
 
 	render() {
-		var total = 0;
-		if (this.state.resultSearchMore.length > 0) { 
-			this.state.resultSearchMore.map((model, idx) => {
-				/*if (model.name)
-					total = total + 1;*/
-				total = total + model.levelInstances.length;
-			});
-		}
+		var total = this.state.resultSearchTotal;
 		return (
 			<div className="fpdi-search">		
 				<div className = "fpdi-search-view">
 					<p>Sua pesquisa retornou {total} {total == 1 ? "resultado" : "resultados"}</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ? 
-					this.state.resultSearchMore.map((model, idx) => {
-						
-						return(
-							<div key={"plan-"+idx}>
-								
-								{/*model.name ? 
-									<div id = "fpdi-result-search-level">
+					<div>
+						{this.state.resultSearchMore.map((model, idx) => {
+							return(
+								<div key={"levelInstance-"+idx}>
+									<div id="fpdi-result-search">
 										<div id="fpdi-result-search-title">
-											Plano de Metas<br/>
-										</div> 
+											{model.level.name}
+										</div>
 										<Link
-											to={'/plan/'+model.parent.id+'/details/subplan/'+model.id}
-											activeClassName="active"
-										>
-										{model.name}
-										</Link>
-									</div> 
-								: ""*/}
-								
-								<div>
-									{model.levelInstances.length > 0 ? 
-										model.levelInstances.map((mod, id) => {	
-											return(
-												<div key={"structure-"+id} id = "fpdi-result-search">
-													<div id="fpdi-result-search-title">
-														{mod.level.name}
-													</div>
-														<Link
-											to={"/plan/"+this.props.planId+"/details/subplan/level/"+mod.id}
+											to={"/plan/"+this.props.planId+"/details/subplan/level/"+model.id}
 											activeClassName="active"
 											title="ver mais"
 											>
-											{mod.name}
+											{model.name}
 										</Link>
-												</div>
-											);				
-										})
-										
-									: ""}
-									{(model.levelInstances.length > 0  && model.levelInstances.length <= 10) ? 
-										<div className="textAlignCenter marginBottom10">
-	                    					<a onClick={this.showMoreOccurencesSearches}>ver mais...</a>
-	                					</div>
-	                				: ""}
-
+									</div>
 								</div>
-							</div>
-						);
-					})
+							);
+						})}
+						{this.state.resultSearchMore.length < this.state.resultSearchTotal ? 
+							<div className="textAlignCenter marginTop20">
+	        					<a onClick={this.showMoreOccurencesSearches}>ver mais...</a>
+	    					</div>
+	    				: ""}
+    				</div>
 				: ""}		
 			</div>
 		);

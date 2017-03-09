@@ -123,7 +123,8 @@ export default React.createClass({
 
 	getAttachments(page, pageSize){
 		var me = this;
-		me.refs["attach-checkbox-all"].checked = false;
+		if (me.refs["attach-checkbox-all"])
+			me.refs["attach-checkbox-all"].checked = false;
 		me.checkAll();
 		AttachmentStore.dispatch({
 			action: AttachmentStore.ACTION_FIND,
@@ -203,10 +204,11 @@ export default React.createClass({
 
 	checkAll(){
 		this.state.list.map((attachment, idx) => {
-			this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"].checked
+			if(this.refs["attach-checkbox-"+idx])
+				this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false;
 		});
 		this.setState({
-			anyCheck: this.refs["attach-checkbox-all"].checked
+			anyCheck: this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false
 		});
 	},
 

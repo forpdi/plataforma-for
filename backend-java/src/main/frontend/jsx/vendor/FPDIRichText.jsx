@@ -4,7 +4,8 @@ import ReactQuill from 'react-quill';
 import RichTextToolbar from 'forpdi/jsx/vendor/RichTextToolbar.jsx';
 import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx";
-import 'quill/dist/quill.snow.css';
+import 'react-quill/node_modules/quill/dist/quill.snow.css';
+import 'react-quill/node_modules/quill/dist/quill.base.css';
 
 export default React.createClass({
 
@@ -19,12 +20,30 @@ export default React.createClass({
                 toolbar: {
                     container: '#'+this.props.id                    
                 }
-            }
+            },
+            selectedTxt: "",
+            newLink: false
         }
     },
 
     componentDidMount(){
         
+    },
+
+    onLinkClick(){
+        this.quill = this.refs['quill'].state.editor;
+        this.selection = this.refs['quill'].state.selection;
+        if(this.selection == undefined)
+            return;
+        var start = this.selection.start;
+        var end = this.selection.end;
+        var text = this.quill.getText().substring(start,end);
+        if(text != ""){
+            this.setState({
+                selectedTxt: text,
+                newLink: true
+            });
+        }
     },
 
     onImageClick(){
@@ -81,11 +100,18 @@ export default React.createClass({
                 onKeyUp={this.onKeyUp}
                 value={this.value}
                 ref="quill">
-                    <RichTextToolbar imageHandler={this.onImageClick} id={this.props.id}/>
+                    <RichTextToolbar imageHandler={this.onImageClick} linkHandler={this.onLinkClick} id={this.props.id}/>
+                 
+                        {/*<div className="fpdi-richtext-link-ctn">
+                            <label htmlFor="url-input" className="fpdi-richtext-link-label">Link:</label>
+                            <input type="url" defaultValue={this.state.selectedTxt} id="url-input"/>
+                            <span className="mdi mdi-link-variant fpdi-richtext-link-btn" title="inserir link"/>
+                        </div>*/}
+                    
                     <div key="editor"
                         ref="editor"
                         className="quill-contents resizeVertical minHeight200"
-                        wrap={true}
+                        spellCheck={true}
                         dangerouslySetInnerHTML={{__html:(this.value)}}/>
 
                 </ReactQuill>
