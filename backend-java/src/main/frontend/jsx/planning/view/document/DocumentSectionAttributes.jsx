@@ -87,7 +87,7 @@ export default React.createClass({
 			me.context.toastr.addAlertSuccess("Informações salvas com sucesso");
 		}, me);
 
-		DocumentStore.on("sectionAttributesRetrieved", (model) => {			
+		DocumentStore.on("sectionAttributesRetrieved", (model) => {		
 			me.context.tabPanel.addTab(me.state.tabPath, model.name);
 			me.setState({
 				model: model,
@@ -280,6 +280,15 @@ export default React.createClass({
 	},
 
 	saveInstanceTable(tableInstance){		
+		
+		var numberTypes = [AttributeTypes.CURRENCY_FIELD, AttributeTypes.NUMBER_FIELD, AttributeTypes.PERCENTAGE_FIELD];
+
+		tableInstance.tableValues.map((model, idx) => {
+			if(numberTypes.includes(model.tableStructure.type)){
+				tableInstance.tableValues[idx].value = model.value.replace(",",".");
+			}
+		});
+
 		TableStore.dispatch({
 			action: TableStore.ACTION_CUSTOM_SAVE,
 			data: {
