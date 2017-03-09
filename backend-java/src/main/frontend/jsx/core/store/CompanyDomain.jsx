@@ -34,9 +34,11 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'companydomain-update',
 	ACTION_SAVE: 'companydomain-save',
 	dispatchAcceptRegex: /^companydomain-[a-zA-Z0-9]+$/,
+	
 
 	url: URL,
 	model: CompanyDomainModel,
+
 
 	save(data) {
 		var me = this;

@@ -42,6 +42,21 @@ public class CompanyBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(CompanyDomain.class).add(Restrictions.eq("host", host));
 		return (CompanyDomain) criteria.uniqueResult();
 	}
+	
+	/**
+	 * Recupera uma instância do objeto CompanyDomain utilizando um host
+	 * específico
+	 * 
+	 * @param host
+	 *             à ser utilizado na query
+	 * @return Domínio que utiliza o host epecificado
+	 */
+	
+	public CompanyDomain retrieveCompanyByDomain (Company company) {
+		Criteria criteria  = this.dao.newCriteria(CompanyDomain.class).add(Restrictions.eq("company",company));
+			
+		return (CompanyDomain) criteria.uniqueResult();
+	}
 
 	/**
 	 * Salva no banco de dados uma nova companhia

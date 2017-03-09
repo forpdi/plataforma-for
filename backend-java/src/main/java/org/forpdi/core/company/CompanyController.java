@@ -164,9 +164,18 @@ public class CompanyController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
-			existent.setDeleted(true);
-			this.bs.persist(existent);
-			this.success();
+			
+			CompanyDomain companyDomain = this.bs.retrieveCompanyByDomain(existent);
+			
+			if (companyDomain == null) {
+				existent.setDeleted(true);
+				this.bs.persist(existent);
+				this.success(existent);
+			} else {
+				this.fail("Esta instituição não pode ser deletada, pois existe um domínio associado á ela.");
+				return;
+			}
+			
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
