@@ -230,10 +230,21 @@ export default React.createClass({
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
 					<b className="budget-graphic-title">Anexar arquivos</b>
-					<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105 "+
-						(this.state.anyCheck ? "" : "hide")} onClick={this.deleteSelected}>
-							<i className="mdi mdi-delete positionStatic"/>
-					</button>	 
+
+					{this.state.list[0] ? (this.context.roles.MANAGER || 
+							_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ?
+						this.state.anyCheck ? 
+							<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+							onClick={this.deleteSelected}>
+								<i className="mdi mdi-delete positionStatic"/>
+							</button>  : 
+							<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+							onClick={this.deleteSelected} disabled>
+								<i className="mdi mdi-delete positionStatic"/>
+							</button> 
+					    : ""): ""
+					}
+
 					<div className="budget-btns">
 						{this.context.roles.MANAGER || (this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>Anexar arquivo</button>
