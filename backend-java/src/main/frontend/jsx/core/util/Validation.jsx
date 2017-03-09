@@ -1422,7 +1422,7 @@ var Validate = {
 	tableNewInstanceValidate(tableValues){
 		var count=0;
 		tableValues.map((table) => {
-			if(table.value == "" || table.value == undefined || table.value.split(",").length > 2) {				
+			if(table.value.trim() == "" || table.value == undefined || table.value.split(",").length > 2) {				
 				count++;
 			}
 		});	

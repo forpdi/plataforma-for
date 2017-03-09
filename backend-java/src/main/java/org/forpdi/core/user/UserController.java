@@ -556,12 +556,17 @@ public class UserController extends AbstractController {
 					}
 
 				} else {
-					UserAccessToken token = this.bs.retrieveToken(user);
-					if (token == null) {
-						this.fail("E-mail e/ou senha inválido(s).");
-					} else {
-						this.userSession.login(token);
-						this.success(new SessionInfo(this.userSession));
+					if (this.domain == null && user.getAccessLevel() < AccessLevels.SYSTEM_ADMIN.getLevel()) {
+						this.fail("Este endereço foi desativado. Entre em contato com o administrador da instituição para mais informações.");
+					}
+					else {
+						UserAccessToken token = this.bs.retrieveToken(user);
+						if (token == null) {
+							this.fail("E-mail e/ou senha inválido(s).");
+						} else {
+							this.userSession.login(token);
+							this.success(new SessionInfo(this.userSession));
+						}
 					}
 				}
 

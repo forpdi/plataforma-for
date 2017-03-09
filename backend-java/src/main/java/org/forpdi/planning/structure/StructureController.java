@@ -457,6 +457,7 @@ public class StructureController extends AbstractController {
 			boolean changeResponsible = false;
 			boolean changeDate = false;
 			String userId = "";
+			String urlAux = "";
 			StructureLevelInstance existentLevelInstance = this.bs.retrieveLevelInstance(levelInstance.getId());
 			if (existentLevelInstance == null) {
 				this.fail("Estrutura incorreta!");
@@ -487,10 +488,12 @@ public class StructureController extends AbstractController {
 								changeResponsible = true;
 							}
 						}
-						if (attribute.getType().equals(DateField.class.getCanonicalName())
-								&& (attributeInstance.getValue() == null
-										|| !attributeInstance.getValue().equals(attInst.getValue()))) {
-							changeDate = true;
+						if (attribute.getType().equals(DateField.class.getCanonicalName())) {
+							if(attributeInstance.getValue() != null){
+								if(!attributeInstance.getValue().equals(attInst.getValue())) {
+									changeDate = true;
+								}
+							}
 						}
 						attribute.setUsers(this.userBS.listUsersByCompany().getList());
 						attributeInstance.setDeleted(false);
@@ -528,42 +531,43 @@ public class StructureController extends AbstractController {
 						existentLevelInstance.getLevel().getSequence() + 1);
 				existentLevelInstance.setLevelSon(nextLevel);
 				if (changeResponsible) {
-					url = domain.getBaseUrl() + "/" + url;
+					urlAux = domain.getBaseUrl() + "/" + url;
 					User responsible = this.userBS.existsByUser(Long.parseLong(userId));
 					CompanyUser companyUser = this.userBS.retrieveCompanyUser(responsible, this.domain.getCompany());
 					if (companyUser.getNotificationSetting() == NotificationSetting.DEFAULT.getSetting() || companyUser
 							.getNotificationSetting() == NotificationSetting.RECEIVE_ALL_BY_EMAIL.getSetting()) {
 						this.notificationBS.sendNotification(NotificationType.ATTRIBUTED_RESPONSIBLE,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								Long.parseLong(userId), url);
+								Long.parseLong(userId), urlAux);
 						this.notificationBS.sendNotificationEmail(NotificationType.ATTRIBUTED_RESPONSIBLE,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								responsible, url);
+								responsible, urlAux);
 					} else if (companyUser.getNotificationSetting() == NotificationSetting.DO_NOT_RECEIVE_EMAIL
 							.getSetting()) {
 						this.notificationBS.sendNotification(NotificationType.ATTRIBUTED_RESPONSIBLE,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								responsible.getId(), url);
+								responsible.getId(), urlAux);
 					}
 				}
 
 				if (changeDate) {
-					url = domain.getBaseUrl() + "/" + url;
+					LOGGER.info(url);
+					urlAux = domain.getBaseUrl() + "/" + url;
 					User responsible = this.userBS.existsByUser(Long.parseLong(userId));
 					CompanyUser companyUser = this.userBS.retrieveCompanyUser(responsible, this.domain.getCompany());
 					if (companyUser.getNotificationSetting() == NotificationSetting.DEFAULT.getSetting() || companyUser
 							.getNotificationSetting() == NotificationSetting.RECEIVE_ALL_BY_EMAIL.getSetting()) {
 						this.notificationBS.sendNotification(NotificationType.DATE_ATTRIBUTE_UPDATED,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								Long.parseLong(userId), url);
+								Long.parseLong(userId), urlAux);
 						this.notificationBS.sendNotificationEmail(NotificationType.DATE_ATTRIBUTE_UPDATED,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								responsible, url);
+								responsible, urlAux);
 					} else if (companyUser.getNotificationSetting() == NotificationSetting.DO_NOT_RECEIVE_EMAIL
 							.getSetting()) {
 						this.notificationBS.sendNotification(NotificationType.DATE_ATTRIBUTE_UPDATED,
 								existentLevelInstance.getName(), existentLevelInstance.getLevel().getName(),
-								responsible.getId(), url);
+								responsible.getId(), urlAux);
 					}
 				}
 
@@ -723,8 +727,7 @@ public class StructureController extends AbstractController {
 								"", companyUser.getUser(), url);
 					}
 				}
-			}
-			else {
+			} else {
 				StructureLevelInstance levelInstanceParent = this.bs.retrieveLevelInstance(levelInstance.getParent());
 				PaginatedList<Attribute> attributes = this.bs.listAttributes(levelInstanceParent.getLevel());
 				for (Attribute attr : attributes.getList()) {
@@ -1097,7 +1100,7 @@ public class StructureController extends AbstractController {
 	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanPermission.class })
 	@Consumes
 	public void deleteManyGoals(PaginatedList<Double> list) {
-	
+
 		try {
 			for (int i = 0; i < list.getTotal(); i++) {
 				Long id = list.getList().get(i).longValue();

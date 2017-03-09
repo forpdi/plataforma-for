@@ -437,23 +437,26 @@ public class PlanController extends AbstractController {
 			page = 0;
 		try {
 			PlanMacro macro = this.bs.exists(parentId, PlanMacro.class);
-
-			PaginatedList<User> users = this.ubs.listUsersBySearch(terms,page,limit);
+			PaginatedList<User> users = this.ubs.listUsersBySearch(terms);
+			
 			List<StructureLevelInstance> listLevelInstancesByResponsible = this.sbs
 					.listLevelInstancesByResponsible(users.getList());
 
-			PaginatedList<Plan> plans = this.bs.listPlansViewMore(macro, false, page, terms, subPlansSelect, ordResult,limit);
 			List<StructureLevelInstance> levelInstanceList = this.sbs.listLevelsInstanceTerms(macro, terms,
-					subPlansSelect, levelsSelect, ordResult,page,limit);
-
-			// For somente com planos
-			for (Plan plan : plans.getList()) {
-				plan.setLevelInstances(new ArrayList<StructureLevelInstance>());
-			}
+					subPlansSelect, levelsSelect, ordResult);
 
 			List<AttributeInstance> attributeInstanceList = this.sbs.listAttributesTerms(macro, terms, subPlansSelect,
-					levelsSelect, ordResult,page,limit);
-
+					levelsSelect, ordResult);
+			
+			int firstResult = 0;
+			int maxResult = 0;
+			int count = 0;
+			int add = 0;
+			if (limit != null) {
+				firstResult = (int) ((page - 1) * limit);
+				maxResult = limit.intValue();
+			}
+			
 			for (AttributeInstance attributeInstance : attributeInstanceList) {
 				boolean exist = false;
 				for (StructureLevelInstance levelInstance : levelInstanceList) {
@@ -462,53 +465,43 @@ public class PlanController extends AbstractController {
 						break;
 					}
 				}
-				if (!exist)
-					levelInstanceList.add(this.sbs.retrieveLevelInstance(attributeInstance.getLevelInstance().getId()));
-			}
-
-			for (StructureLevelInstance levelInstance : levelInstanceList) {
-				boolean exist = false;
-				for (Plan plan : plans.getList()) {
-					if (plan.getId() == levelInstance.getPlan().getId()) {
-						exist = true;
-						levelInstance.setPlan(null);
-						plan.getLevelInstances().add(levelInstance);
-						break;
-					}
-				}
 				if (!exist) {
-					Plan plan = new Plan();
-					plan.setId(levelInstance.getPlan().getId());
-					plan.setLevelInstances(new ArrayList<StructureLevelInstance>());
-					levelInstance.setPlan(null);
-					plan.getLevelInstances().add(levelInstance);
-					plans.getList().add(plan);
-					plans.setTotal(plans.getTotal() + 1);
+					levelInstanceList.add(this.sbs.retrieveLevelInstance(attributeInstance.getLevelInstance().getId()));
+				}
+			}
+			
+			PaginatedList<StructureLevelInstance> levelInstances = new PaginatedList<StructureLevelInstance>();
+			levelInstances.setList(new ArrayList<StructureLevelInstance>());
+			for (StructureLevelInstance levelInstance : levelInstanceList) {
+				if (limit != null) {
+					if (count >= firstResult && add < maxResult) {
+						levelInstances.getList().add(levelInstance);
+						count++;
+						add++;
+					} else {
+						count++;
+					}
+				} else {
+					levelInstances.getList().add(levelInstance);
 				}
 			}
 
 			for (StructureLevelInstance levelInstance : listLevelInstancesByResponsible) {
-				boolean exist = false;
-				for (Plan plan : plans.getList()) {
-					if (plan.getId() == levelInstance.getPlan().getId()) {
-						exist = true;
-						levelInstance.setPlan(null);
-						plan.getLevelInstances().add(levelInstance);
-						break;
+				if (limit != null) {
+					if (count >= firstResult && add < maxResult) {
+						levelInstances.getList().add(levelInstance);
+						count++;
+						add++;
+					} else {
+						count++;
 					}
-				}
-				if (!exist) {
-					Plan plan = new Plan();
-					plan.setId(levelInstance.getPlan().getId());
-					plan.setLevelInstances(new ArrayList<StructureLevelInstance>());
-					levelInstance.setPlan(null);
-					plan.getLevelInstances().add(levelInstance);
-					plans.getList().add(plan);
-					plans.setTotal(plans.getTotal() + 1);
+				} else {
+					levelInstances.getList().add(levelInstance);
 				}
 			}
-			this.success(plans);
-
+			
+			levelInstances.setTotal((long) count);
+			this.success(levelInstances);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
