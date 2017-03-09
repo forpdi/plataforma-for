@@ -33,23 +33,26 @@ export default React.createClass({
 			});
 		}, me);
 
-
-
 		CompanyStore.on('remove', store => {
 			if (store.data) {
-				CompanyStore.dispatch({
-					action: CompanyStore.ACTION_FIND,
-					data: null
+				var models = this.state.models;
+				for (var i=0; i<models.length; i++) {
+					if (models[i].get("id") == store.data.id) {
+						models.splice(i,1);
+					}
+				}
+				this.setState({
+					models: models
 				});
 
 				this.context.toastr.addAlertSuccess(Messages.get("notification.institution.delete"));
-
 			} else {
 				var errorMsg = JSON.parse(store.responseText)
 				this.context.toastr.addAlertError(errorMsg.message);
 			}
 			
 		}, me);
+
 		CompanyStore.on("fail", (msg) => {
 			me.setState({
 				error: msg
