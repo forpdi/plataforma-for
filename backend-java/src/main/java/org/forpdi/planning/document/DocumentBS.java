@@ -965,13 +965,6 @@ public class DocumentBS extends HibernateBusiness {
 			String secName = ds.getName();
 
 			if (ds.isPreTextSection()) { // SEÇÕES PRÉ TEXTUAIS
-				/*
-				 * Paragraph secTitle = new Paragraph(secName, titulo);
-				 * secTitle.setLeading(interLineSpacing);
-				 * secTitle.setSpacingAfter(paragraphSpacing);
-				 * secTitle.setSpacingBefore(paragraphSpacing);
-				 * document.add(secTitle); lastAttWasPlan = false;
-				 */
 
 				for (DocumentAttribute a : ds.getDocumentAttributes()) {
 					if (a.getType().equals(TableField.class.getCanonicalName())) {
@@ -2047,7 +2040,7 @@ public class DocumentBS extends HibernateBusiness {
 		int i = 0;
 
 		// ajuste de widths
-		for (TableStructure ts : tabStructList) {
+		/*for (TableStructure ts : tabStructList) {
 			if (ts.getLabel().length() < 4) {
 				sizes[i] = 6;
 			} else {
@@ -2065,8 +2058,8 @@ public class DocumentBS extends HibernateBusiness {
 				}
 			}
 			i++;
-		}
-		table.setWidths(sizes);
+		}*/
+		//table.setWidths(sizes);
 		Font textoTabela = FontFactory.getFont(FontFactory.TIMES, 10.0f);
 		if (!hideHeaders) {
 			for (TableStructure ts : tabStructList) {
