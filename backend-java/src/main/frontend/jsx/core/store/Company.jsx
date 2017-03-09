@@ -25,10 +25,28 @@ var CompanyStore = Fluxbone.Store.extend({
 	ACTION_RETRIEVE: 'company-retrieve',
 	ACTION_UPDATE: 'company-update',
 	ACTION_FIND_THEMES: 'company-findThemes',
+	ACTION_REMOVE_COMPANY:'company-removeCompany',
 	dispatchAcceptRegex: /^company-[a-zA-Z0-9]+$/,
+	
 
 	url: URL,
 	model: CompanyModel,
+
+	removeCompany(id) {
+
+		var me = this;
+		$.ajax({
+			method: "DELETE",
+			url: me.url+"/"+id,
+			dataType: 'json',
+			success(data) {
+				me.trigger("remove", data);
+			},
+			error: (model,response,opts) => {
+				me.trigger("remove",model);
+			}
+		});
+	},
 
 	findThemes(data) {
 		var me = this;

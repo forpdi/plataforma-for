@@ -24,20 +24,31 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;
+
+
 		CompanyStore.on('find', store => {
 			me.setState({
 				loading: false,
 				models: store.models
 			});
 		}, me);
-		CompanyStore.on('destroy', store => {
-			CompanyStore.dispatch({
-				action: CompanyStore.ACTION_FIND,
-				data: null
-			});
-			//Toastr.remove();
-			//Toastr.success(Messages.get("notification.institution.delete"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.institution.delete"));
+
+
+
+		CompanyStore.on('remove', store => {
+			if (store.data) {
+				CompanyStore.dispatch({
+					action: CompanyStore.ACTION_FIND,
+					data: null
+				});
+
+				this.context.toastr.addAlertSuccess(Messages.get("notification.institution.delete"));
+
+			} else {
+				var errorMsg = JSON.parse(store.responseText)
+				this.context.toastr.addAlertError(errorMsg.message);
+			}
+			
 		}, me);
 		CompanyStore.on("fail", (msg) => {
 			me.setState({
@@ -60,13 +71,14 @@ export default React.createClass({
 	},
 	
 	deleteRecord(model, event) {
+
 		var msg = "Você tem certeza que deseja excluir essa instituição?";
 		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			CompanyStore.dispatch({
-				action: CompanyStore.ACTION_DESTROY,
-				data: model
+				action: CompanyStore.ACTION_REMOVE_COMPANY,
+				data: model.id
 			});
 		},msg,this.cancelBlockUnblock);
 	},
