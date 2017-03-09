@@ -1,7 +1,7 @@
 import React from "react";
 import string from 'string';
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-
+import {Link} from 'react-router';
 
 
 export default React.createClass({
@@ -62,7 +62,8 @@ export default React.createClass({
                         return (
                             <div key={"notification-"+idx} className = {item.vizualized == true && !item.vizualizeNow ? "" : "backgroundNotification"}>
                                 <div className = "row paddingNotification">
-                                    <a href={item.url}>
+                                    <Link to={item.url.split("#")[1]}>
+
                                         <div className="col-md-1">
                                             <img alt="Notifications-Picture" src={item.picture}/>
                                         </div>
@@ -75,7 +76,7 @@ export default React.createClass({
                                             <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
 
                                         </div>
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                         );

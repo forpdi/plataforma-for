@@ -458,6 +458,12 @@ public class StructureController extends AbstractController {
 			boolean changeDate = false;
 			String userId = "";
 			String urlAux = "";
+
+			String mainUrl[] = url.split("\\?"); // remoção de parâmetro na url			
+			if(mainUrl.length>0){
+				url = mainUrl[0];
+			}
+			
 			StructureLevelInstance existentLevelInstance = this.bs.retrieveLevelInstance(levelInstance.getId());
 			if (existentLevelInstance == null) {
 				this.fail("Estrutura incorreta!");
