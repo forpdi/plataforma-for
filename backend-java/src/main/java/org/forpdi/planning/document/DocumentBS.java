@@ -871,7 +871,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
@@ -957,6 +957,9 @@ public class DocumentBS extends HibernateBusiness {
 		boolean lastAttWasPlan = false;
 		boolean lastSecWasPreText = false;
 
+		DocumentSection summarySection = new DocumentSection();
+		List<DocumentSection> summarySectionSons = new ArrayList<DocumentSection>();
+
 		for (int i = 0; i < sections.length; i++) {
 			DocumentSection ds = this.retrieveSectionById(Long.parseLong(sections[i]));
 			ds.setDocumentAttributes(this.listAttributesBySection(ds, ds.getDocument().getPlan().getId()));
@@ -1006,485 +1009,512 @@ public class DocumentBS extends HibernateBusiness {
 			} else { // SEÇÕES NUMERADAS
 				if (lastSecWasPreText) {
 					lastSecWasPreText = false;
-					//LOGGER.info("SUMARIO");
-				} else {
 
-					secIndex++;
+					Paragraph secTitle = new Paragraph("Sumário", titulo);
+					secTitle.setLeading(interLineSpacing);
+					secTitle.setSpacingAfter(paragraphSpacing);
+					secTitle.setSpacingBefore(paragraphSpacing);
+					secTitle.setAlignment(Element.ALIGN_CENTER);
+					document.add(secTitle);
+					int summaryIndex = 0;
+					int summarySubSecIndex = 0;
+					for (String secaoId : sections) {
+						summarySection = this.retrieveSectionById(Long.parseLong(secaoId));
+						if (!summarySection.isPreTextSection()) {
+							summaryIndex++;
+							secTitle = new Paragraph(summaryIndex + ". " + summarySection.getName(), titulo);
+							secTitle.setLeading(interLineSpacing);
+							document.add(secTitle);
 
-					// LOGGER.info(ds.getId() + ". " + ds.getName() + " - Size:
-					// " +
-					// ds.getDocumentAttributes().size());
-
-					boolean secTitlePrinted = false;
-
-					if (ds.getDocumentAttributes().size() == 0) {
-						if (lastAttWasPlan) {
-							document.setPageSize(PageSize.A4);
-							document.newPage();
-						}
-						Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
-						secTitle.setLeading(interLineSpacing);
-						secTitle.setSpacingAfter(paragraphSpacing);
-						secTitle.setSpacingBefore(paragraphSpacing);
-						document.add(secTitle);
-						secTitlePrinted = true;
-						lastAttWasPlan = false;
-					}
-
-					for (DocumentAttribute a : ds.getDocumentAttributes()) {
-						if (a.getType().equals(TextArea.class.getCanonicalName())) {
-							if (a.getValue() != null && !a.getValue().equals("")) {
-								if (lastAttWasPlan) {
-									document.setPageSize(PageSize.A4);
-									document.newPage();
-								}
-								if (!secTitlePrinted) {
-									Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+							List<DocumentSection> dsList = this.listSectionsSons(summarySection);
+							this.setSectionsFilled(dsList, summarySection.getDocument().getPlan().getId());
+							summarySubSecIndex = 0;
+							for (DocumentSection sec : dsList) {
+								
+								if (sec.isFilled()) {
+									summarySubSecIndex++;
+									secTitle = new Paragraph(
+											summaryIndex + "." + summarySubSecIndex + ". " + sec.getName(), texto);
 									secTitle.setLeading(interLineSpacing);
-									secTitle.setSpacingAfter(paragraphSpacing);
-									secTitle.setSpacingBefore(paragraphSpacing);
+									secTitle.setFirstLineIndent(firstLineIndent / 2);
 									document.add(secTitle);
-									secTitlePrinted = true;
 								}
-								String attName = a.getName();
-								if (!attName.equals(secName)) {
-									Paragraph attTitle = new Paragraph(attName, titulo);
-									attTitle.setLeading(interLineSpacing);
-									attTitle.setSpacingAfter(paragraphSpacing);
-									attTitle.setSpacingBefore(paragraphSpacing);
-									document.add(attTitle);
+							}
+
+						}
+					}
+					document.newPage();
+				}
+
+				secIndex++;
+
+				// LOGGER.info(ds.getId() + ". " + ds.getName() + " - Size:
+				// " +
+				// ds.getDocumentAttributes().size());
+
+				boolean secTitlePrinted = false;
+
+				if (ds.getDocumentAttributes().size() == 0) {
+					if (lastAttWasPlan) {
+						document.setPageSize(PageSize.A4);
+						document.newPage();
+					}
+					Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+					secTitle.setLeading(interLineSpacing);
+					secTitle.setSpacingAfter(paragraphSpacing);
+					secTitle.setSpacingBefore(paragraphSpacing);
+					document.add(secTitle);
+					secTitlePrinted = true;
+					lastAttWasPlan = false;
+				}
+
+				for (DocumentAttribute a : ds.getDocumentAttributes()) {
+					if (a.getType().equals(TextArea.class.getCanonicalName())) {
+						if (a.getValue() != null && !a.getValue().equals("")) {
+							if (lastAttWasPlan) {
+								document.setPageSize(PageSize.A4);
+								document.newPage();
+							}
+							if (!secTitlePrinted) {
+								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								secTitle.setLeading(interLineSpacing);
+								secTitle.setSpacingAfter(paragraphSpacing);
+								secTitle.setSpacingBefore(paragraphSpacing);
+								document.add(secTitle);
+								secTitlePrinted = true;
+							}
+							String attName = a.getName();
+							if (!attName.equals(secName)) {
+								Paragraph attTitle = new Paragraph(attName, titulo);
+								attTitle.setLeading(interLineSpacing);
+								attTitle.setSpacingAfter(paragraphSpacing);
+								attTitle.setSpacingBefore(paragraphSpacing);
+								document.add(attTitle);
+							}
+							// HTMLWorker htmlWorker = new
+							// HTMLWorker(document);
+							Map<String, String> pc2 = new HashMap<String, String>();
+							pc2.put("line-height", "115%");
+							pc2.put("margin-bottom", "6.0pt");
+							pc2.put("text-align", "center");
+
+							HashMap<String, String> spanc1 = new HashMap<String, String>();
+							spanc1.put("text-justify", "inter-word");
+
+							StyleSheet styles = new StyleSheet();
+							styles.loadTagStyle("p", "text-indent", "1.25cm");
+
+							String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
+									+ "<p style=\"text-indent: 1.25cm; \">";
+							Queue<String> allMatches = new LinkedList<>();
+							String value = a.getValue();
+							if (a.getValue().contains("<img")) {
+								Matcher m = Pattern.compile("<img [^>]*>").matcher(a.getValue());
+								while (m.find()) {
+									String match = m.group();
+									allMatches.add(match);
+									value = value.replace(match, "<p>||IMAGE||</p>");
 								}
-								// HTMLWorker htmlWorker = new
-								// HTMLWorker(document);
-								Map<String, String> pc2 = new HashMap<String, String>();
-								pc2.put("line-height", "115%");
-								pc2.put("margin-bottom", "6.0pt");
-								pc2.put("text-align", "center");
+							}
+							str += value + "</p></body></html>";
 
-								HashMap<String, String> spanc1 = new HashMap<String, String>();
-								spanc1.put("text-justify", "inter-word");
+							resourcesPath = new File(classLoader.getResource("/reports/html/example.html").getFile())
+									.getPath();
+							resourcesPath = resourcesPath.replace("example.html", "");
+							resourcesPath = resourcesPath.replace("%20", " ");
+							// resourcesPath = "/tmp"; // corrigir para usar
+							// um caminho
+							// dinamico
+							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
+							FileWriter fw = new FileWriter(htmlFile.getPath(), true);
+							BufferedWriter conexao = new BufferedWriter(fw);
+							conexao.write(str);
+							conexao.newLine();
+							conexao.close();
+							// LOGGER.info(htmlFile.getPath());
 
-								StyleSheet styles = new StyleSheet();
-								styles.loadTagStyle("p", "text-indent", "1.25cm");
-
-								String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
-										+ "<p style=\"text-indent: 1.25cm; \">";
-								Queue<String> allMatches = new LinkedList<>();
-								String value = a.getValue();
-								if (a.getValue().contains("<img")) {
-									Matcher m = Pattern.compile("<img [^>]*>").matcher(a.getValue());
-									while (m.find()) {
-										String match = m.group();
-										allMatches.add(match);
-										value = value.replace(match, "<p>||IMAGE||</p>");
-									}
-								}
-								str += value + "</p></body></html>";
-
-								resourcesPath = new File(
-										classLoader.getResource("/reports/html/example.html").getFile()).getPath();
-								resourcesPath = resourcesPath.replace("example.html", "");
-								resourcesPath = resourcesPath.replace("%20", " ");
-								resourcesPath = "/tmp"; // corrigir para usar
-								// um caminho
-								// dinamico
-								File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
-								FileWriter fw = new FileWriter(htmlFile.getPath(), true);
-								BufferedWriter conexao = new BufferedWriter(fw);
-								conexao.write(str);
-								conexao.newLine();
-								conexao.close();
-								// LOGGER.info(htmlFile.getPath());
-
-								ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
-								for (int k = 0; k < p.size(); ++k) {
-									if (p.get(k) instanceof Paragraph) {
-										Paragraph att = (Paragraph) p.get(k);
-										// LOGGER.info("------->"+att.getContent());
-										if (att.getContent().contains("||IMAGE||")) {
-											String img = allMatches.poll();
-											if (img != null) {
-												// LOGGER.info("IMG------->"+img);
-												Image image = Image.getInstance(new URL(
-														img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-												float scaler = ((document.getPageSize().getWidth()
-														- document.leftMargin() - document.rightMargin())
-														/ image.getWidth()) * 100;
-												image.scalePercent(scaler * 0.4f);
-												image.setAlignment(Element.ALIGN_CENTER);
-												document.add(image);
-											}
-										} else {
-											att.setFirstLineIndent(firstLineIndent);
-											document.add(att);
+							ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+							for (int k = 0; k < p.size(); ++k) {
+								if (p.get(k) instanceof Paragraph) {
+									Paragraph att = (Paragraph) p.get(k);
+									// LOGGER.info("------->"+att.getContent());
+									if (att.getContent().contains("||IMAGE||")) {
+										String img = allMatches.poll();
+										if (img != null) {
+											// LOGGER.info("IMG------->"+img);
+											Image image = Image.getInstance(
+													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
+											float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+													- document.rightMargin()) / image.getWidth()) * 100;
+											image.scalePercent(scaler * 0.4f);
+											image.setAlignment(Element.ALIGN_CENTER);
+											document.add(image);
 										}
-									} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
-										com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
-										att.setIndentationLeft(firstLineIndent);
+									} else {
+										att.setFirstLineIndent(firstLineIndent);
 										document.add(att);
 									}
+								} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
+									com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
+									att.setIndentationLeft(firstLineIndent);
+									document.add(att);
 								}
-								lastAttWasPlan = false;
-								htmlFile.delete();
 							}
-						} else if (a.getType().equals(TableField.class.getCanonicalName())) {
+							lastAttWasPlan = false;
+							htmlFile.delete();
+						}
+					} else if (a.getType().equals(TableField.class.getCanonicalName())) {
 
-							TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
-							List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
-							List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
-							if (!tabInstList.isEmpty()) {
-								if (lastAttWasPlan) {
-									document.setPageSize(PageSize.A4);
-									document.newPage();
-								}
-								if (!secTitlePrinted) {
-									Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
-									secTitle.setLeading(interLineSpacing);
-									secTitle.setSpacingAfter(paragraphSpacing);
-									secTitle.setSpacingBefore(paragraphSpacing);
-									document.add(secTitle);
-									secTitlePrinted = true;
-								}
-								String attName = a.getName();
-								if (!attName.equals(secName)) {
-									Paragraph attTitle = new Paragraph(attName, texto);
-									attTitle.setAlignment(Element.ALIGN_CENTER);
-									attTitle.setLeading(interLineSpacing);
-									attTitle.setSpacingAfter(paragraphSpacing);
-									attTitle.setSpacingBefore(paragraphSpacing);
-									document.add(attTitle);
-								}
-								PdfPTable table = returnPdfPTable(tabStructList, tabInstList, false, false);
-								document.add(table);
-								lastAttWasPlan = false;
+						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
+						List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
+						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
+						if (!tabInstList.isEmpty()) {
+							if (lastAttWasPlan) {
+								document.setPageSize(PageSize.A4);
+								document.newPage();
 							}
-
-						} else if (a.getType().equals(ScheduleField.class.getCanonicalName())) {
-							List<ScheduleInstance> schInstList = this.fieldsBS
-									.retrieveScheduleInstanceByAttribute(a.getId(), true);
-							if (!schInstList.isEmpty()) {
-								if (lastAttWasPlan) {
-									document.setPageSize(PageSize.A4);
-									document.newPage();
-								}
-								if (!secTitlePrinted) {
-									Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
-									secTitle.setLeading(interLineSpacing);
-									secTitle.setSpacingAfter(paragraphSpacing);
-									secTitle.setSpacingBefore(paragraphSpacing);
-									document.add(secTitle);
-									secTitlePrinted = true;
-								}
-								String attName = a.getName();
-								if (!attName.equals(secName)) {
-									Paragraph attTitle = new Paragraph(attName, texto);
-									attTitle.setAlignment(Element.ALIGN_CENTER);
-									attTitle.setLeading(interLineSpacing);
-									attTitle.setSpacingAfter(paragraphSpacing);
-									attTitle.setSpacingBefore(paragraphSpacing);
-									document.add(attTitle);
-								}
-								PdfPTable table = new PdfPTable(3);
-								table.getDefaultCell();
-								PdfPCell c = new PdfPCell(new Paragraph("Atividade", texto));
-								c.setHorizontalAlignment(Element.ALIGN_CENTER);
-								c.setBackgroundColor(headerBgColor);
-								table.addCell(c);
-								c = new PdfPCell(new Paragraph("Início", texto));
-								c.setHorizontalAlignment(Element.ALIGN_CENTER);
-								c.setBackgroundColor(headerBgColor);
-
-								table.addCell(c);
-								c = new PdfPCell(new Paragraph("Fim", texto));
-								c.setHorizontalAlignment(Element.ALIGN_CENTER);
-								c.setBackgroundColor(headerBgColor);
-								table.addCell(c);
-
-								SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-								for (ScheduleInstance sch : schInstList) {
-									table.addCell(new Paragraph(sch.getDescription(), texto));
-									table.addCell(new Paragraph(sdf.format(sch.getBegin()), texto));
-									table.addCell(new Paragraph(sdf.format(sch.getEnd()), texto));
-								}
-								document.add(table);
-								lastAttWasPlan = false;
+							if (!secTitlePrinted) {
+								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								secTitle.setLeading(interLineSpacing);
+								secTitle.setSpacingAfter(paragraphSpacing);
+								secTitle.setSpacingBefore(paragraphSpacing);
+								document.add(secTitle);
+								secTitlePrinted = true;
 							}
-						} else if (a.getType().equals(SelectPlan.class.getCanonicalName())) {
-							if (a.getValue() != null) {
-								Plan plan = planBS.retrieveById(Long.parseLong(a.getValue()));
-								List<PdfPTable> planTableList = this.generatePDFplanTable(plan);
-								boolean first = true;
-								// LOGGER.info("2 - " + plan.getName());
-								// LOGGER.info(secName + " " + secTitlePrinted);
-								for (PdfPTable planTable : planTableList) {
-									if (!lastAttWasPlan) {
-										document.setPageSize(PageSize.A4.rotate());
+							String attName = a.getName();
+							if (!attName.equals(secName)) {
+								Paragraph attTitle = new Paragraph(attName, texto);
+								attTitle.setAlignment(Element.ALIGN_CENTER);
+								attTitle.setLeading(interLineSpacing);
+								attTitle.setSpacingAfter(paragraphSpacing);
+								attTitle.setSpacingBefore(paragraphSpacing);
+								document.add(attTitle);
+							}
+							PdfPTable table = returnPdfPTable(tabStructList, tabInstList, false, false);
+							document.add(table);
+							lastAttWasPlan = false;
+						}
+
+					} else if (a.getType().equals(ScheduleField.class.getCanonicalName())) {
+						List<ScheduleInstance> schInstList = this.fieldsBS
+								.retrieveScheduleInstanceByAttribute(a.getId(), true);
+						if (!schInstList.isEmpty()) {
+							if (lastAttWasPlan) {
+								document.setPageSize(PageSize.A4);
+								document.newPage();
+							}
+							if (!secTitlePrinted) {
+								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								secTitle.setLeading(interLineSpacing);
+								secTitle.setSpacingAfter(paragraphSpacing);
+								secTitle.setSpacingBefore(paragraphSpacing);
+								document.add(secTitle);
+								secTitlePrinted = true;
+							}
+							String attName = a.getName();
+							if (!attName.equals(secName)) {
+								Paragraph attTitle = new Paragraph(attName, texto);
+								attTitle.setAlignment(Element.ALIGN_CENTER);
+								attTitle.setLeading(interLineSpacing);
+								attTitle.setSpacingAfter(paragraphSpacing);
+								attTitle.setSpacingBefore(paragraphSpacing);
+								document.add(attTitle);
+							}
+							PdfPTable table = new PdfPTable(3);
+							table.getDefaultCell();
+							PdfPCell c = new PdfPCell(new Paragraph("Atividade", texto));
+							c.setHorizontalAlignment(Element.ALIGN_CENTER);
+							c.setBackgroundColor(headerBgColor);
+							table.addCell(c);
+							c = new PdfPCell(new Paragraph("Início", texto));
+							c.setHorizontalAlignment(Element.ALIGN_CENTER);
+							c.setBackgroundColor(headerBgColor);
+
+							table.addCell(c);
+							c = new PdfPCell(new Paragraph("Fim", texto));
+							c.setHorizontalAlignment(Element.ALIGN_CENTER);
+							c.setBackgroundColor(headerBgColor);
+							table.addCell(c);
+
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+							for (ScheduleInstance sch : schInstList) {
+								table.addCell(new Paragraph(sch.getDescription(), texto));
+								table.addCell(new Paragraph(sdf.format(sch.getBegin()), texto));
+								table.addCell(new Paragraph(sdf.format(sch.getEnd()), texto));
+							}
+							document.add(table);
+							lastAttWasPlan = false;
+						}
+					} else if (a.getType().equals(SelectPlan.class.getCanonicalName())) {
+						if (a.getValue() != null) {
+							Plan plan = planBS.retrieveById(Long.parseLong(a.getValue()));
+							List<PdfPTable> planTableList = this.generatePDFplanTable(plan);
+							boolean first = true;
+							// LOGGER.info("2 - " + plan.getName());
+							// LOGGER.info(secName + " " + secTitlePrinted);
+							for (PdfPTable planTable : planTableList) {
+								if (!lastAttWasPlan) {
+									document.setPageSize(PageSize.A4.rotate());
+								}
+								document.newPage();
+								if (first) {
+
+									if (!secTitlePrinted) {
+										Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+										document.add(secTitle);
+										secTitlePrinted = true;
 									}
-									document.newPage();
-									if (first) {
-
-										if (!secTitlePrinted) {
-											Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
-											document.add(secTitle);
-											secTitlePrinted = true;
-										}
-										Paragraph attTitle = new Paragraph(plan.getName(), texto);
-										attTitle.setAlignment(Element.ALIGN_CENTER);
-										document.add(attTitle);
-										first = false;
-										lastAttWasPlan = true;
-									}
-									document.add(planTable);
+									Paragraph attTitle = new Paragraph(plan.getName(), texto);
+									attTitle.setAlignment(Element.ALIGN_CENTER);
+									document.add(attTitle);
+									first = false;
+									lastAttWasPlan = true;
 								}
-								// document.setPageSize(PageSize.A4);
-								// document.newPage();
+								document.add(planTable);
 							}
+							// document.setPageSize(PageSize.A4);
+							// document.newPage();
 						}
 					}
+				}
 
-					List<DocumentSection> dsList = this.listSectionsSons(ds);
-					this.setSectionsFilled(dsList, ds.getDocument().getPlan().getId());
+				List<DocumentSection> dsList = this.listSectionsSons(ds);
+				this.setSectionsFilled(dsList, ds.getDocument().getPlan().getId());
 
-					// LOGGER.info("dsList.size: " + dsList.size());
+				// LOGGER.info("dsList.size: " + dsList.size());
 
-					for (DocumentSection d : dsList) {
-						if (d.isFilled()) {
-							// LOGGER.info("filled: " + d.getName());
-							String subSecName = d.getName();
-							boolean subSecTitlePrinted = false;
-							// if (!secName.equals(subSecName)) {
-							/*
-							 * subSecIndex++; Paragraph subSecTitle = new
-							 * Paragraph(secIndex + "." + subSecIndex + ". " +
-							 * subSecName, titulo);
-							 * subSecTitle.setLeading(interLineSpacing);
-							 * subSecTitle.setSpacingAfter(paragraphSpacing);
-							 * subSecTitle.setSpacingBefore(paragraphSpacing);
-							 * document.add(subSecTitle); subSecTitlePrinted =
-							 * true;
-							 */
-							// }
+				for (DocumentSection d : dsList) {
+					if (d.isFilled()) {
+						// LOGGER.info("filled: " + d.getName());
+						String subSecName = d.getName();
+						boolean subSecTitlePrinted = false;
+						// if (!secName.equals(subSecName)) {
+						/*
+						 * subSecIndex++; Paragraph subSecTitle = new
+						 * Paragraph(secIndex + "." + subSecIndex + ". " +
+						 * subSecName, titulo);
+						 * subSecTitle.setLeading(interLineSpacing);
+						 * subSecTitle.setSpacingAfter(paragraphSpacing);
+						 * subSecTitle.setSpacingBefore(paragraphSpacing);
+						 * document.add(subSecTitle); subSecTitlePrinted = true;
+						 */
+						// }
 
-							List<DocumentAttribute> attList = this.listAttributesBySection(d,
-									d.getDocument().getPlan().getId());
-							// LOGGER.info("attList.size: " + attList.size());
-							for (DocumentAttribute a : attList) {
-								if (a.getType().equals(TextArea.class.getCanonicalName())) {
-									if (a.getValue() != null && !a.getValue().equals("")) {
-										String attName = a.getName();
-										if (lastAttWasPlan) {
-											document.setPageSize(PageSize.A4);
-											document.newPage();
+						List<DocumentAttribute> attList = this.listAttributesBySection(d,
+								d.getDocument().getPlan().getId());
+						// LOGGER.info("attList.size: " + attList.size());
+						for (DocumentAttribute a : attList) {
+							if (a.getType().equals(TextArea.class.getCanonicalName())) {
+								if (a.getValue() != null && !a.getValue().equals("")) {
+									String attName = a.getName();
+									if (lastAttWasPlan) {
+										document.setPageSize(PageSize.A4);
+										document.newPage();
+									}
+									if (!subSecTitlePrinted) {
+										subSecIndex++;
+										Paragraph subSecTitle = new Paragraph(
+												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										subSecTitle.setLeading(interLineSpacing);
+										subSecTitle.setSpacingAfter(paragraphSpacing);
+										subSecTitle.setSpacingBefore(paragraphSpacing);
+										document.add(subSecTitle);
+										subSecTitlePrinted = true;
+									}
+									if (!attName.equals(subSecName)) {
+										Paragraph attTitle = new Paragraph(attName, titulo);
+										attTitle.setLeading(interLineSpacing);
+										attTitle.setSpacingAfter(paragraphSpacing);
+										attTitle.setSpacingBefore(paragraphSpacing);
+										document.add(attTitle);
+									}
+									// HTMLWorker htmlWorker = new
+									// HTMLWorker(document);
+									Map<String, String> pc2 = new HashMap<String, String>();
+									pc2.put("line-height", "115%");
+									pc2.put("margin-bottom", "6.0pt");
+									pc2.put("text-align", "center");
+
+									HashMap<String, String> spanc1 = new HashMap<String, String>();
+									spanc1.put("text-justify", "inter-word");
+
+									StyleSheet styles = new StyleSheet();
+									styles.loadTagStyle("p", "text-indent", "1.25cm");
+
+									String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
+											+ "<p style=\"text-indent: 1.25cm; \">";
+									Queue<String> allMatches = new LinkedList<>();
+									String value = a.getValue();
+									if (a.getValue().contains("<img")) {
+										Matcher m = Pattern.compile("<img [^>]*>").matcher(a.getValue());
+										while (m.find()) {
+											String match = m.group();
+											allMatches.add(match);
+											value = value.replace(match, "<p>||IMAGE||</p>");
 										}
-										if (!subSecTitlePrinted) {
-											subSecIndex++;
-											Paragraph subSecTitle = new Paragraph(
-													secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-											subSecTitle.setLeading(interLineSpacing);
-											subSecTitle.setSpacingAfter(paragraphSpacing);
-											subSecTitle.setSpacingBefore(paragraphSpacing);
-											document.add(subSecTitle);
-											subSecTitlePrinted = true;
-										}
-										if (!attName.equals(subSecName)) {
-											Paragraph attTitle = new Paragraph(attName, titulo);
-											attTitle.setLeading(interLineSpacing);
-											attTitle.setSpacingAfter(paragraphSpacing);
-											attTitle.setSpacingBefore(paragraphSpacing);
-											document.add(attTitle);
-										}
-										// HTMLWorker htmlWorker = new
-										// HTMLWorker(document);
-										Map<String, String> pc2 = new HashMap<String, String>();
-										pc2.put("line-height", "115%");
-										pc2.put("margin-bottom", "6.0pt");
-										pc2.put("text-align", "center");
+									}
+									str += value + "</p></body></html>";
 
-										HashMap<String, String> spanc1 = new HashMap<String, String>();
-										spanc1.put("text-justify", "inter-word");
+									resourcesPath = new File(
+											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
+									resourcesPath = resourcesPath.replace("example.html", "");
+									resourcesPath = resourcesPath.replace("%20", " ");
+									// resourcesPath = "/tmp"; // corrigir
+									// para
+									// usar
+									// um caminho
+									// dinamico
+									File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
+									FileWriter fw = new FileWriter(htmlFile.getPath(), true);
+									BufferedWriter conexao = new BufferedWriter(fw);
+									conexao.write(str);
+									conexao.newLine();
+									conexao.close();
 
-										StyleSheet styles = new StyleSheet();
-										styles.loadTagStyle("p", "text-indent", "1.25cm");
-
-										String str = "<html>" + "<head>"
-												+ "</head><body style=\"text-indent: 1.25cm; \">"
-												+ "<p style=\"text-indent: 1.25cm; \">";
-										Queue<String> allMatches = new LinkedList<>();
-										String value = a.getValue();
-										if (a.getValue().contains("<img")) {
-											Matcher m = Pattern.compile("<img [^>]*>").matcher(a.getValue());
-											while (m.find()) {
-												String match = m.group();
-												allMatches.add(match);
-												value = value.replace(match, "<p>||IMAGE||</p>");
-											}
-										}
-										str += value + "</p></body></html>";
-
-										resourcesPath = new File(
-												classLoader.getResource("/reports/html/example.html").getFile())
-														.getPath();
-										resourcesPath = resourcesPath.replace("example.html", "");
-										resourcesPath = resourcesPath.replace("%20", " ");
-										resourcesPath = "/tmp"; // corrigir
-										// para
-										// usar
-										// um caminho
-										// dinamico
-										File htmlFile = File.createTempFile("output.", ".html",
-												new File(resourcesPath));
-										FileWriter fw = new FileWriter(htmlFile.getPath(), true);
-										BufferedWriter conexao = new BufferedWriter(fw);
-										conexao.write(str);
-										conexao.newLine();
-										conexao.close();
-
-										ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()),
-												styles);
-										for (int k = 0; k < p.size(); ++k) {
-											if (p.get(k) instanceof Paragraph) {
-												Paragraph att = (Paragraph) p.get(k);
-												if (att.getContent().contains("||IMAGE||")) {
-													String img = allMatches.poll();
-													if (img != null) {
-														Image image = Image.getInstance(new URL(img
-																.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-														float scaler = ((document.getPageSize().getWidth()
-																- document.leftMargin() - document.rightMargin())
-																/ image.getWidth()) * 100;
-														image.scalePercent(scaler * 0.4f);
-														image.setAlignment(Element.ALIGN_CENTER);
-														document.add(image);
-													}
-												} else {
-													att.setFirstLineIndent(firstLineIndent);
-													document.add(att);
+									ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+									for (int k = 0; k < p.size(); ++k) {
+										if (p.get(k) instanceof Paragraph) {
+											Paragraph att = (Paragraph) p.get(k);
+											if (att.getContent().contains("||IMAGE||")) {
+												String img = allMatches.poll();
+												if (img != null) {
+													Image image = Image.getInstance(new URL(
+															img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
+													float scaler = ((document.getPageSize().getWidth()
+															- document.leftMargin() - document.rightMargin())
+															/ image.getWidth()) * 100;
+													image.scalePercent(scaler * 0.4f);
+													image.setAlignment(Element.ALIGN_CENTER);
+													document.add(image);
 												}
-											} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
-												com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
-												att.setIndentationLeft(firstLineIndent);
+											} else {
+												att.setFirstLineIndent(firstLineIndent);
 												document.add(att);
 											}
+										} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
+											com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
+											att.setIndentationLeft(firstLineIndent);
+											document.add(att);
 										}
-										lastAttWasPlan = false;
-										htmlFile.delete();
 									}
-								} else if (a.getType().equals(TableField.class.getCanonicalName())) {
+									lastAttWasPlan = false;
+									htmlFile.delete();
+								}
+							} else if (a.getType().equals(TableField.class.getCanonicalName())) {
 
-									TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
-									List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
-									List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
-									if (!tabInstList.isEmpty()) {
-										if (lastAttWasPlan) {
-											document.setPageSize(PageSize.A4);
-											document.newPage();
-										}
-										String attName = a.getName();
-										if (!subSecTitlePrinted) {
-											subSecIndex++;
-											Paragraph subSecTitle = new Paragraph(
-													secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-											subSecTitle.setLeading(interLineSpacing);
-											subSecTitle.setSpacingAfter(paragraphSpacing);
-											subSecTitle.setSpacingBefore(paragraphSpacing);
-											document.add(subSecTitle);
-											subSecTitlePrinted = true;
-										}
-										if (!attName.equals(subSecName)) {
-											Paragraph attTitle = new Paragraph(attName, texto);
-											attTitle.setAlignment(Element.ALIGN_CENTER);
-											attTitle.setLeading(interLineSpacing);
-											attTitle.setSpacingAfter(paragraphSpacing);
-											attTitle.setSpacingBefore(paragraphSpacing);
-											document.add(attTitle);
-										}
-										PdfPTable table = returnPdfPTable(tabStructList, tabInstList, false, false);
-										document.add(table);
-										lastAttWasPlan = false;
+								TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
+								List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
+								List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
+								if (!tabInstList.isEmpty()) {
+									if (lastAttWasPlan) {
+										document.setPageSize(PageSize.A4);
+										document.newPage();
 									}
-								} else if (a.getType().equals(ScheduleField.class.getCanonicalName())) {
-									List<ScheduleInstance> schInstList = this.fieldsBS
-											.retrieveScheduleInstanceByAttribute(a.getId(), true);
-
-									if (!schInstList.isEmpty()) {
-										if (lastAttWasPlan) {
-											document.setPageSize(PageSize.A4);
-											document.newPage();
-										}
-										if (!subSecTitlePrinted) {
-											subSecIndex++;
-											Paragraph subSecTitle = new Paragraph(
-													secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-											subSecTitle.setLeading(interLineSpacing);
-											subSecTitle.setSpacingAfter(paragraphSpacing);
-											subSecTitle.setSpacingBefore(paragraphSpacing);
-											document.add(subSecTitle);
-											subSecTitlePrinted = true;
-										}
-										String attName = a.getName();
-										if (!attName.equals(subSecName)) {
-											Paragraph attTitle = new Paragraph(attName, texto);
-											attTitle.setAlignment(Element.ALIGN_CENTER);
-											attTitle.setLeading(interLineSpacing);
-											attTitle.setSpacingAfter(paragraphSpacing);
-											attTitle.setSpacingBefore(paragraphSpacing);
-											document.add(attTitle);
-										}
-										PdfPTable table = new PdfPTable(3);
-										table.getDefaultCell();
-										PdfPCell c = new PdfPCell(new Paragraph("Atividade", texto));
-										c.setHorizontalAlignment(Element.ALIGN_CENTER);
-										c.setBackgroundColor(headerBgColor);
-										table.addCell(c);
-										c = new PdfPCell(new Paragraph("Início", texto));
-										c.setHorizontalAlignment(Element.ALIGN_CENTER);
-										c.setBackgroundColor(headerBgColor);
-
-										table.addCell(c);
-										c = new PdfPCell(new Paragraph("Fim", texto));
-										c.setHorizontalAlignment(Element.ALIGN_CENTER);
-										c.setBackgroundColor(headerBgColor);
-										table.addCell(c);
-
-										SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-										for (ScheduleInstance sch : schInstList) {
-											table.addCell(new Paragraph(sch.getDescription(), texto));
-											table.addCell(new Paragraph(sdf.format(sch.getBegin()), texto));
-											table.addCell(new Paragraph(sdf.format(sch.getEnd()), texto));
-										}
-										document.add(table);
-										lastAttWasPlan = false;
+									String attName = a.getName();
+									if (!subSecTitlePrinted) {
+										subSecIndex++;
+										Paragraph subSecTitle = new Paragraph(
+												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										subSecTitle.setLeading(interLineSpacing);
+										subSecTitle.setSpacingAfter(paragraphSpacing);
+										subSecTitle.setSpacingBefore(paragraphSpacing);
+										document.add(subSecTitle);
+										subSecTitlePrinted = true;
 									}
-								} else if (a.getType().equals(SelectPlan.class.getCanonicalName())) {
-									if (a.getValue() != null) {
-										Plan plan = planBS.retrieveById(Long.parseLong(a.getValue()));
-										// LOGGER.info("2 - " + plan.getName());
-										List<PdfPTable> planTableList = this.generatePDFplanTable(plan);
-										boolean first = true;
-										for (PdfPTable planTable : planTableList) {
-											if (!lastAttWasPlan) {
-												document.setPageSize(PageSize.A4.rotate());
+									if (!attName.equals(subSecName)) {
+										Paragraph attTitle = new Paragraph(attName, texto);
+										attTitle.setAlignment(Element.ALIGN_CENTER);
+										attTitle.setLeading(interLineSpacing);
+										attTitle.setSpacingAfter(paragraphSpacing);
+										attTitle.setSpacingBefore(paragraphSpacing);
+										document.add(attTitle);
+									}
+									PdfPTable table = returnPdfPTable(tabStructList, tabInstList, false, false);
+									document.add(table);
+									lastAttWasPlan = false;
+								}
+							} else if (a.getType().equals(ScheduleField.class.getCanonicalName())) {
+								List<ScheduleInstance> schInstList = this.fieldsBS
+										.retrieveScheduleInstanceByAttribute(a.getId(), true);
+
+								if (!schInstList.isEmpty()) {
+									if (lastAttWasPlan) {
+										document.setPageSize(PageSize.A4);
+										document.newPage();
+									}
+									if (!subSecTitlePrinted) {
+										subSecIndex++;
+										Paragraph subSecTitle = new Paragraph(
+												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										subSecTitle.setLeading(interLineSpacing);
+										subSecTitle.setSpacingAfter(paragraphSpacing);
+										subSecTitle.setSpacingBefore(paragraphSpacing);
+										document.add(subSecTitle);
+										subSecTitlePrinted = true;
+									}
+									String attName = a.getName();
+									if (!attName.equals(subSecName)) {
+										Paragraph attTitle = new Paragraph(attName, texto);
+										attTitle.setAlignment(Element.ALIGN_CENTER);
+										attTitle.setLeading(interLineSpacing);
+										attTitle.setSpacingAfter(paragraphSpacing);
+										attTitle.setSpacingBefore(paragraphSpacing);
+										document.add(attTitle);
+									}
+									PdfPTable table = new PdfPTable(3);
+									table.getDefaultCell();
+									PdfPCell c = new PdfPCell(new Paragraph("Atividade", texto));
+									c.setHorizontalAlignment(Element.ALIGN_CENTER);
+									c.setBackgroundColor(headerBgColor);
+									table.addCell(c);
+									c = new PdfPCell(new Paragraph("Início", texto));
+									c.setHorizontalAlignment(Element.ALIGN_CENTER);
+									c.setBackgroundColor(headerBgColor);
+
+									table.addCell(c);
+									c = new PdfPCell(new Paragraph("Fim", texto));
+									c.setHorizontalAlignment(Element.ALIGN_CENTER);
+									c.setBackgroundColor(headerBgColor);
+									table.addCell(c);
+
+									SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+									for (ScheduleInstance sch : schInstList) {
+										table.addCell(new Paragraph(sch.getDescription(), texto));
+										table.addCell(new Paragraph(sdf.format(sch.getBegin()), texto));
+										table.addCell(new Paragraph(sdf.format(sch.getEnd()), texto));
+									}
+									document.add(table);
+									lastAttWasPlan = false;
+								}
+							} else if (a.getType().equals(SelectPlan.class.getCanonicalName())) {
+								if (a.getValue() != null) {
+									Plan plan = planBS.retrieveById(Long.parseLong(a.getValue()));
+									// LOGGER.info("2 - " + plan.getName());
+									List<PdfPTable> planTableList = this.generatePDFplanTable(plan);
+									boolean first = true;
+									for (PdfPTable planTable : planTableList) {
+										if (!lastAttWasPlan) {
+											document.setPageSize(PageSize.A4.rotate());
+										}
+										document.newPage();
+										if (first) {
+											if (!subSecTitlePrinted) {
+												subSecIndex++;
+												Paragraph subSecTitle = new Paragraph(
+														secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+												document.add(subSecTitle);
+												subSecTitlePrinted = true;
 											}
-											document.newPage();
-											if (first) {
-												if (!subSecTitlePrinted) {
-													subSecIndex++;
-													Paragraph subSecTitle = new Paragraph(
-															secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-													document.add(subSecTitle);
-													subSecTitlePrinted = true;
-												}
-												Paragraph attTitle = new Paragraph(plan.getName(), texto);
-												attTitle.setAlignment(Element.ALIGN_CENTER);
-												document.add(attTitle);
-												first = false;
-												lastAttWasPlan = true;
-											}
-											document.add(planTable);
+											Paragraph attTitle = new Paragraph(plan.getName(), texto);
+											attTitle.setAlignment(Element.ALIGN_CENTER);
+											document.add(attTitle);
+											first = false;
+											lastAttWasPlan = true;
 										}
-										// document.setPageSize(PageSize.A4);
-										// document.newPage();
+										document.add(planTable);
 									}
+									// document.setPageSize(PageSize.A4);
+									// document.newPage();
 								}
 							}
 						}
@@ -2040,26 +2070,16 @@ public class DocumentBS extends HibernateBusiness {
 		int i = 0;
 
 		// ajuste de widths
-		/*for (TableStructure ts : tabStructList) {
-			if (ts.getLabel().length() < 4) {
-				sizes[i] = 6;
-			} else {
-				String[] split = ts.getLabel().split(" ");
-				String maior = split[0];
-				for (int j = 0; j < split.length; j++) {
-					if (split[j].length() > maior.length()) {
-						maior = split[j];
-					}
-				}
-				if (split.length <= 3 && maior.length() < 6) {
-					sizes[i] = ts.getLabel().length();
-				} else {
-					sizes[i] = maior.length();
-				}
-			}
-			i++;
-		}*/
-		//table.setWidths(sizes);
+		/*
+		 * for (TableStructure ts : tabStructList) { if (ts.getLabel().length()
+		 * < 4) { sizes[i] = 6; } else { String[] split = ts.getLabel().split(
+		 * " "); String maior = split[0]; for (int j = 0; j < split.length; j++)
+		 * { if (split[j].length() > maior.length()) { maior = split[j]; } } if
+		 * (split.length <= 3 && maior.length() < 6) { sizes[i] =
+		 * ts.getLabel().length(); } else { sizes[i] = maior.length(); } } i++;
+		 * }
+		 */
+		// table.setWidths(sizes);
 		Font textoTabela = FontFactory.getFont(FontFactory.TIMES, 10.0f);
 		if (!hideHeaders) {
 			for (TableStructure ts : tabStructList) {
@@ -2077,7 +2097,12 @@ public class DocumentBS extends HibernateBusiness {
 					} else if (tv.getTableStructure().getType().equals(Percentage.class.getCanonicalName())) {
 						table.addCell(new Paragraph(FormatValue.PERCENTAGE.format(tv.getValue()), textoTabela));
 					} else if (tv.getTableStructure().getType().equals(NumberField.class.getCanonicalName())) {
-						table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue()), textoTabela));
+						double integerTest = Double.valueOf(tv.getValue());
+						if (integerTest == (int) integerTest) {
+							table.addCell(new Paragraph(tv.getValue(), textoTabela));
+						} else {
+							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue()), textoTabela));
+						}
 					} else if (tv.getTableStructure().getType().equals(ResponsibleField.class.getCanonicalName())) {
 						table.addCell(new Paragraph(this.userBS.existsByUser(Long.valueOf(tv.getValue())).getName(),
 								textoTabela));
@@ -2124,7 +2149,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
