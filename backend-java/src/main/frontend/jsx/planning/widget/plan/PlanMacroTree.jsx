@@ -50,8 +50,6 @@ export default React.createClass({
 	componentDidMount(){
 		var me = this;
 		StructureStore.on('levelAttributeSaved', (model) => {
-			console.log(model);
-			console.log(this.state);
 			//Consulta para encontrar qual nó da árvore está ativo
 			var nodeActive = document.getElementsByClassName("fpdi-node-label active");
 			if(nodeActive.length>0){  // Caso encontre um valor, o texto dele será alterado pelo nome atual do nó
@@ -276,24 +274,34 @@ export default React.createClass({
         	var documentId;       	
         	var tree = [];
         	var sections = model.get("sections");
+        	
+
+        	var unnumberedSections = 0;
+
         	if (sections) {
 	        	tree = sections.map((section,idx) => {
-	        		var node = me.createDocumentNodeDef(section, undefined, idx+1);
-					node.children.push({
-						hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-							PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.props.plan.attributes.archived),
-						label: "Nova subseção",
-               			labelCls:'fpdi-new-node-label',
-		                iconCls: 'mdi mdi-plus',
-		                expandable: false,
-		                to: null,
-		                onNewNode: me.newDocumentSection,
-		                key: 'newNode',
-		                parent: node,
-		                parentId: section.id,
-                		documentId: model.get("document").id,
-		                newNodePlaceholder: "Digite o título da subseção"
-					});
+	        		
+	        		if(section.preTextSection){
+	        			var node = me.createDocumentNodeDef(section, undefined, 0);
+	        			unnumberedSections++;
+	        		}else{
+	        			var node = me.createDocumentNodeDef(section, undefined, idx-unnumberedSections+1);
+						node.children.push({
+							hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.props.plan.attributes.archived),
+							label: "Nova subseção",
+	               			labelCls:'fpdi-new-node-label',
+			                iconCls: 'mdi mdi-plus',
+			                expandable: false,
+			                to: null,
+			                onNewNode: me.newDocumentSection,
+			                key: 'newNode',
+			                parent: node,
+			                parentId: section.id,
+	                		documentId: model.get("document").id,
+			                newNodePlaceholder: "Digite o título da subseção"
+						});
+					}
 	                return node;
 	        	});
 	        }
@@ -402,22 +410,42 @@ export default React.createClass({
 	createDocumentNodeDef(section, namePrefix, idx) {
 		namePrefix = namePrefix || "";
 		var to = "/plan/"+this.props.plan.get("id")+"/document/section/"+section.id;
-		var node = {
-			index: namePrefix+idx,
-			label: namePrefix+idx+" - "+section.name,
-			expanded: false,
-			expandable: true,//section.children != "" && section.children != undefined ,
-			to: to,
-			key: 'section-'+section.id,
-			model: section,
-			id: section.id,
-			onExpand: this.expandDocumentRoot,
-			onShrink: this.shrinkRoot,
-			children: !section.leaf && section.children ? section.children.map((subsection,subIdx) => {
-				return this.createDocumentNodeDef(subsection, idx+".", subIdx+1);
-			}):[]
-			//root: section.attributesAmount <= 0
-		};
+		var node;
+		if(section.preTextSection){
+			node = {
+				index: namePrefix+idx,
+				label: section.name,
+				expanded: false,
+				expandable: false,//section.children != "" && section.children != undefined ,
+				to: to,
+				key: 'section-'+section.id,
+				model: section,
+				id: section.id,
+				//onExpand: this.expandDocumentRoot,
+				//onShrink: this.shrinkRoot,
+				//children: !section.leaf && section.children ? section.children.map((subsection,subIdx) => {
+				//	return this.createDocumentNodeDef(subsection, idx+".", subIdx+1);
+				//}):[]
+				//root: section.attributesAmount <= 0
+			};
+		}else{
+			node = {
+				index: namePrefix+idx,
+				label: namePrefix+idx+" - "+section.name,
+				expanded: false,
+				expandable: true,//section.children != "" && section.children != undefined ,
+				to: to,
+				key: 'section-'+section.id,
+				model: section,
+				id: section.id,
+				onExpand: this.expandDocumentRoot,
+				onShrink: this.shrinkRoot,
+				children: !section.leaf && section.children ? section.children.map((subsection,subIdx) => {
+					return this.createDocumentNodeDef(subsection, idx+".", subIdx+1);
+				}):[]
+				//root: section.attributesAmount <= 0
+			};
+		}
 		if (section.leaf) {
 			node.iconCls = "mdi mdi-menu-right";
 		}

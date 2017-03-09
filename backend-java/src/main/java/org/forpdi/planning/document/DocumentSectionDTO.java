@@ -20,13 +20,16 @@ public class DocumentSectionDTO implements Serializable {
 	private boolean leaf = false;
 	private String name;
 	private List<DocumentSectionDTO> children;
-	
+	private boolean preTextSection; 
+
 	public DocumentSectionDTO(DocumentSection section, DocumentBS bs) {
 		this.id = section.getId();
 		this.documentId = section.getDocument().getId();
 		this.sequence = section.getSequence();
 		this.name = section.getName();
+		this.preTextSection = section.isPreTextSection();
 		this.attributesAmount = bs.countAttributesPerSection(section);
+		
 		if (section.getParent() != null) {
 			this.parentId = section.getParent().getId();
 			this.children = null;
@@ -86,5 +89,13 @@ public class DocumentSectionDTO implements Serializable {
 
 	public void setDocumentId(Long documentId) {
 		this.documentId = documentId;
+	}
+	
+	public boolean isPreTextSection() {
+		return preTextSection;
+	}
+
+	public void setPreTextSection(boolean preTextSection) {
+		this.preTextSection = preTextSection;
 	}
 }

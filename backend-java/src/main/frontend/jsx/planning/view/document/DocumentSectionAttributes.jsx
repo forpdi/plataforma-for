@@ -87,7 +87,7 @@ export default React.createClass({
 			me.context.toastr.addAlertSuccess("Informações salvas com sucesso");
 		}, me);
 
-		DocumentStore.on("sectionAttributesRetrieved", (model) => {			
+		DocumentStore.on("sectionAttributesRetrieved", (model) => {		
 			me.context.tabPanel.addTab(me.state.tabPath, model.name);
 			me.setState({
 				model: model,
@@ -280,6 +280,15 @@ export default React.createClass({
 	},
 
 	saveInstanceTable(tableInstance){		
+		
+		var numberTypes = [AttributeTypes.CURRENCY_FIELD, AttributeTypes.NUMBER_FIELD, AttributeTypes.PERCENTAGE_FIELD];
+
+		tableInstance.tableValues.map((model, idx) => {
+			if(numberTypes.includes(model.tableStructure.type)){
+				tableInstance.tableValues[idx].value = model.value.replace(",",".");
+			}
+		});
+
 		TableStore.dispatch({
 			action: TableStore.ACTION_CUSTOM_SAVE,
 			data: {
@@ -572,7 +581,7 @@ export default React.createClass({
 					</div>
 					:
 					(((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) ?
+					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') && !this.state.model.preTextSection) ?
 						<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
 							<span className="mdi mdi-plus" /> Adicionar novo campo
 						</button>
