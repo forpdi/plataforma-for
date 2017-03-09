@@ -624,15 +624,16 @@ export default React.createClass({
 						</div>
 					:
 						<div>
+							<div className={(!!this.props.undeletable ? (this.state.menuHidden ? "" : "widthLimit pull-left") : "")}>
+								<b className="budget-title">{this.props.fieldDef.label}</b>
+							</div>
 							{strategicObjectivesPlans}
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 								(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
 									title="Excluir campo" onClick={this.delete}/> : "")
 							: ""}
-							<div className={(!!this.props.undeletable ? (this.state.menuHidden ? "" : "widthLimit") : "")}>
-								<b className="budget-title">{this.props.fieldDef.label}</b>
-							</div>
+							<div className="clearfix"/>
 						</div>
 					}
 					
