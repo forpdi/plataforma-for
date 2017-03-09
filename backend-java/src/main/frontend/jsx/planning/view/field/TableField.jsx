@@ -264,7 +264,7 @@ export default React.createClass({
 											model.isInTotal ? this.onEditTotalChange:
 											 _.noop),
 							value: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value,
-							editModeValue: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value,
+							editModeValue: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value.replace(".",",")
 						};						
 						return(
 							<td key={"value-"+idx}>
@@ -532,9 +532,14 @@ export default React.createClass({
 													return(
 														<td key={"tableValue-"+id} id={'tableValue'+model.id+'-'+id} ref={'tableValue'+model.id+'-'+id}>
 															{mod.tableStructure.type == AttributeTypes.CURRENCY_FIELD ? 
-																"R$ "+numeral(mod.value).format('0,0.00') : mod.value}
-															{mod.tableStructure.type == AttributeTypes.PERCENTAGE_FIELD ? 
-																"%" : ""}
+																"R$ "+numeral(mod.value).format('0,0.00') : 
+																(mod.tableStructure.type == AttributeTypes.PERCENTAGE_FIELD ? 
+																	numeral(mod.value).format('0,0.00') + "%" : 
+																	(mod.tableStructure.type == AttributeTypes.NUMBER_FIELD ? mod.value.replace(".",",") :
+																	 mod.value)
+																)
+															}
+															
 														</td>
 													);
 												}

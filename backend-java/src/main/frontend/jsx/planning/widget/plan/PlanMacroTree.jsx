@@ -50,8 +50,6 @@ export default React.createClass({
 	componentDidMount(){
 		var me = this;
 		StructureStore.on('levelAttributeSaved', (model) => {
-			console.log(model);
-			console.log(this.state);
 			//Consulta para encontrar qual nó da árvore está ativo
 			var nodeActive = document.getElementsByClassName("fpdi-node-label active");
 			if(nodeActive.length>0){  // Caso encontre um valor, o texto dele será alterado pelo nome atual do nó
@@ -276,14 +274,13 @@ export default React.createClass({
         	var documentId;       	
         	var tree = [];
         	var sections = model.get("sections");
-        	//console.log(model);
+        	
 
         	var unnumberedSections = 0;
 
         	if (sections) {
 	        	tree = sections.map((section,idx) => {
 	        		
-	        		//console.log(section);
 	        		if(section.preTextSection){
 	        			var node = me.createDocumentNodeDef(section, undefined, 0);
 	        			unnumberedSections++;
