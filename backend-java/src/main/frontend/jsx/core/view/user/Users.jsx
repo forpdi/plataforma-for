@@ -722,7 +722,7 @@ export default React.createClass({
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
 												<div className="fpdi-alert-message-text">
-													*Favor não convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail, pois os mesmos podem não receber o convite.
+													Obs: Não convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail, pois os mesmos podem não receber o convite.
 												</div>
 											</td>
 										</tr>
