@@ -25,7 +25,8 @@ export default React.createClass({
 		router: React.PropTypes.object,
 		planMacro: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object,
-		toastr: React.PropTypes.object.isRequired
+		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired
 	},
 	getInitialState() {
 		return {

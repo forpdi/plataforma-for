@@ -89,7 +89,7 @@ export default React.createClass({
 			me.context.router.push("/system/domains");
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.domain.save"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.save"));
+			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.save") + " Talvez seja necessário atualizar a página para ativar as alterações.");
 		}, me);
 		CompanyDomainStore.on("retrieve", (model) => {
 			if (me.isMounted()) {
@@ -157,7 +157,7 @@ export default React.createClass({
 			});
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.domain.update"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.update"));
+			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.update") + " Talvez seja necessário atualizar a página para ativar as alterações.");
 		} else {
 			CompanyDomainStore.dispatch({
 				action: CompanyDomainStore.ACTION_SAVE,
