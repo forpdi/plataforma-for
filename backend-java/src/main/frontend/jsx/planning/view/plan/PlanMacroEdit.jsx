@@ -262,7 +262,7 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 		return <div>
-				<h1 className="marginLeft115">{this.props.params.id ? "Editar Plano":"Novo Plano"}</h1>
+				<h1 className="marginLeft115">{this.props.params.id ? "Editar plano":"Novo plano"}</h1>
 				<div className="fpdi-card padding40">
 					
 					<VerticalForm

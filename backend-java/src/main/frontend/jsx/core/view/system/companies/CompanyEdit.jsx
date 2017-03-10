@@ -165,7 +165,7 @@ export default React.createClass({
 				data: me.state.model
 			});
 			msg = Messages.get("notification.institution.update");
-			msg = "Instituição atualizada com sucesso. Talvez seja necessário atualizar a página para ativar as alterações!"
+			msg = "Instituição atualizada com sucesso."
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.update"));
 			this.context.toastr.addAlertSuccess(msg);
@@ -177,7 +177,7 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.save"));
 			//this.context.toastr.addAlertSuccess(Messages.get("notification.institution.save"));
-			msg = "Instituição criada com sucesso. Talvez seja necessário atualizar a página para ativar as alterações!"
+			msg = "Instituição criada com sucesso."
 			this.context.toastr.addAlertSuccess(msg);
 		}
 	},

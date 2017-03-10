@@ -266,7 +266,9 @@ export default React.createClass({
 		} else {
 			return (
 				<tr  key={"action"+idx} >
-					{this.context.roles.MANAGER || (_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) && UserSession.get("user").id == this.props.responsible.id) ?
+					{this.context.roles.MANAGER || 
+						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+						this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td className="textAlignCenter" >
 							<input type='checkbox' name='checkbox' defaultChecked={action.checked} ref={"checkbox-action-"+action.id}
 							onChange={this.sendCheckBox.bind(this, action.id, action)} defaultValue={action.checked}/>
@@ -276,7 +278,9 @@ export default React.createClass({
 					<td>{action.responsible}</td>
 					<td>{action.begin.split(" ")[0]}</td>
 					<td>{action.end.split(" ")[0]}</td>
-					{this.context.roles.MANAGER || (_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) && UserSession.get("user").id == this.props.responsible.id) ?
+					{this.context.roles.MANAGER || 
+						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+							this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td id={'options'+idx} className='edit-budget-col cursorDefault'>
 							<span className='mdi mdi-pencil cursorPointer' onClick={this.editActionPlan.bind(this,action.id,idx)} title="Editar informações"/>
 							<span className='mdi mdi-delete cursorPointer' onClick={this.deleteActionPlan.bind(this,action.id,idx)} title="Excluir"/>
@@ -528,8 +532,11 @@ export default React.createClass({
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
-						{this.context.roles.MANAGER || (_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) && (this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>Novo</button>
+						{this.context.roles.MANAGER || 
+								(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
+							
+								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>Novo</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} onClick={this.hideFields}></span>
 					</div>}
@@ -541,7 +548,9 @@ export default React.createClass({
 						<table className="budget-field-table table">					
 							<thead>
 								<tr>
-									{this.context.roles.ADMIN || this.context.roles.MANAGER == true || (_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) && (this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
+									{this.context.roles.ADMIN || this.context.roles.MANAGER == true || 
+										(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
 										<th className="textAlignCenter">Concluído</th>
 									:<th/>}
 									<th>Descrição</th>

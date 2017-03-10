@@ -25,7 +25,8 @@ export default React.createClass({
 		router: React.PropTypes.object,
 		planMacro: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object,
-		toastr: React.PropTypes.object.isRequired
+		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired
 	},
 	getInitialState() {
 		return {
@@ -326,7 +327,7 @@ export default React.createClass({
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.changeVizualization}>
 						<span className="mdi mdi-pencil cursorPointer" title="Editar informações"> 
-							<span id="menu-levels"> Editar informações </span>
+							<span id="menu-levels"> Editar informações aki </span>
 						</span>
 					</Link>
 		         </li>
@@ -362,8 +363,7 @@ export default React.createClass({
 			
 			<h1>
 				{this.state.title}
-				{(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) 
-						&& this.state.vizualization && this.props.params.subplanId && this.state.model ? 
+				{(_.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ? 
 					(<span className="dropdown">
 						<a
 							className="dropdown-toggle"
