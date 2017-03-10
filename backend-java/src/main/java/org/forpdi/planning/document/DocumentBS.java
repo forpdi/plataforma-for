@@ -93,6 +93,9 @@ import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfStamper;
+import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
@@ -871,11 +874,17 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
 		File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
+
+		String SRC = pdfFile.getAbsolutePath();
+		String DEST = pdfFile.getAbsolutePath().replace(pdfFile.getName(), "pageNumber.pdf");
+		File file = new File(DEST);
+		file.getParentFile().mkdirs();
+
 		InputStream in = new FileInputStream(pdfFile);
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
 
@@ -916,7 +925,7 @@ public class DocumentBS extends HibernateBusiness {
 		Paragraph TITULO = new Paragraph(title, tituloCapa);
 		// Paragraph AUTHOR = new Paragraph(author, texto);
 		TITULO.setAlignment(Element.ALIGN_CENTER);
-		TITULO.setSpacingBefore(paragraphSpacing);
+		TITULO.setSpacingBefore(paragraphSpacing * 8);
 
 		// AUTHOR.setAlignment(Element.ALIGN_CENTER);
 
@@ -959,6 +968,12 @@ public class DocumentBS extends HibernateBusiness {
 
 		DocumentSection summarySection = new DocumentSection();
 		List<DocumentSection> summarySectionSons = new ArrayList<DocumentSection>();
+
+		// table to store placeholder for all chapters and sections
+		final Map<String, PdfTemplate> tocPlaceholder = new HashMap<>();
+
+		// store the chapters and sections with their title here.
+		final Map<String, Integer> pageByTitle = new HashMap<>();
 
 		for (int i = 0; i < sections.length; i++) {
 			DocumentSection ds = this.retrieveSectionById(Long.parseLong(sections[i]));
@@ -1021,6 +1036,7 @@ public class DocumentBS extends HibernateBusiness {
 					for (String secaoId : sections) {
 						summarySection = this.retrieveSectionById(Long.parseLong(secaoId));
 						if (!summarySection.isPreTextSection()) {
+
 							summaryIndex++;
 							secTitle = new Paragraph(summaryIndex + ". " + summarySection.getName(), titulo);
 							secTitle.setLeading(interLineSpacing);
@@ -1030,7 +1046,7 @@ public class DocumentBS extends HibernateBusiness {
 							this.setSectionsFilled(dsList, summarySection.getDocument().getPlan().getId());
 							summarySubSecIndex = 0;
 							for (DocumentSection sec : dsList) {
-								
+
 								if (sec.isFilled()) {
 									summarySubSecIndex++;
 									secTitle = new Paragraph(
@@ -1122,7 +1138,7 @@ public class DocumentBS extends HibernateBusiness {
 									.getPath();
 							resourcesPath = resourcesPath.replace("example.html", "");
 							resourcesPath = resourcesPath.replace("%20", " ");
-							// resourcesPath = "/tmp"; // corrigir para usar
+							resourcesPath = "/tmp"; // corrigir para usar
 							// um caminho
 							// dinamico
 							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
@@ -1359,7 +1375,7 @@ public class DocumentBS extends HibernateBusiness {
 											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
 									resourcesPath = resourcesPath.replace("example.html", "");
 									resourcesPath = resourcesPath.replace("%20", " ");
-									// resourcesPath = "/tmp"; // corrigir
+									resourcesPath = "/tmp"; // corrigir
 									// para
 									// usar
 									// um caminho
@@ -1523,8 +1539,9 @@ public class DocumentBS extends HibernateBusiness {
 			}
 		}
 		document.close();
-
-		return in;
+		manipulatePdf(SRC, DEST, document);
+		InputStream inpStr = new FileInputStream(file);
+		return inpStr;
 	}
 
 	/**
@@ -2097,11 +2114,11 @@ public class DocumentBS extends HibernateBusiness {
 					} else if (tv.getTableStructure().getType().equals(Percentage.class.getCanonicalName())) {
 						table.addCell(new Paragraph(FormatValue.PERCENTAGE.format(tv.getValue()), textoTabela));
 					} else if (tv.getTableStructure().getType().equals(NumberField.class.getCanonicalName())) {
-						double integerTest = Double.valueOf(tv.getValue());
+						double integerTest = Double.valueOf(tv.getValue().replaceAll("\\.", "").replaceAll(",", "."));
 						if (integerTest == (int) integerTest) {
 							table.addCell(new Paragraph(tv.getValue(), textoTabela));
 						} else {
-							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue()), textoTabela));
+							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue().replaceAll("\\.", "").replaceAll(",", ".")), textoTabela));
 						}
 					} else if (tv.getTableStructure().getType().equals(ResponsibleField.class.getCanonicalName())) {
 						table.addCell(new Paragraph(this.userBS.existsByUser(Long.valueOf(tv.getValue())).getName(),
@@ -2149,7 +2166,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
@@ -2725,4 +2742,24 @@ public class DocumentBS extends HibernateBusiness {
 
 		return in;
 	}
+
+	public void manipulatePdf(String src, String dest, com.lowagie.text.Document document)
+			throws IOException, DocumentException {
+		PdfReader reader = new PdfReader(src);
+		int n = reader.getNumberOfPages();
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(dest));
+		PdfContentByte pagecontent;
+
+		Font texto = FontFactory.getFont(FontFactory.TIMES, 10.0f);
+		for (int i = 0; i < n;) {
+			pagecontent = stamper.getOverContent(++i);
+			ColumnText.showTextAligned(pagecontent, Element.ALIGN_RIGHT, new Phrase(String.format("%s", i), texto),
+					// new Phrase(String.format("Página %s de %s", i, n),
+					// texto),
+					document.right(), document.bottom(), 0);
+		}
+		stamper.close();
+		reader.close();
+	}
+
 }

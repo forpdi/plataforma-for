@@ -1446,11 +1446,13 @@ export default React.createClass({
 									<button type="button" className={"btn btn-danger delete-all-btn floatLeft "} 
 									onClick={this.deleteSelectedGoals}>
 										<i className="mdi mdi-delete positionStatic"/>
-									</button>  : 
+									</button> 
+								: 
 									<button type="button" className={"btn btn-danger delete-all-btn floatLeft "} 
 									onClick={this.deleteSelectedGoals} disabled>
 										<i className="mdi mdi-delete positionStatic"/>
-									</button> }
+									</button>
+								}
 							</div> : ""): ""
 					}
 					<div className="budget-btns">
