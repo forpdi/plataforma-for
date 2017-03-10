@@ -686,8 +686,14 @@ export default React.createClass({
 		        					</thead>
 		        					<tbody>
 		        						<tr>
-		        							<td className="fdpi-table-cell"> <input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue=""/> </td>
-		        							<td className="fdpi-table-cell"> <input maxLength="255" className="budget-field-table" ref='emailUser' type='text' defaultValue=""/> </td>
+		        							<td className="fdpi-table-cell"> 
+		        								<input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue=""/>
+		        								<div ref="formAlertNameUser" className="formAlertError"></div>
+	        								</td>
+		        							<td className="fdpi-table-cell">
+		        								<input maxLength="255" className="budget-field-table" ref='emailUser' type='text' defaultValue=""/>
+		        								<div ref="formAlertEmail" className="formAlertError"></div>
+	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="selectAccessLevels" defaultValue={-1}>
 													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
@@ -706,17 +712,17 @@ export default React.createClass({
 													}
 												}
 												</select>
+												<div ref="formAlertTypeAccont" className="formAlertError"></div>
 											</td>
-											<td className="fdpi-table-cell"> <button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> Enviar convite </button>	</td>
-										</tr>
-
+											<td className="fdpi-table-cell">
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> Enviar convite </button>
+											</td>
+										</tr>  
+		        						
 										<tr>
-											<td className="fdpi-table-cell"> <div ref="formAlertNameUser" className="formAlertError"></div>  </td>
-		        							<td className="fdpi-table-cell"> <div ref="formAlertEmail" className="formAlertError"></div>	  </td>
-		        							<td className="fdpi-table-cell"> 
-		        								<div ref="formAlertTypeAccont" className="formAlertError"></div>	
+											<td colSpan="4" className="fdpi-table-cell">
+												<div className="fpdi-indicator-weigth-total">*Favor não convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail, pois os mesmos podem não receber o convite.</div>
 											</td>
-											<td className="fdpi-table-cell"> 	</td>
 										</tr>
 		        					</tbody>
 	        				</table>
