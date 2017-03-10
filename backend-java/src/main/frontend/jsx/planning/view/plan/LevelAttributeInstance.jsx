@@ -774,7 +774,7 @@ export default React.createClass({
 		);
 	},
 
-	renderEditGoal(userResponsible) {
+	renderEditGoal(userResponsible) {		
 		return (
 			<ul id="level-menu" className="dropdown-menu" >
 				{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
