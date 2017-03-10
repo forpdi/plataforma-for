@@ -33,17 +33,35 @@ export default React.createClass({
     onLinkClick(){
         this.quill = this.refs['quill'].state.editor;
         this.selection = this.refs['quill'].state.selection;
-        if(this.selection == undefined)
-            return;
-        var start = this.selection.start;
-        var end = this.selection.end;
-        var text = this.quill.getText().substring(start,end);
-        if(text != ""){
-            this.setState({
-                selectedTxt: text,
-                newLink: true
-            });
+        var text = "";
+        var start = undefined;
+        var end = undefined;
+        if(this.selection != undefined){
+            start = this.selection.start;
+            end = this.selection.end;
+            text = this.quill.getText().substring(start,end);
+        }        
+        Modal.confirm("Insira o endereço",
+            <p className="fpdi-richtext-link-ctn">
+                <label htmlFor="url-input" className="fpdi-richtext-link-label">Link:</label>
+                <input type="url" defaultValue={text} id="url-input" className="width100percent padding5"
+                 placeholder="insira o endereço url desejado"/>
+                {/*<span className="mdi mdi-link-variant fpdi-richtext-link-btn" title="inserir link"/>*/}
+            </p>,
+            this.insertLink.bind(this, text, start, end));
+    },
+
+    insertLink(text, start, end){
+        var url = document.getElementById("url-input").value;        
+        if(text == ""){
+            text = url;
+            this.quill.insertText(start, text, 'link', url);
+        } else {            
+            this.quill.deleteText(start, end);
+            this.quill.insertText(start, text, 'link', url);            
         }
+        
+        Modal.hide();
     },
 
     onImageClick(){
@@ -101,19 +119,11 @@ export default React.createClass({
                 value={this.value}
                 ref="quill">
                     <RichTextToolbar imageHandler={this.onImageClick} linkHandler={this.onLinkClick} id={this.props.id}/>
-                 
-                        {/*<div className="fpdi-richtext-link-ctn">
-                            <label htmlFor="url-input" className="fpdi-richtext-link-label">Link:</label>
-                            <input type="url" defaultValue={this.state.selectedTxt} id="url-input"/>
-                            <span className="mdi mdi-link-variant fpdi-richtext-link-btn" title="inserir link"/>
-                        </div>*/}
-                    
                     <div key="editor"
                         ref="editor"
                         className="quill-contents resizeVertical minHeight200"
                         spellCheck={true}
                         dangerouslySetInnerHTML={{__html:(this.value)}}/>
-
                 </ReactQuill>
             </div>
         );

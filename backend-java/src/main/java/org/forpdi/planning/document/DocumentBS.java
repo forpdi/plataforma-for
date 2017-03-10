@@ -2114,11 +2114,11 @@ public class DocumentBS extends HibernateBusiness {
 					} else if (tv.getTableStructure().getType().equals(Percentage.class.getCanonicalName())) {
 						table.addCell(new Paragraph(FormatValue.PERCENTAGE.format(tv.getValue()), textoTabela));
 					} else if (tv.getTableStructure().getType().equals(NumberField.class.getCanonicalName())) {
-						double integerTest = Double.valueOf(tv.getValue());
+						double integerTest = Double.valueOf(tv.getValue().replaceAll("\\.", "").replaceAll(",", "."));
 						if (integerTest == (int) integerTest) {
 							table.addCell(new Paragraph(tv.getValue(), textoTabela));
 						} else {
-							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue()), textoTabela));
+							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue().replaceAll("\\.", "").replaceAll(",", ".")), textoTabela));
 						}
 					} else if (tv.getTableStructure().getType().equals(ResponsibleField.class.getCanonicalName())) {
 						table.addCell(new Paragraph(this.userBS.existsByUser(Long.valueOf(tv.getValue())).getName(),

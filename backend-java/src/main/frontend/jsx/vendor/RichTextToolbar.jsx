@@ -120,9 +120,9 @@ export default React.createClass({
 		  	<span className="ql-format-group">
 		  		<span className="ql-format-button ql-image" title="Image" onClick={this.props.imageHandler}/>
 		    </span>
-		    {/*<span className="ql-format-group">
+		    <span className="ql-format-group">
 		  		<span className="ql-format-button ql-link" title="Link" onClick={this.props.linkHandler}/>
-		    </span>*/}
+		    </span>
 		</div>);
 	}
 });

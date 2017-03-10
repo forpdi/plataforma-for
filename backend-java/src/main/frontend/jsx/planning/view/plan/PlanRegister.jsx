@@ -327,7 +327,7 @@ export default React.createClass({
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.changeVizualization}>
 						<span className="mdi mdi-pencil cursorPointer" title="Editar informações"> 
-							<span id="menu-levels"> Editar informações aki </span>
+							<span id="menu-levels"> Editar informações </span>
 						</span>
 					</Link>
 		         </li>
