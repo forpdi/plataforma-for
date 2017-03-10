@@ -784,7 +784,7 @@ export default React.createClass({
 					<li>
 						<a onClick={this.editingAttributes}>
 							<span className="mdi mdi-pencil cursorPointer cursorPointer" title="Editar informações"> 
-								<span id="menu-levels"> Editar informações aki         </span>
+								<span id="menu-levels"> Editar informações </span>
 							</span>
 						</a>
 						
