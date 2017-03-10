@@ -53,7 +53,8 @@ var ConfirmModal = React.createClass({
 
 	getDefaultProps() {
 		return {
-			confirmText: "Ok"
+			confirmText: "Ok",
+			confirmTitle: "Confirmação",
 		};
 	},
 	render() {
@@ -62,10 +63,11 @@ var ConfirmModal = React.createClass({
 				<div className="modal-content fpdi-modal-confirmCustom">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={this.props.onConfirm}><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className="mdi mdi-confirmModalCustom mdi-48px mdi-checkbox-marked-circle" id="modalIcon"></i> Confirmação</h4>
+	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className="mdi mdi-confirmModalCustom mdi-48px mdi-checkbox-marked-circle" id="modalIcon"></i> {this.props.confirmTitle}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body-close-goal">
-	        			<p id>{this.props.message}</p>
+	      				<br/>
+	        			<div id>{this.props.message}</div>
 	      			</div>
 	      			<div className="modal-footer fpdi-modal-footer">
 	      				<button type="button" className="btn btn-sm btn-success modal-button" onClick={this.props.onConfirm}>{this.props.confirmText}</button>
@@ -454,7 +456,7 @@ var Modal = {
 	},
 	confirm(title, msg, cb) {
 		ReactDOM.render((
-			<ConfirmModal onConfirm={cb}  title={title} message={msg} />
+			<ConfirmModal onConfirm={cb}  confirmTitle={title} message={msg} />
 		),this.$el);
 		$(this.$el).modal('show');
 	},
