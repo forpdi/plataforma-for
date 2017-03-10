@@ -146,7 +146,6 @@ export default React.createClass({
 			<div className="summary-table-header">
 				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Agendar Recálculo</button>
 				Tabela de Resumo - {this.props.planMacro.get("name")}
-			}
 			</div>
 			<table>
 				<thead>
