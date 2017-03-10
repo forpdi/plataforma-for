@@ -1,9 +1,10 @@
 import React from "react";
-
 import AttachmentStore from "forpdi/jsx/planning/store/Attachment.jsx"
 import FileStore from "forpdi/jsx/core/store/File.jsx"
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-
+import _ from 'underscore';
+import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
@@ -248,7 +249,9 @@ export default React.createClass({
 					}
 
 					<div className="budget-btns">
-						{this.context.roles.MANAGER || (this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
+						{this.context.roles.MANAGER || 
+								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>Anexar arquivo</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} 
@@ -275,7 +278,9 @@ export default React.createClass({
 									<th>
 										{"Data de upload"}
 									</th>
-									{this.context.roles.MANAGER || (this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
+									{this.context.roles.MANAGER || 
+										_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
+										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
 									<th>
 										<center>
 											{"Ações"}
@@ -304,7 +309,9 @@ export default React.createClass({
 											<td>
 												{attachment.creation.split(" ")[0]}
 											</td>
-											{this.context.roles.MANAGER || UserSession.get("user").id == this.props.responsible.id ? 
+											{this.context.roles.MANAGER ||
+												_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
+												UserSession.get("user").id == this.props.responsible.id ? 
 											<td>
 												{attachment.id == this.state.editId ? 
 													<center className='displayFlex'>																						
