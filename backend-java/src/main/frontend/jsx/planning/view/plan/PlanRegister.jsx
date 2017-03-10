@@ -363,7 +363,7 @@ export default React.createClass({
 			
 			<h1>
 				{this.state.title}
-				{(_.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ? 
+				{(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ? 
 					(<span className="dropdown">
 						<a
 							className="dropdown-toggle"
