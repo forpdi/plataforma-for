@@ -330,6 +330,7 @@ export default React.createClass({
 			fieldEl = (
 				<div>
 					<label className = "fpdi-text-label"> SENHA </label>
+					<br/>
 					<a className="senhaUser" onClick={this.props.fieldDef.onClick}> 
 						{this.props.fieldDef.placeholder}
 					</a>
