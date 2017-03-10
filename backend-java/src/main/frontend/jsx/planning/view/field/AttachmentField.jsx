@@ -231,22 +231,25 @@ export default React.createClass({
 	render(){
 		return(
 			<div className="panel panel-default panel-margins">
-				<div className="panel-heading displayFlex">
+				<div className="panel-heading dashboard-panel-title">
 					<b className="budget-graphic-title">Anexar arquivos</b>
 
 					{this.state.list[0] ? (this.context.roles.MANAGER || 
 							_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ?
-						this.state.anyCheck ? 
-							<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
-							onClick={this.deleteSelected}>
-								<i className="mdi mdi-delete positionStatic"/>
-							</button>  : 
-							<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
-							onClick={this.deleteSelected} disabled>
-								<i className="mdi mdi-delete positionStatic"/>
-							</button> 
-					    : ""): ""
-					}
+						<div className = "floatLeft">
+							{this.state.anyCheck ? 
+								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+								onClick={this.deleteSelected}>
+									<i className="mdi mdi-delete positionStatic"/>
+								</button> 
+							: 
+								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+								onClick={this.deleteSelected} disabled>
+									<i className="mdi mdi-delete positionStatic"/>
+								</button>
+							}
+						</div>
+				    : ""): ""}
 
 					<div className="budget-btns">
 						{this.context.roles.MANAGER || 

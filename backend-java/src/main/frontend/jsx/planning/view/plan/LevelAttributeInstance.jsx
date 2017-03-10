@@ -1085,7 +1085,7 @@ export default React.createClass({
 				levelInstanceIdActionPlan = {this.props.params.levelInstanceId}/>
 
 
-			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">* Como a polaridade foi alterada, os valores das metas devem ser editados para que as alterações sejam aplicadas.</h5></i> : ""}
+			{this.state.showPolarityAlert ? <i><h5 className="fpdi-alert-message-text">* Como a polaridade foi alterada, os valores das metas devem ser editados para que as alterações sejam aplicadas.</h5></i> : ""}
 			{this.state.model.data.level.indicator ? <GoalPerformance  indicator = {this.state.model.data}/> : ""}
 
 			<LevelSons 
