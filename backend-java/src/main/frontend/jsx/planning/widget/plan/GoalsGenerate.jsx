@@ -75,7 +75,7 @@ export default onClickOutside(React.createClass({
 
 		Modal.confirm(
 			"Atenção", 
-			"As metas serão geradas em segundo plano, isso pode demorar alguns minutos. Talvez seja necessário atualizar a página para ativar as alterações.",
+			"As metas serão geradas em segundo plano, isso pode demorar alguns minutos! Talvez seja necessário atualizar a página para ativar as alterações.",
 			() => {
 				Modal.hide();
 				StructureStore.dispatch({

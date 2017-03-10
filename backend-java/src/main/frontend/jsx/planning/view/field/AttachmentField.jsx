@@ -105,7 +105,7 @@ export default React.createClass({
 				action: AttachmentStore.ACTION_CREATE,
 				data: file
 			});
-			me.context.toastr.addAlertSuccess("Anexo salvo com sucesso. Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
+			me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
 		};
 		var onFailure = function (resp) {
 			Modal.hide();

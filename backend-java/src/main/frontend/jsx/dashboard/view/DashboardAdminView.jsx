@@ -35,7 +35,6 @@ export default React.createClass({
 
 	render() {
 		return (
-
             <div className='marginLeft30'>
                 <div className = "row">
                     <div className="col-md-7">
