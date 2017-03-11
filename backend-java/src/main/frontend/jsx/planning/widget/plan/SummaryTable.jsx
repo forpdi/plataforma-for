@@ -149,8 +149,11 @@ export default React.createClass({
 	renderYearCells(rowData) {
 		var cells = [];
 		for (var month = 0; month < 12; month++) {
-			cells.push(<td key={"month-cell-"+month}>
+			/*cells.push(<td key={"month-cell-"+month}>
 				<div className="circle green">100%</div>
+			</td>);*/
+			cells.push(<td key={"month-cell-"+month}>
+				-
 			</td>);
 		}
 		return (<table>
@@ -179,7 +182,7 @@ export default React.createClass({
 				else
 					color = "blue";
 				return (<tr key={"data-row-"+index}>
-					<td style={{"paddingLeft": ""+(rowSpec.indent*2 + 1)+"ex"}}>
+					<td style={{"paddingLeft": ""+(rowSpec.indent*20 + 5)+"px"}}>
 						{rowSpec.loading ? <img src={LoadingImage} style={{"height": "12px"}} />:(rowSpec.expandable ? (
 							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>

@@ -249,6 +249,7 @@ public class StructureBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
 			.add(Restrictions.eq("deleted", false))
 			.add(Restrictions.eq("plan", plan))
+			.addOrder(Order.asc("name"))
 		;
 		if (parentId != null)
 			criteria.add(Restrictions.eq("parent", parentId));
