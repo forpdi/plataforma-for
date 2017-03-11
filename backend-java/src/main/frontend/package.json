@@ -6,7 +6,7 @@
     "devstart": "webpack-dev-server --compress --progress --port 8081 --inline -w",
     "devwatch": "NODE_ENV=development webpack --watch --watch-poll --progress --colors -d || (set NODE_ENV=development && webpack --watch --watch-poll --progress --colors -d)",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "NODE_ENV=production webpack --colors --progress --config webpack.production.config.js --optimize-dedupe --optimize-occurrence-order --optimize-minimize"
+    "deploy": "webpack --colors --progress --config webpack.production.config.js -p"
   },
   "author": "Renato R. R. de Oliveira",
   "devDependencies": {
