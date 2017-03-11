@@ -59,7 +59,7 @@ export default React.createClass({
 					nodeActive[0].innerText = model.data.name;
 				}
 			}
-		});
+		}, me);
 		PlanStore.on("find", (store, raw, opts) => {			
 			var tree = raw.map((plan, index) => {
 				var to = '/plan/'+this.props.plan.get("id")+'/details/subplan/'+plan.id;
@@ -178,7 +178,7 @@ export default React.createClass({
             if(me.isMounted()){
 	            me.forceUpdate();
 	        }
-        });
+        }, me);
 
         StructureStore.on("levelInstanceCreated", (model, opts) => {
         	var actualParent = opts.node.parent;
@@ -212,13 +212,13 @@ export default React.createClass({
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}
-        });
+        }, me);
 
 		StructureStore.on("deleteLevelInstanceByTable", (model) => {
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}
-        });
+        }, me);
 
 		StructureStore.on('deletegoals', (model) => {			
 			for (var j=0; j<model.data.length; j++) {
@@ -226,13 +226,13 @@ export default React.createClass({
         			me.deleteNode(model.data[j], me.state.tree[i]);
 				}
         	}
-		});
+		}, me);
 
         StructureStore.on("goalsGenerated", (model) => {
 			for (var i=0; i<me.state.tree.length; i++) {
         		me.insertNodes(model.data, me.state.tree[i]);
         	}
-		});
+		}, me);
 
         PlanStore.on("planFind", (model, data) => {
         
@@ -264,12 +264,12 @@ export default React.createClass({
 					nodeActive[2].innerText = idx +" - "+ model.data.name;
 				}
 			}
-		});
+		}, me);
 		DocumentStore.on("sectiondeleted", (model) => {
 			for (var i=0; i<me.state.documentTree.length; i++) {
         		me.deleteNode(model.id, me.state.documentTree[i]);
         	}
-		});
+		}, me);
         DocumentStore.on("retrieve", (model) => {
         	var documentId;       	
         	var tree = [];
@@ -332,7 +332,7 @@ export default React.createClass({
 	        	});
 	        }
         	
-        });
+        }, me);
 
 		DocumentStore.on("sectioncreated", (model, opts) => {			
         	var actualParent = opts.node.parent;

@@ -7,7 +7,9 @@ import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 
+import LoadingImage from 'forpdi/img/loading2.gif';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
@@ -34,11 +36,13 @@ export default React.createClass({
 					label: plan.name,
 					expanded: false,
 					expandable: true,
+					indent: 0,
 					key: "subplan-"+plan.id,
-					model: plan,
-					id: plan.id,
-					onExpand: this.expandRoot,
-					onShrink: this.shrinkRoot
+					plan: plan,
+					performance: plan.performance,
+					minimum: plan.minimumAverage,
+					maximum: plan.maximumAverage,
+					parents: []
 				};
 			});
 
@@ -47,6 +51,36 @@ export default React.createClass({
 				tree: tree
 			});
 		}, me);
+
+		StructureStore.on("retrieve-level-instance-performance", (models, parent) =>{
+			if (!models || (models.length <= 0)) {
+				parent.expandable = false;
+			} else {
+				var insertionPoint = 1 + this.state.tree.findIndex((spec) => {
+					return (spec.key === parent.key);
+				});
+	            _.each(models, (level, index) => {
+					me.state.tree.splice(insertionPoint, 0, {
+						label: level.name,
+						expanded: false,
+						expandable: true,
+						indent: parent.indent+1,
+						key: "level-"+level.id,
+						plan: parent.plan,
+						performance: level.levelValue,
+						minimum: level.levelMinimum,
+						maximum: level.levelMaximum,
+						level: level.id,
+						parentKey: parent.key,
+						parentLevel: parent.level,
+						parents: parent.parents.concat([parent.key])
+					});
+				});
+				parent.expanded = true;
+			}
+			parent.loading = false;
+			me.forceUpdate();
+        }, me);
 
 		PlanMacroStore.on("recalculation-scheduled", () => {			
 			me.context.toastr.addAlertSuccess("Recálculo agendado, em breve os valores estarão atualizados.");
@@ -58,6 +92,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		PlanStore.off(null, null, this);
 		PlanMacroStore.off(null, null, this);
+		StructureStore.off(null, null, this);
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -88,6 +123,29 @@ export default React.createClass({
 		});
 	},
 
+	tweakExpansion(spec, event) {
+		event && event.preventDefault();
+		if (!spec.expanded) {
+			spec.loading = true;
+			this.forceUpdate();
+			StructureStore.dispatch({
+                action: StructureStore.ACTION_RETRIEVE_LEVEL_INSTANCE_PERFORMANCE,
+                data: {
+                    planId: spec.plan.id,
+                    parentId: !spec.level ? 0:spec.level
+                },
+                opts: spec
+            });
+		} else {
+			spec.expanded = false;
+			this.setState({
+				tree: this.state.tree.filter((row) => {
+					return (row.parents.indexOf(spec.key) < 0);
+				})
+			});
+		}
+	},
+
 	renderYearCells(rowData) {
 		var cells = [];
 		for (var month = 0; month < 12; month++) {
@@ -108,20 +166,27 @@ export default React.createClass({
 		return (<tbody>
 			{this.state.tree.map((rowSpec, index) => {
 				//console.log(rowSpec.model);
-				var achieved = !rowSpec.model.performance ? null:Numeral(rowSpec.model.performance);
+				var achieved = !rowSpec.performance ? null:Numeral(rowSpec.performance);
 				var color = "";
 				if (!achieved)
 					color = "gray";
-				else if (achieved.value() < rowSpec.model.minimumAverage)
+				else if (achieved.value() < rowSpec.minimum)
 					color = "red";
 				else if (achieved.value() < 100.0)
 					color = "yellow";
-				else if (achieved.value() < rowSpec.model.maximumAverage)
+				else if (achieved.value() < rowSpec.maximum)
 					color = "green";
 				else
 					color = "blue";
 				return (<tr key={"data-row-"+index}>
-					<td>{rowSpec.model.name}</td>
+					<td style={{"paddingLeft": ""+(rowSpec.indent*2 + 1)+"ex"}}>
+						{rowSpec.loading ? <img src={LoadingImage} style={{"height": "12px"}} />:(rowSpec.expandable ? (
+							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
+								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
+						):"")}
+						<span>{rowSpec.label}</span>
+						}
+					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
 							<div className={"circle "+color}>

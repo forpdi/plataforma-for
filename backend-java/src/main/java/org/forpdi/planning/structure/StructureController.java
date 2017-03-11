@@ -313,6 +313,25 @@ public class StructureController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
+	
+	/** Listar instâncias de níveis para exibição de performance. */
+	@Get(BASEPATH + "/structure/levelinstance/performance")
+	@Consumes
+	@NoCache
+	@Permissioned
+	public void listLevelInstancePerformance(Long planId, Long parentId) {
+		try {
+			Plan plan = this.planBS.retrieveById(planId);
+			if (parentId == 0)
+				parentId = null;
+			PaginatedList<StructureLevelInstance> list = this.bs.listLevelsInstance(plan, parentId);
+			List<StructureLevelInstance> structureList = list.getList();
+			this.success(list);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
 
 	/**
 	 * Criar uma instância de um level.

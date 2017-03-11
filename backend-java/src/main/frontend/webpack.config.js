@@ -5,17 +5,17 @@ var Webpack = require("webpack");
 module.exports = {
 	context: __dirname,
     devtool: "cheap-module-source-map",
-    entry: {
+    entry: ["./favicon.ico", "./index.html", "./app.js"] /*{
     	javascript: "./app.js",
     	html: "./index.html",
         icon: "./favicon.ico"
-    },
+    }*/,
     output: {
         path: path.resolve(__dirname, 'build/development'),
         filename: "app.js"
     },
     resolve: {
-        extensions: ["", ".webpack.js", ".web.js", ".js", ".jsx"],
+        extensions: [".js", ".jsx", ".webpack.js", ".web.js"],
     	alias: {
     		"forpdi": __dirname,
             "jquery.ui.widget": "./vendor/jquery.ui.widget.js",
@@ -47,7 +47,7 @@ module.exports = {
             loader: "json-loader"
         },{
             test: /theme-[a-z]+\.scss$/,
-            loader: "file?name=[name].css!sass-loader"
+            loader: "file-loader?name=[name].css!sass-loader"
         },{
             test: /_[a-z\-]+\.scss$/,
             loader: "style-loader!css-loader!sass-loader"
@@ -56,7 +56,7 @@ module.exports = {
         	loader: "style-loader!css-loader"
         },{
         	test: /\.html$|\.ico$/,
-        	loader: "file?name=[name].[ext]"
+        	loader: "file-loader?name=[name].[ext]"
         },{
         	test: /\.(woff|woff2)$/,
         	loader: "url-loader?limit=10000&mimetype=application/font-woff"

@@ -69,3 +69,10 @@ a.fpdi-text-label:focus {
   margin-top: 7px;
   margin-bottom: 7px;
 }
+
+a {
+  cursor: pointer;
+  & *, &:before, & *:before {
+    cursor: pointer;
+  }
+}

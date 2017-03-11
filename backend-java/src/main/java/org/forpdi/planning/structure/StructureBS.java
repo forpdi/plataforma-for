@@ -244,6 +244,22 @@ public class StructureBS extends HibernateBusiness {
 		return results;
 	}
 
+	public PaginatedList<StructureLevelInstance> listLevelsInstance(Plan plan, Long parentId) {
+		PaginatedList<StructureLevelInstance> results = new PaginatedList<StructureLevelInstance>();
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("plan", plan))
+		;
+		if (parentId != null)
+			criteria.add(Restrictions.eq("parent", parentId));
+		else
+			criteria.add(Restrictions.isNull("parent"));
+
+		results.setList(this.dao.findByCriteria(criteria, StructureLevelInstance.class));
+		results.setTotal((long) results.getList().size());
+		return results;
+	}
+
 	/**
 	 * Listar as instâncias dos leveis pelo termo da busca.
 	 * 

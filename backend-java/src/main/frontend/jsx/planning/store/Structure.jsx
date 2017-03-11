@@ -25,6 +25,7 @@ var StructureStore = Fluxbone.Store.extend({
 	ACTION_RETRIEVE: 'structure-retrieve',
 	ACTION_UPDATE: 'structure-update',
 	ACTION_RETRIEVE_LEVEL_INSTANCE: 'structure-findLevelInstance',
+	ACTION_RETRIEVE_LEVEL_INSTANCE_PERFORMANCE: 'structure-findLevelInstancePerformance',
 	ACTION_CREATE_LEVELINSTANCE: 'structure-createLevelInstance',
 	ACTION_GET_LEVELINSTANCE: 'structure-getLevelInstance',
 	ACTION_DELETE_LEVELINSTANCE: 'structure-deleteLevelInstance',
@@ -74,6 +75,22 @@ var StructureStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			success(response) {				
 				me.trigger("levelInstanceFind", response.data, pigback);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	findLevelInstancePerformance(data, pigback) {
+		var me = this;
+		$.ajax({
+			url: me.url+"/levelinstance/performance",
+			method: 'GET',
+			data: data,
+			dataType: 'json',
+			success(response) {				
+				me.trigger("retrieve-level-instance-performance", response.data, pigback);
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
