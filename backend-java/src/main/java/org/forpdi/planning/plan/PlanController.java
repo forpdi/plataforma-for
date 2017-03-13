@@ -666,7 +666,14 @@ public class PlanController extends AbstractController {
 		}
 	}
 
-	/** Agenda um recálculo das médias dos planos. */
+	/**
+	 * Agenda um recálculo das médias dos planos.
+	 * 
+	 * @param id
+	 *            Id do plano macro.
+	 * @return
+	 * 
+	 */
 	@Post(BASEPATH + "/planmacro/{id}/schedule-recalculation")
 	@NoCache
 	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanPermission.class })

@@ -188,7 +188,6 @@ export default React.createClass({
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
 						):"")}
 						<span>{rowSpec.label}</span>
-						}
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
