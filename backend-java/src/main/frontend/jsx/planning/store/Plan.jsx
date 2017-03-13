@@ -31,6 +31,7 @@ var PlanStore = Fluxbone.Store.extend({
 	ACTION_FIND: 'plan-find',
 	ACTION_FIND_TERMS:'plan-findTerms',
 	ACTION_RETRIEVE: 'plan-retrieve',
+	ACTION_RETRIEVE_PERFORMANCE: 'plan-retrievePerformance',
 	ACTION_UPDATE: 'plan-update',
 	ACTION_CUSTOM_UPDATE: 'plan-customUpdate',
 	dispatchAcceptRegex: /^plan-[a-zA-Z0-9]+$/,
@@ -69,8 +70,23 @@ var PlanStore = Fluxbone.Store.extend({
 				me.trigger("planFind", opts);
 			}
 		});
-	}
+	},
 
+	retrievePerformance(params) {
+		var me = this;
+		$.ajax({
+			method: "GET",
+			url: me.url+"/performance",
+			dataType: 'json',
+			data: params,
+			success(response, status, opts) {
+				me.trigger("retrieve-performance", response.data);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	}
 
 });
 

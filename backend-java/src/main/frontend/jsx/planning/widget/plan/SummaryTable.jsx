@@ -30,7 +30,7 @@ export default React.createClass({
 	componentDidMount(){
 		var me = this;
 
-		PlanStore.on("find", (store, raw, opts) => {			
+		PlanStore.on("retrieve-performance", (raw) => {			
 			var tree = raw.map((plan, index) => {
 				return {
 					label: plan.name,
@@ -103,7 +103,7 @@ export default React.createClass({
 
 	refreshPlans(planId) {
 		PlanStore.dispatch({
-			action: PlanStore.ACTION_FIND,
+			action: PlanStore.ACTION_RETRIEVE_PERFORMANCE,
 			data: {
 				parentId: planId
 			},
