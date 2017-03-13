@@ -314,7 +314,7 @@ export default React.createClass({
 											</td>
 											{this.context.roles.MANAGER ||
 												_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-												UserSession.get("user").id == this.props.responsible.id ? 
+												(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
 											<td>
 												{attachment.id == this.state.editId ? 
 													<center className='displayFlex'>																						
