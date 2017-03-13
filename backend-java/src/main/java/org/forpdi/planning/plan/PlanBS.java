@@ -226,6 +226,13 @@ public class PlanBS extends HibernateBusiness {
 		}
 	}
 	
+	/**
+	 * Agenda um recálculo das médias dos planos.
+	 * @param planMacro
+	 * 			Plano macro existente.
+	 * @return
+	 * 			
+	 */
 	public void scheduleRecalculation(PlanMacro planMacro) {
 		Criteria criteria =
 			this.dao.newCriteria(StructureLevelInstance.class)
