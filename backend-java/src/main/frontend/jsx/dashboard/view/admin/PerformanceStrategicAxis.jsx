@@ -67,7 +67,7 @@ export default React.createClass({
             element.push(['Não possui objetivos',parseFloat(0)]);
         } else {
             data.push(['Element', 'Rendimento', { role: 'style' }]);
-            var value
+            var value;
             model.data.map((item) => {
                 value = item.levelValue;
                 var color; 
@@ -77,7 +77,7 @@ export default React.createClass({
                 } else {
                     value = parseFloat(item.levelValue);
                 }         
-            
+                /*
                 if(value < 40){
                     color = "#E74C3C";
                 }else if(value < 70){
@@ -86,7 +86,18 @@ export default React.createClass({
                     color = "#51D466";
                 }else{
                     color = "#4EB4FE";
-                }
+                }*/
+
+                if (!value)
+                    color = "#A9A9A9";
+                else if (value < item.levelMinimum)
+                    color = "#E74C3C";
+                else if (value < 100.0)
+                    color = "#FFCC33";
+                else if (value < item.levelMaximum)
+                    color = "#51D466";
+                else
+                    color = "#4EB4FE";
 
                 var valueForGraph = {
                     v: value,
@@ -147,7 +158,8 @@ export default React.createClass({
                 model.data.map((item) => {
                     var value = parseFloat(item.levelValue);
                     var color;          
-                
+
+                    /*
                     if(value < 40){
                         color = "#E74C3C";
                     }else if(value < 70){
@@ -157,6 +169,18 @@ export default React.createClass({
                     }else{
                         color = "#4EB4FE";
                     }
+                    */
+
+                    if (!value)
+                        color = "#A9A9A9";
+                    else if (value < item.levelMinimum)
+                        color = "#E74C3C";
+                    else if (value < 100.0)
+                        color = "#FFCC33";
+                    else if (value < item.levelMaximum)
+                        color = "#51D466";
+                    else
+                        color = "#4EB4FE";
   
                     var valueForGraph = {
                         v: value,

@@ -75,6 +75,7 @@ export default React.createClass({
                                 f: numeral(parseFloat(ind.aggregate.levelValue)).format('0,0.00') + "%"
                             };
                         }
+                        /*
                         if(ind.aggregate.levelValue < 40){
                             vet[2] = "#E74C3C";
                         }else if(ind.aggregate.levelValue < 70){
@@ -84,6 +85,18 @@ export default React.createClass({
                         }else{
                             vet[2] = "#4EB4FE";
                         }
+                        */
+                        if (!ind.aggregate.levelValue)
+                            vet[2] = "#A9A9A9";
+                        else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+                            vet[2] = "#E74C3C";
+                        else if (ind.aggregate.levelValue < 100.0)
+                            vet[2] = "#FFCC33";
+                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
+                            vet[2] = "#51D466";
+                        else
+                            vet[2] = "#4EB4FE";
+                        
                         elements.push(vet);
                     });                     
                     if(me.state.indicator.indicatorList.length == 0){
@@ -107,12 +120,23 @@ export default React.createClass({
                                 f: numeral(parseFloat(item.levelValue)).format('0,0.00') + "%"
                             }
 
-                            var color;          
+                            var color;
+                            /*          
                             if(value < 40){
                                 color = "#E74C3C";
                             }else if(value < 70){
                                 color = "#FFCC33";
                             }else if(value < 100){
+                                color = "#51D466";
+                            }else{
+                                color = "#4EB4FE";
+                            }*/
+
+                            if(value.v < item.levelMinimum){
+                                color = "#E74C3C";
+                            }else if(value.v < 100){
+                                color = "#FFCC33";
+                            }else if(value.v < item.levelMaximum){
                                 color = "#51D466";
                             }else{
                                 color = "#4EB4FE";

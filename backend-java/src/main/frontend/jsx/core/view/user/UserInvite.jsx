@@ -76,7 +76,6 @@ export default React.createClass({
 	},
 	
 	onSubmit(data) {
-	console.log("aqui");
 		var me = this;
 		var msg = "";
 		if (S(data.name).trim().isEmpty()) {
