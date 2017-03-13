@@ -134,6 +134,19 @@ public class PlanBS extends HibernateBusiness {
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
+	
+	public List<Plan> listAllPlans(PlanMacro macro) {
+		Criteria criteria =
+			this.dao.newCriteria(Plan.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("archived", false))
+			.add(Restrictions.eq("parent", macro))
+			.addOrder(Order.desc("begin"))
+			.addOrder(Order.desc("end"))
+			.addOrder(Order.asc("name"))
+		;	
+		return this.dao.findByCriteria(criteria, Plan.class);
+	}
 
 	/**
 	 * Retorna o plano de metas pelo id.

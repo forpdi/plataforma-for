@@ -371,6 +371,27 @@ public class PlanController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	@Get(BASEPATH + "/plan/performance")
+	@NoCache
+	@Permissioned
+	public void retrievePlansPerformance(Long parentId) {
+		try {
+			PlanMacro macro = this.bs.exists(parentId, PlanMacro.class);
+			List<Plan> list = this.bs.listAllPlans(macro);
+			List<Plan> result = new ArrayList<Plan>(list.size());
+			for (Plan p : list) {
+				Structure s = p.getStructure();
+				s.setLevels(this.sbs.listStructureLevels(s));
+				p.setStructure(s);
+				result.add(p);
+			}
+			this.success(result, (long) result.size());
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 
 	/**
 	 * Retorna os planos de metas com seus níveis de um plano macro.
@@ -390,7 +411,7 @@ public class PlanController extends AbstractController {
 			PlanMacro macro = this.bs.exists(parentId, PlanMacro.class);
 			PaginatedList<Plan> plans = this.bs.listPlans(macro, false, page, null, null, 0);
 			List<Plan> list = plans.getList();
-			List<Plan> result = new ArrayList<Plan>();
+			List<Plan> result = new ArrayList<Plan>(list.size());
 			for (Plan p : list) {
 				Structure s = p.getStructure();
 				s.setLevels(this.sbs.listStructureLevels(s));
