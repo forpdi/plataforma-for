@@ -602,6 +602,7 @@ public class FieldsController extends AbstractController {
 	@Permissioned
 	public void saveAttachment(@NotNull Attachment attachment) {
 		try {
+			attachment.setFileLink(attachment.getFileLink().replace("https://", "http://"));
 			this.bs.saveAttachment(attachment);
 			this.success(attachment);
 		} catch (Throwable e) {
