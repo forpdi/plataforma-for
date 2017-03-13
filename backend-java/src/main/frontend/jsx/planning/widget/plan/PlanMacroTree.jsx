@@ -44,7 +44,8 @@ export default React.createClass({
 			ordResultSearch:null,
 			parentIdSearch:null,
 			termsSearch:'',
-			subPlansSelectSearch:[]
+			subPlansSelectSearch:[],
+			unnumberedSections: 0
 		};
 	},
 	componentDidMount(){
@@ -272,7 +273,7 @@ export default React.createClass({
 		}, me);
         DocumentStore.on("retrieve", (model) => {
         	var documentId;       	
-        	var tree = [];
+        	var tree = [];        	
         	var sections = model.get("sections");
         	
 
@@ -328,7 +329,8 @@ export default React.createClass({
 			});
 			if(this.isMounted()){
 	        	me.setState({
-	        		documentTree: tree
+	        		documentTree: tree,
+	        		unnumberedSections: unnumberedSections
 	        	});
 	        }
         	
@@ -336,12 +338,12 @@ export default React.createClass({
 
 		DocumentStore.on("sectioncreated", (model, opts) => {			
         	var actualParent = opts.node.parent;
-        	var newNode;        	
+        	var newNode;
         	if (actualParent) {        		
-        		newNode = me.createDocumentNodeDef(model, actualParent.index+".", actualParent.children.length);
+        		newNode = me.createDocumentNodeDef(model, (actualParent.index)+".", actualParent.children.length);
            		actualParent.children.splice(actualParent.children.length-1, 0, newNode);
         	} else {
-        		newNode = me.createDocumentNodeDef(model, undefined, this.state.documentTree.length);
+        		newNode = me.createDocumentNodeDef(model, undefined, this.state.documentTree.length-this.state.unnumberedSections);
         		newNode.children.push({
 					hidden: !(this.context.roles.MANAGER),
 					label: "Nova subseção",
