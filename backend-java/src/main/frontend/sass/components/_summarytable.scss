@@ -11,11 +11,13 @@
 		@include border-radius(5px);
 		color: #333333;
 		padding: 2px;
-		width: 45px;
+		width: 50px;
 		display: inline-block;
 		font-size: 11px;
 		&.blue {
 			background-color: #80C7FB;
+			font-size: 10px;
+			line-height: 15px;
 		}
 		&.green {
 			background-color: #51D466;
