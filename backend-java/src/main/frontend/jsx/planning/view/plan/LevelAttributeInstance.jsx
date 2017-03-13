@@ -106,7 +106,7 @@ export default React.createClass({
 				var value = (model.attributeInstance ? model.attributeInstance.value : "");
 				var editModeValue = null;
 				if(model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
-					if (model.attributeInstance) {
+					if (model.attributeInstance && model.attributeInstance.valueAsNumber) {
 						value = model.attributeInstance.valueAsNumber;
 						editModeValue = value.toString().replace(".", ",");
 					} else {
