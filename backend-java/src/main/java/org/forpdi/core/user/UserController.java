@@ -1163,6 +1163,17 @@ public class UserController extends AbstractController {
 		}
 	}
 
+	
+	/**
+	 * Importar usuários.
+	 * 
+	 * @param nameList[]
+	 *          Vetor de nomes.
+	 * @param emailList[]
+	 *            Vetor de emails.
+	 * @param accessList[]
+	 * 			Vetor de nível de acesso.	
+	 */
 	@Post("/api/user/importUsers")
 	@Consumes
 	@NoCache

@@ -263,6 +263,11 @@ public class DocumentController extends AbstractController {
 
 	}
 
+	/**
+	 * Exportar para pdf os atriubos de um level
+	 * @param levelId
+	 * 			Id o level
+	 */
 	@Get(BASEPATH + "/document/exportLevelAttributes")
 	@Consumes
 	@NoCache
