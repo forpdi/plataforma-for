@@ -325,7 +325,21 @@ public class StructureController extends AbstractController {
 			if (parentId == 0)
 				parentId = null;
 			PaginatedList<StructureLevelInstance> list = this.bs.listLevelsInstance(plan, parentId);
-			List<StructureLevelInstance> structureList = list.getList();
+			List<StructureLevelInstanceDetailed> levelInstanceDetailedList = new ArrayList<StructureLevelInstanceDetailed>();
+			for (StructureLevelInstance levelInstance : list.getList()) {
+				levelInstanceDetailedList = this.bs.listLevelInstanceDetailed(levelInstance);
+				levelInstance.setLevelInstanceDetailedList(new ArrayList<StructureLevelInstanceDetailed>());
+				for (int i=0; i<12; i++) {
+					StructureLevelInstanceDetailed levelInstDetailed = null;
+					for (StructureLevelInstanceDetailed levelInstanceDetailed : levelInstanceDetailedList) {
+						levelInstanceDetailed.setLevelInstance(null);
+						if (levelInstanceDetailed.getMonth() == i+1) {
+							levelInstDetailed = levelInstanceDetailed;
+						}
+					}
+					levelInstance.getLevelInstanceDetailedList().add(levelInstDetailed);
+				}
+			}
 			this.success(list);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);

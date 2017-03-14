@@ -117,6 +117,9 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 
 	@Transient
 	private List<StructureLevelInstance> parents;
+	
+	@Transient
+	private List<StructureLevelInstanceDetailed> levelInstanceDetailedList;
 
 	public List<Attribute> getAttributeList() {
 		return attributeList;
@@ -328,6 +331,14 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 
 	public void setLevelMaximum(Double levelMaximum) {
 		this.levelMaximum = levelMaximum;
+	}
+
+	public List<StructureLevelInstanceDetailed> getLevelInstanceDetailedList() {
+		return levelInstanceDetailedList;
+	}
+
+	public void setLevelInstanceDetailedList(List<StructureLevelInstanceDetailed> levelInstanceDetailedList) {
+		this.levelInstanceDetailedList = levelInstanceDetailedList;
 	}
 
 }

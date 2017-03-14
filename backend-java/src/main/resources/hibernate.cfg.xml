@@ -62,6 +62,7 @@
   		<mapping class="org.forpdi.planning.structure.Structure"/>
   		<mapping class="org.forpdi.planning.structure.StructureLevel"/>
   		<mapping class="org.forpdi.planning.structure.StructureLevelInstance"/>
+  		<mapping class="org.forpdi.planning.structure.StructureLevelInstanceDetailed"/>
   		<mapping class="org.forpdi.planning.fields.budget.Budget"/>
   		<mapping class="org.forpdi.planning.fields.budget.BudgetSimulationDB"/>
   		<mapping class="org.forpdi.planning.fields.actionplan.ActionPlan"/>

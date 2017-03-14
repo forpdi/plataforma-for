@@ -106,7 +106,8 @@ public class AttributeHelper {
 	public AttributeInstance retrieveReachedFieldAttribute(StructureLevelInstance levelInstance) {
 		return this.retrieveSpecialAttribute(levelInstance, "reachedField");
 	}
-	
-
+	public AttributeInstance retrieveFinishDateFieldAttribute(StructureLevelInstance levelInstance) {
+		return this.retrieveSpecialAttribute(levelInstance, "finishDate");
+	}
 
 }

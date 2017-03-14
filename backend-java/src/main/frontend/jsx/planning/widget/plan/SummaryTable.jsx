@@ -59,6 +59,7 @@ export default React.createClass({
 				var insertionPoint = 1 + this.state.tree.findIndex((spec) => {
 					return (spec.key === parent.key);
 				});
+
 	            _.each(models, (level, index) => {
 					me.state.tree.splice(insertionPoint, 0, {
 						label: level.name,
@@ -73,7 +74,8 @@ export default React.createClass({
 						level: level.id,
 						parentKey: parent.key,
 						parentLevel: parent.level,
-						parents: parent.parents.concat([parent.key])
+						parents: parent.parents.concat([parent.key]),
+						model: level.levelInstanceDetailedList
 					});
 				});
 				parent.expanded = true;
@@ -152,9 +154,30 @@ export default React.createClass({
 			/*cells.push(<td key={"month-cell-"+month}>
 				<div className="circle green">100%</div>
 			</td>);*/
-			cells.push(<td key={"month-cell-"+month}>
-				-
-			</td>);
+			if (rowData && rowData.length>0 && rowData[month] != null) {
+				var achieved = Numeral(rowData[month].levelValue);
+				var color = "";
+				if (!achieved)
+					color = "gray";
+				else if (achieved.value() < rowData[month].levelMinimum)
+					color = "red";
+				else if (achieved.value() < 100.0)
+					color = "yellow";
+				else if (achieved.value() < rowData[month].levelMaximum)
+					color = "green";
+				else
+					color = "blue";
+
+				cells.push(<td key={"month-cell-"+month}>
+					<div className={"circle width40 "+color}>
+						{Numeral(rowData[month].levelValue).format("0")}%
+					</div>
+				</td>);
+			} else {
+				cells.push(<td key={"month-cell-"+month}>
+					-
+				</td>);
+			}
 		}
 		return (<table>
 			<tbody>
@@ -168,7 +191,6 @@ export default React.createClass({
 	renderTableBody() {
 		return (<tbody>
 			{this.state.tree.map((rowSpec, index) => {
-				//console.log(rowSpec.model);
 				var achieved = !rowSpec.performance ? null:Numeral(rowSpec.performance);
 				var color = "";
 				if (!achieved)
@@ -191,7 +213,7 @@ export default React.createClass({
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
-							<div className={"circle "+color}>
+							<div className={"circle width50 "+color}>
 								{achieved.format("0,0.00")}%
 							</div>
 						)}
