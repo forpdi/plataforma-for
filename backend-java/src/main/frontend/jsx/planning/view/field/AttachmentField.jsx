@@ -139,7 +139,7 @@ export default React.createClass({
 
 	deleteAttachment(attachment){
 		var me = this;
-		Modal.confirmCustom(
+		Modal.confirmCancelCustom(
 			() => {				
 				AttachmentStore.dispatch({
 					action: AttachmentStore.ACTION_DELETE,

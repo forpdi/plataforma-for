@@ -171,7 +171,9 @@ export default React.createClass({
 	},
 
 	deleteTable(id, idx,evt){
-		Modal.deleteConfirm(() => {
+		var msg = "Você tem certeza que deseja excluir ?";
+		
+		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			this.setState({
 				loading: true,
@@ -183,7 +185,7 @@ export default React.createClass({
 					id: id
 				}
 			});
-		});
+		},msg,()=>{Modal.hide()});
 	},
 
 	acceptedEditTable(id,idx){
@@ -193,7 +195,7 @@ export default React.createClass({
 			this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value = this.refs['edit-tabValue'+idx].getValue()
 			 || this.refs['edit-tabValue'+idx].props.fieldDef.value;
 			tableValues.push({
-				value: this.refs['edit-tabValue'+idx].getValue() || this.refs['edit-tabValue'+idx].props.fieldDef.value,
+				value:  this.refs['edit-tabValue'+idx].getValue() || this.refs['edit-tabValue'+idx].props.fieldDef.value,
 				tableStructure: {
 					id: this.state.tableFields.tableStructures[idx].id,
 					optionsField: model.optionsField && model.optionsField.length>0 ? 
