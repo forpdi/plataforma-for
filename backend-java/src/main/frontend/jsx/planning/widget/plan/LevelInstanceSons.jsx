@@ -1627,14 +1627,14 @@ export default React.createClass({
 	},
 	render() {
 		//|| !this.state.enabled
-	
+		var array = [];
 		if (this.state.loading) {
 			return null;
 		}
-
+		
 		return(
 			<div>
-				{this.renderLevelSons(this.state.model.data.sons.list)}
+				{this.state.model.data.sons ? this.renderLevelSons(this.state.model.data.sons.list) : this.renderLevelSons(array)}
 			</div>
 		);
 	}		
