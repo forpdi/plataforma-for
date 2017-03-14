@@ -275,13 +275,28 @@ public class DocumentBS extends HibernateBusiness {
 		return list;
 	}
 
+	
+	/**
+	 * Recupera uma seção do documento pelo id
+	 * @param sectionId
+	 * 			Id da seção do documento
+	 * @return documentSection 
+	 * 			Seção do documento
+	 */
 	public DocumentSection retrieveSectionById(Long sectionId) {
 		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
 		criteria.add(Restrictions.eq("id", sectionId)).add(Restrictions.eq("deleted", false));
 		DocumentSection documentSection = (DocumentSection) criteria.uniqueResult();
 		return documentSection;
 	}
-
+	
+	
+	/**
+	 * Retorna o número de atributos da seção
+	 * @param documentSection
+	 * 		Seção do documento
+	 * @return
+	 */
 	public Long countAttributesPerSection(DocumentSection documentSection) {
 		Criteria count = this.dao.newCriteria(DocumentAttribute.class);
 		count.add(Restrictions.eq("section", documentSection)).add(Restrictions.eq("deleted", false))
@@ -290,6 +305,15 @@ public class DocumentBS extends HibernateBusiness {
 		return (Long) count.uniqueResult();
 	}
 
+	/**
+	 * Retorna a lista de atributos de uma seção do documento
+	 * @param documentSection
+	 * 			Seção do documento
+	 * @param planId
+	 * 			Id do Plano 
+	 * @return List<DocumentAttribute> list
+	 * 			Lista de atributos
+	 */
 	public List<DocumentAttribute> listAttributesBySection(DocumentSection documentSection, Long planId) {
 		Criteria criteria = this.dao.newCriteria(DocumentAttribute.class);
 		criteria.add(Restrictions.eq("section", documentSection)).add(Restrictions.eq("deleted", false))
@@ -2158,7 +2182,15 @@ public class DocumentBS extends HibernateBusiness {
 		}
 		return table;
 	}
-
+	/**
+	 * Exportar para pdf atributos de um level
+	 * @param levelId
+	 * 			Id do level
+	 * @return
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws DocumentException
+	 */
 	public InputStream exportLevelAttributes(Long levelId)
 			throws MalformedURLException, IOException, DocumentException {
 		// TODO Auto-generated method stub
@@ -2742,7 +2774,14 @@ public class DocumentBS extends HibernateBusiness {
 
 		return in;
 	}
-
+	/**
+	 * Realiza as funções necessárias para gerar o PDF
+	 * @param src
+	 * @param dest
+	 * @param document
+	 * @throws IOException
+	 * @throws DocumentException
+	 */
 	public void manipulatePdf(String src, String dest, com.lowagie.text.Document document)
 			throws IOException, DocumentException {
 		PdfReader reader = new PdfReader(src);

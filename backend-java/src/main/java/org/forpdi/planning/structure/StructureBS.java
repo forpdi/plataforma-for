@@ -244,6 +244,15 @@ public class StructureBS extends HibernateBusiness {
 		return results;
 	}
 
+	
+	/**
+	 * Listar levels de uma instância
+	 * @param plan
+	 * 		Plano de Metas
+	 * @param parentId
+	 * 		Id do Plano Macro
+	 * @return
+	 */
 	public PaginatedList<StructureLevelInstance> listLevelsInstance(Plan plan, Long parentId) {
 		PaginatedList<StructureLevelInstance> results = new PaginatedList<StructureLevelInstance>();
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
@@ -587,6 +596,18 @@ public class StructureBS extends HibernateBusiness {
 		}
 	}
 
+	/**
+	 * Seta atributos no plano de ação
+	 * @param levelInstance
+	 * 			Level Instance
+	 * @param attributes
+	 * 			Lista de Atributos
+	 * @param page
+	 * 			Número da página
+	 * @param pageSize
+	 * 			Tamanho da página
+	 * @return
+	 */
 	public PaginatedList<Attribute> setActionPlansAttributes(StructureLevelInstance levelInstance,
 			PaginatedList<Attribute> attributes, Integer page, Integer pageSize) {
 

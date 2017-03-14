@@ -101,6 +101,7 @@ export default React.createClass({
                                  f: parseFloat(ind.aggregate.levelValue.toFixed(2))+"%"
                                 };
                             }
+                            /*
                             if(ind.aggregate.levelValue < 40){
                                 vet[2] = "#E74C3C";
                             }else if(ind.aggregate.levelValue < 70){
@@ -109,7 +110,19 @@ export default React.createClass({
                                 vet[2] = "#51D466";
                             }else{
                                 vet[2] = "#4EB4FE";
-                            }
+                            }*/
+
+                            if (!ind.aggregate.levelValue)
+                                vet[2] = "#A9A9A9";
+                            else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+                                vet[2] = "#E74C3C";
+                            else if (ind.aggregate.levelValue < 100.0)
+                                vet[2] = "#FFCC33";
+                            else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
+                                vet[2] = "#51D466";
+                            else
+                                vet[2] = "#4EB4FE"; 
+
                             elements.push(vet);
                         }); 
 

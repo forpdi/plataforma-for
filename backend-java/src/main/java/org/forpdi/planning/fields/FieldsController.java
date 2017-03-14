@@ -538,6 +538,15 @@ public class FieldsController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Lista com os atributos do plano de ação para serem mostrados
+	 * @param id
+	 * 			Id do plano
+	 * @param page
+	 * 			Número da página
+	 * @param pageSize
+	 * 			Tamanho da página (quantidade de registros por busca)
+	 */
 	@Get(BASEPATH + "/field/actionplan/listActionPlanAttribute")
 	@Consumes
 	@NoCache

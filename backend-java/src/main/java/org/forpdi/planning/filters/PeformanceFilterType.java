@@ -13,6 +13,12 @@ public enum PeformanceFilterType {
 		return this.value;
 	}
 
+	/**
+	 * Retorna string que representa um status
+	 * @param filter
+	 * 		Id fo filter
+	 * @return
+	 */
 	public static PeformanceFilterType valueOf(Integer filter) {
 		switch (filter) {
 		case 1:

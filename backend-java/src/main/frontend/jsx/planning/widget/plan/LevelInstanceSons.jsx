@@ -1145,13 +1145,24 @@ export default React.createClass({
 
 	selectAllGoals(){
 		this.state.model.data.sons.list.map((goal, idx) => {
-			if(!goal.closed)
-				this.refs["goal-checkbox-"+idx].checked = this.refs["all-goals-checkbox"].checked;
+			if(!goal.closed) {
+				if ( this.refs["all-goals-checkbox"] != undefined) {
+					this.refs["goal-checkbox-"+idx].checked = this.refs["all-goals-checkbox"].checked;
+				}
+			}	
 		});	
 		if(this.isMounted()){
-			this.setState({
-				goalChecked: this.refs["all-goals-checkbox"].checked
-			});
+
+			if (this.refs["all-goals-checkbox"] != undefined) {
+				this.setState({
+					goalChecked: this.refs["all-goals-checkbox"].checked
+				});
+			} else {
+				this.setState({
+					goalChecked: false
+				});
+			}
+			
 		}
 	},
 
@@ -1415,7 +1426,12 @@ export default React.createClass({
 
 	pageChange(page, pageSize){	
 		var me = this;
-		this.refs["all-goals-checkbox"].checked = false;	
+
+
+		if (this.refs["all-goals-checkbox"] != undefined) {
+				this.refs["all-goals-checkbox"].checked = false;
+		} 
+	
 		this.selectAllGoals();
 		this.getLevelSons(this.props.parentId, page, pageSize);
 
@@ -1611,14 +1627,14 @@ export default React.createClass({
 	},
 	render() {
 		//|| !this.state.enabled
-	
+		var array = [];
 		if (this.state.loading) {
 			return null;
 		}
-
+		
 		return(
 			<div>
-				{this.renderLevelSons(this.state.model.data.sons.list)}
+				{this.state.model.data.sons ? this.renderLevelSons(this.state.model.data.sons.list) : this.renderLevelSons(array)}
 			</div>
 		);
 	}		

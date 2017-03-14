@@ -156,6 +156,7 @@ export default React.createClass({
                                 f: numeral(parseFloat(parseFloat(ind.levelValue))).format('0,0.00') + "%"
                             };
                         }
+                        /*
                         if(ind.levelValue<40){
                             vet[2] = "#E74C3C";
                         }else if(ind.levelValue<70){
@@ -165,6 +166,19 @@ export default React.createClass({
                         }else{
                             vet[2] = "#4EB4FE";
                         }
+                        */
+
+                        if (!ind.levelValue)
+                            vet[2] = "#A9A9A9";
+                        else if (ind.levelValue < ind.levelMinimum)
+                            vet[2] = "#E74C3C";
+                        else if (ind.levelValue < 100.0)
+                            vet[2] = "#FFCC33";
+                        else if (ind.levelValue < ind.levelMaximum)
+                            vet[2] = "#51D466";
+                        else
+                            vet[2] = "#4EB4FE";
+
                         elements.push(vet);
                     });                   
             
@@ -200,6 +214,7 @@ export default React.createClass({
                                 f: numeral(parseFloat(parseFloat(ind.aggregate.levelValue))).format('0,0.00') + "%"
                             };
                         }
+                        /*
                         if(ind.aggregate.levelValue < 40){
                             vet[2] = "#E74C3C";
                         }else if(ind.aggregate.levelValue < 70){
@@ -209,6 +224,19 @@ export default React.createClass({
                         }else{
                             vet[2] = "#4EB4FE";
                         }
+                        */
+                        
+                        if (!ind.aggregate.levelValue)
+                            vet[2] = "#A9A9A9";
+                        else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+                            vet[2] = "#E74C3C";
+                        else if (ind.aggregate.levelValue < 100.0)
+                            vet[2] = "#FFCC33";
+                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
+                            vet[2] = "#51D466";
+                        else
+                            vet[2] = "#4EB4FE"; 
+                        
                         elements.push(vet);
                     });
 
