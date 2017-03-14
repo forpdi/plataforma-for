@@ -7,6 +7,7 @@ import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -27,36 +28,40 @@ export default React.createClass({
 			list: [],
 			total: 0,
 			editId: null,
-			anyCheck: false
+			anyCheck: false,
+			loading: true
 		}
 	},
 
 	componentDidMount()	{
 		var me = this;
+		me.getAttachments(1, 5);
+
 		AttachmentStore.on("sync", (model) => {			
-			me.getAttachments(1,5);
-			this.context.toastr.addAlertSuccess("Anexo salvo com sucesso!");
+			me.context.toastr.addAlertSuccess("Anexo salvo com sucesso!");
+			me.getAttachments(1,5);			
 		});
 		AttachmentStore.on("attachmentList", (model) => {
-			if(me.isMounted()){
+			if(me.isMounted()){				
 				me.setState({
 					list: model.data,
-					total: model.total
+					total: model.total,
+					loading: false
 				});
 			}			
 		});
 		AttachmentStore.on("attachmentDeleted", (model) => {
-			me.getAttachments(1,5);
-			this.context.toastr.addAlertSuccess("Anexo excluido com sucesso!");
+			me.context.toastr.addAlertSuccess("Anexo excluido com sucesso!");
+			me.getAttachments(1,5);			
 		});
-		AttachmentStore.on("attachmentUpdated", (model) => {			
+		AttachmentStore.on("attachmentUpdated", (model) => {
+			me.context.toastr.addAlertSuccess("Anexo atualizado com sucesso!");
 			me.state.list.map((attachment) => {				
 				if(attachment.id == model.data.id){					
 					attachment.description = model.data.description;
 				}
 			});
-			me.cancelEdit();
-			this.context.toastr.addAlertSuccess("Anexo atualizado com sucesso!");
+			me.cancelEdit();			
 		});		
 	},
 
@@ -66,13 +71,15 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-		this.getAttachments(1, 5);
+		
 	},
 
 	hideFields(){
-		this.setState({
-			hide: !this.state.hide
-		});
+		if(this.isMounted()){
+			this.setState({
+				hide: !this.state.hide
+			});
+		}
 	},
 
 	attachFile(){
@@ -86,31 +93,38 @@ export default React.createClass({
 			</div>
 		);
 		var url = FileStore.url+"/upload";
-		var formatsRegex = "(gif*|jpg*|jpeg*|jpg2*|jp2*|bmp*|tiff*|png*|ai*|psd*|svg*|svgz*|"+
-		"pdf*|doc*|docx*|odt*|rtf*|txt*|xml*|xlsx*|xls*|ods*|csv*|ppt*|pptx*|ppsx*|odp*|"+
-		"mp3*|wav*|wma*|ogg*|aac*|"+
-		"avi*|mov*|wmv*|mp4*|flv*|mkv*|"+
-		"zip*|rar*|7z*|tar*|targz*|tar.bz2*)";
+		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|"+
+		"pdf|doc|docx|odt|rtf|txt|xml|xlsx|xls|ods|csv|ppt|pptx|ppsx|odp|"+
+		"mp3|wav|wma|ogg|aac|"+
+		"avi|mov|wmv|mp4|flv|mkv|"+
+		"zip|rar|7z|tar|targz|tar.bz2";
 		var formatsBlocked = "(exe*)";
 		var onSuccess = function (resp) {				
-			Modal.hide();
-			var file = {
-				name: Modal.fileName,
-				description: "",
-				fileLink: resp.message,
-				levelInstance: {
-					id: me.props.levelInstanceId
-				}		
-			}				
-			AttachmentStore.dispatch({
-				action: AttachmentStore.ACTION_CREATE,
-				data: file
-			});
-			me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
+			if(me.isMounted()){
+				Modal.hide();
+				var file = {
+					name: Modal.fileName,
+					description: "",
+					fileLink: resp.message,
+					levelInstance: {
+						id: me.props.levelInstanceId
+					}		
+				}
+				me.setState({
+					loading: true
+				});
+				AttachmentStore.dispatch({
+					action: AttachmentStore.ACTION_CREATE,
+					data: file
+				});
+				//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
+			}
 		};
 		var onFailure = function (resp) {
 			Modal.hide();
-			me.setState({error: resp.message});				
+			if(me.isMounted()){
+				me.setState({error: resp.message});
+			}
 		};
 		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz\n"+
 			"Documentos: pdf, doc, docx, odt, rtf, txt, xml, xlsx, xls, ods, csv, ppt, pptx, ppsx, odp\n"+
@@ -124,23 +138,33 @@ export default React.createClass({
 
 	getAttachments(page, pageSize){
 		var me = this;
-		if (me.refs["attach-checkbox-all"])
-			me.refs["attach-checkbox-all"].checked = false;
-		me.checkAll();
-		AttachmentStore.dispatch({
-			action: AttachmentStore.ACTION_FIND,
-			data: {
-				id: me.props.levelInstanceId,
-				page: page,
-				pageSize: pageSize
-			}
-		});
+		if(me.isMounted()){			
+			if (me.refs["attach-checkbox-all"])
+				me.refs["attach-checkbox-all"].checked = false;
+			me.checkAll();
+			me.setState({
+				loading: true
+			});
+			AttachmentStore.dispatch({
+				action: AttachmentStore.ACTION_FIND,
+				data: {
+					id: me.props.levelInstanceId,
+					page: page,
+					pageSize: pageSize
+				}
+			});
+		}
 	},
 
 	deleteAttachment(attachment){
 		var me = this;
+
 		Modal.confirmCancelCustom(
 			() => {				
+				me.setState({
+					loading: true
+				});
+
 				AttachmentStore.dispatch({
 					action: AttachmentStore.ACTION_DELETE,
 					data: {
@@ -163,7 +187,10 @@ export default React.createClass({
 			}
 		});
 		Modal.confirmCustom(
-			() => {				
+			() => {
+				me.setState({
+					loading: true
+				});
 				AttachmentStore.dispatch({
 					action: AttachmentStore.ACTION_DELETE_SELECTED,
 					data: {
@@ -198,37 +225,46 @@ export default React.createClass({
 	},
 
 	cancelEdit(){
-		this.setState({
-			editId: null
-		});
+		if(this.isMounted()){
+			this.setState({
+				editId: null
+			});
+		}
 	},
 
 	checkAll(){
-		this.state.list.map((attachment, idx) => {
-			if(this.refs["attach-checkbox-"+idx])
-				this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false;
-		});
-		this.setState({
-			anyCheck: this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false
-		});
+		if(this.isMounted()){
+			this.state.list.map((attachment, idx) => {
+				if(this.refs["attach-checkbox-"+idx])
+					this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false;
+			});
+			this.setState({
+				anyCheck: this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false
+			});
+		}
 	},
 
 	checkAttachment(){
-		var bool = false;
-		this.state.list.map((attachment, idx) => {
-			if(this.refs["attach-checkbox-"+idx].checked){
-			 	bool = true;
-			} else {
-				this.refs["attach-checkbox-all"].checked = false;
-			}
-		});
+		if(this.isMounted()){
+			var bool = false;
+			this.state.list.map((attachment, idx) => {
+				if(this.refs["attach-checkbox-"+idx].checked){
+				 	bool = true;
+				} else {
+					this.refs["attach-checkbox-all"].checked = false;
+				}
+			});
 
-		this.setState({
-			anyCheck: bool
-		});
+			this.setState({
+				anyCheck: bool
+			});
+		}
 	},
 
 	render(){
+		if(this.state.loading)
+			return(<LoadingGauge/>)
+
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading dashboard-panel-title">

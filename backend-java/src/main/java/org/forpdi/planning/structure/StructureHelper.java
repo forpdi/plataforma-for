@@ -6,6 +6,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.forpdi.planning.attribute.AggregateIndicator;
+import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.enums.CalculationType;
 import org.forpdi.planning.bean.PerformanceBean;
 import org.forpdi.planning.plan.Plan;
@@ -40,7 +41,7 @@ public class StructureHelper {
 		this.dao = dao;
 	}
 	
-
+	
 	/**
 	 * Buscar uma instância de um level pelo id.
 	 */
@@ -48,6 +49,30 @@ public class StructureHelper {
 		StructureLevelInstance levelInstance = this.dao.exists(id, StructureLevelInstance.class);
 		this.fillIndicators(levelInstance);
 		return levelInstance;
+	}
+	
+	/**
+	 * Busca detalhada de uma instância de um level.
+	 */
+	public StructureLevelInstanceDetailed getLevelInstanceDetailed(StructureLevelInstance levelInstance, AttributeInstance finishDate) {
+		int month = finishDate.getValueAsDate().getMonth()+1;
+		int year = finishDate.getValueAsDate().getYear()+1900;
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
+		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		criteria.add(Restrictions.eq("month", month));
+		criteria.add(Restrictions.eq("year", year));
+		StructureLevelInstanceDetailed levelInstanceDetailed = (StructureLevelInstanceDetailed) criteria.uniqueResult();
+		
+		if (levelInstanceDetailed == null)
+			levelInstanceDetailed = new StructureLevelInstanceDetailed();
+		levelInstanceDetailed.setLevelInstance(levelInstance);
+		levelInstanceDetailed.setMonth(month);
+		levelInstanceDetailed.setYear(year);
+		levelInstanceDetailed.setLevelValue(levelInstance.getLevelValue());
+		levelInstanceDetailed.setLevelMinimum(levelInstance.getLevelMinimum());
+		levelInstanceDetailed.setLevelMaximum(levelInstance.getLevelMaximum());
+		return levelInstanceDetailed;
 	}
 	
 	/** Calcula a média do valor no nível abaixo. */
