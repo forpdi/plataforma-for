@@ -168,7 +168,6 @@ export default React.createClass({
 	renderTableBody() {
 		return (<tbody>
 			{this.state.tree.map((rowSpec, index) => {
-				//console.log(rowSpec.model);
 				var achieved = !rowSpec.performance ? null:Numeral(rowSpec.performance);
 				var color = "";
 				if (!achieved)

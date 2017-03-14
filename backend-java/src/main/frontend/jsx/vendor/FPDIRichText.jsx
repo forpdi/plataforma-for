@@ -72,7 +72,7 @@ export default React.createClass({
         var fileType = "image/*";
         var typesBlocked = "(exe*)";
         var onSuccess = function (resp){            
-            var image = resp.message;
+            var image = resp.message.replace("https://", "http://");
             Modal.hide();
             this.quill.insertEmbed(this.quill.editor.delta.length(), 'image', image);
             this.quill.focus();
