@@ -40,6 +40,14 @@ public class StructureImporter implements TransactionalOperation {
 	protected StructureBeans.Structure readedStructure;
 	private Structure savedStructure;
 
+	/**
+	 * Importa estrutura do plano (arquivo xml)
+	 * @param xmlIS
+	 * 		Arquivo que contem a estrutura
+	 * @param schema
+	 * 			Schema para validação
+	 * @throws Exception
+	 */
 	public StructureImporter(InputStream xmlIS, String schema) throws Exception {
 		StringBuffer xmlFile = new StringBuffer();
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(xmlIS, Charset.forName("UTF-8")));
@@ -81,6 +89,11 @@ public class StructureImporter implements TransactionalOperation {
 		bais.close();
 	}
 
+	/**
+	 * Inicia a sessão
+	 * @param session 
+	 * 			Sessão que será iniciada
+	 */
 	@Override
 	public void execute(Session session) throws HibernateException {
 		AttributeTypeMap types = new AttributeTypeMap();
@@ -164,10 +177,22 @@ public class StructureImporter implements TransactionalOperation {
 		this.savedStructure = structure;
 	}
 
+	/**
+	 * Retorna o arquivo que contém a estrutura do plano
+	 * @return Structure savedStructure
+	 * 				Estrutura do plano
+	 */
 	public Structure getImportedStructure() {
 		return this.savedStructure;
 	}
 
+	/**
+	 * Monta a estrutura pelo arquivo do xml
+	 * @param is
+	 * 		Manipulador de arquivo
+	 * @return
+	 * @throws DocumentException
+	 */
 	public StructureBeans.Structure parseInternal(InputStream is) throws DocumentException {
 		StructureBeans.Structure struct = new StructureBeans.Structure();
 		Document document = this.dom4jReader.read(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -193,7 +218,12 @@ public class StructureImporter implements TransactionalOperation {
 		}
 		return struct;
 	}
-
+	/**
+	 * Monta a estrutura dos levels
+	 * @param el
+	 * 			Elemento que contém estrutura
+	 * @return
+	 */
 	private List<StructureBeans.StructureLevel> parseLevels(Element el) {
 		List<StructureBeans.StructureLevel> levels = new LinkedList<StructureBeans.StructureLevel>();
 
@@ -218,7 +248,13 @@ public class StructureImporter implements TransactionalOperation {
 
 		return levels;
 	}
-
+	
+	/**
+	 * Monta a estrutura das metas
+	 * @param el
+	 * 		Elemento que contém estrutura	
+	 * @return
+	 */
 	private StructureBeans.StructureLevel parseLevel(Element el) {
 		StructureBeans.StructureLevel level = new StructureBeans.StructureLevel();
 		level.leaf = true;
@@ -249,7 +285,13 @@ public class StructureImporter implements TransactionalOperation {
 
 		return level;
 	}
-
+	
+	/**
+	 * Monta a estrutura dos atributos
+	 * @param el
+	 * 		Elemento que contém a estrutura
+	 * @return
+	 */
 	private List<StructureBeans.Attribute> parseAttributes(Element el) {
 		List<StructureBeans.Attribute> attrs = new LinkedList<StructureBeans.Attribute>();
 
@@ -267,7 +309,12 @@ public class StructureImporter implements TransactionalOperation {
 
 		return attrs;
 	}
-
+	/**
+	 * Monta a estrutura dos atributos
+	 * @param el
+	 * 		Elemento que contém a estrutura
+	 * @return
+	 */
 	private StructureBeans.Attribute parseAttribute(Element el) {
 		StructureBeans.Attribute attr = new StructureBeans.Attribute();
 
@@ -329,7 +376,12 @@ public class StructureImporter implements TransactionalOperation {
 
 		return attr;
 	}
-
+	/**
+	 * Retorna atributo referente a periodicidade
+	 * @param el
+	 * 		Elemento que contém a estrutura
+	 * @return
+	 */
 	private boolean getAttributePeriodicity(Element el) {
 		Iterator<Node> children = el.elementIterator();
 		while (children.hasNext()) {
@@ -345,7 +397,12 @@ public class StructureImporter implements TransactionalOperation {
 		}
 		return false;
 	}
-
+	/**
+	 *	Monta a estrutura do cronograma
+	 * @param el
+	 * 		Elemento que contém a estrutura
+	 * @return
+	 */
 	private List<StructureBeans.ScheduleValue> parseScheduleValues(Element el) {
 		List<StructureBeans.ScheduleValue> values = new LinkedList<StructureBeans.ScheduleValue>();
 
@@ -373,7 +430,12 @@ public class StructureImporter implements TransactionalOperation {
 
 		return values;
 	}
-
+	/**
+	 * Monta a estrutura do cronograma
+	 * @param el
+	 * 			Elemento que contém a estrutura
+	 * @return
+	 */
 	private StructureBeans.ScheduleValue parseScheduleValue(Element el) {
 		StructureBeans.ScheduleValue value = new StructureBeans.ScheduleValue();
 
@@ -392,7 +454,12 @@ public class StructureImporter implements TransactionalOperation {
 
 		return value;
 	}
-
+	/**
+	 * Monta a estrutura dos pontos que possuem opções
+	 * @param el
+	 * 		Elemento que contém a estrutura das opções
+	 * @return
+	 */
 	private List<StructureBeans.OptionsField> parseOptionsField(Element el) {
 		List<StructureBeans.OptionsField> options = new LinkedList<>();
 
