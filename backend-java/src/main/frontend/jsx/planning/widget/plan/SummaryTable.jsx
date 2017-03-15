@@ -65,7 +65,7 @@ export default React.createClass({
 					me.state.tree.splice(insertionPoint, 0, {
 						label: level.name,
 						expanded: false,
-						expandable: true,
+						expandable: !level.level.leaf,
 						indent: parent.indent+1,
 						key: "level-"+level.id,
 						plan: parent.plan,
@@ -225,7 +225,7 @@ export default React.createClass({
 						{rowSpec.loading ? <img src={LoadingImage} style={{"height": "12px"}} />:(rowSpec.expandable ? (
 							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
-						):"")}
+						) : <span className={"mdi mdi-menu-right"}>&nbsp;</span>)}
 						<span title={rowSpec.label}>{rowSpec.label.length>70 ? (rowSpec.label.substring(0, 70)).concat("...") : rowSpec.label}</span>
 					</td>
 					<td className="text-center">
