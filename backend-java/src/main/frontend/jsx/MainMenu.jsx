@@ -2,6 +2,7 @@ import React from "react";
 import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
@@ -95,6 +96,14 @@ export default React.createClass({
             }
         }, me); 
 
+        StructureStore.on("retrieve-level-instance-performance", (models) => {
+            if (models && (models.length > 0)) {
+                this.setState({
+                    hidden: true
+                });
+            }
+        }, me);
+
         /*PlanMacroStore.trigger("fail", (error) => {
             console.log(error);
             me.setState({
@@ -113,6 +122,7 @@ export default React.createClass({
     componentWillUnmount() {
         UserSession.off(null, null, this);
         PlanMacroStore.off(null, null, this);
+        StructureStore.off(null, null, this);
     },
     checkRoute(pathname) {
         this.setState({
