@@ -94,9 +94,15 @@ public class OnLevelInstanceUpdateTask implements Task {
 		StructureLevel level = levelInstance.getLevel();
 		
 		if (!level.isGoal()) {
-			if (level.isIndicator() && levelInstance.isAggregate()) 
+			if (level.isIndicator() && levelInstance.isAggregate()) {
 				structHelper.updateAggregatedLevelValue(levelInstance);
-			else {
+			} else if (level.isIndicator()) {
+				PerformanceBean performance = structHelper.calculateIndicatorLevelValue(levelInstance);
+				levelInstance.setLevelValue(performance.getPerformance());
+				levelInstance.setLevelMinimum(performance.getMinimumAverage());
+				levelInstance.setLevelMaximum(performance.getMaximumAverage());
+				dao.persist(levelInstance);
+			} else {
 				PerformanceBean performance = structHelper.calculateLevelValue(levelInstance);
 				levelInstance.setLevelValue(performance.getPerformance());
 				levelInstance.setLevelMinimum(performance.getMinimumAverage());
@@ -154,7 +160,6 @@ public class OnLevelInstanceUpdateTask implements Task {
 						parentLevelInstance.setLevelValue(performance.getPerformance());
 						parentLevelInstance.setLevelMinimum(performance.getMinimumAverage());
 						parentLevelInstance.setLevelMaximum(performance.getMaximumAverage());
-						//dao.persist(parentLevelInstance);
 						levelInstanceDetailed = structHelper.getLevelInstanceDetailed(parentLevelInstance, finishDate);
 						dao.persist(levelInstanceDetailed);
 					}

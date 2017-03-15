@@ -1,5 +1,6 @@
 package org.forpdi.planning.structure;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -9,13 +10,16 @@ import org.forpdi.planning.attribute.AggregateIndicator;
 import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.enums.CalculationType;
 import org.forpdi.planning.bean.PerformanceBean;
+import org.forpdi.planning.jobs.OnLevelInstanceUpdateTask;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanDetailed;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 
@@ -29,7 +33,7 @@ import br.com.caelum.vraptor.boilerplate.HibernateDAO;
  */
 @RequestScoped
 public class StructureHelper {
-
+	private static final Logger LOG = Logger.getLogger(OnLevelInstanceUpdateTask.class);
 	private final HibernateDAO dao;
 	
 	/** @deprecated CDI-eyes only */
@@ -116,6 +120,41 @@ public class StructureHelper {
 			.setResultTransformer(new AliasToBeanResultTransformer(PerformanceBean.class))
 		;
 		return (PerformanceBean) criteria.uniqueResult();
+	}
+	
+	/** Calcula a média do valor no nível indicador abaixo. */
+	public PerformanceBean calculateIndicatorLevelValue(StructureLevelInstance levelInstance) {
+		Date date = new Date();
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.isNotNull("valueAsDate"));
+		criteria.add(Restrictions.eq("attribute.finishDate", true));
+		criteria.add(Restrictions.eq("levelInstance.deleted", false));
+		criteria.add(Restrictions.eq("levelInstance.parent", levelInstance.getId()));
+		Disjunction or = Restrictions.disjunction();
+		or.add(Restrictions.le("valueAsDate", date));
+		or.add(Restrictions.isNotNull("levelInstance.levelValue"));
+		criteria.add(or);
+		
+		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
+		Double performance = 0.0;
+		Double minimumAverage = 0.0;
+		Double maximumAverage = 0.0;
+		for (AttributeInstance attrInstance : list) {
+			if (attrInstance.getLevelInstance().getLevelValue() != null)
+				performance = performance+attrInstance.getLevelInstance().getLevelValue();
+			if (attrInstance.getLevelInstance().getLevelMinimum() != null)
+				minimumAverage = minimumAverage+attrInstance.getLevelInstance().getLevelMinimum();
+			if (attrInstance.getLevelInstance().getLevelMaximum() != null)
+			maximumAverage = maximumAverage+attrInstance.getLevelInstance().getLevelMaximum();
+		}
+		PerformanceBean performanceBean = new PerformanceBean();
+		performanceBean.setPerformance(performance/list.size());
+		performanceBean.setMinimumAverage(minimumAverage/list.size());
+		performanceBean.setMaximumAverage(maximumAverage/list.size());
+		
+		return performanceBean;
 	}
 	
 	/** Calcula a média do valor no nível abaixo detalhado. */
