@@ -6,9 +6,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.forpdi.planning.attribute.AggregateIndicator;
+import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.enums.CalculationType;
 import org.forpdi.planning.bean.PerformanceBean;
 import org.forpdi.planning.plan.Plan;
+import org.forpdi.planning.plan.PlanDetailed;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -40,7 +42,7 @@ public class StructureHelper {
 		this.dao = dao;
 	}
 	
-
+	
 	/**
 	 * Buscar uma instância de um level pelo id.
 	 */
@@ -48,6 +50,54 @@ public class StructureHelper {
 		StructureLevelInstance levelInstance = this.dao.exists(id, StructureLevelInstance.class);
 		this.fillIndicators(levelInstance);
 		return levelInstance;
+	}
+	
+	/**
+	 * Busca detalhada de uma instância de um level.
+	 */
+	public StructureLevelInstanceDetailed getLevelInstanceDetailed(StructureLevelInstance levelInstance, AttributeInstance finishDate) {
+		int month = finishDate.getValueAsDate().getMonth()+1;
+		int year = finishDate.getValueAsDate().getYear()+1900;
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
+		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		criteria.add(Restrictions.eq("month", month));
+		criteria.add(Restrictions.eq("year", year));
+		StructureLevelInstanceDetailed levelInstanceDetailed = (StructureLevelInstanceDetailed) criteria.uniqueResult();
+		
+		if (levelInstanceDetailed == null)
+			levelInstanceDetailed = new StructureLevelInstanceDetailed();
+		levelInstanceDetailed.setLevelInstance(levelInstance);
+		levelInstanceDetailed.setMonth(month);
+		levelInstanceDetailed.setYear(year);
+		levelInstanceDetailed.setLevelValue(levelInstance.getLevelValue());
+		levelInstanceDetailed.setLevelMinimum(levelInstance.getLevelMinimum());
+		levelInstanceDetailed.setLevelMaximum(levelInstance.getLevelMaximum());
+		return levelInstanceDetailed;
+	}
+	
+	/**
+	 * Busca detalhada de um plano.
+	 */
+	public PlanDetailed getPlanDetailed(Plan plan, AttributeInstance finishDate) {
+		int month = finishDate.getValueAsDate().getMonth()+1;
+		int year = finishDate.getValueAsDate().getYear()+1900;
+		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
+		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("plan", plan));
+		criteria.add(Restrictions.eq("month", month));
+		criteria.add(Restrictions.eq("year", year));
+		PlanDetailed planDetailed = (PlanDetailed) criteria.uniqueResult();
+		
+		if (planDetailed == null)
+			planDetailed = new PlanDetailed();
+		planDetailed.setPlan(plan);
+		planDetailed.setMonth(month);
+		planDetailed.setYear(year);
+		planDetailed.setPerformance(plan.getPerformance());
+		planDetailed.setMinimumAverage(plan.getMinimumAverage());
+		planDetailed.setMaximumAverage(plan.getMaximumAverage());
+		return planDetailed;
 	}
 	
 	/** Calcula a média do valor no nível abaixo. */
@@ -68,6 +118,30 @@ public class StructureHelper {
 		return (PerformanceBean) criteria.uniqueResult();
 	}
 	
+	/** Calcula a média do valor no nível abaixo detalhado. */
+	public PerformanceBean calculateLevelValueDetailed(StructureLevelInstance levelInstance, AttributeInstance finishDate) {
+		int month = finishDate.getValueAsDate().getMonth()+1;
+		int year = finishDate.getValueAsDate().getYear()+1900;
+		Criteria criteria =
+			this.dao.newCriteria(StructureLevelInstanceDetailed.class)
+			.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.isNotNull("levelValue"))
+			.add(Restrictions.eq("month", month))
+			.add(Restrictions.eq("year", year))
+			.add(Restrictions.eq("levelInstance.deleted", false))
+			.add(Restrictions.eq("levelInstance.parent", levelInstance.getId()))
+			.setProjection(
+				Projections.projectionList()
+				.add(Projections.avg("levelValue"), "performance")
+				.add(Projections.avg("levelMinimum"), "minimumAverage")
+				.add(Projections.avg("levelMaximum"), "maximumAverage")
+			)
+			.setResultTransformer(new AliasToBeanResultTransformer(PerformanceBean.class))
+		;
+		return (PerformanceBean) criteria.uniqueResult();
+	}
+	
 	/** Calcula a média do valor do primeiro nível do plano. */
 	public PerformanceBean calculatePlanPerformance(Plan plan) {
 		Criteria criteria =
@@ -76,6 +150,31 @@ public class StructureHelper {
 			.add(Restrictions.eq("plan", plan))
 			.add(Restrictions.isNull("parent"))
 			.add(Restrictions.isNotNull("levelValue"))
+			.setProjection(
+				Projections.projectionList()
+				.add(Projections.avg("levelValue"), "performance")
+				.add(Projections.avg("levelMinimum"), "minimumAverage")
+				.add(Projections.avg("levelMaximum"), "maximumAverage")
+			)
+			.setResultTransformer(new AliasToBeanResultTransformer(PerformanceBean.class))
+		;
+		return (PerformanceBean) criteria.uniqueResult();
+	}
+	
+	/** Calcula a média do valor do primeiro nível do plano. */
+	public PerformanceBean calculatePlanPerformanceDetailed(Plan plan, AttributeInstance finishDate) {
+		int month = finishDate.getValueAsDate().getMonth()+1;
+		int year = finishDate.getValueAsDate().getYear()+1900;
+		Criteria criteria =
+			this.dao.newCriteria(StructureLevelInstanceDetailed.class)
+			.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.isNotNull("levelValue"))
+			.add(Restrictions.eq("month", month))
+			.add(Restrictions.eq("year", year))
+			.add(Restrictions.eq("levelInstance.deleted", false))
+			.add(Restrictions.eq("levelInstance.plan", plan))
+			.add(Restrictions.isNull("levelInstance.parent"))
 			.setProjection(
 				Projections.projectionList()
 				.add(Projections.avg("levelValue"), "performance")

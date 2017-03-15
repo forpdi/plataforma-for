@@ -237,7 +237,7 @@ export default React.createClass({
 			fieldEl = (
 				<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
 			);
- 		} else if (this.props.fieldDef.type == AttributeTypes.TEXT_AREA_FIELD) {	
+ 		} else if (this.props.fieldDef.type == AttributeTypes.TEXT_AREA_FIELD) {
 			if(this.props.isDocument){
 				fieldEl = (
 					<div>
@@ -511,8 +511,8 @@ export default React.createClass({
 			if (this.props.fieldDef.disabled) {	
 	 		 	fieldEl = (<input
 	 				onKeyPress={this.onlyNumber}
-					onPaste={this.onlyNumberPaste}
-	 				className="form-control"
+					onPaste={this.onlyNumberPaste}	
+					className="budget-field-table"
 	 			//	type='number'
 	 				step='any'
 					min="0" //caso seja necessário campo numérico negativo, remover aqui!
@@ -529,6 +529,7 @@ export default React.createClass({
 	 		 	fieldEl = (<input
 	 				onKeyPress={this.onlyNumber}
 					onPaste={this.onlyNumberPaste}
+	 			//	className="budget-field-table"
 	 				className="form-control"
 	 				step='any'
 	 			//	type='number'
@@ -557,6 +558,7 @@ export default React.createClass({
  			/>);
 		} else {
 			fieldEl = (<input
+				//className="budget-field-table"
 				className="form-control"
 				type={this.props.fieldDef.type}
 				maxLength='100'

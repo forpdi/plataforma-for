@@ -2287,5 +2287,22 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("deleted", false));		
 		return this.dao.findByCriteria(criteria, AggregateIndicator.class);
 	}
+	
+	/**
+	 * Listar as instãncias dos leveis detalhadas
+	 * 
+	 * @param levelInstance
+	 *            Instância de um level.
+	 * @return query Lista das intâncias dos leveis.
+	 */
+	public List<StructureLevelInstanceDetailed> listLevelInstanceDetailed(StructureLevelInstance levelInstance) {
+		int year = new Date().getYear()+1900;
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
+		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		criteria.add(Restrictions.eq("year", year));
+
+		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
+	}
 
 }

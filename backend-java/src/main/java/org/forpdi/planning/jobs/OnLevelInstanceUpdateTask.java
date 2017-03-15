@@ -11,9 +11,11 @@ import org.forpdi.planning.attribute.AttributeHelper;
 import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.bean.PerformanceBean;
 import org.forpdi.planning.plan.Plan;
+import org.forpdi.planning.plan.PlanDetailed;
 import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevel;
 import org.forpdi.planning.structure.StructureLevelInstance;
+import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
 import org.hibernate.SessionFactory;
 import org.jboss.logging.Logger;
 
@@ -138,6 +140,32 @@ public class OnLevelInstanceUpdateTask implements Task {
 						levelInstance.setLevelMinimum(100.0 * ((2.0 * expected) - minimum) / expected);
 						levelInstance.setLevelMaximum(100.0 * ((2.0 * expected) - maximum) / expected);
 					}
+				}
+				
+				AttributeInstance finishDate = attrHelper.retrieveFinishDateFieldAttribute(levelInstance);
+				if (finishDate != null) {
+					StructureLevelInstanceDetailed levelInstanceDetailed = structHelper.getLevelInstanceDetailed(levelInstance, finishDate);
+					dao.persist(levelInstanceDetailed);
+					
+					StructureLevelInstance parentLevelInstance = levelInstance;
+					while (parentLevelInstance.getParent() != null) {
+						parentLevelInstance = structHelper.retrieveLevelInstance(parentLevelInstance.getParent());
+						PerformanceBean performance = structHelper.calculateLevelValueDetailed(parentLevelInstance, finishDate);
+						parentLevelInstance.setLevelValue(performance.getPerformance());
+						parentLevelInstance.setLevelMinimum(performance.getMinimumAverage());
+						parentLevelInstance.setLevelMaximum(performance.getMaximumAverage());
+						//dao.persist(parentLevelInstance);
+						levelInstanceDetailed = structHelper.getLevelInstanceDetailed(parentLevelInstance, finishDate);
+						dao.persist(levelInstanceDetailed);
+					}
+					
+					Plan plan = levelInstance.getPlan();
+					PerformanceBean performance = structHelper.calculatePlanPerformanceDetailed(plan, finishDate);
+					plan.setPerformance(performance.getPerformance());
+					plan.setMinimumAverage(performance.getMinimumAverage());
+					plan.setMaximumAverage(performance.getMaximumAverage());
+					PlanDetailed planDetailed = structHelper.getPlanDetailed(plan, finishDate);
+					dao.persist(planDetailed);
 				}
 			} else {
 				levelInstance.setLevelValue(null);

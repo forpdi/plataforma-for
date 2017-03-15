@@ -57,11 +57,13 @@
   		<mapping class="org.forpdi.planning.attribute.AttributeInstance"/>
   		<mapping class="org.forpdi.planning.attribute.AggregateIndicator"/>
   		<mapping class="org.forpdi.planning.plan.Plan"/>
+  		<mapping class="org.forpdi.planning.plan.PlanDetailed"/>
   		<mapping class="org.forpdi.planning.plan.PlanMacro"/>
   		<mapping class="org.forpdi.planning.structure.FavoriteLevelInstance"/>
   		<mapping class="org.forpdi.planning.structure.Structure"/>
   		<mapping class="org.forpdi.planning.structure.StructureLevel"/>
   		<mapping class="org.forpdi.planning.structure.StructureLevelInstance"/>
+  		<mapping class="org.forpdi.planning.structure.StructureLevelInstanceDetailed"/>
   		<mapping class="org.forpdi.planning.fields.budget.Budget"/>
   		<mapping class="org.forpdi.planning.fields.budget.BudgetSimulationDB"/>
   		<mapping class="org.forpdi.planning.fields.actionplan.ActionPlan"/>

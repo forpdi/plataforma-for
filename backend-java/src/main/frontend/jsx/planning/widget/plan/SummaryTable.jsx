@@ -42,7 +42,8 @@ export default React.createClass({
 					performance: plan.performance,
 					minimum: plan.minimumAverage,
 					maximum: plan.maximumAverage,
-					parents: []
+					parents: [],
+					model: plan.planDetailedList
 				};
 			});
 
@@ -59,6 +60,7 @@ export default React.createClass({
 				var insertionPoint = 1 + this.state.tree.findIndex((spec) => {
 					return (spec.key === parent.key);
 				});
+
 	            _.each(models, (level, index) => {
 					me.state.tree.splice(insertionPoint, 0, {
 						label: level.name,
@@ -73,7 +75,8 @@ export default React.createClass({
 						level: level.id,
 						parentKey: parent.key,
 						parentLevel: parent.level,
-						parents: parent.parents.concat([parent.key])
+						parents: parent.parents.concat([parent.key]),
+						model: level.levelInstanceDetailedList
 					});
 				});
 				parent.expanded = true;
@@ -149,12 +152,48 @@ export default React.createClass({
 	renderYearCells(rowData) {
 		var cells = [];
 		for (var month = 0; month < 12; month++) {
-			/*cells.push(<td key={"month-cell-"+month}>
-				<div className="circle green">100%</div>
-			</td>);*/
-			cells.push(<td key={"month-cell-"+month}>
-				-
-			</td>);
+			if (rowData && rowData.length>0 && rowData[month] != null) {
+				var achieved;
+				if (rowData[month].levelValue)
+					achieved = Numeral(rowData[month].levelValue);
+				else
+					achieved = Numeral(rowData[month].performance);
+				
+				var minimum;
+				if (rowData[month].levelMinimum)
+					minimum = Numeral(rowData[month].levelMinimum);
+				else
+					minimum = Numeral(rowData[month].minimumAverage);
+
+				var maximum;
+				if (rowData[month].levelMaximum)
+					maximum = Numeral(rowData[month].levelMaximum);
+				else
+					maximum = Numeral(rowData[month].maximumAverage);
+
+				var color = "";
+				if (!achieved)
+					color = "gray";
+				else if (achieved.value() < minimum)
+					color = "red";
+				else if (achieved.value() < 100.0)
+					color = "yellow";
+				else if (achieved.value() < maximum)
+					color = "green";
+				else
+					color = "blue";
+
+				cells.push(<td key={"month-cell-"+month}>
+					<div className={"circle width40 "+color+
+						(achieved.format("0,0.00").toString().length > 7 ? " fontSize8" : " fontSize95")}>
+						{achieved.format("0,0.00")}%
+					</div>
+				</td>);
+			} else {
+				cells.push(<td key={"month-cell-"+month}>
+					-
+				</td>);
+			}
 		}
 		return (<table>
 			<tbody>
@@ -170,6 +209,7 @@ export default React.createClass({
 			{this.state.tree.map((rowSpec, index) => {
 				var achieved = !rowSpec.performance ? null:Numeral(rowSpec.performance);
 				var color = "";
+
 				if (!achieved)
 					color = "gray";
 				else if (achieved.value() < rowSpec.minimum)
@@ -190,7 +230,8 @@ export default React.createClass({
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
-							<div className={"circle "+color}>
+
+							<div className={"circle width50 fontSize10 "+color}>
 								{achieved.format("0,0.00")}%
 							</div>
 						)}

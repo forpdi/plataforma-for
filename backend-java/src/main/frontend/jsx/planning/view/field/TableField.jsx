@@ -166,12 +166,14 @@ export default React.createClass({
 				}
 			});
 
-			this.context.toastr.addAlertError("Por favor preencha todos os campos.");
+			this.context.toastr.addAlertError("Por favor preencha todos os campos corretamente.");
 		}
 	},
 
 	deleteTable(id, idx,evt){
-		Modal.deleteConfirm(() => {
+		var msg = "Você tem certeza que deseja excluir ?";
+		
+		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			this.setState({
 				loading: true,
@@ -183,17 +185,19 @@ export default React.createClass({
 					id: id
 				}
 			});
-		});
+		},msg,()=>{Modal.hide()});
 	},
 
 	acceptedEditTable(id,idx){
 		var tableValues = [];
 		var empty = false;
-		this.state.tableFields.tableStructures.map((model, idx) => {
-			this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value = this.refs['edit-tabValue'+idx].getValue()
-			 || this.refs['edit-tabValue'+idx].props.fieldDef.value;
+		this.state.tableFields.tableStructures.map((model, idx) => {			
+			if(typeof this.refs['edit-tabValue'+idx].getValue == 'function')
+				this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value = this.refs['edit-tabValue'+idx].getValue();
+			else 
+			 	this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value = this.refs['edit-tabValue'+idx].value;
 			tableValues.push({
-				value: this.refs['edit-tabValue'+idx].getValue() || this.refs['edit-tabValue'+idx].props.fieldDef.value,
+				value:  this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value,
 				tableStructure: {
 					id: this.state.tableFields.tableStructures[idx].id,
 					optionsField: model.optionsField && model.optionsField.length>0 ? 
@@ -265,20 +269,25 @@ export default React.createClass({
 											 _.noop),
 							value: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value,
 							editModeValue: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value.replace(".",",")
-						};						
+						};
+						
 						return(
 							<td key={"value-"+idx}>
 								{model.optionsField && model.optionsField.length>0 ? (
 									<select
 										className="budget-field-table"
-										name={"tabValue"+idx}
-										id={"tabValue"+idx}
-										ref={"tabValue"+idx}>
+										name={"edit-tabValue"+idx}
+										id={"edit-tabValue"+idx}
+										ref={"edit-tabValue"+idx}
+										defaultValue={this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value}>
 											<option key={'field-opt-'}/>
 											{model.optionsField.map((opt,id) => {
-												return (<option key={'field-opt-'+idx+'-'+id} defaultValue={opt.label} 
-													data-placement="right" title={opt.label}>
-														{opt.label}</option>);
+												return (
+													<option key={'field-opt-'+idx+'-'+id} value={opt.label} data-placement="right"
+													 title={opt.label}>
+														{opt.label}
+													</option>
+												);
 											})}
 									</select>
 								) : (

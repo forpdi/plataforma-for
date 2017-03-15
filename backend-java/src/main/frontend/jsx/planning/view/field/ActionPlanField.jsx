@@ -228,7 +228,7 @@ export default React.createClass({
 		var msg = "Você tem certeza que deseja excluir " + ((this.state.actionPlans[idx].description.length >150)?(this.state.actionPlans[idx].description.substr(0,150)+"..."):
 			(this.state.actionPlans[idx].description)) + "?"
 
-		Modal.confirmCustom(() => {
+		Modal.confirmCancelCustom(() => {
 				Modal.hide();
 					this.setState({
 					loading: true,

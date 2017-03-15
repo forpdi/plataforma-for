@@ -1420,9 +1420,13 @@ var Validate = {
 	},
 
 	tableNewInstanceValidate(tableValues){
-		var count=0;
-		tableValues.map((table) => {
-			if(table.value.trim() == "" || table.value == undefined || table.value.split(",").length > 2) {				
+		var count=0;		
+		tableValues.map((table) => {			
+			if((table.value && table.value.trim() == "") ||
+			 table.value == undefined ||
+			 ((table.type == AttributeTypes.NUMBER_FIELD ||
+			  table.type == AttributeTypes.PERCENTAGE_FIELD ||
+			   table.type == AttributeTypes.CURRENCY_FIELD) && table.value.split(",").length > 2)) {
 				count++;
 			}
 		});	
