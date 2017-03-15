@@ -1,5 +1,7 @@
 package org.forpdi.planning.document.bootstrap;
 
+import java.util.logging.Logger;
+
 import org.forpdi.planning.attribute.types.DateField;
 import org.forpdi.planning.attribute.types.NumberField;
 import org.forpdi.planning.attribute.types.ScheduleField;
@@ -655,7 +657,7 @@ public class ForpladHelper {
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
-			optionsField.setDocument(true);
+			optionsField.setDocument(true);			
 			optionsField.setLabel("Anual");
 			session.persist(optionsField);
 			optionsField = new OptionsField();
@@ -808,45 +810,7 @@ public class ForpladHelper {
 			optionsField.setLabel("Semipresencial");
 			session.persist(optionsField);
 			// Novo campo da tabela
-			tableStructure = new TableStructure();
-			tableStructure.setLabel("Regime de matrícula");
-			tableStructure.setType(SelectField.class.getCanonicalName());
-			tableStructure.setTableFields(tableFields);
-			session.persist(tableStructure);
-			// Valores da habilitação
-			optionsField = new OptionsField();
-			optionsField.setAttributeId(attr.getId());
-			optionsField.setColumnId(tableStructure.getId());
-			optionsField.setDocument(true);
-			optionsField.setLabel("Anual");
-			session.persist(optionsField);
-			optionsField = new OptionsField();
-			optionsField.setAttributeId(attr.getId());
-			optionsField.setColumnId(tableStructure.getId());
-			optionsField.setDocument(true);
-			optionsField.setLabel("Semestral");
-			session.persist(optionsField);
-			optionsField = new OptionsField();
-			optionsField.setAttributeId(attr.getId());
-			optionsField.setColumnId(tableStructure.getId());
-			optionsField.setDocument(true);
-			optionsField.setLabel("Bienal");
-			session.persist(optionsField);
-			/*
-			 * tableStructure = new TableStructure();
-			 * tableStructure.setLabel("Habilitação");
-			 * tableStructure.setType(TextField.generateId(TextField.class));
-			 * tableStructure.setTableFields(tableFields);
-			 * session.persist(tableStructure); tableStructure = new
-			 * TableStructure(); tableStructure.setLabel("Modalidade");
-			 * tableStructure.setType(TextField.generateId(TextField.class));
-			 * tableStructure.setTableFields(tableFields);
-			 * session.persist(tableStructure); tableStructure = new
-			 * TableStructure(); tableStructure.setLabel("Regime de matrícula");
-			 * tableStructure.setType(TextField.generateId(TextField.class));
-			 * tableStructure.setTableFields(tableFields);
-			 * session.persist(tableStructure);
-			 */
+			tableStructure = new TableStructure();			
 			tableStructure.setLabel("Turno de funcionamento");
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
