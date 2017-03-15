@@ -42,7 +42,8 @@ export default React.createClass({
 					performance: plan.performance,
 					minimum: plan.minimumAverage,
 					maximum: plan.maximumAverage,
-					parents: []
+					parents: [],
+					model: plan.planDetailedList
 				};
 			});
 
@@ -151,26 +152,40 @@ export default React.createClass({
 	renderYearCells(rowData) {
 		var cells = [];
 		for (var month = 0; month < 12; month++) {
-			/*cells.push(<td key={"month-cell-"+month}>
-				<div className="circle green">100%</div>
-			</td>);*/
 			if (rowData && rowData.length>0 && rowData[month] != null) {
-				var achieved = Numeral(rowData[month].levelValue);
+				var achieved;
+				if (rowData[month].levelValue)
+					achieved = Numeral(rowData[month].levelValue);
+				else
+					achieved = Numeral(rowData[month].performance);
+				
+				var minimum;
+				if (rowData[month].levelMinimum)
+					minimum = Numeral(rowData[month].levelMinimum);
+				else
+					minimum = Numeral(rowData[month].minimumAverage);
+
+				var maximum;
+				if (rowData[month].levelMaximum)
+					maximum = Numeral(rowData[month].levelMaximum);
+				else
+					maximum = Numeral(rowData[month].maximumAverage);
+
 				var color = "";
 				if (!achieved)
 					color = "gray";
-				else if (achieved.value() < rowData[month].levelMinimum)
+				else if (achieved.value() < minimum)
 					color = "red";
 				else if (achieved.value() < 100.0)
 					color = "yellow";
-				else if (achieved.value() < rowData[month].levelMaximum)
+				else if (achieved.value() < maximum)
 					color = "green";
 				else
 					color = "blue";
 
 				cells.push(<td key={"month-cell-"+month}>
 					<div className={"circle width40 "+color}>
-						{Numeral(rowData[month].levelValue).format("0")}%
+						{achieved.format("0")}%
 					</div>
 				</td>);
 			} else {

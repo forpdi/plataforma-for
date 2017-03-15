@@ -67,6 +67,9 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private Double auxValue;
+	
+	@Transient
+	private List<PlanDetailed> planDetailedList;
 
 	public Double getPerformance() {
 		return performance;
@@ -186,7 +189,13 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	public void setMaximumAverage(Double maximumAverage) {
 		this.maximumAverage = maximumAverage;
 	}
-	
-	
+
+	public List<PlanDetailed> getPlanDetailedList() {
+		return planDetailedList;
+	}
+
+	public void setPlanDetailedList(List<PlanDetailed> planDetailedList) {
+		this.planDetailedList = planDetailedList;
+	}
 
 }
