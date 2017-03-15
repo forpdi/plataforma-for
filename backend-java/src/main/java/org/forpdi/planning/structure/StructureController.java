@@ -590,7 +590,6 @@ public class StructureController extends AbstractController {
 				}
 
 				if (changeDate) {
-					LOGGER.info(url);
 					urlAux = domain.getBaseUrl() + "/" + url;
 					User responsible = this.userBS.existsByUser(Long.parseLong(userId));
 					CompanyUser companyUser = this.userBS.retrieveCompanyUser(responsible, this.domain.getCompany());

@@ -53,7 +53,7 @@ export default React.createClass({
 			});
 		}, me);
 
-		StructureStore.on("retrieve-level-instance-performance", (models, parent) =>{
+		StructureStore.on("retrieve-level-instance-performance", (models, parent) => {
 			if (!models || (models.length <= 0)) {
 				parent.expandable = false;
 			} else {
@@ -221,12 +221,12 @@ export default React.createClass({
 				else
 					color = "blue";
 				return (<tr key={"data-row-"+index}>
-					<td style={{"paddingLeft": ""+(rowSpec.indent*20 + 5)+"px"}}>
+					<td style={{"paddingLeft": ""+(rowSpec.indent*10 + 5)+"px"}}>
 						{rowSpec.loading ? <img src={LoadingImage} style={{"height": "12px"}} />:(rowSpec.expandable ? (
 							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
 						):"")}
-						<span>{rowSpec.label}</span>
+						<span title={rowSpec.label}>{rowSpec.label.length>70 ? (rowSpec.label.substring(0, 70)).concat("...") : rowSpec.label}</span>
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
@@ -251,7 +251,7 @@ export default React.createClass({
 		return (
 		<div className="summary-table">
 			<div className="summary-table-header">
-				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Agendar Recálculo</button>
+				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Recalcular</button>
 				Tabela de Resumo - {this.props.planMacro.get("name")}
 			</div>
 			<table>

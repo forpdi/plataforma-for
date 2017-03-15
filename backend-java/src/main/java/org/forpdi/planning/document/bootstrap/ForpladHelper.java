@@ -83,7 +83,11 @@ public class ForpladHelper {
 			this.document.setDescription("O PDI, elaborado para um período de cinco anos, é o documento"
 					+ " que identifica a IES no que diz respeito à sua filosofia de trabalho, à missão a que se propõe, "
 					+ "às diretrizes pedagógicas que orientam suas ações, à sua estrutura organizacional "
-					+ "e às atividades acadêmicas que desenvolve e/ou que pretende desenvolver");
+					+ "e às atividades acadêmicas que desenvolve e/ou que pretende desenvolver "
+					+ "</br>"
+					+ "</br>"
+					+ "</br>"
+					+ "Atenção: Evite colar textos formatados nas seções do Documento do PDI.");
 			this.document.setTitle("Documento - " + plan.getName());
 		}
 
