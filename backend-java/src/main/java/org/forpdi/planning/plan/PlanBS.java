@@ -1,5 +1,6 @@
 package org.forpdi.planning.plan;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -11,6 +12,7 @@ import org.forpdi.planning.jobs.OnLevelInstanceUpdateTask;
 import org.forpdi.planning.structure.Structure;
 import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevelInstance;
+import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
@@ -259,6 +261,23 @@ public class PlanBS extends HibernateBusiness {
 		if (!GeneralUtils.isEmpty(goals)) {
 			this.levelInstanceUpdateTask.add(goals);
 		}
+	}
+	
+	/**
+	 * Listar os planos detalhados
+	 * 
+	 * @param plan
+	 *            Plano de metas.
+	 * @return query Lista dos planos.
+	 */
+	public List<PlanDetailed> listPlanDetailed(Plan plan) {
+		int year = new Date().getYear()+1900;
+		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
+		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("plan", plan));
+		criteria.add(Restrictions.eq("year", year));
+
+		return this.dao.findByCriteria(criteria, PlanDetailed.class);
 	}
 
 }

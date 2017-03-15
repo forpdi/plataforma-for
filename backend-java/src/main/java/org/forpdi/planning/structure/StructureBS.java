@@ -2289,12 +2289,11 @@ public class StructureBS extends HibernateBusiness {
 	}
 	
 	/**
-	 * Listar o leveis indicadores que estão agregados a um level
-	 * indicador agregado.
+	 * Listar as instãncias dos leveis detalhadas
 	 * 
-	 * @param aggregate
-	 *            Instância de um level indicador agregado.
-	 * @return query Lista dos leveis indicadores.
+	 * @param levelInstance
+	 *            Instância de um level.
+	 * @return query Lista das intâncias dos leveis.
 	 */
 	public List<StructureLevelInstanceDetailed> listLevelInstanceDetailed(StructureLevelInstance levelInstance) {
 		int year = new Date().getYear()+1900;

@@ -2230,7 +2230,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		// CABEÇALHO
 		String companyLogoUrl = domain.getCompany().getLogo();
-		String fpdiLogoUrl = new File(classLoader.getResource("logo.png").getFile()).getPath();
+		String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";//new File(classLoader.getResource("logo.png").getFile()).getPath();
 		// LOGGER.info("|"+imageUrl+"|");
 		if (!companyLogoUrl.trim().isEmpty()) {
 			Image companyLogo = Image.getInstance(new URL(companyLogoUrl));
