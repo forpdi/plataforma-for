@@ -184,8 +184,9 @@ export default React.createClass({
 					color = "blue";
 
 				cells.push(<td key={"month-cell-"+month}>
-					<div className={"circle width40 "+color}>
-						{achieved.format("0")}%
+					<div className={"circle width40 "+color+
+						(achieved.format("0,0.00").toString().length > 7 ? " fontSize8" : " fontSize95")}>
+						{achieved.format("0,0.00")}%
 					</div>
 				</td>);
 			} else {
@@ -230,8 +231,7 @@ export default React.createClass({
 					<td className="text-center">
 						{!achieved ? "-":(
 
-							<div className={"circle width50 "+color+
-								(achieved.format("0,0.00").toString().length >= 8 ? " fontSize10" : "")}>
+							<div className={"circle width50 fontSize10 "+color}>
 								{achieved.format("0,0.00")}%
 							</div>
 						)}
