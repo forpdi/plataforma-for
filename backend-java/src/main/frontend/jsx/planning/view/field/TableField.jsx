@@ -166,7 +166,7 @@ export default React.createClass({
 				}
 			});
 
-			this.context.toastr.addAlertError("Por favor preencha todos os campos.");
+			this.context.toastr.addAlertError("Por favor preencha todos os campos corretamente.");
 		}
 	},
 
@@ -270,7 +270,7 @@ export default React.createClass({
 							value: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value,
 							editModeValue: this.state.tableFields.tableInstances[this.state.editingIdx].tableValues[idx].value.replace(".",",")
 						};
-						console.log(model);
+						
 						return(
 							<td key={"value-"+idx}>
 								{model.optionsField && model.optionsField.length>0 ? (
