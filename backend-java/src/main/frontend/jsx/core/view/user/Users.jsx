@@ -725,8 +725,8 @@ export default React.createClass({
 		        						
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
-												<div className="fpdi-alert-message-text">
-													Obs: Não convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail, pois os mesmos podem não receber o convite.
+												<div className="notUseEmail">
+													Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail
 												</div>
 											</td>
 										</tr>
