@@ -479,6 +479,10 @@ export default React.createClass({
 				});
 			}
 		}
+
+		this.setState({
+			countSelectedUsers:0
+		});
 	},
 
 	selectAll(){

@@ -11,8 +11,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,28 +78,35 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
-import com.ibm.icu.text.DecimalFormat;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
-import com.lowagie.text.html.simpleparser.HTMLWorker;
-import com.lowagie.text.html.simpleparser.StyleSheet;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.CMYKColor;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
-import com.lowagie.text.pdf.PdfTemplate;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.text.html.simpleparser.StyleSheet;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.CMYKColor;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfAction;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfDestination;
+import com.itextpdf.text.pdf.PdfDocument;
+import com.itextpdf.text.pdf.PdfImportedPage;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfTemplate;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -894,23 +904,77 @@ public class DocumentBS extends HibernateBusiness {
 	public InputStream exportDocument(String author, String title, String lista)
 			throws IOException, DocumentException, SQLException, ClassNotFoundException {
 
-		com.lowagie.text.Document document = new com.lowagie.text.Document();
+		class TOCEvent extends PdfPageEventHelper {
+
+			protected int counter = 0;
+			protected List<SimpleEntry<String, SimpleEntry<String, Integer>>> toc = new ArrayList<>();
+
+			int preTextPages = 0;
+			String lastText = "";
+
+			@Override
+			public void onGenericTag(PdfWriter writer, com.itextpdf.text.Document document, Rectangle rect,
+					String text) {
+				if (text != lastText) {
+					String name = "dest" + (counter++);
+					int page = writer.getPageNumber() + preTextPages;
+					// LOGGER.info(text);
+					toc.add(new SimpleEntry<String, SimpleEntry<String, Integer>>(text,
+							new SimpleEntry<String, Integer>(name, page)));
+				}
+				lastText = text;
+				// writer.addNamedDestination(name, page, new
+				// PdfDestination(PdfDestination.FITH, rect.getTop()));
+
+			}
+
+			public List<SimpleEntry<String, SimpleEntry<String, Integer>>> getTOC() {
+				return toc;
+			}
+
+			public void setPreTextPages(int n) {
+				this.preTextPages = n;
+			}
+
+		}
+
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+		com.itextpdf.text.Document coverDocument = new com.itextpdf.text.Document();
+		com.itextpdf.text.Document preTextDocument = new com.itextpdf.text.Document();
+		com.itextpdf.text.Document summaryDocument = new com.itextpdf.text.Document();
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
 		File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
 
 		String SRC = pdfFile.getAbsolutePath();
-		String DEST = pdfFile.getAbsolutePath().replace(pdfFile.getName(), "pageNumber.pdf");
+		String DEST = pdfFile.getAbsolutePath() + "mounted.pdf";
+		String SUMMARY = pdfFile.getAbsolutePath() + "summary.pdf";
+		String FINALSUMMARY = pdfFile.getAbsolutePath() + "finalSummary.pdf";
+		String PRETEXT = pdfFile.getAbsolutePath() + "preText.pdf";
+		String COVER = pdfFile.getAbsolutePath() + "cover.pdf";
+		String FINAL = pdfFile.getAbsolutePath() + "final.pdf";
+
+		File coverPdfFile = new File(COVER);
+		File preTextPdfFile = new File(PRETEXT);
+		File summaryPdfFile = new File(SUMMARY);
+		File finalSummaryPdfFile = new File(FINALSUMMARY);
 		File file = new File(DEST);
+		File finalPdfFile = new File(FINAL);
 		file.getParentFile().mkdirs();
 
 		InputStream in = new FileInputStream(pdfFile);
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+		PdfWriter coverWriter = PdfWriter.getInstance(coverDocument, new FileOutputStream(coverPdfFile));
+		PdfWriter preTextWriter = PdfWriter.getInstance(preTextDocument, new FileOutputStream(preTextPdfFile));
+		PdfWriter summaryWriter = PdfWriter.getInstance(summaryDocument, new FileOutputStream(summaryPdfFile));
+
+		TOCEvent event = new TOCEvent();
+		writer.setPageEvent(event);
 
 		// DEFINIÇÕES DE FONTE, MARGENS, ESPAÇAMENTO E CORES
 		Font texto = FontFactory.getFont(FontFactory.TIMES, 12.0f);
@@ -927,11 +991,11 @@ public class DocumentBS extends HibernateBusiness {
 		// 1,5 entrelinhas
 		float interLineSpacing = texto.getCalculatedLeading(1.5f);
 		// Formato A4 do documento
-		document.setPageSize(PageSize.A4);
+		coverDocument.setPageSize(PageSize.A4);
 		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
-		document.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
+		coverDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
 
-		document.open();
+		coverDocument.open();
 
 		// CABEÇALHO
 		String imageUrl = domain.getCompany().getLogo();
@@ -939,11 +1003,11 @@ public class DocumentBS extends HibernateBusiness {
 		if (!imageUrl.trim().isEmpty()) {
 			Image image = Image.getInstance(new URL(imageUrl));
 			// image.scaleAbsolute(150f, 150f);
-			float scaler = ((document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin())
-					/ image.getWidth()) * 100;
+			float scaler = ((coverDocument.getPageSize().getWidth() - coverDocument.leftMargin()
+					- coverDocument.rightMargin()) / image.getWidth()) * 100;
 			image.scalePercent(scaler * 0.4f);
 			image.setAlignment(Element.ALIGN_CENTER);
-			document.add(image);
+			coverDocument.add(image);
 		}
 
 		Paragraph TITULO = new Paragraph(title, tituloCapa);
@@ -953,24 +1017,25 @@ public class DocumentBS extends HibernateBusiness {
 
 		// AUTHOR.setAlignment(Element.ALIGN_CENTER);
 
-		document.add(TITULO);
+		coverDocument.add(TITULO);
 		// document.add(AUTHOR);
 		// document.add(YEAR);
 		Phrase localizationPhrase = new Phrase(this.domain.getCompany().getLocalization(), titulo);
 		// Phrase footer = new Phrase(String.valueOf(cal.get(Calendar.YEAR)),
 		// titulo);
-		PdfContentByte cb = writer.getDirectContent();
+		PdfContentByte cb = coverWriter.getDirectContent();
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, localizationPhrase,
-				(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() + 30, 0);
-		document.newPage();
+				(coverDocument.right() - coverDocument.left()) / 2 + coverDocument.leftMargin(),
+				coverDocument.bottom() + 30, 0);
+		coverDocument.newPage();
 
 		// FOLHA DE ROSTO
 		Paragraph COMPANY = new Paragraph(domain.getCompany().getName(), tituloCapa);
 		COMPANY.setAlignment(Element.ALIGN_CENTER);
 		COMPANY.setSpacingBefore(paragraphSpacing);
-		document.add(COMPANY);
+		coverDocument.add(COMPANY);
 
-		document.add(TITULO);
+		coverDocument.add(TITULO);
 
 		Calendar cal = Calendar.getInstance();
 
@@ -979,10 +1044,13 @@ public class DocumentBS extends HibernateBusiness {
 		// footerRosto.add(periodPhrase);
 		// footerRosto.add(footer);
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, periodPhrase,
-				(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() + 15, 0);
+				(coverDocument.right() - coverDocument.left()) / 2 + coverDocument.leftMargin(),
+				coverDocument.bottom() + 15, 0);
 		ColumnText.showTextAligned(cb, Element.ALIGN_CENTER, localizationPhrase,
-				(document.right() - document.left()) / 2 + document.leftMargin(), document.bottom() + 30, 0);
-		document.newPage();
+				(coverDocument.right() - coverDocument.left()) / 2 + coverDocument.leftMargin(),
+				coverDocument.bottom() + 30, 0);
+		coverDocument.newPage();
+		coverDocument.close();
 
 		String[] sections = lista.split(",");
 		int secIndex = 0, subSecIndex = 0;
@@ -999,6 +1067,20 @@ public class DocumentBS extends HibernateBusiness {
 		// store the chapters and sections with their title here.
 		final Map<String, Integer> pageByTitle = new HashMap<>();
 
+		document.setPageSize(PageSize.A4);
+		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
+		document.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
+		document.open();
+
+		preTextDocument.setPageSize(PageSize.A4);
+		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
+		preTextDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
+		preTextDocument.open();
+
+		boolean endPreText = false;
+		boolean havePreText = false;
+		boolean haveContent = false;
+
 		for (int i = 0; i < sections.length; i++) {
 			DocumentSection ds = this.retrieveSectionById(Long.parseLong(sections[i]));
 			ds.setDocumentAttributes(this.listAttributesBySection(ds, ds.getDocument().getPlan().getId()));
@@ -1010,18 +1092,23 @@ public class DocumentBS extends HibernateBusiness {
 
 				for (DocumentAttribute a : ds.getDocumentAttributes()) {
 					if (a.getType().equals(TableField.class.getCanonicalName())) {
+						havePreText = true;
 						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
 						List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
 						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
 						if (!tabInstList.isEmpty()) {
 							// String attName = a.getName();
 							// if (!attName.equals(secName)) {
-							Paragraph attTitle = new Paragraph(secName, titulo);
+
+							Chunk c = new Chunk(secName, titulo);
+							c.setGenericTag(secName);
+
+							Paragraph attTitle = new Paragraph(c);
 							attTitle.setAlignment(Element.ALIGN_CENTER);
 							attTitle.setLeading(interLineSpacing);
 							attTitle.setSpacingAfter(paragraphSpacing);
 							attTitle.setSpacingBefore(paragraphSpacing);
-							document.add(attTitle);
+							preTextDocument.add(attTitle);
 							// }
 							PdfPTable table;
 							if (tabStructList
@@ -1037,54 +1124,59 @@ public class DocumentBS extends HibernateBusiness {
 								table = returnPdfPTable(tabStructList, tabInstList, false, false);
 							else
 								table = returnPdfPTable(tabStructList, tabInstList, true, true);
-							document.add(table);
-							document.newPage();
+							preTextDocument.add(table);
+							preTextDocument.newPage();
 							lastAttWasPlan = false;
 							lastSecWasPreText = true;
 						}
 					}
 				}
 
-			} else { // SEÇÕES NUMERADAS
-				if (lastSecWasPreText) {
-					lastSecWasPreText = false;
-
-					Paragraph secTitle = new Paragraph("Sumário", titulo);
-					secTitle.setLeading(interLineSpacing);
-					secTitle.setSpacingAfter(paragraphSpacing);
-					secTitle.setSpacingBefore(paragraphSpacing);
-					secTitle.setAlignment(Element.ALIGN_CENTER);
-					document.add(secTitle);
-					int summaryIndex = 0;
-					int summarySubSecIndex = 0;
-					for (String secaoId : sections) {
-						summarySection = this.retrieveSectionById(Long.parseLong(secaoId));
-						if (!summarySection.isPreTextSection()) {
-
-							summaryIndex++;
-							secTitle = new Paragraph(summaryIndex + ". " + summarySection.getName(), titulo);
-							secTitle.setLeading(interLineSpacing);
-							document.add(secTitle);
-
-							List<DocumentSection> dsList = this.listSectionsSons(summarySection);
-							this.setSectionsFilled(dsList, summarySection.getDocument().getPlan().getId());
-							summarySubSecIndex = 0;
-							for (DocumentSection sec : dsList) {
-
-								if (sec.isFilled()) {
-									summarySubSecIndex++;
-									secTitle = new Paragraph(
-											summaryIndex + "." + summarySubSecIndex + ". " + sec.getName(), texto);
-									secTitle.setLeading(interLineSpacing);
-									secTitle.setFirstLineIndent(firstLineIndent / 2);
-									document.add(secTitle);
-								}
-							}
-
-						}
+			} else {
+				haveContent = true;
+				if (!endPreText) {
+					PdfReader cover = new PdfReader(COVER);
+					if (havePreText) {
+						preTextDocument.close();
+						PdfReader preText = new PdfReader(PRETEXT);
+						event.setPreTextPages(preText.getNumberOfPages() + cover.getNumberOfPages());
 					}
-					document.newPage();
+					endPreText = true;
 				}
+				// SEÇÕES NUMERADAS
+				/*
+				 * if (lastSecWasPreText) { lastSecWasPreText = false;
+				 * 
+				 * Paragraph secTitle = new Paragraph("Sumário", titulo);
+				 * secTitle.setLeading(interLineSpacing);
+				 * secTitle.setSpacingAfter(paragraphSpacing);
+				 * secTitle.setSpacingBefore(paragraphSpacing);
+				 * secTitle.setAlignment(Element.ALIGN_CENTER);
+				 * document.add(secTitle); int summaryIndex = 0; int
+				 * summarySubSecIndex = 0; for (String secaoId : sections) {
+				 * summarySection =
+				 * this.retrieveSectionById(Long.parseLong(secaoId)); if
+				 * (!summarySection.isPreTextSection()) {
+				 * 
+				 * summaryIndex++; secTitle = new Paragraph(summaryIndex + ". "
+				 * + summarySection.getName(), titulo);
+				 * secTitle.setLeading(interLineSpacing);
+				 * document.add(secTitle);
+				 * 
+				 * List<DocumentSection> dsList =
+				 * this.listSectionsSons(summarySection);
+				 * this.setSectionsFilled(dsList,
+				 * summarySection.getDocument().getPlan().getId());
+				 * summarySubSecIndex = 0; for (DocumentSection sec : dsList) {
+				 * 
+				 * if (sec.isFilled()) { summarySubSecIndex++; secTitle = new
+				 * Paragraph( summaryIndex + "." + summarySubSecIndex + ". " +
+				 * sec.getName(), texto); secTitle.setLeading(interLineSpacing);
+				 * secTitle.setFirstLineIndent(firstLineIndent / 2);
+				 * document.add(secTitle); } }
+				 * 
+				 * } } document.newPage(); }
+				 */
 
 				secIndex++;
 
@@ -1099,7 +1191,9 @@ public class DocumentBS extends HibernateBusiness {
 						document.setPageSize(PageSize.A4);
 						document.newPage();
 					}
-					Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+					Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+					c.setGenericTag(secIndex + ". " + secName);
+					Paragraph secTitle = new Paragraph(c);
 					secTitle.setLeading(interLineSpacing);
 					secTitle.setSpacingAfter(paragraphSpacing);
 					secTitle.setSpacingBefore(paragraphSpacing);
@@ -1116,7 +1210,9 @@ public class DocumentBS extends HibernateBusiness {
 								document.newPage();
 							}
 							if (!secTitlePrinted) {
-								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+								c.setGenericTag(secIndex + ". " + secName);
+								Paragraph secTitle = new Paragraph(c);
 								secTitle.setLeading(interLineSpacing);
 								secTitle.setSpacingAfter(paragraphSpacing);
 								secTitle.setSpacingBefore(paragraphSpacing);
@@ -1162,7 +1258,7 @@ public class DocumentBS extends HibernateBusiness {
 									.getPath();
 							resourcesPath = resourcesPath.replace("example.html", "");
 							resourcesPath = resourcesPath.replace("%20", " ");
-							resourcesPath = "/tmp"; // corrigir para usar
+							// resourcesPath = "/tmp"; // corrigir para usar
 							// um caminho
 							// dinamico
 							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
@@ -1173,7 +1269,7 @@ public class DocumentBS extends HibernateBusiness {
 							conexao.close();
 							// LOGGER.info(htmlFile.getPath());
 
-							ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+							List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
 							for (int k = 0; k < p.size(); ++k) {
 								if (p.get(k) instanceof Paragraph) {
 									Paragraph att = (Paragraph) p.get(k);
@@ -1194,8 +1290,8 @@ public class DocumentBS extends HibernateBusiness {
 										att.setFirstLineIndent(firstLineIndent);
 										document.add(att);
 									}
-								} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
-									com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
+								} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
+									com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
 									att.setIndentationLeft(firstLineIndent);
 									document.add(att);
 								}
@@ -1214,7 +1310,9 @@ public class DocumentBS extends HibernateBusiness {
 								document.newPage();
 							}
 							if (!secTitlePrinted) {
-								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+								c.setGenericTag(secIndex + ". " + secName);
+								Paragraph secTitle = new Paragraph(c);
 								secTitle.setLeading(interLineSpacing);
 								secTitle.setSpacingAfter(paragraphSpacing);
 								secTitle.setSpacingBefore(paragraphSpacing);
@@ -1244,7 +1342,9 @@ public class DocumentBS extends HibernateBusiness {
 								document.newPage();
 							}
 							if (!secTitlePrinted) {
-								Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+								Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+								c.setGenericTag(secIndex + ". " + secName);
+								Paragraph secTitle = new Paragraph(c);
 								secTitle.setLeading(interLineSpacing);
 								secTitle.setSpacingAfter(paragraphSpacing);
 								secTitle.setSpacingBefore(paragraphSpacing);
@@ -1300,7 +1400,9 @@ public class DocumentBS extends HibernateBusiness {
 								if (first) {
 
 									if (!secTitlePrinted) {
-										Paragraph secTitle = new Paragraph(secIndex + ". " + secName, titulo);
+										Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+										c.setGenericTag(secIndex + ". " + secName);
+										Paragraph secTitle = new Paragraph(c);
 										document.add(secTitle);
 										secTitlePrinted = true;
 									}
@@ -1353,8 +1455,9 @@ public class DocumentBS extends HibernateBusiness {
 									}
 									if (!subSecTitlePrinted) {
 										subSecIndex++;
-										Paragraph subSecTitle = new Paragraph(
-												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+										Paragraph subSecTitle = new Paragraph(c);
 										subSecTitle.setLeading(interLineSpacing);
 										subSecTitle.setSpacingAfter(paragraphSpacing);
 										subSecTitle.setSpacingBefore(paragraphSpacing);
@@ -1399,7 +1502,7 @@ public class DocumentBS extends HibernateBusiness {
 											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
 									resourcesPath = resourcesPath.replace("example.html", "");
 									resourcesPath = resourcesPath.replace("%20", " ");
-									resourcesPath = "/tmp"; // corrigir
+									// resourcesPath = "/tmp"; // corrigir
 									// para
 									// usar
 									// um caminho
@@ -1411,7 +1514,8 @@ public class DocumentBS extends HibernateBusiness {
 									conexao.newLine();
 									conexao.close();
 
-									ArrayList<?> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+									List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()),
+											styles);
 									for (int k = 0; k < p.size(); ++k) {
 										if (p.get(k) instanceof Paragraph) {
 											Paragraph att = (Paragraph) p.get(k);
@@ -1431,8 +1535,8 @@ public class DocumentBS extends HibernateBusiness {
 												att.setFirstLineIndent(firstLineIndent);
 												document.add(att);
 											}
-										} else if (p.get(k).getClass().getName().equals("com.lowagie.text.List")) {
-											com.lowagie.text.List att = (com.lowagie.text.List) p.get(k);
+										} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
+											com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
 											att.setIndentationLeft(firstLineIndent);
 											document.add(att);
 										}
@@ -1453,8 +1557,9 @@ public class DocumentBS extends HibernateBusiness {
 									String attName = a.getName();
 									if (!subSecTitlePrinted) {
 										subSecIndex++;
-										Paragraph subSecTitle = new Paragraph(
-												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+										Paragraph subSecTitle = new Paragraph(c);
 										subSecTitle.setLeading(interLineSpacing);
 										subSecTitle.setSpacingAfter(paragraphSpacing);
 										subSecTitle.setSpacingBefore(paragraphSpacing);
@@ -1484,8 +1589,9 @@ public class DocumentBS extends HibernateBusiness {
 									}
 									if (!subSecTitlePrinted) {
 										subSecIndex++;
-										Paragraph subSecTitle = new Paragraph(
-												secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+										c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+										Paragraph subSecTitle = new Paragraph(c);
 										subSecTitle.setLeading(interLineSpacing);
 										subSecTitle.setSpacingAfter(paragraphSpacing);
 										subSecTitle.setSpacingBefore(paragraphSpacing);
@@ -1540,8 +1646,10 @@ public class DocumentBS extends HibernateBusiness {
 										if (first) {
 											if (!subSecTitlePrinted) {
 												subSecIndex++;
-												Paragraph subSecTitle = new Paragraph(
-														secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+												Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName,
+														titulo);
+												c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+												Paragraph subSecTitle = new Paragraph(c);
 												document.add(subSecTitle);
 												subSecTitlePrinted = true;
 											}
@@ -1562,9 +1670,115 @@ public class DocumentBS extends HibernateBusiness {
 				}
 			}
 		}
-		document.close();
-		manipulatePdf(SRC, DEST, document);
-		InputStream inpStr = new FileInputStream(file);
+		if (havePreText)
+			preTextDocument.close();
+		if (haveContent)
+			document.close();
+
+		summaryDocument.setPageSize(PageSize.A4);
+		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
+		summaryDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
+		summaryDocument.open();
+
+		Paragraph summaryTitle = new Paragraph("Sumário", titulo);
+		summaryTitle.setLeading(interLineSpacing);
+		summaryTitle.setSpacingAfter(paragraphSpacing);
+		summaryTitle.setSpacingBefore(paragraphSpacing);
+		summaryDocument.add(summaryTitle);
+
+		Chunk dottedLine = new Chunk(new DottedLineSeparator());
+		List<SimpleEntry<String, SimpleEntry<String, Integer>>> entries = event.getTOC();
+		Paragraph p;
+		int summaryCountPages = 0;
+		for (SimpleEntry<String, SimpleEntry<String, Integer>> entry : entries) {
+			// LOGGER.info(entry.getKey());
+			Chunk chunk = new Chunk(entry.getKey(), titulo);
+			SimpleEntry<String, Integer> value = entry.getValue();
+			chunk.setAction(PdfAction.gotoLocalPage(value.getKey(), false));
+			p = new Paragraph(chunk);
+			p.add(dottedLine);
+			chunk = new Chunk(String.valueOf(value.getValue()), titulo);
+			chunk.setAction(PdfAction.gotoLocalPage(value.getKey(), false));
+			p.add(chunk);
+			summaryDocument.add(p);
+		}
+		summaryDocument.close();
+		PdfReader summaryAux = new PdfReader(SUMMARY);
+		summaryCountPages = summaryAux.getNumberOfPages();
+
+		com.itextpdf.text.Document finalSummaryDocument = new com.itextpdf.text.Document();
+		// Formato A4 do documento
+		finalSummaryDocument.setPageSize(PageSize.A4);
+		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
+		finalSummaryDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
+		PdfWriter finalSummaryWriter = PdfWriter.getInstance(finalSummaryDocument,
+				new FileOutputStream(finalSummaryPdfFile));
+		finalSummaryDocument.open();
+
+		finalSummaryDocument.add(summaryTitle);
+		for (SimpleEntry<String, SimpleEntry<String, Integer>> entry : entries) {
+			// LOGGER.info(entry.getKey());
+			Chunk chunk = new Chunk(entry.getKey(), titulo);
+			SimpleEntry<String, Integer> value = entry.getValue();
+			chunk.setAction(PdfAction.gotoLocalPage(value.getKey(), false));
+			p = new Paragraph(chunk);
+			p.add(dottedLine);
+			chunk = new Chunk(String.valueOf(value.getValue() + summaryCountPages), titulo);
+			chunk.setAction(PdfAction.gotoLocalPage(value.getKey(), false));
+			p.add(chunk);
+			finalSummaryDocument.add(p);
+		}
+		finalSummaryDocument.close();
+
+		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
+
+		PdfImportedPage page;
+		int n;
+		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(DEST));
+		newDocument.open();
+
+		PdfReader cover = new PdfReader(COVER);
+		PdfReader summary = new PdfReader(FINALSUMMARY);
+		PdfReader content;
+		PdfReader preText;
+		int unnumberedPgsCount = summaryCountPages;
+		// CAPA
+		n = cover.getNumberOfPages();
+		unnumberedPgsCount += n;
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(cover, ++i);
+			copy.addPage(page);
+		}
+		if (havePreText) {
+			preText = new PdfReader(PRETEXT);
+			// SEÇÕES PRE TEXTUAIS
+			n = preText.getNumberOfPages();
+			unnumberedPgsCount += n;
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(preText, ++i);
+				copy.addPage(page);
+			}
+		}
+		if (haveContent) {
+			// SUMÁRIO
+			n = summary.getNumberOfPages();
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(summary, ++i);
+				copy.addPage(page);
+			}
+			content = new PdfReader(SRC);
+			// CONTEÚDO
+			n = content.getNumberOfPages();
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(content, ++i);
+				copy.addPage(page);
+			}
+		}
+
+		newDocument.close();
+
+		manipulatePdf(DEST, FINAL, newDocument, unnumberedPgsCount);
+		InputStream inpStr = new FileInputStream(finalPdfFile);
 		return inpStr;
 	}
 
@@ -2138,11 +2352,15 @@ public class DocumentBS extends HibernateBusiness {
 					} else if (tv.getTableStructure().getType().equals(Percentage.class.getCanonicalName())) {
 						table.addCell(new Paragraph(FormatValue.PERCENTAGE.format(tv.getValue()), textoTabela));
 					} else if (tv.getTableStructure().getType().equals(NumberField.class.getCanonicalName())) {
-						double integerTest = Double.valueOf(tv.getValue().replaceAll("\\.", "").replaceAll(",", "."));
+						double integerTest = Double.valueOf(tv.getValue());
 						if (integerTest == (int) integerTest) {
 							table.addCell(new Paragraph(tv.getValue(), textoTabela));
 						} else {
-							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue().replaceAll("\\.", "").replaceAll(",", ".")), textoTabela));
+							table.addCell(
+									new Paragraph(
+											FormatValue.NUMERIC
+													.format(tv.getValue()),
+											textoTabela));
 						}
 					} else if (tv.getTableStructure().getType().equals(ResponsibleField.class.getCanonicalName())) {
 						table.addCell(new Paragraph(this.userBS.existsByUser(Long.valueOf(tv.getValue())).getName(),
@@ -2194,11 +2412,11 @@ public class DocumentBS extends HibernateBusiness {
 	public InputStream exportLevelAttributes(Long levelId)
 			throws MalformedURLException, IOException, DocumentException {
 		// TODO Auto-generated method stub
-		com.lowagie.text.Document document = new com.lowagie.text.Document();
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
@@ -2230,8 +2448,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		// CABEÇALHO
 		String companyLogoUrl = domain.getCompany().getLogo();
-		String fpdiLogoUrl = new File(classLoader.getResource("logo.png").getFile()).getPath();
-		// LOGGER.info("|"+imageUrl+"|");
+		String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";//new File(classLoader.getResource("logo.png").getFile()).getPath();
 		if (!companyLogoUrl.trim().isEmpty()) {
 			Image companyLogo = Image.getInstance(new URL(companyLogoUrl));
 			Image fpdiLogo = Image.getInstance(fpdiLogoUrl);
@@ -2774,6 +2991,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		return in;
 	}
+	
 	/**
 	 * Realiza as funções necessárias para gerar o PDF
 	 * @param src
@@ -2782,7 +3000,7 @@ public class DocumentBS extends HibernateBusiness {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	public void manipulatePdf(String src, String dest, com.lowagie.text.Document document)
+	public void manipulatePdf(String src, String dest, com.itextpdf.text.Document document, int unnumbered)
 			throws IOException, DocumentException {
 		PdfReader reader = new PdfReader(src);
 		int n = reader.getNumberOfPages();
@@ -2792,10 +3010,11 @@ public class DocumentBS extends HibernateBusiness {
 		Font texto = FontFactory.getFont(FontFactory.TIMES, 10.0f);
 		for (int i = 0; i < n;) {
 			pagecontent = stamper.getOverContent(++i);
-			ColumnText.showTextAligned(pagecontent, Element.ALIGN_RIGHT, new Phrase(String.format("%s", i), texto),
-					// new Phrase(String.format("Página %s de %s", i, n),
-					// texto),
-					document.right(), document.bottom(), 0);
+			if (i > unnumbered)
+				ColumnText.showTextAligned(pagecontent, Element.ALIGN_RIGHT, new Phrase(String.format("%s", i), texto),
+						// new Phrase(String.format("Página %s de %s", i, n),
+						// texto),
+						document.right(), document.bottom(), 0);
 		}
 		stamper.close();
 		reader.close();
