@@ -208,6 +208,7 @@ export default React.createClass({
 			{this.state.tree.map((rowSpec, index) => {
 				var achieved = !rowSpec.performance ? null:Numeral(rowSpec.performance);
 				var color = "";
+
 				if (!achieved)
 					color = "gray";
 				else if (achieved.value() < rowSpec.minimum)
@@ -228,7 +229,9 @@ export default React.createClass({
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
-							<div className={"circle width50 "+color}>
+
+							<div className={"circle width50 "+color+
+								(achieved.format("0,0.00").toString().length >= 8 ? " fontSize10" : "")}>
 								{achieved.format("0,0.00")}%
 							</div>
 						)}
