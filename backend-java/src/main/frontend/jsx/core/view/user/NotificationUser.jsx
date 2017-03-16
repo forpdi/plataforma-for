@@ -62,21 +62,39 @@ export default React.createClass({
                         return (
                             <div key={"notification-"+idx} className = {item.vizualized == true && !item.vizualizeNow ? "" : "backgroundNotification"}>
                                 <div className = "row paddingNotification">
-                                    <Link to={item.url.split("#")[1]}>
+                                   
+                                    {item.url != undefined ?
 
-                                        <div className="col-md-1">
-                                            <img alt="Notifications-Picture" src={item.picture}/>
-                                        </div>
+                                        (<Link to={item.url.split("#")[1]}>
+                                                <div className="col-md-1">
+                                                    <img alt="Notifications-Picture" src={item.picture}/>
+                                                </div>
 
-                                        <div className="col-md-8">
-                                            <p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
-                                        </div>
+                                                <div className="col-md-8">
+                                                    <p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
+                                                </div>
 
-                                        <div className="col-md-3">
-                                            <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
+                                                <div className="col-md-3">
+                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
+                                                </div>
+                                            </Link>
+                                        ) 
+                                        : (
+                                            <div>
+                                                 <div className="col-md-1">
+                                                    <img alt="Notifications-Picture" src={item.picture}/>
+                                                </div>
 
-                                        </div>
-                                    </Link>
+                                                <div className="col-md-8">
+                                                    <p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
+                                                </div>
+
+                                                <div className="col-md-3">
+                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
+                                                </div>
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             </div>
                         );
