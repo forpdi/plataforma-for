@@ -65,7 +65,7 @@ export default React.createClass({
 					me.state.tree.splice(insertionPoint, 0, {
 						label: level.name,
 						expanded: false,
-						expandable: !level.level.leaf,
+						expandable: !level.level.leaf && !level.aggregate,
 						indent: parent.indent+1,
 						key: "level-"+level.id,
 						plan: parent.plan,
@@ -221,7 +221,7 @@ export default React.createClass({
 				else
 					color = "blue";
 				return (<tr key={"data-row-"+index}>
-					<td style={{"paddingLeft": ""+(rowSpec.indent*10 + 5)+"px"}}>
+					<td style={{"paddingLeft": ""+(rowSpec.indent*15 + 5)+"px"}}>
 						{rowSpec.loading ? <img src={LoadingImage} style={{"height": "12px"}} />:(rowSpec.expandable ? (
 							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
