@@ -226,7 +226,7 @@ export default React.createClass({
 							<a className={rowSpec.expanded ? "mdi mdi-chevron-down":"mdi mdi-chevron-right"}
 								onClick={this.tweakExpansion.bind(this, rowSpec)}>&nbsp;</a>
 						) : <span className={"mdi mdi-menu-right"}>&nbsp;</span>)}
-						<span title={rowSpec.label}>{rowSpec.label.length>70 ? (rowSpec.label.substring(0, 70)).concat("...") : rowSpec.label}</span>
+						<span className="displayInline" title={rowSpec.label}>{rowSpec.label.length>70 ? (rowSpec.label.substring(0, 70)).concat("...") : rowSpec.label}</span>
 					</td>
 					<td className="text-center">
 						{!achieved ? "-":(
