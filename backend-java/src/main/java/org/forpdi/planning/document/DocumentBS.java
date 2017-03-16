@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -96,8 +95,6 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfDestination;
-import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -909,7 +906,6 @@ public class DocumentBS extends HibernateBusiness {
 			protected int counter = 0;
 			protected List<SimpleEntry<String, SimpleEntry<String, Integer>>> toc = new ArrayList<>();
 
-			int preTextPages = 0;
 			String lastText = "";
 
 			@Override
@@ -917,7 +913,7 @@ public class DocumentBS extends HibernateBusiness {
 					String text) {
 				if (text != lastText) {
 					String name = "dest" + (counter++);
-					int page = writer.getPageNumber() + preTextPages;
+					int page = writer.getPageNumber();
 					// LOGGER.info(text);
 					toc.add(new SimpleEntry<String, SimpleEntry<String, Integer>>(text,
 							new SimpleEntry<String, Integer>(name, page)));
@@ -932,10 +928,6 @@ public class DocumentBS extends HibernateBusiness {
 				return toc;
 			}
 
-			public void setPreTextPages(int n) {
-				this.preTextPages = n;
-			}
-
 		}
 
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
@@ -945,7 +937,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
@@ -1134,15 +1126,6 @@ public class DocumentBS extends HibernateBusiness {
 
 			} else {
 				haveContent = true;
-				if (!endPreText) {
-					PdfReader cover = new PdfReader(COVER);
-					if (havePreText) {
-						preTextDocument.close();
-						PdfReader preText = new PdfReader(PRETEXT);
-						event.setPreTextPages(preText.getNumberOfPages() + cover.getNumberOfPages());
-					}
-					endPreText = true;
-				}
 				// SEÇÕES NUMERADAS
 				/*
 				 * if (lastSecWasPreText) { lastSecWasPreText = false;
@@ -1258,7 +1241,7 @@ public class DocumentBS extends HibernateBusiness {
 									.getPath();
 							resourcesPath = resourcesPath.replace("example.html", "");
 							resourcesPath = resourcesPath.replace("%20", " ");
-							// resourcesPath = "/tmp"; // corrigir para usar
+							resourcesPath = "/tmp"; // corrigir para usar
 							// um caminho
 							// dinamico
 							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
@@ -1502,7 +1485,7 @@ public class DocumentBS extends HibernateBusiness {
 											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
 									resourcesPath = resourcesPath.replace("example.html", "");
 									resourcesPath = resourcesPath.replace("%20", " ");
-									// resourcesPath = "/tmp"; // corrigir
+									resourcesPath = "/tmp"; // corrigir
 									// para
 									// usar
 									// um caminho
@@ -1704,7 +1687,13 @@ public class DocumentBS extends HibernateBusiness {
 		}
 		summaryDocument.close();
 		PdfReader summaryAux = new PdfReader(SUMMARY);
-		summaryCountPages = summaryAux.getNumberOfPages();
+		PdfReader cover = new PdfReader(COVER);
+		summaryCountPages = summaryAux.getNumberOfPages() + cover.getNumberOfPages();
+		PdfReader preText;
+		if (havePreText) {
+			preText = new PdfReader(PRETEXT);
+			summaryCountPages += preText.getNumberOfPages();
+		}
 
 		com.itextpdf.text.Document finalSummaryDocument = new com.itextpdf.text.Document();
 		// Formato A4 do documento
@@ -1737,14 +1726,13 @@ public class DocumentBS extends HibernateBusiness {
 		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(DEST));
 		newDocument.open();
 
-		PdfReader cover = new PdfReader(COVER);
+		
 		PdfReader summary = new PdfReader(FINALSUMMARY);
 		PdfReader content;
-		PdfReader preText;
-		int unnumberedPgsCount = summaryCountPages;
+		//int unnumberedPgsCount = summaryCountPages;
 		// CAPA
 		n = cover.getNumberOfPages();
-		unnumberedPgsCount += n;
+		//unnumberedPgsCount += n;
 		for (int i = 0; i < n;) {
 			page = copy.getImportedPage(cover, ++i);
 			copy.addPage(page);
@@ -1753,7 +1741,7 @@ public class DocumentBS extends HibernateBusiness {
 			preText = new PdfReader(PRETEXT);
 			// SEÇÕES PRE TEXTUAIS
 			n = preText.getNumberOfPages();
-			unnumberedPgsCount += n;
+			//unnumberedPgsCount += n;
 			for (int i = 0; i < n;) {
 				page = copy.getImportedPage(preText, ++i);
 				copy.addPage(page);
@@ -1777,7 +1765,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		newDocument.close();
 
-		manipulatePdf(DEST, FINAL, newDocument, unnumberedPgsCount);
+		manipulatePdf(DEST, FINAL, newDocument, summaryCountPages);
 		InputStream inpStr = new FileInputStream(finalPdfFile);
 		return inpStr;
 	}
@@ -2321,8 +2309,8 @@ public class DocumentBS extends HibernateBusiness {
 			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		}
 		table.setWidthPercentage(100);
-		int[] sizes = new int[tabStructList.size()];
-		int i = 0;
+		//int[] sizes = new int[tabStructList.size()];
+		//int i = 0;
 
 		// ajuste de widths
 		/*
@@ -2416,29 +2404,29 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
 		File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
 		InputStream in = new FileInputStream(pdfFile);
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+		//PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
 
 		// DEFINIÇÕES DE FONTE, MARGENS, ESPAÇAMENTO E CORES
 		Font texto = FontFactory.getFont(FontFactory.TIMES, 12.0f);
 		Font textoItalico = FontFactory.getFont(FontFactory.TIMES_ITALIC, 12.0f);
 
 		Font titulo = FontFactory.getFont(FontFactory.TIMES_BOLD, 12.0f);
-		Font tituloCapa = FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f);
+		//Font tituloCapa = FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f);
 		// Cor cinza - cabeçalho das tabelas
-		CMYKColor headerBgColor = new CMYKColor(55, 45, 42, 7);
+		//CMYKColor headerBgColor = new CMYKColor(55, 45, 42, 7);
 
 		// 0,8 cm acima e abaixo
 		float paragraphSpacing = 22.6772f;
 		// Parágrafo com 1,25 cm na primeira linha
-		float firstLineIndent = 35.43307f;
+		//float firstLineIndent = 35.43307f;
 		// 1,5 entrelinhas
-		float interLineSpacing = texto.getCalculatedLeading(1.5f);
+		//float interLineSpacing = texto.getCalculatedLeading(1.5f);
 		// Formato A4 do documento
 		document.setPageSize(PageSize.A4);
 		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm

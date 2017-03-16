@@ -258,33 +258,54 @@ public class StructureHelper {
 	/** Realiza o cálculo e atualiza o valor de nível (valor agregado)
 	 * de acordo com o tipo de cálculo definido para o nível. */
 	public void updateAggregatedLevelValue(StructureLevelInstance levelInstance) {
+		Double total = 0.0;
+		Double totalMinimum = 0.0;
+		Double totalMaximum = 0.0;
 		if (levelInstance.getCalculation() == CalculationType.NORMAL_AVG) {
-			Double total = 0.0;
 			for (AggregateIndicator aggregates : levelInstance.getIndicatorList()) {
-				if (aggregates.getAggregate().getLevelValue() != null)
+				if (aggregates.getAggregate().getLevelValue() != null) {
 					total += aggregates.getAggregate().getLevelValue();
+					totalMinimum += aggregates.getAggregate().getLevelMinimum();
+					totalMaximum += aggregates.getAggregate().getLevelMaximum();
+				}
 			}
-			if (levelInstance.getIndicatorList().size() > 0)
+			if (levelInstance.getIndicatorList().size() > 0) {
 				levelInstance.setLevelValue(total / levelInstance.getIndicatorList().size());
-			else
+				levelInstance.setLevelMinimum(totalMinimum / levelInstance.getIndicatorList().size());
+				levelInstance.setLevelMaximum(totalMaximum / levelInstance.getIndicatorList().size());
+			} else {
 				levelInstance.setLevelValue(total);
-		} else if (levelInstance.getCalculation() == CalculationType.WEIGHTED_AVG) {
-			Double total = 0.0;
-			for (AggregateIndicator aggregates : levelInstance.getIndicatorList()) {
-				if (aggregates.getAggregate().getLevelValue() != null)
-					total += aggregates.getAggregate().getLevelValue() * aggregates.getPercentage();
+				levelInstance.setLevelMinimum(totalMinimum);
+				levelInstance.setLevelMaximum(totalMaximum);
 			}
-			if (levelInstance.getIndicatorList().size() > 0)
-				levelInstance.setLevelValue(total / 100);
-			else
-				levelInstance.setLevelValue(total);
-		} else if (levelInstance.getCalculation() == CalculationType.SUM) {
-			Double total = 0.0;
+		} else if (levelInstance.getCalculation() == CalculationType.WEIGHTED_AVG) {
 			for (AggregateIndicator aggregates : levelInstance.getIndicatorList()) {
-				if (aggregates.getAggregate().getLevelValue() != null)
+				if (aggregates.getAggregate().getLevelValue() != null) {
+					total += aggregates.getAggregate().getLevelValue() * aggregates.getPercentage();
+					totalMinimum += aggregates.getAggregate().getLevelMinimum() * aggregates.getPercentage();
+					totalMaximum += aggregates.getAggregate().getLevelMaximum() * aggregates.getPercentage();
+				}
+			}
+			if (levelInstance.getIndicatorList().size() > 0) {
+				levelInstance.setLevelValue(total / 100);
+				levelInstance.setLevelMinimum(totalMinimum / 100);
+				levelInstance.setLevelMaximum(totalMaximum / 100);
+			} else {
+				levelInstance.setLevelValue(total);
+				levelInstance.setLevelMinimum(totalMinimum);
+				levelInstance.setLevelMaximum(totalMaximum);
+			}
+		} else if (levelInstance.getCalculation() == CalculationType.SUM) {
+			for (AggregateIndicator aggregates : levelInstance.getIndicatorList()) {
+				if (aggregates.getAggregate().getLevelValue() != null) {
 					total += aggregates.getAggregate().getLevelValue();
+					totalMinimum += aggregates.getAggregate().getLevelMinimum();
+					totalMaximum += aggregates.getAggregate().getLevelMaximum();
+				}
 			}
 			levelInstance.setLevelValue(total);
+			levelInstance.setLevelMinimum(totalMinimum);
+			levelInstance.setLevelMaximum(totalMaximum);
 		}
 		this.dao.persist(levelInstance);
 	}
