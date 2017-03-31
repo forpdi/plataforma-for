@@ -5,11 +5,7 @@ var Webpack = require("webpack");
 module.exports = {
 	context: __dirname,
     devtool: "cheap-module-source-map",
-    entry: ["./favicon.ico", "./index.html", "./app.js"] /*{
-    	javascript: "./app.js",
-    	html: "./index.html",
-        icon: "./favicon.ico"
-    }*/,
+    entry: ["./favicon.ico", "./index.html", "./app.js"],
     output: {
         path: path.resolve(__dirname, 'build/development'),
         filename: "app.js"
@@ -29,12 +25,12 @@ module.exports = {
               }),
               new Webpack.DefinePlugin({
                   'process.env':{
-                      'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+                      'NODE_ENV': JSON.stringify('development')
                   }
               })
     ],
     module: {
-        noParse: /node_modules\/quill\/dist\/quill.js/,        
+        noParse: /node_modules\/quill\/dist\/quill.js/,
         loaders: [{
             test: /\.jsx$/,
             exclude: [node_modules_dir],

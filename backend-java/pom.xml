@@ -30,20 +30,10 @@
 
 	<properties>
 		<version.vraptor.boilerplate>1.0.0</version.vraptor.boilerplate>
-
 		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
-		<db.name>forpdi_db</db.name>
-		<db.username>root</db.username>
-		<db.password></db.password>
-		<backendUrl>http://localhost:8080/forpdi/</backendUrl>
-		<mail.smtp.url>progolden.com.br</mail.smtp.url>
-		<mail.smtp.port>465</mail.smtp.port>
-		<mail.smtp.username>noreply@forpdi.org</mail.smtp.username>
-		<mail.smtp.password>NoReply@123!</mail.smtp.password>
-		<mail.smtp.ssl>true</mail.smtp.ssl>
-		<war.frontenddir>development</war.frontenddir>
+		<propertiesfile>dev.properties</propertiesfile>
 	</properties>
-
+	
 	<profiles>
 		<profile>
 			<id>teste</id>
@@ -95,6 +85,9 @@
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
+		<filters>
+			<filter>${propertiesfile}</filter>
+		</filters>
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
@@ -119,6 +112,9 @@
 				<configuration>
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<resourceEncoding>UTF-8</resourceEncoding>
+					<filters>
+						<filter>${propertiesfile}</filter>
+					</filters>
 					<webResources>
 						<resource>
 							<directory>src/main/frontend/build/${war.frontenddir}</directory>

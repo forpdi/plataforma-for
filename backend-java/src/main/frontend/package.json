@@ -1,14 +1,23 @@
 {
   "name": "forpdi-web",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha1",
   "description": "ForPDI web client.",
   "scripts": {
     "devstart": "webpack-dev-server --compress --progress --port 8081 --inline -w",
     "devwatch": "NODE_ENV=development webpack --watch --watch-poll --progress --colors -d || (set NODE_ENV=development && webpack --watch --watch-poll --progress --colors -d)",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "webpack --colors --progress --config webpack.production.config.js -p"
+    "build": "webpack --colors --progress --config webpack.production.config.js -p"
   },
-  "author": "Renato R. R. de Oliveira",
+  "author": [
+			{
+				"name": "Renato R. R. de Oliveira",
+				"email": "renatorro@comp.ufla.br"
+			},
+			{
+				"name": "Rodrigo Freitas",
+				"email": "rodrigotkd@gmail.com"
+			}
+	],
   "devDependencies": {
     "babel-core": "^6.22.1",
     "babel-loader": "^6.4.0",
@@ -59,5 +68,6 @@
     "type": "git",
     "url": "https://github.com/forpdi/forpdi"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+	"readme": "../../../../README.md"
 }
