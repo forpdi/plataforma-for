@@ -33,51 +33,24 @@
 		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
 		<propertiesfile>dev.properties</propertiesfile>
 	</properties>
-	
+
 	<profiles>
 		<profile>
-			<id>teste</id>
+			<id>test</id>
 			<properties>
-				<db.name>forpdi_teste</db.name>
-				<db.username>root</db.username>
-				<db.password>Adm@ProDb!20</db.password>
-				<backendUrl>http://teste.forpdi.org/</backendUrl>
-				<mail.smtp.url>localhost</mail.smtp.url>
-				<mail.smtp.port>25</mail.smtp.port>
-				<mail.smtp.username></mail.smtp.username>
-				<mail.smtp.password></mail.smtp.password>
-				<mail.smtp.ssl>false</mail.smtp.ssl>
-				<war.frontenddir>production</war.frontenddir>
+				<propertiesfile>test.properties</propertiesfile>
 			</properties>
 		</profile>
 		<profile>
 			<id>mirror</id>
 			<properties>
-				<db.name>forpdi_db</db.name>
-				<db.username>root</db.username>
-				<db.password>Adm@ProDb!20</db.password>
-				<backendUrl>http://mirror.forpdi.org/</backendUrl>
-				<mail.smtp.url>localhost</mail.smtp.url>
-				<mail.smtp.port>25</mail.smtp.port>
-				<mail.smtp.username></mail.smtp.username>
-				<mail.smtp.password></mail.smtp.password>
-				<mail.smtp.ssl>false</mail.smtp.ssl>
-				<war.frontenddir>production</war.frontenddir>
+				<propertiesfile>mirror.properties</propertiesfile>
 			</properties>
 		</profile>
 		<profile>
 			<id>prd</id>
 			<properties>
-				<db.name>forpdi_db</db.name>
-				<db.username>forpdi_admin</db.username>
-				<db.password>@forpdiAdminBD!</db.password>
-				<backendUrl>http://app.forpdi.org/</backendUrl>
-				<mail.smtp.url>localhost</mail.smtp.url>
-				<mail.smtp.port>25</mail.smtp.port>
-				<mail.smtp.username></mail.smtp.username>
-				<mail.smtp.password></mail.smtp.password>
-				<mail.smtp.ssl>false</mail.smtp.ssl>
-				<war.frontenddir>production</war.frontenddir>
+				<propertiesfile>prd.properties</propertiesfile>
 			</properties>
 		</profile>
 	</profiles>
@@ -133,6 +106,25 @@
 						</resource>
 					</webResources>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<executions>
+					<!-- Associate the read-project-properties goal with the initialize phase, to read the properties file. -->
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>${propertiesfile}</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
