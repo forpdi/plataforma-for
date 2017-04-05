@@ -46,7 +46,7 @@ public class EmailSenderTask implements Task {
 	 * 
 	 * @param email
 	 */
-	public void add(NotificationEmail email) {
+	public synchronized void add(NotificationEmail email) {
 		queue.add(email);
 	}
 
@@ -56,6 +56,7 @@ public class EmailSenderTask implements Task {
 	 */
 	@Override
 	public void execute() {
+		LOG.infof("Executando envio de %d emails...", this.queue.size());
 		while (!this.queue.isEmpty()) {
 			try {
 				NotificationEmail email = this.queue.poll();
