@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.mail.EmailException;
 import org.forpdi.system.EmailUtilsPlugin;
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.tasks.Task;
 import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
@@ -23,6 +24,7 @@ import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
 @Scheduled(fixedRate = 60000)
 public class EmailSenderTask implements Task {
 
+	private static Logger LOG = Logger.getLogger(EmailSenderTask.class);
 	private Queue<NotificationEmail> queue;
 
 	public EmailSenderTask() {
@@ -59,7 +61,7 @@ public class EmailSenderTask implements Task {
 				NotificationEmail email = this.queue.poll();
 				EmailUtilsPlugin.sendHtmlEmail(email.getEmail(), email.getName(), email.getSubject(), email.getBody());
 			} catch (EmailException e) {
-				e.printStackTrace();
+				LOG.error("Falha ao enviar e-mail.", e);
 			}
 		}
 	}
