@@ -26,7 +26,7 @@ public class EmailUtilsPlugin {
 		email.setAuthentication(SystemConfigs.getConfig("smtp.user"), SystemConfigs.getConfig("smtp.password"));
 		email.setFrom("noreply@forpdi.org", "ForPDI");
 		email.setHostName(SystemConfigs.getConfig("smtp.host"));
-		email.setSmtpPort(SystemConfigs.getConfig("smtp.port"));
+		email.setSmtpPort(Integer.parseInt(SystemConfigs.getConfig("smtp.port")));
 		email.setSSLOnConnect(false);
 		email.addTo(toEmail, toName);
 		email.setSubject(subject);
@@ -53,7 +53,7 @@ public class EmailUtilsPlugin {
 		email.setAuthentication(SystemConfigs.getConfig("smtp.user"), SystemConfigs.getConfig("smtp.password"));
 		email.setFrom("noreply@forpdi.org", "ForPDI");
 		email.setHostName(SystemConfigs.getConfig("smtp.host"));
-		email.setSmtpPort(SystemConfigs.getConfig("smtp.port"));
+		email.setSmtpPort(Integer.parseInt(SystemConfigs.getConfig("smtp.port")));
 		email.setSSLOnConnect(false);
 		email.addTo(toEmail, toName);
 		email.setSubject(subject);
