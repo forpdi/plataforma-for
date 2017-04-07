@@ -89,6 +89,51 @@ public class UserController extends AbstractController {
 			this.fail("E-mail do usuário já foi cadastrado!");
 		}
 	}
+	
+	/**
+	 * Cadastra um usuário sem enviar convite
+	 * 
+	 * @param name
+	 *            Nome do usuário.
+	 * @param email
+	 *            Email do usuário.
+	 * @param password
+	 * 			  Senha do usuário.
+	 * @param accessLevel
+	 *            Nível de acesso do usuário.
+	 * @return User Usuário cadastrado
+	 */
+	@Post("/api/user/register")
+	@Consumes
+	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	public void register(@NotEmpty String name, @NotEmpty String email, @NotEmpty String password, Integer accessLevel) {
+		try {
+			User user = this.bs.existsByEmail(email);
+			if (user == null)
+				user = new User();
+			user.setName(name);
+			user.setEmail(email);
+			user.setPassword(CryptManager.passwordHash(password));
+			user.setDeleted(false);
+			user.setActive(true);
+			this.bs.persist(user);
+			
+			CompanyUser companyUser = new CompanyUser();
+			companyUser.setCompany(this.domain.getCompany());
+			companyUser.setUser(user);
+			CompanyUser existent = this.bs.exists(companyUser, CompanyUser.class);
+			if (existent == null) {
+				companyUser.setAccessLevel(accessLevel);
+				this.bs.persist(companyUser);
+			}
+
+			this.success(user);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("E-mail do usuário já foi cadastrado!");
+		}
+	}
 
 	/**
 	 * Atualizar um determinado campo do usuário.

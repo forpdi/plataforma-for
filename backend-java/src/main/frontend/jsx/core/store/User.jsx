@@ -41,13 +41,13 @@ var UserStore = Fluxbone.Store.extend({
 	ACTION_USER_PROFILE: 'user-retrieveUserProfile',
 	ACTION_UPDATE_NOTIFICATION_SETTINGS: 'user-updateNotificationSettings',
 	ACTION_IMPORT_USERS: 'user-importUsers',
+	ACTION_REGISTER: 'user-registerUser',
 	dispatchAcceptRegex: /^user-[a-zA-Z0-9]+$/,
 
 	url: URL,
 	model: UserModel,
 
 	removeFromCompany(id) {
-
 		var me = this;
 		$.ajax({
 			method: "DELETE",
@@ -150,7 +150,6 @@ var UserStore = Fluxbone.Store.extend({
 				me.trigger("editUser",opts);
 			}
 		});
-
 	},
 
 	updatePicture(data){	
@@ -308,6 +307,24 @@ var UserStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	registerUser(data) {
+		var me = this;
+		$.ajax({
+			method: "POST",
+			url: me.url+"/register",
+			dataType: 'json',
+			contentType: 'json',
+			data: JSON.stringify(data),
+			success(model) {
+				me.trigger("user-registred", model);
+			},
+			error: (model,response,opts) => {
+				me.handleRequestErrors([], response);
+			}
+		});
+	},
+
 });
 
 export default new UserStore();

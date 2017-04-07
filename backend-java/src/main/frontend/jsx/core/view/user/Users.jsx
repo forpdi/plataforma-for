@@ -30,9 +30,11 @@ export default React.createClass({
 		return {
 			loading: true,
 			loadingSend: false,
+			loadingCreate: false,
 			error: null,
 			hideUser:false,
-			hideNewUser:false,
+			hideNewUser:true,
+			hideCreateUser: true,
 			sortIconStatus:"",
 			accessLevelSelect: null,
 			models:null,
@@ -83,7 +85,7 @@ export default React.createClass({
 		UserStore.on("remove", (data) => {
 			if(data.data){
 				this.context.toastr.addAlertSuccess("Usuário removido com sucesso.");
-				me.getUsers(1,5);
+				me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 				//me.refs["pagination"].reload();
 			}else{
 				this.context.toastr.addAlertError("Impossível excluir esse usuário pois ele é responsável por algum nível do plano de metas.");
@@ -98,20 +100,20 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success("Usuário bloqueado com sucesso.");
 			this.context.toastr.addAlertSuccess("Usuário bloqueado com sucesso.");
-			me.getUsers(1,5);
+			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
 		UserStore.on("unblock", () => {
 			//Toastr.remove();
 			//Toastr.success("Usuário desbloqueado com sucesso.");
 			this.context.toastr.addAlertSuccess("Usuário desbloqueado com sucesso.");
-			me.getUsers(1,5);
+			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
 		UserStore.on("resend-invitation", () => {
 			//Toastr.remove();
 			//Toastr.success("Convite reenviado com sucesso.");
-			me.getUsers(1,5);
+			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			this.context.toastr.addAlertSuccess("Convite reenviado com sucesso.");
 		}, me);
 		UserStore.on("sync", (model) => {
@@ -125,10 +127,22 @@ export default React.createClass({
 			this.refs.nameUser.value = "";
 			this.refs.emailUser.value = "";
 			this.refs.selectAccessLevels.value = -1;
-			me.getUsers(1,5);
+			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//console.log(me.refs["pagination"])
 			//me.refs["pagination"].loadPage(1, null, 10);
 
+		}, me);
+		UserStore.on("user-registred", (model) => {
+			this.setState({
+				loadingCreate: false
+			});
+			this.context.toastr.addAlertSuccess("Usuário cadastrado com sucesso: " +model.data.email);
+
+			this.refs.newNameUser.value = "";
+			this.refs.newEmailUser.value = "";
+			this.refs.newPasswordUser.value = "";
+			this.refs.newSelectAccessLevels.value = -1;
+			this.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 		}, me);
 		UserStore.on("fail", msg =>{
 			UserStore.dispatch({
@@ -137,10 +151,9 @@ export default React.createClass({
 		},me)
 		UserStore.on("users-imported", (data) =>{
 			this.context.toastr.addAlertSuccess("Usuários importados com sucesso.");
-			me.getUsers(1,5);
+			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		},me)
-
 
 	},
 	componentWillUnmount() {
@@ -201,7 +214,7 @@ export default React.createClass({
 			action: UserStore.ACTION_RESEND_INVITATION,
 			data: id
 		});
-		this.context.toastr.addAlertSuccess("O convite foi reenviado ao usuário")
+		this.context.toastr.addAlertSuccess("O convite foi reenviado ao usuário");
 	},
 
 	hideFieldsUser() {
@@ -215,12 +228,16 @@ export default React.createClass({
       		hideNewUser: !this.state.hideNewUser
    	 	})
   	},
+
+  	hideFieldsCreateUser() {
+    	this.setState({
+      		hideCreateUser: !this.state.hideCreateUser
+   	 	})
+  	},
 	
-	userExists() {
-		
-		
+	userExists(email) {
 		for (var aux in this.state.models) {
-			if(this.state.models[aux].email.localeCompare(this.refs.emailUser.value.trim()) == 0) {
+			if(this.state.models[aux].email.localeCompare(email) == 0) {
 				return true;
 			}
 		}
@@ -248,8 +265,7 @@ export default React.createClass({
 			})
 		}
 
-		if (!me.userExists()) { 
-
+		if (!me.userExists(this.refs.emailUser.value.trim())) { 
 			UserStore.dispatch({
 				action: UserStore.ACTION_SIGNUP,
 				data: {
@@ -262,6 +278,43 @@ export default React.createClass({
 			this.context.toastr.addAlertError("O convite para este email já foi enviado, utilize a opção de reenviar na tabela Usuários do Sistema");
 			this.setState({
 				loadingSend: false
+			});
+		}
+	},
+
+	onSubmitCreateUser() {
+		var me = this;
+		var errorField = false;
+
+		var errorField = Validate.validationCreateUser(this.refs);
+
+		if (errorField){
+			this.context.toastr.addAlertError("É necessário preencher todos os campos do formulário");
+			return;
+		} else {
+			this.setState({
+				loadingCreate: true
+			});
+
+			this.setState({
+				newAccessLevelSelect: this.refs.newSelectAccessLevels.value
+			})
+		}
+
+		if (!me.userExists(this.refs.newEmailUser.value.trim())) { 
+			UserStore.dispatch({
+				action: UserStore.ACTION_REGISTER,
+				data: {
+					name:this.refs.newNameUser.value.trim(),
+					email:this.refs.newEmailUser.value.trim(),
+					password:this.refs.newPasswordUser.value.trim(),
+					accessLevel:parseInt(this.refs.newSelectAccessLevels.value)
+				}
+			});
+		} else {
+			this.context.toastr.addAlertError("Já foi cadastrado um usuário com este e-mail.");
+			this.setState({
+				loadingCreate: false
 			});
 		}
 	},
@@ -313,9 +366,24 @@ export default React.createClass({
 				pageSize: pageSize
 			}
 		});
-
-
    },
+
+    copyInviteToken(token) {
+    	var url = window.location.href.split("#")[0]+"#/register/"+token;
+    	var textArea = document.createElement("textarea");
+		textArea.value = url;
+  		document.body.appendChild(textArea);
+  		textArea.select();
+  		try {
+    		var successful = document.execCommand('copy');
+    		document.body.removeChild(textArea);
+    		if (successful)
+    			this.context.toastr.addAlertSuccess("A url foi copiada para a área de transferência.")
+  		} catch (err) {
+  			document.body.removeChild(textArea);
+    		window.prompt("Copie a url para a área de transferência:", url);
+  		}
+    },
 
 	renderSameUserOptions() {
 		return (
@@ -332,12 +400,15 @@ export default React.createClass({
 	renderAnotherUser(model, cpf) {
 		return (
 			<ul className="dropdown-menu">
-				{cpf.isEmpty() ? <li>
+				{!model.active ? <li>
+					<a onClick={this.copyInviteToken.bind(this, model.inviteToken)}>
+						Copiar link para cadastro</a>
+				</li> : ""}
+				{!model.active ? <li>
 					<a onClick={this.resendInvitation.bind(this, model.id)}>
-						Reenviar convite
-					</a>
-				</li>:""}
-				{!cpf.isEmpty() && (this.context.roles.MANAGER  || _.contains(this.context.permissions, 
+						Reenviar convite</a>
+				</li> : ""}
+				{model.active && (this.context.roles.MANAGER  || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission"))? 
 				<li>
@@ -667,14 +738,13 @@ export default React.createClass({
 				{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
-	        			<div className="panel-heading displayFlex">
-	        				<b className="budget-graphic-title"> Novo usuário </b>
+	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsNewUser}>
+	        				<b className="budget-graphic-title"> Convidar usuário </b>
 	        				<div className="performance-strategic-btns floatRight">
 	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> Importar usuários </button>
-	                			<span  className={(this.state.hideNewUser)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFieldsNewUser}/>
+	                			<span  className={(this.state.hideNewUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsNewUser}/>
 	              			</div>
 	        			</div>
-
 	        			{!this.state.hideNewUser ? 
 	        				this.state.loadingSend ?
 	        					<LoadingGauge />
@@ -726,23 +796,96 @@ export default React.createClass({
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail
+													Obs: Utilize preferencialmente e-mail institucional ou gmail. Pode acontecer de alguns e-mail irem para caixa de spam. {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
 												</div>
 											</td>
 										</tr>
 		        					</tbody>
 	        				</table>
-
 	        			:""}
-	        		</div>
-					 : "")}
+    				</div>
+        		: "")}
+
+        		{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
+					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
+					<div className="panel panel-default"> 
+	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsCreateUser}>
+	        				<b className="budget-graphic-title"> Cadastrar usuário </b>
+	        				<div className="performance-strategic-btns floatRight">
+	                			<span  className={(this.state.hideCreateUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsCreateUser}/>
+	              			</div>
+	        			</div>
+	        			{!this.state.hideCreateUser ? 
+	        				this.state.loadingCreate ?
+	        					<LoadingGauge />
+	        				:
+		        				<table className="table fpdi-table">
+		        					<thead className="hidden-xs">	
+		        						<tr>
+		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{"Senha"} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">Tipo de Conta <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2"> </th>
+		        						</tr>      				
+		        					</thead>
+		        					<tbody>
+		        						<tr>
+		        							<td className="fdpi-table-cell"> 
+		        								<input maxLength="255" className="budget-field-table" ref='newNameUser' type='text' defaultValue=""/>
+		        								<div ref="formAlertNewNameUser" className="formAlertError"></div>
+	        								</td>
+		        							<td className="fdpi-table-cell">
+		        								<input maxLength="255" className="budget-field-table" ref='newEmailUser' type='text' defaultValue=""/>
+		        								<div ref="formAlertNewEmail" className="formAlertError"></div>
+	        								</td>
+	        								<td className="fdpi-table-cell"> 
+		        								<input maxLength="255" className="budget-field-table" ref='newPasswordUser' type='password' defaultValue=""/>
+		        								<div ref="formAlertNewPasswordUser" className="formAlertError"></div>
+	        								</td>
+		        							<td className="fdpi-table-cell"> 
+		        								<select  className="form-control user-select-box" ref="newSelectAccessLevels" defaultValue={-1}>
+													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
+													{this.context.roles.SYSADMIN ?
+														AccessLevels.list.map((attr, idy) =>{
+			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
+			                    								data-placement="right" title={attr.name}>
+			                    									{attr.name}</option>);
+														})
+													:
+														AccessLevels.listNoSysAdm.map((attr, idy) =>{
+			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
+			                    								data-placement="right" title={attr.name}>
+			                    									{attr.name}</option>);
+														})
+													}
+												}
+												</select>
+												<div ref="formAlertNewTypeAccont" className="formAlertError"></div>
+											</td>
+											<td className="fdpi-table-cell">
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>Cadastrar</button>
+											</td>
+										</tr>
+										<tr>
+											<td colSpan="5" className="fdpi-table-cell">
+												<div className="notUseEmail">
+													Obs: Ao cadastrar um usuário diretamente no sistema, ele não receberá confirmação por e-mail.
+												</div>
+											</td>
+										</tr>  
+		        					</tbody>
+	        					</table>
+	        				:""}
+		        		</div>
+					: "")}
 				
 
 			<div className="panel panel-default">     
-        		<div className="panel-heading">
+        		<div className="panel-heading cursorPointer" onClick={this.hideFieldsUser}>
         			<b className="budget-graphic-title"> Usuários do Sistema </b>
         			<div className="performance-strategic-btns floatRight">
-                		<span  className={(this.state.hideUser)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFieldsUser}/>
+                		<span  className={(this.state.hideUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsUser}/>
               		</div>
         		</div>
         		{!this.state.hideUser ?
@@ -765,7 +908,7 @@ export default React.createClass({
 									sameUser = (cpf.isEmpty() || UserSession.attributes.user == null ? false : cpf == UserSession.attributes.user.cpf);
 
 									return (<tr key={"user-"+idx} className={model.blocked ? "danger":""}>
-											<td  className={"col-sm-3"+(cpf.isEmpty() ? " warning":"")}>											
+											<td  className={"col-sm-3"+(!model.active ? " warning":"")}>											
 												<span className="dropdown">
 													<a
 														className="dropdown-toggle"
@@ -782,15 +925,17 @@ export default React.createClass({
 												</span>
 												{model.name}
 											</td>
-											<td className={"col-sm-3"+(cpf.isEmpty() ? " warning":"")}> <p id = "userNCadastrado"> {model.email} </p> </td> 
-											<td className={"col-sm-3"+(cpf.isEmpty() ? " warning":"")}>
-												<p id = "userNCadastrado"> {cpf.isEmpty() ? ".." :cpf.s} </p>
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p id = "userNCadastrado"> {model.email} </p> </td> 
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
+												<p id = "userNCadastrado"> {!model.active ? "" :cpf.s} </p>
 											</td>
-											<td className={"col-sm-3"+(cpf.isEmpty() ? " warning":"")}>
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
 												<p id = "userNCadastrado">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
-											<td className={"col-sm-3"+(cpf.isEmpty() ? " warning":"")}>
-												{cpf.isEmpty() ? (model.blocked ? "Bloqueado" : <p id = "userNCadastrado"> <small>O usuário ainda não concluiu o cadastro.</small> </p>) : (model.blocked ? "Bloqueado" : "Regular")}
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
+												{!model.active ? (model.blocked ? "Bloqueado" :
+													<p id = "userNCadastrado"><small>O usuário ainda não concluiu o cadastro.</small></p>)
+												: (model.blocked ? "Bloqueado" : "Regular")}
 											</td>
 										</tr>);
 									})}

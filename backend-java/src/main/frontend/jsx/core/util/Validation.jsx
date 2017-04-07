@@ -867,6 +867,51 @@ var Validate = {
 		return errorField;
 	},
 
+	validationCreateUser: function(refs) {
+		var errorField = false;
+		if (refs.newNameUser.value.trim() == "") {
+			refs.formAlertNewNameUser.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.newNameUser.className += " borderError";
+			errorField = true;
+		} else {
+			refs.formAlertNewNameUser.innerHTML = "";
+			refs.newNameUser.className = "budget-field-table";
+		}
+		if (refs.newEmailUser.value.trim() == "") {
+			refs.formAlertNewEmail.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.newEmailUser.className += " borderError";
+			errorField = true;
+		} else if (!this.emailIsValid(refs.newEmailUser.value.trim())) {
+			refs.formAlertNewEmail.innerHTML = "Email inválido";
+			refs.newEmailUser.className += " borderError";
+			errorField = true;
+		} else {
+			refs.formAlertNewEmail.innerHTML  = "";
+			refs.newEmailUser.className = "budget-field-table";
+		}
+		if (refs.newPasswordUser.value.trim() == "") {
+			refs.formAlertNewPasswordUser.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.newPasswordUser.className += " borderError";
+			errorField = true;
+		} else if (refs.newPasswordUser.value.trim().length < 5) {
+			refs.formAlertNewPasswordUser.innerHTML = "A senha deve conter no mínimo 5 caracteres!";
+			refs.newPasswordUser.className += " borderError";
+			errorField = true;
+		} else {
+			refs.formAlertNewPasswordUser.innerHTML  = "";
+			refs.newPasswordUser.className = "budget-field-table";
+		}
+		if(refs.newSelectAccessLevels.value.trim() == "-1") {
+			refs.formAlertNewTypeAccont.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.newSelectAccessLevels.className += " borderError";
+			errorField = true;
+		} else {
+			refs.formAlertNewTypeAccont.innerHTML = "";
+			refs.newSelectAccessLevels.className = "form-control user-select-box";
+		}
+		return errorField;
+	},
+
 	validationNewFieldDocument: function(newfield) {
 		var name, type;
 		name =  S(newfield['newfield-name'].value);
