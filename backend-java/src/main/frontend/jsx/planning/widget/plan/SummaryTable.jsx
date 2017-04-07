@@ -178,7 +178,7 @@ export default React.createClass({
 					color = "red";
 				else if (achieved.value() < 100.0)
 					color = "yellow";
-				else if (achieved.value() < maximum)
+				else if (achieved.value() < maximum || maximum == 100.0)
 					color = "green";
 				else
 					color = "blue";
@@ -216,7 +216,7 @@ export default React.createClass({
 					color = "red";
 				else if (achieved.value() < 100.0)
 					color = "yellow";
-				else if (achieved.value() < rowSpec.maximum)
+				else if (achieved.value() < rowSpec.maximum || rowSpec.maximum == 100.0)
 					color = "green";
 				else
 					color = "blue";

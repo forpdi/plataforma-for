@@ -26,14 +26,13 @@ var CompanyStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'company-update',
 	ACTION_FIND_THEMES: 'company-findThemes',
 	ACTION_REMOVE_COMPANY:'company-removeCompany',
+	ACTION_LIST_COMPANIES: 'company-listCompanies',
 	dispatchAcceptRegex: /^company-[a-zA-Z0-9]+$/,
 	
-
 	url: URL,
 	model: CompanyModel,
 
 	removeCompany(id) {
-
 		var me = this;
 		$.ajax({
 			method: "DELETE",
@@ -65,6 +64,22 @@ var CompanyStore = Fluxbone.Store.extend({
 				me.trigger("themes", me._themes);
 			});
 		}
+	},
+
+	listCompanies(data) {
+		var me = this;
+		$.ajax({
+			url: me.url,
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("companies-listed", model, data);
+			},
+			error: (model,response,opts) => {
+				me.trigger("remove",model);
+			}
+		});
 	}
 
 });

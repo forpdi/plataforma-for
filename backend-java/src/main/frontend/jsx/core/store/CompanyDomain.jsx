@@ -33,8 +33,8 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 	ACTION_RETRIEVE: 'companydomain-retrieve',
 	ACTION_UPDATE: 'companydomain-update',
 	ACTION_SAVE: 'companydomain-save',
+	ACTION_LIST_DOMAINS: 'companydomain-listDomains',
 	dispatchAcceptRegex: /^companydomain-[a-zA-Z0-9]+$/,
-	
 
 	url: URL,
 	model: CompanyDomainModel,
@@ -59,6 +59,22 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	listDomains(data) {
+		var me = this;
+		$.ajax({
+			url: me.url,
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("domains-listed", model, data);
+			},
+			error: (model,response,opts) => {
+				me.trigger("remove",model);
+			}
+		});
+	}
 
 });
 

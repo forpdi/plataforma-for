@@ -79,8 +79,9 @@ public class CompanyBS extends HibernateBusiness {
 	 */
 	public PaginatedList<Company> list(int page) {
 		PaginatedList<Company> results = new PaginatedList<Company>();
-		Criteria criteria = this.dao.newCriteria(Company.class).setFirstResult(page * PAGESIZE).setMaxResults(PAGESIZE)
-				.add(Restrictions.eq("deleted", false)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(Company.class).add(Restrictions.eq("deleted", false)).addOrder(Order.asc("name"));
+		if (page > 0)
+			criteria.setFirstResult((page-1) * PAGESIZE).setMaxResults(PAGESIZE);
 		Criteria counting = this.dao.newCriteria(Company.class).setProjection(Projections.countDistinct("id"))
 				.add(Restrictions.eq("deleted", false));
 		results.setList(this.dao.findByCriteria(criteria, Company.class));
@@ -97,9 +98,11 @@ public class CompanyBS extends HibernateBusiness {
 	 */
 	public PaginatedList<CompanyDomain> listDomains(int page) {
 		PaginatedList<CompanyDomain> results = new PaginatedList<CompanyDomain>();
-		Criteria criteria = this.dao.newCriteria(CompanyDomain.class).setFirstResult(page * PAGESIZE)
-				.setMaxResults(PAGESIZE).createAlias("company", "company", JoinType.INNER_JOIN)
+		Criteria criteria = this.dao.newCriteria(CompanyDomain.class)
+				.createAlias("company", "company", JoinType.INNER_JOIN)
 				.addOrder(Order.asc("company.name")).addOrder(Order.asc("host"));
+		if (page > 0)
+			criteria.setFirstResult((page-1) * PAGESIZE).setMaxResults(PAGESIZE);
 		Criteria counting = this.dao.newCriteria(CompanyDomain.class).setProjection(Projections.countDistinct("id"));
 		results.setList(this.dao.findByCriteria(criteria, CompanyDomain.class));
 		results.setTotal((Long) counting.uniqueResult());

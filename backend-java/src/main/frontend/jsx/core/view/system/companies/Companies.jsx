@@ -19,12 +19,13 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			loading: true,
-			error: null
+			error: null,
+			page: 1,
+			total: null
 		};
 	},
 	componentDidMount() {
 		var me = this;
-
 
 		CompanyStore.on('find', store => {
 			me.setState({
@@ -53,11 +54,43 @@ export default React.createClass({
 			
 		}, me);
 
+		CompanyStore.on('companies-listed', (store, data) => {
+			var list;
+			if (data.page == 1) {
+				list = store.data;
+			} else {
+				list = this.state.models;
+				for (var i=0; i<store.data.length; i++) {
+					list.push(store.data[i]);
+				}
+			}
+			if (me.isMounted()) {
+				me.setState({
+					loading: false,
+					models: list,
+					page: this.state.page+1,
+					total: store.total
+				});
+			}
+			me.forceUpdate();
+		}, me);
+
+		CompanyStore.on('sync', model => {
+			me.findCompanies(1);
+			if (me.isMounted()) {
+				me.setState({
+					page: 1
+				})
+			}
+		}, me);
+
 		CompanyStore.on("fail", (msg) => {
 			me.setState({
 				error: msg
 			});
 		}, me);
+
+		me.findCompanies(1);
 	},
 	componentWillUnmount() {
 		CompanyStore.off(null, null, this);
@@ -74,7 +107,6 @@ export default React.createClass({
 	},
 	
 	deleteRecord(model, event) {
-
 		var msg = "Você tem certeza que deseja excluir essa instituição?";
 		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
@@ -84,6 +116,15 @@ export default React.createClass({
 				data: model.id
 			});
 		},msg,this.cancelBlockUnblock);
+	},
+
+	findCompanies(page) {
+		CompanyStore.dispatch({
+   			action: CompanyStore.ACTION_LIST_COMPANIES,
+			data: {
+				page: page
+			}
+ 		});
 	},
 
 	renderRecords() {
@@ -96,20 +137,22 @@ export default React.createClass({
 					<div className="fpdi-card fpdi-card-full fpdi-card-company">
 						<div className="row">
 							<div className="fpdi-card-title col-md-8">
-								<span title = {model.get("name")} className = "cursorPointer"> {(model.get("name").length>20)?(string(model.get("name")).trim().substr(0,20).concat("...").toString()):(model.get("name"))} </span>
+								<span title = {model.name} className = "cursorPointer"> {(model.name.length>20)?(string(model.name).trim().substr(0,20).concat("...").toString()):(model.name)} </span>
 							</div>
 							<div className="text-right col-md-4">
-								<Link to={"/system/companies/edit/"+model.get("id")} className="mdi mdi-pencil-box" title="Editar" />
+								<Link to={"/system/companies/edit/"+model.id} className="mdi mdi-pencil-box" title="Editar" />
 								<a onClick={this.deleteRecord.bind(this, model)} className="mdi mdi-delete" title="Excluir" />
 							</div>
 						</div>
 						<div className="fpdi-company-logo" style={{backgroundImage: 'url('+
-						((model.get("logo")!='')?(model.get("logo")):(Logo))+")"}} />
-						
-						
+						((model.logo!='')?(model.logo):(Logo))+")"}} />
 					</div>
 				</div>);
 			})}
+			<br /><br /><br />
+			{this.state.total && this.state.models && this.state.models.length < this.state.total ?
+				<div className="showMore"><a onClick={this.findCompanies.bind(this, this.state.page)}>Ver mais</a></div>
+			: ""}
 		</div>);
 	},
 
@@ -133,9 +176,8 @@ export default React.createClass({
 				</div>)
 			:""}
 
-			{this.state.loading ? <LoadingGauge />:this.renderRecords()}
-
-			<Pagination store={CompanyStore} />
+			{this.state.loading ? <LoadingGauge /> : this.renderRecords()}
+			{/*<Pagination store={CompanyStore} />*/}
 		</div>);
 	  }
 	});
