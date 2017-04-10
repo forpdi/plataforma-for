@@ -94,7 +94,7 @@ export default React.createClass({
                     color = "#E74C3C";
                 else if (value < 100.0)
                     color = "#FFCC33";
-                else if (value < item.levelMaximum)
+                else if (value < item.levelMaximum || item.levelMaximum == 100.0)
                     color = "#51D466";
                 else
                     color = "#4EB4FE";
@@ -177,7 +177,7 @@ export default React.createClass({
                         color = "#E74C3C";
                     else if (value < 100.0)
                         color = "#FFCC33";
-                    else if (value < item.levelMaximum)
+                    else if (value < item.levelMaximum || item.levelMaximum == 100.0)
                         color = "#51D466";
                     else
                         color = "#4EB4FE";

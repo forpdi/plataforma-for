@@ -1418,8 +1418,8 @@ public class StructureBS extends HibernateBusiness {
 		counting.setProjection(Projections.countDistinct("levelInstance.id"));
 
 		if (plan != null) {
-			criteria.add(Restrictions.eq("plan", plan));
-			counting.add(Restrictions.eq("plan", plan));
+			criteria.add(Restrictions.eq("levelInstance.plan", plan));
+			counting.add(Restrictions.eq("levelInstance.plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 			counting.add(Restrictions.eq("plan.parent", macro));

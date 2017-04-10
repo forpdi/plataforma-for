@@ -174,7 +174,7 @@ export default React.createClass({
                             vet[2] = "#E74C3C";
                         else if (ind.levelValue < 100.0)
                             vet[2] = "#FFCC33";
-                        else if (ind.levelValue < ind.levelMaximum)
+                        else if (ind.levelValue < ind.levelMaximum || ind.levelMaximum == 100.0)
                             vet[2] = "#51D466";
                         else
                             vet[2] = "#4EB4FE";
@@ -232,7 +232,7 @@ export default React.createClass({
                             vet[2] = "#E74C3C";
                         else if (ind.aggregate.levelValue < 100.0)
                             vet[2] = "#FFCC33";
-                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
+                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum || ind.aggregate.levelMaximum == 100.0)
                             vet[2] = "#51D466";
                         else
                             vet[2] = "#4EB4FE"; 
