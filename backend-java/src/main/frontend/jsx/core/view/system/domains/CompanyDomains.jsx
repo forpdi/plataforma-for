@@ -36,14 +36,8 @@ export default React.createClass({
 			}
 		}, me);
 
-		CompanyDomainStore.on('destroy', store => {
-			CompanyDomainStore.dispatch({
-				action: CompanyDomainStore.ACTION_FIND,
-				data: null
-			});
-
-			//Toastr.remove();
-			//Toastr.success(Messages.get("notification.domain.delete"));
+		CompanyDomainStore.on('remove', store => {
+			me.findDomains(1);
 			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.delete"));
 		}, me);
 
@@ -104,13 +98,13 @@ export default React.createClass({
 	},
 
 	deleteRecord(model, event) {
-		var msg = "Você tem certeza que deseja excluir " + model.get("host") + "?";
+		var msg = "Você tem certeza que deseja excluir " + model.host + "?";
 		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			CompanyDomainStore.dispatch({
-				action: CompanyDomainStore.ACTION_DESTROY,
-				data: model
+				action: CompanyDomainStore.ACTION_REMOVE_DOMAIN,
+				data: model.id
 			});
 		},msg,this.cancelBlockUnblock);
 	},
@@ -142,7 +136,7 @@ export default React.createClass({
 							</div>
 						</div>
 						<div className="fpdi-company-logo" style={{backgroundImage: 'url('+
-							((model.company.logo!='')?(model.company.logo):(Logo))
+							((model.company && model.company.logo!='')?(model.company.logo):(Logo))
 							+")"}} />
 					</div>
 				</div>);

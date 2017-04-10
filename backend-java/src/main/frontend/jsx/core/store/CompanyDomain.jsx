@@ -34,11 +34,27 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'companydomain-update',
 	ACTION_SAVE: 'companydomain-save',
 	ACTION_LIST_DOMAINS: 'companydomain-listDomains',
+	ACTION_REMOVE_DOMAIN: 'companydomain-removeDomain',
 	dispatchAcceptRegex: /^companydomain-[a-zA-Z0-9]+$/,
 
 	url: URL,
 	model: CompanyDomainModel,
 
+	removeDomain(id) {
+		var me = this;
+		console.log(id)
+		$.ajax({
+			method: "DELETE",
+			url: me.url+"/"+id,
+			dataType: 'json',
+			success(data) {
+				me.trigger("remove", data);
+			},
+			error: (model,response,opts) => {
+				me.trigger("remove",model);
+			}
+		});
+	},
 
 	save(data) {
 		var me = this;
@@ -74,7 +90,7 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 				me.trigger("remove",model);
 			}
 		});
-	}
+	},
 
 });
 
