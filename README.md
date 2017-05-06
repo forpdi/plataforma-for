@@ -9,7 +9,7 @@ Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 - Hibernate/JPA como framework de persistência
 - VRaptor 4 como framework MVC
 - Java EE 7 com JDK 1.8, CDI 1.2 (Weld 2) e JPA 2
-- Servidor de aplicação WildFly 9.0.2
+- Servidor de aplicação: WildFly 9.0.2
 - Serviços baseados em REST
 - Frontend web desacoplado
   - React.js
@@ -54,7 +54,33 @@ npm run devwatch
 
 #### Construindo o .war para publicação
 
+
 ### Runtime
+Para o runtime do forpdi você vai precisar:
+
+- Java 1.8 (JDK)
+- Servidor de aplicação Java EE: Wildfly 9.0.2
+- Banco de Dados MySQL 5.7+
+
+Primeiramente, baixe e instale o JDK 1.8 para seu sistema operacional configurando corretamente a variável JAVA_HOME no seu servidor.
+Em seguida faça o download do [Wildfly 9.0.2](http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip) e descompacte-o em alguma pasta de seu servidor.
+Neste passo a passo, será assumido que o Wildfly foi descompactado na pasta `/opt/wildfly`.
+
+O processo de build do arquivo WAR é cober nas seções anteriores. Isso inclui dados de conexão com o banco de dados que devem ser passados para o sistema no momento do build. Então daqui por diante será assumido que o banco de dados com codificação de caracteres UTF-8 já foi criado.
+Nessa etapa a única coisa que precisa ser feita é a publicação do arquivo WAR no Wildfly. Existem várias maneiras de fazer isso e o Wildfly possui várias configurações de execução, caso você queira otimizar essas configurações consulta a documentação do Wildfly.
+A maneira mais simples de executar o sistema é rodas o Wildfly em modo standalone e colocar o seu arquivo WAR na pasta de deployments:
+
+```shell
+# Copie o arquivo war após o build
+cp {caminho_da_pasta_backend-java}/target/forpdi.war /opt/wildfly/standalone/deployments/
+# Execute o Wildfly em modo standalone como root
+cd /opt/wildfly
+/opt/wildfly/bin/standalone.sh &
+# Você precisa sair do terminal com o comando exit para não encerrar o processo:
+exit
+```
+
+Por padrão o sistema estará disponível em: `http://seuservidor.com/forpdi/`
 
 #### Implantando no Wildfly
 
