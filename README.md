@@ -52,8 +52,76 @@ npm run deploy
 npm run devwatch
 ```
 
-#### Construindo o .war para publicação
+Após realizar o build do frontend você já pode construir o arquivo WAR para posterior publicação no servidor de produção.
 
+#### Construindo o .war para publicação
+O ForPDI utiliza o Apache Maven para realizar o processo de packaging da aplicação em um arquivo `.war` que pode ser implantado em um servidor de aplicação que suporta Java.
+Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do do [Maven 3.x](http://ftp.unicamp.br/pub/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip).
+Após o download do Maven, descompacte o arquivo em uma pasta. Neste passo a passo será considerado que o Maven foi descompactado na pasta `/opt/maven`.
+Em seguida, confkgure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
+
+Com os procedimentos de instalação prontos, você já pode realizar o build e packaging da aplicação. O arquivo `backend-java/pom.xml` descreve todas as configurações do Maven para o projeto.
+O ForPDI está configurado com alguns *profiles* iniciais, o profile de desenvolvimento (perfil padrão) já vem pronto para uso, com as configurações no arquivo `backend-java/dev.properties`:
+
+```properties
+# dev.properties
+war.frontenddir=development
+backendUrl=http://localhost:8080/forpdi/
+
+db.name=forpdi_db
+db.username=root
+db.password=
+
+mail.smtp.from.name=ForPDI
+mail.smtp.from.email=noreply@forpdi.org
+mail.smtp.url=localhost
+mail.smtp.port=25
+mail.smtp.username=
+mail.smtp.password=
+mail.smtp.ssl=false
+mail.smtp.tls=false
+```
+
+Note que o perfil de desenvolvimento vem configurado com SMTP local (localhost na porta 25) e o usuário do banco de dados é o root sem senha. Caso seu ambiente de desenvolvimento tenha outras configurações você pode trocá-las nesse arquivo.
+Os outros perfis disponíveis são o de teste (`test`), espelho (`mirror`) e produção (`prd`). Os arquivos de propriedades desses ambientes não são sincronizados pelo Git, já que eles contêm informações de senhas e usuários.
+Para realizar o build você terá que copiar o arquivo `dev.properties` para o nome do ambiente cujo qual você quer realizar build (`test.properties`, `mirror.properties` e `prd.properties`).
+Em seguida, edite o arquivo e insira os dados de conexão do banco de dados e SMTP de seu ambiente. Por exemplo, para gerar um arquivo WAR para produção poderíamos fazer da seguinte forma:
+
+```shell
+# Copie o arquivo dev.properties e edite-o
+cd backend-java
+cp dev.properties prd.properties
+vim prd.properties
+```
+```properties
+# prd.properties
+war.frontenddir=production
+backendUrl=http://app.forpdi.org/
+
+db.name=forpdi_prd
+db.username=forpdi
+db.password=SuaSenhaDoBancoDeDados
+
+mail.smtp.from.name=ForPDI
+mail.smtp.from.email=noreply@forpdi.org
+mail.smtp.url=smtp.gmail.com
+mail.smtp.port=587
+mail.smtp.username=seuemail@gmail.com
+mail.smtp.password=SuaSenhaDoEmail
+mail.smtp.ssl=false
+mail.smtp.tls=true
+```
+
+Acima um exemplo de arquivo para produção. A propriedade `war.frontenddir` define qual build do frontend deve ser copiado para a aplicação final, `development` ou `production`. Essa parte do build foi explicado na seção anterior.
+Após configurar o arquivo podemos realizar o packaging do maven para o perfil desejado:
+
+```shell
+# Realize o build e packaging da aplicação
+cd backend-java
+mvn clean package -P prd
+```
+
+Após o packaging, o arquivo WAR estará disponível na pasta `backend-java/target/forpdi.war`. Esse arquivo é sua aplicação completa, pronta para publicação no Wildfly.
 
 ### Runtime
 Para o runtime do forpdi você vai precisar:
@@ -82,9 +150,7 @@ exit
 
 Por padrão o sistema estará disponível em: `http://seuservidor.com/forpdi/`
 
-#### Implantando no Wildfly
-
-#### Configurando o Eclipse para desenvolvimento
+### Configurando o Eclipse para desenvolvimento
 
 ## Licença
 
