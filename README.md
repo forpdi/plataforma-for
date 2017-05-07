@@ -4,6 +4,18 @@ Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgaç
 
 Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 
+**Table of Contents**
+
+- [Stack de tecnologias utilizadas](#stack-de-tecnologias-utilizadas)
+- [Pré-requisitos](#pr%C3%A9-requisitos)
+  - [Build](#build)
+    - [Construindo o front-end](#construindo-o-front-end)
+    - [Construindo o .war para publicação](#construindo-o-war-para-publica%C3%A7%C3%A3o)
+  - [Runtime](#runtime)
+  - [Configurando o Eclipse para desenvolvimento](#configurando-o-eclipse-para-desenvolvimento)
+- [Licença](#licen%C3%A7a)
+
+
 ## Stack de tecnologias utilizadas
 - Banco de dados MySQL 5.7
 - Hibernate/JPA como framework de persistência
