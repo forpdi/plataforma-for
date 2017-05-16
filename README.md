@@ -58,7 +58,7 @@ Após a execução destes 2 comandos, você pode realizar um build para produç�
 
 ```shell
 # Para compilar a versão de produção
-npm run deploy
+npm run build
 
 # Para realizar um watch de desenvolvimento
 npm run devwatch
