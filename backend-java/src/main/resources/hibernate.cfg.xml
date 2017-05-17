@@ -4,14 +4,14 @@
 <hibernate-configuration>
 	<session-factory>
   		<property name="org.hibernate">true</property>
-		
-		<property name="connection.url">jdbc:mysql://localhost/${db.name}?autoReconnect=true&amp;useSSL=false</property>		
+
+		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false</property>
 		<property name="connection.username">${db.username}</property>
 		<property name="connection.password">${db.password}</property>
 		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
 		<property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
-		
+
 		<!-- Configuração Propriedades Hibernate -->
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		<property name="hibernate.show_sql">false</property>
@@ -20,7 +20,7 @@
 		<property name="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</property>
 		<property name="hibernate.c3p0.unreturnedConnectionTimeout">300</property>
 		-->
-		
+
 		<property name="hibernate.current_session_context_class">thread</property>
 		<property name="hibernate.order_updates">true</property>
 		<property name="hibernate.max_fetch_depth">6</property>
@@ -34,7 +34,7 @@
 		<property name="hibernate.c3p0.maxIdleTime">150</property>
 		<property name="hibernate.c3p0.checkoutTimeout">25000</property>
 		<property name="hibernate.c3p0.maxStatements">10000</property>
-		
+
 		<!-- Cache configurations -->
 		<property name="hibernate.cache.use_second_level_cache">true</property>
 		<property name="hibernate.cache.use_query_cache">false</property>
@@ -81,6 +81,6 @@
   		<mapping class="org.forpdi.planning.document.DocumentAttribute"/>
   		<mapping class="org.forpdi.planning.document.DocumentSection"/>
   		<mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
-  		
+
 	</session-factory>
 </hibernate-configuration>

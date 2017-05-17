@@ -80,6 +80,8 @@ O ForPDI está configurado com alguns *profiles* iniciais, o profile de desenvol
 war.frontenddir=development
 backendUrl=http://localhost:8080/forpdi/
 
+db.host=localhost
+db.port=3306
 db.name=forpdi_db
 db.username=root
 db.password=
@@ -110,6 +112,8 @@ vim prd.properties
 war.frontenddir=production
 backendUrl=http://app.forpdi.org/
 
+db.host=localhost
+db.port=3306
 db.name=forpdi_prd
 db.username=forpdi
 db.password=SuaSenhaDoBancoDeDados
@@ -146,7 +150,16 @@ Primeiramente, baixe e instale o JDK 1.8 para seu sistema operacional configuran
 Em seguida faça o download do [Wildfly 9.0.2](http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip) e descompacte-o em alguma pasta de seu servidor.
 Neste passo a passo, será assumido que o Wildfly foi descompactado na pasta `/opt/wildfly`.
 
-O processo de build do arquivo WAR é cober nas seções anteriores. Isso inclui dados de conexão com o banco de dados que devem ser passados para o sistema no momento do build. Então daqui por diante será assumido que o banco de dados com codificação de caracteres UTF-8 já foi criado.
+Antes de publicar a aplicação no WIldfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
+Esse banco de dados deve possuir o nome definido no arquivo `prd.properties` na hora do build (propriedade `db.name`). A codificação de caracteres deve ser o *UTF-8*.
+Crie o banco de dados através do comando SQL:
+
+```sql
+/* Exemplo de criação do banco de dados "forpdi_prd" */
+CREATE DATABASE forpdi_prd CHARSET=utf8;
+```
+
+O processo de build do arquivo WAR é coberto nas seções anteriores. Isso inclui dados de conexão com o banco de dados que devem ser passados para o sistema no momento do build.
 Nessa etapa a única coisa que precisa ser feita é a publicação do arquivo WAR no Wildfly. Existem várias maneiras de fazer isso e o Wildfly possui várias configurações de execução, caso você queira otimizar essas configurações consulta a documentação do Wildfly.
 A maneira mais simples de executar o sistema é rodas o Wildfly em modo standalone e colocar o seu arquivo WAR na pasta de deployments:
 
@@ -160,7 +173,13 @@ cd /opt/wildfly
 exit
 ```
 
-Por padrão o sistema estará disponível em: `http://seuservidor.com/forpdi/`
+Por padrão o sistema estará disponível em: `http://seuservidor.com/forpdi/`.
+O primeiro acesso deve ser feito utilizando o usuário administrador de sistema:
+
+```
+E-mail: admin@forpdi.org
+Senha: 12345
+```
 
 ### Configurando o Eclipse para desenvolvimento
 
