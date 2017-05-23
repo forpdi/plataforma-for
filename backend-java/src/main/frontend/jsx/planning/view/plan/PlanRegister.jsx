@@ -36,7 +36,8 @@ export default React.createClass({
 			fields: null,
 			structures: null,
 			structureError:false,
-			vizualization: false
+			vizualization: false,
+			tabPath: this.props.location.pathname
 		};
 	},
 	getFields(showName) {
@@ -127,14 +128,26 @@ export default React.createClass({
 		}, me);
 
 		PlanStore.on("retrieve", (model) => {
-			me.setState({
-				model: model,
-				modelId: model.get("id"),
-				title: model.get("name"),
-				vizualization: true
-			});
-			dateBegin = model.get("begin").split(" ")[0];
-			dateEnd = model.get("end").split(" ")[0];
+			if(!model.attributes.deleted){
+				me.setState({
+					model: model,
+					modelId: model.get("id"),
+					title: model.get("name"),
+					vizualization: true
+				});
+				dateBegin = model.get("begin").split(" ")[0];
+				dateEnd = model.get("end").split(" ")[0];
+			}else{
+				me.setState({
+					model: null,
+					modelId: null,
+					title: null,
+					vizualization: true
+				});
+				me.context.tabPanel.removeTabByPath(me.state.tabPath);
+				me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
+			}
+
 
 			me.updateLoadingState(false);
 		}, me);	
@@ -170,6 +183,13 @@ export default React.createClass({
 				}
 			}
 			me.updateLoadingState(true);
+		}, me);
+
+		PlanStore.on('destroy', store => {
+			me.context.tabPanel.removeTabByPath(me.state.tabPath);		
+			me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
+			me.context.toastr.addAlertSuccess(store.attributes.name + " excluído com sucesso.");
+			//http://localhost:8080/forpdi/#/plan/1/details/overview
 		}, me);
 
 		me.refreshData(me.props, me.context);
@@ -304,6 +324,16 @@ export default React.createClass({
 		});
 	},
 
+	deletePlan() {
+
+		if (this.state.model != null) {
+			PlanStore.dispatch({
+				action: PlanStore.ACTION_DESTROY,
+				data: this.state.model
+			});
+		}		
+	},
+
 	renderArchivePlanMacro() {
 		return (
 			<ul className="dropdown-menu">
@@ -328,6 +358,15 @@ export default React.createClass({
 						onClick={this.changeVizualization}>
 						<span className="mdi mdi-pencil cursorPointer" title="Editar informações"> 
 							<span id="menu-levels"> Editar informações </span>
+						</span>
+					</Link>
+		         </li>
+		         <li>
+					<Link
+						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
+						onClick={this.deletePlan}>
+						<span className="mdi mdi-delete cursorPointer" title="Excluir plano de metas"> 
+							<span id="menu-levels"> Excluir plano de metas </span>
 						</span>
 					</Link>
 		         </li>

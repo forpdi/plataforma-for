@@ -565,6 +565,11 @@ public class PlanController extends AbstractController {
 				return;
 			}
 			existent.setDeleted(true);
+			List<StructureLevelInstance> planStructures = this.sbs.listLevelInstanceByPlan(existent);
+			for(StructureLevelInstance structure : planStructures){
+				structure.setDeleted(true);
+				this.sbs.persist(structure);
+			}
 			this.bs.persist(existent);
 			this.success();
 		} catch (Throwable e) {
