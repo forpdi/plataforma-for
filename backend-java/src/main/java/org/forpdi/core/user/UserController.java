@@ -970,8 +970,10 @@ public class UserController extends AbstractController {
 			if (!sbs.isUserResponsibleForSomeLevel(id, this.domain.getCompany())) {
 				CompanyUser companyUser = this.bs.retrieveCompanyUser(user, this.domain.getCompany());
 				if (companyUser != null) {
-					// companyUser.getUser().setDeleted(true);
-					// companyUser.getUser().setInviteToken(null);
+					companyUser.getUser().setDeleted(true);
+					companyUser.getUser().setInviteToken(null);
+					companyUser.getUser().setCellphone(null);
+					companyUser.getUser().setCpf(null);
 					this.bs.remove(companyUser);
 				}
 				this.success(true);
