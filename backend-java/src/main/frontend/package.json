@@ -4,7 +4,7 @@
   "description": "ForPDI web client.",
   "scripts": {
     "devstart": "webpack-dev-server --compress --progress --port 8081 --inline -w",
-    "devwatch": "NODE_ENV=development webpack --watch --watch-poll --progress --colors -d || (set NODE_ENV=development && webpack --watch --watch-poll --progress --colors -d)",
+    "devwatch": "webpack --watch --watch-poll --progress --colors -d",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --colors --progress --config webpack.production.config.js -p"
   },

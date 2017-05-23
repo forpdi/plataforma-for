@@ -181,6 +181,9 @@ E-mail: admin@forpdi.org
 Senha: 12345
 ```
 
+Para um guia mais detalhado da configuração inicial, acesse [o vídeo de instrução dos primeiros passos no ForPDI](https://youtu.be/4INjIqucYRo),
+que explica as configurações e recursos mínimos para iniciar a utilização do ForPDI.
+
 ### Configurando o Eclipse para desenvolvimento
 
 ## Licença
