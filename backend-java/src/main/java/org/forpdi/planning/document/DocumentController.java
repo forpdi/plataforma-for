@@ -279,7 +279,7 @@ public class DocumentController extends AbstractController {
 
 			this.response.reset();
 			this.response.setHeader("Content-Type", "application/pdf");
-			this.response.setHeader("Content-Disposition", "inline; filename=\".pdf\"");
+			this.response.setHeader("Content-Disposition", "inline; filename=\"exportLevel" + levelId + ".pdf\"");
 			out = this.response.getOutputStream();
 			IOUtils.copy(in, out);
 			// out.flush();

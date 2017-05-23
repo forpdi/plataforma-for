@@ -2410,7 +2410,8 @@ public class DocumentBS extends HibernateBusiness {
 		resourcesPath = resourcesPath.replace("%20", " ");
 		File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
 		InputStream in = new FileInputStream(pdfFile);
-		//PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+		@SuppressWarnings("unused")
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
 
 		// DEFINIÇÕES DE FONTE, MARGENS, ESPAÇAMENTO E CORES
 		Font texto = FontFactory.getFont(FontFactory.TIMES, 12.0f);
@@ -2465,7 +2466,6 @@ public class DocumentBS extends HibernateBusiness {
 			table.addCell(companyCell);
 			table.addCell(fpdiCell);
 			document.add(table);
-			;
 		}
 
 		StructureLevelInstance levelInstance = this.structHelper.retrieveLevelInstance(levelId);
@@ -2486,6 +2486,7 @@ public class DocumentBS extends HibernateBusiness {
 		// PLANO MACRO
 		Paragraph planMacroParagraph = new Paragraph(planMacroName, titulo);
 		document.add(planMacroParagraph);
+		
 
 		// PLANO DE METAS
 		Paragraph planParagraph = new Paragraph(planName, titulo);
