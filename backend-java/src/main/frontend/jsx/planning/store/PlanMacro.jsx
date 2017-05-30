@@ -52,6 +52,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 	ACTION_FIND_UNARCHIVED: 'planmacro-findUnarchived',
 	ACTION_SCHEDULE_RECALCULATION: "planmacro-scheduleRecalculation",
 	ACTION_MAIN_MENU_STATE: "planmacro-mainMenuState",
+	ACTION_DELETE: "planmacro-delete",
 	dispatchAcceptRegex: /^planmacro-[a-zA-Z0-9]+$/,
 
 	url: URL,
@@ -165,6 +166,20 @@ var PlanMacroStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("planmacrounarchived", opts);
+			}
+		});
+	},
+
+	delete(data){		
+		var me = this;
+		$.ajax({
+			url: me.url+"/"+data.id,
+			method: 'DELETE',
+			success(model) {
+				me.trigger("plan-deleted", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("plan-deleted", opts);
 			}
 		});
 	},

@@ -130,8 +130,12 @@ public class PlanController extends AbstractController {
 		try {
 			PlanMacro plan = this.bs.exists(id, PlanMacro.class);
 			if (plan == null) {
-				this.fail("A empresa solicitada não foi encontrada.");
+				this.fail("O plano solicitado não foi encontrado.");
 			} else {
+				if(this.bs.listAllPlans(plan).size() > 0)
+					plan.setHaveSons(true);
+				else
+					plan.setHaveSons(false);
 				this.success(plan);
 			}
 		} catch (Throwable ex) {
@@ -155,6 +159,12 @@ public class PlanController extends AbstractController {
 		try {
 			if (this.domain != null) {
 				PaginatedList<PlanMacro> plans = this.bs.listMacros(this.domain.getCompany(), false, page);
+				for(PlanMacro p : plans.getList()){
+					if(this.bs.listAllPlans(p).size() > 0)
+						p.setHaveSons(true);
+					else
+						p.setHaveSons(false);
+				}
 				this.success(plans);
 			} else {
 				this.fail("Não possui domínio!");
@@ -363,8 +373,13 @@ public class PlanController extends AbstractController {
 		try {
 			Plan plan = this.bs.exists(id, Plan.class);
 			if (plan == null) {
-				this.fail("O subplano solicitado não foi encontrada.");
+				this.fail("O subplano solicitado não foi encontrado.");
 			} else {
+				if(this.sbs.listLevelsInstance(plan, null).getList().size() > 0){
+					plan.setHaveSons(true);
+				}else{
+					plan.setHaveSons(false);
+				}
 				this.success(plan);
 			}
 		} catch (Throwable ex) {
@@ -434,8 +449,14 @@ public class PlanController extends AbstractController {
 				Structure s = p.getStructure();
 				s.setLevels(this.sbs.listStructureLevels(s));
 				p.setStructure(s);
+				if(this.sbs.listLevelsInstance(p, null).getList().size() > 0){
+					p.setHaveSons(true);
+				}else{
+					p.setHaveSons(false);
+				}
 				result.add(p);
 			}
+			
 			plans.setList(result);
 
 			this.success(plans);

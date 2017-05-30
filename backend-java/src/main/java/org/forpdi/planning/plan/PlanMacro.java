@@ -55,6 +55,19 @@ public class PlanMacro extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false)
 	private boolean documented = true;
 	
+	@Transient
+	private boolean haveSons;
+	
+	
+	
+	public boolean isHaveSons() {
+		return haveSons;
+	}
+
+	public void setHaveSons(boolean haveSons) {
+		this.haveSons = haveSons;
+	}
+
 	public boolean isDocumented() {
 		return documented;
 	}

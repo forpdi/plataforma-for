@@ -64,6 +64,11 @@ export default React.createClass({
 		if (!this.state.model) {
 			return <LoadingGauge />;
 		}
+		if(this.state.model.attributes.deleted){
+			return(<div className="fpdi-plan-details">
+					<h1 className="marginLeft30">Esse plano encontra-se indisponível.</h1>
+				</div>);
+		}
 		if(this.state.model.attributes.archived){
 			if(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)){
 				return (

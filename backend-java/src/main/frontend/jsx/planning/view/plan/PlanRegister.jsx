@@ -37,7 +37,8 @@ export default React.createClass({
 			structures: null,
 			structureError:false,
 			vizualization: false,
-			tabPath: this.props.location.pathname
+			tabPath: this.props.location.pathname,
+			undeletable: false
 		};
 	},
 	getFields(showName) {
@@ -120,7 +121,7 @@ export default React.createClass({
 	componentDidMount() {		
 		var me = this;
 
-		PlanStore.on("sync", (model) => {			
+		PlanStore.on("sync", (model) => {		
 			if (me.context.tabPanel) {
 				me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			}
@@ -133,7 +134,8 @@ export default React.createClass({
 					model: model,
 					modelId: model.get("id"),
 					title: model.get("name"),
-					vizualization: true
+					vizualization: true,
+					undeletable: model.attributes.haveSons
 				});
 				dateBegin = model.get("begin").split(" ")[0];
 				dateEnd = model.get("end").split(" ")[0];
@@ -325,13 +327,20 @@ export default React.createClass({
 	},
 
 	deletePlan() {
+		var me = this;
+		if (me.state.model != null) {
+			var msg = "Você tem certeza que deseja excluir esse plano de metas?"
+			Modal.confirmCustom(() => {
+				Modal.hide();
+				PlanStore.dispatch({
+					action: PlanStore.ACTION_DESTROY,
+					data: me.state.model
+				});				
+			},msg,me.refreshCancel);
+		}
 
-		if (this.state.model != null) {
-			PlanStore.dispatch({
-				action: PlanStore.ACTION_DESTROY,
-				data: this.state.model
-			});
-		}		
+
+		
 	},
 
 	renderArchivePlanMacro() {
@@ -361,6 +370,16 @@ export default React.createClass({
 						</span>
 					</Link>
 		         </li>
+		         {this.state.undeletable ? 
+		         <li>
+					<Link
+						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}>
+						<span className="mdi mdi-delete disabledIcon cursorPointer" title={"Não pode ser excluído, pois possui níveis filhos"}> 
+							<span id="menu-levels"> Excluir plano de metas </span>
+						</span>
+					</Link>
+		         </li>
+		         :
 		         <li>
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
@@ -370,6 +389,8 @@ export default React.createClass({
 						</span>
 					</Link>
 		         </li>
+		     	}
+		         
 			</ul>
 		);
 	},

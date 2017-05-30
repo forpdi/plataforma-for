@@ -70,6 +70,17 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private List<PlanDetailed> planDetailedList;
+	
+	@Transient
+	private boolean haveSons;
+
+	public boolean isHaveSons() {
+		return haveSons;
+	}
+
+	public void setHaveSons(boolean haveSons) {
+		this.haveSons = haveSons;
+	}
 
 	public Double getPerformance() {
 		return performance;

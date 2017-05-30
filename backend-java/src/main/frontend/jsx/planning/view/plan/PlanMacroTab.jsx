@@ -25,7 +25,8 @@ export default React.createClass({
 			archived: null,
 			loading: !!this.props.params.id,
 			modelId: this.props.params.id,
-			model: null
+			model: null,
+			undeletable: false
 		};
 	},
 	updateLoadingState(showName) {
@@ -86,10 +87,19 @@ export default React.createClass({
 			if(this.isMounted()){
 				me.setState({
 					model: model,
-					archived: model.attributes.archived
+					archived: model.attributes.archived,
+					undeletable: model.attributes.haveSons
 				});
 			}
 			me.updateLoadingState(false);
+		}, me);
+
+		PlanMacroStore.on('plan-deleted', (response, data) => {
+			me.context.toastr.addAlertSuccess(data.attributes.name + " excluído com sucesso.");
+			me.context.router.push("/home");
+			PlanMacroStore.dispatch({
+                action: PlanMacroStore.ACTION_FIND
+            });
 		}, me);
 
 		if (this.props.params.id) {
@@ -112,6 +122,22 @@ export default React.createClass({
 
 	cancelBlockUnblock () {
 		Modal.hide();
+	},
+
+	deletePlan(event){
+		event && event.preventDefault();
+		var msg = "Você tem certeza que deseja excluir esse plano?"
+		var me = this;
+		if (me.state.model != null) {
+			Modal.confirmCustom(() => {
+				Modal.hide();
+				PlanMacroStore.dispatch({
+					action: PlanMacroStore.ACTION_DELETE,
+					data: me.state.model
+				});				
+			},msg,me.cancelBlockUnblock);
+		}
+		me.forceUpdate();
 	},
 
 	archivePlan(event) {
@@ -287,8 +313,25 @@ export default React.createClass({
 							<span id="menu-levels"> Arquivar plano </span>
 						</span>
 					</a>
-					
 				</li>
+				{this.state.undeletable ? 
+					<li> 
+						<a data-placement="bottom">
+							<span className="mdi mdi-delete disabledIcon mdi-18" title="Não pode ser excluído, pois possui níveis filhos"> 
+								<span id="menu-levels"> Excluir plano </span>
+							</span>
+						</a>
+					</li>
+					:
+					<li> 
+						<a onClick={this.deletePlan} data-placement="bottom">
+							<span className="mdi mdi-delete mdi-18 deleteIcon" title="Excluir plano"> 
+								<span id="menu-levels"> Excluir plano </span>
+							</span>
+						</a>
+					</li>
+				}
+				
 
 			</ul>	
 		);	
