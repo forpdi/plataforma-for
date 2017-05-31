@@ -559,6 +559,7 @@ public class PlanController extends AbstractController {
 					levelInstances.getList().add(levelInstance);
 				}
 			}
+
 			
 			levelInstances.setTotal((long) count);
 			this.success(levelInstances);
@@ -585,14 +586,18 @@ public class PlanController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
-			existent.setDeleted(true);
-			List<StructureLevelInstance> planStructures = this.sbs.listLevelInstanceByPlan(existent);
-			for(StructureLevelInstance structure : planStructures){
-				structure.setDeleted(true);
-				this.sbs.persist(structure);
+			if(this.sbs.listLevelsInstance(existent, null).getList().size()>0){
+				this.fail("Impossível excluir plano de metas com níveis filhos");
+			}else{			
+				existent.setDeleted(true);
+				List<StructureLevelInstance> planStructures = this.sbs.listLevelInstanceByPlan(existent);
+				for(StructureLevelInstance structure : planStructures){
+					structure.setDeleted(true);
+					this.sbs.persist(structure);
+				}
+				this.bs.persist(existent);
+				this.success();
 			}
-			this.bs.persist(existent);
-			this.success();
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());

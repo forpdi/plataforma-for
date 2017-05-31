@@ -61,7 +61,7 @@ export default React.createClass({
 				}
 			}
 		}, me);
-		PlanStore.on("find", (store, raw, opts) => {			
+		PlanStore.on("find", (store, raw, opts) => {		
 			var tree = raw.map((plan, index) => {
 				var to = '/plan/'+this.props.plan.get("id")+'/details/subplan/'+plan.id;
 				return {
@@ -99,7 +99,8 @@ export default React.createClass({
 			}
 		}, me);
 
-        PlanStore.on("sync", (model) =>{        	
+        PlanStore.on("sync", (model) =>{     
+        	
         	if(model.get('updated')){
         		me.state.tree.map((child,idx) => {
         			if(child.id == model.get("id")){
@@ -182,6 +183,10 @@ export default React.createClass({
         }, me);
 
         StructureStore.on("levelInstanceCreated", (model, opts) => {
+        	this.refreshPlans(this.props.plan.get("id"));
+        	//this.refreshPlans(this.props.plan.get("id"));
+
+
         	var actualParent = opts.node.parent;
         	var to = "/plan/"+me.props.plan.get("id")+"/details/subplan/level/"+model.id;
         	
@@ -210,12 +215,14 @@ export default React.createClass({
         }, me);
 
         StructureStore.on("deleteLevelInstance", (model) => {
+        	this.refreshPlans(this.props.plan.get("id"));
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}
         }, me);
 
 		StructureStore.on("deleteLevelInstanceByTable", (model) => {
+			this.refreshPlans(this.props.plan.get("id"));
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}

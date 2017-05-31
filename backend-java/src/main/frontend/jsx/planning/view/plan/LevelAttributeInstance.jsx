@@ -856,7 +856,7 @@ export default React.createClass({
 
 			         	<li>
 							<a onClick={this.deleteLevelAttribute} type="submit">
-								<span className="mdi mdi-delete cursorPointer" title="Não pode ser adicionado, você já possui o máximo de favoritos"> 
+								<span className="mdi mdi-delete cursorPointer" title={"Excluir " + this.state.subTitle}> 
 									<span id="menu-levels"> Excluir </span>
 								</span>
 							</a>

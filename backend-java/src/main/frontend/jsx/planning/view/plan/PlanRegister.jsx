@@ -121,7 +121,7 @@ export default React.createClass({
 	componentDidMount() {		
 		var me = this;
 
-		PlanStore.on("sync", (model) => {		
+		PlanStore.on("sync", (model) => {	
 			if (me.context.tabPanel) {
 				me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			}
@@ -139,6 +139,7 @@ export default React.createClass({
 				});
 				dateBegin = model.get("begin").split(" ")[0];
 				dateEnd = model.get("end").split(" ")[0];
+				me.forceUpdate();
 			}else{
 				me.setState({
 					model: null,
@@ -187,6 +188,11 @@ export default React.createClass({
 			me.updateLoadingState(true);
 		}, me);
 
+		/*PlanStore.on('fail', store => {
+			console.log("fail");
+			console.log(store);
+			me.context.toastr.addAlertError(store);
+		}, me);*/
 		PlanStore.on('destroy', store => {
 			me.context.tabPanel.removeTabByPath(me.state.tabPath);		
 			me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
