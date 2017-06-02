@@ -183,10 +183,7 @@ export default React.createClass({
         }, me);
 
         StructureStore.on("levelInstanceCreated", (model, opts) => {
-        	this.refreshPlans(this.props.plan.get("id"));
         	//this.refreshPlans(this.props.plan.get("id"));
-
-
         	var actualParent = opts.node.parent;
         	var to = "/plan/"+me.props.plan.get("id")+"/details/subplan/level/"+model.id;
         	
@@ -215,14 +212,12 @@ export default React.createClass({
         }, me);
 
         StructureStore.on("deleteLevelInstance", (model) => {
-        	this.refreshPlans(this.props.plan.get("id"));
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}
         }, me);
 
 		StructureStore.on("deleteLevelInstanceByTable", (model) => {
-			this.refreshPlans(this.props.plan.get("id"));
         	for (var i=0; i<me.state.tree.length; i++) {
         		me.deleteNode(model.data.id, me.state.tree[i]);
         	}
@@ -243,7 +238,6 @@ export default React.createClass({
 		}, me);
 
         PlanStore.on("planFind", (model, data) => {
-        
         	this.setState({
 				dataInitSearch:data.dataInit,
 				dataEndSearch:data.dataEnd,

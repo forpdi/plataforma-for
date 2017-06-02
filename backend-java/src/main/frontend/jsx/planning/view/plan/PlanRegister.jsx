@@ -230,7 +230,7 @@ export default React.createClass({
 
 		if (props.params.subplanId) {
 			PlanStore.dispatch({
-				action: PlanStore.ACTION_RETRIEVE,
+				action: PlanStore.ACTION_RETRIEVE_PLAN,
 				data: props.params.subplanId
 			});
 		} else {
