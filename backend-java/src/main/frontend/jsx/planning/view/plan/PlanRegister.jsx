@@ -140,6 +140,7 @@ export default React.createClass({
 				dateBegin = model.get("begin").split(" ")[0];
 				dateEnd = model.get("end").split(" ")[0];
 				me.forceUpdate();
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}else{
 				me.setState({
 					model: null,
@@ -241,9 +242,8 @@ export default React.createClass({
 			if (this.state.structures) {
 				_.defer(() => {this.updateLoadingState(true);});
 			}
+			_.defer(() => {context.tabPanel.addTab(props.location.pathname, "Novo plano de metas");});
 		}
-
-		_.defer(() => {context.tabPanel.addTab(props.location.pathname, props.params.subplanId ? (this.state.title ? this.state.title : "Plano de metas") :"Novo plano de metas");});
 	},
 
 	onChangeStructure(){
