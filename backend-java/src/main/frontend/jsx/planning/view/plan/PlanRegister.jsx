@@ -151,8 +151,6 @@ export default React.createClass({
 				me.context.tabPanel.removeTabByPath(me.state.tabPath);
 				me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			}
-
-
 			me.updateLoadingState(false);
 		}, me);	
 
@@ -189,16 +187,10 @@ export default React.createClass({
 			me.updateLoadingState(true);
 		}, me);
 
-		/*PlanStore.on('fail', store => {
-			console.log("fail");
-			console.log(store);
-			me.context.toastr.addAlertError(store);
-		}, me);*/
-		PlanStore.on('destroy', store => {
+		PlanStore.on('delete', store => {
 			me.context.tabPanel.removeTabByPath(me.state.tabPath);		
 			me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			me.context.toastr.addAlertSuccess(store.attributes.name + " excluído com sucesso.");
-			//http://localhost:8080/forpdi/#/plan/1/details/overview
 		}, me);
 
 		me.refreshData(me.props, me.context);
@@ -339,14 +331,11 @@ export default React.createClass({
 			Modal.confirmCustom(() => {
 				Modal.hide();
 				PlanStore.dispatch({
-					action: PlanStore.ACTION_DESTROY,
+					action: PlanStore.ACTION_DELETE_PLAN,
 					data: me.state.model
 				});				
 			},msg,me.refreshCancel);
-		}
-
-
-		
+		}	
 	},
 
 	renderArchivePlanMacro() {
