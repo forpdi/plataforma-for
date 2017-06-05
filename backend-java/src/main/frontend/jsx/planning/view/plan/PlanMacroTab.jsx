@@ -126,15 +126,16 @@ export default React.createClass({
 
 	deletePlan(event){
 		event && event.preventDefault();
-		var msg = "Você tem certeza que deseja excluir esse plano?"
 		var me = this;
+		var msg = "Você tem certeza que deseja excluir "+me.state.model.attributes.name+"?";
+		
 		if (me.state.model != null) {
-			Modal.confirmCustom(() => {
+			Modal.confirmCancelCustom(() => {				
 				Modal.hide();
 				PlanMacroStore.dispatch({
 					action: PlanMacroStore.ACTION_DELETE,
 					data: me.state.model
-				});				
+				});		
 			},msg,me.cancelBlockUnblock);
 		}
 		me.forceUpdate();

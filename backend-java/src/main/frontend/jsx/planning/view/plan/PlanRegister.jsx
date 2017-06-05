@@ -327,14 +327,22 @@ export default React.createClass({
 	deletePlan() {
 		var me = this;
 		if (me.state.model != null) {
-			var msg = "Você tem certeza que deseja excluir esse plano de metas?"
+			/*var msg = "Você tem certeza que deseja excluir esse plano de metas?"
 			Modal.confirmCustom(() => {
 				Modal.hide();
 				PlanStore.dispatch({
 					action: PlanStore.ACTION_DELETE_PLAN,
 					data: me.state.model
 				});				
-			},msg,me.refreshCancel);
+			},msg,me.refreshCancel);*/
+			var msg = "Você tem certeza que deseja excluir "+me.state.model.attributes.name+"?";
+			Modal.confirmCancelCustom(() => {				
+				Modal.hide();
+				PlanStore.dispatch({
+					action: PlanStore.ACTION_DELETE_PLAN,
+					data: me.state.model
+				});	
+			},msg,()=>{Modal.hide();me.refreshCancel;});
 		}	
 	},
 
