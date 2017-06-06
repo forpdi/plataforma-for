@@ -366,7 +366,7 @@ public class UserController extends AbstractController {
 		User userRetrieveCpf = null;
 		User userRetrieveEmail = null;
 		User userRetrieveCellphone = null;
-
+		
 		userRetrieveCpf = bs.existsByCpf(user.getCpf());
 		userRetrieveEmail = bs.existsByEmail(user.getEmail());
 		userRetrieveCellphone = bs.existsByCellphone(user.getCellphone());
@@ -389,24 +389,20 @@ public class UserController extends AbstractController {
 			userRetrieveCellphone.setId(user.getId());
 		}
 
-		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail())
-				|| userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
-			LOGGER.info(userRetrieveCpf.getId() +"="+ user.getId());
-			LOGGER.info(userRetrieveEmail.getId() +"="+ user.getId());
-			LOGGER.info(userRetrieveCellphone.getId() +"="+ user.getId());
-			if (userRetrieveCpf.getId() == user.getId()) {
+		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail()) || userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
+			if (userRetrieveCpf.getId().equals(user.getId())) {
 				userRetrieveCpf = null;
 			} else {
 				this.fail("Verifique se o campo CPF já está cadastrado no sistema");
 			}
 			
-			if (userRetrieveEmail.getId() == user.getId()) {
+			if (userRetrieveEmail.getId().equals(user.getId())) {
 				userRetrieveEmail = null;
 			} else {
 				this.fail("Verifique se o campo E-MAIL já está cadastrado no sistema");
 			}
 		
-			if (userRetrieveCellphone.getId() == user.getId()) {
+			if (userRetrieveCellphone.getId().equals(user.getId())) {
 				userRetrieveCellphone = null;
 			} else {
 				this.fail("Verifique se o campo CELULAR já está cadastrado no sistema");
