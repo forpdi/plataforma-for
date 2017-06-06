@@ -376,6 +376,7 @@ public class UserController extends AbstractController {
 			userRetrieveCpf.setId(user.getId());
 			userRetrieveCpf.setCpf("");
 		}
+		
 		if (userRetrieveEmail == null) {
 			userRetrieveEmail = new User();
 			userRetrieveEmail.setEmail("");
@@ -390,9 +391,28 @@ public class UserController extends AbstractController {
 
 		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail())
 				|| userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
-
-			if (userRetrieveCpf.getId() == user.getId() && userRetrieveEmail.getId() == user.getId()
-					&& userRetrieveCellphone.getId() == user.getId()) {
+			LOGGER.info(userRetrieveCpf.getId() +"="+ user.getId());
+			LOGGER.info(userRetrieveEmail.getId() +"="+ user.getId());
+			LOGGER.info(userRetrieveCellphone.getId() +"="+ user.getId());
+			if (userRetrieveCpf.getId() == user.getId()) {
+				userRetrieveCpf = null;
+			} else {
+				this.fail("Verifique se o campo CPF já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveEmail.getId() == user.getId()) {
+				userRetrieveEmail = null;
+			} else {
+				this.fail("Verifique se o campo E-MAIL já está cadastrado no sistema");
+			}
+		
+			if (userRetrieveCellphone.getId() == user.getId()) {
+				userRetrieveCellphone = null;
+			} else {
+				this.fail("Verifique se o campo CELULAR já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveCpf == null && userRetrieveEmail == null && userRetrieveCellphone == null) {
 				try {
 					User existent = this.bs.existsByUser(user.getId());
 					CompanyUser companyUser = this.bs.retrieveCompanyUser(existent, this.domain.getCompany());
@@ -447,9 +467,7 @@ public class UserController extends AbstractController {
 				}
 
 			} else {
-
 				this.fail("Verifique se os campos E-MAIL, CPF ou CELULAR já estão cadastrados no sistema");
-
 			}
 
 		} else {
