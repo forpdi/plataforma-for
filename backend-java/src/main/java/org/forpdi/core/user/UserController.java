@@ -260,9 +260,25 @@ public class UserController extends AbstractController {
 
 		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail())
 				|| userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
-
-			if (userRetrieveCpf.getId() == user.getId() && userRetrieveEmail.getId() == user.getId()
-					&& userRetrieveCellphone.getId() == user.getId()) {
+			if (userRetrieveCpf.getId().equals(user.getId())) {
+				userRetrieveCpf = null;
+			} else {
+				this.fail("Verifique se o campo CPF já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveEmail.getId().equals(user.getId())) {
+				userRetrieveEmail = null;
+			} else {
+				this.fail("Verifique se o campo E-MAIL já está cadastrado no sistema");
+			}
+		
+			if (userRetrieveCellphone.getId().equals(user.getId())) {
+				userRetrieveCellphone = null;
+			} else {
+				this.fail("Verifique se o campo CELULAR já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveCpf == null && userRetrieveEmail == null && userRetrieveCellphone == null) {
 				try {
 					User existent = this.bs.exists(this.userSession.getUser().getId(), User.class);
 
@@ -298,13 +314,9 @@ public class UserController extends AbstractController {
 					LOGGER.error("Erro no login.", e);
 					this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 				}
-
 			} else {
-
 				this.fail("Verifique se os campos E-MAIL, CPF ou CELULAR já estão cadastrados no sistema");
-
 			}
-
 		} else {
 			try {
 				User existent = this.bs.exists(this.userSession.getUser().getId(), User.class);
@@ -332,19 +344,15 @@ public class UserController extends AbstractController {
 					} else {
 						this.fail("Sua senha atual está incorreta");
 					}
-
 				} else {
 					this.bs.persist(existent);
 					this.success(existent);
 				}
-
 			} catch (Throwable e) {
 				LOGGER.error("Erro no login.", e);
 				this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 			}
-
 		}
-
 	}
 
 	/**
@@ -456,18 +464,14 @@ public class UserController extends AbstractController {
 						}
 					}
 					this.success(existent);
-
 				} catch (Throwable e) {
 					LOGGER.error("Erro no login.", e);
 					this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 				}
-
 			} else {
 				this.fail("Verifique se os campos E-MAIL, CPF ou CELULAR já estão cadastrados no sistema");
 			}
-
 		} else {
-
 			try {
 				User existent = this.bs.existsByUser(user.getId());
 				CompanyUser companyUser = this.bs.retrieveCompanyUser(existent, this.domain.getCompany());
@@ -516,9 +520,7 @@ public class UserController extends AbstractController {
 				LOGGER.error("Erro no login.", e);
 				this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 			}
-
 		}
-
 	}
 
 	/**
