@@ -272,15 +272,15 @@ export default React.createClass({
 
 	renderUnarchivePlan() {
 		return (
-			<ul className="dropdown-menu dropdown-menu-levels-icons">
+			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a
-						className="mdi mdi-folder-upload mdi-18"
-						title="Desarquivar plano" 
 						data-placement="bottom"
 						onClick={this.unarchivePlan}>
-						<span id = "menu-levels">
-							Desarquivar plano
+						<span className="mdi mdi-folder-upload mdi-18" title="Desarquivar plano" > 
+							<span id = "menu-levels">
+								Desarquivar plano
+							</span>
 						</span>
 					</a>
 		         </li>
