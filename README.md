@@ -150,7 +150,7 @@ Primeiramente, baixe e instale o JDK 1.8 para seu sistema operacional configuran
 Em seguida faça o download do [Wildfly 9.0.2](http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip) e descompacte-o em alguma pasta de seu servidor.
 Neste passo a passo, será assumido que o Wildfly foi descompactado na pasta `/opt/wildfly`.
 
-Antes de publicar a aplicação no WIldfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
+Antes de publicar a aplicação no Wildfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
 Esse banco de dados deve possuir o nome definido no arquivo `prd.properties` na hora do build (propriedade `db.name`). A codificação de caracteres deve ser o *UTF-8*.
 Crie o banco de dados através do comando SQL:
 
