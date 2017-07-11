@@ -98,7 +98,7 @@ export default React.createClass({
 	},
 
 	deleteRecord(model, event) {
-		var msg = "Você tem certeza que deseja excluir " + model.host + "?";
+		var msg = Messages.get("label.deleteConfirmation") + model.host + "?";
 		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();

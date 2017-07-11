@@ -37,7 +37,7 @@ export default React.createClass({
 			type: "text",
 			placeholder: "",
 			maxLength: 128,
-			label: "Host",
+			label: Messages.get("label.host"),
 			required:true,
 			helpBox: 'Ex: app.forpdi.org',
 			value: this.state.model ? this.state.model.get("host"):null
@@ -46,7 +46,7 @@ export default React.createClass({
 			type: "url",
 			placeholder: "",
 			maxLength: 255,
-			label: "URL Base",
+			label: Messages.get("label.baseUrl"),
 			required:true,
 			helpBox: "Ex: http://app.forpdi.org/",
 			value: this.state.model ? this.state.model.get("baseUrl"):null
@@ -89,7 +89,7 @@ export default React.createClass({
 			me.context.router.push("/system/domains");
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.domain.save"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.save") + " Talvez seja necessário atualizar a página para ativar as alterações.");
+			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.save") + " "+ Messages.get("notification.pageRefreshRequest"));
 		}, me);
 		CompanyDomainStore.on("retrieve", (model) => {
 			if (me.isMounted()) {
@@ -157,7 +157,7 @@ export default React.createClass({
 			});
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.domain.update"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.update") + " Talvez seja necessário atualizar a página para ativar as alterações.");
+			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.update") + " "+ Messages.get("notification.pageRefreshRequest"));
 		} else {
 			CompanyDomainStore.dispatch({
 				action: CompanyDomainStore.ACTION_SAVE,
@@ -174,7 +174,7 @@ export default React.createClass({
 		return (<div className="col-sm-offset-3 col-sm-6 animated fadeIn">
 			{this.state.loading ? <LoadingGauge />:<div>
 				<h1>
-					{this.state.model ? "Editar domínio":"Adicionar novo domínio"}
+					{this.state.model ? Messages.get("label.editDomain"):Messages.get("label.addNewDomain")}
 				</h1>
 				<VerticalForm
 					ref="CompanyDomainEditForm"
