@@ -385,7 +385,7 @@ var ExportDocumentModal = React.createClass({
 							<div id="exportDocumentModalFooter" name="exportDocumentModalFooter">
 								<p id="paramError" className="exportDocumentError"></p>
 								<p className="help-block">
-									<span className="fpdi-required" /> Campos obrigatórios.
+									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 								</p>
 	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>Exportar</button>
 	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>

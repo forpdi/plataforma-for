@@ -1,4 +1,3 @@
-
 import $ from 'jquery';
 import Toastr from 'toastr';
 import React from "react";
@@ -6,6 +5,8 @@ import {Link, hashHistory} from "react-router";
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 
 var VerticalForm =  React.createClass({
 	contextTypes: {
@@ -165,7 +166,7 @@ var VerticalForm =  React.createClass({
 			})}
 
 			<p className="help-block">
-				<span className="fpdi-required" /> Campos obrigatórios.
+				<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 			</p>
 			{alerts}
 

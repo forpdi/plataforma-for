@@ -79,7 +79,7 @@ export default React.createClass({
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
 							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
-							<h3 className="fpdi-login-subtitle">Plataforma Aberta para Gestão e Acompanhamento do<br/>Plano de Desenvolvimento Institucional - PDI</h3>
+							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.get("label.login.title")}</h3>
 						</div>
 					</div>
 				</div>
@@ -89,7 +89,7 @@ export default React.createClass({
 				<div className="col-md-4 col-md-offset-4">	
 					<div className="fpdi-card-login">		
 						<div className="panel panel-default">
-						  <div className="panel-heading"><p className="fpdi-login-title">Login</p></div>
+						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.get("label.login")}</p></div>
 							  <div className="panel-body">
 									<div className="fpdi-login-body">
 										<VerticalForm
@@ -98,7 +98,7 @@ export default React.createClass({
 											fields={this.state.fields}
 											store={UserSession}
 											hideCanel={true}
-											submitLabel="Fazer login"
+											submitLabel={Messages.get("label.LogIn")}
 											blockButtons={true}
 											confirmKey={13}
 											id="login-form"
@@ -108,7 +108,7 @@ export default React.createClass({
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">
-												<Link to="/recover-password">Esqueceu sua senha?</Link>
+												<Link to="/recover-password">{Messages.get("label.recoverPassword")}</Link>
 											</div>
 										</div>
 									</div>
@@ -117,8 +117,8 @@ export default React.createClass({
 					</div>
 
 					<div className="fpdi-browsers-info">
-						Para uma melhor experiência utilize os seguintes navegadores:<br/>
-						<i>Mozilla Firefox v52.0 - Google Chrome v56.0 - Opera v43.0</i>
+						{Messages.get("label.infoBrowsers")}<br/>
+						<i>{Messages.get("label.browsers")}</i>
 					</div>
 				</div>
 			</div>

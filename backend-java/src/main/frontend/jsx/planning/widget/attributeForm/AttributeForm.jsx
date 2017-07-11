@@ -212,7 +212,7 @@ var VerticalForm =  React.createClass({
 			})}
 			{showButtons && requiredFields ? 
 				<p className="help-block">
-					<span className="fpdi-required" /> Campos obrigatórios.
+					<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 				</p>
 			: ""}
 			{alerts}
