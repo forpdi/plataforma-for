@@ -3,6 +3,7 @@ import string from 'string';
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import {Link} from 'react-router';
 
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
     getInitialState() {
@@ -99,7 +100,7 @@ export default React.createClass({
                             </div>
                         );
                     })
-                : <div className="fpdi-noNotifications">{"Você ainda não possui nenhuma notificação registada no sistema."}</div>}
+                : <div className="fpdi-noNotifications">{Messages.get("notification.noNotifications")}</div>}
             </div>
         );
     }
