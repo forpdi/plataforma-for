@@ -190,7 +190,7 @@ export default React.createClass({
 		return (<div className="col-sm-offset-3 col-sm-6 animated fadeIn">
 			{this.state.loading ? <LoadingGauge />:<div>
 				<h1>
-					{this.state.model ? "Editar instituição":"Adicionar nova instituição"}
+					{this.state.model ? Messages.get("label.editCompany"):Messages.get("label.addNewCompany")}
 				</h1>
 				<VerticalForm
 					ref = "CompanyEditInstitution"
