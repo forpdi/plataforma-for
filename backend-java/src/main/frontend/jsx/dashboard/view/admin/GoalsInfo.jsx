@@ -4,6 +4,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -111,48 +112,48 @@ export default React.createClass({
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.inDay}</h1>
 										<h4>{"("+numeral(this.state.info.inDayPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Em dia</p>
+										<p>{Messages.get("label.goals.inDay")}</p>
 									</div>
 
 									{/*Colocar cálculo correto*/}
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.closeToMaturity}</h1>
 										<h4>{"("+numeral(this.state.info.closeToMaturityPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Próximas a vencer</p>
+										<p>{Messages.get("label.goals.closeToMaturity")}</p>
 									</div>
 
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.late}</h1>
 										<h4>{"("+numeral(this.state.info.latePercentage).format('0,0.00')+"%)"}</h4>
-										<p>Atrasadas</p>
+										<p>{Messages.get("label.goals.late")}</p>
 									</div>
 									
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.notStarted}</h1>
 										<h4>{"("+numeral(this.state.info.notStartedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Não iniciados</p>
+										<p>{Messages.get("label.goals.notStarted")}</p>
 									</div>						
 								</div>
 								<div className="row">
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.belowMininum}</h1>
 										<h4>{"("+numeral(this.state.info.belowMinimumPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Abaixo do mínimo</p>
+										<p>{Messages.get("label.goals.belowMinimum")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.belowExpected}</h1>
 										<h4>{"("+numeral(this.state.info.belowExpectedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Abaixo do esperado</p>
+										<p>{Messages.get("label.goals.belowExpected")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.reached}</h1>
 										<h4>{"("+numeral(this.state.info.reachedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Suficiente</p>
+										<p>{Messages.get("label.goals.reached")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.aboveExpected}</h1>
 										<h4>{"("+numeral(this.state.info.aboveExpectedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>Acima do máximo</p>
+										<p>{Messages.get("label.goals.aboveExpected")}</p>
 									</div>
 								</div>						
 							</div>}

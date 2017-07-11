@@ -7,6 +7,7 @@ import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import BudgetStore from "forpdi/jsx/planning/store/Budget.jsx";
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 
@@ -106,9 +107,9 @@ export default React.createClass({
           this.setState({      
               data: [ 
                 ['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-                ["Aprovado", store.data.planned, '#A7E2D2', plannedTooltipText],            
-                ['Empenhado', store.data.committed , '#3AB795', committedTooltipText],
-                ['Realizado', store.data.conducted , '#76D3BA', conductedTooltipText]            
+                [Messages.get("label.budget.planned"), store.data.planned, '#A7E2D2', plannedTooltipText],            
+                [Messages.get("label.budget.committed"), store.data.committed , '#3AB795', committedTooltipText],
+                [Messages.get("label.budget.conducted"), store.data.conducted , '#76D3BA', conductedTooltipText]            
               ],
               loading: false
           });
@@ -126,9 +127,9 @@ export default React.createClass({
         },
         data: [ 
         	['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-       		["Aprovado", 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],            
-        	['Empenhado', 0 , '#3AB795', "R$ "+this.formatBR(this.formatEUA(0))],
-        	['Realizado', 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]            
+       		[Messages.get("label.budget.planned"), 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],            
+        	[Messages.get("label.budget.committed"), 0 , '#3AB795', "R$ "+this.formatBR(this.formatEUA(0))],
+        	[Messages.get("label.budget.conducted"), 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]            
       	]      
       });
     }
@@ -240,7 +241,7 @@ export default React.createClass({
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
               </div>
             <div>
-              <b className="budget-graphic-title"> Orçamento </b>
+              <b className="budget-graphic-title"> {Messages.get("label.budget")} </b>
               <select onChange={this.objectiveChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
               <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
               {this.state.objectives ? 
