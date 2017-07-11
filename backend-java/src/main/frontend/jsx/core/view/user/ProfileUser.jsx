@@ -13,6 +13,8 @@ import NotificationUser from "forpdi/jsx/core/view/user/NotificationUser.jsx";
 import string from 'string';
 import Logo from 'forpdi/img/foto_padrao.png';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 
 //import Toastr from 'toastr';
 
@@ -71,7 +73,7 @@ export default React.createClass({
 			
 			//Toastr.remove();
 			//Toastr.success("Foto alterada com sucesso.");
-			this.context.toastr.addAlertSuccess("Foto alterada com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));
 			
 		}, me);
 
@@ -97,7 +99,7 @@ export default React.createClass({
 				}
 				//Toastr.remove();
 				//Toastr.success("Dados editados com sucesso.");
-				this.context.toastr.addAlertSuccess("Dados editados com sucesso.");
+				this.context.toastr.addAlertSuccess(Messages.get("notification.dataEditedSuccessfully"));
 
 				me.context.router.push("/users/profilerUser/"+(model.data.id));
 				
@@ -171,7 +173,7 @@ export default React.createClass({
         }, me);
 
 	    UserStore.on("notifications-settings-updated", (model) => {
-	    	this.context.toastr.addAlertSuccess("Configurações de notificação salvas com sucesso.");
+	    	this.context.toastr.addAlertSuccess(Messages.get("notification.settings.savedSuccessfully"));
 	    },me);
 
 
@@ -196,7 +198,7 @@ export default React.createClass({
 			name: "name",
 			type: "text",
 			placeholder: "",
-			label: "Nome",
+			label: Messages.get("label.name"),
 			maxLength:255,
 			value: model? model.name:null,
 			required: true
@@ -205,7 +207,7 @@ export default React.createClass({
 			name: "email",
 			type: "email",
 			placeholder: "",
-			label: "E-mail",
+			label: Messages.get("label.email"),
 			maxLength:255,
 			value:  model? model.email:null,
 			required: true
@@ -215,7 +217,7 @@ export default React.createClass({
 			name: "cpf",
 			type: "cpf",
 			placeholder: "",
-			label: "CPF",
+			label: Messages.get("label.cpf"),
 			value:  model? model.cpf:null,
 			required: true
 		}, 
@@ -225,7 +227,7 @@ export default React.createClass({
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: "Data de Nascimento",
+			label: Messages.get("label.birthdate"),
 			onChange:this.onStartDateChange,
 			value:  model? model.birthdate:null,
 			required: true
@@ -235,7 +237,7 @@ export default React.createClass({
 			name: "cellphone",
 			type: "tel",
 			placeholder: "",
-			label: "Celular",
+			label: Messages.get("label.cellphone"),
 			value:  model? model.cellphone:null,
 			required: true
 		},
@@ -243,7 +245,7 @@ export default React.createClass({
 			name: "phone",
 			type: "tel",
 			placeholder: "",
-			label: "Telefone",
+			label: Messages.get("label.phone"),
 			value:  model? model.phone:null,
 		},
 
@@ -251,7 +253,7 @@ export default React.createClass({
 			name: "department",
 			type: "text",
 			placeholder: "",
-			label: "Departamento",
+			label: Messages.get("label.department"),
 			maxLength:255,
 			value:  model? model.department:null,
 		},
@@ -259,7 +261,7 @@ export default React.createClass({
 		{
 			name: "senha",
 			type: "changePassword",
-			placeholder: "Alterar Senha",
+			placeholder: Messages.get("label.changePassword"),
 			onClick: this.changePassword
 		}]
 
@@ -296,7 +298,7 @@ export default React.createClass({
 			"Enviar Foto",
 			(<div>
 				<p>
-					Selecione um arquivo.
+					{Messages.get("label.selectFile")}
 				</p>
 			</div>),
 			FileStore.url+"/upload",
@@ -356,7 +358,7 @@ export default React.createClass({
 				deleteFieldsPassword.push({
 					name: "senha",
 					type: "changePassword",
-					placeholder: "Alterar Senha",
+					placeholder: Messages.get("label.changePassword"),
 					onClick: this.changePassword
 				})
 		}
@@ -365,7 +367,7 @@ export default React.createClass({
 			fields:deleteFieldsPassword
 		})
 
-		var msg = "Você não salvou as modificações. Deseja continuar?";
+		var msg = Messages.get("label.msgEdit");
 
 		Modal.confirmCancelCustom(this.refreshAccept,msg,this.refreshCancel);
 
@@ -414,7 +416,7 @@ export default React.createClass({
 			name: "currentPassword",
 			type: "password",
 			placeholder: "",
-			label: "Senha Atual",
+			label: Messages.get("label.currentPassword"),
 			value: "",
 			required: true
 		})
@@ -422,7 +424,7 @@ export default React.createClass({
 			name: "newPassword",
 			type: "password",
 			placeholder: "",
-			label: "Nova Senha",
+			label: Messages.get("label.newPassword"),
 			value: "",
 			required: true		
 		})
@@ -431,7 +433,7 @@ export default React.createClass({
 			name: "newPasswordTwo",
 			type: "password",
 			placeholder: "",
-			label: "Confirme a nova senha",
+			label: Messages.get("label.newPasswordTwo"),
 			value: "",
 			required: true
 		})
@@ -453,11 +455,11 @@ export default React.createClass({
 		if (errorField) {
 			//Toastr.remove();
 			//Toastr.error("Erro ao salvar os dados do formulário.Corrija-os e tente salvar novamente");
-			this.context.toastr.addAlertError("Erro ao salvar os dados do formulário. Corrija-os e tente salvar novamente");
+			this.context.toastr.addAlertError(Messages.get("label.errorSavingdata"));
 
 		} else {
 			
-			var msg = "Os dados serão atualizados. Deseja continuar essa ação?";
+			var msg = Messages.get("label.msgUpdate");
 			Modal.confirmCustom(() => {
 				Modal.hide();
 				UserStore.dispatch({
@@ -573,7 +575,7 @@ export default React.createClass({
 
 		return (
 			<div className="fpdi-profile-user padding40">
-			<h1 id = "title-profile-user">Meu perfil</h1> 
+			<h1 id = "title-profile-user">{Messages.get("label.myProfile")}</h1> 
 
 				<div className="row">
 				
@@ -581,7 +583,7 @@ export default React.createClass({
 						{this.state.editUser == false ?
 
  								<div className="panel panel-default panel-default-user">
-									<div className="panel-heading">Dados do usuário <span className="mdi mdi-pencil cursorPointer floatRight" title="Editar perfil" onClick={this.confirmEdit}></span> </div>
+									<div className="panel-heading">{Messages.get("label.userData")} <span className="mdi mdi-pencil cursorPointer floatRight" title={Messages.get("label.editProfile")} onClick={this.confirmEdit}></span> </div>
 										<div className="panel-body">
 										
 										<div className="fpdi-container-profile">
@@ -594,25 +596,25 @@ export default React.createClass({
 											<div>
 												<form>
 													<div className="form-group form-profile">
-														<label className = "fpdi-text-label"> NOME </label>
+														<label className = "fpdi-text-label"> {Messages.get("label.name")} </label>
 															<p id = "p-profileUser" title = {this.state.model.name}> {(this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)} </p>
 
-														<label className = "fpdi-text-label"> E-MAIL </label>
+														<label className = "fpdi-text-label"> {Messages.get("label.email")} </label>
 															<p id = "p-profileUser"> {this.state.model.email} </p>
 														
-														<label className = "fpdi-text-label"> CPF </label>
+														<label className = "fpdi-text-label"> {Messages.get("label.cpf")} </label>
 															<p id = "p-profileUser"> {this.state.model.cpf} </p>
 														
-														<label className = "fpdi-text-label"> DATA DE NASCIMENTO </label>
+														<label className = "fpdi-text-label"> {Messages.get("label.birthdate")} </label>
 															<p id = "p-profileUser"> {this.state.model.birthdate == null ? this.state.model.birthdate : this.state.model.birthdate.split(" ")[0]} </p>
 														
-														<label className = "fpdi-text-label">CELULAR</label>
+														<label className = "fpdi-text-label">{Messages.get("label.cellphone")}</label>
 															<p id = "p-profileUser"> {this.state.model.cellphone} </p>
 														
-														<label className = "fpdi-text-label">TELEFONE</label>
+														<label className = "fpdi-text-label">{Messages.get("label.phone")}</label>
 															<p id = "p-profileUser"> {this.state.model.phone} </p>
 																
-														<label className = "fpdi-text-label"> DEPARTAMENTO</label>
+														<label className = "fpdi-text-label"> {Messages.get("label.department")}</label>
 															<p id = "p-profileUser" title = {this.state.model.department}> {this.state.model.department == null ? this.state.model.department: (this.state.model.department.length>25)?(string(this.state.model.department).trim().substr(0,25).concat("...").toString()):(this.state.model.department)}</p>
 													</div>
 												</form>
@@ -624,13 +626,13 @@ export default React.createClass({
 						 		: 
 
 						 		<div className="panel panel-default panel-default-user">
-									<div className="panel-heading">Dados do usuário </div>
+									<div className="panel-heading">{Messages.get("label.userData")} </div>
 										<div className="panel-body">
 											<div className="fpdi-container-profile">
 											<img className="fpdi-image-profile" src={this.state.model.picture == null ?(Logo):this.state.model.picture}/>
 										</div>
 										<div className="fpdi-container-profile-icon">
-												<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title="Alterar foto de perfil"></span>
+												<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.changeProfilePhoto")}></span>
 											</div>
 										
 											
@@ -640,7 +642,7 @@ export default React.createClass({
 														onSubmit={this.onSubmit}
 														fields={this.state.fields}
 														store={UserStore}
-														submitLabel="Salvar"
+														submitLabel={Messages.get("label.submitLabel")}
 														onCancel = {this.onCancel}
 														/>
 												
@@ -656,7 +658,7 @@ export default React.createClass({
 					<div className="col-sm-3">
 						<div className="panel panel-default panel-default-user">
 							<div className="panel-heading"> 
-								Permissões do usuário
+								{Messages.get("label.userPermissions")}
 							</div>					
 							{this.state.permissions.map((item, idx) => {
 								if(item.granted || this.context.accessLevel >= item.accessLevel){
@@ -676,7 +678,7 @@ export default React.createClass({
 					<div className="col-sm-6">
 						{/*<NotificationUser/>*/}
 						<div className="panel panel-default panel-default-user">
-							<div className="panel-heading"> Notificações 
+							<div className="panel-heading"> {Messages.get("label.notification")}
 								{this.context.accessLevel != AccessLevels.enum.SYSADMIN ? 
 									<div className="dropdown floatRight">
 										<a
@@ -685,12 +687,12 @@ export default React.createClass({
 											data-toggle="dropdown"
 											aria-haspopup="true"
 											aria-expanded="true"
-											title="Configurações"
+											title={Messages.get("label.settings")}
 											>
 												<span className="mdi mdi-settings cursorPointer floatRight"/>
 										</a>
 										<div className="dropdown-menu dropdown-menu-right width250" aria-labelledby="notifications-settings-menu">
-											<p>Recebimento de notificações:</p>
+											<p>{Messages.get("notification.receiving")}</p>
 											<div className="radio" id="notificationSettingRadio" onClick={this.setNotificationConfig}>
 												<div key={'field-opt-1'}><label><input
 													type="radio"
@@ -698,7 +700,7 @@ export default React.createClass({
 													id="notificationSetting1"
 													defaultChecked={this.state.model.notificationSettings == 1 ? true : false}
 													value="1"
-													/>Manter recebimento padrão
+													/>{Messages.get("notification.standard")}
 													<span className="fpdi-required">&nbsp;</span>
 												</label></div>
 												<div key={'field-opt-2'}><label><input
@@ -707,7 +709,7 @@ export default React.createClass({
 													id="notificationSetting2"
 													defaultChecked={this.state.model.notificationSettings == 2 ? true : false}
 													value="2"
-													/>Receber todas por e-mail
+													/>{Messages.get("notification.emailType")} 
 												</label></div>
 												<div key={'field-opt-3'}><label><input
 													type="radio"
@@ -715,21 +717,20 @@ export default React.createClass({
 													id="notificationSetting3"
 													defaultChecked={this.state.model.notificationSettings == 3 ? true : false}
 													value="3"
-													/>Não receber e-mail
+													/>{Messages.get("notification.noEmailType")}
 												</label></div>
 											</div>
-											<p className="notificationSettingsDropdown"><span className="fpdi-required"></span> No recebimento padrão, as notificações de planos criados, meta concluída, vencimento de planos
-											e conclusão do plano de ações do indicador são exibidas apenas no sistema.</p>
+											<p className="notificationSettingsDropdown"><span className="fpdi-required"></span> {Messages.get("notification.typeInformation")} </p>
 										</div>
 									</div>
-									:""}
+								:""}
 							</div>
 								{/*<div className="panel-body">Em construção</div>*/}
 								<div>
 									<NotificationUser ref={"userNotification"}/>
 									{this.state.hideShowMore == false ?
 										<div className="textAlignCenter marginBottom10">
-	                    					<a onClick={this.showMoreNotifications}>ver mais...</a>
+	                    					<a onClick={this.showMoreNotifications}>{Messages.get("label.viewMore")}</a>
 	                					</div>
 	                				: ""}
 								</div>

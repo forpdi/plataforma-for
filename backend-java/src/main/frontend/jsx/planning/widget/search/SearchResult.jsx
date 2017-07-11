@@ -2,6 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import {Link} from 'react-router';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 export default React.createClass({
@@ -111,7 +112,7 @@ export default React.createClass({
 						})}
 						{this.state.resultSearchMore.length < this.state.resultSearchTotal ? 
 							<div className="textAlignCenter marginTop20">
-	        					<a onClick={this.showMoreOccurencesSearches}>ver mais...</a>
+	        					<a onClick={this.showMoreOccurencesSearches}>{Messages.get("label.viewMore")}</a>
 	    					</div>
 	    				: ""}
     				</div>

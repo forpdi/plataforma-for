@@ -14,6 +14,8 @@ import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 
 
+
+
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -1301,7 +1303,7 @@ export default React.createClass({
 											<Link
 												to={"/plan/"+model.plan.parent.id+"/details/subplan/level/"+model.id}
 												title="ver mais">
-													ver mais ...
+													{Messages.get("label.viewMore")}
 											</Link>
 										</div>
 									</td>

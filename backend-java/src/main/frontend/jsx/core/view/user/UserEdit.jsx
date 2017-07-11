@@ -14,6 +14,7 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import _ from "underscore";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 import NotificationMessageUser from "forpdi/jsx/core/view/user/NotificationMessageUser.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 //import Toastr from 'toastr';
@@ -853,7 +854,7 @@ export default React.createClass({
 												<NotificationMessageUser ref="pagination"/>
         										{this.state.hideShowMoreMessages == false ?
         											<div className="textAlignCenter">
-                    									<a onClick={this.showMoreMessages}>ver mais...</a>
+                    									<a onClick={this.showMoreMessages}>{Messages.get("label.viewMore")}</a>
                 									</div>
                 								:""}
 											</div>
