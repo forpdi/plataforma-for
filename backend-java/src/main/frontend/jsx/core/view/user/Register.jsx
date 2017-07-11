@@ -82,7 +82,7 @@ export default React.createClass({
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.passwordconfirm")
+				label: Messages.get("label.passwordConfirm")
 			}],
 			loading: true,
 			valid: false
