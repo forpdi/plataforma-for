@@ -571,6 +571,32 @@ var Validate = {
 		return msg;
 	},
 
+	validationCompanyEdit: function(data, companyEditForm) {
+		var msg="";
+		if(data.name.trim() == "" ){
+			msg = "Existem erros no formulário";
+			companyEditForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			companyEditForm.refs.name.refs["field-name"].className += " borderError";
+		} else {
+			if(companyEditForm.refs.name.refs["field-name"].className && companyEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
+				companyEditForm.refs.name.refs["field-name"].className = "form-control";
+				companyEditForm.refs.name.refs.formAlertError.innerHTML = "";
+			}
+		}
+		if(data.localization.trim() == ""){
+			msg = "Existem erros no formulário";
+			companyEditForm.refs.localization.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			companyEditForm.refs.localization.refs["field-localization"].className += " borderError";
+		} else {
+			if(companyEditForm.refs.localization.refs["field-localization"].className && companyEditForm.refs.localization.refs["field-localization"].className.indexOf('borderError')){
+				companyEditForm.refs.localization.refs["field-localization"].className = "form-control";
+				companyEditForm.refs.localization.refs.formAlertError.innerHTML = "";
+			}
+		}
+
+		return msg;
+	},
+
 	validationLogin: function(login) {
 		if(login.refs.email.getValue().trim() == "")
 			login.refs.email.refs["field-email"].className = "form-control borderError";

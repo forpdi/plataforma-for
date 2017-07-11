@@ -9,8 +9,11 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 //import Toastr from 'toastr';
+import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
+//import Toastr from 'toastr';
 
+var Validate = Validation.validate;
 var VerticalForm = Form.VerticalForm;
 var errorField = false;
 
@@ -34,14 +37,14 @@ export default React.createClass({
 			placeholder: "",
 			maxLength:255,
 			required:true,
-			label: "Nome",
+			label: Messages.get("label.name"),
 			value: model ? model.get("name"):null
 		},{
 			name: "logo",
 			type: "text",
 			maxLength:255,
 			placeholder: "",
-			label: "URL da Logo (Para melhor visualização insira imagem com medidas: 203x100)",
+			label: Messages.get("label.system.companyLogo"),
 			value: model ? model.get("logo"):null,
 			onChange: this.isImg
 		},{
@@ -49,7 +52,7 @@ export default React.createClass({
 			type: 'textarea',
 			maxLength:10000,
 			placeholder: '',
-			label: "Descrição",
+			label: Messages.get("label.description"),
 			value: model ? model.get("description"):null
 
 		},{
@@ -58,14 +61,14 @@ export default React.createClass({
 			maxLength:255,
 			placeholder: 'Cidade/Estado',
 			required:true,
-			label: "Cidade/Estado",
+			label: Messages.get("label.cityState"),
 			value: model ? model.get("localization"):null	
 		},{
 			name: "showDashboard",
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: "Habilitar dashboard da comunidade",
+			label: Messages.get("label.enableCommunityDashboard"),
 			value: model ? model.get("showDashboard") : true,
 			onChange: this.fieldsDashboardBoardCommunity
 		},{
@@ -73,7 +76,7 @@ export default React.createClass({
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: "Exibir data de vencimento para a comunidade",
+			label: Messages.get("label.showMaturityDateToCommunity"),
 			value: model ? model.get("showMaturity") : true
 		}];
 	},
@@ -141,7 +144,7 @@ export default React.createClass({
 		var me = this;
 		var msg="";
 
-		if ( (data.name.trim() == "") && (data.localization.trim() == "")){
+		/*if ( (data.name.trim() == "") && (data.localization.trim() == "")){
 			msg+= "Os campos nome e cidade/estado estão vazios!";
 		} else if (data.name.trim() == "")  {
 			msg+= "O campo nome está vazio!";
@@ -149,7 +152,8 @@ export default React.createClass({
 			msg+= "O campo de cidade/estado está vazio!";
 		} else if (errorField) {
 			msg+= " Endereço de imagem inválido!";
-		}
+		}*/
+		var msg = Validate.validationCompanyEdit(data, this.refs.CompanyEditInstitution);
 
 		if(msg!= ""){
 			//Toastr.remove();
@@ -165,7 +169,7 @@ export default React.createClass({
 				data: me.state.model
 			});
 			msg = Messages.get("notification.institution.update");
-			msg = "Instituição atualizada com sucesso."
+			//msg = "Instituição atualizada com sucesso."
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.update"));
 			this.context.toastr.addAlertSuccess(msg);
