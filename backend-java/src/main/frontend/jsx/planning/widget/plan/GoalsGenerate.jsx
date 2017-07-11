@@ -158,7 +158,7 @@ export default onClickOutside(React.createClass({
 					</div>
 					
 					<h3>Obs.: As metas serão geradas obedecendo a periodicidade do indicador.</h3>
-					<p className="requiredColor">* Campos obrigatórios</p>
+					<p className="requiredColor">* {Messages.get("label.requiredFields")}</p>
 				</div> 
 			
 				<div className="level-search-buttons">
