@@ -535,7 +535,7 @@ export default React.createClass({
 								(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
 							
-								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>Novo</button>
+								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>{Messages.get("label.new")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} onClick={this.hideFields}></span>
 					</div>}

@@ -466,13 +466,13 @@ export default React.createClass({
 					{!!this.props.isDocument ? ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 													PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ? 
 					<span className="mdi mdi-pencil attribute-input-edit atribute-input-edit-schedule inner" 
-					title="Alterar campo" onClick={this.edit}/> :"") : ""}
+					title={Messages.get("label.title.changeField")} onClick={this.edit}/> :"") : ""}
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
 					{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ?
-						<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newSchedule}>Novo</button>
+						<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newSchedule}>{Messages.get("label.new")}</button>
 					:""}
 						<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
 					</div>}
@@ -482,10 +482,10 @@ export default React.createClass({
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>Atividade</th>
-							<th>Início</th>
-							<th>Fim</th>
-							{this.state.schedule.periodicityEnable ? <th>Periodicidade</th> : <th></th>}
+							<th>{Messages.get("label.activity")}</th>
+							<th>{Messages.get("label.begin")}</th>
+							<th>{Messages.get("label.end")}</th>
+							{this.state.schedule.periodicityEnable ? <th>{Messages.get("label.title.periodicity")}</th> : <th></th>}
 							{this.state.schedule.scheduleStructures.length >0 ?
 								this.state.schedule.scheduleStructures.map((model, idx) => {
 									return(
