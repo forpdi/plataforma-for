@@ -4,12 +4,13 @@ import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
   getInitialState() {
     return {
         options: {
-          title: "Histórico de Indicadores",
+          title: Messages.get("label.indicatorsHistory"),
           vAxis: {
             title: 'Desempenho (%)', minValue: 0
           },
@@ -124,10 +125,10 @@ export default React.createClass({
     return (
       <div className="panel panel-default">
         <div className="panel-heading dashboard-panel-title"> 
-          <b className="budget-graphic-title"> Histórico dos Indicadores </b>
+          <b className="budget-graphic-title"> {Messages.get("label.indicatorsHistory")} </b>
           <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")} onClick={this.hideFields}/>
           <select onChange={this.indicatorsChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
-              <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores </option>
+              <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")} </option>
                 {this.state.indicators.map((attr, idy) =>{
                   return(
                     <option key={attr.id} value={idy} data-placement="right" title={attr.name}>

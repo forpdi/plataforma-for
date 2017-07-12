@@ -5,6 +5,7 @@ import ForPDIChart from 'forpdi/jsx/core/widget/ForPDIChart.jsx';
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -414,10 +415,10 @@ export default React.createClass({
                                         ) : ""
                                     }
                                     
-                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.get("label.goals.belowMinimum")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.get("label.goals.belowExpected")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.get("label.goals.reached")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.get("label.goals.aboveExpected")}</span>
                                     {this.state.indicator.aggregate ? "" :
                                         <span className="legend-item"><input type="text"  className="legend-goals-difference-expected marginLeft10" disabled/> Esperado</span>
                                     }

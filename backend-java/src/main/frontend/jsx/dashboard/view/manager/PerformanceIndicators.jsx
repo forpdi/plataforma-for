@@ -8,6 +8,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import ForPDIChart from "forpdi/jsx/core/widget/ForPDIChart.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -502,9 +503,9 @@ export default React.createClass({
                <div className="panel panel-default" id = {!this.state.hide ? "panelSection" : ""}>
                    <div className="panel-heading dashboard-panel-title">
                          <div>
-                             <b className="budget-graphic-title"> Desempenho dos indicadores</b>
+                             <b className="budget-graphic-title"> {Messages.get("label.indicatorsPerformance")}</b>
                              <select onChange={me.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-                                 <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
+                                 <option value={-1} data-placement="right" title="Todos os objetivos">{Messages.get("label.allObjectives")}</option>
                                  {
                                      me.state.objectives.map((attr, idy) =>{
                                          return(
@@ -516,7 +517,7 @@ export default React.createClass({
                                  }
                               </select>
                              <select defaultValue={-1} onChange={me.indicatorChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicators" >
-                                 <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores</option>
+                                 <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
                                       {
                                         (me.state.indicators) ? (me.state.indicators.map((attr, idy) =>{
                                               return(
@@ -551,11 +552,11 @@ export default React.createClass({
                              (
                                  <div className="colaborator-goal-performance-legend">   
                                      
-                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.get("label.goals.belowMinimum")}</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.get("label.goals.belowExpected")}</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.get("label.goals.reached")}</span>
                                     <br/>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.get("label.goals.aboveExpected")}</span>
                                      <span className="legend-item"><input type="text"  className="legend-goals-difference-expected marginLeft10" disabled/> Esperado</span>
                                  </div>
                              ) :
@@ -565,15 +566,15 @@ export default React.createClass({
                                     <div className="aggregate-indicator-without-goals-legend"> 
                                             <span className="legend-item"> 
                                                     {me.state.aggregateIndicator == true ? 
-                                                         <p id = "aggregate-indicator-goals"> Esse indicador não possui metas, pois é do tipo agregado.</p>
+                                                         <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
                                                         :
                                                     <p>&nbsp;</p>}
                                             </span>
                                     </div> 
-                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.get("label.goals.belowMinimum")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.get("label.goals.belowExpected")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.get("label.goals.reached")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.get("label.goals.aboveExpected")}</span>
                                  </div>
                              )                   
                          } 

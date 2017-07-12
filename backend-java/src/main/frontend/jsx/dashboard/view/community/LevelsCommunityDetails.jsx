@@ -4,6 +4,7 @@ import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import LoadingGaugeWhite from "forpdi/jsx/core/widget/LoadingGaugeWhite.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 
@@ -118,11 +119,11 @@ export default React.createClass({
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicatorsThematicAxis}</div>
 									</div>
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Objetivos</div>
+										<div className="dashboard-indicator-header">{Messages.get("label.objective")}s</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfObjectives}</div> 
 									</div>
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Indicadores</div>
+										<div className="dashboard-indicator-header">{Messages.get("label.indicators")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicators}</div>
 									</div> 
 									<div className="col-sm-3 dashboard-plan-details-column">

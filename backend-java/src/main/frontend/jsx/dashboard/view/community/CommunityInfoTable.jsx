@@ -7,6 +7,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 import moment from 'moment';
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
   getInitialState() {
@@ -375,19 +376,19 @@ export default React.createClass({
           <table className="dashboard-table table" id="goalsInfoTable">
               <tbody>
                 <tr>
-                    <th className = "column-goals-perfomance">Eixo temático
+                    <th className = "column-goals-perfomance">{Messages.get("label.thematicAxis")}
                       <span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
                       ? this.quickSortByStrategicAxisName.bind(this,"asc") :  this.quickSortByStrategicAxisName.bind(this,"desc")} > </span></th>
                     
-                    <th className = "column-goals-perfomance">Objetivo
+                    <th className = "column-goals-perfomance">{Messages.get("label.objective")}
                       <span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
                       ? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
                     
-                    <th className = "column-goals-perfomance">Indicador
+                    <th className = "column-goals-perfomance">{Messages.get("label.indicator")}
                       <span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
@@ -439,7 +440,7 @@ export default React.createClass({
                   })
                 :
                   <tr> 
-                    <td id = "GoalsInformationTable"> {"Não há registros cadastrados"} </td>
+                    <td id = "GoalsInformationTable"> {Messages.get("label.noRegister")} </td>
                     <td> </td>
                     <td> </td>
                     <td> </td>

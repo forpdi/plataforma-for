@@ -5,6 +5,7 @@ import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -228,7 +229,7 @@ export default React.createClass({
                         <div className="aggregate-indicator-without-goals-legend"> 
                             {this.state.aggregateIndicator ? 
                             <span className="legend-item"> 
-                                    <p id = "aggregate-indicator-goals"> Este é um indicador agregado, composto por outros indicadores.</p>
+                                    <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorText")}</p>
                             </span>
                             :<div className="height10">                                 
                             </div>}

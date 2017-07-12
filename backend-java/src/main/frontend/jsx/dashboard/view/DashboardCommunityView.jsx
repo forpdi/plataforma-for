@@ -9,6 +9,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Filter from "forpdi/jsx/dashboard/view/community/FilterCommunity.jsx";
 
 import Logo from 'forpdi/img/logo.png';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var ReactToastr = require("react-toastr");
 var {ToastContainer} = ReactToastr; 
@@ -63,7 +64,7 @@ export default React.createClass({
 			        </div>
 		        </div>
 		        <div className="col-md-8 textAlignCenter marginRight0">
-		        	<h1>Plano de Desenvolvimento Institucional</h1>
+		        	<h1>{Messages.get("label.institutionalDevelopmentPlan")}</h1>
 		        </div>
 		        <div className="col-md-2"></div>
 				
@@ -78,7 +79,7 @@ export default React.createClass({
 					  	</div>)
 					  :
 					  	(<div>
-					  		<h1 className="dashboard-noCommunity">O dashboard da comunidade não está habilitado para esta instituição.</h1>
+					  		<h1 className="dashboard-noCommunity">{Messages.get("label.unableCommunityDashboard")}</h1>
 				  		</div>)}
 			</div>
 		</main>);
