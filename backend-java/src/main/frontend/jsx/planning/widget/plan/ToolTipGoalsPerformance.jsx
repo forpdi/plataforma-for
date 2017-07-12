@@ -1,5 +1,6 @@
 import moment from 'moment';
 import React from 'react';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	
@@ -42,7 +43,7 @@ export default React.createClass({
 					<input type="text" className="btn-action-goals-minimum" />
 					</div>
 					<div className="box">
-					<p className="toolTipGoalItem">Suficiente</p>
+					<p className="toolTipGoalItem">{Messages.get("label.goals.reached")}</p>
 					 
 					</div>
 					<div className="boxIcon">

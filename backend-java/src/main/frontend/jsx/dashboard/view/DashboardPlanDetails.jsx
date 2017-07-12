@@ -3,6 +3,7 @@ import React from "react";
 import Progress from 'react-progressbar';
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import LoadingGaugeWhite from "forpdi/jsx/core/widget/LoadingGaugeWhite.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 
@@ -59,12 +60,12 @@ export default React.createClass({
 
 
 	render() {		
-		var title = "Informações gerais das metas"+(this.state.plan != -1 ? " - " + this.state.plan.get("name") :"");
+		var title = Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + this.state.plan.get("name") :"");
 		return (
 			<div className={this.props.className}>
 				<div className="panel">
 					<div className="dashboard-plan-details-header">
-						<span title={title}>{(this.state.plan == -1)?("Todos os planos"):
+						<span title={title}>{(this.state.plan == -1)?(Messages.get("label.allPlans")):
 								((this.state.plan != -1 ? (this.state.plan.get("name").length > 30 ? 
 									this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) + 
 									(this.state.subplan != -1 ? " - "+ (this.state.subplan.name.length > 30 ? 
@@ -83,17 +84,17 @@ export default React.createClass({
 						<div>
 								<div className="dashboard-indicator-container">
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">Objetivos</div>
+								<div className="dashboard-indicator-header">{Messages.get("label.objective")}s</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfObjectives : "0"}</div></div>
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">Indicadores</div>
+								<div className="dashboard-indicator-header">{Messages.get("label.indicators")}</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfIndicators : "0"}</div></div>
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">Metas</div>
+								<div className="dashboard-indicator-header">{Messages.get("label.goals")}</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfGoals : "0"}</div></div>
 							</div>
 							<div className="dashboard-goals-information">
-							    <div className='dashboard-goals-title'>Metas em atraso</div>
+							    <div className='dashboard-goals-title'>{Messages.get("label.lateGoals")}</div>
 							    <div className="fontSize12 ">
 							    	<div className="dashboard-goals-head"><span className='fontWeightBold'>{this.state.planDetails ? this.state.planDetails.goalsDelayedPerCent.toFixed(2) : "0"}%</span> das metas estão atrasadas<span className='fontWeightBold floatRight'>100%</span></div></div>
 								<Progress completed={this.state.planDetails ? Number(this.state.planDetails.goalsDelayedPerCent) : 0} />
@@ -101,10 +102,10 @@ export default React.createClass({
 
 							</div>
 							<div className="dashboard-objective-information">
-							    <div className='dashboard-goals-title'>Orçamento</div>
+							    <div className='dashboard-goals-title'>{Messages.get("label.budget")}</div>
 							    {this.state.planDetails ? (this.state.planDetails.numberOfBudgets >= 1 ?
-							    	<div className="fontSize12">Existem <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> elementos orçamentários vinculados aos objetivos.</div>
-							    	: <div className="fontSize12">Existe <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> elemento orçamentário vinculado ao objetivo.</div>) : "0"}
+							    	<div className="fontSize12">{Messages.get("label.thereAre")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.get("label.budgetaryElementsLinkedToTheObjectives")}</div>
+							    	: <div className="fontSize12">{Messages.get("label.exist")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span>{Messages.get("label.budgetaryElementLinkedToTheObjective")}</div>) : "0"}
 							</div>
 						</div>}					    
 					</div>)}

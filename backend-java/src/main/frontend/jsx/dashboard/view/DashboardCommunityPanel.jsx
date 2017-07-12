@@ -11,7 +11,7 @@ import ReactTooltip from 'react-tooltip';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
     contextTypes: {
@@ -345,7 +345,7 @@ export default React.createClass({
                                     </select>
                                     <select defaultValue={this.state.objectiveId} onChange={this.objectiveChange} ref="selectObjective" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
                                         disabled={(this.state.selectedStrategicAxis<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos</option>
+                                            <option value={-1} data-placement="right" title="Todos os objetivos">{Messages.get("label.allObjectives")}</option>
                                             {(this.state.objectives) ? (this.state.objectives.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -354,7 +354,7 @@ export default React.createClass({
                                     </select>
                                     <select defaultValue={this.state.indicatorId} onChange={this.indicatorChange} ref="selectIndicator" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
                                         disabled={(this.state.selectedObjective<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
                                             {(this.state.indicators) ? (this.state.indicators.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -390,7 +390,7 @@ export default React.createClass({
                 
                 <div className={!this.state.hidden ? "col-md-10 col81pct" : "col-md-11 col-96pct"}>
                     <div className="dashboard-community-graphs">
-                        <h1>Painel de bordo da comunidade <span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
+                        <h1>{Messages.get("label.communityDashboard")}<span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
                         <div className = "row">
                             <div className="col-md-8">
                                 <PerformanceLevels plan={this.state.selectedPlan} subPlan={this.state.selectedSubplan} levelInstance={this.state.selectedLevelInstance} dashboardAxis={dashboardAxis} isAggregateIndicator = {this.state.aggregateIndicator} isIndicator = {this.state.indicator} />

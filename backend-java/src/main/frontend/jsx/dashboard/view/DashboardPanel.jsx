@@ -5,6 +5,7 @@ import DashboardAdminView from "forpdi/jsx/dashboard/view/DashboardAdminView.jsx
 import DashboardColaboratorView from "forpdi/jsx/dashboard/view/DashboardColaboratorView.jsx";
 import DashboardManagerView from "forpdi/jsx/dashboard/view/DashboardManagerView.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
   
 export default React.createClass({
     contextTypes: {
@@ -120,13 +121,13 @@ export default React.createClass({
 	render() {
 		return (
 			<div className="dashboard-container">
-				<h1 className="marginLeft30">Painel de bordo</h1>
+				<h1 className="marginLeft30">{Messages.get("label.dashboard")}</h1>
 				{(
                     <div className="marginLeft30">
 				        <select onChange={this.planMacroChange} className="form-control dashboard-select-box" ref="selectPlanMacro"
                             disabled={!this.state.loaded}>
 				            <option value={-1} data-placement="right" title="Todos os planos">
-                                Todos os planos
+                                {Messages.get("label.allPlans")}
                             </option>
 				            {this.state.plans.map((attr, idy) =>{
                     	       return(
@@ -138,8 +139,8 @@ export default React.createClass({
 				        </select>
 				        <select  onChange={this.subplanChange} ref="selectSubplan" className={(this.state.selectedPlan<0)?"form-control dashboard-select-box dashboard-select-box-disabled marginLeft10" : "form-control dashboard-select-box marginLeft10"} 
 				            disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
-					            <option value={-1} data-placement="right" title="Todos os planos de metas">
-                                    Todos os planos de metas
+					            <option value={-1} data-placement="right" title={Messages.get("label.allGoalPlans")}>
+                                    {Messages.get("label.allGoalPlans")}
                                 </option>
 					            {(this.state.subplans)?(this.state.subplans.map((attr, idy) =>{
 							        return(

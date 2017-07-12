@@ -5,6 +5,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 //import Toastr from 'toastr';
 
