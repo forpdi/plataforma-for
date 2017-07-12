@@ -70,7 +70,7 @@ var VerticalForm =  React.createClass({
 					&& field.type != AttributeTypes.TABLE_FIELD) {
 						if(this.props.isDocument) {
 							if(!Title.validateTitle(this.refs[field.name], idx, this.props.editFunc)){
-								this.context.toastr.addAlertError("Existem erros no formulário");
+								this.context.toastr.addAlertError(Messages.get("label.form.error"));
 								error = true;
 							}
 						} 
