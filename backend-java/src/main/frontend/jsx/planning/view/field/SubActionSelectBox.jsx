@@ -1,4 +1,5 @@
 import React from "react";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import BudgetStore from "forpdi/jsx/planning/store/Budget.jsx";
 
@@ -47,7 +48,7 @@ export default React.createClass({
 		return(
 			<div className={this.props.className}>
 				<select ref="subaction-select" onChange={this.onChange} className="subAction-select-box" defaultValue={this.value}>
-					<option value={-1} key="opt-0" data-placement="right" title="Selecione">Selecione</option>
+					<option value={-1} key="opt-0" data-placement="right" title={Messages.get("label.select")}>{Messages.get("label.select")}</option>
 					{this.state.budgets.map( (budget,idx) => {
 						return(
 							<option value={idx} key={"opt-"+idx} data-placement="right" title={budget.subAction}>

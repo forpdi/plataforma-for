@@ -326,7 +326,7 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<b className="budget-title">Or&#231;amento</b>
+					<b className="budget-title"> {Messages.get("label.budget")}</b>
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
