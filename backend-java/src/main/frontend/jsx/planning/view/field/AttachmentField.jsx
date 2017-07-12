@@ -8,6 +8,7 @@ import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -38,7 +39,7 @@ export default React.createClass({
 		me.getAttachments(1, 5);
 
 		AttachmentStore.on("sync", (model) => {			
-			me.context.toastr.addAlertSuccess("Anexo salvo com sucesso!");
+			me.context.toastr.addAlertSuccess(Messages.get("label.success.savedAttachment"));
 			me.getAttachments(1,5);			
 		});
 		AttachmentStore.on("attachmentList", (model) => {
@@ -51,11 +52,11 @@ export default React.createClass({
 			}			
 		});
 		AttachmentStore.on("attachmentDeleted", (model) => {
-			me.context.toastr.addAlertSuccess("Anexo excluido com sucesso!");
+			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentDelete"));
 			me.getAttachments(1,5);			
 		});
 		AttachmentStore.on("attachmentUpdated", (model) => {
-			me.context.toastr.addAlertSuccess("Anexo atualizado com sucesso!");
+			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentRefresh"));
 			me.state.list.map((attachment) => {				
 				if(attachment.id == model.data.id){					
 					attachment.description = model.data.description;
@@ -84,11 +85,11 @@ export default React.createClass({
 
 	attachFile(){
 		var me = this;
-		var title = "Inserir anexo";
+		var title = Messages.get("label.insertAttachment");
 		var msg = (
 			<div>
 				<p>
-					Selecione um arquivo.
+					{Messages.get("label.selectFile")}
 				</p>
 			</div>
 		);
@@ -173,7 +174,7 @@ export default React.createClass({
 				});
 				Modal.hide();
 			},
-			"Realmente deseja excluir o anexo "+attachment.name+"?",
+			 Messages.get("label.msg.deletedAttachment") + " " +attachment.name+"?",
 			() => {Modal.hide()}
 		);		
 	},
@@ -200,7 +201,7 @@ export default React.createClass({
 				});
 				Modal.hide();
 			},
-			"Realmente deseja excluir "+array.length+" anexos?",
+			Messages.get("label.msg.removeAttachment") + " " + array.length + " " + Messages.get("label.attachment"),
 			() => {Modal.hide()}
 		);
 	},
@@ -268,7 +269,7 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading dashboard-panel-title">
-					<b className="budget-graphic-title">Anexar arquivos</b>
+					<b className="budget-graphic-title">{Messages.get("label.attachFiles")}</b>
 
 					{this.state.list[0] ? (this.context.roles.MANAGER || 
 							_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ?
@@ -291,7 +292,7 @@ export default React.createClass({
 						{this.context.roles.MANAGER || 
 								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>Anexar arquivo</button>
+							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>{Messages.get("label.attachFiles")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} 
 						onClick={this.hideFields}/>
@@ -306,23 +307,23 @@ export default React.createClass({
 										<input ref={"attach-checkbox-all"} type="checkbox" onClick={this.checkAll}/>
 									</th>
 									<th>
-										{"Arquivo"}
+										{Messages.get("label.msg.file")}
 									</th>
 									<th>
-										{"Descrição"}
+										{Messages.get("label.description")}
 									</th>
 									<th>
-										{"Autor"}
+										{Messages.get("label.author")}
 									</th>
 									<th>
-										{"Data de upload"}
+										{Messages.get("label.uploadData")}
 									</th>
 									{this.context.roles.MANAGER || 
 										_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
 									<th>
 										<center>
-											{"Ações"}
+											{Messages.get("label.actions")}
 										</center>
 									</th> : undefined}									
 								</tr>
@@ -355,9 +356,9 @@ export default React.createClass({
 												{attachment.id == this.state.editId ? 
 													<center className='displayFlex'>																						
 									                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit.bind(this, attachment)}
-									                   	 title="Salvar"/>
+									                   	 title={Messages.get("label.submitLabel")}/>
 									                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEdit}
-									                  	 title="Cancelar"/>
+									                  	 title={Messages.get("label.cancel")}/>
 													</center> :
 													<center>
 														<span className="mdi mdi-pencil cursorPointer" onClick={this.editAttachment.bind(this, attachment)}/>

@@ -12,7 +12,6 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
-
 //import Toastr from 'toastr';
 
 var Validate = Validation.validate;
@@ -69,7 +68,7 @@ export default React.createClass({
 		if(this.refs[this.ref].value.length >= this.refs[this.ref].maxLength){
 			//Toastr.remove();
 			//Toastr.error("Limite de "+this.refs[this.ref].maxLength+" caracteres atingido!");
-			this.context.toastr.addAlertError("Limite de "+this.refs[this.ref].maxLength+" caracteres atingido!");
+			this.context.toastr.addAlertError(Messages.get("label.limit") +this.refs[this.ref].maxLength+ " " + Messages.get("label.error.limitCaracteres"));
 		}
 	},
 
@@ -100,7 +99,7 @@ export default React.createClass({
 
 			//Toastr.remove();
 			//Toastr.success("Plano de ação salvo com sucesso!");
-			this.context.toastr.addAlertSuccess("Plano de ação salvo com sucesso!");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.planSaved"));
 		},this);
 
 		ActionPlanStore.on("actionPlanDeletedSuccess", model => {			
@@ -111,13 +110,13 @@ export default React.createClass({
 			this.getActionPlans(this.state.levelInstanceId,1,5);
 			//Toastr.remove();
 			//Toastr.success("Plano de ação deletado com sucesso!");
-			this.context.toastr.addAlertSuccess("Plano de ação deletado com sucesso!");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.planDeleted"));
 		},this);
 
 		ActionPlanStore.on("actionPlanDeletedError", model => {			
     		//Toastr.remove();
 			//Toastr.error("Erro ao deletar plano de ação");
-			this.context.toastr.addAlertError("Erro ao deletar plano de ação");
+			this.context.toastr.addAlertError(Messages.get("label.error.deletePlanAction"));
 			this.setState({
 				adding: false,
 				Loading:false
@@ -129,11 +128,11 @@ export default React.createClass({
 			if(model.responseText){
 				//Toastr.remove();
 				//Toastr.error("Já existe um plano de ação cadastrado com esta descrição!");
-				this.context.toastr.addAlertError("Já existe um plano de ação cadastrado com esta descrição!");				
+				this.context.toastr.addAlertError(Messages.get("label.error.alreadyRegisteredPlanAction"));				
 			} else{
 				//Toastr.remove();
 				//Toastr.success("Plano de ação editado com sucesso!");
-				this.context.toastr.addAlertSuccess("Plano de ação editado com sucesso!");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.editPlanAction"));
 				this.setState({
 					loading:false
 				})
@@ -225,7 +224,7 @@ export default React.createClass({
 	},
 
 	deleteActionPlan(id, idx,evt) {
-		var msg = "Você tem certeza que deseja excluir " + ((this.state.actionPlans[idx].description.length >150)?(this.state.actionPlans[idx].description.substr(0,150)+"..."):
+		var msg = Messages.get("label.deleteConfirmation") + " " + ((this.state.actionPlans[idx].description.length >150)?(this.state.actionPlans[idx].description.substr(0,150)+"..."):
 			(this.state.actionPlans[idx].description)) + "?"
 
 		Modal.confirmCancelCustom(() => {
@@ -282,8 +281,8 @@ export default React.createClass({
 						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 							this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td id={'options'+idx} className='edit-budget-col cursorDefault'>
-							<span className='mdi mdi-pencil cursorPointer' onClick={this.editActionPlan.bind(this,action.id,idx)} title="Editar informações"/>
-							<span className='mdi mdi-delete cursorPointer' onClick={this.deleteActionPlan.bind(this,action.id,idx)} title="Excluir"/>
+							<span className='mdi mdi-pencil cursorPointer' onClick={this.editActionPlan.bind(this,action.id,idx)} title={Messages.get("label.title.editInformation")}/>
+							<span className='mdi mdi-delete cursorPointer' onClick={this.deleteActionPlan.bind(this,action.id,idx)} title={Messages.get("label.delete")}/>
 						</td>
 					:<td/>}
 				</tr>
@@ -378,8 +377,8 @@ export default React.createClass({
 				</td>
 				<td>
 		            <div className='displayFlex'>
-		               	<span className='mdi mdi-check accepted-budget' onClick={this.acceptEditActionPlan.bind(this,action.id)} title="Salvar"></span>
-		              	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewActionPlan} title="Cancelar"></span>
+		               	<span className='mdi mdi-check accepted-budget' onClick={this.acceptEditActionPlan.bind(this,action.id)} title={Messages.get("label.submitLabel")}></span>
+		              	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewActionPlan} title={Messages.get("label.cancel")}></span>
 		           	</div>
 		        </td>
             </tr>
@@ -394,8 +393,8 @@ export default React.createClass({
 		var url = window.location.href;	
 		evt.preventDefault();
 		var msg = (actionPlan.checked ? 
-		 "Tem certeza que deseja reabrir o plano de ação "+actionPlan.description+"?" :
-		 "Tem certeza que deseja concluir o plano de ação "+actionPlan.description+"?");
+		 Messages.get("label.reopenPlanAction")+actionPlan.description+"?" :
+		 Messages.get("label.completeActionPlan")+actionPlan.description+"?");
 		//Atualiza o checkbox do frontend
 		Modal.confirmCustom(() => {
 			actionPlan.checked = !actionPlan.checked;
@@ -516,8 +515,8 @@ export default React.createClass({
 				</td>
 				<td>				
 	                <div className='displayFlex'>
-	                   	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewActionPlan} title="Salvar"></span>
-	                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewActionPlan} title="Cancelar"></span>
+	                   	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewActionPlan} title={Messages.get("label.submitLabel")}></span>
+	                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewActionPlan} title={Messages.get("label.cancel")}></span>
 	               	</div>
 	            </td>
 			</tr>
@@ -528,7 +527,7 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<b className="budget-graphic-title">Plano de ação </b>
+					<b className="budget-graphic-title">{Messages.get("label.planAction")} </b>
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
@@ -551,12 +550,12 @@ export default React.createClass({
 									{this.context.roles.ADMIN || this.context.roles.MANAGER == true || 
 										(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
-										<th className="textAlignCenter">Concluído</th>
+										<th className="textAlignCenter">{Messages.get("label.completed")}</th>
 									:<th/>}
-									<th>Descrição</th>
-									<th>Responsável</th>
-									<th>Início</th>
-									<th>Término</th>
+									<th>{Messages.get("label.description")}</th>
+									<th>{Messages.get("label.responsible")}</th>
+									<th>{Messages.get("label.begin")}</th>
+									<th>{Messages.get("label.term")}</th>
 								</tr>
 							</thead>
 								<tbody>

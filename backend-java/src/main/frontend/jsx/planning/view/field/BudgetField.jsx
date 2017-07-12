@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from 'react-router';
 //import Toastr from 'toastr';
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import BudgetStore from "forpdi/jsx/planning/store/Budget.jsx";
@@ -113,7 +113,7 @@ export default React.createClass({
 	            this.state.budgets[this.state.idx].planned = model.data.planned;
 				//Toastr.remove();
 				//Toastr.success("Orçamento editado com sucesso!");
-				this.context.toastr.addAlertSuccess("Orçamento editado com sucesso!");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.budgetEdited"));
 				this.rejectEditbudget(this.state.idx);
 			}else{
 				var errorMsg = JSON.parse(model.responseText)
@@ -255,8 +255,8 @@ export default React.createClass({
 				<td>{"R$"+this.formatBR(this.formatEUA(model.conducted))}</td>
 				<td>				
                     <div className='displayFlex'>
-                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.budget.id, idx)} title="Salvar"></span>
-                      	<span className='mdi mdi-close reject-budget' onClick={this.rejectEditbudget.bind(this, idx)} title="Cancelar"></span>
+                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.budget.id, idx)} title={Messages.get("label.submitLabel")}></span>
+                      	<span className='mdi mdi-close reject-budget' onClick={this.rejectEditbudget.bind(this, idx)} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
 			</tr>
@@ -277,8 +277,8 @@ export default React.createClass({
 				<td>-</td>
 				<td>				
                     <div className='displayFlex'>
-                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title="Salvar"></span>
-                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewBudget} title="Cancelar"></span>
+                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
+                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewBudget} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
 			</tr>
@@ -332,7 +332,7 @@ export default React.createClass({
 					<div className="budget-btns">
 						{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>Novo</button>
+							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.get("label.new")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
 					</div>}
@@ -342,11 +342,11 @@ export default React.createClass({
 					<thead/>
 						<thead>
 							<tr>
-								<th>A&#231;&#227;o or&#231;ament&#225;ria <span className = "fpdi-required"/></th>
-								<th>Nome <span className = "fpdi-required"/> </th>
-								<th>Or&#231;amento LOA</th>
-								<th>Empenhado</th>
-								<th>Realizado</th>
+								<th>{Messages.get("label.budgetAction")} <span className = "fpdi-required"/></th>
+								<th>{Messages.get("label.name")}<span className = "fpdi-required"/> </th>
+								<th>{Messages.get("label.budgetLoa")}</th>
+								<th>{Messages.get("label.budget.committed")}</th>
+								<th>{Messages.get("label.budget.conducted")}</th>
 								<th> </th>
 							</tr>
 						</thead>
@@ -367,8 +367,8 @@ export default React.createClass({
 									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
-											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.budget.id,idx)} title="Editar informações"/>
-											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.budget.id,idx)} title="Excluir"/>
+											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.title.editInformation")}/>
+											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.delete")}/>
 										</td>
 									: <td></td>}
 								</tr>
