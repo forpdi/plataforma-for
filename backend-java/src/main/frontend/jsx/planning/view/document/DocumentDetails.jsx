@@ -2,8 +2,8 @@
 import React from 'react';
 import Marked from "marked";
 import DocumentStore from "forpdi/jsx/planning/store/Document.jsx";
-
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -58,7 +58,7 @@ export default React.createClass({
 			<h1>{this.state.document.title}</h1>
 			<div className="media">
 				<div className="media-body">
-					<div className="fpdi-text-label">Descrição</div>
+					<div className="fpdi-text-label">{Messages.get("label.title.description")}</div>
 					<div className="pdi-normal-text"
 						 dangerouslySetInnerHTML={{__html: Marked(this.state.document.description)}} />
 				</div>
