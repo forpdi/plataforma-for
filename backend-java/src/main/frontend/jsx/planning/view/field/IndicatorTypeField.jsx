@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from 'react-router';
 import _ from 'underscore';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -33,7 +34,7 @@ export default React.createClass({
 						if(option[this.props.fieldDef.valueField]){
 							return (
 								<span key={"value-"+idx} className="fpdi-indicator-type-value">
-									{this.props.fieldDef.name == "indicator-type" ? "Indicador ":""}{option[this.props.fieldDef.displayField]}
+									{this.props.fieldDef.name == "indicator-type" ? Messages.get("label.indicator"):""}{option[this.props.fieldDef.displayField]}
 								</span>
 							);
 						}

@@ -1,6 +1,7 @@
 import React from "react";
 import {Link} from 'react-router';
 import _ from 'underscore';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -44,7 +45,7 @@ export default React.createClass({
 				}
 			} else {
 				return(
-					<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: "Nenhum plano de metas cadastrado ainda"}}/></div>
+					<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html:Messages.get("label.title.goalPlanNotRegistered")}}/></div>
 				);
 			}
 		} else {
@@ -78,8 +79,8 @@ export default React.createClass({
 						ref={this.props.fieldId}
 						type={this.props.fieldDef.type}
 						>
-						<option key='field-opt-' data-placement="right" title="Nenhum plano de metas cadastrado ainda">
-							Nenhum plano de metas cadastrado ainda
+						<option key='field-opt-' data-placement="right" title={Messages.get("label.title.goalPlanNotRegistered")}>
+							{Messages.get("label.title.goalPlanNotRegistered")}
 						</option>
 					</select>
 				);

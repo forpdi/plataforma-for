@@ -3,7 +3,7 @@ import {Link} from 'react-router';
 
 import _ from "underscore";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import TableStore from "forpdi/jsx/planning/store/TableFields.jsx";
@@ -81,7 +81,7 @@ export default React.createClass({
 					});
 	    		}				
 				
-				this.context.toastr.addAlertSuccess("Informações salvas com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 			}
 		}, this);
 		TableStore.on("tableUpdated", model => {
@@ -91,7 +91,7 @@ export default React.createClass({
 					loading: false
 				});
 
-				this.context.toastr.addAlertSuccess("Edição realizada com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.edited"));
 			}
 		},this);
 		TableStore.on("tableDeleted", model => {			
@@ -103,7 +103,7 @@ export default React.createClass({
 					loading: false
 				});
 				
-				this.context.toastr.addAlertSuccess("Exclusão realizada com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.deletion"));
 			}
 		},this);
 
@@ -166,7 +166,7 @@ export default React.createClass({
 				}
 			});
 
-			this.context.toastr.addAlertError("Por favor preencha todos os campos corretamente.");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllFields"));
 		}
 	},
 
@@ -207,7 +207,7 @@ export default React.createClass({
 			});
 		});
 		if(!NewFieldValidation.tableNewInstanceValidate(tableValues)){
-			this.context.toastr.addAlertError("Por favor preencha todos os campos corretamente.");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllFields"));
 			return;
 		}
 		var tableInstance = {
@@ -311,8 +311,8 @@ export default React.createClass({
 				: ""}
 				<td className="edit-budget-col cursorDefault">				
                     <div className='tableFieldIcons'>
-                       		<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditTable} title="Salvar"></span>
-                      		<span className='mdi mdi-close reject-budget' onClick={this.rejectedEditTable} title="Cancelar"></span>
+                       		<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditTable} title={Messages.get("label.submitLabel")}></span>
+                      		<span className='mdi mdi-close reject-budget' onClick={this.rejectedEditTable} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
 			</tr>
@@ -419,8 +419,8 @@ export default React.createClass({
 				: ""}
 				<td  className="edit-budget-col cursorDefault">
                     <div className='tableFieldIcons'>
-                       		<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewTable} title="Salvar"></span>
-                      		<span className='mdi mdi-close reject-budget' onClick={this.cancelNewTable} title="Cancelar"></span>
+                       		<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewTable} title={Messages.get("label.submitLabel")}></span>
+                      		<span className='mdi mdi-close reject-budget' onClick={this.cancelNewTable} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
 			</tr>
@@ -449,7 +449,7 @@ export default React.createClass({
 			this.state.title = this.refs['edit-input'].value;
 			this.cancelEditing();
 		}else{
-			this.context.toastr.addAlertError("Preencha o nome da tabela");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeNameTable"));
 		}
 	},
 
@@ -459,8 +459,8 @@ export default React.createClass({
 			<div className="edit-section-attribute"> 
 				<input defaultValue={this.props.fieldDef.label == "" ? this.state.title : this.props.fieldDef.label} className="edit-section-attribute-input" ref="edit-input"/>
 				<div className=' displayFlex'>
-                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title="Salvar"></span>
-                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title="Cancelar"></span>
+                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
+                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title={Messages.get("label.cancel")}></span>
                	</div>
 			</div>
 			</div>
@@ -481,10 +481,10 @@ export default React.createClass({
 													PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")) ?
 						<span>
 							<span type="submit" className="mdi mdi-delete attribute-input-edit atribute-input-edit-schedule inner"
-					 		title="Excluir campo" onClick={this.delete}/>
+					 		title={Messages.get("label.title.deleteField")} onClick={this.delete}/>
 
 							<span className="mdi mdi-pencil attribute-input-edit atribute-input-edit-schedule inner" 
-							title="Alterar campo" onClick={this.edit}/>
+							title={Messages.get("label.title.changeField")} onClick={this.edit}/>
 
 						</span> : "") : ""}
 					{(this.state.adding)?
