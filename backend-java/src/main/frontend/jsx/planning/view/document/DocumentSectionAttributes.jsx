@@ -84,7 +84,7 @@ export default React.createClass({
 				vizualization: true
 			})			
 			me.getSectionAttributes(model.data.id, me.props.params.planId);
-			me.context.toastr.addAlertSuccess("Informações salvas com sucesso");
+			me.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 		}, me);
 
 		DocumentStore.on("sectionAttributesRetrieved", (model) => {		
@@ -141,14 +141,14 @@ export default React.createClass({
 					//Toastr.remove();
 					//Toastr.success("Campo \""+attr.name+"\" adicionado com sucesso.");
 					var nameCreated = attr.name.substr(0,50).concat("...");
-					me.context.toastr.addAlertSuccess("Campo \""+nameCreated+"\" adicionado com sucesso.");
+					me.context.toastr.addAlertSuccess(Messages.get("label.field") + nameCreated + Messages.get("label.success.added"));
 					me.tweakNewField();
 				}
 			}
 		});
 
 		DocumentStore.on("sectiondeleted", (model) => {			
-			me.context.toastr.addAlertSuccess("Seção \""+model.name+"\" excluido com sucesso.");
+			me.context.toastr.addAlertSuccess(Messages.get("label.section") + model.name + Messages.get("label.success.deleted"));
 			me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			DocumentStore.dispatch({
 				action: DocumentStore.ACTION_RETRIEVE,
@@ -157,7 +157,7 @@ export default React.createClass({
 		});
 
 		DocumentStore.on("attributedeleted", (model) => {
-			me.context.toastr.addAlertSuccess("Campo \""+model.name+"\" excluido com sucesso.");					
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + nameCreated + Messages.get("label.success.deleted"));					
 			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
 		});
 
@@ -199,7 +199,7 @@ export default React.createClass({
 			});			
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
-			me.context.toastr.addAlertSuccess("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + me.state.recentAttr.name + Messages.get("label.success.added"));
 			me.tweakNewField();
 		});
 
@@ -221,7 +221,7 @@ export default React.createClass({
 			});			
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
-			me.context.toastr.addAlertSuccess("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + me.state.recentAttr.name + Messages.get("label.success.added"));
 			me.tweakNewField();
 		});
 	},
@@ -308,7 +308,7 @@ export default React.createClass({
 
 		var me = this;
 		var documentAttributes = [];
-		var msg = "Existem erros no formulário:";
+		var msg = Messages.get("label.msg.errorsForm");
 		var boolMsg = false;
 		
 		var index = 0;
@@ -371,7 +371,7 @@ export default React.createClass({
 	saveNewField(extra, periodicity, evt) {
 		var validation = Validate.validationNewFieldDocument(this.refs);		
 		if (validation.errorField) {
-			this.context.toastr.addAlertError("Existem erros no formulário");
+			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 		}
 		else {
 			this.setState({
@@ -396,7 +396,7 @@ export default React.createClass({
 	},
 
 	deleteSection(){
-		var msg = "Tem certeza que deseja excluir esta seção?";
+		var msg = Messages.get("label.msg.deleteSection");
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			DocumentStore.dispatch({
@@ -409,7 +409,7 @@ export default React.createClass({
 	},
 
 	deleteAttribute(id){
-		var msg = "Tem certeza que deseja excluir este campo?";
+		var msg = Messages.get("label.msg.deleteField");
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			this.setState({
@@ -480,7 +480,7 @@ export default React.createClass({
 
 					{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) ?
-						(this.state.vizualization == true ? <i className="mdi mdi-pencil cursorPointer deleteIcon" onClick={this.editingAttributes} title="Editar informações"/> : "")
+						(this.state.vizualization == true ? <i className="mdi mdi-pencil cursorPointer deleteIcon" onClick={this.editingAttributes} title={Messages.get("label.title.editInformation")}/> : "")
 					: ""}
 					{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) && this.state.model.leaf ?
@@ -504,7 +504,7 @@ export default React.createClass({
 								defaultValue={this.state.model.name}
 								id='fieldName'
 								ref='fieldName'
-								placeholder='Título da seção.'
+								placeholder={Messages.get("label.title.section")}
 								onKeyPress={this.onKeyUp}
 							/>
 							<div ref="formAlertTitleSection" className="formAlertError"></div>
@@ -523,7 +523,7 @@ export default React.createClass({
 					onCancel={this.onCancel}
 					deleteFunc={this.deleteAttribute}
 					editFunc={this.editAttribute}
-					submitLabel="Salvar"
+					submitLabel={Messages.get("label.submitLabel")}
 					isDocument={true}/>
 				{this.state.newField ?
 					<div className="form-group form-group-sm marginTop20">
@@ -534,7 +534,7 @@ export default React.createClass({
 									spellCheck={false} 
 									className="form-control"
 									ref="newfield-name"
-									placeholder="Nome do campo" 
+									placeholder={Messages.get("label.field.name")} 
 									maxLength="255"
 									/>
 							</div>
@@ -544,10 +544,10 @@ export default React.createClass({
 									spellCheck={false} 
 									className="form-control"
 									ref="newfield-type"
-									placeholder="Tipo do campo"
+									placeholder={Messages.get("label.field.type")}
 									onChange={this.onSelectFieldType}
 									id="selectFieldType">
-										<option value="">-- Selecione o tipo do campo --</option>
+										<option value="">{Messages.get("label.selectTypeField")}</option>
 										{this.state.types.map((type, idx) => {
 											return <option value={type.id} key={"attr-type-"+idx}>{type.label}</option>
 										})}
@@ -555,9 +555,9 @@ export default React.createClass({
 							</div>
 							{this.state.buttonsHide?"":
 								<div className="col-sm-12 col-md-4" >
-									<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.saveNewField} title="Salvar"/>
+									<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.saveNewField} title={Messages.get("label.submitLabel")}/>
 					            	<span>&nbsp;</span>
-					            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.tweakNewField} title="Cancelar"/>
+					            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.tweakNewField} title={Messages.get("label.cancel")}/>
 								</div>
 							}
 						</div>
@@ -583,7 +583,7 @@ export default React.createClass({
 					(((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') && !this.state.model.preTextSection) ?
 						<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
-							<span className="mdi mdi-plus" /> Adicionar novo campo
+							<span className="mdi mdi-plus" /> {Messages.get("label.addNewField")}
 						</button>
 					:"")
 				}

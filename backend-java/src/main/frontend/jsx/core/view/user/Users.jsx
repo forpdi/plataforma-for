@@ -84,11 +84,11 @@ export default React.createClass({
 
 		UserStore.on("remove", (data) => {
 			if(data.data){
-				this.context.toastr.addAlertSuccess("Usuário removido com sucesso.");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.removerUser"));
 				me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 				//me.refs["pagination"].reload();
 			}else{
-				this.context.toastr.addAlertError("Impossível excluir esse usuário pois ele é responsável por algum nível do plano de metas.");
+				this.context.toastr.addAlertError(Messages.get("label.error.unableDeleteUser"));
 				
 			}
 
@@ -99,14 +99,14 @@ export default React.createClass({
 		UserStore.on("block", () => {
 			//Toastr.remove();
 			//Toastr.success("Usuário bloqueado com sucesso.");
-			this.context.toastr.addAlertSuccess("Usuário bloqueado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.userBlock"));
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
 		UserStore.on("unblock", () => {
 			//Toastr.remove();
 			//Toastr.success("Usuário desbloqueado com sucesso.");
-			this.context.toastr.addAlertSuccess("Usuário desbloqueado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.userUnblock"));
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
@@ -114,7 +114,7 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success("Convite reenviado com sucesso.");
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
-			this.context.toastr.addAlertSuccess("Convite reenviado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.invitionUserAgain"));
 		}, me);
 		UserStore.on("sync", (model) => {
 			//Toastr.remove();
@@ -122,7 +122,7 @@ export default React.createClass({
 				loadingSend: false
 			});
 
-			this.context.toastr.addAlertSuccess("Um e-mail de convite foi enviado para "  + model.attributes.email + ", no qual o usuário precisa completar o cadastro.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.emailSent") + " "  + model.attributes.email + Messages.get("label.success.userCompleteRegister"));
 
 			this.refs.nameUser.value = "";
 			this.refs.emailUser.value = "";
@@ -136,7 +136,7 @@ export default React.createClass({
 			this.setState({
 				loadingCreate: false
 			});
-			this.context.toastr.addAlertSuccess("Usuário cadastrado com sucesso: " +model.data.email);
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.registredUser") +model.data.email);
 
 			this.refs.newNameUser.value = "";
 			this.refs.newEmailUser.value = "";
@@ -150,7 +150,7 @@ export default React.createClass({
 			});
 		},me)
 		UserStore.on("users-imported", (data) =>{
-			this.context.toastr.addAlertSuccess("Usuários importados com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.importedUser"));
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		},me)
@@ -172,7 +172,7 @@ export default React.createClass({
 
 	removeUser(id, event) {
 		event && event.preventDefault();
-		var msg = "Tem certeza que deseja remover este usuário?"
+		var msg = Messages.get("label.msg.removeUser");
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			UserStore.dispatch({
@@ -184,7 +184,7 @@ export default React.createClass({
 	
 	blockUser(id,nome, event) {
 		event && event.preventDefault();
-		var msg =  "O usuário " + nome + " será bloqueado.Deseja continuar ?";
+		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messages.get("label.msg.blockUser");
 
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
@@ -198,7 +198,7 @@ export default React.createClass({
 
 	unblockUser(id,nome, event) {
 		event && event.preventDefault();
-		var msg =  "O usuário " + nome + " será desbloqueado.Deseja continuar ?";
+		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messsages.get("label.msg.unblockUser");
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			UserStore.dispatch({
@@ -214,7 +214,7 @@ export default React.createClass({
 			action: UserStore.ACTION_RESEND_INVITATION,
 			data: id
 		});
-		this.context.toastr.addAlertSuccess("O convite foi reenviado ao usuário");
+		this.context.toastr.addAlertSuccess(Messages.get("label.resendInviteUser"));
 	},
 
 	hideFieldsUser() {
@@ -253,7 +253,7 @@ export default React.createClass({
 		if (errorField){
 			//Toastr.remove();
 			//Toastr.error(msg);
-			this.context.toastr.addAlertError("É necessário preencher todos os campos do formulário");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllForm"));
 			return;
 		} else {
 			this.setState({
@@ -275,7 +275,7 @@ export default React.createClass({
 				}
 			});
 		} else {
-			this.context.toastr.addAlertError("O convite para este email já foi enviado, utilize a opção de reenviar na tabela Usuários do Sistema");
+			this.context.toastr.addAlertError(Messages.get("label.resendEmail"));
 			this.setState({
 				loadingSend: false
 			});
@@ -289,7 +289,7 @@ export default React.createClass({
 		var errorField = Validate.validationCreateUser(this.refs);
 
 		if (errorField){
-			this.context.toastr.addAlertError("É necessário preencher todos os campos do formulário");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllForm"));
 			return;
 		} else {
 			this.setState({
@@ -312,7 +312,7 @@ export default React.createClass({
 				}
 			});
 		} else {
-			this.context.toastr.addAlertError("Já foi cadastrado um usuário com este e-mail.");
+			this.context.toastr.addAlertError(Messages.get("label.equalEmail"));
 			this.setState({
 				loadingCreate: false
 			});
@@ -378,10 +378,10 @@ export default React.createClass({
     		var successful = document.execCommand('copy');
     		document.body.removeChild(textArea);
     		if (successful)
-    			this.context.toastr.addAlertSuccess("A url foi copiada para a área de transferência.")
+    			this.context.toastr.addAlertSuccess(Messages.get(label.copiedUrl));
   		} catch (err) {
   			document.body.removeChild(textArea);
-    		window.prompt("Copie a url para a área de transferência:", url);
+    		window.prompt(Messages.get("label.copyUrl"), url);
   		}
     },
 
@@ -390,7 +390,7 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				<li>
 					<Link  to = {"/users/profilerUser/" +UserSession.attributes.user.id}>
-						Meu Perfil
+						{Messages.get("label.myProfile")}
 					</Link>
 				</li>
 			</ul>
@@ -402,18 +402,18 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				{!model.active ? <li>
 					<a onClick={this.copyInviteToken.bind(this, model.inviteToken)}>
-						Copiar link para cadastro</a>
+						{Messages.get("label.copyLinkRegister")}</a>
 				</li> : ""}
 				{!model.active ? <li>
 					<a onClick={this.resendInvitation.bind(this, model.id)}>
-						Reenviar convite</a>
+						{Messages.get("label.resendInvitation")}</a>
 				</li> : ""}
 				{model.active && (this.context.roles.MANAGER  || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission"))? 
 				<li>
 					<Link to={"/users/"+model.id+"/edit"}>
-						Visualizar usuário
+						{Messages.get("label.viewUser")}
 					</Link>
 				</li>:""}
 				{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
@@ -421,11 +421,11 @@ export default React.createClass({
 					<li>
 						{model.blocked ?
 							<a onClick={this.unblockUser.bind(this, model.id,model.name)}>
-								Desbloquear usuário
+								{Messages.get("label.unblockUser")}
 							</a>
 							:
 							<a onClick={this.blockUser.bind(this, model.id,model.name)}>
-								Bloquear usuário
+								{Messages.get("label.blockUser")}
 							</a>
 						}
 					</li> : ""
@@ -434,7 +434,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
-							Remover usuário
+							{Messages.get("label.removeUser")};
 						</a>
 					</li> : ""
 				)}
@@ -445,10 +445,10 @@ export default React.createClass({
 	readCSVFile(){
 		var me = this;
 		Modal.readFile(
-			"Importar usuários",
+			Messages.get("label.importUsers"),
 			(<div>
 				<p>
-					Faça upload de um arquivo no formato .csv. O arquivo deve conter somente as colunas "nome" e "e-mail".
+					{Messages.get("label.fileCsv")}
 				</p>
 			</div>),
 			".csv",
@@ -462,7 +462,7 @@ export default React.createClass({
 					reader.readAsText(file);
 			      	reader.onload = function(event){
 				  		var fileArr = event.target.result.split('\n');      
-				  		var msg = "Lista de usuários";
+				  		var msg = Messages.get("label.userList");
 				  		function User() {
 			                var name;
 			                var email;
@@ -490,7 +490,7 @@ export default React.createClass({
 					      		emptyUsersToImport: false
 					   	 	})
 					  		Modal.importUsers(
-					  			"Importar Usuários",
+					  			Messages.get("label.importUsers"),
 					  			me.renderImportedUsers(userList),
 					  			() => {
 					  				me.selectedUsersToImport();
@@ -499,12 +499,12 @@ export default React.createClass({
 					  		);
 					  	}else{
 					  		var errorTag = document.getElementById("upload-error-span");
-		      				errorTag.innerHTML = "O arquivo não está dentro dos padrões.";
+		      				errorTag.innerHTML = Messages.get("label.fileNoCsv");
 					  	}
 			      	};
 		      	}else{
 		      		var errorTag = document.getElementById("upload-error-span");
-		      		errorTag.innerHTML = "O arquivo deve ter extensão '.csv'";
+		      		errorTag.innerHTML = Messages.get("label.fileExtCsv");
 		      	}     	
 			}
 		);
@@ -669,9 +669,9 @@ export default React.createClass({
 				</tbody>
 			</table>
 				<div>
-					<strong ><span id="qntdSelectedUsers">0</span> usuários selecionados.</strong>
+					<strong ><span id="qntdSelectedUsers">0</span> {Messages.get("label.selectUsers")}</strong>
 					<span className="floatRight">
-						<strong>Arquivo: </strong>
+						<strong>{Messages.get("label.file")} </strong>
 							<span id="fileName">{this.state.importFileName}
 						</span>
 					</span>
@@ -739,9 +739,9 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsNewUser}>
-	        				<b className="budget-graphic-title"> Convidar usuário </b>
+	        				<b className="budget-graphic-title"> {Messages.get("label.inviteUser")} </b>
 	        				<div className="performance-strategic-btns floatRight">
-	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> Importar usuários </button>
+	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> {Messages.get("label.importUsers")} </button>
 	                			<span  className={(this.state.hideNewUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsNewUser}/>
 	              			</div>
 	        			</div>
@@ -754,7 +754,7 @@ export default React.createClass({
 		        						<tr>
 		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
 		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">Tipo de Conta <span className="fpdi-required"></span>  </th>
+		        							<th className="col-sm-3">{Messages.get("label.accountType")} <span className="fpdi-required"></span>  </th>
 		        							<th className="col-sm-3"> </th>
 		        						</tr>      				
 		        					</thead>
@@ -770,7 +770,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="selectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
+													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">{Messages.get("label.selectAccountType")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -789,14 +789,14 @@ export default React.createClass({
 												<div ref="formAlertTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> Enviar convite </button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> {Messages.get("label.submit.sendInvitation")} </button>
 											</td>
 										</tr>  
 		        						
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													Obs: Utilize preferencialmente e-mail institucional ou gmail. Pode acontecer de alguns e-mail irem para caixa de spam. {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
+													{Messages.get("label.typeEmail")} {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
 												</div>
 											</td>
 										</tr>
@@ -810,7 +810,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsCreateUser}>
-	        				<b className="budget-graphic-title"> Cadastrar usuário </b>
+	        				<b className="budget-graphic-title"> {Messages.get("label.RegisterUser")} </b>
 	        				<div className="performance-strategic-btns floatRight">
 	                			<span  className={(this.state.hideCreateUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsCreateUser}/>
 	              			</div>
@@ -824,8 +824,8 @@ export default React.createClass({
 		        						<tr>
 		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
 		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">{"Senha"} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">Tipo de Conta <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.get("label.password")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.get("label.accountType")} <span className="fpdi-required"></span> </th>
 		        							<th className="col-sm-2"> </th>
 		        						</tr>      				
 		        					</thead>
@@ -845,7 +845,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="newSelectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
+													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">{Messages.get("label.selectAccountType")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -870,7 +870,7 @@ export default React.createClass({
 										<tr>
 											<td colSpan="5" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													Obs: Ao cadastrar um usuário diretamente no sistema, ele não receberá confirmação por e-mail.
+													{Messages.get("label.noConfirmToEmail")}
 												</div>
 											</td>
 										</tr>  
@@ -883,7 +883,7 @@ export default React.createClass({
 
 			<div className="panel panel-default">     
         		<div className="panel-heading cursorPointer" onClick={this.hideFieldsUser}>
-        			<b className="budget-graphic-title"> Usuários do Sistema </b>
+        			<b className="budget-graphic-title"> {Messages.get("label.systemUsers")} </b>
         			<div className="performance-strategic-btns floatRight">
                 		<span  className={(this.state.hideUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsUser}/>
               		</div>
@@ -898,8 +898,8 @@ export default React.createClass({
                        					onClick={(this.state.sortIconStatus == "" || this.state.sortIconStatus =="desc") ? this.quickSortByUsersName.bind(this,"asc") :  this.quickSortByUsersName.bind(this,"desc")} title="Ordenar"> </span></th>
 									<th className="col-sm-3">{Messages.get("label.email")}</th>
 									<th className="col-sm-3">{Messages.get("label.cpf")}</th>
-									<th className="col-sm-3">Tipo de Conta </th>
-									<th className="col-sm-3"> Situação </th>		
+									<th className="col-sm-3">{Messages.get("label.accountType")}</th>
+									<th className="col-sm-3"> {Messages.get("label.situation")} </th>		
 								</tr>
 							</thead>
 							<tbody>
@@ -915,10 +915,10 @@ export default React.createClass({
 														data-toggle="dropdown"
 														aria-haspopup="true"
 														aria-expanded="true"
-														title="Ações"
+														title={Messages.get("label.actions")}
 													>
-														<span className="sr-only">Ações</span>
-														<span title="Ações" className="mdi mdi-chevron-down" />
+														<span className="sr-only">{Messages.get("label.actions")}</span>
+														<span title={Messages.get("label.actions")} className="mdi mdi-chevron-down" />
 													</a>
 													
 													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(model,cpf)}											
@@ -933,9 +933,9 @@ export default React.createClass({
 												<p id = "userNCadastrado">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												{!model.active ? (model.blocked ? "Bloqueado" :
-													<p id = "userNCadastrado"><small>O usuário ainda não concluiu o cadastro.</small></p>)
-												: (model.blocked ? "Bloqueado" : "Regular")}
+												{!model.active ? (model.blocked ? Messages.get("label.blockedUser") :
+													<p id = "userNCadastrado"><small> {Messages.get("label.userNoRegister")}</small></p>)
+												: (model.blocked ? Messages.get("label.blockedUser") : Messages.get("label.regularUser"))}
 											</td>
 										</tr>);
 									})}
@@ -955,7 +955,7 @@ export default React.createClass({
 		/* Colocar no render devido o processo assíncrono */
 		if (this.state.emptyUsersToImport){
 			Modal.importUsers(
-	  			"Importar Usuários",
+	  			Messages.get("label.importUsers"),
 	  			this.renderImportedUsers(this.state.usersToImport),
 	  			() => {
 	  				this.selectedUsersToImport();

@@ -1,8 +1,7 @@
-
 import React from "react";
 import _ from 'underscore';
-
 import AttributeForm from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 //import Toastr from 'toastr';
 
 var VerticalForm = AttributeForm.VerticalForm;
@@ -46,17 +45,17 @@ export default React.createClass({
 			typeLabel: "Número"
 		});
 		this.state.columns.push({
-			label: "Atividade",
+			label: Messages.get("label.activity"),
 			type: AttributeTypes.TEXT_FIELD,
 			typeLabel: "Campo de Texto"
 		});
 		this.state.columns.push({
-			label: "Início",
+			label: Messages.get("label.begin"),
 			type: AttributeTypes.DATE,
 			typeLabel: "Data"
 		});
 		this.state.columns.push({
-			label: "Fim",
+			label: Messages.get("label.end"),
 			type: AttributeTypes.DATE,
 			typeLabel: "Data"
 		});
@@ -69,7 +68,7 @@ export default React.createClass({
 		if(name == undefined || name == ""  || type == undefined || type == ""){
 			//Toastr.remove();
 			//Toastr.error("Preencha o nome e o tipo da nova coluna.");
-			this.context.toastr.addAlertError("Preencha o nome e o tipo da nova coluna.");			
+			this.context.toastr.addAlertError(Messages.get("label.error.nameTypeColumnEmpty"));			
 			return;
 		}
 
@@ -135,11 +134,11 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<strong>Configuração do cronograma</strong>
+					<strong>{Messages.get("label.scheduleSetting")}</strong>
 				</div>
 				<div className="panel-body">
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="new-column-name">Periodicidade:</label>
+						<label htmlFor="new-column-name">{Messages.get("label.periodicity")}</label>
 					    <input
 							type="checkbox"
 							className="periodicity-checkbox"							
@@ -147,25 +146,25 @@ export default React.createClass({
 							defaultValue={false}/>
 					</div>				
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="new-column-name">Nome da coluna:</label>
+						<label htmlFor="new-column-name">{Messages.get("label.columnName")}</label>
 					    <input
 							type="text"
 							spellCheck={false} 
 							className="form-control"
 							ref="new-column-name"
-							placeholder="Nome do campo"
+							placeholder={Messages.get("label.field.name")}
 							id="new-column-name" />
 					</div>
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="select-new-column-type">Tipo:</label>
+						<label htmlFor="select-new-column-type">{Messages.get("label.type")}</label>
 					    <select
 							type="text"
 							spellCheck={false} 
 							className="form-control"
 							ref="new-column-type"
-							placeholder="Tipo"
+							placeholder={Messages.get("label.typeLegend")}
 							id="select-new-column-type">
-							<option value="" data-placement="right" title="Selecione o tipo do campo">-- Selecione o tipo do campo --</option>
+							<option value="" data-placement="right" title={Messages.get("label.title.selectTypeField")}>{Messages.get("label.selectTypeField")}</option>
 							{this.state.types.map((type, idx) => {
 								return <option value={type.id} key={"attr-type-"+idx} data-placement="right" title={type.label}>
 									{type.label}</option>
@@ -175,7 +174,7 @@ export default React.createClass({
 					<div className="col-sm-4 col-md-3">
 						<label htmlFor="add-column">&nbsp;</label>
 						<button className="btn btn-sm btn-info form-control" id="add-column" onClick={this.insertColumn}>
-							Inserir coluna
+							{Messages.get("label.insertColumn")}
 						</button>
 					</div>
 					<br/>
@@ -189,9 +188,9 @@ export default React.createClass({
 					  							<th className="textAlignCenter" key={"col-"+idx}>
 					  								<input defaultValue={column.label} ref={"edit-field-"+idx}/>
 					  								<span>&nbsp;</span>
-					  								<span className="mdi mdi-check btn btn-sm btn-success padding2" onClick={this.confirmEdit.bind(this,idx)} title="Salvar"/>
+					  								<span className="mdi mdi-check btn btn-sm btn-success padding2" onClick={this.confirmEdit.bind(this,idx)} title={Messages.get("label.submitLabel")}/>
 									            	<span>&nbsp;</span>
-									            	<span className="mdi mdi-close btn btn-sm btn-danger padding2" onClick={this.cancelEdit} title="Cancelar"/>
+									            	<span className="mdi mdi-close btn btn-sm btn-danger padding2" onClick={this.cancelEdit} title={Messages.get("label.cancel")}/>
 					  							</th>
 					  							: 
 					  							<th className="textAlignCenter" key={"col-"+idx}>
@@ -199,8 +198,8 @@ export default React.createClass({
 								  					<span>&nbsp;</span>
 								  					{idx > 3 ? 
 									  					<div>
-							  								<span className="mdi mdi-pencil cursorPointer" onClick={this.editColumn.bind(this,idx)} title="Editar informações"></span>
-							  								<span className="mdi mdi-delete cursorPointer" onClick={this.deleteColumn.bind(this,idx)} title="Excluir"></span>
+							  								<span className="mdi mdi-pencil cursorPointer" onClick={this.editColumn.bind(this,idx)} title={Messages.get("label.title.editInformation")}></span>
+							  								<span className="mdi mdi-delete cursorPointer" onClick={this.deleteColumn.bind(this,idx)} title={Messages.get("label.delete")}></span>
 							  							</div>
 							  						:
 							  							<div/>
@@ -223,9 +222,9 @@ export default React.createClass({
 					  	</table>					 	
 					</div>	 						  
 					<div className="col-sm-12 col-md-4" >
-						<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.save} title="Salvar"/>
+						<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.save} title={Messages.get("label.submitLabel")}/>
 		            	<span>&nbsp;</span>
-		            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.cancel} title="Cancelar"/>
+		            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.cancel} title={Messages.get("label.cancel")}/>
 					</div>											
 				</div>
 			</div>
