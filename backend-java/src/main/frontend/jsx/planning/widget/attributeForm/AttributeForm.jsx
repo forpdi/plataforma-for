@@ -10,6 +10,8 @@ import ScheduleField from "forpdi/jsx/planning/view/field/ScheduleField.jsx";
 import TableField from "forpdi/jsx/planning/view/field/TableField.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 
 var Title = Validation.validate;
 
