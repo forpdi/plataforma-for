@@ -79,9 +79,9 @@ export default React.createClass({
 			//Toastr.remove();
 			{aux.closed == false ? 
 				/*Toastr.success("Meta aberta com successo")*/
-				this.context.toastr.addAlertSuccess("Meta aberta com sucesso")
+				this.context.toastr.addAlertSuccess(Messages.get("label.successOpenedGoal"))
 				:/*Toastr.success("Meta concluída com successo")*/ 
-				this.context.toastr.addAlertSuccess("Meta concluída com sucesso")
+				this.context.toastr.addAlertSuccess(Messages.get("label.successCompletedGoal"))
 			}
 		}, me);
 		this.getLevelSons(this.props.parentId, 1, 5);
@@ -132,7 +132,7 @@ export default React.createClass({
 			}
 			//Toastr.remove();
 			//Toastr.success("Meta editado com sucesso");
-			this.context.toastr.addAlertSuccess("Meta editada com sucesso");
+			this.context.toastr.addAlertSuccess(Messages.get("label.successEditedGoal"));
 			this.cancelEditGoal();
 		}, me);
 		
@@ -181,7 +181,7 @@ export default React.createClass({
 					pageSize: null
 				}
 			});
-			this.context.toastr.addAlertSuccess("Metas excluidas com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.successDeletedGoal"));
 		}, me);
 	},
 
@@ -279,7 +279,7 @@ export default React.createClass({
 		var url = window.location.hash;
   		
 		var msg = "";
-		var errorMsg ="A meta não pode ser fechada pois existem campos em branco na meta!";
+		var errorMsg =Messages.get("label.goalCantCloseWithBlankFields");
 		var error = false;
 		
 		for(var count=0;count<this.state.model.data.sons.list[idx].level.attributes.length;count++){
@@ -288,7 +288,7 @@ export default React.createClass({
 				error = true;
 			}
 		}
-		errorMsg += " Por favor, acesse a meta e edite os campos para que seja possível fechá-la!";
+		errorMsg += Messages.get("label.editFieldToCloseGoal");
 		if(error){
 			//Toastr.remove();
 			//Toastr.error(errorMsg);
@@ -297,9 +297,9 @@ export default React.createClass({
 		}
 
 		{closeOpenGoal ? 
-			msg = "Tem certeza que deseja concluir a meta?"
+			msg = Messages.get("label.sureWantCompleteGoal")
 
-		:msg = "Tem certeza que deseja abrir a meta?" }
+		:msg = Messages.get("label.sureWantOpenGoal") }
 		
 		Modal.confirmCustom(() => {
 				Modal.hide();
@@ -905,7 +905,7 @@ export default React.createClass({
 			} 		 
 		}		
 
-		this.context.toastr.addAlertError("Por favor, edite o indicador e preencha os campos obrigatórios para poder gerar metas");					
+		this.context.toastr.addAlertError(Messages.get("label.fillRequiredFieldsToGenerateGoals"));					
 	},
 
 
@@ -1126,7 +1126,7 @@ export default React.createClass({
 	},
 
 	deleteLevelAttribute(idGoal) {
-		var msg = "Você tem certeza que deseja excluir ?";
+		var msg = Messages.get("label.generalDeleteConfirmation");
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			if(this.isMounted()){
@@ -1413,7 +1413,7 @@ export default React.createClass({
 													  data-placement="top" data-container="body">
 											</i>)
 										: (<i className = "mdi  mdi-lock lockGoal-locked" onClick={""} 
-											title= {"Concluir Meta: O campo alcançado deve estar preenchido"}  data-placement="top"
+											title= {Messages.get("label.concludeGoalHint")}  data-placement="top"
 											 data-container="body"> </i>)
 									)
 								: ""
