@@ -125,11 +125,11 @@ export default React.createClass({
             if(model.get("updated")){
             	//Toastr.remove();
 			    //Toastr.success("Plano de metas alterado com sucesso");
-				this.context.toastr.addAlertSuccess("Plano de metas alterado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedGoalPlan"));
             }else{
 	        	//Toastr.remove();
 				//Toastr.success("Plano de metas salvo com sucesso");
-				this.context.toastr.addAlertSuccess("Plano de metas salvo com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.successSavedGoalPlan"));
 			}
 
 			//this.refreshPlans(this.props.plan.get("id"));
@@ -301,7 +301,7 @@ export default React.createClass({
 			                parent: node,
 			                parentId: section.id,
 	                		documentId: model.get("document").id,
-			                newNodePlaceholder: "Digite o título da subseção"
+			                newNodePlaceholder: Messages.get("label.inputSubsectionTitle")
 						});
 					}
 	                return node;
@@ -318,7 +318,7 @@ export default React.createClass({
 	        tree.push({
 				hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 				    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.props.plan.attributes.archived),
-				label: "Nova seção",
+				label: Messages.get("label.newSection"),
                 iconCls: 'mdi mdi-plus',
                 labelCls:'fpdi-new-node-label',
                 expandable: false,
@@ -326,7 +326,7 @@ export default React.createClass({
                 onNewNode: me.newDocumentSection,
                 key: 'newNode',
                 documentId: documentId,
-                newNodePlaceholder: "Digite o título da seção"
+                newNodePlaceholder: Messages.get("label.inputSectionTitle")
 			});
 			if(this.isMounted()){
 	        	me.setState({
@@ -347,7 +347,7 @@ export default React.createClass({
         		newNode = me.createDocumentNodeDef(model, undefined, this.state.documentTree.length-this.state.unnumberedSections);
         		newNode.children.push({
 					hidden: !(this.context.roles.MANAGER),
-					label: "Nova subseção",
+					label: Messages.get("label.newSubsection"),
 					labelCls:'fpdi-new-node-label',
 	                iconCls: 'mdi mdi-plus',
 	                className: "fpdi-new-node-label",
@@ -358,7 +358,7 @@ export default React.createClass({
 	                parent: newNode,
 	                parentId: model.id,
             		documentId: model.documentId,
-	                newNodePlaceholder: "Digite o título da subseção"
+	                newNodePlaceholder: Messages.get("label.inputSubsectionTitle")
 				});
            		me.state.documentTree.splice(me.state.documentTree.length-1, 0, newNode);
         	}
@@ -459,7 +459,7 @@ export default React.createClass({
     	if (!!title.match(/^(\s)*$/)){
         	//Toastr.remove();
         	//Toastr.error("O campo deve ser preenchido com o título da seção.");
-			this.context.toastr.addAlertError("O campo deve ser preenchido com o título da seção.");
+			this.context.toastr.addAlertError(Messages.get("label.mustFillWithSectionTitle"));
         	return false;
         }
         DocumentStore.dispatch({
@@ -480,7 +480,7 @@ export default React.createClass({
     	if(nodeProps.parent.model.aggregate){
     		//Toastr.remove();
         	//Toastr.error("Indicadores agregados não podem ter metas.");
-			this.context.toastr.addAlertError("Indicadores agregados não podem ter metas.");
+			this.context.toastr.addAlertError(Messages.get("label.aggIndicatorCantHaveGoals"));
         	return false;
     	}
     	var model = nodeProps.parent.model;
@@ -694,10 +694,10 @@ export default React.createClass({
 			}
 			if(me.isMounted()) {
 			    if (empty) {
-			    	this.context.toastr.addAlertError("Nenhum campo do documento foi preenchido.");
+			    	this.context.toastr.addAlertError(Messages.get("label.noDocumentFieldsFilled"));
 			    } else {
 					Modal.exportDocument(
-						"Confirmação de exportação",
+						Messages.get("label.exportConfirmation"),
 						this.renderRecords(),
 						() => {
 							var i = 0;
@@ -714,7 +714,7 @@ export default React.createClass({
 							var lista = sections.substring(0, sections.length - 3);
 							var elemError = document.getElementById("paramError");
 							if(sections=='' || author.trim()=='' || title.trim()==''){
-								elemError.innerHTML = "Erro ao exportar documento. Preencha os campos autor e título, e selecione pelo menos uma seção.";
+								elemError.innerHTML = Messages.get("label.exportError");
 								if(author.trim()=='') {
 									document.getElementById("documentAuthor").className = "borderError";
 								}
@@ -830,7 +830,7 @@ export default React.createClass({
 					title="Documento"
 					activeClassName="active"
 					className="tabTreePanel">
-						Documento do PDI
+						{Messages.get("label.pdiDocument")}
 				</Link> : undefined}
 				<Link
 					role="tab"
@@ -838,7 +838,7 @@ export default React.createClass({
 					title="Planos de metas"					
 					activeClassName="active"
 					className="tabTreePanel">
-						Planos de metas
+						{Messages.get("label.goalsPlan")}
 				</Link>
 					
 			</ul>
@@ -846,10 +846,10 @@ export default React.createClass({
 			<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
 				{this.state.subplans.length > 0 ? 
 					<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title="Limpar"> </i>
+						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")}> </i>
 	    				<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown}/>
-	    				<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title="Pesquisa avançada"> </i>
-	    				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title="Pesquisar"> </i>
+	    				<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}> </i>
+	    				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 					</div>
 				: ""}
 
@@ -897,7 +897,7 @@ export default React.createClass({
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ? 
 						<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
 							<span /*className="mdi mdi-export"*/
-							/> Exportar documento
+							/> {Messages.get("label.exportDocument")}
 						</a> : ""
 					}
 				</div>

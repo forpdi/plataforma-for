@@ -634,7 +634,7 @@ export default React.createClass({
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 								(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
-									title={label.deleteField} onClick={this.delete}/> : "")
+									title={Messages.get("label.deleteField")} onClick={this.delete}/> : "")
 							: ""}
 							<div className="clearfix"/>
 						</div>
