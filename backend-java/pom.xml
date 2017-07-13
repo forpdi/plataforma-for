@@ -32,6 +32,7 @@
 		<version.vraptor.boilerplate>1.0.0</version.vraptor.boilerplate>
 		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
 		<propertiesfile>dev.properties</propertiesfile>
+		<war.frontenddir>development</war.frontenddir>
 	</properties>
 
 	<profiles>
