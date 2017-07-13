@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Link} from 'react-router';
  
@@ -66,10 +65,10 @@ export default React.createClass({
 		var fields = [];
 		if(model.data.level.indicator){			
 			var options = [{
-				name: "Simples",
+				name:  Messages.get("label.aggregateSimples"),
 				value: !model.data.aggregate		
 			},{				
-				name: "Agregado",
+				name: Messages.get("label.aggregateAggregated"),
 				value: model.data.aggregate
 			}];		
 
@@ -94,7 +93,7 @@ export default React.createClass({
 			type: "text",
 			required: true,
 			placeholder: "",
-			label: "Nome",
+			label: Messages.get("label.name"),
 			value: model.data.name,
 			disabled: this.context.roles.MANAGER || _.contains(this.context.permissions, 
          							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true 
@@ -238,7 +237,7 @@ export default React.createClass({
 			agg = false;
 		}else{
 			if(this.state.haveChildren){				
-				this.context.toastr.addAlertError("Indicadores agregados não podem ter metas.");
+				this.context.toastr.addAlertError(Messages.get("label.error.noGoalsAggregateAggregated"));
         		aggregateRadio.checked = false;
 				aggregateRadio.value = false;
         		return false;
@@ -282,7 +281,7 @@ export default React.createClass({
 
 		StructureStore.on('levelAttributeSaved', (model) => {			
 			if(model.success == true){				
-				this.context.toastr.addAlertSuccess("Informações salvas com sucesso!");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 				this.refs.levelInstanceTitle.title = model.data.name;				
 				if(this.isMounted()){		
 					var showPolarityAlert = false;
@@ -304,7 +303,7 @@ export default React.createClass({
 				}
 			}
 			else{				
-				this.context.toastr.addAlertError("Não foi possivel salvar os atributos do nível!");
+				this.context.toastr.addAlertError(Messages.get("label.impossibleSaveAttributes"));
 			}
 		}, me);
 
@@ -314,7 +313,7 @@ export default React.createClass({
 				action: StructureStore.ACTION_FIND,
 				data: null
 			});			
-			this.context.toastr.addAlertSuccess(store.data.name + " excluído com sucesso.");
+			this.context.toastr.addAlertSuccess(store.data.name + " " + Messages.get("label.successDeleted"));
 		}, me);
 
 		StructureStore.on('favoriteSaved', model => {
@@ -324,7 +323,7 @@ export default React.createClass({
 					favoriteTotal: this.state.favoriteTotal+1
 				});
 			}
-			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " adicionado aos favoritos.");
+			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " " + Messages.get("label.addedFavorites"));
 		}, me);
 
 		StructureStore.on('favoriteRemoved', model => {
@@ -334,7 +333,7 @@ export default React.createClass({
 					favoriteTotal: this.state.favoriteTotal-1
 				});
 			}
-			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " removido dos favoritos.");
+			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " " + Messages.get("label.removedFavorites"));
 		}, me);
 
 		StructureStore.on("levelAttributeRetrieved", (model) => {
@@ -487,9 +486,10 @@ export default React.createClass({
 		var msg = "";
 
 		{closeOpenGoal ? 
-			msg = "Tem certeza que deseja concluir a meta?"
+			msg = Messages.get("label.msg.completeGoal")
 
-		:msg = "Tem certeza que deseja abrir a meta?" }
+			: msg = Messages.get("label.msg.openGoal") 
+		}
 		
 		Modal.confirmCustom(() => {
 			Modal.hide();
@@ -512,7 +512,7 @@ export default React.createClass({
 	deleteLevelAttribute() {
 		var data = this.state.model;		
 		if(this.state.undeletable) {
-			var msg = "Você tem certeza que deseja excluir " + this.state.model.data.name + "?";
+			var msg =  Messages.get("label.deleteConfirmation") + " "  + this.state.model.data.name + "?";
 			Modal.confirmCancelCustom(() => {
 				Modal.hide();
 				var levelInstance = {
@@ -549,7 +549,7 @@ export default React.createClass({
 	},
 
 	removeFavoriteLevel(){
-		var msg = "Você tem certeza que deseja remover " + this.state.model.data.name + " dos favoritos?";
+		var msg =  Messages.get("label.msg.removeConfirmation")  + " " + this.state.model.data.name + " " + Messages.get("label.msg.favorites");;
 			Modal.confirmCancelCustom(() => {
 				Modal.hide();
 
@@ -759,9 +759,9 @@ export default React.createClass({
 				<li>
 					<a
 						className="mdi mdi-pencil disabledIcon"
-						title="Impossível editar nível de um plano arquivado">
+						title={Messages.get("label.title.UnableEditArchivedPlan")}>
 						<span id = "menu-levels">
-							Impossível editar nível de um plano arquivado
+							{Messages.get("label.title.UnableEditArchivedPlan")}
 						</span>
 					</a>
 		         </li>
@@ -769,10 +769,10 @@ export default React.createClass({
 		         <li>
 					<a
 						className="mdi mdi-delete disabledIcon"
-						title="Impossível excluir nível de um plano arquivado"
+						title={Messages.get("label.unableDeleteArchivedPlan")}
 						type="submit">
 						<span id = "menu-levels">
-							Impossível excluir nível de um plano arquivado
+							{Messages.get("label.unableDeleteArchivedPlan")}
 						</span>
 					</a>
 		         </li>
@@ -789,8 +789,8 @@ export default React.createClass({
  							this.state.model.data.level.goal) ? (
 					<li>
 						<a onClick={this.editingAttributes}>
-							<span className="mdi mdi-pencil cursorPointer cursorPointer" title="Editar informações"> 
-								<span id="menu-levels"> Editar informações </span>
+							<span className="mdi mdi-pencil cursorPointer cursorPointer" title={Messages.get("label.title.editInformation")}> 
+								<span id="menu-levels"> {Messages.get("label.title.editInformation")} </span>
 							</span>
 						</a>
 						
@@ -803,9 +803,9 @@ export default React.createClass({
 								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? this.confirmCompleteGoal.bind(this, this.state.model.data.id, false) : "") }>
 							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open deleteIcon":"mdi  mdi-lock lockGoal-closedeleteIcon"} 
-								title= {this.state.model.data.closed == false ? "Concluir Meta: Ao concluir a meta, você indica ao sistema que ela está finalizada" : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : "Você não pode reabrir a meta, entre em contato com o administrador")}> 
-								<span id="menu-levels"> {this.state.model.data.closed == false ? "Concluir meta":"Reabrir meta"} </span>
+								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}> 
+								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.get("label.msg.finishGoal"):Messages.get("label.msg.reopenGoal")} </span>
 							</span>
 						</a>
 
@@ -815,8 +815,8 @@ export default React.createClass({
          							PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization ? (
 			        <li>
 						<a onClick={this.exportLevelAttributes}>
-							<span className="mdi mdi-file-export cursorPointer" title="Gerar relatório"> 
-								<span id="menu-levels"> Gerar relatório     </span>
+							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
+								<span id="menu-levels"> {Messages.get("label.generateReport")} </span>
 							</span>
 						</a>
 					</li>) : ""}
@@ -825,24 +825,24 @@ export default React.createClass({
 			        (this.state.favoriteExistent ? (
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
-								<span className="mdi mdi-star-outline cursorPointer" title="Remover dos favoritos"> 
-									<span id="menu-levels"> Remover dos favoritos </span>
+								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
+									<span id="menu-levels"> {Messages.get("label.removeFromFavorites")} </span>
 								</span>
 							</a>
 			         	</li>) 
 			        	: (!this.state.favoriteTotal || this.state.favoriteTotal < 10 ?
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
-									<span className="mdi mdi-star cursorPointer" title="Adicionar aos favoritos"> 
-										<span id="menu-levels"> Adicionar aos favoritos  </span>
+									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
+										<span id="menu-levels"> {Messages.get("label.addFavorites")}  </span>
 									</span>
 								</a>
 			         		</li>
 		         			:
 			         			<li>
 					         		<a type="submit">
-										<span className="mdi mdi-star disabledIcon" title="Não pode ser adicionado, você já possui o máximo de favoritos"> 
-											<span id="menu-levels"> "Não pode adicionar aos favoritos" </span>
+										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
+											<span id="menu-levels"> {Messages.get("label.notAddFavorites")} </span>
 										</span>
 									</a>
 					         	</li>
@@ -856,16 +856,16 @@ export default React.createClass({
 
 			         	<li>
 							<a onClick={this.deleteLevelAttribute} type="submit">
-								<span className="mdi mdi-delete cursorPointer" title={"Excluir " + this.state.subTitle}> 
-									<span id="menu-levels"> Excluir </span>
+								<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}> 
+									<span id="menu-levels"> {Messages.get("label.delete")} </span>
 								</span>
 							</a>
 			         	</li>
 			        : 
 			        	<li>
 			        		<a type="submit">
-								<span className="mdi mdi-delete disabledIcon marginLeft5 cursorPointer" title={"Não pode ser excluído"+(!this.state.model.data.leaf ? ", possui níveis filhos" : "")}> 
-									<span id="menu-levels"> "Não pode ser excluído" </span>
+								<span className="mdi mdi-delete disabledIcon marginLeft5 cursorPointer" title={Messages.get("label.notDeleted") +(!this.state.model.data.leaf ? ", possui níveis filhos" : "")}> 
+									<span id="menu-levels"> {Messages.get("label.notDeleted")} </span>
 								</span>
 							</a>
 			         	</li>
@@ -879,8 +879,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a data-placement="top">
-						<span className="mdi mdi-pencil disabledIcon marginLeft5" title="Não pode ser editada, meta concluída"> 
-							<span id="menu-levels"> "Não pode ser editada"     </span>
+						<span className="mdi mdi-pencil disabledIcon marginLeft5" title={Messages.get("label.title.notEditGoalComplete")}> 
+							<span id="menu-levels"> {Messages.get("label.notEdit")} </span>
 						</span>
 					</a>
 		         </li>
@@ -892,9 +892,9 @@ export default React.createClass({
 								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? this.confirmCompleteGoal.bind(this, this.state.model.data.id, false) : "")}>
 							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open":"mdi  mdi-lock lockGoal-close"}
-								title= {this.state.model.data.closed == false ? "Concluir Meta: Ao concluir a meta, você indica ao sistema que ela está finalizada" : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : "Você não pode reabrir a meta, entre em contato com o administrador")}> 
-								<span id="menu-levels"> {this.state.model.data.closed == false ? "Concluir meta":"Reabrir meta"} </span>
+								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}> 
+								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.get("label.msg.finishGoal"):Messages.get("label.msg.reopenGoal")} </span>
 							</span>
 						</a>
 
@@ -905,8 +905,8 @@ export default React.createClass({
 			        <li>
 
 			        	<a onClick={this.exportLevelAttributes}>
-							<span className="mdi mdi-file-export cursorPointer" title="Gerar relatório"> 
-								<span id="menu-levels"> Gerar relatório </span>
+							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
+								<span id="menu-levels"> {Messages.get("label.generateReport")}</span>
 							</span>
 						</a>
 			        </li>) : ""}
@@ -915,24 +915,24 @@ export default React.createClass({
 			        (this.state.favoriteExistent ? (
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
-								<span className="mdi mdi-star-outline cursorPointer" title="Remover dos favoritos"> 
-									<span id="menu-levels"> Remover dos favoritos </span>
+								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
+									<span id="menu-levels"> {Messages.get("label.removeFromFavorites")} </span>
 								</span>
 							</a>
 			         	</li>) 
 			        	: (!this.state.favoriteTotal || this.state.favoriteTotal < 10 ?
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
-									<span className="mdi mdi-star cursorPointer" title="Adicionar aos favoritos"> 
-										<span id="menu-levels">	Adicionar aos favorito </span>
+									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
+										<span id="menu-levels">	{Messages.get("label.addFavorites")} </span>
 									</span>
 								</a>
 			         		</li>
 		         			:
 			         			<li>
 			         				<a type="submit">
-										<span className="mdi mdi-star disabledIcon" title="Não pode ser adicionado, você já possui o máximo de favoritos"> 
-											<span id="menu-levels">	"Não pode adicionar aos favoritos" </span>
+										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
+											<span id="menu-levels">	{Messages.get("label.notAddFavorites")} </span>
 										</span>
 									</a>
 					         	</li>
@@ -943,8 +943,8 @@ export default React.createClass({
 		         {this.state.undeletable ?
 		         	<li>
 		         		<a type="submit">
-							<span className="mdi mdi-delete disabledIcon marginLeft5" title={"Não pode ser excluído"+(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
-								<span id="menu-levels">	"Não pode ser excluído" </span>
+							<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") + " " +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
+								<span id="menu-levels">	{Messages.get("label.notDeleted")} </span>
 							</span>
 						</a>
 
@@ -961,8 +961,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a>
-						<span className="mdi mdi-delete disabledIcon" title="Impossível excluir nível de um plano arquivado"> 
-							<span id="menu-levels">	"Impossível excluir nível de um plano arquivado" </span>
+						<span className="mdi mdi-delete disabledIcon" title={Messages.get("label.unableDeleteArchivedPlan")}> 
+							<span id="menu-levels">	{Messages.get("label.unableDeleteArchivedPlan")} </span>
 						</span>
 					</a>
 		         </li>
@@ -975,8 +975,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-delete cursorPointer deleteIcon" title="Excluir"> 
-							<span id="menu-levels">	"Excluir" </span>
+						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}> 
+							<span id="menu-levels">	{Messages.get("label.delete")} </span>
 						</span>
 					</a>
 		         </li>
@@ -990,8 +990,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-delete disabledIcon marginLeft5" title={"Não pode ser excluído"+(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
-							<span id="menu-levels">	{"Não pode ser excluído"} </span>
+						<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
+							<span id="menu-levels">	{Messages.get("label.notDeleted")} </span>
 						</span>
 					</a>
 		         </li>
@@ -1033,9 +1033,9 @@ export default React.createClass({
 									data-toggle="dropdown"
 									aria-haspopup="true"
 									aria-expanded="true"
-									title="Ações"
+									title={Messages.get("label.actions")}
 								>
-									<span className="sr-only">Ações</span>
+									<span className="sr-only">{Messages.get("label.actions")}</span>
 									<span className="mdi mdi-chevron-down" />
 								</a>	
 									{this.context.planMacro.attributes.archived ?  this.renderDisableEdit() : 
@@ -1055,13 +1055,13 @@ export default React.createClass({
 						this.state.aggregate ? 
 							<div>
 								<span className="fpdi-level-type-value">
-									{"Indicador Agregado"}
+									{Messages.get("label.indicatorAggregate")}
 								</span>
 							</div>
 						:
 							<div>
 								<span className="fpdi-level-type-value">
-									{"Indicador Simples"}
+									{Messages.get("label.indicatorSimple")}
 								</span>
 							</div>
 					}	
@@ -1091,7 +1091,7 @@ export default React.createClass({
 				levelInstanceIdActionPlan = {this.props.params.levelInstanceId}/>
 
 
-			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">* Como a polaridade foi alterada, os valores das metas devem ser editados para que as alterações sejam aplicadas.</h5></i> : ""}
+			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">{Messages.get("label.msg.polarityChanged")}</h5></i> : ""}
 			{this.state.model.data.level.indicator ? <GoalPerformance  indicator = {this.state.model.data}/> : ""}
 
 			<LevelSons 
