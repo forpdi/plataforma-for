@@ -86,7 +86,7 @@ export default React.createClass({
         }, me);
 
 		PlanMacroStore.on("recalculation-scheduled", () => {			
-			me.context.toastr.addAlertSuccess("Recálculo agendado, em breve os valores estarão atualizados.");
+			me.context.toastr.addAlertSuccess(Messages.get("label.recalculationScheduled"));
 		}, me);
 		
 		this.refreshPlans(this.props.planMacro.get("id"));
@@ -259,27 +259,27 @@ export default React.createClass({
 					<tr>
 						<th></th>
 						<th></th>
-						<th className="text-center">Desempenho por mês</th>
+						<th className="text-center">{Messages.get("label.monthPerformance")}</th>
 					</tr>
 					<tr>
 						<th>Nível</th>
-						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>Rendimento</th>
+						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>{Messages.get("label.profit")}</th>
 						<td className="summary-table-calendar-cell">
 							<table>
 								<tbody>
 									<tr>
-										<td>Jan</td>
-										<td>Fev</td>
-										<td>Mar</td>
-										<td>Abr</td>
-										<td>Mai</td>
-										<td>Jun</td>
-										<td>Jul</td>
-										<td>Ago</td>
-										<td>Set</td>
-										<td>Out</td>
-										<td>Nov</td>
-										<td>Dez</td>
+										<td>{Messages.get("label.month.abbr.january")}</td>
+										<td>{Messages.get("label.month.abbr.february")}</td>
+										<td>{Messages.get("label.month.abbr.march")}</td>
+										<td>{Messages.get("label.month.abbr.april")}</td>
+										<td>{Messages.get("label.month.abbr.may")}</td>
+										<td>{Messages.get("label.month.abbr.june")}</td>
+										<td>{Messages.get("label.month.abbr.july")}</td>
+										<td>{Messages.get("label.month.abbr.august")}</td>
+										<td>{Messages.get("label.month.abbr.september")}</td>
+										<td>{Messages.get("label.month.abbr.october")}</td>
+										<td>{Messages.get("label.month.abbr.november")}</td>
+										<td>{Messages.get("label.month.abbr.december")}</td>
 									</tr>
 								</tbody>
 							</table>
