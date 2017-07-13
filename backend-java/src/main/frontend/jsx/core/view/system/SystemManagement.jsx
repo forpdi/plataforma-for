@@ -64,7 +64,7 @@ export default React.createClass({
 			   		{Messages.get("label.institutions")}
 			    </Link>
 			    {this.state.companies.length <= 0 ? 
-				    <div title="Você não tem nenhuma instituição cadastrada"><span className="cursorDefault" >
+				    <div title={Messages.get("label.noCompanyRegistered")}><span className="cursorDefault" >
 				    	<Link role="tab" to={this.props.location.pathname} activeClassName="tabItemDisable"  >
 				   		{	Messages.get("label.domains")}
 				    	</Link></span></div>

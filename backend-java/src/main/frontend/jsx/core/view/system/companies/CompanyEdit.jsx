@@ -131,7 +131,7 @@ export default React.createClass({
 				errorField = false;
 			}
 			img.onerror = function() {
-				me.context.toastr.addAlertError("Endereço de imagem inválido.");
+				me.context.toastr.addAlertError(Messages.get("label.invalidImageUrl"));
 				errorField = true;
 				me.refs.CompanyEditInstitution.refs.logo.refs["field-logo"].className += " borderError";
 			}
@@ -181,7 +181,7 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.save"));
 			//this.context.toastr.addAlertSuccess(Messages.get("notification.institution.save"));
-			msg = "Instituição criada com sucesso."
+			msg = Messages.get("notification.institution.save");
 			this.context.toastr.addAlertSuccess(msg);
 		}
 	},
@@ -197,7 +197,7 @@ export default React.createClass({
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={CompanyStore}
-					submitLabel="Salvar"
+					submitLabel={Messages.get("label.save")}
 				/>
 			</div>}
 		</div>);

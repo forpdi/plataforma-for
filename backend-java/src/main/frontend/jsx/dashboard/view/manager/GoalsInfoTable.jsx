@@ -315,7 +315,7 @@ export default React.createClass({
 		  			<b className="budget-graphic-title">{Messages.get("label.goals")}</b>
 		  			{/*this.state.objectivesInformation != null ?
 		  			<select onChange={this.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-						<option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
+						<option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
 						{this.state.objectivesInformation.map((attr, idy) =>{
 								  return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>{attr.name}</option>);
 						  })
@@ -413,7 +413,7 @@ export default React.createClass({
 		  			<b className="budget-graphic-title"> {Messages.get("label.goals")} </b>
 		  			{/*this.state.objectivesInformation != null ?
 		  			<select onChange={this.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-						<option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
+						<option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
 						{this.state.objectivesInformation.map((attr, idy) =>{
 								  return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>{attr.name}</option>);
 						  })

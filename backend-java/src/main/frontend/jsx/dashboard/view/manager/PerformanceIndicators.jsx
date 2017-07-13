@@ -505,7 +505,7 @@ export default React.createClass({
                          <div>
                              <b className="budget-graphic-title"> {Messages.get("label.indicatorsPerformance")}</b>
                              <select onChange={me.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-                                 <option value={-1} data-placement="right" title="Todos os objetivos">{Messages.get("label.allObjectives")}</option>
+                                 <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")}</option>
                                  {
                                      me.state.objectives.map((attr, idy) =>{
                                          return(

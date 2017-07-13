@@ -181,7 +181,7 @@ export default React.createClass({
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={CompanyDomainStore}
-					submitLabel="Salvar"
+					submitLabel={Messages.get("label.save")}
 				/>
 			</div>}
 		</div>);

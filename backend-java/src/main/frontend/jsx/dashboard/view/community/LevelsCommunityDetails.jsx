@@ -82,7 +82,7 @@ export default React.createClass({
 	  	var dashboardTitle = "";
 	  	
       	if (this.state.subplan == -1)
-       	 	dashboardTitle = " - Todos os planos de metas";
+       	 	dashboardTitle = " - "+ Messages.get("label.allGoalPlans");
      	else if (this.state.subplan)
         	dashboardTitle = " - "+this.state.subplan.name;
 

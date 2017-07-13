@@ -105,7 +105,7 @@ export default React.createClass({
 			//Toastr.remove();
 			if(model.status == undefined || model.status == 200){
 				//Toastr.success("Plano duplicado com sucesso");
-				this.context.toastr.addAlertSuccess("Plano duplicado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.planDuplicate"));
 				me.close();
 				me.context.router.push("/plan/"+model.data.id+"/details/");
 				PlanMacroStore.dispatch({

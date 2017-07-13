@@ -118,7 +118,7 @@ export default React.createClass({
 				
 				Modal.hide();
 			},
-			"Realmente deseja sair do sistema ?",
+			Messages.get("label.logoffConfirmation"),
 			() => {Modal.hide()}
 		);	
         
@@ -219,13 +219,13 @@ export default React.createClass({
 					aria-expanded="true"
 					title="Menu de Opções"
 					>
-						<span className="sr-only">Menu de Opções</span>
+						<span className="sr-only">{Messages.get("label.optionMenu")}</span>
 						<span id="align-top-bar-menu" className="mdi mdi-menu icon-link" />
 				</a>
 				<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
 					<li>
 						<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-							<span className="mdi mdi-account-circle icon-link"/> Meu Perfil
+							<span className="mdi mdi-account-circle icon-link"/> {Messages.get("label.myProfile")}
 						</Link>
 					</li>
 					

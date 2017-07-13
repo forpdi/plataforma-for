@@ -194,7 +194,7 @@ export default React.createClass({
     render() {
         var dashboardTitle = "";
         if (this.state.levelInstance == -1 && this.state.subPlan == -1)
-            dashboardTitle = "Desempenho dos eixos temáticos - Todos os planos de metas";
+            dashboardTitle = "Desempenho dos eixos temáticos - "+Messages.get("label.allGoalPlans");
         else if (this.state.levelInstance == -1)
             dashboardTitle = "Desempenho dos eixos temáticos - "+this.state.subPlan.name;
         else if (this.state.levelInstance.parent == null) 

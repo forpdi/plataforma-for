@@ -23,7 +23,7 @@ export default React.createClass({
       plan:this.props.plan,
       subPlan:this.props.subPlan,
        options:{
-          title: 'Orçamento Geral',
+          title: Messages.get("label.generalBudget"),
           hAxis: {title: '', minValue: 0, maxValue: 15},
           vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
           legend: 'none',
@@ -119,7 +119,7 @@ export default React.createClass({
     if(this.isMounted()) {    	
     	this.setState({
         options:{
-          title: 'Orçamento Geral',
+          title: Messages.get("label.generalBudget"),
           hAxis: {title: '', minValue: 0, maxValue: 15},
           vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
           legend: 'none',
@@ -243,7 +243,7 @@ export default React.createClass({
             <div>
               <b className="budget-graphic-title"> {Messages.get("label.budget")} </b>
               <select onChange={this.objectiveChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-              <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
+              <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
               {this.state.objectives ? 
                 this.state.objectives.map((attr, idy) =>{
                   return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
@@ -254,7 +254,7 @@ export default React.createClass({
               </select>                                                     
               <select  onChange={this.subActionChange} ref="selectSubAction" className="form-control dashboard-select-box-graphs marginLeft10" 
                disabled={(this.state.selectedObjectives<0)?("disabled"):("")}>
-                <option value={-1} data-placement="right" title="Todas as sub-ações">Todas as sub-ações</option>
+                <option value={-1} data-placement="right" title="Todas as sub-ações">{Messages.get("label.allSubActions")}</option>
                 {(this.state.actionBudgets)?(this.state.actionBudgets.map((attr, idy) =>{
                   return(<option key={attr.id} value={idy} data-placement="right" title={attr.subAction}>{attr.subAction}</option>);
                   }) ):("")

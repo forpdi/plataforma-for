@@ -126,7 +126,7 @@ export default React.createClass({
                     <div className="marginLeft30">
 				        <select onChange={this.planMacroChange} className="form-control dashboard-select-box" ref="selectPlanMacro"
                             disabled={!this.state.loaded}>
-				            <option value={-1} data-placement="right" title="Todos os planos">
+				            <option value={-1} data-placement="right" title={Messages.get("label.allPlans")}>
                                 {Messages.get("label.allPlans")}
                             </option>
 				            {this.state.plans.map((attr, idy) =>{

@@ -353,7 +353,7 @@ export default React.createClass({
   render() {
       var dashboardTitle = "";
       if (this.state.levelInstance == -1 && this.state.subPlan == -1)
-        dashboardTitle = " - Todos os planos de metas";
+        dashboardTitle = " - "+Messages.get("label.allGoalPlans");
       else if (this.state.levelInstance == -1)
         dashboardTitle = " - "+this.state.subPlan.name;
       else if (this.state.levelInstance.parent == null) 

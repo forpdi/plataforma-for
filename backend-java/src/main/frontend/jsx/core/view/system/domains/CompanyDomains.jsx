@@ -120,7 +120,7 @@ export default React.createClass({
 
 	renderRecords() {
 		if (!this.state.models || (this.state.models.length <= 0)) {
-			return <p><i>Nenhum domínio cadastrado ainda.</i></p>;
+			return <p><i>{Messages.get("label.noDomainRegistered")}</i></p>;
 		}
 		return (<div className="row">
 			{this.state.models.map((model, idx) => {
@@ -143,7 +143,7 @@ export default React.createClass({
 			})}
 			<br /><br /><br />
 			{this.state.total && this.state.models && this.state.models.length < this.state.total ?
-				<div className="showMore"><a onClick={this.findDomains.bind(this, this.state.page)}>Ver mais</a></div>
+				<div className="showMore"><a onClick={this.findDomains.bind(this, this.state.page)}>{Messages.get("label.title.viewMore")}</a></div>
 			: ""}
 		</div>);
 	},
@@ -157,7 +157,7 @@ export default React.createClass({
 			<ul className="fpdi-action-list text-right">
 				<Link to="/system/domains/new" className="btn btn-sm btn-primary">
 					{/*<span className="mdi mdi-plus"
-					/>*/} Adicionar domínio
+					/>*/} {Messages.get("label.addDomain")}
 				</Link>
 			</ul>
 

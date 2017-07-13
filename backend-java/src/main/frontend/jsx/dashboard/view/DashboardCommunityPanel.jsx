@@ -285,13 +285,13 @@ export default React.createClass({
 	render() {
         var dashboardAxis = "";
         if (this.state.selectedLevelInstance == -1)
-          dashboardAxis = "Eixos Temáticos";
+          dashboardAxis = Messages.get("label.thematicAxes");
         else if (this.state.selectedLevelInstance.parent == null) 
-          dashboardAxis = "Objetivos";
+          dashboardAxis = Messages.get("label.objectives");
         else if (this.state.selectedLevelInstance.level.objective)
-          dashboardAxis = "Indicadores";
+          dashboardAxis = Messages.get("label.indicators");
         else if (this.state.selectedLevelInstance.level.indicator)
-          dashboardAxis = (this.state.aggregateIndicator ? "Indicadores" : "Metas");
+          dashboardAxis = (this.state.aggregateIndicator ? Messages.get("label.indicators") : Messages.get("label.goals"));
         
 		return (
         <div className="fpdi-tabs-nav">
@@ -327,7 +327,7 @@ export default React.createClass({
                                     </select>
                                     <select defaultValue={this.state.subPlanId} onChange={this.subplanChange} ref="selectSubplan" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
                                         disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os planos de metas">Todos os planos de metas</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.allGoalPlans")}>{Messages.get("label.allGoalPlans")}</option>
                                             {(this.state.subplans) ? (this.state.subplans.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -336,7 +336,7 @@ export default React.createClass({
                                     </select>
                                     <select defaultValue={this.state.strategicAxisId} onChange={this.strategicAxisChange} ref="selectStrategicAxis" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
                                         disabled={(this.state.selectedSubplan<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os eixos temáticos">Todos os eixos temáticos</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.allThematicAxes")}>{Messages.get("label.allThematicAxes")}</option>
                                             {(this.state.strategicAxis) ? (this.state.strategicAxis.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -345,7 +345,7 @@ export default React.createClass({
                                     </select>
                                     <select defaultValue={this.state.objectiveId} onChange={this.objectiveChange} ref="selectObjective" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
                                         disabled={(this.state.selectedStrategicAxis<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os objetivos">{Messages.get("label.allObjectives")}</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")}</option>
                                             {(this.state.objectives) ? (this.state.objectives.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}

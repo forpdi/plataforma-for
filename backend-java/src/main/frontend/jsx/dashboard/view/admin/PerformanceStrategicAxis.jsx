@@ -294,7 +294,7 @@ export default React.createClass({
                 <div className="panel-heading dashboard-panel-title">
                     <b className="budget-graphic-title"> {Messages.get("label.thematicAxesPerformance")} </b>
                         <select onChange={this.onThematicAxesChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectThematicAxes">
-                            <option value={-1} data-placement="right" title="Todos os Eixos Temáticos"> {Messages.get("label.allThematicAxes")} </option>
+                            <option value={-1} data-placement="right" title={Messages.get("label.allThematicAxes")}> {Messages.get("label.allThematicAxes")} </option>
                             {
                                 this.state.thematicAxes.map((attr, idy) =>{
                                     return(
