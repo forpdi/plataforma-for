@@ -41,14 +41,14 @@ export default React.createClass({
 			required: true,
 			maxLength:255,
 			placeholder: "",
-			label: "Nome",
+			label: Messages.get("label.name"),
 			value: model ? model.get("name"):null
 		},{
 			name: "begin",
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: "Data de Início",
+			label: Messages.get("label.dateBegin"),
 			onChange:this.onStartDateChange,
 			value: model ? model.get("begin"):null
 		},{
@@ -56,7 +56,7 @@ export default React.createClass({
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: "Data de Término",
+			label: Messages.get("label.dateEnd"),
 			onChange:this.onEndDateChange,
 			value: model ? model.get("end"):null
 		},{
@@ -64,7 +64,7 @@ export default React.createClass({
 			type: "textarea",
 			placeholder: "",
 			maxLength:10000,
-			label: "Descrição do Plano",
+			label: Messages.get("label.descriptionPlan"),
 			value: model ? model.get("description"):null
 
 		}]; 
@@ -129,7 +129,7 @@ export default React.createClass({
 			me.updateLoadingState();
 		}, me);
 		if (this.props.params.id) {
-			_.defer(() => {me.context.tabPanel.addTab(me.props.location.pathname,"Duplicar plano macro");});
+			_.defer(() => {me.context.tabPanel.addTab(me.props.location.pathname,Messages.get("label.title.duplicatePlanMacro"));});
 			PlanMacroStore.dispatch({
 				action: PlanMacroStore.ACTION_RETRIEVE,
 				data: this.state.modelId
@@ -186,29 +186,29 @@ export default React.createClass({
 		
 		return (
 			<div className="fpdi-duplicate-plan">
-				<h1>Duplicar Plano</h1>
-				<p>Plano a ser duplicado: <b>{this.state.model.get("name")}</b></p>
+				<h1>{Messages.get("label.duplicatePlan")}</h1>
+				<p>{Messages.get("label.planDuplicate")} <b>{this.state.model.get("name")}</b></p>
 				<div className="marginTop40">
-					<h4 className="fpdi-text-label">PLANOS DE METAS</h4>
+					<h4 className="fpdi-text-label">{Messages.get("label.goalPlans")}</h4>
 					<div className="row">
 						<label className="col-sm-3">
 							<input type="checkbox" defaultValue={true} defaultChecked={true} ref="keeplevels" onChange={this.keepLevels}/>
-							<b className="fpdi-duplicate-checkbox-label">Manter níveis</b>							
+							<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepLevels")}</b>							
 						</label>
 						<label className="col-sm-3">
 							<input type="checkbox" defaultValue={false} ref="keeplevelscontent"/>
-							<b className="fpdi-duplicate-checkbox-label">Manter conteúdo</b>							
+							<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepContent")}</b>							
 						</label>
 					</div>
 				</div>				
 				<div className="marginBottom20">
 				{this.context.planMacro.get('documented') ? 
 					<div>
-						<h4 className="fpdi-text-label">DOCUMENTO</h4>
+						<h4 className="fpdi-text-label">{Messages.get("label.document")}</h4>
 						<div className="row">
 							<label className="col-sm-3">
 								<input type="checkbox" defaultValue={false} ref="keepsectioncontent"/>
-								<b className="fpdi-duplicate-checkbox-label">Manter conteúdo</b>							
+								<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepContent")}</b>							
 							</label>
 						</div>
 					</div>: undefined}
@@ -219,7 +219,7 @@ export default React.createClass({
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={PlanMacroStore}
-					submitLabel="Duplicar"
+					submitLabel={Messages.get("label.duplicate")}
 					onCancel={this.close}
 				/>
 			</div>

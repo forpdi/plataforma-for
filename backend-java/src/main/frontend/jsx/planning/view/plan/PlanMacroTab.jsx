@@ -8,7 +8,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SummaryTable from "forpdi/jsx/planning/widget/plan/SummaryTable.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -47,7 +47,7 @@ export default React.createClass({
 						archived: true
 					});
 				}
-				this.context.toastr.addAlertSuccess("Plano arquivado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.planField"));
 				me.context.router.push("/plan/"+model.data.id+"/details/");
 				PlanMacroStore.dispatch({
             		action: PlanMacroStore.ACTION_FIND_UNARCHIVED
@@ -68,7 +68,7 @@ export default React.createClass({
 						archived: false
 					});
 				}
-				this.context.toastr.addAlertSuccess("Plano desarquivado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.unarchived"));
 				me.context.router.push("/plan/"+model.data.id+"/details/");
 				PlanMacroStore.dispatch({
             		action: PlanMacroStore.ACTION_FIND_UNARCHIVED
@@ -95,7 +95,7 @@ export default React.createClass({
 		}, me);
 
 		PlanMacroStore.on('plan-deleted', (response, data) => {
-			me.context.toastr.addAlertSuccess(data.attributes.name + " excluído com sucesso.");
+			me.context.toastr.addAlertSuccess(data.attributes.name + " " + Messages.get("label.successDeleted"));
 			me.context.router.push("/home");
 			PlanMacroStore.dispatch({
                 action: PlanMacroStore.ACTION_FIND
@@ -127,7 +127,7 @@ export default React.createClass({
 	deletePlan(event){
 		event && event.preventDefault();
 		var me = this;
-		var msg = "Você tem certeza que deseja excluir "+me.state.model.attributes.name+"?";
+		var msg =  Messages.get("label.deleteConfirmation")+" "+me.state.model.attributes.name+"?";
 		
 		if (me.state.model != null) {
 			Modal.confirmCancelCustom(() => {				
@@ -143,7 +143,7 @@ export default React.createClass({
 
 	archivePlan(event) {
 		event && event.preventDefault();
-		var msg = "Você tem certeza que deseja arquivar esse plano?";
+		var msg = Messages.get("label.msg.filePlan");
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			PlanMacroStore.dispatch({
@@ -160,7 +160,7 @@ export default React.createClass({
 	unarchivePlan(event) {
 		event && event.preventDefault();
 		var me = this;
-		var msg = "Você tem certeza que deseja desarquivar esse plano?";
+		var msg = Messages.get("label.msg.unarchivePlan");
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			PlanMacroStore.dispatch({
@@ -175,7 +175,7 @@ export default React.createClass({
 
 	onSubmit(data) {
 		var me = this;
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var dataError = false;
 		var boolMsg = false;
 		var difference = 0;
@@ -184,7 +184,7 @@ export default React.createClass({
 		var begin = this.refs.planMacroEditForm.refs["begin"].props.fieldDef.value.split(" ");
 		begin = moment(begin,"DD/MM/YYYY").toDate();
 		if(begin== null){
-			this.refs.planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			this.refs.planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.planMacroEditForm.refs.begin.refs["field-begin"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -200,7 +200,7 @@ export default React.createClass({
 		var end = this.refs.planMacroEditForm.refs["end"].props.fieldDef.value.split(" ");
 		end = moment(end,"DD/MM/YYYY").toDate();
 		if(end== null){
-			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -219,17 +219,17 @@ export default React.createClass({
 			difference = valDateFinal - valDateBegin;
 		}
 		if (!dataError && begin.getTime() == end.getTime()) {
-			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.dateBeginAfterDateBegin");
 			this.refs.planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		} else if (!dataError && difference < 86400000) {
-			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Message.get("label.dateBeginAfterDateBegin");
 			this.refs.planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
 		if(data.name == "" ||  !!data.name.match(/^(\s)+$/) ){
 			boolMsg = true;
-			this.refs.planMacroEditForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			this.refs.planMacroEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.planMacroEditForm.refs.name.refs["field-name"].className += " borderError";
 		}else{
 			if(this.refs.planMacroEditForm.refs.name.refs["field-name"].className && this.refs.planMacroEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
@@ -245,13 +245,13 @@ export default React.createClass({
 
 		if (me.props.params.id) {
 			me.state.model.set(data);
-			msg = "Os dados serão atualizados. Deseja continuar essa ação?";
+			msg = Messages.get("label.msgUpdate");
 			PlanMacroStore.dispatch({
 				action: PlanMacroStore.ACTION_UPDATE,
 				data: me.state.model
 			});
 		} else {
-			msg = "O Plano Macro será criado. Deseja continuar essa ação?";
+			msg = Messages.get("label.msg.planMacroCreate");
 			PlanMacroStore.dispatch({
 				action: PlanMacroStore.ACTION_NEWPLAN,
 				data: data,
@@ -277,9 +277,9 @@ export default React.createClass({
 					<a
 						data-placement="bottom"
 						onClick={this.unarchivePlan}>
-						<span className="mdi mdi-folder-upload mdi-18" title="Desarquivar plano" > 
+						<span className="mdi mdi-folder-upload mdi-18" title={"label.unarchivePlan"} > 
 							<span id = "menu-levels">
-								Desarquivar plano
+								{Messages.get("label.unarchivePlan")}
 							</span>
 						</span>
 					</a>
@@ -293,8 +293,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li> 
 					<Link to={"/plan/"+this.context.planMacro.get("id")+"/edit"} data-placement="bottom">
-						<span className="mdi mdi-pencil mdi-18" title="Editar plano"> 
-							<span id="menu-levels"> Editar plano</span>
+						<span className="mdi mdi-pencil mdi-18" title={Messages.get("label.editPlan")}> 
+							<span id="menu-levels">{Messages.get("label.editPlan")}</span>
 						</span>
 					</Link>
 				</li>
@@ -303,31 +303,31 @@ export default React.createClass({
 						to={"/plan/"+this.context.planMacro.get("id")+"/details/duplicate"}
 						onClick={this.changeVizualization}
 						data-placement="bottom">
-						<span className="mdi mdi-content-copy mdi-18" title="Duplicar plano"> 
-							<span id="menu-levels"> Duplicar plano</span>
+						<span className="mdi mdi-content-copy mdi-18" title={Messages.get("label.duplicatePlan")}> 
+							<span id="menu-levels"> {Messages.get("label.duplicatePlan")}</span>
 						</span>
 					</Link>
 				</li>
 				<li> 
 					<a onClick={this.archivePlan} data-placement="bottom">
-						<span className="mdi mdi-folder-download mdi-18 deleteIcon" title="Arquivar plano"> 
-							<span id="menu-levels"> Arquivar plano </span>
+						<span className="mdi mdi-folder-download mdi-18 deleteIcon" title={Messages.get("label.archivePlan")}> 
+							<span id="menu-levels"> {Messages.get("label.archivePlan")}</span>
 						</span>
 					</a>
 				</li>
 				{this.state.undeletable ? 
 					<li> 
 						<a data-placement="bottom">
-							<span className="mdi mdi-delete disabledIcon mdi-18" title="Não pode ser excluído, pois possui níveis filhos"> 
-								<span id="menu-levels"> Excluir plano </span>
+							<span className="mdi mdi-delete disabledIcon mdi-18" title={Messages.get("label.notDeleteChildLevels")}> 
+								<span id="menu-levels"> {Messages.get("label.deletePlan")}</span>
 							</span>
 						</a>
 					</li>
 					:
 					<li> 
 						<a onClick={this.deletePlan} data-placement="bottom">
-							<span className="mdi mdi-delete mdi-18 deleteIcon" title="Excluir plano"> 
-								<span id="menu-levels"> Excluir plano </span>
+							<span className="mdi mdi-delete mdi-18 deleteIcon" title={Messages.get("label.deletePlan")}> 
+								<span id="menu-levels"> {Messages.get("label.deletePlan")} </span>
 							</span>
 						</a>
 					</li>
@@ -351,9 +351,9 @@ export default React.createClass({
 								data-toggle="dropdown"
 								aria-haspopup="true"
 								aria-expanded="true"
-								title="Ações"
+								title={Messages.get("label.actions")}
 							>
-								<span className="sr-only">Ações</span>
+								<span className="sr-only">{Messages.get("label.actions")}</span>
 								<span className="mdi mdi-chevron-down" />
 							</a>
 							
@@ -366,13 +366,13 @@ export default React.createClass({
 				</div>
 
 				<div className="media-body">
-					{this.state.archived ? <span className="fpdi-archived-label">Plano arquivado</span> : ""}
+					{this.state.archived ? <span className="fpdi-archived-label">{Messages.get("label.planField")}</span> : ""}
 					<div className="row h4">
 						<div className="col-sm-6 col-md-4">
-							<small>DATA DE INÍCIO</small><br />{this.context.planMacro.get("begin").substr(0,10)}
+							<small>{Messages.get("label.dateBeginUp")}</small><br />{this.context.planMacro.get("begin").substr(0,10)}
 						</div>
 						<div className="col-sm-6 col-md-4">
-							<small>DATA DE TÉRMINO</small><br />{this.context.planMacro.get("end").substr(0,10)}
+							<small>{Messages.get("label.dateEndUp")}</small><br />{this.context.planMacro.get("end").substr(0,10)}
 						</div>
 					</div>
 					<div className="markdown-container" dangerouslySetInnerHTML={{__html: Marked(this.context.planMacro.get("description"))}} />
