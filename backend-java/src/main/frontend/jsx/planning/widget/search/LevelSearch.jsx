@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var onClickOutside = require('react-onclickoutside');
 
@@ -15,7 +16,7 @@ export default onClickOutside(React.createClass({
 
 	getDefaultProps() {
 		return {
-			searchText: "Pesquisa",
+			searchText: Messages.get("label.search"),
 			subplans: null,
 			submit: null,
 			plan:null,
@@ -272,18 +273,18 @@ export default onClickOutside(React.createClass({
 				<div className="level-search">
 		  
   	               <div className='displayFlex-level-search'>
-   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title="Fechar"></span>
+   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
   	               	</div>
-					<h1>Pesquisa Avançada</h1>
+					<h1>{Messages.get("label.advancedSearch")}</h1>
 					
 					<div className="level-search-keyword">
-						<h3>Palavra-chave</h3>
+						<h3>{Messages.get("label.keyword")}</h3>
 						<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
 					</div> 
 			
 
 				<div className="level-search-checkbox">
-					<h3>Plano de metas</h3>
+					<h3>{Messages.get("label.goalsPlan")}</h3>
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'subplan-opt-0'}>
@@ -316,7 +317,7 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-checkbox">
-					<h3>Níveis</h3>					
+					<h3>{Messages.get("label.levels")}</h3>					
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'level-opt-0'}>
@@ -326,7 +327,7 @@ export default onClickOutside(React.createClass({
 								key={'level-opt-0'}
 								type="checkbox" 
 								defaultChecked = {true} />
-							Todos
+							{Messages.get("label.all")}
 						</div>
 
 						{this.props.subplans[0] ? this.props.subplans[0].structure.levels.map( (opt,idx) => {							

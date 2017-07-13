@@ -212,7 +212,7 @@ export default React.createClass({
                         <Link to="/plan/new" activeClassName="active">
                             <span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
                                 <span className="fpdi-nav-label">
-                                    {Messages.get("label.newplan")}
+                                    {Messages.get("label.newPlan")}
                                 </span>
                         </Link>
                     </div>

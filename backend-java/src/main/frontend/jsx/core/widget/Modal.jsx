@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 
 import FeedbackPost from "forpdi/jsx/core/widget/contact/FeedbackPost.jsx";
 import ReportProblem from "forpdi/jsx/core/widget/contact/ReportProblem.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var EL = document.getElementById("main-global-modal");
 
