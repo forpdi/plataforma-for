@@ -78,7 +78,7 @@ export default React.createClass({
 	},
 	
 	deleteRecord(model, event) {
-		var msg = "Você tem certeza que deseja excluir " + model.get("name") + "?";
+		var msg = Messages.get("label.deleteConfirmation") + " " + model.get("name") + "?";
 		event.preventDefault();
 		
 		Modal.confirmCancelCustom(() => {
@@ -97,8 +97,8 @@ export default React.createClass({
 
 
 		Modal.uploadFile(
-			"Importar uma estrututura",
-			<p>Faça o upload de um arquivo XML contendo uma estrutura de PDI.</p>,
+			Messages.get("label.importEstructure"),
+			<p>{Messages.get("label.uploadXml")}</p>,
 			StructureStore.url+"/import",
 			"xml/*",
 			formatsBlocked,
@@ -107,7 +107,7 @@ export default React.createClass({
 				Modal.hide();
 				//Toastr.remove();
 				//Toastr.success("Estrutura " +response.data.name + " importada com sucesso.");
-				this.context.toastr.addAlertSuccess("Estrutura " +response.data.name + " importada com sucesso.");
+				this.context.toastr.addAlertSuccess( Messages.get("label.title.structure") + " " +response.data.name + " " + Messages.get("label.success.Importing"));
 			},
 			(response) => {			
 				Modal.hide();
@@ -121,7 +121,7 @@ export default React.createClass({
 	renderRecords() {
 		
 		if (!this.state.models || (this.state.models.length <= 0)) {
-			return <p><i>Nenhuma estrutura cadastrada ainda.</i></p>;
+			return <p><i>{Messages.get("label.noStructureRegistred")}</i></p>;
 		}
 		return (<div className="row">
 			{this.state.models.map((model, idx) => {
@@ -135,13 +135,13 @@ export default React.createClass({
 								<Link
 									to={"/structures/preview/"+model.get("id")}
 									className="mdi mdi-eye"
-									title="Visualizar"
+									title={Messages.get("label.view")}
 									data-placement="top"
 								/>
 								<a
 									onClick={this.deleteRecord.bind(this, model)}
 									className="mdi mdi-delete marginRight0"
-									title="Excluir"
+									title={Messages.get("label.delete")}
 									data-placement="top"
 								/>
 							</div>
@@ -161,9 +161,9 @@ export default React.createClass({
 			<h1>{Messages.get("label.structures")}</h1>
 			<ul className="fpdi-action-list text-right">
 				<a className="btn btn-sm btn-primary" onClick= {this.state.companies.length == 0 ? "" : this.importStructure} disabled = {this.state.companies.length == 0 ? true : false}  
-				title= {(this.state.companies.length) == 0 ? "Para importar estrutura é necessário criar uma Instituição e um Domínio primeiro." : ""} >
+				title= {(this.state.companies.length) == 0 ? Messages.get("label.createStructure") : ""} >
 					{/*<span className="mdi mdi-import"
-					/>*/}Importar estrutura
+					/>*/}{Messages.get("label.importEstructurePdi")}
 				</a>
 			</ul>
 			{this.state.error ? (<div className="alert alert-danger animated fadeIn" role="alert">
@@ -176,7 +176,7 @@ export default React.createClass({
 
 
 			{EnvInfo.company ? (this.state.loading ? <LoadingGauge />:this.renderRecords())
-			: <p><i>Para importar estrutura é necessário criar uma Instituição e um Domínio primeiro.</i></p>}
+			: <p><i>{Messages.get("label.createStructure")}</i></p>}
 
 			<Pagination store={StructureStore} ref="paginator" />
 		</div>);
