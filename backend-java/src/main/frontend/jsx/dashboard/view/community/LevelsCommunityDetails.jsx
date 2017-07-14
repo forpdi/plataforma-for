@@ -115,7 +115,7 @@ export default React.createClass({
 							<div>
 								<div className="dashboard-indicator-container-commmunity">
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header-axis">Eixos Temáticos </div>
+										<div className="dashboard-indicator-header-axis">{Messages.get("label.thematicAxes")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicatorsThematicAxis}</div>
 									</div>
 									<div className="col-sm-3 dashboard-plan-details-column">
@@ -127,17 +127,17 @@ export default React.createClass({
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicators}</div>
 									</div> 
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Metas</div>
+										<div className="dashboard-indicator-header">{Messages.get("label.goals")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfGoals}</div>
 									</div> 
 								</div>
 								<div className="dashboard-goals-information-commmunity">
-								    <div className='dashboard-goals-title'>Metas Alcançadas </div>
+								    <div className='dashboard-goals-title'>{Messages.get("label.reachedGoals")} </div>
 								    <div className="fontSize12 ">
 								   		<div className="dashboard-goals-head">
 									   		<span className='fontWeightBold'>
 									   			{this.state.planDetails.goalsDelayedPerCent.toFixed(2)}%
-									   		</span> das metas estão alcançadas 
+									   		</span>{Messages.get("label.ofTheGoalsAreReached")}
 									   		<span className='fontWeightBold floatRight'>100%</span>
 								   		</div>
 								   	</div>

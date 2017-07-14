@@ -87,14 +87,14 @@ export default React.createClass({
     },
 
 	render() {
-		var title = "Informações gerais das metas"+(this.state.plan != -1 ? " - " + this.state.plan.get("name") + 
+		var title = Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + this.state.plan.get("name") + 
 					(this.state.subPlan != -1 ? " - "+ this.state.subPlan.name : "") :"");
 		return (
 			<div className={this.props.className}>
 				<div className="panel panel-default dashboard-goals-info-ctn">
 					<div className="panel-heading dashboard-panel-title">
 						<b className="budget-graphic-title" title={title}> 
-							{"Informações gerais das metas"+(this.state.plan != -1 ? " - " + (this.state.plan.get("name").length > 30 ? 
+							{Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + (this.state.plan.get("name").length > 30 ? 
 								this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) + 
 								(this.state.subPlan != -1 ? " - "+ (this.state.subPlan.name.length > 30 ? 
 								this.state.subPlan.name.substr(0,30).contat("...") : this.state.subPlan.name) : "")

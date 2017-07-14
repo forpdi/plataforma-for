@@ -129,8 +129,8 @@ export default React.createClass({
 
                         if(me.state.indicator.indicatorList.length == 0){
                             data = [['Element', 'Rendimento']];  
-                            elements.push(["Não possui indicadores",0]);
-                            data.push(["Não possui indicadores",0]);
+                            elements.push([Messages.get("label.haveNoIndicators"),0]);
+                            data.push([Messages.get("label.haveNoIndicators"),0]);
                         }else{
                             me.state.indicator.indicatorList.map((ind, cont) =>{
                              data.push(elements[cont]);
@@ -155,8 +155,8 @@ export default React.createClass({
                     });
                     if(model.data.length == 0){
                         data = [['Element', 'Alcançado']];
-                        elements.push(["Não possui metas",0]);
-                        data.push(["Não possui metas",0]);
+                        elements.push([Messages.get("label.haveNoGoals"),0]);
+                        data.push([Messages.get("label.haveNoGoals"),0]);
                     }else{
                         model.data.map((item, cont) => {
                             data.push(elements[cont]);                        
@@ -178,7 +178,7 @@ export default React.createClass({
         var bool1 = (this.state.indicator.indicatorList && this.state.indicator.indicatorList.length == 0 ? false : true);
         var bool2 = (model ? model.data.length > 0 : true);
         var hTitle1 = (this.state.indicator.indicatorList && this.state.indicator.indicatorList.length == 0 ? "" : "Indicadores"); 
-        var hTitle2 = (model && model.data.length > 0 ? "Metas" : ""); 
+        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
         this.setState({            
             optionsIndicators:{
                 title: '',
@@ -387,7 +387,7 @@ export default React.createClass({
 				<div>
 					<div className="panel panel-default dashboard-goals-info-ctn">
 						<div className="panel-heading">
-							<b className="budget-graphic-title"> Desempenho do Indicador </b>
+							<b className="budget-graphic-title"> {Messages.get("label.indicatorPerformance")} </b>
                             <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")}  onClick={this.hideFields}/>
 						</div>
                         {!this.state.hide ?

@@ -60,8 +60,8 @@ export default React.createClass({
 
     updateChartOptions(model){
         var bool = (model ? model.data.length > 0 : true);
-        var hTitle1 = (model && model.data.length > 0 ? "Indicadores" : ""); 
-        var hTitle2 = (model && model.data.length > 0 ? "Metas" : ""); 
+        var hTitle1 = (model && model.data.length > 0 ? Messages.get("label.indicators") : ""); 
+        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
         this.setState({            
             options:{
                 title: '',
@@ -118,8 +118,8 @@ export default React.createClass({
                 });
                 
                 if(model.data.length == 0){
-                    elements.push(["Não possui metas",0,'',0]);
-                    data.push(["Não possui metas",0,'',0]);
+                    elements.push([Messages.get("label.haveNoGoals"),0,'',0]);
+                    data.push([Messages.get("label.haveNoGoals"),0,'',0]);
                 }else{
                     model.data.map((ind, idx) => {
                         data.push(elements[idx]);
@@ -184,7 +184,7 @@ export default React.createClass({
                     });                   
             
                     if(model.data.length==0){
-                        vet[0] = "Não possui indicadores";
+                        vet[0] = Messages.get("label.haveNoIndicators");
                         vet[1] = 0;
                         vet[2] = "#FFFFFF";
                         elements.push(vet);

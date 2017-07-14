@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip';
 import FavoriteToolTip from "forpdi/jsx/planning/widget/plan/FavoriteToolTip.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -196,7 +197,7 @@ export default React.createClass({
 							</ReactTooltip>
 
 							<div className={"marginLeft20"}>
-								Você não possui favoritos.
+								{Messages.get("label.haveNoFavorites")}
 								{/*Ícone de informação*/}
 								<span data-tip data-type='light' data-for='favoriteTooltip'>
 									<i className="mdi mdi-information-outline fpdi-tooltip-info pointer deleteIcon"/>

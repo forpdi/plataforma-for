@@ -1562,7 +1562,7 @@ export default React.createClass({
 
 										{sons[0].level.goal ?
 											<th className = "column-goals-perfomance"> 
-												Desempenho 
+												{Messages.get("label.performance")}
 												<span data-tip data-type='light' data-for='toolTipGoalProgress'>
 													<i className="mdi mdi-information-outline fpdi-tooltip-info pointer"/>
 												</span>

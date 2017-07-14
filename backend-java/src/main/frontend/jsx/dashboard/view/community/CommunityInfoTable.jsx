@@ -366,7 +366,7 @@ export default React.createClass({
       return (
         <div className="panel panel-default">
           <div className="panel-heading">
-            <b className="budget-graphic-title"> <span className="fpdi-nav-label" title = {("Tabela de Metas"+dashboardTitle).length > 70 ? ("Tabela de Metas"+dashboardTitle) : ""}> {(dashboardTitle.length) <= 70?("Tabela de Metas"+dashboardTitle):(("Tabela de Metas"+dashboardTitle).split("",70).concat(" ..."))} </span> </b>
+            <b className="budget-graphic-title"> <span className="fpdi-nav-label" title = {(Messages.get("label.goalsTable")+dashboardTitle).length > 70 ? (Messages.get("label.goalsTable")+dashboardTitle) : ""}> {(dashboardTitle.length) <= 70?(Messages.get("label.goalsTable")+dashboardTitle):((Messages.get("label.goalsTable")+dashboardTitle).split("",70).concat(" ..."))} </span> </b>
               <div className="performance-strategic-btns floatRight">
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
               </div>

@@ -201,7 +201,7 @@ export default React.createClass({
 
 
             var bool = (model ? model.data.length > 0 : true);
-            var hTitle = (model && model.data.length > 0 ? "Eixos temáticos" : "");  
+            var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");  
             this.setState({
                 data:data,
                 elements:element,

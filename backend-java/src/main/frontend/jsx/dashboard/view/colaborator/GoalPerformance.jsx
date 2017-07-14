@@ -111,8 +111,8 @@ export default React.createClass({
                 });
                 if(model.data.length == 0){
                     data = [['Element', 'Alcançado']];
-                    elements.push(["Não possui metas",0]);
-                    data.push(["Não possui metas",0]);
+                    elements.push([Messages.get("label.haveNoGoals"),0]);
+                    data.push([Messages.get("label.haveNoGoals"),0]);
                 }else{
                     model.data.map((goal, idx) => {
                         data.push(elements[idx]);
@@ -135,7 +135,7 @@ export default React.createClass({
 
     updateChartOptions(model){
         var bool = (model ? model.data.length > 0 : true);
-        var hTitle = (model && model.data.length > 0 ? "Metas" : ""); 
+        var hTitle = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
         this.setState({            
             options:{
                 title: '',

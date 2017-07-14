@@ -194,15 +194,15 @@ export default React.createClass({
     render() {
         var dashboardTitle = "";
         if (this.state.levelInstance == -1 && this.state.subPlan == -1)
-            dashboardTitle = "Desempenho dos eixos temáticos - "+Messages.get("label.allGoalPlans");
+            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+Messages.get("label.allGoalPlans");
         else if (this.state.levelInstance == -1)
-            dashboardTitle = "Desempenho dos eixos temáticos - "+this.state.subPlan.name;
+            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+this.state.subPlan.name;
         else if (this.state.levelInstance.parent == null) 
-            dashboardTitle = "Desempenho dos objetivos - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.objectivesPerformance") + " - "+this.state.levelInstance.name;
         else if (this.state.levelInstance.level.objective)
-            dashboardTitle = "Desempenho dos indicadores - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.indicatorsPerformance") + " - "+this.state.levelInstance.name;
         else if (this.state.levelInstance.level.indicator)
-            dashboardTitle = "Desempenho das metas - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.goalsPerformance") + " - "+this.state.levelInstance.name;
         return (
             <div className="panel panel-default">
                 <div className="panel-heading dashboard-panel-title">

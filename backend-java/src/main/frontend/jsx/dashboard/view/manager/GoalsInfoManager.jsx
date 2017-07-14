@@ -50,7 +50,7 @@ export default React.createClass({
 				<div className="panel panel-default">
 					<div className="panel-heading dashboard-panel-title">
 						<b className="budget-graphic-title"> 
-							{"Informações gerais das metas"+(this.state.plan != -1 ? " - "+this.state.plan.get("name") + 
+							{Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - "+this.state.plan.get("name") + 
 								(this.state.subPlan != -1 ? " - "+this.state.subPlan.name : "")
 								:"")
 							}
