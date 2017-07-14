@@ -175,7 +175,7 @@ export default React.createClass({
 								spellCheck={false} 
 								className="form-control"
 								ref="new-column-name"
-								placeholder="Nome do campo"
+								placeholder={Messages.get("label.field.name")}
 								id="new-column-name" />
 						</div>
 						<div className="col-sm-6 col-md-4">
@@ -224,9 +224,9 @@ export default React.createClass({
 								  					{column.label}
 								  					<span>&nbsp;</span>
 						  							<span className="mdi mdi-pencil cursorPointer" onClick={this.editColumn.bind(this,idx)}
-						  							 title="Editar informações"></span>
+						  							 title={Messages.get("label.title.editInformation")}></span>
 						  							<span className="mdi mdi-delete cursorPointer" onClick={this.deleteColumn.bind(this,idx)}
-						  							 title="Excluir"></span>
+						  							 title={Messages.get("label.delete")}></span>
 						  						</th>
 						  					)
 					  					)
