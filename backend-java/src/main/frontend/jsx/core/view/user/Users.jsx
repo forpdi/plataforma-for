@@ -608,16 +608,16 @@ export default React.createClass({
 					<thead className="import-table-header">
 						<tr>
 							<th className = "column-goals-perfomance col-xs-1"> 
-								<input id="selectAll" value="selectAll" type="checkbox" title="Todos" onChange={me.selectAll}/>
+								<input id="selectAll" value="selectAll" type="checkbox" title={Messages.get("label.all")} onChange={me.selectAll}/>
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								Nome
+								{Messages.get("label.name")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								Email
+								{Messages.get("label.email")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-3"> 
-								Tipo de conta
+								{Messages.get("label.accountType")}
 							</th>
 						</tr>										
 					</thead>
@@ -678,7 +678,7 @@ export default React.createClass({
 				</div>
 				{this.state.emptyUsersToImport ? 
 					(<div className="emptyUsersToImport">
-						Você não selecionou <strong>nenhum usuário</strong> para importar!
+						{Messages.get("label.notSelect")} <strong>{Messages.get("label.noUser")}</strong> {Messages.get("label.toImport")}
 					</div>) 
 					: ""
 				}
@@ -770,7 +770,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="selectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">{Messages.get("label.selectAccountType")} </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.get("label.selectAccountType")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -845,7 +845,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="newSelectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">{Messages.get("label.selectAccountType")} </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.get("label.selectAccountType")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -864,7 +864,7 @@ export default React.createClass({
 												<div ref="formAlertNewTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>Cadastrar</button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>{Messages.get("label.register")}</button>
 											</td>
 										</tr>
 										<tr>

@@ -75,7 +75,7 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
+							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
 							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.get("label.login.title")}</h3>
 						</div>
 					</div>
@@ -90,7 +90,7 @@ export default React.createClass({
 									<div className="panel panel-default">
 									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.get("label.resetPassword")}</p></div>
 									  	<div className="panel-body">
-									  		  <p className="fpdi-recover-password-title">Informe sua nova senha de acesso.</p>
+									  		  <p className="fpdi-recover-password-title">{Messages.get("label.title.newPassword")}</p>
 										<div className="fpdi-login-body">
 										<VerticalForm
 											onSubmit={this.onSubmit}

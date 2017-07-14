@@ -126,7 +126,7 @@ export default React.createClass({
 	render() {
 		return (<div className="fpdi-card container animated fadeIn" style={{maxWidth: '600px'}}>
 					<h1>
-						Convidar usuário
+						{Messages.get("label.inviteUser")}
 					</h1>
 					<p>{Messages.get("label.msg.newEmailUser")}</p>
 					<VerticalForm

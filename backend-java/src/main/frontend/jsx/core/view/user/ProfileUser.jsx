@@ -295,7 +295,7 @@ export default React.createClass({
 		var me = this;
 		var formatsBlocked = "(exe*)";
 		Modal.uploadFile(
-			"Enviar Foto",
+			Messages.get("label.sendPicture"),
 			(<div>
 				<p>
 					{Messages.get("label.selectFile")}
@@ -590,7 +590,7 @@ export default React.createClass({
 											<img className="fpdi-image-profile" src={this.state.model.picture == null ?(Logo):this.state.model.picture} />
 										</div>
 										<div className="fpdi-container-profile-icon">
-											<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title="Para melhor visualização da imagem insira uma foto com a mesma largura e altura"></span>
+											<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.betterImagePreview")}></span>
 											</div>
 											
 											<div>

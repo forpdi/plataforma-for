@@ -163,7 +163,7 @@ export default React.createClass({
 		}
 		return (<div className="fpdi-top-bar">
 	        <Link to='/home' className="fpdi-top-bar-brand">
-				{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt="ForPDI Logo" src={Logo}/>):(<img alt="ForPDI Logo" src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
+				{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>):(<img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
 	        </Link>
 	
 			<span className="fpdi-fill" />
