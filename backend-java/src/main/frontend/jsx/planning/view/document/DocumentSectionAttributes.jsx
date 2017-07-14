@@ -141,14 +141,14 @@ export default React.createClass({
 					//Toastr.remove();
 					//Toastr.success("Campo \""+attr.name+"\" adicionado com sucesso.");
 					var nameCreated = attr.name.substr(0,50).concat("...");
-					me.context.toastr.addAlertSuccess(Messages.get("label.field") + nameCreated + Messages.get("label.success.added"));
+					me.context.toastr.addAlertSuccess(Messages.get("label.field") +  " " + nameCreated + " " + Messages.get("label.success.added"));
 					me.tweakNewField();
 				}
 			}
 		});
 
 		DocumentStore.on("sectiondeleted", (model) => {			
-			me.context.toastr.addAlertSuccess(Messages.get("label.section") + model.name + Messages.get("label.success.deleted"));
+			me.context.toastr.addAlertSuccess(Messages.get("label.section") + " " + model.name + " " + Messages.get("label.success.deleted"));
 			me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			DocumentStore.dispatch({
 				action: DocumentStore.ACTION_RETRIEVE,
@@ -157,7 +157,7 @@ export default React.createClass({
 		});
 
 		DocumentStore.on("attributedeleted", (model) => {
-			me.context.toastr.addAlertSuccess(Messages.get("label.field") + nameCreated + Messages.get("label.success.deleted"));					
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + model.name + " " + Messages.get("label.success.deleted"));					
 			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
 		});
 
@@ -199,7 +199,7 @@ export default React.createClass({
 			});			
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
-			me.context.toastr.addAlertSuccess(Messages.get("label.field") + me.state.recentAttr.name + Messages.get("label.success.added"));
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + me.state.recentAttr.name + " " + Messages.get("label.success.added"));
 			me.tweakNewField();
 		});
 
@@ -221,7 +221,7 @@ export default React.createClass({
 			});			
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
-			me.context.toastr.addAlertSuccess(Messages.get("label.field") + me.state.recentAttr.name + Messages.get("label.success.added"));
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + me.state.recentAttr.name + " " + Messages.get("label.success.added"));
 			me.tweakNewField();
 		});
 	},
@@ -485,14 +485,14 @@ export default React.createClass({
 					{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) && this.state.model.leaf ?
 						<i type="submit" className="mdi mdi-delete cursorPointer deleteIcon" onClick={this.deleteSection} 
-						title="Excluir seção" ></i> 
+						title={Messages.get("label.deleteSection")} ></i> 
 					: ""}
 				</h1>
 
 				{!this.state.vizualization ? 
 					<div className="panel panel-default panel-margins">
 						<div className="panel-heading attribute-input-opts">
-							<b className="budget-title">Título</b>
+							<b className="budget-title">{Messages.get("label.title")}</b>
 						</div>
 						<div>
 							<input
