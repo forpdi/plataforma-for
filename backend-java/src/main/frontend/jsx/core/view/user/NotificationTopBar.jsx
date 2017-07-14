@@ -3,6 +3,7 @@ import string from 'string';
 import {Link} from "react-router";
 import NotificationUser from "forpdi/jsx/core/view/user/NotificationUser.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
     getInitialState() {
@@ -37,7 +38,7 @@ export default React.createClass({
                     {(this.state.notifications && this.state.notifications.length > 0) ?  
                         <div className="textAlignCenter">
                             <Link  to = {"/users/profilerUser/" +this.state.user.id}>
-                                ver todas
+                                Messages.get("label.seeAll");
                             </Link>
                         </div>
                     : ""}
