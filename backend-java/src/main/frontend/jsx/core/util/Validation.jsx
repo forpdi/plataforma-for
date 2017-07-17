@@ -1414,7 +1414,7 @@ var Validate = {
 		var msg = Messages.get("label.form.error");
 
 		if (nameGoal.value.trim() == "") {
-			refs.formAlertErrorName.innerHTML = "Você não pode deixar o nome em branco!";
+			refs.formAlertErrorName.innerHTML = Messages.get("label.notNameEmpty");
 			refs["nameGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1423,7 +1423,7 @@ var Validate = {
 		}
 
 		if (responsibleGoal.value.trim() == "") {
-			refs.formAlertErrorResponsavel.innerHTML = "Você não pode deixar o responsável em branco!";
+			refs.formAlertErrorResponsavel.innerHTML = Messages.get("label.notRespEmpty");
 			refs["responsibleGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1432,7 +1432,7 @@ var Validate = {
 		}
 
 		if (descriptionGoal.value.trim() == "") {
-			refs.formAlertErrorDescription.innerHTML = "Você não pode deixar a descrição branco!";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.notDescEmpty");
 			refs["descriptionGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1441,7 +1441,7 @@ var Validate = {
 		}
 
 		if (expectedGoal.value.trim() == "" || isNaN(expectedGoal.value)) {
-			refs.formAlertErrorExpected.innerHTML = "Valor inválido para o esperado!";
+			refs.formAlertErrorExpected.innerHTML = Messages.get("label.valueInvalidExpected");
 			refs["expectedGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1450,7 +1450,7 @@ var Validate = {
 		}
 
 		if (minimumGoal.value.trim() == "" || isNaN(minimumGoal.value)) {
-			refs.formAlertErrorMinimum.innerHTML = "Valor inválido para o mínimo!";
+			refs.formAlertErrorMinimum.innerHTML = Messages.get("label.valueInvalidMin");
 			refs["minimumGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1459,7 +1459,7 @@ var Validate = {
 		}
 
 		if (maximumGoal.value.trim() == "" || isNaN(maximumGoal.value)) {
-			refs.formAlertErrorMaximum.innerHTML = "Valor inválido para o máximo!";
+			refs.formAlertErrorMaximum.innerHTML = Messages.get("label.valueInvalidMax");
 			refs["maximumGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
