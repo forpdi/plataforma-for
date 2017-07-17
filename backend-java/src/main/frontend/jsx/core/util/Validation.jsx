@@ -227,7 +227,7 @@ var Validate = {
 		}		
 		
 		if (expec != null && min != null && max != null) {
-			if (model.data.polarity == "Menor-melhor") {
+			if (model.data.polarity == Messages.get("label.lowerBest")) {
 				if (max > min) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxCantBeGreaterThanMin") +" "+ Messages.get("label.checkIndicatorPolarity");
