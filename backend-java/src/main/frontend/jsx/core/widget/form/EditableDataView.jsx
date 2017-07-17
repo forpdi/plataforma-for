@@ -1,4 +1,3 @@
-
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -6,6 +5,7 @@ import MaskedInput from 'react-maskedinput';
 import string from "string";
 import moment from 'moment';
 //import Toastr from 'toastr';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 import AccessLevels from 'forpdi/jsx/core/store/AccessLevels.json';
@@ -130,7 +130,7 @@ export default React.createClass({
 			if(date>actualDate){
 				//Toastr.remove();
 				//Toastr.error('Data de nascimento maior que a data atual!');
-				this.context.toastr.addAlertError('Data de nascimento maior que a data atual!');
+				this.context.toastr.addAlertError(Messages.get("label.dateBirthDateAfterDateCurrent"));
 				return;
 			}
 		}
@@ -177,8 +177,8 @@ export default React.createClass({
 						onKeyUp={this.onKeyPress}
 						maxLength={this.props.maxLength}/>
 					<div>
-						<button className="btn btn-success" onClick={this.saveValue}><span className="mdi mdi-check" title="Salvar" /></button>
-						<button className="btn btn-danger"><span className="mdi mdi-close" title="Cancelar"/></button>
+						<button className="btn btn-success" onClick={this.saveValue}><span className="mdi mdi-check" title={Messages.get("label.submitLabel")} /></button>
+						<button className="btn btn-danger"><span className="mdi mdi-close" title={Messages.get("label.cancel")}/></button>
 					</div>
 				</div>);
 			} else if (this.props.type === 'date') {
@@ -195,10 +195,10 @@ export default React.createClass({
 					/>
 					<div>
 						<button className="btn btn-success" onClick={this.saveValue}>
-							<span className="mdi mdi-check" title="Salvar"/>
+							<span className="mdi mdi-check" title={Messages.get("label.submitLabel")}/>
 						</button>
 						<button className="btn btn-danger" onClick={this.cancelEdit}>
-							<span className="mdi mdi-close" title="Cancelar"/>
+							<span className="mdi mdi-close" title={Messages.get("label.cancel")}/>
 						</button>
 					</div>
 				</div>);
@@ -217,10 +217,10 @@ export default React.createClass({
 					</select>
 					<div>
 						<button className="btn btn-success" onClick={this.saveValue}>
-							<span className="mdi mdi-check" title="Salvar"/>
+							<span className="mdi mdi-check" title={Messages.get("label.submitLabel")}/>
 						</button>
 						<button className="btn btn-danger" onClick={this.cancelEdit}>
-							<span className="mdi mdi-close" title="Cancelar"/>
+							<span className="mdi mdi-close" title={Messages.get("label.cancel")}/>
 						</button>
 					</div>
 				</div>);
@@ -237,10 +237,10 @@ export default React.createClass({
 					/>
 					<div>
 						<button className="btn btn-success" onClick={this.saveValue}>
-							<span className="mdi mdi-check" title="Salvar"/>
+							<span className="mdi mdi-check" title={Messages.get("label.submitLabel")}/>
 						</button>
 						<button className="btn btn-danger" onClick={this.cancelEdit}>
-							<span className="mdi mdi-close" title="Cancelar"/>
+							<span className="mdi mdi-close" title={Messages.get("label.cancel")}/>
 						</button>
 					</div>
 				</div>);
@@ -256,10 +256,10 @@ export default React.createClass({
 					/>
 					<div>
 						<button className="btn btn-success" onClick={this.saveValue}>
-							<span className="mdi mdi-check" title="Salvar"/>
+							<span className="mdi mdi-check" title={Messages.get("label.submitLabel")}/>
 						</button>
 						<button className="btn btn-danger" onClick={this.cancelEdit}>
-							<span className="mdi mdi-close" title="Cancelar"/>
+							<span className="mdi mdi-close" title={Messages.get("label.cancel")}/>
 						</button>
 					</div>
 				</div>);

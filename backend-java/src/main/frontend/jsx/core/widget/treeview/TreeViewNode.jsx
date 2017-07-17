@@ -1,4 +1,3 @@
-
 import $ from 'jquery';
 import _ from 'underscore';
 import React from "react";
@@ -41,7 +40,7 @@ export default React.createClass({
 			iconCls: 'mdi mdi-chevron-right',
 			expanded: false,
 			expandable: false,
-			newNodePlaceholder: "Digite o nome do nível"
+			newNodePlaceholder: Messages.get("label.nameLevel")
 		};
 	},
 	componentDidMount() {
@@ -131,9 +130,9 @@ export default React.createClass({
 				<textarea className="fpdi-new-node-textarea" placeholder={this.props.newNodePlaceholder} maxLength='255' ref="nodeName" onKeyDown={this.onKeyDown}/>
 				<div className="row">
 					<div className="col-xs-12 text-right">
-						<span className="mdi mdi-check fdpi-accepted-new-node" onClick={this.aproveNewNode} title="Salvar"/>
+						<span className="mdi mdi-check fdpi-accepted-new-node" onClick={this.aproveNewNode} title={Messages.get("Salvar")}/>
 						<span>&nbsp;</span>
-						<span className="mdi mdi-close fdpi-rejected-new-node" onClick={this.cancelNewNode} title="Cancelar"/>
+						<span className="mdi mdi-close fdpi-rejected-new-node" onClick={this.cancelNewNode} title={Messages.get("label.cancel")}/>
 					</div>
 				</div>
 			</div>
@@ -158,7 +157,7 @@ export default React.createClass({
 							onClick={this.onIconClick} />
 						:
 							(this.props.model && this.props.model.aggregate ?
-								<a className={this.props.iconCls}  onClick={me.onLabelClick} title="Indicador agregado"/>
+								<a className={this.props.iconCls}  onClick={me.onLabelClick} title={Messages.get("label.indicatorAggregate")}/>
 							:	
 								<a className={this.props.iconCls}  onClick={me.onLabelClick} />)
 					}
@@ -183,7 +182,7 @@ export default React.createClass({
 							}
 							{
 								(this.props.model && this.props.model.haveBudget)?
-								<i className="mdi mdi-cash-usd budgetCoinIcon" title="Esse nível possui um campo orçamento"></i>
+								<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")}></i>
 								:""
 							}
 							{/*
