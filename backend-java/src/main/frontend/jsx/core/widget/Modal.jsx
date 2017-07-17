@@ -1,4 +1,3 @@
-
 import _ from 'underscore';
 import $ from 'jquery';
 import React from 'react';
@@ -23,7 +22,7 @@ var AlertModal = React.createClass({
 	        			<p>{this.props.message}</p>
 	      			</div>
 	      			<div className="modal-footer fpdi-modal-footer">
-	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Ok</button>
+	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.ok")}</button>
 	      			</div>
 				</div>
 			</div>
@@ -54,8 +53,8 @@ var ConfirmModal = React.createClass({
 
 	getDefaultProps() {
 		return {
-			confirmText: "Ok",
-			confirmTitle: "Confirmação",
+			confirmText: Messages.get("label.ok"),
+			confirmTitle: Messages.get("label.confirmation"),
 		};
 	},
 	render() {
@@ -82,8 +81,8 @@ var ConfirmModal = React.createClass({
 var ConfirmModalCustom = React.createClass({
 	getDefaultProps() {
 		return {
-			confirmText: "Sim",
-			declineText: "Não"
+			confirmText: Messages.get("label.yes"),
+			declineText: Messages.get("label.no")
 		};
 	},
 	render() {
@@ -92,7 +91,7 @@ var ConfirmModalCustom = React.createClass({
 				<div className="modal-content fpdi-modal-confirmCustom">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className="mdi mdi-confirmModalCustom mdi-48px mdi-checkbox-marked-circle" id="modalIcon"></i> Confirmação</h4>
+	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className="mdi mdi-confirmModalCustom mdi-48px mdi-checkbox-marked-circle" id="modalIcon"></i> {Messages.get("label.confirmation")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body-close-goal">
 	        			<p id>{this.props.text}</p>
@@ -111,14 +110,14 @@ var ConfirmModalCustom = React.createClass({
 
 var ConfirmConviteUser = React.createClass({
 	render() {
-		var msg1 = "Um e-mail de convite foi enviado para ";
-		var msg2 = ", no qual o usuário precisa completar o cadastro.";
+		var msg1 = (Messages.get("label.success.emailSent") + " ");
+		var msg2 = Messages.get("label.success.userCompleteRegister");
 		return (
 			<div className="modal-dialog modal-sm">
 				<div className="modal-content fpdi-modal-confirmCustomUser">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel">Confirmação</h4>
+	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel">{Messages.get("label.confirmation")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body-close-goal modal-content-confirmUser">
 						<p id> {msg1}<strong>{this.props.text}</strong>{msg2}</p>
@@ -132,8 +131,8 @@ var ConfirmConviteUser = React.createClass({
 var CancelModalCustom = React.createClass({
 	getDefaultProps() {
 		return {
-			confirmText: "Sim",
-			declineText: "Não"
+			confirmText: Messages.get("label.yes"),
+			declineText: Messages.get("label.no")
 		};
 	},
 	render() {
@@ -142,7 +141,7 @@ var CancelModalCustom = React.createClass({
 				<div className="modal-content fpdi-modal-confirmCustom">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			 <h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className=" mdi-cancelModalCustom mdi mdi-alert-circle" id="modalIcon"> </i> Alerta</h4>
+	        			 <h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel"><i className=" mdi-cancelModalCustom mdi mdi-alert-circle" id="modalIcon"> </i> {Messages.get("label.alert")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body-close-goal">
 	        			<p id>{this.props.text}</p>
@@ -160,9 +159,9 @@ var CancelModalCustom = React.createClass({
 var DeleteConfirmModal = React.createClass({
 	getDefaultProps() {
 		return {
-			text: "Você tem certeza que deseja excluir esse registro?",
-			confirmText: "Excluir",
-			declineText: "Cancelar"
+			text: Messages.get("label.deleteRecord"),
+			confirmText: Messages.get("label.delete"),
+			declineText: Messages.get("label.cancel")
 		};
 	},
 	render() {
@@ -171,7 +170,7 @@ var DeleteConfirmModal = React.createClass({
 				<div className="modal-content">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title" id="myModalLabel">Atenção</h4>
+	        			<h4 className="modal-title" id="myModalLabel">{Messages.get("label.attention")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body">
 	        			<p>{this.props.text}</p>
@@ -189,8 +188,8 @@ var DeleteConfirmModal = React.createClass({
 var DeleteConfirmModalCustom = React.createClass({
 	getDefaultProps() {
 		return {
-			confirmText: "Excluir",
-			declineText: "Cancelar"
+			confirmText: Messages.get("label.delete"),
+			declineText: Messages.get("label.cancel")
 		};
 	},
 	render() {
@@ -199,7 +198,7 @@ var DeleteConfirmModalCustom = React.createClass({
 				<div className="modal-content">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title" id="myModalLabel">Atenção</h4>
+	        			<h4 className="modal-title" id="myModalLabel">{Messages.get("label.attention")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body">
 	        			<p>{this.props.text}</p>
@@ -220,8 +219,8 @@ var DeleteConfirmModalCustom = React.createClass({
 var ConcludeGoalModalCustom = React.createClass({
 	getDefaultProps() {
 		return {
-			confirmText: "Confirmar",
-			declineText: "Cancelar"
+			confirmText: Messages.get("label.confirm"),
+			declineText: Messages.get("label.cancel")
 		};
 	},
 	render() {
@@ -230,7 +229,7 @@ var ConcludeGoalModalCustom = React.createClass({
 				<div className="modal-content">
 					<div className="modal-header fpdi-modal-header">
 	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel">Confirmação</h4>
+	        			<h4 className="modal-title centerTitleModalCompleteGoal" id="myModalLabel">{Messages.get("label.confirmation")}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body-close-goal">
 	        			<p id>{this.props.text}</p>
@@ -267,8 +266,8 @@ var ReadTextModal = React.createClass({
 	        			<input type='text' className='form-control' ref="text-input" />
 	      			</div>
 	      			<div className="modal-footer">
-	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
-	        			<button type="button" className="btn btn-sm btn-primary" onClick={this.onConfirmWrapper}>Confirmar</button>
+	        			<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
+	        			<button type="button" className="btn btn-sm btn-primary" onClick={this.onConfirmWrapper}>{Messages.get("label.confirm")}</button>
 	      			</div>
 				</div>
 			</div>
@@ -363,33 +362,33 @@ var ExportDocumentModal = React.createClass({
 	      			<div className="modal-body fpdi-modal-body">
 	      				<form>
 		      				<div className="col-md-6">
-			        			<label htmlFor="documentTitle">Título do documento <span className="fpdi-required">&nbsp;</span>
+			        			<label htmlFor="documentTitle">{Messages.get("label.documentTitle")} <span className="fpdi-required">&nbsp;</span>
 			        				<input type='text' name="documentTitle" ref="documentTitle" id="documentTitle" />
 			        			</label>
 			        			
 			        		</div>
 			        		<div className="col-md-6">
-			        			<label htmlFor="documentAuthor">Autor <span className="fpdi-required">&nbsp;</span>
+			        			<label htmlFor="documentAuthor">{Messages.get("label.author")} <span className="fpdi-required">&nbsp;</span>
 			        				<input type='text' name="documentAuthor"  ref="documentAuthor" id="documentAuthor" />
 			        			</label>
 	      					</div>
 	      					<div className="col-md-12" >
-		      					<label htmlFor="container"> Selecione as seções que deseja incluir no documento: <span className="fpdi-required">&nbsp;</span></label>
+		      					<label htmlFor="container"> {Messages.get("label.includeSectionsDocument")} <span className="fpdi-required">&nbsp;</span></label>
 		      					<div className="container" id="container">
 		      						{this.props.text}	
 								</div>
 							</div>								
 							<br/>
 							<div className="col-md-12" >
-								<label className="paddingTop5">As seções vazias não serão exportadas.</label>
+								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
 							</div>
 							<div id="exportDocumentModalFooter" name="exportDocumentModalFooter">
 								<p id="paramError" className="exportDocumentError"></p>
 								<p className="help-block">
 									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 								</p>
-	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>Exportar</button>
-	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.export")}</button>
+	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
 	      				</form>
 	      			</div>
@@ -409,12 +408,12 @@ var ImportUsersModal = React.createClass({
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body">
-	      				<p id="paramError" className="importUsersWarning"><strong>Atenção: </strong> Não esqueça de atribuir o tipo de conta adequado para cada usuário importado.</p>
+	      				<p id="paramError" className="importUsersWarning"><strong> {Messages.get("label.attention") + ":"}</strong> {Messages.get("label.userTypeAccount")}</p>
 							{this.props.text}
 						<div id="importUserstModalFooter" name="importUserstModalFooter">
 								<p id="paramError" className="importUsersWarning"></p>
-	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>Importar</button>
-	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">Cancelar</button>
+	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.import")}</button>
+	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
 	      			</div>
 				</div>
@@ -520,7 +519,7 @@ var Modal = {
 	},
 	reportProblem() {
 		ReactDOM.render((
-			<MediumModal title="Reportar problema">
+			<MediumModal title={Messages.get("label.reportIssue")}>
 				<ReportProblem
 					onCancel={this.hide.bind(this)}
 					onSubmit={this.hide.bind(this)}
@@ -580,7 +579,7 @@ var Modal = {
 			fail: function (evt,opts) {
 				if(typeViolation){					
 					document.getElementById('upload-error-span').innerHTML = 
-					"O formato "+format+" não é válido.<br>"+(validSamples ? "Exemplos de formatos válidos: "+validSamples : "");
+					"O formato "+format+" não é válido.<br>"+(validSamples ? Messages.get("label.examplesValidFormats") + ": "+validSamples : "");
 				} else if (sizeExceeded){
 					document.getElementById('upload-error-span').innerHTML = 
 					"Tamanho máximo excedido, o tamanho máximo é "+maxSize/10e5 +"MB";
