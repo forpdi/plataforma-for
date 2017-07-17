@@ -247,7 +247,7 @@ export default React.createClass({
 						onKeyPress={this.onKeyUp}
 						onPaste={this.onKeyUp}/> 
 						<div id = "field-subject">
-							<span> Max 70 </span>
+							<span> {Messages.get("label.maxCaracteresSeventy")} </span>
 						</div>
 			</div>);
 		} else if (this.props.fieldDef.type == 'message') {
@@ -265,7 +265,7 @@ export default React.createClass({
 						onPaste={this.onKeyUp}
 						onKeyPress={this.onKeyUp}/>
 						<div id = "field-message">
-							<span> Max 255 </span>
+							<span> {Messages.get("label.maxCaracteresTwoHundred")} </span>
 						</div>
 			</div>);
 		} else if (this.props.fieldDef.type == 'cpf') {
