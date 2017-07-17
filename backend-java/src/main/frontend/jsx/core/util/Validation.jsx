@@ -708,7 +708,7 @@ var Validate = {
 			profileEditUser.refs.cpf.refs["field-cpf"].input.className = "form-control borderError";
 			errorField = true;
 		}else if(!this.validarCPF(data.cpf)){	
-			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = "CPF inválido!";
+			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = Messages.get("label.cpfInvalid");
 			profileEditUser.refs.cpf.refs["field-cpf"].input.className = "form-control borderError";
 			errorField = true;
 		} else {
@@ -760,7 +760,7 @@ var Validate = {
 				errorField = true;
 			} else if (data.newPassword.length < 5 && data.newPassword.length > 0) {
 				msg =Messages.get("label.form.error");
-				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
+				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 				profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 				errorField = true;
 			} else {
@@ -785,8 +785,8 @@ var Validate = {
 			
 			if (data.newPassword.trim() != "" && data.newPasswordTwo.trim() != "" ) {
 				if (data.newPassword.trim().localeCompare(data.newPasswordTwo.trim()) != 0) {
-					profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "As senhas não correspondem";
-					profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = "As senhas não correspondem";
+					profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
+					profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
 					profileEditUser.refs.newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
 					profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 					errorField = true;
@@ -814,7 +814,7 @@ var Validate = {
 			}
 			if(data.password.length < 5 ||  !!data.password.match(/^(\s)+$/) ){
 				msg = Messages.get("label.form.error");
-				profileEditUser.refs.password.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
+				profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 				profileEditUser.refs.password.refs["field-password"].className += " borderError";
 				errorField = true;
 			} else {
@@ -830,8 +830,8 @@ var Validate = {
 				errorField = true;
 			} else {
 				if(data.password.trim().localeCompare(data.passwordconfirm.trim()) != 0) {
-					profileEditUser.refs.password.refs.formAlertError.innerHTML = "As senhas não correspondem";
-					profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = "As senhas não correspondem";
+					profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
+					profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
 					profileEditUser.refs.password.refs["field-password"].className += " borderError";
 					profileEditUser.refs.passwordconfirm.refs["field-passwordconfirm"].className += " borderError";
 					errorField = true;
@@ -876,7 +876,7 @@ var Validate = {
 			refs.emailUser.className += " borderError";
 			errorField = true;
 		} else if (!this.emailIsValid(refs.emailUser.value.trim())) {
-			refs.formAlertEmail.innerHTML = "Email inválido";
+			refs.formAlertEmail.innerHTML = Messages.get("label.emailInvalid");
 			refs.emailUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -909,7 +909,7 @@ var Validate = {
 			refs.newEmailUser.className += " borderError";
 			errorField = true;
 		} else if (!this.emailIsValid(refs.newEmailUser.value.trim())) {
-			refs.formAlertNewEmail.innerHTML = "Email inválido";
+			refs.formAlertNewEmail.innerHTML = Messages.get("label.emailInvalid");
 			refs.newEmailUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -921,7 +921,7 @@ var Validate = {
 			refs.newPasswordUser.className += " borderError";
 			errorField = true;
 		} else if (refs.newPasswordUser.value.trim().length < 5) {
-			refs.formAlertNewPasswordUser.innerHTML = "A senha deve conter no mínimo 5 caracteres!";
+			refs.formAlertNewPasswordUser.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 			refs.newPasswordUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -1011,7 +1011,7 @@ var Validate = {
 		rps = refs.responsavel.value.trim();
 
 		if (!dateError && dataBegin.getTime() > dataEnd.getTime()) {		
- 			refs.formAlertErrorEnd.innerHTML = "Data término deve ser posterior à data de início";		
+ 			refs.formAlertErrorEnd.innerHTML = Messages.get("label.dateEndAfterDataBegin");		
  			refs.end.refs.input.refs.input.className += " borderError"; 		
  			boolMsg = true;		
  		} else if(!dateError) {		
@@ -1019,7 +1019,7 @@ var Validate = {
  			refs.end.refs.input.refs.input.className = "budget-field-table";		
  		}
 		if (dsc.length > 3999) {
-			refs.formAlertErrorDescription.innerHTML = "Descrição muito grande, máximo 4000 caracteres";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.descLimitCaracteres");
 			refs.descricao.className += " borderError"; 
 			boolMsg = true;
 		} else {
@@ -1098,7 +1098,7 @@ var Validate = {
 
 		if (!dateError) {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
-				refs.formAlertErrorEndEdit.innerHTML = "Data término deve ser posterior à data de início";
+				refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.dateEndAfterDataBegin");
 				refs.end.refs.input.refs.input.className += " borderError";
 				boolMsg = true;
 			} else {
@@ -1258,7 +1258,7 @@ var Validate = {
 
 		if (!dateError) {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
-				refs.formAlertErrorEnd.innerHTML = "Data término deve ser posterior à data de início";
+				refs.formAlertErrorEnd.innerHTML = Messages.get("label.dateEndAfterDataBegin");
 				refs.end.className += " borderError";
 				boolMsg = true;
 			} else {
@@ -1276,7 +1276,7 @@ var Validate = {
 		} else {
 			if (desc.length > 4000) {
 				boolMsg = true;
-				refs.formAlertErrorDescription.innerHTML = "A descrição deve ter no máximo 4000 caracteres!";
+				refs.formAlertErrorDescription.innerHTML = Messages.get("label.descLimitCaracteres");
 				refs.scheduleDescription.className += " borderError";
 			} else if(refs.scheduleDescription.className && refs.scheduleDescription.className.indexOf('borderError')){
 				refs.scheduleDescription.className = "budget-field-table";
@@ -1356,7 +1356,7 @@ var Validate = {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
 			boolMsg = true;
 
-			refs.formAlertErrorEndEdit.innerHTML = "Data final anterior à data de início";
+			refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.dateEndBeforeDataBegin");
 			refs.end.className += " borderError";
 
 			} else {
@@ -1375,7 +1375,7 @@ var Validate = {
 		} else {
 			if (desc.length > 4000) {
 				boolMsg = true;
-				refs.formAlertErrorDescriptionEdit.innerHTML = "A descrição deve ter no máximo 4000 caracteres!";
+				refs.formAlertErrorDescriptionEdit.innerHTML = Messages.get("label.descLimitCaracteres");
 				refs.descriptionEdit.className += " borderError";
 			} else if(refs.descriptionEdit.className && refs.descriptionEdit.className.indexOf('borderError')){
 				refs.descriptionEdit.className = "budget-field-table";
