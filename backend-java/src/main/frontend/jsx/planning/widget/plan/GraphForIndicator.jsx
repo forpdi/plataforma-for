@@ -270,7 +270,7 @@ export default React.createClass({
         } else {
             sufix = format;
         }
-        if(goal.polarity == "Maior-melhor"){
+        if(goal.polarity == Messages.get("label.highestBest")){
         	if(reachedField<minimumField){
         		graphItem[1] = {
                     v: reachedField,
@@ -312,7 +312,7 @@ export default React.createClass({
                 };
                 graphItem[2] = "#4EB4FE";
         	}
-        } else if (goal.polarity == "Menor-melhor"){
+        } else if (goal.polarity == Messages.get("label.lowerBest")){
             if(reachedField > minimumField){
                 graphItem[1] = {
                     v: reachedField,

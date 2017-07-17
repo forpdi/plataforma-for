@@ -126,7 +126,7 @@ export default React.createClass({
 			});
 		}
 		
-		var msg = "Você tem certeza que deseja remover " + levelInstance.name + " dos favoritos?";
+		var msg = Messages.get("label.msg.removeConfirmation") + levelInstance.name + " " + Messages.get("label.msg.favorites");
 			Modal.confirmCancelCustom(() => {
 				Modal.hide();
 
