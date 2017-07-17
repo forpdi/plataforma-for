@@ -176,7 +176,7 @@ var Validate = {
 				} else {
 					positionExpec = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "Campo Esperado não pode conter letras";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedFieldCantContainLetters");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					expec = null;
 					msg = Messages.get("label.form.error");
@@ -191,7 +191,7 @@ var Validate = {
 				} else {
 					positionMin = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMin].refs.formAlertError.innerHTML = "Campo Mínimo não pode conter letras";
+					levelForm.refs["attribute"+positionMin].refs.formAlertError.innerHTML = Messages.get("label.minFieldCantContainLetters");
 					levelForm.refs["attribute"+positionMin].refs["field-attribute"+positionMin].className += " borderError";
 					min = null;
 					msg = Messages.get("label.form.error");
@@ -207,7 +207,7 @@ var Validate = {
 				} else {
 					positionMax = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "Campo Máximo não pode conter letras";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxFieldCantContainLetters");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
 					max = null;
 					msg = Messages.get("label.form.error");	
@@ -218,7 +218,7 @@ var Validate = {
 				if (tr != ""){
 					if (isNaN(data[Object.keys(data)[i]].replace(",","."))) {
 							boolMsg = true;
-							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Campo Alcançado não pode conter letras";
+							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.reachedFieldCantContainLetters");
 							levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
 					}
 				}
@@ -230,34 +230,34 @@ var Validate = {
 			if (model.data.polarity == "Menor-melhor") {
 				if (max > min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxCantBeGreaterThanMin") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
 					msg = Messages.get("label.form.error");
 				} if (expec > min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeGreaterThanMin") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					msg = Messages.get("label.form.error");
 				} if (expec < max) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o máximo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeLessThanMax") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					msg = Messages.get("label.form.error");
 				}
 			} else {
 				if (max < min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser menor que o mínimo";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxCantBeLessThanMin");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
 					msg = Messages.get("label.form.error");
 				} if (expec < min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o mínimo";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeLessThanMin");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					msg = Messages.get("label.form.error");
 				} if (expec > max) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o máximo";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeGreaterThanMax");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					msg = Messages.get("label.form.error");
 				}
@@ -327,12 +327,12 @@ var Validate = {
 		}
 
 		if (!dataError && dataBegin.getTime() == dataEnd.getTime()) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		// dataFinal - data Inicio caso menor 86400000 (um dia em milesegundos), quer dizer que a data inicio e maior data final
 		} else if (!dataError && difference < 86400000) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
@@ -409,12 +409,12 @@ var Validate = {
 			difference = valDateFinal - valDateBegin;
 		}
 		if (!dataError && dataBegin.getTime() == dataEnd.getTime()) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		// dataFinal - data Inicio caso menor 86400000 (um dia em milesegundos), quer dizer que a data inicio e maior data final
 		} else if (!dataError && difference < 86400000) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
@@ -484,11 +484,11 @@ var Validate = {
 		}
 		
 		if (!dataError && dataBegin>=dataEnd) {
-			planRegisterForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planRegisterForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			document.getElementById("field-end").className = "form-control borderError";
 			boolMsg = true;
 		}else{
-			if(planRegisterForm.refs.end.refs.formAlertError == "Data de término deve ser posterior à data de início"){
+			if(planRegisterForm.refs.end.refs.formAlertError == Messages.get("label.endDateMustBeAfterBeginDate")){
 				planRegisterForm.refs.end.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-end").className = "form-control";
 			}
@@ -496,24 +496,24 @@ var Validate = {
 		} 		
 
 		if(dateBeginPlanMacro>dataBegin){
-			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = "Data de início do plano de metas é menor que a data de início do plano macro";
+			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.goalPlanBeginDateLessThanBeginDateOfMacroPlan");
 			document.getElementById("field-begin").className = "form-control borderError";
 			dataError = true;
 			boolMsg = true;
 		}else{
 			
-			if(planRegisterForm.refs.begin.refs.formAlertError.innerHTML == "Data de início do plano de metas é menor que a data de início do plano macro"){
+			if(planRegisterForm.refs.begin.refs.formAlertError.innerHTML == Messages.get("label.goalPlanBeginDateLessThanBeginDateOfMacroPlan")){
 				planRegisterForm.refs.begin.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-begin").className = "form-control";
 			}
 		}
 		if(dataEndPlanMacro<dataEnd){
-			planRegisterForm.refs.end.refs.formAlertError.innerHTML = "Data de término do plano de metas é maior que a data de término do plano macro";
+			planRegisterForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.goalPlanEndDateGreaterThanEndDateOfMacroPlan");
 			document.getElementById("field-end").className = "form-control borderError";
 			dataError = true;
 			boolMsg = true;
 		}else{
-			if(planRegisterForm.refs.end.refs.formAlertError.innerHTML == "Data de término do plano de metas é maior que a data de término do plano macro"){
+			if(planRegisterForm.refs.end.refs.formAlertError.innerHTML == Messages.get("label.goalPlanEndDateGreaterThanEndDateOfMacroPlan")){
 				planRegisterForm.refs.end.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-end").className = "form-control";
 			}
@@ -683,7 +683,7 @@ var Validate = {
 		if (celNumber.length < 10) {
 			msg = Messages.get("label.form.error");
 			profileEditUser.refs.cellphone.refs["field-cellphone"].input.className = "form-control borderError";
-			profileEditUser.refs.cellphone.refs.formAlertError.innerHTML = "Número inválido, por favor verifique o número e o DDD cadastrados";
+			profileEditUser.refs.cellphone.refs.formAlertError.innerHTML = Messages.get("label.invalidPhoneNumber");
 			errorField = true;
 		} else if(profileEditUser.refs.cellphone.refs["field-cellphone"].input.className && profileEditUser.refs.cellphone.refs["field-cellphone"].input.className.indexOf('borderError')){
 			profileEditUser.refs.cellphone.refs["field-cellphone"].input.className = "form-control";
@@ -695,7 +695,7 @@ var Validate = {
 			profileEditUser.refs.birthdate.refs["field-birthdate"].refs.input.refs.input.className = "form-control borderError";
 			errorField = true;
 		} else if (birthdate > currentDate) {
-			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = "Data de nascimento não pode ser superior à data atual!";
+			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = Messages.get("label.invalidBirthDate");
 			profileEditUser.refs.birthdate.refs["field-birthdate"].refs.input.refs.input.className = "form-control borderError";
 			errorField = true;
 		} else {

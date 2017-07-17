@@ -219,11 +219,11 @@ export default React.createClass({
 			difference = valDateFinal - valDateBegin;
 		}
 		if (!dataError && begin.getTime() == end.getTime()) {
-			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.dateBeginAfterDateBegin");
+			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			this.refs.planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		} else if (!dataError && difference < 86400000) {
-			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Message.get("label.dateBeginAfterDateBegin");
+			this.refs.planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Message.get("label.endDateMustBeAfterBeginDate");
 			this.refs.planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
