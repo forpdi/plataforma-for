@@ -1068,7 +1068,7 @@ export default React.createClass({
 				</div>
 				<div className = "fpdi-levelValueBox">
 					<div className = {this.state.levelValue == null || this.state.levelValue < 1000 ? "col-lg-1 box-proceeds" : "col-lg-1"} >
-						<span id = "title-proceeds"> Rendimento </span>
+						<span id = "title-proceeds"> {Messages.get("label.profit")} </span>
 						<span id = "value-proceeds"> {this.state.levelValue == null ? 0 + "%" : this.state.levelValue.toFixed(2)+"%"} </span>
 					</div>	
 				</div>
