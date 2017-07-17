@@ -179,7 +179,7 @@ var Validate = {
 					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "Campo Esperado não pode conter letras";
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					expec = null;
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 
@@ -194,7 +194,7 @@ var Validate = {
 					levelForm.refs["attribute"+positionMin].refs.formAlertError.innerHTML = "Campo Mínimo não pode conter letras";
 					levelForm.refs["attribute"+positionMin].refs["field-attribute"+positionMin].className += " borderError";
 					min = null;
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 
@@ -210,7 +210,7 @@ var Validate = {
 					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "Campo Máximo não pode conter letras";
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
 					max = null;
-					msg = "Existem erros no formulário";	
+					msg = Messages.get("label.form.error");	
 				}
 			}
 
@@ -232,34 +232,34 @@ var Validate = {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec > min) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec < max) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o máximo. Verifique a polaridade do indicador.";
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			} else {
 				if (max < min) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser menor que o mínimo";
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec < min) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o mínimo";
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec > max) {
 					boolMsg = true;
 					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o máximo";
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 		}
@@ -283,7 +283,7 @@ var Validate = {
     },
 
     validationDuplicatePlan: function(data, planMacroEditForm) {
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 
 		// Parte do codigo para contonar erro de datas
 		var valDateBegin,valDateFinal;
@@ -356,7 +356,7 @@ var Validate = {
     },
 
     validationPlanMacroEdit: function(data, planMacroEditForm) {
-        var msg = "Existem erros no formulário";
+        var msg = Messages.get("label.form.error");
 		var dataError = false;
 		var boolMsg = false;
 
@@ -442,7 +442,7 @@ var Validate = {
 		dateBeginPlanMacro = moment(dateBeginPlanMacro,"DD/MM/YYYY").toDate();
 		var dataEndPlanMacro = planMacro.get("end").split(" ");
 		dataEndPlanMacro = moment(dataEndPlanMacro,"DD/MM/YYYY").toDate();
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		var innerHtml = "";
 
@@ -529,7 +529,7 @@ var Validate = {
 	validationCompanyDomainEdit: function(data, companyDomainEditForm) {
 		var msg="";
 		if(data.host == "" ||  !!data.host.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyDomainEditForm.refs.host.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.host.refs["field-host"].className += " borderError";
 		} else {
@@ -539,7 +539,7 @@ var Validate = {
 			}
 		}
 		if(data.baseUrl == ""){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyDomainEditForm.refs.baseUrl.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.baseUrl.refs["field-baseUrl"].className += " borderError";
 		} else {
@@ -549,7 +549,7 @@ var Validate = {
 			}
 		}
 		if(data.theme == "" ||  !!data.theme.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyDomainEditForm.refs.theme.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.theme.refs["field-theme"].className += " borderError";
 		} else {
@@ -559,7 +559,7 @@ var Validate = {
 			}
 		}
 		if(data.company.id == "" ||  !!data.company.id.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyDomainEditForm.refs.company.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.company.refs["field-company"].className += " borderError";
 		} else {
@@ -575,7 +575,7 @@ var Validate = {
 	validationCompanyEdit: function(data, companyEditForm) {
 		var msg="";
 		if(data.name.trim() == "" ){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyEditForm.refs.name.refs["field-name"].className += " borderError";
 		} else {
@@ -585,7 +585,7 @@ var Validate = {
 			}
 		}
 		if(data.localization.trim() == ""){
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			companyEditForm.refs.localization.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyEditForm.refs.localization.refs["field-localization"].className += " borderError";
 		} else {
@@ -681,7 +681,7 @@ var Validate = {
 		}
 
 		if (celNumber.length < 10) {
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			profileEditUser.refs.cellphone.refs["field-cellphone"].input.className = "form-control borderError";
 			profileEditUser.refs.cellphone.refs.formAlertError.innerHTML = "Número inválido, por favor verifique o número e o DDD cadastrados";
 			errorField = true;
@@ -759,7 +759,7 @@ var Validate = {
 				profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 				errorField = true;
 			} else if (data.newPassword.length < 5 && data.newPassword.length > 0) {
-				msg = "Existem erros no formulário";
+				msg =Messages.get("label.form.error");
 				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
 				profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 				errorField = true;
@@ -802,7 +802,7 @@ var Validate = {
 
 		} else if (data.password != undefined) {
 			if(data.password == "" ||  !!data.password.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
+				msg = Messages.get("label.form.error");
 				profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.password.refs["field-password"].className += " borderError";
 				errorField = true;
@@ -813,7 +813,7 @@ var Validate = {
 				}
 			}
 			if(data.password.length < 5 ||  !!data.password.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
+				msg = Messages.get("label.form.error");
 				profileEditUser.refs.password.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
 				profileEditUser.refs.password.refs["field-password"].className += " borderError";
 				errorField = true;
@@ -824,7 +824,7 @@ var Validate = {
 				}
 			}
 			if(data.passwordconfirm == "" ||  !!data.passwordconfirm.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
+				msg = Messages.get("label.form.error");
 				profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.passwordconfirm.refs["field-passwordconfirm"].className += " borderError";
 				errorField = true;
@@ -978,7 +978,7 @@ var Validate = {
 		var dataBegin = new Date ();
 		var dataEnd = new Date ();
 		var dateError = false;
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		
 
@@ -1069,7 +1069,7 @@ var Validate = {
 
 		var dateError = false;
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 		
 		if(state.initDate != undefined){
@@ -1136,7 +1136,7 @@ var Validate = {
 	validationNewBudgetField: function(refs) {
 		var name = refs.budgetNameText.value.trim();
 		var subAction = refs.subActions.value.trim();
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 
 
@@ -1184,7 +1184,7 @@ var Validate = {
 		var subActionEdit = subAction.trim();
 		var nomeEdit = name.trim();
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 
 
@@ -1221,7 +1221,7 @@ var Validate = {
 		var dataBegin = new Date ();
 		var data;
 		var initDate;
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		var dateError = false;
 
@@ -1318,7 +1318,7 @@ var Validate = {
 		if(state.schedule.periodicityEnable)
 			peri = refs.periodicityEdit.value.trim();
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 		var dataError = false;
 
@@ -1411,7 +1411,7 @@ var Validate = {
 		var maximumGoal = document.getElementById("maximumGoal");
 		var boolMsg = false;
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 
 		if (nameGoal.value.trim() == "") {
 			refs.formAlertErrorName.innerHTML = "Você não pode deixar o nome em branco!";
