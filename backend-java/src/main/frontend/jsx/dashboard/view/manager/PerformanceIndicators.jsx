@@ -484,7 +484,7 @@ export default React.createClass({
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
             }
             
-            var msg = "Você deseja ir para o nível selecionado?";                            
+            var msg = Messages.get("label.askGoToSelectedLevel");
             Modal.confirmCustom(() => {
                 Modal.hide();           
                 location.assign(url);

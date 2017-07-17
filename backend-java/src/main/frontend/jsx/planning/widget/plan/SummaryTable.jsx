@@ -252,7 +252,7 @@ export default React.createClass({
 		<div className="summary-table">
 			<div className="summary-table-header">
 				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Recalcular</button>
-				Tabela de Resumo - {this.props.planMacro.get("name")}
+				{Messages.get("label.summaryTable")} - {this.props.planMacro.get("name")}
 			</div>
 			<table>
 				<thead>
