@@ -1,8 +1,8 @@
-
 import _ from "underscore";
 import React from "react";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import ContactStore from "forpdi/jsx/core/store/Contact.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var VerticalForm = Form.VerticalForm;
 
@@ -16,23 +16,23 @@ export default React.createClass({
 				name: "subject",
 				type: "select",
 				options: [
-					{'subject': "Dificuldade de Uso"},
-					{'subject': "Dúvida"},
-					{'subject': "Novas Funcionalidades"},
-					{'subject': "Pagamento/Assinatura"},
-					{'subject': "Perfil do Usuário"},
-					{'subject': "Sugestão de Melhoria"}
+					{'subject': Messages.get("label.difficultyUse")},
+					{'subject': Messages.get("label.doubt")},
+					{'subject': Messages.get("label.newFeatures")},
+					{'subject': Messages.get("label.paymentSubscription")},
+					{'subject': Messages.get("label.perfilUser")},
+					{'subject': Messages.get("label.improvementSuggestion")}
 				],
 				valueField: 'subject',
 				displayField: 'subject',
-				placeholder: "Selecione um assunto para a mensagem...",
-				label: "Assunto"
+				placeholder: Messages.get("label.selectSubject"),
+				label: Messages.get("label.subject")
 			},{
 				name: "description",
 				type: "textarea",
 				rows: 4,
 				placeholder: "",
-				label: "Descreva melhor seu feedback"
+				label: Messages.get("label.feedback")
 			}]
 		};
 	},
@@ -63,8 +63,8 @@ export default React.createClass({
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={ContactStore}
-					cancelLabel="Cancelar"
-					submitLabel="Enviar mensagem"
+					cancelLabel={Messages.get("label.cancel")}
+					submitLabel={Messages.get("label.sendMenssage")}
 				/>
 			</div>
 		);
