@@ -171,7 +171,7 @@ export default React.createClass({
 	},
 
 	deleteTable(id, idx,evt){
-		var msg = "Você tem certeza que deseja excluir ?";
+		var msg = Messages.get("label.generalDeleteConfirmation");
 		
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();

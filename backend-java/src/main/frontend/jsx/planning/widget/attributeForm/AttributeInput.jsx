@@ -95,7 +95,7 @@ export default React.createClass({
 	},
 	maxLengthMask(){
 		if(this.refs[this.state.fieldId].value.length >= this.refs[this.state.fieldId].maxLength){
-			this.context.toastr.addAlertError("Limite de "+this.refs[this.state.fieldId].maxLength+" caracteres atingido!");
+			this.context.toastr.addAlertError( Messages.get("label.error.limit") + " " +this.refs[this.state.fieldId].maxLength+" " + Messages.get("label.error.limitCaracteres"));
 		}
 	},
 	onlyNumber(evt){
@@ -165,7 +165,7 @@ export default React.createClass({
 			this.props.editFunc(this.refs['edit-input'].value, this.props.index);
 			this.cancelEditing();
 		}else{
-			this.context.toastr.addAlertError("Por favor, preencha o campo");
+			this.context.toastr.addAlertError(Messages.get("label.completedField"));
 		}
 	},
 
@@ -174,8 +174,8 @@ export default React.createClass({
 			<div className="edit-section-attribute"> 
 				<input defaultValue={this.props.fieldDef.label} className="edit-section-attribute-input" maxLength="255" ref="edit-input"/>
 				<div className='displayFlex'>
-                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title="Salvar"></span>
-                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title="Cancelar"></span>
+                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
+                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title={Messages.get("label.cancel")}></span>
                	</div>
 			</div>
 		);
@@ -189,12 +189,12 @@ export default React.createClass({
 				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 					(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
-				 		title="Excluir campo" onClick={this.delete}/> : "")
+				 		title={Messages.get("label.title.deleteField")} onClick={this.delete}/> : "")
 				: ""}
 				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 					(!!this.props.alterable ? <span className="mdi mdi-pencil attribute-input-edit inner" 
-							title="Alterar campo" onClick={this.edit}/> : "")
+							title={Messages.get("label.title.changeField")} onClick={this.edit}/> : "")
 				:""}
 			</div>
 		);
@@ -256,7 +256,7 @@ export default React.createClass({
 							onPaste={this.onKeyUp}
 						/>
 						<div className="textAreaMaxLenght documentText">
-							<span>Máx. 10000 caracteres</span>
+							<span>{Messages.get("label.maxTenThousandCaracteres")}</span>
 						</div>
 					</div>
 				);			
@@ -278,10 +278,10 @@ export default React.createClass({
 								onKeyPress={this.onKeyUp}
 								onPaste={this.onKeyUp}
 								disabled
-								title={"Você não tem permissão para editar este campo."}
+								title={Messages.get("label.haveNoPermissionToEdit")}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>Máx. 4000 caracteres</span>
+								<span>{Messages.get("label.fourThousandCaracteres")}</span>
 							</div>
 						</div>
 					);
@@ -303,7 +303,7 @@ export default React.createClass({
 								onPaste={this.onKeyUp}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>Máx. 4000 caracteres</span>
+								<span>{Messages.get("label.fourThousandCaracteres")}</span>
 							</div>
 						</div>
 					);

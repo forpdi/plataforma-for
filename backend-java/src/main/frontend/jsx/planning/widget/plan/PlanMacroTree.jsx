@@ -82,7 +82,7 @@ export default React.createClass({
 				tree.push({
 					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 							PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-					label: "Novo(a) Plano de metas",
+					label: Messages.get("label.newPlanGoals"),
 					labelCls:'fpdi-new-node-label',
 				  	iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 				  	expandable: false,
@@ -490,7 +490,7 @@ export default React.createClass({
     	if(name ==""  || !!name.match(/^(\s)*$/)){
         	//Toastr.remove();
         	//Toastr.error("O campo deve ser preenchido com o nome do "+nodeProps.label.toLowerCase()+"!");
-			this.context.toastr.addAlertError("O campo deve ser preenchido com o nome do "+nodeProps.label.toLowerCase()+"!");
+			this.context.toastr.addAlertError(Messages.get("label.fieldComplete") + " " + nodeProps.label.toLowerCase()+"!");
         	return false;
         }        
         StructureStore.dispatch({

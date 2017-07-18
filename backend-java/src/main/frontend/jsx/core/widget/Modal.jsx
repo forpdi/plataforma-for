@@ -508,7 +508,7 @@ var Modal = {
 
 	feedbackPost() {
 		ReactDOM.render((
-			<MediumModal title="Enviar feedback">
+			<MediumModal title={Messages.get("label.sendFeedback")}>
 				<FeedbackPost
 					onCancel={this.hide.bind(this)}
 					onSubmit={this.hide.bind(this)}

@@ -88,7 +88,7 @@ export default React.createClass({
 		return (
 			<div className="fpdi-search">		
 				<div className = "fpdi-search-view">
-					<p>{Messages.get("label.searchReturned")} {total} {total == 1 ? "resultado" : "resultados"}</p>
+					<p>{Messages.get("label.searchReturned")} {total} {total == 1 ? Messages.get("label.result") : Messages.get("label.results")}</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ? 
 					<div>
@@ -102,7 +102,7 @@ export default React.createClass({
 										<Link
 											to={"/plan/"+this.props.planId+"/details/subplan/level/"+model.id}
 											activeClassName="active"
-											title="ver mais"
+											title={Messages.get("label.title.viewMore")}
 											>
 											{model.name}
 										</Link>
