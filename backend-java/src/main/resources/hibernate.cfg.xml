@@ -44,6 +44,7 @@
 
   		<mapping class="org.forpdi.core.company.Company"/>
   		<mapping class="org.forpdi.core.company.CompanyDomain"/>
+  		<mapping class="org.forpdi.core.company.CompanyMessage"/>
   		<mapping class="org.forpdi.core.company.CompanyUser"/>
   		<mapping class="org.forpdi.core.notification.MessageHistory"/>
   		<mapping class="org.forpdi.core.notification.Notification"/>

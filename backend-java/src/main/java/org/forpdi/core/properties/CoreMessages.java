@@ -3,6 +3,7 @@ package org.forpdi.core.properties;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 
@@ -26,6 +27,8 @@ public final class CoreMessages {
 	private final Locale locale;
 	/** Bundle com mensagens traduzidas. */
 	private final PropertyResourceBundle bundle;
+	/** Mapa com overlays de mensagens ao bundle padrão. */
+	private Map<String, String> overlay;
 	
 	/**
 	 * Retorna o texto no locale padr�o (ingl�s).
@@ -85,12 +88,35 @@ public final class CoreMessages {
 	}
 	
 	/**
+	 * Define um mapa de overlays de mensagens.
+	 * @param overlay Mapa contendo mensagens na forma chave-valor.
+	 */
+	public void setOverlay(Map<String, String> overlay) {
+		this.overlay = overlay;
+	}
+	
+	/**
+	 * Recupera uma mensagem do mapa de overlay (se houver).
+	 * @param key Chave da mensagem a ser recuperada.
+	 * @return Mensagem contida no overlay.
+	 */
+	private String getOverlayMessage(String key) {
+		if ((this.overlay == null) || GeneralUtils.isEmpty(key))
+			return null;
+		return this.overlay.get(key);
+	}
+	
+	/**
 	 * Obt�m uma mensagem dada a chave.
 	 * @param key Chave no arquivo de properties.
 	 * @return Texto referente a chave passada.
 	 */
 	public String getMessage(String key) {
 		try {
+			String overlayed = this.getOverlayMessage(key);
+			if (!GeneralUtils.isEmpty(overlayed)) {
+				return overlayed;
+			}
 			return this.bundle.getString(key);
 		} catch (MissingResourceException ex) {
 			return "???"+key+"???";
@@ -101,11 +127,11 @@ public final class CoreMessages {
 	 * Retorna uma mensagem formatada utilizando o MessageFormat.
 	 * @param key Chave da mesnagem.
 	 * @param args Parametros a serem inseridos na mensagem.
-	 * @return Mensagem formatada inserindo os argumentos no template est�tico obtivdo do arquivo de propriedades.
+	 * @return Mensagem formatada inserindo os argumentos no template estático obtivdo do arquivo de propriedades.
 	 */
 	public String formatMessage(String key, Object[] args) {
 		try {
-			String raw = this.bundle.getString(key);
+			String raw = this.getMessage(key);
 			return MessageFormat.format(raw, args);
 		} catch (MissingResourceException ex) {
 			return "???!"+key+"!???";
@@ -113,7 +139,7 @@ public final class CoreMessages {
 	}
 	
 	/**
-	 * Obt�m uma string com um mapa em JSON de todas as mensagens.
+	 * Obtém uma string com um mapa em JSON de todas as mensagens.
 	 */
 	public String getJSONMessages() {
 		StringBuilder builder = new StringBuilder();
@@ -127,7 +153,8 @@ public final class CoreMessages {
 			else
 				first = false;
 			String key = keys.nextElement();
-			String escaped = this.bundle.getString(key).replaceAll("\\'", "\\\\'");
+			String value = this.getMessage(key);
+			String escaped = value.replaceAll("\\'", "\\\\'");
 			builder.append("'").append(key).append("':'").append(escaped).append("'");
 		}
 		

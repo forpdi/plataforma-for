@@ -1,6 +1,7 @@
 package org.forpdi.system;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -52,6 +53,8 @@ public class IndexController extends AbstractController {
 				.append(CompanyThemeFactory.getDefaultTheme().getCSSFile())
 				.append("'");
 		} else {
+			Map<String, String> messagesOverlays = this.companyBS.retrieveMessagesOverlay(domain.getCompany());
+			msg.setOverlay(messagesOverlays);
 			body.append(",'company': ").append(gson.toJson(domain.getCompany()));
 			body.append(",'themeCss': '")
 				.append(CompanyThemeFactory.getInstance().get(domain.getTheme()).getCSSFile())

@@ -1,15 +1,20 @@
 package org.forpdi.core.company;
 
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.properties.CoreMessages;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.user.authz.permission.EditMessagesPermission;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -301,6 +306,43 @@ public class CompanyController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
+	}
+
+	@Post("/api/company/messages")
+	@NoCache
+	@Consumes
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {EditMessagesPermission.class})
+	public void updateMessageOverlay(@NotEmpty String key, @NotEmpty String value) {
+		try {
+			CompanyDomain domain = this.bs.currentDomain();
+			if (domain == null) {
+				this.result.notFound();
+			} else {
+				this.bs.updateMessageOverlay(domain.getCompany(), key, value);
+				this.success(true);
+			}
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	@Get("/api/company/messages")
+	public void getMessages() {
+		CompanyDomain domain = this.bs.currentDomain();
+		CoreMessages msg = new CoreMessages(CoreMessages.DEFAULT_LOCALE);
+		if (domain != null) {
+			Map<String, String> messagesOverlays = this.bs.retrieveMessagesOverlay(domain.getCompany());
+			msg.setOverlay(messagesOverlays);
+		}
+		try {
+			this.response.setCharacterEncoding("UTF-8");
+			this.response.addHeader("Content-Type", "application/json"); 
+			this.response.getWriter().print(msg.getJSONMessages());
+		} catch (IOException ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+		}
+		this.result.nothing();
 	}
 
 }
