@@ -38,7 +38,7 @@ export default React.createClass({
                     {(this.state.notifications && this.state.notifications.length > 0) ?  
                         <div className="textAlignCenter">
                             <Link  to = {"/users/profilerUser/" +this.state.user.id}>
-                                {Messages.get("label.seeAll")}
+                                {Messages.getEditable("label.seeAll","fpdi-nav-label")}
                             </Link>
                         </div>
                     : ""}

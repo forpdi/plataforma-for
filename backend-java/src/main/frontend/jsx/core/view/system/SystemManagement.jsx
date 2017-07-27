@@ -55,22 +55,22 @@ export default React.createClass({
 			<ul className="fpdi-tabs-nav" role="tablist">
 			    {(false)?(
 				 <Link role="tab" to="/system/general" activeClassName="active"> 
-			   		{Messages.get("label.general")} 
+			   		{Messages.getEditable("label.general","fpdi-nav-label")} 
 			   	</Link>):("")
 			    }
 
 
 			    <Link role="tab" to="/system/companies" activeClassName="active">
-			   		{Messages.get("label.institutions")}
+			   		{Messages.getEditable("label.institutions","fpdi-nav-label")}
 			    </Link>
 			    {this.state.companies.length <= 0 ? 
 				    <div title={Messages.get("label.noCompanyRegistered")}><span className="cursorDefault" >
 				    	<Link role="tab" to={this.props.location.pathname} activeClassName="tabItemDisable"  >
-				   		{	Messages.get("label.domains")}
+				   		{	Messages.getEditable("label.domains","fpdi-nav-label")}
 				    	</Link></span></div>
 				    :
 				    <Link role="tab" to="/system/domains" activeClassName="active">
-				   		{Messages.get("label.domains")}
+				   		{Messages.getEditable("label.domains","fpdi-nav-label")}
 				    </Link>
 				}
 			  </ul>

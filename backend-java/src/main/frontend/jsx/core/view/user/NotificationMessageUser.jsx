@@ -61,7 +61,7 @@ export default React.createClass({
                                                                
                     );
                 })
-                : <div className="fpdi-noNotifications">{Messages.get("notification.noNotifications")}</div>}
+                : <div className="fpdi-noNotifications">{Messages.getEditable("notification.noNotifications","fpdi-nav-label")}</div>}
             </div>
         );
     }

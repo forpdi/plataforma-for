@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
@@ -28,13 +27,13 @@ export default React.createClass({
 				type: "email",
 				placeholder: "",
 				required:true,
-				label: Messages.get("label.email")
+				label: Messages.getEditable("label.email","fpdi-nav-label")
 			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
 				required:true,
-				label: Messages.get("label.password")
+				label: Messages.getEditable("label.password","fpdi-nav-label")
 			}]
 		};
 	},
@@ -78,8 +77,8 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.get("label.login.title")}</h3>
+							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.getEditable("label.forPdiLogo","fpdi-nav-label")} />
+							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -89,7 +88,7 @@ export default React.createClass({
 				<div className="col-md-4 col-md-offset-4">	
 					<div className="fpdi-card-login">		
 						<div className="panel panel-default">
-						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.get("label.login")}</p></div>
+						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.login","fpdi-nav-label")}</p></div>
 							  <div className="panel-body">
 									<div className="fpdi-login-body">
 										<VerticalForm
@@ -108,7 +107,7 @@ export default React.createClass({
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">
-												<Link to="/recover-password">{Messages.get("label.recoverPassword")}</Link>
+												<Link to="/recover-password">{Messages.getEditable("label.recoverPassword","fpdi-nav-label")}</Link>
 											</div>
 										</div>
 									</div>
@@ -117,8 +116,8 @@ export default React.createClass({
 					</div>
 
 					<div className="fpdi-browsers-info">
-						{Messages.get("label.infoBrowsers")}<br/>
-						<i>{Messages.get("label.browsers")}</i>
+						{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
+						<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
 					</div>
 				</div>
 			</div>

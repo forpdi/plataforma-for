@@ -219,7 +219,7 @@ export default React.createClass({
 			name: "name",
 			type: "text",
 			placeholder: "",
-			label: Messages.get("label.name"),
+			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			maxLength:255,
 			value: model  ? model.name:null,
 			required: true
@@ -228,7 +228,7 @@ export default React.createClass({
 			name: "email",
 			type: "email",
 			placeholder: "",
-			label: Messages.get("label.email"),
+			label: Messages.getEditable("label.email","fpdi-nav-label"),
 			maxLength:255,
 			value:  model ? model.email:null,
 			required: true,
@@ -240,7 +240,7 @@ export default React.createClass({
 			name: "cpf",
 			type: "cpf",
 			placeholder: "",
-			label: Messages.get("label.cpf"),
+			label: Messages.getEditable("label.cpf","fpdi-nav-label"),
 			value:  model ? model.cpf:null,
 			required: true,
 			disabled: this.context.roles.SYSADMIN || (model && UserSession.get("user").id == model.id) ? false : true,
@@ -252,7 +252,7 @@ export default React.createClass({
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: Messages.get("label.birthdate"),
+			label: Messages.getEditable("label.birthdate","fpdi-nav-label"),
 			onChange: this.onStartDateChange,
 			value: 	model ? model.birthdate:null,
 			required: true
@@ -262,7 +262,7 @@ export default React.createClass({
 			name: "cellphone",
 			type: "tel",
 			placeholder: "",
-			label: Messages.get("label.cellphone"),
+			label: Messages.getEditable("label.cellphone","fpdi-nav-label"),
 			value:  model ? model.cellphone:null,
 			required: true
 		},
@@ -270,7 +270,7 @@ export default React.createClass({
 			name: "phone",
 			type: "tel",
 			placeholder: "",
-			label: Messages.get("label.phone"),
+			label: Messages.getEditable("label.phone","fpdi-nav-label"),
 			value: 	model? model.phone:null,
 		},
 
@@ -278,7 +278,7 @@ export default React.createClass({
 			name: "department",
 			type: "text",
 			placeholder: "",
-			label: Messages.get("label.department"),
+			label: Messages.getEditable("label.department","fpdi-nav-label"),
 			maxLength:255,
 			value:  model ? model.department:null,
 		},
@@ -305,7 +305,7 @@ export default React.createClass({
 			name: "newPassword",
 			type: "password",
 			placeholder: "",
-			label: Messages.get("label.newPassword"),
+			label: Messages.getEditable("label.newPassword","fpdi-nav-label"),
 			value: "",
 			required: false	
 		}]
@@ -318,7 +318,7 @@ export default React.createClass({
 			name: "assunto",
 			type: "subject",
 			placeholder: "",
-			label: Messages.get("label.subject"),
+			label: Messages.getEditable("label.subject","fpdi-nav-label"),
 			maxLength:70,
 			value: null,
 			required: true
@@ -327,7 +327,7 @@ export default React.createClass({
 			name: "mensagem",
 			type: "message",
 			placeholder: "",
-			label: Messages.get("label.msg"),
+			label: Messages.getEditable("label.msg","fpdi-nav-label"),
 			maxLength:255,
 			value: null,
 			required: true
@@ -686,12 +686,12 @@ export default React.createClass({
 		
 		return (
   				<div className="fpdi-profile-user padding40">
-				 	<h1  id = "title-profile-user"> {Messages.get("label.editUser")} </h1>  
+				 	<h1  id = "title-profile-user"> {Messages.getEditable("label.editUser","fpdi-nav-label")} </h1>  
 						<div className="marginBottom20">
 							<span>
 								<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
 									to={"/users"}
-									title={"Usuários"}>{Messages.get("label.users")}</Link>
+									title={"Usuários"}>{Messages.getEditable("label.users","fpdi-nav-label")}</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>
 							
@@ -705,7 +705,7 @@ export default React.createClass({
 								{this.state.isEditUser == false ?
 
    	 								<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading">{Messages.get("label.userData")}
+      									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}
       										{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ?  
       											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.confirmEdit} title={Messages.get("label.title.editUserProfile")}/>
@@ -726,28 +726,28 @@ export default React.createClass({
   												<div>
   													<form>
   														<div className="form-group form-profile">
-  															<label className = "fpdi-text-label"> {Messages.get("label.name")} </label>
+  															<label className = "fpdi-text-label"> {Messages.getEditable("label.name","fpdi-nav-label")} </label>
   																<p id = "p-profileUser"> {(this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)} </p>
 
-  															<label className = "fpdi-text-label"> {Messages.get("label.email")} </label>
+  															<label className = "fpdi-text-label"> {Messages.getEditable("label.email","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.email} </p>
     														
-    														<label className = "fpdi-text-label"> {Messages.get("label.cpf")} </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.cpf","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.cpf} </p>
 
-    														<label className = "fpdi-text-label"> {Messages.get("label.birthdate")} </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.birthdate","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.birthdate == null ? this.state.model.birthdate : this.state.model.birthdate.split(" ")[0]} </p>
 
-    														<label className = "fpdi-text-label">{Messages.get("label.cellphone")}</label>
+    														<label className = "fpdi-text-label">{Messages.getEditable("label.cellphone","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.cellphone} </p>
 
-															<label className = "fpdi-text-label">{Messages.get("label.phone")}</label>
+															<label className = "fpdi-text-label">{Messages.getEditable("label.phone","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.phone}  </p>
     																	
-    														<label className = "fpdi-text-label"> {Messages.get("label.department")}</label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.department","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.department == null ? this.state.model.department: (this.state.model.department.length>25)?(string(this.state.model.department).trim().substr(0,25).concat("...").toString()):(this.state.model.department)} </p>
 
-    														<label className = "fpdi-text-label"> {Messages.get("label.userType")} </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.userType","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {AccessLevels.mapped[this.state.model.accessLevel]} </p> 	
   														</div>
   													</form>
@@ -759,7 +759,7 @@ export default React.createClass({
    							 		: 
 
    							 		<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading">{Messages.get("label.userData")}</div>
+      									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}</div>
       										<div className="panel-body">
       											
       											<div className="fpdi-container-profile">
@@ -792,7 +792,7 @@ export default React.createClass({
 
 								<div className="col-sm-3">
 									<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading"> {Messages.get("label.userPermissions")}
+      									<div className="panel-heading"> {Messages.getEditable("label.userPermissions","fpdi-nav-label")}
       										{(this.state.editingPermission || !(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ? "" : 
       											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.editPermissions} title={Messages.get("label.title.editPermissions")}/>)}
@@ -820,8 +820,8 @@ export default React.createClass({
 											})}
 											{!!this.state.editingPermission ?
 												(<div className="form-group user-permission-btn-ctn">
-													<button className="btn btn-success user-permission-btn-save" onClick={this.savePermissions}>{Messages.get("label.submitLabel")}</button>
-													<button className="btn btn-default" onClick={this.editPermissions}>{Messages.get("label.cancel")}</button>												
+													<button className="btn btn-success user-permission-btn-save" onClick={this.savePermissions}>{Messages.getEditable("label.submitLabel","fpdi-nav-label")}</button>
+													<button className="btn btn-default" onClick={this.editPermissions}>{Messages.getEditable("label.cancel","fpdi-nav-label")}</button>												
 												</div>)
 												:
 												""
@@ -831,7 +831,7 @@ export default React.createClass({
 								</div>
 								<div className="col-sm-6">
 									<div className="panel panel-default panel-default-user">
-										<div className="panel-heading">{Messages.get("label.sendMessages")}</div>
+										<div className="panel-heading">{Messages.getEditable("label.sendMessages","fpdi-nav-label")}</div>
 										<div className="padding5">
 											<div className="panel-body">
 												<VerticalForm
@@ -848,13 +848,13 @@ export default React.createClass({
 									</div>
 									
 									<div className = "panel panel-default panel-message">
-										<div className="panel-heading"> {Messages.get("label.messageHistory")} </div>
+										<div className="panel-heading"> {Messages.getEditable("label.messageHistory","fpdi-nav-label")} </div>
 										<div className="padding5">
 											<div className="panel-body">
 												<NotificationMessageUser ref="pagination"/>
         										{this.state.hideShowMoreMessages == false ?
         											<div className="textAlignCenter">
-                    									<a onClick={this.showMoreMessages}>{Messages.get("label.viewMore")}</a>
+                    									<a onClick={this.showMoreMessages}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
                 									</div>
                 								:""}
 											</div>

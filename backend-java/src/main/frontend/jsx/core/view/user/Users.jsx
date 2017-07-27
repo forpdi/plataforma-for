@@ -390,7 +390,7 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				<li>
 					<Link  to = {"/users/profilerUser/" +UserSession.attributes.user.id}>
-						{Messages.get("label.myProfile")}
+						{Messages.getEditable("label.myProfile","fpdi-nav-label")}
 					</Link>
 				</li>
 			</ul>
@@ -402,18 +402,18 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				{!model.active ? <li>
 					<a onClick={this.copyInviteToken.bind(this, model.inviteToken)}>
-						{Messages.get("label.copyLinkRegister")}</a>
+						{Messages.getEditable("label.copyLinkRegister","fpdi-nav-label")}</a>
 				</li> : ""}
 				{!model.active ? <li>
 					<a onClick={this.resendInvitation.bind(this, model.id)}>
-						{Messages.get("label.resendInvitation")}</a>
+						{Messages.getEditable("label.resendInvitation","fpdi-nav-label")}</a>
 				</li> : ""}
 				{model.active && (this.context.roles.MANAGER  || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission"))? 
 				<li>
 					<Link to={"/users/"+model.id+"/edit"}>
-						{Messages.get("label.viewUser")}
+						{Messages.getEditable("label.viewUser","fpdi-nav-label")}
 					</Link>
 				</li>:""}
 				{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
@@ -421,11 +421,11 @@ export default React.createClass({
 					<li>
 						{model.blocked ?
 							<a onClick={this.unblockUser.bind(this, model.id,model.name)}>
-								{Messages.get("label.unblockUser")}
+								{Messages.getEditable("label.unblockUser","fpdi-nav-label")}
 							</a>
 							:
 							<a onClick={this.blockUser.bind(this, model.id,model.name)}>
-								{Messages.get("label.blockUser")}
+								{Messages.getEditable("label.blockUser","fpdi-nav-label")}
 							</a>
 						}
 					</li> : ""
@@ -434,7 +434,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
-							{Messages.get("label.removeUser")};
+							{Messages.getEditable("label.removeUser","fpdi-nav-label")};
 						</a>
 					</li> : ""
 				)}
@@ -448,7 +448,7 @@ export default React.createClass({
 			Messages.get("label.importUsers"),
 			(<div>
 				<p>
-					{Messages.get("label.fileCsv")}
+					{Messages.getEditable("label.fileCsv","fpdi-nav-label")}
 				</p>
 			</div>),
 			".csv",
@@ -611,13 +611,13 @@ export default React.createClass({
 								<input id="selectAll" value="selectAll" type="checkbox" title={Messages.get("label.all")} onChange={me.selectAll}/>
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								{Messages.get("label.name")}
+								{Messages.getEditable("label.name","fpdi-nav-label")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								{Messages.get("label.email")}
+								{Messages.getEditable("label.email","fpdi-nav-label")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-3"> 
-								{Messages.get("label.accountType")}
+								{Messages.getEditable("label.accountType","fpdi-nav-label")}
 							</th>
 						</tr>										
 					</thead>
@@ -669,16 +669,16 @@ export default React.createClass({
 				</tbody>
 			</table>
 				<div>
-					<strong ><span id="qntdSelectedUsers">0</span> {Messages.get("label.selectUsers")}</strong>
+					<strong ><span id="qntdSelectedUsers">0</span> {Messages.getEditable("label.selectUsers","fpdi-nav-label")}</strong>
 					<span className="floatRight">
-						<strong>{Messages.get("label.file")} </strong>
+						<strong>{Messages.getEditable("label.file","fpdi-nav-label")} </strong>
 							<span id="fileName">{this.state.importFileName}
 						</span>
 					</span>
 				</div>
 				{this.state.emptyUsersToImport ? 
 					(<div className="emptyUsersToImport">
-						{Messages.get("label.notSelect")} <strong>{Messages.get("label.noUser")}</strong> {Messages.get("label.toImport")}
+						{Messages.getEditable("label.notSelect","fpdi-nav-label")} <strong>{Messages.getEditable("label.noUser","fpdi-nav-label")}</strong> {Messages.getEditable("label.toImport","fpdi-nav-label")}
 					</div>) 
 					: ""
 				}
@@ -739,9 +739,9 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsNewUser}>
-	        				<b className="budget-graphic-title"> {Messages.get("label.inviteUser")} </b>
+	        				<b className="budget-graphic-title"> {Messages.getEditable("label.inviteUser","fpdi-nav-label")} </b>
 	        				<div className="performance-strategic-btns floatRight">
-	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> {Messages.get("label.importUsers")} </button>
+	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> {Messages.getEditable("label.importUsers","fpdi-nav-label")} </button>
 	                			<span  className={(this.state.hideNewUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsNewUser}/>
 	              			</div>
 	        			</div>
@@ -750,11 +750,11 @@ export default React.createClass({
 	        					<LoadingGauge />
 	        				:
 		        				<table className="table fpdi-table">
-		        					<thead className="hidden-xs">	
+		        					<thead className="hidden-xs">
 		        						<tr>
-		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">{Messages.get("label.accountType")} <span className="fpdi-required"></span>  </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.accountType","fpdi-nav-label")} <span className="fpdi-required"></span>  </th>
 		        							<th className="col-sm-3"> </th>
 		        						</tr>      				
 		        					</thead>
@@ -770,7 +770,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="selectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.get("label.selectAccountType")} </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.getEditable("label.selectAccountType","fpdi-nav-label")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -789,14 +789,14 @@ export default React.createClass({
 												<div ref="formAlertTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> {Messages.get("label.submit.sendInvitation")} </button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> {Messages.getEditable("label.submit.sendInvitation","fpdi-nav-label")} </button>
 											</td>
 										</tr>  
 		        						
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													{Messages.get("label.typeEmail")} {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
+													{Messages.getEditable("label.typeEmail","fpdi-nav-label")} {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
 												</div>
 											</td>
 										</tr>
@@ -810,7 +810,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsCreateUser}>
-	        				<b className="budget-graphic-title"> {Messages.get("label.RegisterUser")} </b>
+	        				<b className="budget-graphic-title"> {Messages.getEditable("label.RegisterUser","fpdi-nav-label")} </b>
 	        				<div className="performance-strategic-btns floatRight">
 	                			<span  className={(this.state.hideCreateUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsCreateUser}/>
 	              			</div>
@@ -822,10 +822,10 @@ export default React.createClass({
 		        				<table className="table fpdi-table">
 		        					<thead className="hidden-xs">	
 		        						<tr>
-		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">{Messages.get("label.password")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">{Messages.get("label.accountType")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.getEditable("label.password","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.getEditable("label.accountType","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
 		        							<th className="col-sm-2"> </th>
 		        						</tr>      				
 		        					</thead>
@@ -845,7 +845,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="newSelectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.get("label.selectAccountType")} </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.getEditable("label.selectAccountType","fpdi-nav-label")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -864,13 +864,13 @@ export default React.createClass({
 												<div ref="formAlertNewTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>{Messages.get("label.register")}</button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>{Messages.getEditable("label.register","fpdi-nav-label")}</button>
 											</td>
 										</tr>
 										<tr>
 											<td colSpan="5" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													{Messages.get("label.noConfirmToEmail")}
+													{Messages.getEditable("label.noConfirmToEmail","fpdi-nav-label")}
 												</div>
 											</td>
 										</tr>  
@@ -883,7 +883,7 @@ export default React.createClass({
 
 			<div className="panel panel-default">     
         		<div className="panel-heading cursorPointer" onClick={this.hideFieldsUser}>
-        			<b className="budget-graphic-title"> {Messages.get("label.systemUsers")} </b>
+        			<b className="budget-graphic-title"> {Messages.getEditable("label.systemUsers","fpdi-nav-label")} </b>
         			<div className="performance-strategic-btns floatRight">
                 		<span  className={(this.state.hideUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsUser}/>
               		</div>
@@ -893,13 +893,13 @@ export default React.createClass({
 						<table className="table fpdi-table">
 							<thead className="hidden-xs">
 								<tr>
-									<th className="col-sm-3">{Messages.get("label.name")}  <span className={this.state.sortIconStatus == "desc"?"mdi mdi-sort-ascending cursorPointer":
+									<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className={this.state.sortIconStatus == "desc"?"mdi mdi-sort-ascending cursorPointer":
                        					(this.state.sortIconStatus =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                        					onClick={(this.state.sortIconStatus == "" || this.state.sortIconStatus =="desc") ? this.quickSortByUsersName.bind(this,"asc") :  this.quickSortByUsersName.bind(this,"desc")} title="Ordenar"> </span></th>
-									<th className="col-sm-3">{Messages.get("label.email")}</th>
-									<th className="col-sm-3">{Messages.get("label.cpf")}</th>
-									<th className="col-sm-3">{Messages.get("label.accountType")}</th>
-									<th className="col-sm-3"> {Messages.get("label.situation")} </th>		
+									<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")}</th>
+									<th className="col-sm-3">{Messages.getEditable("label.cpf","fpdi-nav-label")}</th>
+									<th className="col-sm-3">{Messages.getEditable("label.accountType","fpdi-nav-label")}</th>
+									<th className="col-sm-3"> {Messages.getEditable("label.situation","fpdi-nav-label")} </th>		
 								</tr>
 							</thead>
 							<tbody>
@@ -915,10 +915,10 @@ export default React.createClass({
 														data-toggle="dropdown"
 														aria-haspopup="true"
 														aria-expanded="true"
-														title={Messages.get("label.actions")}
+														title={Messages.getEditable("label.actions","fpdi-nav-label")}
 													>
-														<span className="sr-only">{Messages.get("label.actions")}</span>
-														<span title={Messages.get("label.actions")} className="mdi mdi-chevron-down" />
+														<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+														<span title={Messages.getEditable("label.actions","fpdi-nav-label")} className="mdi mdi-chevron-down" />
 													</a>
 													
 													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(model,cpf)}											
@@ -933,9 +933,9 @@ export default React.createClass({
 												<p id = "userNCadastrado">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												{!model.active ? (model.blocked ? Messages.get("label.blockedUser") :
-													<p id = "userNCadastrado"><small> {Messages.get("label.userNoRegister")}</small></p>)
-												: (model.blocked ? Messages.get("label.blockedUser") : Messages.get("label.regularUser"))}
+												{!model.active ? (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") :
+													<p id = "userNCadastrado"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
+												: (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") : Messages.getEditable("label.regularUser","fpdi-nav-label"))}
 											</td>
 										</tr>);
 									})}
@@ -968,7 +968,7 @@ export default React.createClass({
 		}
 		return (<div className="fpdi-profile-user padding40">
 			<div className="fpdi-tabs-content container-fluid animated fadeIn">
-				<h1>{Messages.get("label.users")}</h1>
+				<h1>{Messages.getEditable("label.users","fpdi-nav-label")}</h1>
 				{/*
 					<ul className="fpdi-action-list text-right">
 						<Link to="/users/new" className="btn btn-sm btn-primary">

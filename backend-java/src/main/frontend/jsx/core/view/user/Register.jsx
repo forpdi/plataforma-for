@@ -37,52 +37,52 @@ export default React.createClass({
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.name")
+				label: Messages.getEditable("label.name","fpdi-nav-label")
 			},{
 				name: "cpf",
 				type: "cpf",
 				placeholder: "",
 				required: true,
-				label: Messages.get("label.cpf")
+				label: Messages.getEditable("label.cpf","fpdi-nav-label")
 			},{
 				name: "birthdate",
 				type: "date",
 				placeholder: "",
 				required: true,
 				onChange:this.onBirthDateChange,
-				label: Messages.get("label.birthdate")
+				label: Messages.getEditable("label.birthdate","fpdi-nav-label")
 				
 			},{
 				name: "cellphone",
 				type: "tel",
 				placeholder: "",
 				required: true,
-				label: Messages.get("label.cellphone")
+				label: Messages.getEditable("label.cellphone","fpdi-nav-label")
 			},{
 				name: "phone",
 				type: "tel",
 				placeholder: "",
-				label: Messages.get("label.phone")
+				label: Messages.getEditable("label.phone","fpdi-nav-label")
 			},{
 				name: "department",
 				type: "text",
 				placeholder: "",
 				maxLength:255,
-				label: Messages.get("label.department")
+				label: Messages.getEditable("label.department","fpdi-nav-label")
 			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.password")
+				label: Messages.getEditable("label.password","fpdi-nav-label")
 			},{
 				name: "passwordconfirm",
 				type: "password",
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.passwordConfirm")
+				label: Messages.getEditable("label.passwordConfirm","fpdi-nav-label")
 			}],
 			loading: true,
 			valid: false
@@ -207,7 +207,7 @@ export default React.createClass({
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
 							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.get("label.login.title")}</h3>
+							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -217,9 +217,9 @@ export default React.createClass({
 							<div className="col-md-4 col-md-offset-4">
 								<div className="fpdi-card-login">		
 									<div className="panel panel-default">
-									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.get("label.completeRegistration")}</p></div>
+									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.completeRegistration","fpdi-nav-label")}</p></div>
 									  	<div className="panel-body">
-									  		  <p className="fpdi-recover-password-title">{Messages.get("label.dataCompleteRegistration")}</p>
+									  		  <p className="fpdi-recover-password-title">{Messages.getEditable("label.dataCompleteRegistration","fpdi-nav-label")}</p>
 												<div className="fpdi-login-body">
 														<VerticalForm
 															ref="registerForm"
@@ -237,9 +237,9 @@ export default React.createClass({
 						:
 						<div className="col-md-4 col-md-offset-4">
 							<div className="fpdi-login-header">
-								<h1>{this.state.confirmed ? Messages.get("label.registrationSuccessfullyCompleted")  :
-								 Messages.get("label.pageNotAvailable")}</h1>
-								<p><a className="btn btn-sm btn-primary" href="#/">{Messages.get("label.returnToHomePage")}</a></p>
+								<h1>{this.state.confirmed ? Messages.getEditable("label.registrationSuccessfullyCompleted","fpdi-nav-label")  :
+								 Messages.getEditable("label.pageNotAvailable","fpdi-nav-label")}</h1>
+								<p><a className="btn btn-sm btn-primary" href="#/">{Messages.getEditable("label.returnToHomePage","fpdi-nav-label")}</a></p>
 							</div>
 						</div>
 					}

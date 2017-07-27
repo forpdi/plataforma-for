@@ -30,21 +30,21 @@ export default React.createClass({
 				maxLength: 255,
 				required:true,
 				placeholder: "",
-				label: Messages.get("label.name")
+				label: Messages.getEditable("label.name","fpdi-nav-label")
 			},{
 				name: "email",
 				type: "email",
 				maxLength: 255,
 				required:true,
 				placeholder: "",
-				label: Messages.get("label.email")
+				label: Messages.getEditable("label.email","fpdi-nav-label")
 			},{
 				name: "accessLevel",
 				type: "select",
 				maxLength: 255,
 				required: true,
 				placeholder: Messages.get("label.permissionLevel"),
-				label: Messages.get("label.permission"),
+				label: Messages.getEditable("label.permission","fpdi-nav-label"),
 				displayField: 'name',
 				valueField: 'accessLevel',
 				options: AccessLevels.list.filter((level) => {
@@ -126,9 +126,9 @@ export default React.createClass({
 	render() {
 		return (<div className="fpdi-card container animated fadeIn" style={{maxWidth: '600px'}}>
 					<h1>
-						{Messages.get("label.inviteUser")}
+						{Messages.getEditable("label.inviteUser","fpdi-nav-label")}
 					</h1>
-					<p>{Messages.get("label.msg.newEmailUser")}</p>
+					<p>{Messages.getEditable("label.msg.newEmailUser","fpdi-nav-label")}</p>
 					<VerticalForm
 						ref="userInviteForm"
 						onSubmit={this.onSubmit}

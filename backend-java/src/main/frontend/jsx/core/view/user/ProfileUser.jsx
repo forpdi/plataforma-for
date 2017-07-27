@@ -198,7 +198,7 @@ export default React.createClass({
 			name: "name",
 			type: "text",
 			placeholder: "",
-			label: Messages.get("label.name"),
+			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			maxLength:255,
 			value: model? model.name:null,
 			required: true
@@ -207,7 +207,7 @@ export default React.createClass({
 			name: "email",
 			type: "email",
 			placeholder: "",
-			label: Messages.get("label.email"),
+			label: Messages.getEditable("label.email","fpdi-nav-label"),
 			maxLength:255,
 			value:  model? model.email:null,
 			required: true
@@ -217,7 +217,7 @@ export default React.createClass({
 			name: "cpf",
 			type: "cpf",
 			placeholder: "",
-			label: Messages.get("label.cpf"),
+			label: Messages.getEditable("label.cpf","fpdi-nav-label"),
 			value:  model? model.cpf:null,
 			required: true
 		}, 
@@ -227,7 +227,7 @@ export default React.createClass({
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: Messages.get("label.birthdate"),
+			label: Messages.getEditable("label.birthdate","fpdi-nav-label"),
 			onChange:this.onStartDateChange,
 			value:  model? model.birthdate:null,
 			required: true
@@ -237,7 +237,7 @@ export default React.createClass({
 			name: "cellphone",
 			type: "tel",
 			placeholder: "",
-			label: Messages.get("label.cellphone"),
+			label: Messages.getEditable("label.cellphone","fpdi-nav-label"),
 			value:  model? model.cellphone:null,
 			required: true
 		},
@@ -245,7 +245,7 @@ export default React.createClass({
 			name: "phone",
 			type: "tel",
 			placeholder: "",
-			label: Messages.get("label.phone"),
+			label: Messages.getEditable("label.phone","fpdi-nav-label"),
 			value:  model? model.phone:null,
 		},
 
@@ -253,7 +253,7 @@ export default React.createClass({
 			name: "department",
 			type: "text",
 			placeholder: "",
-			label: Messages.get("label.department"),
+			label: Messages.getEditable("label.department","fpdi-nav-label"),
 			maxLength:255,
 			value:  model? model.department:null,
 		},
@@ -261,7 +261,7 @@ export default React.createClass({
 		{
 			name: "senha",
 			type: "changePassword",
-			placeholder: Messages.get("label.changePassword"),
+			placeholder: Messages.getEditable("label.changePassword","fpdi-nav-label"),
 			onClick: this.changePassword
 		}]
 
@@ -416,7 +416,7 @@ export default React.createClass({
 			name: "currentPassword",
 			type: "password",
 			placeholder: "",
-			label: Messages.get("label.currentPassword"),
+			label: Messages.getEditable("label.currentPassword","fpdi-nav-label"),
 			value: "",
 			required: true
 		})
@@ -424,7 +424,7 @@ export default React.createClass({
 			name: "newPassword",
 			type: "password",
 			placeholder: "",
-			label: Messages.get("label.newPassword"),
+			label: Messages.getEditable("label.newPassword","fpdi-nav-label"),
 			value: "",
 			required: true		
 		})
@@ -433,7 +433,7 @@ export default React.createClass({
 			name: "newPasswordTwo",
 			type: "password",
 			placeholder: "",
-			label: Messages.get("label.newPasswordTwo"),
+			label: Messages.getEditable("label.newPasswordTwo","fpdi-nav-label"),
 			value: "",
 			required: true
 		})
@@ -575,7 +575,7 @@ export default React.createClass({
 
 		return (
 			<div className="fpdi-profile-user padding40">
-			<h1 id = "title-profile-user">{Messages.get("label.myProfile")}</h1> 
+			<h1 id = "title-profile-user">{Messages.getEditable("label.myProfile","fpdi-nav-label")}</h1> 
 
 				<div className="row">
 				
@@ -583,7 +583,7 @@ export default React.createClass({
 						{this.state.editUser == false ?
 
  								<div className="panel panel-default panel-default-user">
-									<div className="panel-heading">{Messages.get("label.userData")} <span className="mdi mdi-pencil cursorPointer floatRight" title={Messages.get("label.editProfile")} onClick={this.confirmEdit}></span> </div>
+									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")} <span className="mdi mdi-pencil cursorPointer floatRight" title={Messages.get("label.editProfile")} onClick={this.confirmEdit}></span> </div>
 										<div className="panel-body">
 										
 										<div className="fpdi-container-profile">
@@ -596,25 +596,25 @@ export default React.createClass({
 											<div>
 												<form>
 													<div className="form-group form-profile">
-														<label className = "fpdi-text-label"> {Messages.get("label.name")} </label>
+														<label className = "fpdi-text-label"> {Messages.getEditable("label.name","fpdi-nav-label")} </label>
 															<p id = "p-profileUser" title = {this.state.model.name}> {(this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)} </p>
 
-														<label className = "fpdi-text-label"> {Messages.get("label.email")} </label>
+														<label className = "fpdi-text-label"> {Messages.getEditable("label.email","fpdi-nav-label")} </label>
 															<p id = "p-profileUser"> {this.state.model.email} </p>
 														
-														<label className = "fpdi-text-label"> {Messages.get("label.cpf")} </label>
+														<label className = "fpdi-text-label"> {Messages.getEditable("label.cpf","fpdi-nav-label")} </label>
 															<p id = "p-profileUser"> {this.state.model.cpf} </p>
 														
-														<label className = "fpdi-text-label"> {Messages.get("label.birthdate")} </label>
+														<label className = "fpdi-text-label"> {Messages.getEditable("label.birthdate","fpdi-nav-label")} </label>
 															<p id = "p-profileUser"> {this.state.model.birthdate == null ? this.state.model.birthdate : this.state.model.birthdate.split(" ")[0]} </p>
 														
-														<label className = "fpdi-text-label">{Messages.get("label.cellphone")}</label>
+														<label className = "fpdi-text-label">{Messages.getEditable("label.cellphone","fpdi-nav-label")}</label>
 															<p id = "p-profileUser"> {this.state.model.cellphone} </p>
 														
-														<label className = "fpdi-text-label">{Messages.get("label.phone")}</label>
+														<label className = "fpdi-text-label">{Messages.getEditable("label.phone","fpdi-nav-label")}</label>
 															<p id = "p-profileUser"> {this.state.model.phone} </p>
 																
-														<label className = "fpdi-text-label"> {Messages.get("label.department")}</label>
+														<label className = "fpdi-text-label"> {Messages.getEditable("label.department","fpdi-nav-label")}</label>
 															<p id = "p-profileUser" title = {this.state.model.department}> {this.state.model.department == null ? this.state.model.department: (this.state.model.department.length>25)?(string(this.state.model.department).trim().substr(0,25).concat("...").toString()):(this.state.model.department)}</p>
 													</div>
 												</form>
@@ -626,7 +626,7 @@ export default React.createClass({
 						 		: 
 
 						 		<div className="panel panel-default panel-default-user">
-									<div className="panel-heading">{Messages.get("label.userData")} </div>
+									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")} </div>
 										<div className="panel-body">
 											<div className="fpdi-container-profile">
 											<img className="fpdi-image-profile" src={this.state.model.picture == null ?(Logo):this.state.model.picture}/>
@@ -658,7 +658,7 @@ export default React.createClass({
 					<div className="col-sm-3">
 						<div className="panel panel-default panel-default-user">
 							<div className="panel-heading"> 
-								{Messages.get("label.userPermissions")}
+								{Messages.getEditable("label.userPermissions","fpdi-nav-label")}
 							</div>					
 							{this.state.permissions.map((item, idx) => {
 								if(item.granted || this.context.accessLevel >= item.accessLevel){
@@ -678,7 +678,7 @@ export default React.createClass({
 					<div className="col-sm-6">
 						{/*<NotificationUser/>*/}
 						<div className="panel panel-default panel-default-user">
-							<div className="panel-heading"> {Messages.get("label.notification")}
+							<div className="panel-heading"> {Messages.getEditable("label.notification","fpdi-nav-label")}
 								{this.context.accessLevel != AccessLevels.enum.SYSADMIN ? 
 									<div className="dropdown floatRight">
 										<a
@@ -692,7 +692,7 @@ export default React.createClass({
 												<span className="mdi mdi-settings cursorPointer floatRight"/>
 										</a>
 										<div className="dropdown-menu dropdown-menu-right width250" aria-labelledby="notifications-settings-menu">
-											<p>{Messages.get("notification.receiving")}</p>
+											<p>{Messages.getEditable("notification.receiving","fpdi-nav-label")}</p>
 											<div className="radio" id="notificationSettingRadio" onClick={this.setNotificationConfig}>
 												<div key={'field-opt-1'}><label><input
 													type="radio"
@@ -700,7 +700,7 @@ export default React.createClass({
 													id="notificationSetting1"
 													defaultChecked={this.state.model.notificationSettings == 1 ? true : false}
 													value="1"
-													/>{Messages.get("notification.standard")}
+													/>{Messages.getEditable("notification.standard","fpdi-nav-label")}
 													<span className="fpdi-required">&nbsp;</span>
 												</label></div>
 												<div key={'field-opt-2'}><label><input
@@ -709,7 +709,7 @@ export default React.createClass({
 													id="notificationSetting2"
 													defaultChecked={this.state.model.notificationSettings == 2 ? true : false}
 													value="2"
-													/>{Messages.get("notification.emailType")} 
+													/>{Messages.getEditable("notification.emailType","fpdi-nav-label")} 
 												</label></div>
 												<div key={'field-opt-3'}><label><input
 													type="radio"
@@ -717,10 +717,10 @@ export default React.createClass({
 													id="notificationSetting3"
 													defaultChecked={this.state.model.notificationSettings == 3 ? true : false}
 													value="3"
-													/>{Messages.get("notification.noEmailType")}
+													/>{Messages.getEditable("notification.noEmailType","fpdi-nav-label")}
 												</label></div>
 											</div>
-											<p className="notificationSettingsDropdown"><span className="fpdi-required"></span> {Messages.get("notification.typeInformation")} </p>
+											<p className="notificationSettingsDropdown"><span className="fpdi-required"></span> {Messages.getEditable("notification.typeInformation","fpdi-nav-label")} </p>
 										</div>
 									</div>
 								:""}
@@ -730,7 +730,7 @@ export default React.createClass({
 									<NotificationUser ref={"userNotification"}/>
 									{this.state.hideShowMore == false ?
 										<div className="textAlignCenter marginBottom10">
-	                    					<a onClick={this.showMoreNotifications}>{Messages.get("label.viewMore")}</a>
+	                    					<a onClick={this.showMoreNotifications}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
 	                					</div>
 	                				: ""}
 								</div>

@@ -23,7 +23,7 @@ export default React.createClass({
 				type: "email",
 				required:true,
 				placeholder: "",
-				label: Messages.get("label.email")
+				label: Messages.getEditable("label.email","fpdi-nav-label")
 			}]
 		};
 	},
@@ -89,7 +89,7 @@ export default React.createClass({
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
 							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.get("label.login.title")}</h3>
+							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -98,10 +98,10 @@ export default React.createClass({
 				<div className="col-md-4 col-md-offset-4">	
 				<div className="fpdi-card-login">		
 					<div className="panel panel-default">
-					  <div className="panel-heading"><p className="fpdi-login-title"> {Messages.get("label.title.recoverPassword")}</p></div>
+					  <div className="panel-heading"><p className="fpdi-login-title"> {Messages.getEditable("label.title.recoverPassword","fpdi-nav-label")}</p></div>
 					  <div className="panel-body">
 
-					  <p className="fpdi-recover-password-title">{Messages.get("label.emailRecoveryPassword")}</p>
+					  <p className="fpdi-recover-password-title">{Messages.getEditable("label.emailRecoveryPassword","fpdi-nav-label")}</p>
 									<div className="fpdi-login-body">
 										<VerticalForm
 											onSubmit={this.onSubmit}
