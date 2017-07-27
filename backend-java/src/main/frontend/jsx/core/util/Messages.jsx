@@ -62,7 +62,7 @@ const EditMessagePopover = React.createClass({
 		if (this.state.hidden) {
 			return <div />;
 		}
-		console.log("Rerender",this.state);
+
 		return (<div ref='main' className="fpdi-message-edit-popup"
 			style={{top: this.state.top+"px", left: this.state.left+"px"}}>
 			<p>Editar este texto:</p>
@@ -97,6 +97,13 @@ if (!el) {
 const EditCt = ReactDOM.render(<EditMessagePopover />, el);
 
 const EditableMessage = React.createClass({
+	contextTypes: {
+		accessLevel: React.PropTypes.number,
+		accessLevels: React.PropTypes.object,
+		permissions: React.PropTypes.array,
+		roles: React.PropTypes.object,
+		toastr: React.PropTypes.object
+	},
 	propTypes: {
 		className: PropTypes.string,
 		messageKey: PropTypes.string.isRequired,
@@ -108,6 +115,8 @@ const EditableMessage = React.createClass({
 		};
 	},
 	onContextMenu(event) {
+		if (!this.context.roles.ADMIN)
+			return;
 		event.preventDefault();
 		EditCt.show(this.props.messageKey, this.props.text,
 			event.clientX, event.clientY, this);
