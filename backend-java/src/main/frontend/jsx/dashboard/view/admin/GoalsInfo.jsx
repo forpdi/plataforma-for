@@ -112,48 +112,48 @@ export default React.createClass({
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.inDay}</h1>
 										<h4>{"("+numeral(this.state.info.inDayPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.inDay")}</p>
+										<p>{Messages.getEditable("label.goals.inDay","fpdi-nav-label")}</p>
 									</div>
 
 									{/*Colocar cálculo correto*/}
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.closeToMaturity}</h1>
 										<h4>{"("+numeral(this.state.info.closeToMaturityPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.closeToMaturity")}</p>
+										<p>{Messages.getEditable("label.goals.closeToMaturity","fpdi-nav-label")}</p>
 									</div>
 
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.late}</h1>
 										<h4>{"("+numeral(this.state.info.latePercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.late")}</p>
+										<p>{Messages.getEditable("label.goals.late","fpdi-nav-label")}</p>
 									</div>
 									
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.notStarted}</h1>
 										<h4>{"("+numeral(this.state.info.notStartedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.notStarted")}</p>
+										<p>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</p>
 									</div>						
 								</div>
 								<div className="row">
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.belowMininum}</h1>
 										<h4>{"("+numeral(this.state.info.belowMinimumPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.belowMinimum")}</p>
+										<p>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.belowExpected}</h1>
 										<h4>{"("+numeral(this.state.info.belowExpectedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.belowExpected")}</p>
+										<p>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.reached}</h1>
 										<h4>{"("+numeral(this.state.info.reachedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.reached")}</p>
+										<p>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</p>
 									</div>
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.aboveExpected}</h1>
 										<h4>{"("+numeral(this.state.info.aboveExpectedPercentage).format('0,0.00')+"%)"}</h4>
-										<p>{Messages.get("label.goals.aboveExpected")}</p>
+										<p>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</p>
 									</div>
 								</div>						
 							</div>}

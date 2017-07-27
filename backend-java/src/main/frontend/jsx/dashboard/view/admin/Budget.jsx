@@ -23,7 +23,7 @@ export default React.createClass({
       plan:this.props.plan,
       subPlan:this.props.subPlan,
        options:{
-          title: Messages.get("label.generalBudget"),
+          title: Messages.getgetEditable("label.generalBudget","fpdi-nav-label"),
           hAxis: {title: '', minValue: 0, maxValue: 15},
           vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
           legend: 'none',
@@ -241,9 +241,9 @@ export default React.createClass({
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
               </div>
             <div>
-              <b className="budget-graphic-title"> {Messages.get("label.budget")} </b>
+              <b className="budget-graphic-title"> {Messages.getEditable("label.budget","fpdi-nav-label")} </b>
               <select onChange={this.objectiveChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-              <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
+              <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.getEditable("label.allObjectives","fpdi-nav-label")} </option>
               {this.state.objectives ? 
                 this.state.objectives.map((attr, idy) =>{
                   return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
