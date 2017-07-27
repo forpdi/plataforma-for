@@ -252,34 +252,34 @@ export default React.createClass({
 		<div className="summary-table">
 			<div className="summary-table-header">
 				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Recalcular</button>
-				{Messages.get("label.summaryTable")} - {this.props.planMacro.get("name")}
+				{Messages.getEditable("label.summaryTable","fpdi-nav-label")} - {this.props.planMacro.get("name")}
 			</div>
 			<table>
 				<thead>
 					<tr>
 						<th></th>
 						<th></th>
-						<th className="text-center">{Messages.get("label.monthPerformance")}</th>
+						<th className="text-center">{Messages.getEditable("label.monthPerformance","fpdi-nav-label")}</th>
 					</tr>
 					<tr>
 						<th>Nível</th>
-						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>{Messages.get("label.profit")}</th>
+						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>{Messages.getEditable("label.profit","fpdi-nav-label")}</th>
 						<td className="summary-table-calendar-cell">
 							<table>
 								<tbody>
 									<tr>
-										<td>{Messages.get("label.month.abbr.january")}</td>
-										<td>{Messages.get("label.month.abbr.february")}</td>
-										<td>{Messages.get("label.month.abbr.march")}</td>
-										<td>{Messages.get("label.month.abbr.april")}</td>
-										<td>{Messages.get("label.month.abbr.may")}</td>
-										<td>{Messages.get("label.month.abbr.june")}</td>
-										<td>{Messages.get("label.month.abbr.july")}</td>
-										<td>{Messages.get("label.month.abbr.august")}</td>
-										<td>{Messages.get("label.month.abbr.september")}</td>
-										<td>{Messages.get("label.month.abbr.october")}</td>
-										<td>{Messages.get("label.month.abbr.november")}</td>
-										<td>{Messages.get("label.month.abbr.december")}</td>
+										<td>{Messages.getEditable("label.month.abbr.january","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.february","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.march","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.april","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.may","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.june","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.july","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.august","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.september","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.october","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.november","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.december","fpdi-nav-label")}</td>
 									</tr>
 								</tbody>
 							</table>

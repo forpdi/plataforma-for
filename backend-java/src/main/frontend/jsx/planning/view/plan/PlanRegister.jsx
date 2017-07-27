@@ -352,7 +352,7 @@ export default React.createClass({
 				<li> 
 					<a onClick={this.deleteLevelAttribute}>
 						<span className="mdi mdi-pencil disabledIcon" title={Messages.get("label.title.unableArchivedPlan")}> 
-							<span id="menu-levels">	{Messages.get("label.title.unableArchivedPlan")} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.title.unableArchivedPlan","fpdi-nav-label")} </span>
 						</span>
 					</a>
 				</li>
@@ -369,7 +369,7 @@ export default React.createClass({
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.changeVizualization}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}> 
-							<span id="menu-levels"> {Messages.get("label.title.editInformation")} </span>
+							<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
@@ -378,7 +378,7 @@ export default React.createClass({
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}>
 						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}> 
-							<span id="menu-levels"> {Messages.get("label.deletePlanGoals")}</span>
+							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")}</span>
 						</span>
 					</Link>
 		         </li>
@@ -388,7 +388,7 @@ export default React.createClass({
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.deletePlan}>
 						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanGoals")}> 
-							<span id="menu-levels"> {Messages.get("label.deletePlanGoals")} </span>
+							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
@@ -435,7 +435,7 @@ export default React.createClass({
 							aria-expanded="true"
 							title={Messages.get("label.actions")}
 						>
-							<span className="sr-only">{Messages.get("label.actions")}</span>
+							<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 							<span className="mdi mdi-chevron-down" />
 						</a>
 

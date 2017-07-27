@@ -177,7 +177,7 @@ export default React.createClass({
 			}			
 			return(
 				<div className="fpdi-marginTop20">
-					<label className="fpdi-text-label">{Messages.get("label.accumulationForm")} {this.props.visualization? "" : <span className="fpdi-required">&nbsp;</span>}</label>
+					<label className="fpdi-text-label">{Messages.getEditable("label.accumulationForm","fpdi-nav-label")} {this.props.visualization? "" : <span className="fpdi-required">&nbsp;</span>}</label>
 					{this.props.visualization ? 
 						<span className="pdi-normal-text">{calculationLabel}</span>
 					:
@@ -201,7 +201,7 @@ export default React.createClass({
 					{this.props.visualization ? ""
 					:
 						<div className="fpdi-indicators">
-							<label className="fpdi-text-label">{Messages.get("label.indicators")}</label>
+							<label className="fpdi-text-label">{Messages.getEditable("label.indicators","fpdi-nav-label")}</label>
 							<div className="form-control fpdi-indicators-ctn">
 								{
 									this.state.indicators.length > 1 ?
@@ -233,20 +233,20 @@ export default React.createClass({
 											);
 										}
 									})) : <span className="indicator-list-truncate">
-											{Messages.get("label.haveNoSimpleIndicatorsToSelect")}
+											{Messages.getEditable("label.haveNoSimpleIndicatorsToSelect","fpdi-nav-label")}
 										</span>								
 								}
 							</div>
 						</div>	
 					}					
 					<div className="panel panel-default">						  
-					  <div className="panel-heading">{Messages.get("label.selectedIndicators")}</div>
+					  <div className="panel-heading">{Messages.getEditable("label.selectedIndicators","fpdi-nav-label")}</div>
 					  <table className="table">
 					    <thead>
 					    	<tr>
-						    	<th>Nome</th>	
+						    	<th>{Messages.getEditable("label.name","fpdi-nav-label")}</th>	
 						    	<th/>					    	
-						    	{this.state.calculationType == 1 ? <th>Peso</th> : <th/>}
+						    	{this.state.calculationType == 1 ? <th>{Messages.getEditable("label.weight","fpdi-nav-label")}</th> : <th/>}
 						    </tr>
 					    </thead>
 					    <tbody>
@@ -286,7 +286,7 @@ export default React.createClass({
 						    			<b>{this.state.total+'%'}</b>						    			
 						    		</td>						    		
 						    		<td className="fpdi-indicator-weigth-total-text">
-						    			{this.state.total != 100 ? Messages.get("label.totalMustBe100") : ""}
+						    			{this.state.total != 100 ? Messages.getEditable("label.totalMustBe100","fpdi-nav-label") : ""}
 						    		</td>						    		
 						    	</tr>
 					    	: <tr/>}

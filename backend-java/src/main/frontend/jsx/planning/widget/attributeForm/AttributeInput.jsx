@@ -256,7 +256,7 @@ export default React.createClass({
 							onPaste={this.onKeyUp}
 						/>
 						<div className="textAreaMaxLenght documentText">
-							<span>{Messages.get("label.maxTenThousandCaracteres")}</span>
+							<span>{Messages.getEditable("label.maxTenThousandCaracteres","fpdi-nav-label")}</span>
 						</div>
 					</div>
 				);			
@@ -281,7 +281,7 @@ export default React.createClass({
 								title={Messages.get("label.haveNoPermissionToEdit")}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>{Messages.get("label.fourThousandCaracteres")}</span>
+								<span>{Messages.getEditable("label.fourThousandCaracteres","fpdi-nav-label")}</span>
 							</div>
 						</div>
 					);
@@ -303,7 +303,7 @@ export default React.createClass({
 								onPaste={this.onKeyUp}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>{Messages.get("label.fourThousandCaracteres")}</span>
+								<span>{Messages.getEditable("label.fourThousandCaracteres","fpdi-nav-label")}</span>
 							</div>
 						</div>
 					);
@@ -416,7 +416,7 @@ export default React.createClass({
 						type={this.props.fieldDef.type}
 						>
 						<option key='field-opt-' data-placement="right" title={Messages.get("label.NoGoalPlanRegistered")}>
-							{Messages.get("label.NoGoalPlanRegistered")}
+							{Messages.getEditable("label.NoGoalPlanRegistered","fpdi-nav-label")}
 						</option>
 					</select>
 				);
@@ -611,7 +611,7 @@ export default React.createClass({
 						type={this.props.fieldDef.type}
 						>
 						<option key='field-opt-' data-placement="right" title={Messages.get("label.noGoalPlanRegistered")}>
-							{Messages.get("label.noGoalPlanRegistered")}
+							{Messages.getEditable("label.noGoalPlanRegistered","fpdi-nav-label")}
 						</option>
 					</select>
 				)

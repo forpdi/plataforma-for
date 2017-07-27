@@ -275,16 +275,16 @@ export default onClickOutside(React.createClass({
   	               <div className='displayFlex-level-search'>
    	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
   	               	</div>
-					<h1>{Messages.get("label.advancedSearch")}</h1>
+					<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
 					
 					<div className="level-search-keyword">
-						<h3>{Messages.get("label.keyword")}</h3>
+						<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
 						<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
 					</div> 
 			
 
 				<div className="level-search-checkbox">
-					<h3>{Messages.get("label.goalsPlan")}</h3>
+					<h3>{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}</h3>
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'subplan-opt-0'}>
@@ -317,7 +317,7 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-checkbox">
-					<h3>{Messages.get("label.levels")}</h3>					
+					<h3>{Messages.getEditable("label.levels","fpdi-nav-label")}</h3>					
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'level-opt-0'}>
@@ -327,7 +327,7 @@ export default onClickOutside(React.createClass({
 								key={'level-opt-0'}
 								type="checkbox" 
 								defaultChecked = {true} />
-							{Messages.get("label.all")}
+							{Messages.getEditable("label.all","fpdi-nav-label")}
 						</div>
 
 						{this.props.subplans[0] ? this.props.subplans[0].structure.levels.map( (opt,idx) => {							
@@ -365,7 +365,7 @@ export default onClickOutside(React.createClass({
 				{!this.state.hideDate ?
 					(<div className="level-search-date">
 						<div className="level-search-date-init">
-							<h3>{Messages.get("label.dateBegin")}</h3>
+							<h3>{Messages.getEditable("label.dateBegin","fpdi-nav-label")}</h3>
 							<DatePicker
 								type="datepicker"
 								ref='begin' 
@@ -378,7 +378,7 @@ export default onClickOutside(React.createClass({
 						</div>
 
 						<div className="level-search-date-init">
-						<h3>{Messages.get("label.dataEnd")}</h3>
+						<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
 							<DatePicker
 								type="datepicker"
 								ref='end' 

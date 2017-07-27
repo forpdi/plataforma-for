@@ -110,13 +110,13 @@ export default onClickOutside(React.createClass({
    	        		<span className='mdi-level-search mdi mdi-close-circle pointer closeButton' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
   	        	</div>
 
-				<h1>{Messages.get("label.generatGoals")}</h1>
+				<h1>{Messages.getEditable("label.generatGoals","fpdi-nav-label")}</h1>
 					
 				<div className="level-search-keyword">
-					<h3>{Messages.get("label.name")}<span className="requiredColor">*</span></h3>
+					<h3>{Messages.getEditable("label.name","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 					<input className="form-control" type="text" ref="nameGoal" id="nameGoal" maxLength="200"/>
 					<div className="formAlertError" ref="formAlertErrorName"></div>
-					<h3>{Messages.get("label.responsible")}<span className="requiredColor">*</span></h3>
+					<h3>{Messages.getEditable("label.responsible","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 					<select
 						className="form-control fontSize12"
 						name="responsibleGoal"
@@ -133,33 +133,33 @@ export default onClickOutside(React.createClass({
 					</select>
 					<div className="formAlertError" ref="formAlertErrorResponsavel"></div>
 					
-					<h3>{Messages.get("label.description")}<span className="requiredColor">*</span></h3>
+					<h3>{Messages.getEditable("label.description","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 					<textarea  className="form-control" ref="descriptionGoal" id="descriptionGoal" maxLength="3000" rows="3"></textarea>
 					<div className="formAlertError" ref="formAlertErrorDescription"></div>
 					
 					<div className="row">
 						<div className="col-md-4">
-						<h3>{Messages.get("label.goals.expected")}<span className="requiredColor">*</span></h3>
+						<h3>{Messages.getEditable("label.goals.expected","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 						<input className="form-control" type="text" ref="expectedGoal" id="expectedGoal" onKeyPress={this.onlyNumber} type="number"/>
 						<div className="formAlertError" ref="formAlertErrorExpected"></div>
 					</div>
 
 
 					<div className="col-md-4">	
-						<h3>{Messages.get("label.min")} <span className="requiredColor">*</span></h3>
+						<h3>{Messages.getEditable("label.min","fpdi-nav-label")} <span className="requiredColor">*</span></h3>
 						<input className="form-control" type="text" ref="minimumGoal" id="minimumGoal" onKeyPress={this.onlyNumber} type="number"/>
 						<div className="formAlertError" ref="formAlertErrorMinimum"></div>
 					</div>
 						
 						<div className="col-md-4">
-							<h3>{Messages.get("label.max")} <span className="requiredColor">*</span></h3>
+							<h3>{Messages.getEditable("label.max","fpdi-nav-label")} <span className="requiredColor">*</span></h3>
 						<input className="form-control" type="text" ref="maximumGoal" id="maximumGoal" onKeyPress={this.onlyNumber} type="number"/>	
 						<div className="formAlertError" ref="formAlertErrorMaximum"></div>
 					</div>
 					</div>
 					
-					<h3>{Messages.get("label.goalsWillBeGeneratedAccordingIndicatorPeriodicity")}</h3>
-					<p className="requiredColor">* {Messages.get("label.requiredFields")}</p>
+					<h3>{Messages.getEditable("label.goalsWillBeGeneratedAccordingIndicatorPeriodicity","fpdi-nav-label")}</h3>
+					<p className="requiredColor">* {Messages.getEditable("label.requiredFields","fpdi-nav-label")}</p>
 				</div> 
 			
 				<div className="level-search-buttons">
