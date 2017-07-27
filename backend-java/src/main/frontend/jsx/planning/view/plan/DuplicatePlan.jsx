@@ -186,29 +186,29 @@ export default React.createClass({
 		
 		return (
 			<div className="fpdi-duplicate-plan">
-				<h1>{Messages.get("label.duplicatePlan")}</h1>
-				<p>{Messages.get("label.planDuplicate")} <b>{this.state.model.get("name")}</b></p>
+				<h1>{Messages.getEditable("label.duplicatePlan","fpdi-nav-label")}</h1>
+				<p>{Messages.getEditable("label.planDuplicate","fpdi-nav-label")} <b>{this.state.model.get("name")}</b></p>
 				<div className="marginTop40">
 					<h4 className="fpdi-text-label">{Messages.get("label.goalPlans")}</h4>
 					<div className="row">
 						<label className="col-sm-3">
 							<input type="checkbox" defaultValue={true} defaultChecked={true} ref="keeplevels" onChange={this.keepLevels}/>
-							<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepLevels")}</b>							
+							<b className="fpdi-duplicate-checkbox-label">{Messages.getEditable("label.keepLevels","fpdi-nav-label")}</b>							
 						</label>
 						<label className="col-sm-3">
 							<input type="checkbox" defaultValue={false} ref="keeplevelscontent"/>
-							<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepContent")}</b>							
+							<b className="fpdi-duplicate-checkbox-label">{Messages.getEditable("label.keepContent","fpdi-nav-label")}</b>							
 						</label>
 					</div>
 				</div>				
 				<div className="marginBottom20">
 				{this.context.planMacro.get('documented') ? 
 					<div>
-						<h4 className="fpdi-text-label">{Messages.get("label.document")}</h4>
+						<h4 className="fpdi-text-label">{Messages.getEditable("label.document","fpdi-nav-label")}</h4>
 						<div className="row">
 							<label className="col-sm-3">
 								<input type="checkbox" defaultValue={false} ref="keepsectioncontent"/>
-								<b className="fpdi-duplicate-checkbox-label">{Messages.get("label.keepContent")}</b>							
+								<b className="fpdi-duplicate-checkbox-label">{Messages.getEditable("label.keepContent","fpdi-nav-label")}</b>							
 							</label>
 						</div>
 					</div>: undefined}

@@ -164,12 +164,12 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<strong>{Messages.get("label.configTable")}</strong>
+					<strong>{Messages.getEditable("label.configTable","fpdi-nav-label")}</strong>
 				</div>
 				<div className="panel-body">
 					<div className="row">					
 						<div className="col-sm-6 col-md-4">
-							<label htmlFor="new-column-name">{Messages.get("label.columnName")}</label>
+							<label htmlFor="new-column-name">{Messages.getEditable("label.columnName","fpdi-nav-label")}</label>
 						    <input
 								type="text"
 								spellCheck={false} 

@@ -134,11 +134,11 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<strong>{Messages.get("label.scheduleSetting")}</strong>
+					<strong>{Messages.getEditable("label.scheduleSetting", "fpdi-nav-label")}</strong>
 				</div>
 				<div className="panel-body">
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="new-column-name">{Messages.get("label.periodicity")}</label>
+						<label htmlFor="new-column-name">{Messages.getEditable("label.periodicity","fpdi-nav-label")}</label>
 					    <input
 							type="checkbox"
 							className="periodicity-checkbox"							
@@ -146,17 +146,17 @@ export default React.createClass({
 							defaultValue={false}/>
 					</div>				
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="new-column-name">{Messages.get("label.columnName")}</label>
+						<label htmlFor="new-column-name">{Messages.getEditable("label.columnName","fpdi-nav-label")}</label>
 					    <input
 							type="text"
 							spellCheck={false} 
 							className="form-control"
 							ref="new-column-name"
-							placeholder={Messages.get("label.field.name")}
+							placeholder={Messages.getEditable("label.field.name","fpdi-nav-label")}
 							id="new-column-name" />
 					</div>
 					<div className="col-sm-4 col-md-3">
-						<label htmlFor="select-new-column-type">{Messages.get("label.type")}</label>
+						<label htmlFor="select-new-column-type">{Messages.getEditable("label.type","fpdi-nav-label")}</label>
 					    <select
 							type="text"
 							spellCheck={false} 

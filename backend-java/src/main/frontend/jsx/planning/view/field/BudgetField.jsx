@@ -326,13 +326,13 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<b className="budget-title"> {Messages.get("label.budget")}</b>
+					<b className="budget-title"> {Messages.getEditable("label.budget","fpdi-nav-label")}</b>
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
 						{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.get("label.new")}</button>
+							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
 					</div>}
@@ -342,11 +342,11 @@ export default React.createClass({
 					<thead/>
 						<thead>
 							<tr>
-								<th>{Messages.get("label.budgetAction")} <span className = "fpdi-required"/></th>
-								<th>{Messages.get("label.name")}<span className = "fpdi-required"/> </th>
-								<th>{Messages.get("label.budgetLoa")}</th>
-								<th>{Messages.get("label.budget.committed")}</th>
-								<th>{Messages.get("label.budget.conducted")}</th>
+								<th>{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
+								<th>{Messages.getEditable("label.name","fpdi-nav-label")}<span className = "fpdi-required"/> </th>
+								<th>{Messages.getEditable("label.budgetLoa","fpdi-nav-label")}</th>
+								<th>{Messages.getEditable("label.budget.committed","fpdi-nav-label")}</th>
+								<th>{Messages.getEditable("label.budget.conducted","fpdi-nav-label")}</th>
 								<th> </th>
 							</tr>
 						</thead>
