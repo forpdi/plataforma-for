@@ -37,7 +37,7 @@ export default React.createClass({
 			type: "text",
 			placeholder: "",
 			maxLength: 128,
-			label: Messages.get("label.host"),
+			label: Messages.getEditable("label.host", "fpdi-nav-label"),
 			required:true,
 			helpBox: 'Ex: app.forpdi.org',
 			value: this.state.model ? this.state.model.get("host"):null
@@ -46,15 +46,15 @@ export default React.createClass({
 			type: "url",
 			placeholder: "",
 			maxLength: 255,
-			label: Messages.get("label.baseUrl"),
+			label: Messages.getEditable("label.baseUrl", "fpdi-nav-label"), 
 			required:true,
 			helpBox: "Ex: http://app.forpdi.org/",
 			value: this.state.model ? this.state.model.get("baseUrl"):null
 		},{
 			name: 'theme',
 			type: 'select',
-			placeholder: '-- Selecione um Tema --',
-			label: "Tema",
+			placeholder: Messages.get("label.selectTheme"),
+			label: Messages.getEditable("label.theme","fpdi-nav-label"),
 			required:true,
 			value: this.state.model ? this.state.model.get("theme"):null,
 			displayField: 'label',
@@ -63,8 +63,8 @@ export default React.createClass({
 		},{
 			name: 'company',
 			type: 'select',
-			placeholder: '-- Selecione uma Instituição --',
-			label: "Instituição",
+			placeholder: Messages.get("label.selectInstitution"),
+			label: Messages.getEditable("label.institution","fpdi-nav-label"),
 			required:true,
 			value: this.state.model ? this.state.model.get("company").id:null,
 			displayField: 'name',

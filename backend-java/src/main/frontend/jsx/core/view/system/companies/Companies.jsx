@@ -146,7 +146,7 @@ export default React.createClass({
 			return this.props.children;
 		}
 		return (<div className="container-fluid animated fadeIn">
-			<h1>{Messages.get("label.institutions")}</h1>
+			<h1> {Messages.getEditable("label.institutions", "fpdi-nav-label")} </h1>
 			<ul className="fpdi-action-list text-right">
 				<Link to="/system/companies/new" className="btn btn-sm btn-primary">
 					{/*<span className="mdi mdi-plus"

@@ -37,14 +37,14 @@ export default React.createClass({
 			placeholder: "",
 			maxLength:255,
 			required:true,
-			label: Messages.get("label.name"),
+			label: Messages.getEditable("label.name", "fpdi-nav-label"),
 			value: model ? model.get("name"):null
 		},{
 			name: "logo",
 			type: "text",
 			maxLength:255,
 			placeholder: "",
-			label: Messages.get("label.system.companyLogo"),
+			label: Messages.getEditable("label.system.companyLogo", "fpdi-nav-label"),
 			value: model ? model.get("logo"):null,
 			onChange: this.isImg
 		},{
@@ -52,7 +52,7 @@ export default React.createClass({
 			type: 'textarea',
 			maxLength:10000,
 			placeholder: '',
-			label: Messages.get("label.description"),
+			label: Messages.getEditable("label.description", "fpdi-nav-label"),
 			value: model ? model.get("description"):null
 
 		},{
@@ -61,14 +61,14 @@ export default React.createClass({
 			maxLength:255,
 			placeholder: 'Cidade/Estado',
 			required:true,
-			label: Messages.get("label.cityState"),
+			label: Messages.getEditable("label.cityState", "fpdi-nav-label"),
 			value: model ? model.get("localization"):null	
 		},{
 			name: "showDashboard",
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: Messages.get("label.enableCommunityDashboard"),
+			label: Messages.getEditable("label.enableCommunityDashboard", "fpdi-nav-label"), 
 			value: model ? model.get("showDashboard") : true,
 			onChange: this.fieldsDashboardBoardCommunity
 		},{
@@ -76,7 +76,7 @@ export default React.createClass({
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: Messages.get("label.showMaturityDateToCommunity"),
+			label: Messages.getEditable("label.showMaturityDateToCommunity", "fpdi-nav-label"),  
 			value: model ? model.get("showMaturity") : true
 		}];
 	},
