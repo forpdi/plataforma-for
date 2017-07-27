@@ -292,9 +292,9 @@ export default React.createClass({
         <div>            
             <div id= {!this.state.hide ? "panelSection" :""} className="panel panel-default">
                 <div className="panel-heading dashboard-panel-title">
-                    <b className="budget-graphic-title"> {Messages.get("label.thematicAxesPerformance")} </b>
+                    <b className="budget-graphic-title"> {Messages.getEditable("label.thematicAxesPerformance","fpdi-nav-label")} </b>
                         <select onChange={this.onThematicAxesChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectThematicAxes">
-                            <option value={-1} data-placement="right" title={Messages.get("label.allThematicAxes")}> {Messages.get("label.allThematicAxes")} </option>
+                            <option value={-1} data-placement="right" title={Messages.get("label.allThematicAxes")}> {Messages.getEditable("label.allThematicAxes","fpdi-nav-label")} </option>
                             {
                                 this.state.thematicAxes.map((attr, idy) =>{
                                     return(
@@ -325,10 +325,10 @@ export default React.createClass({
                              onChangePage={this.getInfo}
                              chartEvents={this.state.chartEvents} />
                             <div className="colaborator-goal-performance-legend">                            
-                                <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.get("label.goals.belowMinimum")}</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.get("label.goals.belowExpected")}</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.get("label.goals.reached")}</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.get("label.goals.aboveExpected")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</span>
                             </div>
                         </div>
                     )
