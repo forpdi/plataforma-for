@@ -33,9 +33,9 @@ export default React.createClass({
 				<table className="budget-field-table table">	
 					<thead>
 						<tr>
-							<th className="width30percent">{Messages.get("label.goalsPlan")}</th>
-							<th>{Messages.get("label.objective")}</th>
-							<th>{Messages.get("label.perspectiveBsc")}</th>
+							<th className="width30percent">{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.objective","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.perspectiveBsc", "fpdi-nav-label")}</th>
 						</tr>
 					</thead>
 					<tbody>

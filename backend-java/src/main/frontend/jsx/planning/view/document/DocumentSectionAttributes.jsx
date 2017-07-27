@@ -492,7 +492,7 @@ export default React.createClass({
 				{!this.state.vizualization ? 
 					<div className="panel panel-default panel-margins">
 						<div className="panel-heading attribute-input-opts">
-							<b className="budget-title">{Messages.get("label.title")}</b>
+							<b className="budget-title">{Messages.getEditable("label.title", "fpdi-nav-label")}</b>
 						</div>
 						<div>
 							<input

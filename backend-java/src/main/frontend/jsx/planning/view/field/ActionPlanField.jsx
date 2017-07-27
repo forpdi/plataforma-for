@@ -527,7 +527,7 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<b className="budget-graphic-title">{Messages.get("label.planAction")} </b>
+					<b className="budget-graphic-title">{Messages.getEditable("label.planAction","fpdi-nav-label")} </b>
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
@@ -535,7 +535,7 @@ export default React.createClass({
 								(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
 							
-								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>{Messages.get("label.new")}</button>
+								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} onClick={this.hideFields}></span>
 					</div>}
@@ -550,12 +550,12 @@ export default React.createClass({
 									{this.context.roles.ADMIN || this.context.roles.MANAGER == true || 
 										(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
-										<th className="textAlignCenter">{Messages.get("label.completed")}</th>
+										<th className="textAlignCenter">{Messages.getEditable("label.completed","fpdi-nav-label")}</th>
 									:<th/>}
-									<th>{Messages.get("label.description")}</th>
-									<th>{Messages.get("label.responsible")}</th>
-									<th>{Messages.get("label.begin")}</th>
-									<th>{Messages.get("label.term")}</th>
+									<th>{Messages.getEditable("label.description","fpdi-nav-label")}</th>
+									<th>{Messages.getEditable("label.responsible","fpdi-nav-label")}</th>
+									<th>{Messages.getEditable("label.begin","fpdi-nav-label")}</th>
+									<th>{Messages.getEditable("label.term","fpdi-nav-label")}</th>
 								</tr>
 							</thead>
 								<tbody>

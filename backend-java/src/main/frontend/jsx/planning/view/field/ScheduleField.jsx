@@ -482,10 +482,10 @@ export default React.createClass({
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>{Messages.get("label.activity")}</th>
-							<th>{Messages.get("label.begin")}</th>
-							<th>{Messages.get("label.end")}</th>
-							{this.state.schedule.periodicityEnable ? <th>{Messages.get("label.title.periodicity")}</th> : <th></th>}
+							<th>{Messages.getEditable("label.activity","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.begin","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.end","fpdi-nav-label")}</th>
+							{this.state.schedule.periodicityEnable ? <th>{Messages.getEditable("label.title.periodicity","fpdi-nav-label")}</th> : <th></th>}
 							{this.state.schedule.scheduleStructures.length >0 ?
 								this.state.schedule.scheduleStructures.map((model, idx) => {
 									return(

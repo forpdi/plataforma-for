@@ -269,7 +269,7 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading dashboard-panel-title">
-					<b className="budget-graphic-title">{Messages.get("label.attachFiles")}</b>
+					<b className="budget-graphic-title">{Messages.getEditable("label.attachFiles","fpdi-nav-label")}</b>
 
 					{this.state.list[0] ? (this.context.roles.MANAGER || 
 							_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ?
@@ -292,7 +292,7 @@ export default React.createClass({
 						{this.context.roles.MANAGER || 
 								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
 								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>{Messages.get("label.attachFiles")}</button>
+							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>{Messages.getEditable("label.attachFiles","fpdi-nav-label")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} 
 						onClick={this.hideFields}/>
@@ -307,23 +307,23 @@ export default React.createClass({
 										<input ref={"attach-checkbox-all"} type="checkbox" onClick={this.checkAll}/>
 									</th>
 									<th>
-										{Messages.get("label.msg.file")}
+										{Messages.getEditable("label.msg.file","fpdi-nav-label")}
 									</th>
 									<th>
-										{Messages.get("label.description")}
+										{Messages.getEditable("label.description","fpdi-nav-label")}
 									</th>
 									<th>
-										{Messages.get("label.author")}
+										{Messages.getEditable("label.author","fpdi-nav-label")}
 									</th>
 									<th>
-										{Messages.get("label.uploadData")}
+										{Messages.getEditable("label.uploadData","fpdi-nav-label")}
 									</th>
 									{this.context.roles.MANAGER || 
 										_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
 									<th>
 										<center>
-											{Messages.get("label.actions")}
+											{Messages.getEditable("label.actions","fpdi-nav-label")}
 										</center>
 									</th> : undefined}									
 								</tr>

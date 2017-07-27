@@ -761,7 +761,7 @@ export default React.createClass({
 						className="mdi mdi-pencil disabledIcon"
 						title={Messages.get("label.title.UnableEditArchivedPlan")}>
 						<span id = "menu-levels">
-							{Messages.get("label.title.UnableEditArchivedPlan")}
+							{Messages.getEditable("label.title.UnableEditArchivedPlan","fpdi-nav-label")}
 						</span>
 					</a>
 		         </li>
@@ -772,7 +772,7 @@ export default React.createClass({
 						title={Messages.get("label.unableDeleteArchivedPlan")}
 						type="submit">
 						<span id = "menu-levels">
-							{Messages.get("label.unableDeleteArchivedPlan")}
+							{Messages.getEditable("label.unableDeleteArchivedPlan","fpdi-nav-label")}
 						</span>
 					</a>
 		         </li>
@@ -790,7 +790,7 @@ export default React.createClass({
 					<li>
 						<a onClick={this.editingAttributes}>
 							<span className="mdi mdi-pencil cursorPointer cursorPointer" title={Messages.get("label.title.editInformation")}> 
-								<span id="menu-levels"> {Messages.get("label.title.editInformation")} </span>
+								<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 							</span>
 						</a>
 						
@@ -816,7 +816,7 @@ export default React.createClass({
 			        <li>
 						<a onClick={this.exportLevelAttributes}>
 							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
-								<span id="menu-levels"> {Messages.get("label.generateReport")} </span>
+								<span id="menu-levels"> {Messages.getEditable("label.generateReport","fpdi-nav-label")} </span>
 							</span>
 						</a>
 					</li>) : ""}
@@ -826,7 +826,7 @@ export default React.createClass({
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
 								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
-									<span id="menu-levels"> {Messages.get("label.removeFromFavorites")} </span>
+									<span id="menu-levels"> {Messages.getEditable("label.removeFromFavorites","fpdi-nav-label")} </span>
 								</span>
 							</a>
 			         	</li>) 
@@ -834,7 +834,7 @@ export default React.createClass({
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
 									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
-										<span id="menu-levels"> {Messages.get("label.addFavorites")}  </span>
+										<span id="menu-levels"> {Messages.getEditable("label.addFavorites","fpdi-nav-label")}  </span>
 									</span>
 								</a>
 			         		</li>
@@ -842,7 +842,7 @@ export default React.createClass({
 			         			<li>
 					         		<a type="submit">
 										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
-											<span id="menu-levels"> {Messages.get("label.notAddFavorites")} </span>
+											<span id="menu-levels"> {Messages.getEditable("label.notAddFavorites","fpdi-nav-label")} </span>
 										</span>
 									</a>
 					         	</li>
@@ -857,7 +857,7 @@ export default React.createClass({
 			         	<li>
 							<a onClick={this.deleteLevelAttribute} type="submit">
 								<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}> 
-									<span id="menu-levels"> {Messages.get("label.delete")} </span>
+									<span id="menu-levels"> {Messages.getEditable("label.delete","fpdi-nav-label")} </span>
 								</span>
 							</a>
 			         	</li>
@@ -865,7 +865,7 @@ export default React.createClass({
 			        	<li>
 			        		<a type="submit">
 								<span className="mdi mdi-delete disabledIcon marginLeft5 cursorPointer" title={Messages.get("label.notDeleted") +(!this.state.model.data.leaf ? ", possui níveis filhos" : "")}> 
-									<span id="menu-levels"> {Messages.get("label.notDeleted")} </span>
+									<span id="menu-levels"> {Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 								</span>
 							</a>
 			         	</li>
@@ -880,7 +880,7 @@ export default React.createClass({
 				<li>
 					<a data-placement="top">
 						<span className="mdi mdi-pencil disabledIcon marginLeft5" title={Messages.get("label.title.notEditGoalComplete")}> 
-							<span id="menu-levels"> {Messages.get("label.notEdit")} </span>
+							<span id="menu-levels"> {Messages.getEditable("label.notEdit","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>
@@ -894,7 +894,7 @@ export default React.createClass({
 							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open":"mdi  mdi-lock lockGoal-close"}
 								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}> 
-								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.get("label.msg.finishGoal"):Messages.get("label.msg.reopenGoal")} </span>
+								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.getEditable("label.msg.finishGoal","fpdi-nav-label"):Messages.getEditable("label.msg.reopenGoal","fpdi-nav-label")} </span>
 							</span>
 						</a>
 
@@ -906,7 +906,7 @@ export default React.createClass({
 
 			        	<a onClick={this.exportLevelAttributes}>
 							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
-								<span id="menu-levels"> {Messages.get("label.generateReport")}</span>
+								<span id="menu-levels"> {Messages.getEditable("label.generateReport","fpdi-nav-label")}</span>
 							</span>
 						</a>
 			        </li>) : ""}
@@ -916,7 +916,7 @@ export default React.createClass({
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
 								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
-									<span id="menu-levels"> {Messages.get("label.removeFromFavorites")} </span>
+									<span id="menu-levels"> {Messages.getEditable("label.removeFromFavorites","fpdi-nav-label")} </span>
 								</span>
 							</a>
 			         	</li>) 
@@ -924,7 +924,7 @@ export default React.createClass({
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
 									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
-										<span id="menu-levels">	{Messages.get("label.addFavorites")} </span>
+										<span id="menu-levels">	{Messages.getEditable("label.addFavorites","fpdi-nav-label")} </span>
 									</span>
 								</a>
 			         		</li>
@@ -932,7 +932,7 @@ export default React.createClass({
 			         			<li>
 			         				<a type="submit">
 										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
-											<span id="menu-levels">	{Messages.get("label.notAddFavorites")} </span>
+											<span id="menu-levels">	{Messages.getEditable("label.notAddFavorites","fpdi-nav-label")} </span>
 										</span>
 									</a>
 					         	</li>
@@ -944,7 +944,7 @@ export default React.createClass({
 		         	<li>
 		         		<a type="submit">
 							<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") + " " +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
-								<span id="menu-levels">	{Messages.get("label.notDeleted")} </span>
+								<span id="menu-levels">	{Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 							</span>
 						</a>
 
@@ -962,7 +962,7 @@ export default React.createClass({
 				<li>
 					<a>
 						<span className="mdi mdi-delete disabledIcon" title={Messages.get("label.unableDeleteArchivedPlan")}> 
-							<span id="menu-levels">	{Messages.get("label.unableDeleteArchivedPlan")} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.unableDeleteArchivedPlan","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>
@@ -976,7 +976,7 @@ export default React.createClass({
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
 						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}> 
-							<span id="menu-levels">	{Messages.get("label.delete")} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.delete"),"fpdi-nav-label"} </span>
 						</span>
 					</a>
 		         </li>
@@ -991,7 +991,7 @@ export default React.createClass({
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
 						<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
-							<span id="menu-levels">	{Messages.get("label.notDeleted")} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>
@@ -1035,7 +1035,7 @@ export default React.createClass({
 									aria-expanded="true"
 									title={Messages.get("label.actions")}
 								>
-									<span className="sr-only">{Messages.get("label.actions")}</span>
+									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 									<span className="mdi mdi-chevron-down" />
 								</a>	
 									{this.context.planMacro.attributes.archived ?  this.renderDisableEdit() : 
@@ -1055,20 +1055,20 @@ export default React.createClass({
 						this.state.aggregate ? 
 							<div>
 								<span className="fpdi-level-type-value">
-									{Messages.get("label.indicatorAggregate")}
+									{Messages.getEditable("label.indicatorAggregate","fpdi-nav-label")}
 								</span>
 							</div>
 						:
 							<div>
 								<span className="fpdi-level-type-value">
-									{Messages.get("label.indicatorSimple")}
+									{Messages.getEditable("label.indicatorSimple","fpdi-nav-label")}
 								</span>
 							</div>
 					}	
 				</div>
 				<div className = "fpdi-levelValueBox">
 					<div className = {this.state.levelValue == null || this.state.levelValue < 1000 ? "col-lg-1 box-proceeds" : "col-lg-1"} >
-						<span id = "title-proceeds"> {Messages.get("label.profit")} </span>
+						<span id = "title-proceeds"> {Messages.getEditable("label.profit","fpdi-nav-label")} </span>
 						<span id = "value-proceeds"> {this.state.levelValue == null ? 0 + "%" : this.state.levelValue.toFixed(2)+"%"} </span>
 					</div>	
 				</div>
@@ -1091,7 +1091,7 @@ export default React.createClass({
 				levelInstanceIdActionPlan = {this.props.params.levelInstanceId}/>
 
 
-			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">{Messages.get("label.msg.polarityChanged")}</h5></i> : ""}
+			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">{Messages.getEditable("label.msg.polarityChanged")}</h5></i> : ""}
 			{this.state.model.data.level.indicator ? <GoalPerformance  indicator = {this.state.model.data}/> : ""}
 
 			<LevelSons 
