@@ -188,7 +188,7 @@ export default React.createClass({
             <div className="fpdi-tabs-nav">
     			<Link to="/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
-                    /> {Messages.getEditable("label.dashboard", "fpdi-nav-label")}
+                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
                 </Link>
     		</div>
             <div style={{height: "10px"}} />
@@ -212,7 +212,7 @@ export default React.createClass({
                         <Link to="/plan/new" activeClassName="active">
                             <span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
                                 <span className="fpdi-nav-label">
-                                    {Messages.get("label.newPlan")}
+                                    {Messages.getEditable("label.newPlan","fpdi-nav-label")}
                                 </span>
                         </Link>
                     </div>
@@ -252,7 +252,7 @@ export default React.createClass({
                 <a onClick={this.tweakHidden}>
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
                         /> <span className="fpdi-nav-label">
-                            {Messages.get("label.collapseMenu")}
+                            {Messages.getEditable("label.collapseMenu","fpdi-nav-label")}
                         </span>
                 </a>
             </div>
