@@ -52,7 +52,7 @@ export default React.createClass({
 							<ul className="structure-preview-list">
 								{level.attributes.map((attr, idy) => {
 									return <li key={"li-"+idy} >
-										{attr.label}, <i>{attr.required ? Messages.get("label.required"):Messages.get("label.optional")}</i>.
+										{attr.label}, <i>{attr.required ? Messages.getEditable("label.required","fpdi-nav-label"):Messages.getEditable("label.optional","fpdi-nav-label")}</i>.
 									</li>;
 								})}
 							</ul>
@@ -79,7 +79,7 @@ export default React.createClass({
 							<span>
 								<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
 									to={"/structures"}
-									title={Messages.get("label.structures")}>{Messages.get("label.structures")}
+									title={Messages.get("label.structures")}>{Messages.getEditable("label.structures","fpdi-nav-label")}
 								</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>

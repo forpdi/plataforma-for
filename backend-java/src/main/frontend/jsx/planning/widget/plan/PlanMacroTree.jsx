@@ -830,7 +830,7 @@ export default React.createClass({
 					title="Documento"
 					activeClassName="active"
 					className="tabTreePanel">
-						{Messages.get("label.pdiDocument")}
+						{Messages.getEditable("label.pdiDocument","fpdi-nav-label")}
 				</Link> : undefined}
 				<Link
 					role="tab"
@@ -838,7 +838,7 @@ export default React.createClass({
 					title="Planos de metas"					
 					activeClassName="active"
 					className="tabTreePanel">
-						{Messages.get("label.goalsPlan")}
+						{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}
 				</Link>
 					
 			</ul>
@@ -897,7 +897,7 @@ export default React.createClass({
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ? 
 						<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
 							<span /*className="mdi mdi-export"*/
-							/> {Messages.get("label.exportDocument")}
+							/> {Messages.getEditable("label.exportDocument","fpdi-nav-label")}
 						</a> : ""
 					}
 				</div>

@@ -279,7 +279,7 @@ export default React.createClass({
 						onClick={this.unarchivePlan}>
 						<span className="mdi mdi-folder-upload mdi-18" title={"label.unarchivePlan"} > 
 							<span id = "menu-levels">
-								{Messages.get("label.unarchivePlan")}
+								{Messages.getEditable("label.unarchivePlan","fpdi-nav-label")}
 							</span>
 						</span>
 					</a>
@@ -294,7 +294,7 @@ export default React.createClass({
 				<li> 
 					<Link to={"/plan/"+this.context.planMacro.get("id")+"/edit"} data-placement="bottom">
 						<span className="mdi mdi-pencil mdi-18" title={Messages.get("label.editPlan")}> 
-							<span id="menu-levels">{Messages.get("label.editPlan")}</span>
+							<span id="menu-levels">{Messages.getEditable("label.editPlan","fpdi-nav-label")}</span>
 						</span>
 					</Link>
 				</li>
@@ -304,14 +304,14 @@ export default React.createClass({
 						onClick={this.changeVizualization}
 						data-placement="bottom">
 						<span className="mdi mdi-content-copy mdi-18" title={Messages.get("label.duplicatePlan")}> 
-							<span id="menu-levels"> {Messages.get("label.duplicatePlan")}</span>
+							<span id="menu-levels"> {Messages.getEditable("label.duplicatePlan","fpdi-nav-label")}</span>
 						</span>
 					</Link>
 				</li>
 				<li> 
 					<a onClick={this.archivePlan} data-placement="bottom">
 						<span className="mdi mdi-folder-download mdi-18 deleteIcon" title={Messages.get("label.archivePlan")}> 
-							<span id="menu-levels"> {Messages.get("label.archivePlan")}</span>
+							<span id="menu-levels"> {Messages.getEditable("label.archivePlan","fpdi-nav-label")}</span>
 						</span>
 					</a>
 				</li>
@@ -319,7 +319,7 @@ export default React.createClass({
 					<li> 
 						<a data-placement="bottom">
 							<span className="mdi mdi-delete disabledIcon mdi-18" title={Messages.get("label.notDeleteChildLevels")}> 
-								<span id="menu-levels"> {Messages.get("label.deletePlan")}</span>
+								<span id="menu-levels"> {Messages.getEditable("label.deletePlan","fpdi-nav-label")}</span>
 							</span>
 						</a>
 					</li>
@@ -327,7 +327,7 @@ export default React.createClass({
 					<li> 
 						<a onClick={this.deletePlan} data-placement="bottom">
 							<span className="mdi mdi-delete mdi-18 deleteIcon" title={Messages.get("label.deletePlan")}> 
-								<span id="menu-levels"> {Messages.get("label.deletePlan")} </span>
+								<span id="menu-levels"> {Messages.getEditable("label.deletePlan","fpdi-nav-label")} </span>
 							</span>
 						</a>
 					</li>
@@ -353,7 +353,7 @@ export default React.createClass({
 								aria-expanded="true"
 								title={Messages.get("label.actions")}
 							>
-								<span className="sr-only">{Messages.get("label.actions")}</span>
+								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 								<span className="mdi mdi-chevron-down" />
 							</a>
 							
@@ -366,13 +366,13 @@ export default React.createClass({
 				</div>
 
 				<div className="media-body">
-					{this.state.archived ? <span className="fpdi-archived-label">{Messages.get("label.planField")}</span> : ""}
+					{this.state.archived ? <span className="fpdi-archived-label">{Messages.getEditable("label.planField","fpdi-nav-label")}</span> : ""}
 					<div className="row h4">
 						<div className="col-sm-6 col-md-4">
-							<small>{Messages.get("label.dateBeginUp")}</small><br />{this.context.planMacro.get("begin").substr(0,10)}
+							<small>{Messages.getEditable("label.dateBeginUp","fpdi-nav-label")}</small><br />{this.context.planMacro.get("begin").substr(0,10)}
 						</div>
 						<div className="col-sm-6 col-md-4">
-							<small>{Messages.get("label.dateEndUp")}</small><br />{this.context.planMacro.get("end").substr(0,10)}
+							<small>{Messages.getEditable("label.dateEndUp","fpdi-nav-label")}</small><br />{this.context.planMacro.get("end").substr(0,10)}
 						</div>
 					</div>
 					<div className="markdown-container" dangerouslySetInnerHTML={{__html: Marked(this.context.planMacro.get("description"))}} />

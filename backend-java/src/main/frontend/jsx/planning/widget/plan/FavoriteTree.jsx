@@ -197,7 +197,7 @@ export default React.createClass({
 							</ReactTooltip>
 
 							<div className={"marginLeft20"}>
-								{Messages.get("label.haveNoFavorites")}
+								{Messages.getEditable("label.haveNoFavorites","fpdi-nav-label")}
 								{/*Ícone de informação*/}
 								<span data-tip data-type='light' data-for='favoriteTooltip'>
 									<i className="mdi mdi-information-outline fpdi-tooltip-info pointer deleteIcon"/>

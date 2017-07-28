@@ -121,7 +121,7 @@ export default React.createClass({
 	renderRecords() {
 		
 		if (!this.state.models || (this.state.models.length <= 0)) {
-			return <p><i>{Messages.get("label.noStructureRegistred")}</i></p>;
+			return <p><i>{Messages.getEditable("label.noStructureRegistred","fpdi-nav-label")}</i></p>;
 		}
 		return (<div className="row">
 			{this.state.models.map((model, idx) => {
@@ -163,7 +163,7 @@ export default React.createClass({
 				<a className="btn btn-sm btn-primary" onClick= {this.state.companies.length == 0 ? "" : this.importStructure} disabled = {this.state.companies.length == 0 ? true : false}  
 				title= {(this.state.companies.length) == 0 ? Messages.get("label.createStructure") : ""} >
 					{/*<span className="mdi mdi-import"
-					/>*/}{Messages.get("label.importEstructurePdi")}
+					/>*/}{Messages.getEditable("label.importEstructurePdi","fpdi-nav-label")}
 				</a>
 			</ul>
 			{this.state.error ? (<div className="alert alert-danger animated fadeIn" role="alert">
@@ -176,7 +176,7 @@ export default React.createClass({
 
 
 			{EnvInfo.company ? (this.state.loading ? <LoadingGauge />:this.renderRecords())
-			: <p><i>{Messages.get("label.createStructure")}</i></p>}
+			: <p><i>{Messages.getEditable("label.createStructure","fpdi-nav-label")}</i></p>}
 
 			<Pagination store={StructureStore} ref="paginator" />
 		</div>);

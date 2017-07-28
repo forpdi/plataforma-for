@@ -36,7 +36,7 @@ export default React.createClass({
 							height:'38px'
 						}}
 					/>
-					{Messages.get("label.maxTenFavorites")}
+					{Messages.getEditable("label.maxTenFavorites","fpdi-nav-label")}
 				</div>
 			</div>
 		);

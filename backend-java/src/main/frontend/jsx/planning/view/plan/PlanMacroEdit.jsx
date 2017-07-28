@@ -262,7 +262,7 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 		return <div>
-				<h1 className="marginLeft115">{this.props.params.id ? Messages.get("label.editPlan"):Messages.get("label.newPlan")}</h1>
+				<h1 className="marginLeft115">{this.props.params.id ? Messages.getEditable("label.editPlan","fpdi-nav-label"):Messages.getEditable("label.newPlan","fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
 					
 					<VerticalForm

@@ -1303,7 +1303,7 @@ export default React.createClass({
 											<Link
 												to={"/plan/"+model.plan.parent.id+"/details/subplan/level/"+model.id}
 												title="ver mais">
-													{Messages.get("label.viewMore")}
+													{Messages.getEditable("label.viewMore","fpdi-nav-label")}
 											</Link>
 										</div>
 									</td>
@@ -1562,7 +1562,7 @@ export default React.createClass({
 
 										{sons[0].level.goal ?
 											<th className = "column-goals-perfomance"> 
-												{Messages.get("label.performance")}
+												{Messages.getEditable("label.performance","fpdi-nav-label")}
 												<span data-tip data-type='light' data-for='toolTipGoalProgress'>
 													<i className="mdi mdi-information-outline fpdi-tooltip-info pointer"/>
 												</span>

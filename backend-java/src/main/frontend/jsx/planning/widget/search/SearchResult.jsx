@@ -88,7 +88,7 @@ export default React.createClass({
 		return (
 			<div className="fpdi-search">		
 				<div className = "fpdi-search-view">
-					<p>{Messages.get("label.searchReturned")} {total} {total == 1 ? Messages.get("label.result") : Messages.get("label.results")}</p>
+					<p>{Messages.getEditable("label.searchReturned","fpdi-nav-label")} {total} {total == 1 ? Messages.getEditable("label.result","fpdi-nav-label") : Messages.getEditable("label.results","fpdi-nav-label")}</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ? 
 					<div>
@@ -112,7 +112,7 @@ export default React.createClass({
 						})}
 						{this.state.resultSearchMore.length < this.state.resultSearchTotal ? 
 							<div className="textAlignCenter marginTop20">
-	        					<a onClick={this.showMoreOccurencesSearches}>{Messages.get("label.viewMore")}</a>
+	        					<a onClick={this.showMoreOccurencesSearches}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
 	    					</div>
 	    				: ""}
     				</div>
