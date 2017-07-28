@@ -84,17 +84,17 @@ export default React.createClass({
 						<div>
 								<div className="dashboard-indicator-container">
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">{Messages.get("label.objective")}s</div>
+								<div className="dashboard-indicator-header">{Messages.getEditable("label.objective","fpdi-nav-label")}s</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfObjectives : "0"}</div></div>
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">{Messages.get("label.indicators")}</div>
+								<div className="dashboard-indicator-header">{Messages.getEditable("label.indicators","fpdi-nav-label")}</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfIndicators : "0"}</div></div>
 							<div className="col-sm-4 dashboard-plan-details-column">
-								<div className="dashboard-indicator-header">{Messages.get("label.goals")}</div>
+								<div className="dashboard-indicator-header">{Messages.getEditable("label.goals","fpdi-nav-label")}</div>
 								<div className="dashboard-indicator-number">{this.state.planDetails ? this.state.planDetails.numberOfGoals : "0"}</div></div>
 							</div>
 							<div className="dashboard-goals-information">
-							    <div className='dashboard-goals-title'>{Messages.get("label.lateGoals")}</div>
+							    <div className='dashboard-goals-title'>{Messages.getEditable("label.lateGoals","fpdi-nav-label")}</div>
 							    <div className="fontSize12 ">
 							    	<div className="dashboard-goals-head"><span className='fontWeightBold'>{this.state.planDetails ? this.state.planDetails.goalsDelayedPerCent.toFixed(2) : "0"}%</span> das metas estão atrasadas<span className='fontWeightBold floatRight'>100%</span></div></div>
 								<Progress completed={this.state.planDetails ? Number(this.state.planDetails.goalsDelayedPerCent) : 0} />
@@ -102,10 +102,10 @@ export default React.createClass({
 
 							</div>
 							<div className="dashboard-objective-information">
-							    <div className='dashboard-goals-title'>{Messages.get("label.budget")}</div>
+							    <div className='dashboard-goals-title'>{Messages.getEditable("label.budget","fpdi-nav-label")}</div>
 							    {this.state.planDetails ? (this.state.planDetails.numberOfBudgets >= 1 ?
-							    	<div className="fontSize12">{Messages.get("label.thereAre")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.get("label.budgetaryElementsLinkedToTheObjectives")}</div>
-							    	: <div className="fontSize12">{Messages.get("label.exist")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span>{Messages.get("label.budgetaryElementLinkedToTheObjective")}</div>) : "0"}
+							    	<div className="fontSize12">{Messages.getEditable("label.thereAre","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.getEditable("label.budgetaryElementsLinkedToTheObjectives","fpdi-nav-label")}</div>
+							    	: <div className="fontSize12">{Messages.getEditable("label.exist","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span>{Messages.getEditable("label.budgetaryElementLinkedToTheObjective","fpdi-nav-label")}</div>) : "0"}
 							</div>
 						</div>}					    
 					</div>)}

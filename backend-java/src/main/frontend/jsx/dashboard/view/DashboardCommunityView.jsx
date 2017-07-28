@@ -64,7 +64,7 @@ export default React.createClass({
 			        </div>
 		        </div>
 		        <div className="col-md-8 textAlignCenter marginRight0">
-		        	<h1>{Messages.get("label.institutionalDevelopmentPlan")}</h1>
+		        	<h1>{Messages.getEditable("label.institutionalDevelopmentPlan","fpdi-nav-label")}</h1>
 		        </div>
 		        <div className="col-md-2"></div>
 				
@@ -79,7 +79,7 @@ export default React.createClass({
 					  	</div>)
 					  :
 					  	(<div>
-					  		<h1 className="dashboard-noCommunity">{Messages.get("label.unableCommunityDashboard")}</h1>
+					  		<h1 className="dashboard-noCommunity">{Messages.getEditable("label.unableCommunityDashboard","fpdi-nav-label")}</h1>
 				  		</div>)}
 			</div>
 		</main>);

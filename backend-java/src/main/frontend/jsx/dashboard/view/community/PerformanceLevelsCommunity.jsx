@@ -229,7 +229,7 @@ export default React.createClass({
                         <div className="aggregate-indicator-without-goals-legend"> 
                             {this.state.aggregateIndicator ? 
                             <span className="legend-item"> 
-                                    <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorText")}</p>
+                                    <p id = "aggregate-indicator-goals">{Messages.getEditable("label.aggIndicatorText","fpdi-nav-label")}</p>
                             </span>
                             :<div className="height10">                                 
                             </div>}

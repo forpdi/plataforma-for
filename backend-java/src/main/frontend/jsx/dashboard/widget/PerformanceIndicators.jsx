@@ -51,7 +51,7 @@ export default React.createClass({
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <b className="budget-graphic-title"> {Messages.get("label.indicatorsPerformance")} </b>
+          <b className="budget-graphic-title"> {Messages.getEditable("label.indicatorsPerformance","fpdi-nav-label")} </b>
           <div className="performance-strategic-btns floatRight">
             <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
           </div>

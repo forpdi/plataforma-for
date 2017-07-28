@@ -35,7 +35,7 @@ export default React.createClass({
             <a onClick={this.tweakHidden}>
                 <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle":"mdi-arrow-left-bold-circle")}
                     /> <span className="fpdi-nav-label">
-                        Recolher Menu
+                        {Messages.getEditable("label.collapseMenu","fpdi-nav-label")}
                     </span>
             </a>
         </div>

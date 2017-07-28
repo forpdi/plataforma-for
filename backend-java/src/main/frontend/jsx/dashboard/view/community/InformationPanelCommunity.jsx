@@ -33,15 +33,17 @@ export default React.createClass({
 				<div className="fpdi-ToolTipNotification">	
 
 					 <div className='displayFlex-goals'>
-					 	<h3 id = "TitleSubtitleNotification"> O PDI  </h3>
+					 	<h3 id = "TitleSubtitleNotification"> 
+					 		{Messages.getEditable("label.titlePDI","fpdi-nav-label")} 
+					 	</h3>
   	            	</div>
 
   	            	<div className='displayFlex-goals'>
 					 		<p id = "TitleSubtitleNotification">
-					 			{Messages.get("label.pdiInfoText")}
+					 			{Messages.getEditable("label.pdiInfoText","fpdi-nav-label")}
 					 		</p>
 					 		<p id = "TitleSubtitleNotification">
-					 			{Messages.get("label.communityDashboardInfo")}
+					 			{Messages.getEditable("label.communityDashboardInfo","fpdi-nav-label")}
 					 		</p>
 					 </div>
   	          </div>			

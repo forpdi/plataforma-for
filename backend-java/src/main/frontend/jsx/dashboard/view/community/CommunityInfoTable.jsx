@@ -376,45 +376,45 @@ export default React.createClass({
           <table className="dashboard-table table" id="goalsInfoTable">
               <tbody>
                 <tr>
-                    <th className = "column-goals-perfomance">{Messages.get("label.thematicAxis")}
+                    <th className = "column-goals-perfomance">{Messages.getEditable("label.thematicAxis","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
                       ? this.quickSortByStrategicAxisName.bind(this,"asc") :  this.quickSortByStrategicAxisName.bind(this,"desc")} > </span></th>
                     
-                    <th className = "column-goals-perfomance">{Messages.get("label.objective")}
+                    <th className = "column-goals-perfomance">{Messages.getEditable("label.objective","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
                       ? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
                     
-                    <th className = "column-goals-perfomance">{Messages.get("label.indicator")}
+                    <th className = "column-goals-perfomance">{Messages.getEditable("label.indicator","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
                       ? this.quickSortByIndicatorName.bind(this,"asc") :  this.quickSortByIndicatorName.bind(this,"desc")} > </span></th>
                     
-                    <th id = "column-goals-perfomance">Meta                    
+                    <th id = "column-goals-perfomance">{Messages.getEditable("label.goalSing","fpdi-nav-label")}                    
                       <span className={this.state.sortIconStatus[3] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc") 
                       ? this.quickSortByGoalName.bind(this,"asc") :  this.quickSortByGoalName.bind(this,"desc")} > </span></th>
                     
                     {EnvInfo.company.showMaturity ?
-                      <th className = "column-goals-perfomance">Vencimento
+                      <th className = "column-goals-perfomance">{Messages.getEditable("label.maturity","fpdi-nav-label")} 
                         <span className={this.state.sortIconStatus[4] == "desc"?"mdi mdi-sort-descending cursorPointer":
                         (this.state.sortIconStatus[4] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                         onClick={(this.state.sortIconStatus[4] == "" || this.state.sortIconStatus[4] =="desc") 
                         ? this.quickSortByFinishDate.bind(this,"asc") :  this.quickSortByFinishDate.bind(this,"desc")} > </span></th>
                     : null}
 
-                    <th className = "column-goals-perfomance  column-goals-perfomance-action">Esperado                    
+                    <th className = "column-goals-perfomance  column-goals-perfomance-action"> {Messages.getEditable("label.goals.expected","fpdi-nav-label")}                    
                       <span className={this.state.sortIconStatus[5] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[5] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[5] == "" || this.state.sortIconStatus[5] =="desc") 
                       ? this.quickSortByExpected.bind(this,"asc") :  this.quickSortByExpected.bind(this,"desc")} > </span></th>
 
-                    <th className = "column-goals-perfomance  column-goals-perfomance-action">Alcançado                    
+                    <th className = "column-goals-perfomance  column-goals-perfomance-action"> {Messages.getEditable("label.titleReached","fpdi-nav-label")}                  
                       <span className={this.state.sortIconStatus[6] == "desc"?"mdi mdi-sort-descending cursorPointer":
                       (this.state.sortIconStatus[6] =="asc" ? "mdi mdi-sort-ascending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                       onClick={(this.state.sortIconStatus[6] == "" || this.state.sortIconStatus[6] =="desc") 

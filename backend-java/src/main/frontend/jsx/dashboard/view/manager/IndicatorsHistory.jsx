@@ -10,7 +10,7 @@ export default React.createClass({
   getInitialState() {
     return {
         options: {
-          title: Messages.get("label.indicatorsHistory"),
+          title: Messages.getEditable("label.indicatorsHistory","fpdi-nav-label"),
           vAxis: {
             title: 'Desempenho (%)', minValue: 0
           },
@@ -125,7 +125,7 @@ export default React.createClass({
     return (
       <div className="panel panel-default">
         <div className="panel-heading dashboard-panel-title"> 
-          <b className="budget-graphic-title"> {Messages.get("label.indicatorsHistory")} </b>
+          <b className="budget-graphic-title"> {Messages.getEditable("label.indicatorsHistory","fpdi-nav-label")} </b>
           <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")} onClick={this.hideFields}/>
           <select onChange={this.indicatorsChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
               <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")} </option>

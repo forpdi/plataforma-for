@@ -26,11 +26,11 @@ export default React.createClass({
 			<div className={this.props.className+" dashboard-goals-board"}>
 				{this.props.loading ? 
 					<div className="loading-text-goal-board">
-						{Messages.get("label.loading")}
+						{Messages.getEditable("label.loading","fpdi-nav-label")}
 					</div> :
 					<div>
 						<div className="dashboard-goals-board-number">{this.props.numberValue}</div>
-						<div>{(this.props.numberValue!= 1)?(Messages.get("label.goals")):(Messages.get("label.goalSing"))}</div>
+						<div>{(this.props.numberValue!= 1)?(Messages.getEditable("label.goals","fpdi-nav-label")):(Messages.getEditable("label.goalSing","fpdi-nav-label"))}</div>
 						<div>{(this.props.numberValue!= 1)?(this.props.goalSubLabel):(this.props.goalSubLabelSingular)}</div>
 						<div className="dashboard-goals-board-see-more">{/*<i className="mdi mdi-plus" />ver mais*/}</div>
 					</div>

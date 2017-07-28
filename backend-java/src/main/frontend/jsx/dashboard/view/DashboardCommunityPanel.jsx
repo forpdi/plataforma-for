@@ -390,7 +390,7 @@ export default React.createClass({
                 
                 <div className={!this.state.hidden ? "col-md-10 col81pct" : "col-md-11 col-96pct"}>
                     <div className="dashboard-community-graphs">
-                        <h1>{Messages.get("label.communityDashboard")}<span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
+                        <h1>{Messages.getEditable("label.communityDashboard","fpdi-nav-label")}<span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
                         <div className = "row">
                             <div className="col-md-8">
                                 <PerformanceLevels plan={this.state.selectedPlan} subPlan={this.state.selectedSubplan} levelInstance={this.state.selectedLevelInstance} dashboardAxis={dashboardAxis} isAggregateIndicator = {this.state.aggregateIndicator} isIndicator = {this.state.indicator} />

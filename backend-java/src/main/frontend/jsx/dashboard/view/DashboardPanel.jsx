@@ -121,7 +121,7 @@ export default React.createClass({
 	render() {
 		return (
 			<div className="dashboard-container">
-				<h1 className="marginLeft30">{Messages.get("label.dashboard")}</h1>
+				<h1 className="marginLeft30">{Messages.getEditable("label.dashboard","fpdi-nav-label")}</h1>
 				{(
                     <div className="marginLeft30">
 				        <select onChange={this.planMacroChange} className="form-control dashboard-select-box" ref="selectPlanMacro"

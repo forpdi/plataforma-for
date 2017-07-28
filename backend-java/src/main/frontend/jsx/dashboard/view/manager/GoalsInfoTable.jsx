@@ -332,12 +332,12 @@ export default React.createClass({
 					</select>
 		  
 		  			<select onChange={this.onPerformanceSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectPerformances">
-						<option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.get("label.selectPerformance")} </option>
-						<option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.get("label.goals.belowMinimum")}</option>
-						<option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.get("label.goals.belowExpected")}</option>
-						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached")}</option>
-						<option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected")}</option>
-						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted")}</option>
+						<option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.getEditable("label.selectPerformance","fpdi-nav-label")} </option>
+						<option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</option>
+						<option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</option>
+						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</option>
+						<option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</option>
+						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</option>
 		  			</select>                    
 		  			<div className="performance-strategic-btns floatRight">
 						<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
@@ -348,31 +348,31 @@ export default React.createClass({
 		  				<table className="dashboard-table table" id="goalsInfoTable">
 			  				<tbody>
 								<tr>
-									<th   id = "column-goals-perfomance">{Messages.get("label.objective")}
+									<th   id = "column-goals-perfomance">{Messages.getEditable("label.objective","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
 					  				? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
 					
-									<th   id = "column-goals-perfomance">{Messages.get("label.indicator")}
+									<th   id = "column-goals-perfomance">{Messages.getEditable("label.indicator","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
 					  				? this.quickSortByIndicatorName.bind(this,"asc") :  this.quickSortByIndicatorName.bind(this,"desc")} > </span></th>
 					
-									<th  id = "column-goals-perfomance">Meta                    
+									<th  id = "column-goals-perfomance"> {Messages.getEditable("label.goalSing","fpdi-nav-label")}                    
 					  					<span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
 					  				? this.quickSortByGoalName.bind(this,"asc") :  this.quickSortByGoalName.bind(this,"desc")} > </span></th>
 					
-									<th id = "column-goals-perfomance">Responsável
+									<th id = "column-goals-perfomance"> {Messages.getEditable("label.responsible","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[3] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc") 
 					  				? this.quickSortByResponsible.bind(this,"asc") :  this.quickSortByResponsible.bind(this,"desc")} > </span></th>
 
-									<th id = "column-goals-perfomance">Status</th>
+									<th id = "column-goals-perfomance"> {Messages.getEditable("label.status","fpdi-nav-label")} </th>
 								</tr>
 							{
 								this.state.goalsInformation.map((goal, idx) => {									
@@ -410,7 +410,7 @@ export default React.createClass({
 		return (
 			<div className="panel panel-default">
 				<div className="panel-heading">
-		  			<b className="budget-graphic-title"> {Messages.get("label.goals")} </b>
+		  			<b className="budget-graphic-title"> {Messages.getEditable("label.goals","fpdi-nav-label")} </b>
 		  			{/*this.state.objectivesInformation != null ?
 		  			<select onChange={this.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
 						<option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
@@ -430,12 +430,12 @@ export default React.createClass({
 					</select>
 		  
 		  			<select onChange={this.onPerformanceSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectPerformances">
-						<option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.get("label.selectPerformance")} </option>
-						<option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.get("label.goals.belowMinimum")}</option>
-						<option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.get("label.goals.belowExpected")}</option>
-						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached")}</option>
-						<option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected")}</option>
-						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted")}</option>
+						<option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.getEditable("label.selectPerformance","fpdi-nav-label")} </option>
+						<option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</option>
+						<option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</option>
+						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</option>
+						<option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</option>
+						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</option>
 		  			</select>                    
 		  			<div className="performance-strategic-btns floatRight">
 						<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
@@ -446,35 +446,35 @@ export default React.createClass({
 		  				<table className="dashboard-table table" id="goalsInfoTable">
 			  				<tbody>
 								<tr>
-									<th   id = "column-goals-perfomance">{Messages.get("label.objective")}
+									<th   id = "column-goals-perfomance">{Messages.getEditable("label.objective","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
 					  				? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
 					
-									<th   id = "column-goals-perfomance">{Messages.get("label.indicator")}
+									<th   id = "column-goals-perfomance">{Messages.geEditablet("label.indicator","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
 					  				? this.quickSortByIndicatorName.bind(this,"asc") :  this.quickSortByIndicatorName.bind(this,"desc")} > </span></th>
 					
-									<th  id = "column-goals-perfomance">Meta                    
+									<th  id = "column-goals-perfomance">{Messages.getEditable("label.goalSing","fpdi-nav-label")}               
 					  					<span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
 					  				? this.quickSortByGoalName.bind(this,"asc") :  this.quickSortByGoalName.bind(this,"desc")} > </span></th>
 					
-									<th id = "column-goals-perfomance">Responsável
+									<th id = "column-goals-perfomance">{Messages.getEditable("label.responsible","fpdi-nav-label")}
 					  					<span className={this.state.sortIconStatus[3] == "desc"?"mdi mdi-sort-ascending cursorPointer":
 					  					(this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
 					  					onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc") 
 					  				? this.quickSortByResponsible.bind(this,"asc") :  this.quickSortByResponsible.bind(this,"desc")} > </span></th>
 
-									<th id = "column-goals-perfomance">Status</th>
+									<th id = "column-goals-perfomance">{Messages.getEditable("label.status","fpdi-nav-label")}</th>
 								</tr>
 								<tr>
 									  <th><p id = "GoalsInformationTable" className={this.state.indicator && this.state.indicator.aggregate ? "noWrap" : ""}>
-									  	{this.state.indicator && this.state.indicator.aggregate ? Messages.get("label.infoTable.aggIndicatorHaveNoGoals") : Messages.get("label.noRegister")}
+									  	{this.state.indicator && this.state.indicator.aggregate ? Messages.getEditable("label.infoTable.aggIndicatorHaveNoGoals","fpdi-nav-label") : Messages.getEditable("label.noRegister","fpdi-nav-label")}
 									  	</p></th>
 								</tr>
 			 				</tbody>

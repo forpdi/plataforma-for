@@ -63,22 +63,22 @@ export default React.createClass({
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.belowMininum}</h1>
 							<h4>{"("+this.state.info.belowMinimumPercentage+"%)"}</h4>
-							<p>{Messages.get("label.goals.belowMinimum")}</p>
+							<p>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.belowExpected}</h1>
 							<h4>{"("+this.state.info.belowExpectedPercentage+"%)"}</h4>
-							<p>{Messages.get("label.goals.belowExpected")}</p>
+							<p>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.reached}</h1>
 							<h4>{"("+this.state.info.reachedPercentage+"%)"}</h4>
-							<p>{Messages.get("label.goals.reached")}</p>
+							<p>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.aboveExpected}</h1>
 							<h4>{"("+this.state.info.aboveExpectedPercentage+"%)"}</h4>
-							<p>{Messages.get("label.goals.aboveExpected")}</p>
+							<p>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</p>
 						</div>
 					</div> : ""}
 				</div>
