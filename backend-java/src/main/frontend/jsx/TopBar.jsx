@@ -225,7 +225,7 @@ export default React.createClass({
 				<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
 					<li>
 						<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-							<span className="mdi mdi-account-circle icon-link"/> {Messages.get("label.myProfile")}
+							<span className="mdi mdi-account-circle icon-link"/> {Messages.getEditable("label.myProfile","fpdi-nav-label")}
 						</Link>
 					</li>
 					
@@ -234,7 +234,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company ? <li>
 						<Link to="/users">
 		                	<span className="mdi mdi-account-multiple icon-link"
-		                    	/> {Messages.get("label.users")}
+		                    	/> {Messages.getEditable("label.users","fpdi-nav-label")}
 		            	</Link>
 		            </li>:""}
 					
@@ -251,14 +251,14 @@ export default React.createClass({
 			        {this.context.roles.SYSADMIN ? <li>
 						<Link to="/system/companies">
 			                <span className="mdi mdi-chemical-weapon icon-link"
-			                    /> {Messages.get("label.system")}
+			                    /> {Messages.getEditable("label.system","fpdi-nav-label")}
 			            </Link>
 					</li>:""}
 					
 					{this.context.roles.SYSADMIN ? <li>
 						<Link to="/structures">
 			                <span className="mdi mdi-note-text icon-link"
-			                    /> {Messages.get("label.structures")}
+			                    /> {Messages.getEditable("label.structures","fpdi-nav-label")}
 			            </Link>
 					</li>:""}
 
@@ -267,7 +267,7 @@ export default React.createClass({
 					<li role="separator" className="divider"></li>
 					<li>
 						<a onClick={this.onLogout}>
-							<span className="mdi mdi-logout icon-link" /> Sair
+							<span className="mdi mdi-logout icon-link" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
 						</a>
 					</li>
 				</ul>
