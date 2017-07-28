@@ -494,7 +494,7 @@ export default React.createClass({
                           </select> : ""*/}
              
               <select onChange={this.onIndicatorSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
-                            <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.getEditable("label.allIndicators","fpdi-nav-label")}</option>
+                            <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
                             {this.state.indicators.map((attr, idy) =>{
                                       return(<option key={"ind-opt-"+idy} value={idy} data-placement="right" title={attr.name}>
                                                      {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}

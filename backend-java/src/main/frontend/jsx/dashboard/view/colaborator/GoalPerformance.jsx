@@ -365,7 +365,7 @@ export default React.createClass({
 								<b className="budget-graphic-title"> {Messages.getEditable("label.goalsPerformance","fpdi-nav-label")}</b>
                                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")}  onClick={this.hideFields}/>
 								<select onChange={this.onIndicatorSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
-						            <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.getEditable("label.allIndicators","fpdi-nav-label")}</option>
+						            <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
 						            {this.state.indicators.map((attr, idy) =>{
 						                      return(<option key={"ind-opt-"+idy} value={idy} data-placement="right" title={attr.name}>
                                                  {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
