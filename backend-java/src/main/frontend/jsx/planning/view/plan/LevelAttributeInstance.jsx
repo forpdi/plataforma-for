@@ -93,7 +93,7 @@ export default React.createClass({
 			type: "text",
 			required: true,
 			placeholder: "",
-			label: Messages.get("label.name"),
+			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			value: model.data.name,
 			disabled: this.context.roles.MANAGER || _.contains(this.context.permissions, 
          							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true 

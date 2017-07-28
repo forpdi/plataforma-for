@@ -50,7 +50,7 @@ export default React.createClass({
 				maxLength:255,
 				required: true,
 				placeholder: "",
-				label: Messages.get("label.name"),
+				label: Messages.getEditable("label.name","fpdi-nav-label"),
 				value: this.state.model ? this.state.model.get("name"):null
 			});
 		}
@@ -90,7 +90,7 @@ export default React.createClass({
 			type: AttributeTypes.TEXT_AREA_FIELD,
 			placeholder: "",
 			maxLength: 9000,
-			label: Messages.get("label.descriptionPlan"),
+			label: Messages.getEditable("label.descriptionPlan","fpdi-nav-label"),
 			value: this.state.model ? this.state.model.get("description"):null
 		});
 
@@ -228,7 +228,7 @@ export default React.createClass({
 			});
 		} else {
 			this.setState({
-				title: Messages.get("label.newGoalPlan"),
+				title: Messages.getEditable("label.newGoalPlan","fpdi-nav-label"),
 				vizualization: false
 			});
 			if (this.state.structures) {

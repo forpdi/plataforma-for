@@ -107,7 +107,7 @@ export default React.createClass({
 				Modal.hide();
 				//Toastr.remove();
 				//Toastr.success("Estrutura " +response.data.name + " importada com sucesso.");
-				this.context.toastr.addAlertSuccess( Messages.get("label.title.structure") + " " +response.data.name + " " + Messages.get("label.success.Importing"));
+				this.context.toastr.addAlertSuccess( Messages.get("label.structure") + " " +response.data.name + " " + Messages.get("label.success.importing"));
 			},
 			(response) => {			
 				Modal.hide();

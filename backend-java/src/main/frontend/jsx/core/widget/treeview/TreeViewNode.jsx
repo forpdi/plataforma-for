@@ -130,7 +130,7 @@ export default React.createClass({
 				<textarea className="fpdi-new-node-textarea" placeholder={this.props.newNodePlaceholder} maxLength='255' ref="nodeName" onKeyDown={this.onKeyDown}/>
 				<div className="row">
 					<div className="col-xs-12 text-right">
-						<span className="mdi mdi-check fdpi-accepted-new-node" onClick={this.aproveNewNode} title={Messages.get("Salvar")}/>
+						<span className="mdi mdi-check fdpi-accepted-new-node" onClick={this.aproveNewNode} title={Messages.get("label.save")}/>
 						<span>&nbsp;</span>
 						<span className="mdi mdi-close fdpi-rejected-new-node" onClick={this.cancelNewNode} title={Messages.get("label.cancel")}/>
 					</div>

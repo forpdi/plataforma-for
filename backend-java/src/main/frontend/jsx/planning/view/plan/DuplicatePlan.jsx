@@ -41,7 +41,7 @@ export default React.createClass({
 			required: true,
 			maxLength:255,
 			placeholder: "",
-			label: Messages.get("label.name"),
+			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			value: model ? model.get("name"):null
 		},{
 			name: "begin",
@@ -64,7 +64,7 @@ export default React.createClass({
 			type: "textarea",
 			placeholder: "",
 			maxLength:10000,
-			label: Messages.get("label.descriptionPlan"),
+			label: Messages.getEditable("label.descriptionPlan","fpdi-nav-label"),
 			value: model ? model.get("description"):null
 
 		}]; 
