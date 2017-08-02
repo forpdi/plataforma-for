@@ -124,32 +124,38 @@ export default React.createClass({
 				<h1 className="marginLeft30">{Messages.getEditable("label.dashboard","fpdi-nav-label")}</h1>
 				{(
                     <div className="marginLeft30">
-				        <select onChange={this.planMacroChange} className="form-control dashboard-select-box" ref="selectPlanMacro"
-                            disabled={!this.state.loaded}>
-				            <option value={-1} data-placement="right" title={Messages.get("label.allPlans")}>
-                                {Messages.get("label.allPlans")}
-                            </option>
-				            {this.state.plans.map((attr, idy) =>{
-                    	       return(
-                                <option key={attr.get('id')} value={idy} data-placement="right" title={attr.get("name")}>
-                                    {(attr.get("name").length>20)?(string(attr.get("name")).trim().substr(0, 20).concat("...").toString()):(attr.get("name"))}
+				        <span className = "marginRight20 marginBottom10">
+                            <span className = "fpdi-nav-label">{Messages.getEditable("label.title.plan","fpdi-nav-label")}&nbsp;</span>
+                            <select onChange={this.planMacroChange} className="form-control dashboard-select-box" ref="selectPlanMacro"
+                                disabled={!this.state.loaded}>
+    				            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>
+                                    {Messages.get("label.viewAll")}
                                 </option>
-                                );
-					        })}
-				        </select>
-				        <select  onChange={this.subplanChange} ref="selectSubplan" className={(this.state.selectedPlan<0)?"form-control dashboard-select-box dashboard-select-box-disabled marginLeft10" : "form-control dashboard-select-box marginLeft10"} 
-				            disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
-					            <option value={-1} data-placement="right" title={Messages.get("label.allGoalPlans")}>
-                                    {Messages.get("label.allGoalPlans")}
-                                </option>
-					            {(this.state.subplans)?(this.state.subplans.map((attr, idy) =>{
-							        return(
-                                        <option key={attr.id} value={idy} data-placement="right" title={attr.name}>
-                                            {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
-                                        </option>
+    				            {this.state.plans.map((attr, idy) =>{
+                        	       return(
+                                    <option key={attr.get('id')} value={idy} data-placement="right" title={attr.get("name")}>
+                                        {(attr.get("name").length>20)?(string(attr.get("name")).trim().substr(0, 20).concat("...").toString()):(attr.get("name"))}
+                                    </option>
                                     );
-						        })):("")}
-    					</select>
+    					        })}
+    				        </select>
+                        </span>
+                        <span>
+                            <span className = "fpdi-nav-label">{Messages.getEditable("label.title.goalsPlan","fpdi-nav-label")}&nbsp;</span>
+    				        <select  onChange={this.subplanChange} ref="selectSubplan" className={(this.state.selectedPlan<0)?"form-control dashboard-select-box dashboard-select-box-disabled" : "form-control dashboard-select-box"} 
+    				            disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
+    					            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>
+                                        {Messages.get("label.viewAll")}
+                                    </option>
+    					            {(this.state.subplans)?(this.state.subplans.map((attr, idy) =>{
+    							        return(
+                                            <option key={attr.id} value={idy} data-placement="right" title={attr.name}>
+                                                {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
+                                            </option>
+                                        );
+    						        })):("")}
+        					</select>
+                        </span>
                     </div>)}
 				{this.renderDashboard()}
 			</div>

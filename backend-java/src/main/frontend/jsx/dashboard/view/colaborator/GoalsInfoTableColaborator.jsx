@@ -416,12 +416,12 @@ export default React.createClass({
                         }
                  </select>
                 <select onChange={this.onPerformanceSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectPerformances">
-                    <option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.getEditable("label.selectPerformance","fpdi-nav-label")} </option>
-                    <option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</option>
-                    <option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</option>
-                    <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</option>
-                    <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</option>
-                    <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</option>
+                    <option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.get("label.selectPerformance")} </option>
+                    <option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.get("label.goals.belowMinimum")}</option>
+                    <option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.get("label.goals.belowExpected")}</option>
+                    <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached")}</option>
+                    <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected")}</option>
+                    <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted")}</option>
                 </select>                    
 
               <div className="performance-strategic-btns floatRight">
@@ -503,12 +503,12 @@ export default React.createClass({
                             }
                           </select>
               <select onChange={this.onPerformanceSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectPerformances">
-                            <option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.getEditable("label.selectPerformance","fpdi-nav-label")} </option>
-                            <option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</option>
-                            <option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</option>
-                            <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</option>
-                            <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</option>
-                            <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</option>
+                            <option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.get("label.selectPerformance")} </option>
+                            <option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.get("label.goals.belowMinimum","fpdi-nav-label")}</option>
+                            <option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.get("label.goals.belowExpected","fpdi-nav-label")}</option>
+                            <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached","fpdi-nav-label")}</option>
+                            <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected","fpdi-nav-label")}</option>
+                            <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted","fpdi-nav-label")}</option>
               </select>                    
               <div className="performance-strategic-btns floatRight">
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
