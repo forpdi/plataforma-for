@@ -340,7 +340,6 @@ export default React.createClass({
 	},
 
 	render() {
-		{console.log(this.context.planMacro)}
 		return <div>
 			<div className="media-list">
 				<div className="media-header">
