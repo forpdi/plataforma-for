@@ -58,7 +58,28 @@ const EditMessagePopover = React.createClass({
 		this.setState(this.getInitialState());
 	},
 
+	componentDidMount() {
+		var me = this;
+		$(document).ready(function(){
+	  		$("#message-edit-container").click(function(e){				
+				var e=window.event||e;
+				e.stopPropagation();
+			});
+			$(document).click(function(e){
+	    		me.setState({
+	    			hidden: true,
+					text: '',
+					messageKey: null,
+					top: -500,
+					left: -200,
+					messageComponent: null
+	    		})
+			});	
+		});
+	},
+
 	render() {
+
 		if (this.state.hidden) {
 			return <div />;
 		}
@@ -73,12 +94,12 @@ const EditMessagePopover = React.createClass({
 				<div className="form-group row">
 					<div className="col col-sm-6">
 						<button type="submit" className="btn btn-sm btn-block btn-success">
-							<span className="mdi mdi-check" />
+							<span className="mdi mdi-check marginBottom5" />
 						</button>
 					</div>
 					<div className="col col-sm-6">
 						<button className="btn btn-sm btn-block btn-danger" onClick={this.dismiss}>
-							<span className="mdi mdi-close" />
+							<span className="mdi mdi-close marginBottom5" />
 						</button>
 					</div>
 				</div>
@@ -126,7 +147,7 @@ const EditableMessage = React.createClass({
 	},
 	render() {
 		return (<span className={this.props.className} onContextMenu={this.onContextMenu}>
-			{this.state.text}*
+			{this.state.text}
 		</span>);
 	},
 });
