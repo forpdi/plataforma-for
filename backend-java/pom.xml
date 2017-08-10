@@ -40,18 +40,21 @@
 			<id>test</id>
 			<properties>
 				<propertiesfile>test.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 		<profile>
 			<id>mirror</id>
 			<properties>
 				<propertiesfile>mirror.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 		<profile>
 			<id>prd</id>
 			<properties>
 				<propertiesfile>prd.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 	</profiles>
