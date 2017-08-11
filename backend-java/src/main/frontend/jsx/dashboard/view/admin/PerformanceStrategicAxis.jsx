@@ -120,7 +120,7 @@ export default React.createClass({
         
         
         var bool = (model ? model.data.length > 0 : true);     
-        var hTitle = (model && model.data.length > 0 ? "Objetivos" : "");   
+        var hTitle = (model && model.data.length > 0 ? label.thematicAxes : "");   
         this.setState({
             data:data,
             elements:element,

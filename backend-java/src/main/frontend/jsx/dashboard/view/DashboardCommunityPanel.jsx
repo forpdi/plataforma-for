@@ -326,7 +326,7 @@ export default React.createClass({
                                             </option>);
                                         })}
                                     </select>
-                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.title.goalsPlan","fpdi-nav-label")} </span>
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.goalsPlan","fpdi-nav-label")}: </span>
                                     <select defaultValue={this.state.subPlanId} onChange={this.subplanChange} ref="selectSubplan" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
                                             <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
@@ -336,7 +336,7 @@ export default React.createClass({
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.title.thematicAxes","fpdi-nav-label")} </span>
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.thematicAxes","fpdi-nav-label")}: </span>
                                     <select defaultValue={this.state.strategicAxisId} onChange={this.strategicAxisChange} ref="selectStrategicAxis" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedSubplan<0)?("disabled"):("")}>
                                             <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
@@ -346,7 +346,7 @@ export default React.createClass({
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.title.objectives","fpdi-nav-label")} </span>
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.objectives","fpdi-nav-label")}: </span>
                                     <select defaultValue={this.state.objectiveId} onChange={this.objectiveChange} ref="selectObjective" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedStrategicAxis<0)?("disabled"):("")}>
                                             <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
@@ -356,7 +356,7 @@ export default React.createClass({
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.title.indicators","fpdi-nav-label")} </span>
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.indicators","fpdi-nav-label")}: </span>
                                     <select defaultValue={this.state.indicatorId} onChange={this.indicatorChange} ref="selectIndicator" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedObjective<0)?("disabled"):("")}>
                                             <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>

@@ -82,7 +82,7 @@ export default React.createClass({
 				tree.push({
 					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 							PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-					label: Messages.getEditable("label.newPlanGoals","fpdi-nav-label"),
+					label: Messages.get("label.newPlanGoals"),
 					labelCls:'fpdi-new-node-label',
 				  	iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 				  	expandable: false,

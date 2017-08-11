@@ -19,7 +19,7 @@ export default React.createClass({
           data: [],
           options:{
             title: '',
-            hAxis: {title: this.props.dashboardAxis, minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
+            hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
             vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
             legend: 'none',
             explorer: { axis: 'horizontal' },
@@ -40,7 +40,7 @@ export default React.createClass({
             levelInstance: newProps.levelInstance,        
             options:{
               title: '',
-              hAxis: {title: newProps.dashboardAxis, minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
+              hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
               vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
               legend: 'none',
               explorer: { axis: 'horizontal' },
@@ -194,7 +194,7 @@ export default React.createClass({
     render() {
         var dashboardTitle = "";
         if (this.state.levelInstance == -1 && this.state.subPlan == -1)
-            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+Messages.get("label.allGoalPlans");
+            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - Todos os "+Messages.get("label.goalsPlan");
         else if (this.state.levelInstance == -1)
             dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+this.state.subPlan.name;
         else if (this.state.levelInstance.parent == null) 
