@@ -8,8 +8,8 @@
 	<structureLevels>
 
 		<level>
-			<name>Diretriz organizacional</name>
-			<description>Quais as diretrizes organizacionais do seu PDI</description>
+			<name>Diretriz Institucional</name>
+			<description>Quais as diretrizes institucionais do seu PDI</description>
 			<indicator>false</indicator>
 			<goal>false</goal>
 			<objective>false</objective>
@@ -27,7 +27,7 @@
 				<attribute required="true" visibleInTables="true">
 					<type>TextArea</type>
 					<label>Descri&#231;&#227;o</label>
-					<description>Descri&#231;&#227;o da diretriz organizacional</description>
+					<description>Descri&#231;&#227;o da diretriz institucional</description>
 					<optionsField></optionsField>
 					<scheduleOptions>
 						<periodicity></periodicity>
@@ -37,7 +37,7 @@
 			</attributes>
 			<level>
 				<name>Objetivo</name>
-				<description>Objetivo para cada diretriz organizacional</description>
+				<description>Objetivo para cada diretriz institucional</description>
 				<indicator>false</indicator>
 				<goal>false</goal>
 				<objective>true</objective>
