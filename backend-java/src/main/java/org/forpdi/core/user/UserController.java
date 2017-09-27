@@ -760,7 +760,7 @@ public class UserController extends AbstractController {
 				} else {
 					UserRecoverRequest req = this.bs.requestRecover(user);
 
-					String url = request.getRequestURL().toString().replaceAll("api/user/recover", "#/reset-password/")
+					String url = request.getRequestURL().toString().replaceAll("forpdi/api/user/recover", "#/reset-password/")
 							+ req.getToken();
 					this.notificationBS.sendNotificationEmail(NotificationType.RECOVER_PASSWORD, url, "", user, null);
 					this.success(email);

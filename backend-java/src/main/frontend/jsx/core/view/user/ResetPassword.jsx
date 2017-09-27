@@ -25,7 +25,7 @@ export default React.createClass({
 				type: "password",
 				required:true,
 				placeholder: "",
-				label: Messages.getEditable("passwordConfirm","fpdi-nav-label")
+				label: Messages.getEditable("label.passwordConfirm","fpdi-nav-label")
 			},{
 				name: "token",
 				type: "hidden",
