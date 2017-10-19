@@ -6,9 +6,8 @@ public class BudgetDTO extends SimpleLogicalDeletableEntity{
 	private static final long serialVersionUID = 1L;
 	
 	private Budget budget;
-	private Double planned;
-	private Double conducted;
-	private Double committed;
+	private Double budgetLoa;
+	private Double balanceAvailable;
 	
 	public BudgetDTO(){}
 
@@ -20,29 +19,22 @@ public class BudgetDTO extends SimpleLogicalDeletableEntity{
 		this.budget = budget;
 	}
 
-	public Double getPlanned() {
-		return planned;
+	public Double getBudgetLoa() {
+		return budgetLoa;
 	}
 
-	public void setPlanned(Double planned) {
-		this.planned = planned;
+	public void setBudgetLoa(Double budgetLoa) {
+		this.budgetLoa = budgetLoa;
 	}
 
-	public Double getConducted() {
-		return conducted;
+	public Double getBalanceAvailable() {
+		return balanceAvailable;
 	}
 
-	public void setConducted(Double conducted) {
-		this.conducted = conducted;
+	public void setBalanceAvailable(Double balanceAvailable) {
+		this.balanceAvailable = balanceAvailable;
 	}
 
-	public Double getCommitted() {
-		return committed;
-	}
-
-	public void setCommitted(Double commited) {
-		this.committed = commited;
-	}
 	
 	
 }

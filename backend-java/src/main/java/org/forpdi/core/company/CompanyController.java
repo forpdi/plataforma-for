@@ -103,7 +103,8 @@ public class CompanyController extends AbstractController {
 			existent.setLogo(company.getLogo());
 			existent.setName(company.getName());
 			existent.setShowDashboard(company.isShowDashboard());
-			existent.setShowMaturity(company.isShowMaturity());			
+			existent.setShowMaturity(company.isShowMaturity());
+			existent.setShowBudgetElement(company.isShowBudgetElement());
 			this.bs.persist(existent);
 			this.success(existent);
 		} catch (Throwable e) {

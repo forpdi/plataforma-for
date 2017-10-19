@@ -26,11 +26,17 @@ export default React.createClass({
             plans: [],
             domainError:true,
             archivedPlans: [],
-            archivedPlansHidden:true
+            archivedPlansHidden:true,
+            showBudgetElement:false
         };
     },
     componentDidMount() {
         var me = this;
+        
+        me.setState({
+            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
+        });
+
         if (this.state.logged && EnvInfo.company != null) {
             me.refreshPlans();
         }
@@ -123,6 +129,13 @@ export default React.createClass({
         UserSession.off(null, null, this);
         PlanMacroStore.off(null, null, this);
         StructureStore.off(null, null, this);
+    },
+
+    componentWillReceiveProps() {
+        this.setState({
+            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
+        });
+       
     },
     checkRoute(pathname) {
         this.setState({
@@ -242,6 +255,16 @@ export default React.createClass({
                             :""}
                         </div>
                     :""}
+                </div>
+            : ""}
+
+            
+            {this.state.showBudgetElement ? 
+                <div className="fpdi-tabs-nav">
+                    <Link to="/budget-element" activeClassName="active">
+                        <span className="fpdi-nav-icon mdi mdi-coin icon-link"
+                        /> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}
+                    </Link>
                 </div>
             : ""}
 

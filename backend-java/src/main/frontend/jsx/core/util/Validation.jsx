@@ -1135,7 +1135,6 @@ var Validate = {
 
 	validationNewBudgetField: function(refs) {
 		var name = refs.budgetNameText.value.trim();
-		var subAction = refs.subActions.value.trim();
 		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 
@@ -1157,23 +1156,10 @@ var Validate = {
 				refs.formAlertErrorName.innerHTML = "";
 			}
 		}
-
-		if (subAction == "") {
-			boolMsg = true;
-			//Toastr.remove();
-			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
-			refs.subActions.className += " borderError";
-		} else {
-			if(refs.subActions.className && refs.subActions.className.indexOf('borderError')){
-				refs.subActions.className = "";
-				refs.formAlertErrorSubAction.innerHTML = "";
-			}
-		}
 		var aux = {
 			msg: msg,
 			boolMsg: boolMsg,
-			name: name,
-			subAction: subAction
+			name: name
 		};
 		return aux;
 	},

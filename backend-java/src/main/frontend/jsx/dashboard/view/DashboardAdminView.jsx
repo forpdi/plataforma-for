@@ -42,7 +42,7 @@ export default React.createClass({
                         <GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan} />
                     </div>
                     <div className="col-md-5">
-                        <Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile}/>
+                        {/** <Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile}/> */}
                         <DashboardPlanDetails plan={this.state.plan}  subPlan={this.state.subPlan} />
                     </div>
 			     </div>

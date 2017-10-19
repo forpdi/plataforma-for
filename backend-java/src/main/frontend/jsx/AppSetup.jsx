@@ -48,6 +48,8 @@ import ProfileUser from "forpdi/jsx/core/view/user/ProfileUser.jsx";
 import Dashboard from "forpdi/jsx/dashboard/view/DashboardPanel.jsx";
 import Community from "forpdi/jsx/dashboard/view/DashboardCommunityView.jsx";
 
+import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
+
 Moment.locale("pt_BR");
 
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -76,6 +78,9 @@ ReactDOM.render((
 			<Route path="structures" component={StructureList}>
 				<Route path="preview/:modelId" component={StructurePreview} />
 			</Route>
+
+
+			<Route path="budget-element" component={BudgetElement} />
 
 			<Route path="plan/new" component={PlanMacroEdit} />
 			<Route path="plan/:id">

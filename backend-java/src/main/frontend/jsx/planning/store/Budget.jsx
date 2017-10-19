@@ -3,9 +3,11 @@ import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 import string from "string";
 
 var URL = Fluxbone.BACKEND_URL+"field";
+var URL_BUDGET = Fluxbone.BACKEND_URL+"budget"
 
 var BudgetModel = Fluxbone.Model.extend({
 	url: URL+"/budget",
+	url_budget :URL_BUDGET + "/element",
 	validate(attrs, options) {
 		var errors = [];
 
@@ -27,12 +29,15 @@ var BudgetStore = Fluxbone.Store.extend({
 	ACTION_FIND: 'budget-find',
 	ACTION_RETRIEVE: 'budget-retrieve',
 	ACTION_UPDATE: 'budget-update',
-	ACTION_GET_BUDGET_SIMULATION: 'budget-getBudgetSimulation',
+	ACTION_GET_BUDGET: 'budget-getBudget',
 	ACTION_DELETE: 'budget-delete',
 	ACTION_CUSTOM_UPDATE: 'budget-customUpdate',
 	dispatchAcceptRegex: /^budget-[a-zA-Z0-9]+$/,
+	ACTION_CREATE_BUDGET_ELEMENT: 'budget-createBudgetElement',
+	ACTION_GET_BUDGET_ELEMENT: 'budget-getBudgetElement',
 
 	url: URL+"/budget",
+	url_budget :URL_BUDGET + "/element",
 	model: BudgetModel,
 
 	delete(data){
@@ -66,16 +71,54 @@ var BudgetStore = Fluxbone.Store.extend({
 		});
 	},
 
-	getBudgetSimulation(data){
+	getBudget(data){
 		var me = this;
 		$.ajax({
-			url: me.url+"/simulation",
+			url: me.url+"/budget",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'json',
 			data: data,
 			success(model) {
 				me.trigger("budgetRetrivied", model);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	createBudgetElement(data) {
+		var me = this;
+		$.ajax({
+			url: me.url_budget +"/create",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				subAction: data.subAction,
+				budgetLoa: data.budgetLoa,
+				companyId: data.companyId,
+			}),
+			success(model) {
+				me.trigger("budgetElementSavedSuccess", model);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	getBudgetElement(data){
+		var me = this;
+		$.ajax({
+			url: me.url_budget +"/list",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("budgetElementRetrivied", model);
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);

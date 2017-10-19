@@ -1,6 +1,7 @@
+import S from 'string';
 import React from "react";
 import {Link} from 'react-router';
-//import Toastr from 'toastr';
+
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -10,11 +11,6 @@ import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import _ from 'underscore';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
-//import Toastr from 'toastr';
-
-var Validate = Validation.validate;
-
-
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -23,24 +19,87 @@ export default React.createClass({
         permissions: React.PropTypes.array.isRequired,
         roles: React.PropTypes.object.isRequired
 	},
-
-	getInitialState() {
-		return {			
-			budgets: this.props.data,
-			loading: false,
-			hide: false,
+    
+    getInitialState() {
+        return {
+            loading: false,
+            hide: false,
+			budgetElements	: [],
 			editingIdx: -1
-		};
-	},
-
-	newBudget(evt){
+        };
+    },
+     
+    newBudget(evt){
 		if (this.isMounted()) {
 	    	this.setState({
 	    		adding: true,
 	    		hide:false
 	    	}); 
     	}   	
+    },
+    
+
+	onKeyUp(evt){		
+		var key = evt.which;
+		if(key == 13) {
+			evt.preventDefault();
+			return;
+		}
+    },
+    
+	componentDidMount() {
+
+        BudgetStore.dispatch({
+        	action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,        
+          });
+          
+        BudgetStore.on("budgetElementSavedSuccess", model => {
+			this.state.budgetElements.push(model.data);
+			console.log("this.state.budgetElements");
+			console.log(this.state.budgetElements);
+
+			if (this.isMounted()) {
+				this.setState({
+					adding: false
+				});
+			}
+            this.context.toastr.addAlertSuccess("Elemento orçamentário adicionado com sucesso");
+        },this);
+        
+        BudgetStore.on("budgetElementRetrivied", (model) => {	
+			if (this.isMounted()) {		
+			    this.setState({
+			    	budgetElements: model.data
+			    });	 
+            }
+            console.log(this.state.budgetElements);	
+          });
+          
 	},
+	componentWillUnmount() {
+	
+    },
+
+    cancelNewBudget(){
+		if (this.isMounted()) {
+			this.setState({
+	    		adding: false
+	    	});
+		}
+	},
+
+    acceptNewBudget() {
+    
+        BudgetStore.dispatch({
+            action: BudgetStore.ACTION_CREATE_BUDGET_ELEMENT,
+            data: {
+                subAction: this.refs.subAction.value,
+                budgetLoa:parseFloat(this.refs.budgetLoa.value),
+                companyId: EnvInfo.company.id
+            }
+        });
+	},
+
 	formatReal( int ){
 		int = int *100;
         var tmp = int+'';
@@ -68,98 +127,8 @@ export default React.createClass({
         return (neg ? '-'+tmp : tmp);
 	},
 
-	onKeyUp(evt){		
-		var key = evt.which;
-		if(key == 13) {
-			evt.preventDefault();
-			return;
-		}
-	},
-
-	componentDidMount()	{
-		console.log(this.state.budgets);
-		if (this.isMounted()) {
-			this.setState({
-	    		adding: false,
-	    	});
-		}
-    	BudgetStore.on("sync", model => {		
-			this.state.budgets.push(model.attributes);
-			if (this.isMounted()) {
-				this.setState({
-					adding: false
-				});
-			}
-
-			console.log(model.attributes);
-			console.log("SYNC");
-		},this);
-		BudgetStore.on("fail", msg=>{
-			//Toastr.remove();
-			//Toastr.error(msg);
-			this.context.toastr.addAlertError(msg);
-		},this);
-		BudgetStore.on("budgetDeleted", model => {			
-			this.state.budgets.splice(this.state.idx,1);
-			if (this.isMounted()) {
-				this.setState({
-					loading: false
-				});
-			}
-		},this);
-		BudgetStore.on("budgetUpdated", model => {
-
-			if(model.data){
-				this.state.budgets[this.state.idx].budget.name=model.data.budget.name;
-				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction;
-	            this.state.budgets[this.state.idx].committed = model.data.committed;
-	            this.state.budgets[this.state.idx].conducted = model.data.conducted;
-	            this.state.budgets[this.state.idx].planned = model.data.planned;
-				//Toastr.remove();
-				//Toastr.success("Orçamento editado com sucesso!");
-				this.context.toastr.addAlertSuccess(Messages.get("label.success.budgetEdited"));
-				this.rejectEditbudget(this.state.idx);
-			}else{
-				var errorMsg = JSON.parse(model.responseText)
-				//Toastr.remove();
-				//Toastr.error(errorMsg.message);
-				this.context.toastr.addAlertError(errorMsg.message);
-			}
-			if (this.isMounted()) {
-				this.setState({
-					loading: false,
-					editingIdx: -1
-				});
-			}
-		},this);
-	},
-
-	componentWillUnmount() {
-		BudgetStore.off(null, null, this);
-	},
-
-	cancelNewBudget(){
-		if (this.isMounted()) {
-			this.setState({
-	    		adding: false
-	    	});
-		}
-	},
-
-	acceptNewBudget(){
-		var validation = Validate.validationNewBudgetField(this.refs);
-		if (validation.boolMsg) {
-			//Toastr.remove();
-			//Toastr.error(msg);
-			this.context.toastr.addAlertError(validation.msg);
-			return;
-		}
-		
-		this.props.newFunc(this.refs.subActions.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
-	},
-
 	deleteBudget(id, idx,evt){
-		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
+		var msg = "Você tem certeza que deseja excluir " + this.state.budgetElements[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			if (this.isMounted()) {
@@ -269,16 +238,14 @@ export default React.createClass({
 	renderNewBudget(){
 		return(			
 			<tr key='new-budget'>
-				<td ref="tdSubAction"><SubActionSelectBox className="" ref="subActions"/>
+				<td ref="tdSubAction"><input type='text' maxLength='255' className='budget-field-table' ref="subAction" onKeyPress={this.onKeyUp}/>
 					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 				</td>
-				<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetNameText" onKeyPress={this.onKeyUp}/>
+				<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetLoa" onKeyPress={this.onKeyUp}/>
 					<div className="formAlertError" ref="formAlertErrorName"></div>	
 				</td>
-				<td>-</td>
-				<td>-</td>
-				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onKeyUp}/></td>
-				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onKeyUp}/></td>
+				<td> - </td>
+				<td> - </td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
@@ -305,7 +272,6 @@ export default React.createClass({
   	},
 
   	formatBR(str){
-   
 	    var x = str.split('.')[0];
 	    x = this.replaceAll(x,",",".");
 	    var decimal = str.split('.')[1];
@@ -321,70 +287,62 @@ export default React.createClass({
 	        str = str.replace(needle, replacement);
 	    }
 	    return str;
-  	},
-
-	render(){
-		if (this.state.loading) {
+      },
+ 	
+	render() {
+        if (this.state.loading) {
 			return <LoadingGauge />;
-		}		
-		return(
-			<div className="panel panel-default panel-margins">
-				<div className="panel-heading displayFlex">
-					<b className="budget-title"> {Messages.getEditable("label.budget","fpdi-nav-label")}</b>
-					{(this.state.adding)?
-						"":
-					<div className="budget-btns">
-						{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
-         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
-							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
-						:""}
-						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
-					</div>}
-				</div>
-				{!this.state.hide ?(
-				<table className="budget-field-table table">					
-					<thead/>
-						<thead>
-							<tr>
-								<th>{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
-								<th>{Messages.getEditable("label.name","fpdi-nav-label")}<span className = "fpdi-required"/> </th>
-								<th>{Messages.getEditable("label.budgetLoa","fpdi-nav-label")}</th>
-								<th>{Messages.getEditable("label.balanceAvailable","fpdi-nav-label")}</th>
-								<th>{Messages.getEditable("label.budget.committed","fpdi-nav-label")}</th>
-								<th>{Messages.getEditable("label.budget.conducted","fpdi-nav-label")}</th>
-								<th> </th>
-							</tr>
-						</thead>
-						<tbody>
-						{this.state.adding ? this.renderNewBudget() : undefined}
-						{this.state.budgets.map((model, idx) => {
-							//if( _.contains(this.state.editingIdx, idx) ){
+        } 		
+		return (<div className="fpdi-profile-user fpdi-budget-element">
+			<div className="fpdi-tabs-content container-fluid animated fadeIn paddingLeft0">
+				<h1>{Messages.getEditable("label.budgetElement","fpdi-nav-label")}</h1>
+			</div>
+
+            <div className="panel panel-default">
+                <div className="panel-heading displayFlex">
+                    <b className="budget-title"> {Messages.getEditable("label.budget","fpdi-nav-label")}</b>
+                    {(this.state.adding)?
+                        "":
+                    <div className="budget-btns">
+                        {(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+                            PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
+                            <button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
+                        :""}
+                        <span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
+                    </div>}
+                </div>
+                {!this.state.hide ?(
+                <table className="budget-field-table table">
+                <thead/>					
+                    <thead>
+                        <tr>
+                            <th>{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
+                            <th>{Messages.getEditable("label.budgetLoa","fpdi-nav-label")} <span className = "fpdi-required"/> </th>
+                            <th>{Messages.getEditable("label.balanceAvailable","fpdi-nav-label")}</th>
+                            <th>{Messages.getEditable("label.linkedObjects","fpdi-nav-label")}</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.adding ? this.renderNewBudget() : undefined}
+					{this.state.budgetElements.map((model, idx) => {
 							if(this.state.editingIdx == idx){
 								return(this.renderEditLine(model, idx));
 							}
 							return(
-								<tr key={"budget-"+idx}>
-									<td id={'subAction'+idx}>{model.budget.subAction}</td>
-									<td id={'name'+idx}>{model.budget.name}</td>	
-									<td id={'budgetLoa' + idx}>{model.budgetLoa}</td>
-									<td id = {'balanceAvailable' + idx}> {model.balanceAvailable}</td>
-									<td id = {'committed' + idx}>{model.budget.committed}</td>
-									<td id = {'realized' + idx}> {model.budget.realized}</td>
-									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
-         								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
-										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
-											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.title.editInformation")}/>
-											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.delete")}/>
-										</td>
-									: <td></td>}
+								<tr key={"budget-element"+idx}>
+									<td id={'subAction'+idx}>{model.subAction.toUpperCase()}</td>
+									<td id={'budgetLoa'+idx}>{model.budgetLoa}</td>
+									<td>{"R$"+(model.balanceAvailable)}</td>
+									<td id={'linkedObjects'+idx}>{model.linkedObjects}</td>
+									<td> </td>
 								</tr>
 							);
 						})}
-						</tbody>
-					<tbody/>					
-				</table>):("")}
-			</div>
-		);
-	}
-
-});
+                    </tbody>
+                <tbody/>
+                </table>):("")}
+            </div>  
+		</div>);
+	  }
+	});

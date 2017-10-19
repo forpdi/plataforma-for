@@ -31,6 +31,8 @@ public class Company extends SimpleLogicalDeletableEntity {
 	private boolean showDashboard = true;
 	
 	private boolean showMaturity = true;
+	
+	private boolean showBudgetElement = true;
 
 	public String getName() {
 		return name;
@@ -70,6 +72,14 @@ public class Company extends SimpleLogicalDeletableEntity {
 
 	public void setShowMaturity(boolean showMaturity) {
 		this.showMaturity = showMaturity;
+	}
+	
+	public boolean isShowBudgetElement() {
+		return showBudgetElement;
+	}
+
+	public void setShowBudgetElement(boolean showBudgetElement) {
+		this.showBudgetElement = showBudgetElement;
 	}
 
 	public String getLocalization() {

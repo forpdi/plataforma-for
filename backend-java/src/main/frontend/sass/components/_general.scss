@@ -909,6 +909,10 @@ label{
 
 }
 
+.paddingLeft0{
+	padding-left:0px !important;
+}
+
 .requiredColor{
 	color: red;
 }
@@ -1389,4 +1393,8 @@ label{
 	&.hidden {
 		display: none;
 	}
+}
+
+.fpdi-budget-element {
+	padding: 10px 40px 10px 40px !important;
 }

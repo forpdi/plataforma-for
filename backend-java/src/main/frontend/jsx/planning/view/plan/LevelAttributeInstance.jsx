@@ -413,15 +413,18 @@ export default React.createClass({
 		});
 	},
 
-	newLevelInstanceBudget(name,subAction){		
+	newLevelInstanceBudget(subAction,name,committed,realized) {
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_CREATE,
 			data: {
-				instanceId: this.props.params.levelInstanceId,
+				subAction: subAction,
 				name: name,
-				subAction: subAction
+				committed:committed,
+				realized:realized,
+				instanceId: this.props.params.levelInstanceId,
+				
 			}
-		});
+		});	
 	},
 
 	saveInstanceSchedule(scheduleInstance){	

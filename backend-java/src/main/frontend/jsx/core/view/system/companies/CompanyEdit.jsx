@@ -78,6 +78,14 @@ export default React.createClass({
 			required:true,
 			label: Messages.getEditable("label.showMaturityDateToCommunity", "fpdi-nav-label"),  
 			value: model ? model.get("showMaturity") : true
+		},
+		{
+			name: "showBudgetElement",
+			type: "checkbox",
+			placeholder: "",
+			required:true,
+			label: Messages.getEditable("label.showBudgetElement", "fpdi-nav-label"),  
+			value: model ? model.get("showBudgetElement") : true
 		}];
 	},
 	componentDidMount() {
@@ -89,7 +97,8 @@ export default React.createClass({
 				EnvInfo.company.logo = model.get("logo");
 				EnvInfo.company.description = model.get("description");
 				EnvInfo.company.showDashboard = model.get("showDashboard");
-				EnvInfo.company.showMaturity = model.get("showMaturity");				
+				EnvInfo.company.showMaturity = model.get("showMaturity");
+				EnvInfo.company.showBudgetElement = model.get("showBudgetElement");
 			}
 			me.context.router.push("/system/companies");				
 		}, me);

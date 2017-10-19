@@ -11,13 +11,16 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.company.Company;
+import org.forpdi.core.company.CompanyBS;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
+import org.forpdi.planning.fields.budget.BudgetBS;
 import org.forpdi.planning.fields.budget.BudgetDTO;
-import org.forpdi.planning.fields.budget.BudgetSimulationDB;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.forpdi.planning.fields.schedule.Schedule;
 import org.forpdi.planning.fields.schedule.ScheduleInstance;
 import org.forpdi.planning.fields.schedule.ScheduleStructure;
@@ -42,6 +45,10 @@ public class FieldsController extends AbstractController {
 	private FieldsBS bs;
 	@Inject
 	private StructureBS structureBs;
+	@Inject
+	private CompanyBS companyBs;
+	@Inject
+	private BudgetBS budgetElementBs;
 
 	/**
 	 * Salvar um novo orçamento no banco de dados, relacionando a uma instancia
@@ -60,28 +67,59 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void save(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long instanceId) {
+	public void save(@NotNull Long subAction, @NotEmpty String name,Double committed,Double realized, @NotNull Long instanceId) {
+		
+		LOGGER.info(subAction);
+
+		
 		try {
 			StructureLevelInstance instance = this.structureBs.retrieveLevelInstance(instanceId);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(subAction);
+			
 			if (instance == null) {
 				this.fail("Estrutura inválida!");
 				return;
 			}
-			Budget budget = new Budget();
-			budget.setLevelInstance(instance);
-			budget.setName(name);
-			budget.setSubAction(subAction);
-			BudgetSimulationDB simulation = this.bs.retrieveBudgetSimulation(subAction);
-			if (simulation == null) {
-				this.fail("Sub-ação inválida!");
+			
+			if (budgetElement == null) {
+				this.fail("Sub ação inválida!");
 				return;
 			}
+			
+			Budget budget = new Budget();
+			budget.setSubAction(budgetElement.getSubAction());
+			budget.setName(name);
+			
+			if (committed != null) {
+				budget.setCommitted(committed);
+			}
+			
+			if (realized != null) {
+				budget.setRealized(realized);
+			}
+			
+			budget.setBudgetElement(budgetElement);
+			budget.setLevelInstance(instance);
+			
+			if (committed != null) {
+				double balanceAvailable = budgetElement.getBalanceAvailable();
+				balanceAvailable -= committed;
+				budgetElement.setBalanceAvailable(balanceAvailable);
+			}
+			
+			int linkedObjects = budgetElement.getLinkedObjects();
+			linkedObjects += 1;
+			budgetElement.setLinkedObjects(linkedObjects);
+			
+			this.budgetElementBs.update(budgetElement);
+			
 			this.bs.saveBudget(budget);
+			
 			BudgetDTO item = new BudgetDTO();
 			item.setBudget(budget);
-			item.setCommitted(simulation.getCommitted());
-			item.setConducted(simulation.getConducted());
-			item.setPlanned(simulation.getPlanned());
+			item.setBudgetLoa(budgetElement.getBudgetLoa());
+			item.setBalanceAvailable(budgetElement.getBalanceAvailable());
+			
 			this.success(item);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -113,7 +151,7 @@ public class FieldsController extends AbstractController {
 				this.fail("Oçamento inválido.");
 			}
 
-			BudgetSimulationDB simulation = this.bs.retrieveBudgetSimulation(subAction);
+			BudgetElement simulation = this.bs.retrieveBudgetSimulation(subAction);
 			if (simulation == null) {
 				LOGGER.error("Não existe ação orçamentária!");
 				this.fail("Não existe ação orçamentária!");
@@ -123,9 +161,9 @@ public class FieldsController extends AbstractController {
 				this.bs.update(budget);
 				BudgetDTO item = new BudgetDTO();
 				item.setBudget(budget);
-				item.setCommitted(simulation.getCommitted());
-				item.setConducted(simulation.getConducted());
-				item.setPlanned(simulation.getPlanned());
+				//item.setCommitted(simulation.getCommitted());
+				//item.setConducted(simulation.getConducted());
+				//item.setPlanned(simulation.getPlanned());
 
 				this.success(item);
 			}
@@ -472,12 +510,18 @@ public class FieldsController extends AbstractController {
 	 * 
 	 * @return list, todos as simulações de orçamento
 	 */
-	@Get(BASEPATH + "/field/budget/simulation")
+	@Get(BASEPATH + "/field/budget/budget")
 	@NoCache
 	@Permissioned
-	public void listBudgetAction() {
+	public void listBudgetAction(@NotNull Long companyId) {
 		try {
-			PaginatedList<BudgetSimulationDB> list = this.bs.listBudgetSimulation();
+			Company company = this.companyBs.exists(companyId, Company.class);
+			if (company == null) {
+				this.fail("Empresa inválida!");
+				return;
+			}
+			
+			PaginatedList<BudgetElement> list = this.bs.listBudget(company);
 			this.success(list);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

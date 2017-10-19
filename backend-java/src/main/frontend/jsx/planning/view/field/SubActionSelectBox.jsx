@@ -21,13 +21,19 @@ export default React.createClass({
 		    } 	
 	  	});
 	  	BudgetStore.dispatch({
-        	action: BudgetStore.ACTION_GET_BUDGET_SIMULATION,        
+			action: BudgetStore.ACTION_GET_BUDGET,
+			data: {
+				companyId: EnvInfo.company.id 
+			}      
       	});
 	},
 
 	componentWillReceiveProps(newProps){		
 		BudgetStore.dispatch({
-        	action: BudgetStore.ACTION_GET_BUDGET_SIMULATION,        
+			action: BudgetStore.ACTION_GET_BUDGET,
+			data: {
+				companyId: EnvInfo.company.id 
+			}      
       	});
 	},
 
@@ -38,7 +44,7 @@ export default React.createClass({
 	onChange(){
 		var idx = this.refs['subaction-select'].value;
 		if(idx >= 0){
-			this.value = this.state.budgets[idx].subAction;		
+			this.value = this.state.budgets[idx].id;		
 		} else {
 			this.value = "";
 		}
