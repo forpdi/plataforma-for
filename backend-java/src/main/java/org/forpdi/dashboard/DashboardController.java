@@ -210,37 +210,43 @@ public class DashboardController extends AbstractController {
 	 * @return budgets lista de orçamentos recuperados
 	 * 
 	 */
-	/**
 		@Get(BASEPATH + "/dashboard/admin/budget")
 		@NoCache
 		@Permissioned
-		public void listBudgets(Long macro, Long plan, Long objective, String subAction) {
-			try {
-				PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
-				Plan plan2 = this.planBS.retrieveById(plan);
-				StructureLevelInstance obj = this.sbs.retrieveLevelInstance(objective);
-				List<Budget> list = this.bs.listBudgets(planMacro, plan2, obj, subAction);
-				GeneralBudgets budgets = new GeneralBudgets();
-				Double conducted = 0.0;
-				Double commited = 0.0;
-				Double planned = 0.0;
-				for (Budget budget : list) {
-					BudgetDTO dto = this.fbs.getBudgetBySubAction(budget);
-					conducted += dto.getConducted();
-					commited += dto.getCommitted();
-					planned += dto.getPlanned();
+	public void listBudgets(Long macro, Long plan, Long objective, String subAction) {
+		try {
+			PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
+			Plan plan2 = this.planBS.retrieveById(plan);
+			StructureLevelInstance obj = this.sbs.retrieveLevelInstance(objective);
+			List<Budget> list = this.bs.listBudgets(planMacro, plan2, obj, subAction);
+			GeneralBudgets budgets = new GeneralBudgets();
+			Double realized = 0.0;
+			Double committed = 0.0;
+			Double planned = 0.0;
+			LOGGER.info(list.get(0).getName());
+			
+			for (Budget budget : list) {
+				if (budget.getCommitted() != null) {
+					committed += budget.getCommitted();
 				}
-				budgets.setCommitted(commited);
-				budgets.setConducted(conducted);
-				budgets.setPlanned(planned);
-				this.success(budgets);
-			} catch (Throwable ex) {
-				LOGGER.error("Unexpected runtime error", ex);
-				this.fail("Erro inesperado: " + ex.getMessage());
-	
+				
+				if (budget.getRealized() != null) {
+					realized += budget.getRealized();
+				}
+				
+				planned += budget.getBudgetElement().getBudgetLoa();
 			}
+			budgets.setCommitted(committed);
+			budgets.setConducted(realized);
+			budgets.setPlanned(planned);
+			this.success(budgets);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+
 		}
-	*/
+	}
+
 
 	/**
 	 * Usuário recupera lista de indicadores e suas informações

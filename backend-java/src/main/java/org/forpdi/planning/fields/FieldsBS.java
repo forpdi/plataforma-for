@@ -435,26 +435,6 @@ public class FieldsBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Buscar cronograma à partir de uma ação orçamentária.
-	 * 
-	 * @param budget
-	 *            Cronograma para ser buscado.
-	 * @return getBudgetBySubAction Cronograma.
-	 */
-	public BudgetDTO getBudgetBySubAction(Budget budget) {
-		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subAction", budget.getSubAction()));
-		BudgetElement simulation = (BudgetElement) criteria.uniqueResult();
-		BudgetDTO dto = new BudgetDTO();
-		dto.setBudget(budget);
-		//dto.setCommitted(simulation.getCommitted());
-		//dto.setConducted(simulation.getConducted());
-		//dto.setPlanned(simulation.getPlanned());
-
-		return dto;
-	}
-
-	/**
 	 * Retornar planos de ação à partir de estrutura.
 	 * 
 	 * @param instance

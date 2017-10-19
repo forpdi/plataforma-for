@@ -56,19 +56,19 @@ public class Budget extends SimpleLogicalDeletableEntity {
 		this.name = name;
 	}
 
-	public double getCommitted() {
+	public Double getCommitted() {
 		return committed;
 	}
 
-	public void setCommitted(double committed) {
+	public void setCommitted(Double committed) {
 		this.committed = committed;
 	}
 
-	public double getRealized() {
+	public Double getRealized() {
 		return realized;
 	}
 
-	public void setRealized(double realized) {
+	public void setRealized(Double realized) {
 		this.realized = realized;
 	}
 
