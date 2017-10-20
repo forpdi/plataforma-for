@@ -1165,9 +1165,9 @@ var Validate = {
 	},
 	
 	validationEditBudgetField: function(refs, idx) {
-		var subAction = refs["subActions-edit-"+idx].value;
+		var subAction = refs["subActions-edit-"+idx].state.value;
 		var name= refs['inputName'+idx].value;
-		var subActionEdit = subAction.trim();
+		var subActionEdit = subAction;
 		var nomeEdit = name.trim();
 
 		var msg = Messages.get("label.form.error");

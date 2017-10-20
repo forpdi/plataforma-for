@@ -424,11 +424,10 @@ public class FieldsBS extends HibernateBusiness {
 		BudgetElement data;
 		for (int i = 0; i < budgetList.getTotal(); i++) {
 			BudgetDTO item = new BudgetDTO();
-			data = this.retrieveBudgetSimulation(budgetList.getList().get(i).getSubAction());
+			data = this.retrieveBudgetElement(budgetList.getList().get(i).getSubAction());
 			item.setBudget(budgetList.getList().get(i));
-			//item.setCommitted(data.getCommitted());
-			//item.setConducted(data.getConducted());
-			//item.setPlanned(data.getPlanned());
+			item.setBudgetLoa(data.getBudgetLoa());
+			item.setBalanceAvailable(data.getBalanceAvailable());
 			budgetItemlist.add(item);
 		}
 		return budgetItemlist;
@@ -526,7 +525,7 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Ação orçamentária.
 	 * @return BudgetSimulationDB Ação orçamentária.
 	 */
-	public BudgetElement retrieveBudgetSimulation(String subAction) {
+	public BudgetElement retrieveBudgetElement(String subAction) {
 		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("subAction", subAction));
 		return (BudgetElement) criteria.uniqueResult();

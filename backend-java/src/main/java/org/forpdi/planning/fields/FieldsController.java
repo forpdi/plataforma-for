@@ -143,30 +143,44 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void update(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long id) {
+	public void update(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long id, Double committed, Double realized,  @NotNull Long idBudgetElement) {
 		try {
 			Budget budget = this.bs.budgetExistsById(id);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(idBudgetElement);
+			
 			if (budget == null) {
 				LOGGER.error("Orçamento inexistente para ser editado.");
 				this.fail("Oçamento inválido.");
 			}
-
-			BudgetElement simulation = this.bs.retrieveBudgetSimulation(subAction);
-			if (simulation == null) {
-				LOGGER.error("Não existe ação orçamentária!");
-				this.fail("Não existe ação orçamentária!");
-			} else {
-				budget.setName(name);
-				budget.setSubAction(subAction);
-				this.bs.update(budget);
-				BudgetDTO item = new BudgetDTO();
-				item.setBudget(budget);
-				//item.setCommitted(simulation.getCommitted());
-				//item.setConducted(simulation.getConducted());
-				//item.setPlanned(simulation.getPlanned());
-
-				this.success(item);
+			
+			if (budgetElement == null) {
+				this.fail("Sub ação inválida!");
+				return;
 			}
+
+			budget.setName(name);
+			budget.setSubAction(budgetElement.getSubAction());
+			budget.setBudgetElement(budgetElement);
+			
+			 if (committed != null) {
+				 budget.setCommitted(committed);
+				 double budgetLoa= budgetElement.getBudgetLoa();
+				 budgetLoa -= committed;
+				 budgetElement.setBalanceAvailable(budgetLoa);
+				 this.budgetElementBs.update(budgetElement);
+			 }
+			 
+			 if (realized != null) {
+				 budget.setRealized(realized);
+			 }
+					
+			this.bs.update(budget);
+			BudgetDTO item = new BudgetDTO();
+			item.setBudget(budget);
+			item.setBudgetLoa(budgetElement.getBudgetLoa());
+			item.setBalanceAvailable(budgetElement.getBalanceAvailable());
+			this.success(item);
+		
 
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);

@@ -77,7 +77,6 @@ export default React.createClass({
 	},
 
 	componentDidMount()	{
-		console.log(this.state.budgets);
 		if (this.isMounted()) {
 			this.setState({
 	    		adding: false,
@@ -90,9 +89,6 @@ export default React.createClass({
 					adding: false
 				});
 			}
-
-			console.log(model.attributes);
-			console.log("SYNC");
 		},this);
 		BudgetStore.on("fail", msg=>{
 			//Toastr.remove();
@@ -108,13 +104,17 @@ export default React.createClass({
 			}
 		},this);
 		BudgetStore.on("budgetUpdated", model => {
-
+			
+		
 			if(model.data){
-				this.state.budgets[this.state.idx].budget.name=model.data.budget.name;
-				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction;
-	            this.state.budgets[this.state.idx].committed = model.data.committed;
-	            this.state.budgets[this.state.idx].conducted = model.data.conducted;
-	            this.state.budgets[this.state.idx].planned = model.data.planned;
+				this.state.budgets[this.state.idx].budget.name=model.data.budget.name; 
+				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction; 
+				this.state.budgets[this.state.idx].committed = model.data.budget.committed; 
+				this.state.budgets[this.state.idx].realized = model.data.budget.realized; 
+				this.state.budgets[this.state.idx].budgetLoa = model.data.budgetLoa;
+				this.state.budgets[this.state.idx].balanceAvailable = model.data.balanceAvailable;
+				this.state.budgets[this.state.idx].budget = model.data.budget;
+
 				//Toastr.remove();
 				//Toastr.success("Orçamento editado com sucesso!");
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.budgetEdited"));
@@ -155,7 +155,7 @@ export default React.createClass({
 			return;
 		}
 		
-		this.props.newFunc(this.refs.subActions.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
+		this.props.newFunc(this.refs.subActions.state.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
 	},
 
 	deleteBudget(id, idx,evt){
@@ -194,31 +194,37 @@ export default React.createClass({
 	},
 
 	acceptedEditbudget(id, idx){
+		 
 		var validation = Validate.validationEditBudgetField(this.refs, idx);	
 		//console.log("acceptedEditbudget");
 		
 
 		if (validation.boolMsg) {
 			//Toastr.remove();
- 			//Toastr.error(msg);
+			//Toastr.error(msg);
 			this.context.toastr.addAlertError(validation.msg);
- 			return;
+			return;
 		}
 		
 		if (this.isMounted()) {
-	        this.setState({
+			this.setState({
 				loading: true,
 				idx: idx //index a ser editado
 			});
-	    }
+		}
+		
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_CUSTOM_UPDATE,
 			data: {
-				id: id,
 				name:validation.name,
-				subAction:validation.subAction
+				subAction:validation.subAction,
+				id: id,
+				committed:parseFloat(this.refs['editCommitted'+idx].value),
+				realized:parseFloat(this.refs['editRealized'+idx].value),
+				idBudgetElement: this.refs["subActions-edit-"+idx].state.value
 			}
-		});		
+		});
+		
 
 	},
 
@@ -243,19 +249,24 @@ export default React.createClass({
 		}
 	},
 
-	renderEditLine(model, idx){		
+	renderEditLine(model, idx){
 		return(
 			<tr key={'new-budget-'+idx}>
-				<td><SubActionSelectBox className="" ref={"subActions-edit-"+idx} defaultValue={model.budget.subAction}/>
+				<td><SubActionSelectBox className="" ref={"subActions-edit-"+idx} defaultValue={model.budget.budgetElement.id}/>
 					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 				</td>
 				<td><input type='text' maxLength='255' className='budget-field-table' ref={'inputName'+idx}
 				 	onKeyPress={this.onKeyUp} defaultValue={model.budget.name}/>
 				 	<div className="formAlertError" ref="formAlertErrorName"></div>
-					</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.planned))}</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.committed))}</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.conducted))}</td>
+				</td>
+				<td> - </td>
+				<td> - </td>
+				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editCommitted'+idx}
+							defaultValue={model.budget.committed} />
+				</td>
+				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editRealized'+idx}
+							defaultValue={model.budget.realized} />
+				</td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.budget.id, idx)} title={Messages.get("label.submitLabel")}></span>

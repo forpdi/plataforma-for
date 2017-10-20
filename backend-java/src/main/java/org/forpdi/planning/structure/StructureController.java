@@ -313,7 +313,7 @@ public class StructureController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
-	
+
 	/** Listar instâncias de níveis para exibição de performance. */
 	@Get(BASEPATH + "/structure/levelinstance/performance")
 	@Consumes
@@ -329,11 +329,11 @@ public class StructureController extends AbstractController {
 			for (StructureLevelInstance levelInstance : list.getList()) {
 				levelInstanceDetailedList = this.bs.listLevelInstanceDetailed(levelInstance);
 				levelInstance.setLevelInstanceDetailedList(new ArrayList<StructureLevelInstanceDetailed>());
-				for (int i=0; i<12; i++) {
+				for (int i = 0; i < 12; i++) {
 					StructureLevelInstanceDetailed levelInstDetailed = null;
 					for (StructureLevelInstanceDetailed levelInstanceDetailed : levelInstanceDetailedList) {
 						levelInstanceDetailed.setLevelInstance(null);
-						if (levelInstanceDetailed.getMonth() == i+1) {
+						if (levelInstanceDetailed.getMonth() == i + 1) {
 							levelInstDetailed = levelInstanceDetailed;
 						}
 					}
@@ -483,7 +483,8 @@ public class StructureController extends AbstractController {
 	@Post(BASEPATH + "/structure/levelattributes")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanPermission.class })
+	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
+	// ManagePlanPermission.class })
 	@Permissioned(value = AccessLevels.COLABORATOR)
 	public void saveLevelAttributesInstance(StructureLevelInstance levelInstance, String url) {
 		try {
@@ -492,11 +493,11 @@ public class StructureController extends AbstractController {
 			String userId = "";
 			String urlAux = "";
 
-			String mainUrl[] = url.split("\\?"); // remoção de parâmetro na url			
-			if(mainUrl.length>0){
+			String mainUrl[] = url.split("\\?"); // remoção de parâmetro na url
+			if (mainUrl.length > 0) {
 				url = mainUrl[0];
 			}
-			
+
 			StructureLevelInstance existentLevelInstance = this.bs.retrieveLevelInstance(levelInstance.getId());
 			if (existentLevelInstance == null) {
 				this.fail("Estrutura incorreta!");
@@ -528,8 +529,8 @@ public class StructureController extends AbstractController {
 							}
 						}
 						if (attribute.getType().equals(DateField.class.getCanonicalName())) {
-							if(attributeInstance.getValue() != null){
-								if(!attributeInstance.getValue().equals(attInst.getValue())) {
+							if (attributeInstance.getValue() != null) {
+								if (!attributeInstance.getValue().equals(attInst.getValue())) {
 									changeDate = true;
 								}
 							}
@@ -616,7 +617,7 @@ public class StructureController extends AbstractController {
 					attrInst = this.attrHelper.retrievePolarityAttributeInstance(existentLevelInstance.getParent());
 				if (attrInst != null)
 					existentLevelInstance.setPolarity(attrInst.getValue());
-				
+
 				List<Attribute> attributeList = this.bs.retrieveLevelAttributes(existentLevelInstance.getLevel());
 				attributeList = this.bs.setAttributesInstances(existentLevelInstance, attributeList);
 				existentLevelInstance.getLevel().setAttributes(attributeList);

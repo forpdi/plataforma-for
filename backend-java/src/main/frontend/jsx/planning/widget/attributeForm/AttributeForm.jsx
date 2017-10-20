@@ -240,7 +240,7 @@ var VerticalForm =  React.createClass({
 				)
 			: ""}
 			{this.props.fields.map((field,idx) => {
-				if(field.type == AttributeTypes.BUDGET_FIELD){
+				if(field.type == AttributeTypes.BUDGET_FIELD && (EnvInfo.company && EnvInfo.company.showBudgetElement == true)){
 					return(<BudgetField key={field.name} data={field.budgets} newFunc={field.extra}/>);
 				} else if(field.type == AttributeTypes.ACTION_PLAN_FIELD){
 					return(<ActionPlanField key={field.name} responsible={this.props.userResponsible}

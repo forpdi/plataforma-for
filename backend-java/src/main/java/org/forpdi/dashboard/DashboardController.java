@@ -223,7 +223,6 @@ public class DashboardController extends AbstractController {
 			Double realized = 0.0;
 			Double committed = 0.0;
 			Double planned = 0.0;
-			LOGGER.info(list.get(0).getName());
 			
 			for (Budget budget : list) {
 				if (budget.getCommitted() != null) {

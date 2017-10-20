@@ -7,12 +7,16 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
+			value: this.props.defaultValue || "",
 			budgets	: []
 		};
 	},
 
 	componentDidMount(){
-		this.value = this.props.defaultValue || "";		
+		this.setState({
+			value: this.props.defaultValue || ""
+		});
+
 		BudgetStore.on("budgetRetrivied", (model) => {	
 			if (this.isMounted()) {		
 			    this.setState({
@@ -34,7 +38,7 @@ export default React.createClass({
 			data: {
 				companyId: EnvInfo.company.id 
 			}      
-      	});
+		  });
 	},
 
 	componentWillUnmount() {
@@ -42,27 +46,29 @@ export default React.createClass({
 	},
 
 	onChange(){
-		var idx = this.refs['subaction-select'].value;
-		if(idx >= 0){
-			this.value = this.state.budgets[idx].id;		
+		var id = this.refs['subaction-select'].value;
+		if(id >= 0){
+			this.state.value = id;		
 		} else {
-			this.value = "";
+			this.state.value = "";
 		}
 	},
 
 	render(){
 		return(
 			<div className={this.props.className}>
-				<select ref="subaction-select" onChange={this.onChange} className="subAction-select-box" defaultValue={this.value}>
-					<option value={-1} key="opt-0" data-placement="right" title={Messages.get("label.select")}>{Messages.get("label.select")}</option>
-					{this.state.budgets.map( (budget,idx) => {
-						return(
-							<option value={idx} key={"opt-"+idx} data-placement="right" title={budget.subAction}>
-								{budget.subAction}
-							</option>
-						);
-					})}
-				</select>
+				{this.state.budgets && this.state.budgets.length > 0 ?
+					<select ref="subaction-select" onChange={this.onChange} className="subAction-select-box" defaultValue={this.state.value}>
+						<option value={-1} key="opt-0" data-placement="right" title={Messages.get("label.select")}>{Messages.get("label.select")}</option>
+						{this.state.budgets.map( (budget,idx) => {
+							return(
+								<option value={budget.id} key={"opt-"+idx} data-placement="right" title={budget.subAction}>
+									{budget.subAction}
+								</option>
+							);
+						})}
+					</select>
+				: "Nenhum elemento orçamentário cadastrado."}
 			</div>
 		);
 	}

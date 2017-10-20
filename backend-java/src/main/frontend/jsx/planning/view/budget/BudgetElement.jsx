@@ -55,9 +55,7 @@ export default React.createClass({
           
         BudgetStore.on("budgetElementSavedSuccess", model => {
 			this.state.budgetElements.push(model.data);
-			console.log("this.state.budgetElements");
-			console.log(this.state.budgetElements);
-
+	
 			if (this.isMounted()) {
 				this.setState({
 					adding: false
@@ -72,7 +70,6 @@ export default React.createClass({
 			    	budgetElements: model.data
 			    });	 
             }
-            console.log(this.state.budgetElements);	
           });
           
 	},
