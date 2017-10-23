@@ -3,11 +3,11 @@ import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 import string from "string";
 
 var URL = Fluxbone.BACKEND_URL+"field";
-var URL_BUDGET = Fluxbone.BACKEND_URL+"budget"
+var URL_BUDGET_ELEMENT = Fluxbone.BACKEND_URL+"budget"
 
 var BudgetModel = Fluxbone.Model.extend({
 	url: URL+"/budget",
-	url_budget :URL_BUDGET + "/element",
+	url_budget_element :URL_BUDGET_ELEMENT + "/element",
 	validate(attrs, options) {
 		var errors = [];
 
@@ -35,9 +35,10 @@ var BudgetStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^budget-[a-zA-Z0-9]+$/,
 	ACTION_CREATE_BUDGET_ELEMENT: 'budget-createBudgetElement',
 	ACTION_GET_BUDGET_ELEMENT: 'budget-getBudgetElement',
+	ACTION_GET_UPDATE_BUDGET_ELEMENT: 'budget-updateBudgetElement',
 
 	url: URL+"/budget",
-	url_budget :URL_BUDGET + "/element",
+	url_budget_element : URL_BUDGET_ELEMENT + "/element",
 	model: BudgetModel,
 
 	delete(data){
@@ -72,13 +73,14 @@ var BudgetStore = Fluxbone.Store.extend({
 	},
 
 	getBudget(data){
+		console.log(data);
 		var me = this;
 		$.ajax({
 			url: me.url+"/budget",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'json',
-			data: data,
+			data:data.companyId,
 			success(model) {
 				me.trigger("budgetRetrivied", model);
 			},
@@ -91,7 +93,7 @@ var BudgetStore = Fluxbone.Store.extend({
 	createBudgetElement(data) {
 		var me = this;
 		$.ajax({
-			url: me.url_budget +"/create",
+			url: me.url_budget_element +"/create",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -110,13 +112,13 @@ var BudgetStore = Fluxbone.Store.extend({
 	},
 
 	getBudgetElement(data){
+		console.log(data);
 		var me = this;
 		$.ajax({
-			url: me.url_budget +"/list",
+			url: me.url_budget_element +"/list/"+data.companyId,
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'json',
-			data: data,
 			success(model) {
 				me.trigger("budgetElementRetrivied", model);
 			},
@@ -124,7 +126,22 @@ var BudgetStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], opts);
 			}
 		});
-	}
+	},
+	updateBudgetElement(data){
+		var me = this;
+		$.ajax({
+			url: me.url_budget_element +"/update",
+			method: 'POST',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("budgetElementUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("budgetElementUpdated", opts);
+			}
+		});
+	},
 
 });
 

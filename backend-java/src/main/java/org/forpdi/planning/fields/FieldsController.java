@@ -199,9 +199,20 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void deleteBdget(@NotNull Long id) {
+	public void deleteBdget(@NotNull Long id,@NotNull Long idBudgetElement,Double committed) {
+		LOGGER.info("Committed");
+		LOGGER.info(committed);
 		try {
 			Budget budget = this.bs.budgetExistsById(id);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(idBudgetElement);
+			
+			if (committed != null) {
+				double balanceAvailable = budgetElement.getBalanceAvailable(); 
+				balanceAvailable += committed;
+				budgetElement.setBalanceAvailable(balanceAvailable);
+				this.budgetElementBs.update(budgetElement);
+			}
+			
 			this.bs.deleteBudget(budget);
 			this.success(budget);
 		} catch (Throwable e) {

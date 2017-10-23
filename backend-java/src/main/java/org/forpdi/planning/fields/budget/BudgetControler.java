@@ -68,17 +68,76 @@ public class BudgetControler  extends AbstractController {
 	 * 
 	 * @return list, todos as simulações de orçamento
 	 */
-	@Get(BASEPATH + "/budget/element/list")
+	@Get(BASEPATH + "/budget/element/list/{companyId}")
 	@NoCache
 	@Permissioned
-	public void listBudgetAction() {
+	public void listBudgetAction(Long companyId) {
+
 		try {
-			PaginatedList<BudgetElement> list = this.bs.listBudgetSimulation();
+			
+			Company company = this.bs.exists(companyId, Company.class);
+			
+			if (company == null) {
+				this.fail("A empresa solicitada não foi encontrada.");
+				return;
+			}
+			
+			PaginatedList<BudgetElement> list = this.bs.listBudgetElement(company);
+			
 			this.success(list);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
+	}
+	
+	/**
+	 * Atualizar um orçamento existente no banco de dados.
+	 * 
+	 * @param name,
+	 *            novo nome do orçamento
+	 * @param subAction,
+	 *            nova sub ação orçametaria
+	 * @param id,
+	 *            referente ao orçamento existente
+	 * 
+	 * @return item, dto do orçamento atualizado
+	 */
+	@Post(BASEPATH + "/budget/element/update")
+	@Consumes
+	@NoCache
+	@Permissioned
+	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotNull Double budgetLoa) {
+		
+		try {
+			BudgetElement budgetElement = this.bs.budgetElementExistsById(idBudgetElement);
+			
+			if (budgetElement == null) {
+				this.fail("Oçamento inválido.");
+				return;
+			}
+			
+			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
+			
+			if (budgetLoa < diferenca) {
+				this.fail("Orçamento loa não permitido.");
+				return;
+			}
+			
+			budgetElement.setSubAction(subAction);
+			budgetElement.setBudgetLoa(budgetLoa);
+			budgetElement.setBalanceAvailable(budgetLoa);
+					
+			this.bs.update(budgetElement);
+			
+			this.success(budgetElement);
+		
+
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+		
 	}
 	
 

@@ -48,9 +48,11 @@ export default React.createClass({
     },
     
 	componentDidMount() {
-
         BudgetStore.dispatch({
-        	action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,        
+			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
+			data: {
+                companyId: EnvInfo.company.id
+            }
           });
           
         BudgetStore.on("budgetElementSavedSuccess", model => {
@@ -70,7 +72,35 @@ export default React.createClass({
 			    	budgetElements: model.data
 			    });	 
             }
-          });
+		  });
+		  
+		  BudgetStore.on("budgetElementUpdated", model => {
+			
+		
+			if(model.data){
+				
+
+				this.state.budgetElements[this.state.idx].subAction = model.data.subAction; 
+				this.state.budgetElements[this.state.idx].balanceAvailable=model.data.balanceAvailable; 
+				this.state.budgetElements[this.state.idx].budgetLoa = model.data.budgetLoa; 
+
+				//Toastr.remove();
+				//Toastr.success("Orçamento editado com sucesso!");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.budgetEdited"));
+				this.rejectEditbudget(this.state.idx);
+			}else{
+				var errorMsg = JSON.parse(model.responseText)
+				//Toastr.remove();
+				//Toastr.error(errorMsg.message);
+				this.context.toastr.addAlertError(errorMsg.message);
+			}
+			if (this.isMounted()) {
+				this.setState({
+					loading: false,
+					editingIdx: -1
+				});
+			}
+		},this);
           
 	},
 	componentWillUnmount() {
@@ -160,16 +190,20 @@ export default React.createClass({
 	},
 
 	acceptedEditbudget(id, idx){
-		var validation = Validate.validationEditBudgetField(this.refs, idx);	
-		//console.log("acceptedEditbudget");
+		/**
+		  var validation = Validate.validationEditBudgetField(this.refs, idx);	
+			console.log("acceptedEditbudget");
 		
 
-		if (validation.boolMsg) {
-			//Toastr.remove();
- 			//Toastr.error(msg);
-			this.context.toastr.addAlertError(validation.msg);
- 			return;
-		}
+			if (validation.boolMsg) {
+				//Toastr.remove();
+				//Toastr.error(msg);
+				this.context.toastr.addAlertError(validation.msg);
+				return;
+			}
+
+		 */
+
 		
 		if (this.isMounted()) {
 	        this.setState({
@@ -178,11 +212,11 @@ export default React.createClass({
 			});
 	    }
 		BudgetStore.dispatch({
-			action: BudgetStore.ACTION_CUSTOM_UPDATE,
+			action: BudgetStore.ACTION_GET_UPDATE_BUDGET_ELEMENT,
 			data: {
-				id: id,
-				name:validation.name,
-				subAction:validation.subAction
+				idBudgetElement: id,
+				subAction:this.refs['nameBudgetElement'+idx].value,
+				budgetLoa:this.refs['budgetLoa'+idx].value
 			}
 		});		
 
@@ -211,20 +245,20 @@ export default React.createClass({
 
 	renderEditLine(model, idx){		
 		return(
-			<tr key={'new-budget-'+idx}>
-				<td><SubActionSelectBox className="" ref={"subActions-edit-"+idx} defaultValue={model.budget.subAction}/>
-					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
-				</td>
-				<td><input type='text' maxLength='255' className='budget-field-table' ref={'inputName'+idx}
-				 	onKeyPress={this.onKeyUp} defaultValue={model.budget.name}/>
+			<tr key={'new-budgetElement-'+idx}>
+				<td><input type='text' maxLength='255' className='budget-field-table' ref={'nameBudgetElement'+idx}
+				 	onKeyPress={this.onKeyUp} defaultValue={model.subAction}/>
 				 	<div className="formAlertError" ref="formAlertErrorName"></div>
-					</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.planned))}</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.committed))}</td>
-				<td>{"R$"+this.formatBR(this.formatEUA(model.conducted))}</td>
+				</td>
+				<td><input type='text' maxLength='255' className='budget-field-table' ref={'budgetLoa'+idx}
+				 	onKeyPress={this.onKeyUp} defaultValue={model.budgetLoa}/>
+				 	<div className="formAlertError" ref="formAlertErrorName"></div>
+				</td>
+				<td> - </td>
+				<td> - </td>
 				<td>				
                     <div className='displayFlex'>
-                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.budget.id, idx)} title={Messages.get("label.submitLabel")}></span>
+                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.id,idx)} title={Messages.get("label.submitLabel")}></span>
                       	<span className='mdi mdi-close reject-budget' onClick={this.rejectEditbudget.bind(this, idx)} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
@@ -333,6 +367,13 @@ export default React.createClass({
 									<td>{"R$"+(model.balanceAvailable)}</td>
 									<td id={'linkedObjects'+idx}>{model.linkedObjects}</td>
 									<td> </td>
+									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+         								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
+										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
+											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.id,idx)} title={Messages.get("label.title.editInformation")}/>
+											<span className="mdi mdi-delete cursorPointer inner" title={Messages.get("label.delete")}/>
+										</td>
+									: <td></td>}
 								</tr>
 							);
 						})}

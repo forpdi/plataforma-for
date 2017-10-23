@@ -158,7 +158,7 @@ export default React.createClass({
 		this.props.newFunc(this.refs.subActions.state.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
 	},
 
-	deleteBudget(id, idx,evt){
+	deleteBudget(id,budgetElement,committed,idx,evt){
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
 			Modal.hide();
@@ -171,7 +171,9 @@ export default React.createClass({
 			BudgetStore.dispatch({
 				action: BudgetStore.ACTION_DELETE,
 				data: {
-					id: id
+					id: id,
+					idBudgetElement:budgetElement,
+					committed:committed
 				}
 			});
 
@@ -385,7 +387,7 @@ export default React.createClass({
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
 											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.title.editInformation")}/>
-											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.delete")}/>
+											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.budget.id,model.budget.budgetElement.id,model.budget.committed,idx)} title={Messages.get("label.delete")}/>
 										</td>
 									: <td></td>}
 								</tr>

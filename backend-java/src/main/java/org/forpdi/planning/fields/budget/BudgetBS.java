@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.forpdi.core.company.Company;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 
@@ -32,9 +33,10 @@ public class BudgetBS extends HibernateBusiness {
 	 * 
 	 * @return BudgetSimulationDB Lista de ação orçamentária.
 	 */
-	public PaginatedList<BudgetElement> listBudgetSimulation() {
+	public PaginatedList<BudgetElement> listBudgetElement(Company company) {
 		PaginatedList<BudgetElement> list = new PaginatedList<BudgetElement>();
-		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false));
+		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("company", company));
 
 		list.setList(this.dao.findByCriteria(criteria, BudgetElement.class));
 		
