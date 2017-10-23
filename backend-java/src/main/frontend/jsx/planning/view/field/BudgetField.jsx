@@ -174,6 +174,7 @@ export default React.createClass({
 	},
 
 	deleteBudget(id,budgetElement,committed,idx,evt){
+		console.log("AKI -- DELETE");
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
 			Modal.hide();

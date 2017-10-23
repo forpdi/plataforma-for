@@ -28,7 +28,7 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 	private double balanceAvailable;
 	
 	@Column(nullable=false)
-	private int linkedObjects = 0;
+	private Long linkedObjects = 0l;
 	
 	private Date creation = new Date();
 	
@@ -59,11 +59,11 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 		this.balanceAvailable = balanceAvailable;
 	}
 
-	public int getLinkedObjects() {
+	public Long getLinkedObjects() {
 		return linkedObjects;
 	}
 
-	public void setLinkedObjects(int linkedObjects) {
+	public void setLinkedObjects(Long linkedObjects) {
 		this.linkedObjects = linkedObjects;
 	}
 	

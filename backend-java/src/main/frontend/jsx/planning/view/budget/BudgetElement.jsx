@@ -211,7 +211,7 @@ export default React.createClass({
 				});
 			}
 			BudgetStore.dispatch({
-				action: BudgetStore.ACTION_DELETE,
+				action: BudgetStore.ACTION_DELETE_BUDGET_ELEMENT,
 				data: {
 					id: id
 				}

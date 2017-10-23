@@ -35,12 +35,14 @@ var BudgetStore = Fluxbone.Store.extend({
 	ACTION_CREATE_BUDGET_ELEMENT: 'budget-createBudgetElement',
 	ACTION_GET_BUDGET_ELEMENT: 'budget-getBudgetElement',
 	ACTION_GET_UPDATE_BUDGET_ELEMENT: 'budget-updateBudgetElement',
+	ACTION_DELETE_BUDGET_ELEMENT:'budget-deleteBudgetElement',
 
 	url: URL+"/budget",
 	url_budget_element : URL_BUDGET_ELEMENT + "/element",
 	model: BudgetModel,
 
 	delete(data){
+		console.log("AKI - DISPACHE");
 		var me = this;
 		$.ajax({
 			url: me.url+"/delete",
@@ -123,7 +125,7 @@ var BudgetStore = Fluxbone.Store.extend({
 		});
 	},
 
-	delete(data){
+	deleteBudgetElement(data){
 		var me = this;
 		$.ajax({
 			url: me.url_budget_element +"/delete",

@@ -69,8 +69,6 @@ public class FieldsController extends AbstractController {
 	@Permissioned
 	public void save(@NotNull Long subAction, @NotEmpty String name,Double committed,Double realized, @NotNull Long instanceId) {
 		
-		LOGGER.info(subAction);
-
 		
 		try {
 			StructureLevelInstance instance = this.structureBs.retrieveLevelInstance(instanceId);
@@ -90,9 +88,12 @@ public class FieldsController extends AbstractController {
 			budget.setSubAction(budgetElement.getSubAction());
 			budget.setName(name);
 			
-			if (committed != null) {
+			if (committed != null && committed < budgetElement.getBudgetLoa()) {
 				budget.setCommitted(committed);
-			}
+			} else {
+				 this.fail("Valor do empanhado não pode ser maior que o valor do orçamento LOA!");
+				 return;
+			 }
 			
 			if (realized != null) {
 				budget.setRealized(realized);
@@ -107,7 +108,7 @@ public class FieldsController extends AbstractController {
 				budgetElement.setBalanceAvailable(balanceAvailable);
 			}
 			
-			int linkedObjects = budgetElement.getLinkedObjects();
+			Long linkedObjects = budgetElement.getLinkedObjects();
 			linkedObjects += 1;
 			budgetElement.setLinkedObjects(linkedObjects);
 			
@@ -157,13 +158,13 @@ public class FieldsController extends AbstractController {
 				this.fail("Sub ação inválida!");
 				return;
 			}
+			
 
 			budget.setName(name);
 			budget.setSubAction(budgetElement.getSubAction());
-			budget.setBudgetElement(budgetElement);
+			
 				
 			 if (committed != null && committed < budgetElement.getBudgetLoa()) {
-				 budget.setCommitted(committed);
 				 double budgetLoa= budgetElement.getBudgetLoa();
 				 budgetLoa -= committed;
 				 budgetElement.setBalanceAvailable(budgetLoa);
@@ -173,7 +174,21 @@ public class FieldsController extends AbstractController {
 				 return;
 			 }
 			 
-			
+			 if (budget.getBudgetElement().getId() != budgetElement.getId()) {
+				 BudgetElement budgetElementUpdate = budget.getBudgetElement();
+				 Double balanceAvaliableUpdate = budget.getBudgetElement().getBalanceAvailable();
+				 balanceAvaliableUpdate += budget.getCommitted();
+				 budgetElementUpdate.setBalanceAvailable(balanceAvaliableUpdate);
+				 Long linkedObjects =  budgetElementUpdate.getLinkedObjects();
+				 linkedObjects -= 1;
+				 budgetElementUpdate.setLinkedObjects(linkedObjects);
+				 budgetElement.setLinkedObjects(budgetElement.getLinkedObjects()+1);
+				 this.budgetElementBs.update(budgetElementUpdate);
+			 }
+			 
+			 
+			 budget.setCommitted(committed);
+			 budget.setBudgetElement(budgetElement);
 			 
 			 if (realized != null) {
 				 budget.setRealized(realized);
@@ -213,6 +228,7 @@ public class FieldsController extends AbstractController {
 				double balanceAvailable = budgetElement.getBalanceAvailable(); 
 				balanceAvailable += committed;
 				budgetElement.setBalanceAvailable(balanceAvailable);
+				budgetElement.setLinkedObjects(budgetElement.getLinkedObjects()-1);
 				this.budgetElementBs.update(budgetElement);
 			}
 			
