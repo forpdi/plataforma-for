@@ -158,6 +158,21 @@ export default React.createClass({
 		this.props.newFunc(this.refs.subActions.state.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
 	},
 
+	onKeyUp(evt){		
+		var key = evt.which;
+		if(key == 13) {
+			evt.preventDefault();
+			return;
+		}
+	},
+	onlyNumber(evt){
+		var key = evt.which;
+		if(key == 13|| key != 46 && (key < 48 || key > 57)) {
+			evt.preventDefault();
+			return;
+		}
+	},
+
 	deleteBudget(id,budgetElement,committed,idx,evt){
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
@@ -264,10 +279,10 @@ export default React.createClass({
 				<td> - </td>
 				<td> - </td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editCommitted'+idx}
-							defaultValue={model.budget.committed} />
+							defaultValue={model.budget.committed} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
 				</td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editRealized'+idx}
-							defaultValue={model.budget.realized} />
+							defaultValue={model.budget.realized} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
 				</td>
 				<td>				
                     <div className='displayFlex'>
@@ -290,8 +305,8 @@ export default React.createClass({
 				</td>
 				<td>-</td>
 				<td>-</td>
-				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onKeyUp}/></td>
-				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onKeyUp}/></td>
+				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/></td>
+				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/></td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>

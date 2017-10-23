@@ -1134,17 +1134,20 @@ var Validate = {
 	},
 
 	validationNewBudgetField: function(refs) {
-		var name = refs.budgetNameText.value.trim();
+		var subAction = refs["subActions"].state.value;
+		var name = refs["budgetNameText"].value;
 		var msg = Messages.get("label.form.error");
- 		var boolMsg = false;
-
-
- 		//if (name.length > 255) {
- 			//Toastr.remove();
- 			//Toastr.error("Limite de caractres atingido nos campo(s) abaixo: " + "Nome");
-			//this.context.toastr.addAlertError("Limite de caractres atingido nos campo(s) abaixo: " + "Nome");
- 			//return;
- 		//}
+		 var boolMsg = false;
+		 		 
+		 if (subAction == "") {
+			boolMsg = true;
+			//Toastr.remove();
+			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["subActions"].className += " borderError";
+		} else { 
+			refs.formAlertErrorSubAction.innerHTML = "";
+			//Toastr.remove();
+		}
 
 		if(name == "") {
 			boolMsg = true;
@@ -1201,6 +1204,93 @@ var Validate = {
 			subAction: subAction
 		};
 		return aux;
+	},
+
+	validationEditBudgetElementField: function(refs, idx) {
+		var subAction = refs["nameBudgetElement"+idx].value;
+		var budgetLoa = refs["budgetLoaEdit"+idx].value
+		
+		var msg = Messages.get("label.form.error");
+ 		var boolMsg = false;
+
+		if (subAction == "") {
+			boolMsg = true;
+			//Toastr.remove();
+			refs.formAlertErrorSubActionEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["nameBudgetElement"+idx].className += " borderError";
+		} else { 
+			if(refs['nameBudgetElement'+idx].className && refs['nameBudgetElement'+idx].className.indexOf('borderError')){
+				refs['nameBudgetElement'+idx].className = "budget-field-table";
+				refs.formAlertErrorSubActionEdit.innerHTML = "";
+			}
+			//Toastr.remove();
+		}
+
+		if(budgetLoa.trim() == "") {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoaEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs['budgetLoaEdit'+idx].className += " borderError";
+		} else {
+			if(refs['budgetLoaEdit'+idx].className && refs['budgetLoaEdit'+idx].className.indexOf('borderError')){
+				refs['budgetLoaEdit'+idx].className = "budget-field-table";
+				refs.formAlertErrorBudgetLoaEdit.innerHTML = "";
+			}
+
+		}
+
+		var aux = {
+			msg: msg,
+			boolMsg: boolMsg,
+			name: name,
+			subAction: subAction
+		};
+
+		
+		return aux;
+	},
+
+	validationNewBudgetElementField: function(refs) {
+		var subAction = refs["subAction"].value;
+		var budgetLoa = refs["budgetLoa"].value
+		
+		var msg = Messages.get("label.form.error");
+ 		var boolMsg = false;
+
+		if (subAction == "") {
+			boolMsg = true;
+			//Toastr.remove();
+			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["subAction"].className += " borderError";
+		} else { 
+			if(refs['subAction'].className && refs['subAction'].className.indexOf('borderError')){
+				refs['subAction'].className = "budget-field-table";
+				refs.formAlertErrorSubAction.innerHTML = "";
+			}
+			//Toastr.remove();
+		}
+
+		if(budgetLoa.trim() == "") {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoa.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs['budgetLoa'].className += " borderError";
+		} else {
+			if(refs['budgetLoa'].className && refs['budgetLoa'].className.indexOf('borderError')){
+				refs['budgetLoa'].className = "budget-field-table";
+				refs.formAlertErrorBudgetLoa.innerHTML = "";
+			}
+
+		}
+
+		var aux = {
+			msg: msg,
+			boolMsg: boolMsg,
+			name: name,
+			subAction: subAction
+		};
+
+
+		return aux;
+
 	},
 
 	validationNewSchedule: function(refs, state) {

@@ -17,15 +17,17 @@ export default React.createClass({
 			value: this.props.defaultValue || ""
 		});
 
-		BudgetStore.on("budgetRetrivied", (model) => {	
+		BudgetStore.on("budgetElementRetrivied", (model) => {	
 			if (this.isMounted()) {		
 			    this.setState({
 			    	budgets: model.data
 			    });	 
 		    } 	
-	  	});
+		  });
+		  
+		
 	  	BudgetStore.dispatch({
-			action: BudgetStore.ACTION_GET_BUDGET,
+			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
 			data: {
 				companyId: EnvInfo.company.id 
 			}      
@@ -34,7 +36,7 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps){		
 		BudgetStore.dispatch({
-			action: BudgetStore.ACTION_GET_BUDGET,
+			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
 			data: {
 				companyId: EnvInfo.company.id 
 			}      

@@ -29,7 +29,6 @@ var BudgetStore = Fluxbone.Store.extend({
 	ACTION_FIND: 'budget-find',
 	ACTION_RETRIEVE: 'budget-retrieve',
 	ACTION_UPDATE: 'budget-update',
-	ACTION_GET_BUDGET: 'budget-getBudget',
 	ACTION_DELETE: 'budget-delete',
 	ACTION_CUSTOM_UPDATE: 'budget-customUpdate',
 	dispatchAcceptRegex: /^budget-[a-zA-Z0-9]+$/,
@@ -72,24 +71,6 @@ var BudgetStore = Fluxbone.Store.extend({
 		});
 	},
 
-	getBudget(data){
-		console.log(data);
-		var me = this;
-		$.ajax({
-			url: me.url+"/budget",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'json',
-			data:data.companyId,
-			success(model) {
-				me.trigger("budgetRetrivied", model);
-			},
-			error(opts, status, errorMsg) {
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
 	createBudgetElement(data) {
 		var me = this;
 		$.ajax({
@@ -112,7 +93,6 @@ var BudgetStore = Fluxbone.Store.extend({
 	},
 
 	getBudgetElement(data){
-		console.log(data);
 		var me = this;
 		$.ajax({
 			url: me.url_budget_element +"/list/"+data.companyId,
@@ -139,6 +119,22 @@ var BudgetStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("budgetElementUpdated", opts);
+			}
+		});
+	},
+
+	delete(data){
+		var me = this;
+		$.ajax({
+			url: me.url_budget_element +"/delete",
+			method: 'POST',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("budgetElementDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("budgetElementDeleted", opts);
 			}
 		});
 	},

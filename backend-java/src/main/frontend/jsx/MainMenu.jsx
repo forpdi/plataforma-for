@@ -258,16 +258,16 @@ export default React.createClass({
                 </div>
             : ""}
 
-            
-            {this.state.showBudgetElement ? 
+                                
+            {((this.context.roles.ADMIN || _.contains(this.context.permissions,
+             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?    
                 <div className="fpdi-tabs-nav">
                     <Link to="/budget-element" activeClassName="active">
                         <span className="fpdi-nav-icon mdi mdi-coin icon-link"
                         /> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}
                     </Link>
                 </div>
-            : ""}
-
+            :""}
 
 
             <div style={{height: "10px"}} />

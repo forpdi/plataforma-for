@@ -161,14 +161,19 @@ public class FieldsController extends AbstractController {
 			budget.setName(name);
 			budget.setSubAction(budgetElement.getSubAction());
 			budget.setBudgetElement(budgetElement);
-			
-			 if (committed != null) {
+				
+			 if (committed != null && committed < budgetElement.getBudgetLoa()) {
 				 budget.setCommitted(committed);
 				 double budgetLoa= budgetElement.getBudgetLoa();
 				 budgetLoa -= committed;
 				 budgetElement.setBalanceAvailable(budgetLoa);
 				 this.budgetElementBs.update(budgetElement);
+			 } else {
+				 this.fail("Valor do empanhado não pode ser maior que o valor do orçamento LOA!");
+				 return;
 			 }
+			 
+			
 			 
 			 if (realized != null) {
 				 budget.setRealized(realized);
@@ -200,8 +205,6 @@ public class FieldsController extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void deleteBdget(@NotNull Long id,@NotNull Long idBudgetElement,Double committed) {
-		LOGGER.info("Committed");
-		LOGGER.info(committed);
 		try {
 			Budget budget = this.bs.budgetExistsById(id);
 			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(idBudgetElement);
@@ -539,6 +542,8 @@ public class FieldsController extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void listBudgetAction(@NotNull Long companyId) {
+		LOGGER.info("companyID");
+		LOGGER.info(companyId);
 		try {
 			Company company = this.companyBs.exists(companyId, Company.class);
 			if (company == null) {

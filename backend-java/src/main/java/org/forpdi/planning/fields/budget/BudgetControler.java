@@ -64,7 +64,10 @@ public class BudgetControler  extends AbstractController {
 	}
 	
 	/**
-	 * Listar todos os orçamentos de simulação
+	 * Listar todos elementos orçamentários de uma company
+	 * 
+	 * @param companyId
+	 * 			Id da company
 	 * 
 	 * @return list, todos as simulações de orçamento
 	 */
@@ -92,7 +95,7 @@ public class BudgetControler  extends AbstractController {
 	}
 	
 	/**
-	 * Atualizar um orçamento existente no banco de dados.
+	 * Atualizar um Elemento orçamentário existente no banco de dados.
 	 * 
 	 * @param name,
 	 *            novo nome do orçamento
@@ -107,7 +110,9 @@ public class BudgetControler  extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotNull Double budgetLoa) {
+	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotEmpty String budgetLoa) {
+		
+		Double budgetLoaD = Double.parseDouble(budgetLoa);
 		
 		try {
 			BudgetElement budgetElement = this.bs.budgetElementExistsById(idBudgetElement);
@@ -119,14 +124,15 @@ public class BudgetControler  extends AbstractController {
 			
 			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
 			
-			if (budgetLoa < diferenca) {
+			
+			if (budgetLoaD  < diferenca) {
 				this.fail("Orçamento loa não permitido.");
 				return;
 			}
 			
 			budgetElement.setSubAction(subAction);
-			budgetElement.setBudgetLoa(budgetLoa);
-			budgetElement.setBalanceAvailable(budgetLoa);
+			budgetElement.setBudgetLoa(budgetLoaD);
+			budgetElement.setBalanceAvailable(budgetLoaD);
 					
 			this.bs.update(budgetElement);
 			
@@ -138,6 +144,35 @@ public class BudgetControler  extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 		
+	}
+	
+	
+	/**
+	 * Excluir um elemento existente no banco de dados
+	 * 
+	 * @param id,
+	 *            referente ao orçamento a ser excluido
+	 * @return budget, orçamento excluído
+	 */
+	@Post(BASEPATH + "/budget/element/delete")
+	@Consumes
+	@NoCache
+	@Permissioned
+	public void deleteBdget(@NotNull Long id) {
+		try {
+			BudgetElement budgetElement = this.bs.budgetElementExistsById(id);
+			
+			if (budgetElement.getLinkedObjects() > 0) {
+				this.fail("Não foi possivél deletar, elemento orçamentario possui orçamento relacionado.");
+				return;
+			}
+			
+			this.bs.deleteBudget(budgetElement);
+			this.success(budgetElement);
+		} catch (Throwable e) {
+			LOGGER.error("Erro ao deletar o orçamento", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
 	}
 	
 

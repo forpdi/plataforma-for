@@ -69,5 +69,17 @@ public class BudgetBS extends HibernateBusiness {
 		budgetElement.setDeleted(false);
 		this.persist(budgetElement);
 	}
+	
+	/**
+	 * Deletar elemento orçamentário.
+	 * 
+	 * @param budget
+	 *            Orçamento para deletar.
+	 * @return void.
+	 */
+	public void deleteBudget(BudgetElement budgetElement) {
+		budgetElement.setDeleted(true);
+		this.persist(budgetElement);
+	}
 
 }

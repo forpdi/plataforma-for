@@ -11,6 +11,9 @@ import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import _ from 'underscore';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
+
+var Validate = Validation.validate;
+
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -45,7 +48,22 @@ export default React.createClass({
 			evt.preventDefault();
 			return;
 		}
-    },
+	},
+	onlyNumber(evt){
+		var key = evt.which;
+		if(key == 13|| key != 46 && (key < 48 || key > 57)) {
+			evt.preventDefault();
+			return;
+		}
+	},
+   
+   onlyNumberPaste(evt){
+	   var value = evt.clipboardData.getData('Text');
+	   if (!(!isNaN(parseFloat(value)) && isFinite(value)) || parseFloat(value) < 0) {
+		   evt.preventDefault();
+		   return;
+	   }
+   },
     
 	componentDidMount() {
         BudgetStore.dispatch({
@@ -72,14 +90,10 @@ export default React.createClass({
 			    	budgetElements: model.data
 			    });	 
             }
-		  });
+		  },this);
 		  
 		  BudgetStore.on("budgetElementUpdated", model => {
-			
-		
 			if(model.data){
-				
-
 				this.state.budgetElements[this.state.idx].subAction = model.data.subAction; 
 				this.state.budgetElements[this.state.idx].balanceAvailable=model.data.balanceAvailable; 
 				this.state.budgetElements[this.state.idx].budgetLoa = model.data.budgetLoa; 
@@ -101,6 +115,28 @@ export default React.createClass({
 				});
 			}
 		},this);
+
+		BudgetStore.on("budgetElementDeleted", model => {			
+			if (model.success) {
+				this.state.budgetElements.splice(this.state.idx,1);
+				this.context.toastr.addAlertSuccess(Messages.get("label.deleted.budgetElement"));
+				if (this.isMounted()) {
+					this.setState({
+						loading: false
+					});
+				} 
+				
+			} else  {
+				var errorMsg = JSON.parse(model.responseText)
+				this.context.toastr.addAlertError(errorMsg.message);
+				if (this.isMounted()) {
+					this.setState({
+						loading: false
+					});
+				} 
+
+			}
+		},this);
           
 	},
 	componentWillUnmount() {
@@ -115,8 +151,17 @@ export default React.createClass({
 		}
 	},
 
-    acceptNewBudget() {
-    
+	acceptNewBudget() {
+
+		var validation = Validate.validationNewBudgetElementField(this.refs);	
+		
+		if (validation.boolMsg) {
+			//Toastr.remove();
+			//Toastr.error(msg);
+			this.context.toastr.addAlertError(validation.msg);
+			return;
+		}
+		
         BudgetStore.dispatch({
             action: BudgetStore.ACTION_CREATE_BUDGET_ELEMENT,
             data: {
@@ -155,7 +200,8 @@ export default React.createClass({
 	},
 
 	deleteBudget(id, idx,evt){
-		var msg = "Você tem certeza que deseja excluir " + this.state.budgetElements[idx].budget.subAction + "?";
+		var msg = "Você tem certeza que deseja excluir " + this.state.budgetElements[idx].subAction + "?";
+		
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			if (this.isMounted()) {
@@ -172,39 +218,19 @@ export default React.createClass({
 			});
 
 			},msg,()=>{Modal.hide()});
-
-		/*Modal.deleteConfirmCustom(() => {
-			Modal.hide();
-
-			this.setState({
-				loading: true,
-				idx: idx //index a ser deletado
-			});
-			BudgetStore.dispatch({
-				action: BudgetStore.ACTION_DELETE,
-				data: {
-					id: id
-				}
-			});
-		},"Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?");*/
 	},
 
 	acceptedEditbudget(id, idx){
-		/**
-		  var validation = Validate.validationEditBudgetField(this.refs, idx);	
-			console.log("acceptedEditbudget");
-		
 
-			if (validation.boolMsg) {
-				//Toastr.remove();
-				//Toastr.error(msg);
-				this.context.toastr.addAlertError(validation.msg);
-				return;
-			}
+		var validation = Validate.validationEditBudgetElementField(this.refs, idx);	
 
-		 */
+		if (validation.boolMsg) {
+			//Toastr.remove();
+			//Toastr.error(msg);
+			this.context.toastr.addAlertError(validation.msg);
+			return;
+		}
 
-		
 		if (this.isMounted()) {
 	        this.setState({
 				loading: true,
@@ -216,16 +242,12 @@ export default React.createClass({
 			data: {
 				idBudgetElement: id,
 				subAction:this.refs['nameBudgetElement'+idx].value,
-				budgetLoa:this.refs['budgetLoa'+idx].value
+				budgetLoa:parseFloat(this.refs['budgetLoaEdit'+idx].value)
 			}
 		});		
 
 	},
-
 	rejectEditbudget(idx){
-		//var array = this.state.editingIdx;
-		//var i = array.indexOf(idx);
-		//array.splice(i);
 		if (this.isMounted()) {
 			this.setState({
 				editingIdx: -1
@@ -248,14 +270,15 @@ export default React.createClass({
 			<tr key={'new-budgetElement-'+idx}>
 				<td><input type='text' maxLength='255' className='budget-field-table' ref={'nameBudgetElement'+idx}
 				 	onKeyPress={this.onKeyUp} defaultValue={model.subAction}/>
-				 	<div className="formAlertError" ref="formAlertErrorName"></div>
+				 	<div className="formAlertError" ref="formAlertErrorSubActionEdit"></div>
 				</td>
-				<td><input type='text' maxLength='255' className='budget-field-table' ref={'budgetLoa'+idx}
-				 	onKeyPress={this.onKeyUp} defaultValue={model.budgetLoa}/>
-				 	<div className="formAlertError" ref="formAlertErrorName"></div>
+				<td><input type='text' maxLength='255' className='budget-field-table' ref={'budgetLoaEdit'+idx} defaultValue={model.budgetLoa} onKeyPress={this.onlyNumber}
+					onPaste={this.onlyNumberPaste}/>
+				 	<div className="formAlertError" ref="formAlertErrorBudgetLoaEdit"></div>
 				</td>
 				<td> - </td>
 				<td> - </td>
+				<td> </td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.id,idx)} title={Messages.get("label.submitLabel")}></span>
@@ -272,11 +295,13 @@ export default React.createClass({
 				<td ref="tdSubAction"><input type='text' maxLength='255' className='budget-field-table' ref="subAction" onKeyPress={this.onKeyUp}/>
 					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 				</td>
-				<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetLoa" onKeyPress={this.onKeyUp}/>
-					<div className="formAlertError" ref="formAlertErrorName"></div>	
+				<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetLoa" onKeyPress={this.onlyNumber}
+						onPaste={this.onlyNumberPaste}/>
+					<div className="formAlertError" ref="formAlertErrorBudgetLoa"></div>	
 				</td>
 				<td> - </td>
 				<td> - </td>
+				<td></td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
@@ -363,15 +388,15 @@ export default React.createClass({
 							return(
 								<tr key={"budget-element"+idx}>
 									<td id={'subAction'+idx}>{model.subAction.toUpperCase()}</td>
-									<td id={'budgetLoa'+idx}>{model.budgetLoa}</td>
-									<td>{"R$"+(model.balanceAvailable)}</td>
+									<td id={'budgetLoa'+idx}>{"R$" + (model.budgetLoa)}</td>
+									<td>{"R$" + (model.balanceAvailable)}</td>
 									<td id={'linkedObjects'+idx}>{model.linkedObjects}</td>
 									<td> </td>
 									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
 											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.id,idx)} title={Messages.get("label.title.editInformation")}/>
-											<span className="mdi mdi-delete cursorPointer inner" title={Messages.get("label.delete")}/>
+											<span className="mdi mdi-delete cursorPointer inner" onClick={this.deleteBudget.bind(this,model.id,idx)} title={Messages.get("label.delete")}/>
 										</td>
 									: <td></td>}
 								</tr>
