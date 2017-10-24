@@ -116,10 +116,6 @@ public class BudgetControler  extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotNull Double budgetLoa) {
-		LOGGER.info("BudgetLOA");
-		LOGGER.info(budgetLoa);
-		
-		
 		try {
 			BudgetElement budgetElement = this.bs.budgetElementExistsById(idBudgetElement);
 			
@@ -149,8 +145,6 @@ public class BudgetControler  extends AbstractController {
 			}
 			
 			Double budgetLoaTotal = budgetLoa - committedTotal;
-			
-			LOGGER.info(committedTotal);
 			
 			budgetElement.setSubAction(subAction);
 			budgetElement.setBudgetLoa(budgetLoa);
