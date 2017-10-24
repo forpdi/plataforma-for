@@ -41,19 +41,24 @@ public class BudgetControler  extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void save(@NotEmpty String subAction, @NotNull Double budgetLoa,@NotNull Long companyId) {
+	public void save(@NotEmpty String subAction,@NotEmpty String budgetLoa,@NotNull Long companyId) {
+		
 		try {
 			Company company = this.companyBs.exists(companyId, Company.class);
 			if (company == null) {
 				this.fail("Empresa inválida!");
 				return;
 			}
-
+			
+			String number = budgetLoa;
+			String numberFormated = number.replaceAll(",",".");
+			Double budgetLoaD = Double.parseDouble(numberFormated);
+			
 			BudgetElement budgetElement = new BudgetElement();
 			budgetElement.setCompany(company);
 			budgetElement.setSubAction(subAction);
-			budgetElement.setBudgetLoa(budgetLoa);
-			budgetElement.setBalanceAvailable(budgetLoa);
+			budgetElement.setBudgetLoa(budgetLoaD);
+			budgetElement.setBalanceAvailable(budgetLoaD);
 			
 			this.bs.saveBudgetElement(budgetElement);
 			this.success(budgetElement);
@@ -110,9 +115,10 @@ public class BudgetControler  extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotEmpty String budgetLoa) {
+	public void update(@NotNull Long idBudgetElement,@NotEmpty String subAction,@NotNull Double budgetLoa) {
+		LOGGER.info("BudgetLOA");
+		LOGGER.info(budgetLoa);
 		
-		Double budgetLoaD = Double.parseDouble(budgetLoa);
 		
 		try {
 			BudgetElement budgetElement = this.bs.budgetElementExistsById(idBudgetElement);
@@ -125,14 +131,14 @@ public class BudgetControler  extends AbstractController {
 			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
 			
 			
-			if (budgetLoaD  < diferenca) {
+			if (budgetLoa  < diferenca) {
 				this.fail("Orçamento loa não permitido.");
 				return;
 			}
 			
 			budgetElement.setSubAction(subAction);
-			budgetElement.setBudgetLoa(budgetLoaD);
-			budgetElement.setBalanceAvailable(budgetLoaD);
+			budgetElement.setBudgetLoa(budgetLoa);
+			budgetElement.setBalanceAvailable(budgetLoa);
 					
 			this.bs.update(budgetElement);
 			

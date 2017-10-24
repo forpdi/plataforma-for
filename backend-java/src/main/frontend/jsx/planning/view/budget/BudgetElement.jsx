@@ -51,7 +51,7 @@ export default React.createClass({
 	},
 	onlyNumber(evt){
 		var key = evt.which;
-		if(key == 13|| key != 46 && (key < 48 || key > 57)) {
+		if(key == 13|| key != 44 && (key < 48 || key > 57)) {
 			evt.preventDefault();
 			return;
 		}
@@ -151,6 +151,30 @@ export default React.createClass({
 		}
 	},
 
+	formatEUA(num){
+	    var n = num.toFixed(2).toString(), p = n.indexOf('.');
+	    return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
+	        return p<0 || i<p ? ($0+',') : $0;
+	    });
+  	},
+
+  	formatBR(str){
+   
+	    var x = str.split('.')[0];
+	    x = this.replaceAll(x,",",".");
+	    var decimal = str.split('.')[1];
+	    if(decimal == undefined){
+	      decimal = '00';
+	    }
+	    return x + "," + decimal;
+	  },
+	  
+	converteMoedaFloat(valor){
+		var valorFormated = valor.toString();
+		valorFormated =  valorFormated.replace(".",",");		
+		return valorFormated;
+	 },
+
 	acceptNewBudget() {
 
 		var validation = Validate.validationNewBudgetElementField(this.refs);	
@@ -166,7 +190,7 @@ export default React.createClass({
             action: BudgetStore.ACTION_CREATE_BUDGET_ELEMENT,
             data: {
                 subAction: this.refs.subAction.value,
-                budgetLoa:parseFloat(this.refs.budgetLoa.value),
+                budgetLoa:this.refs.budgetLoa.value,
                 companyId: EnvInfo.company.id
             }
         });
@@ -236,13 +260,15 @@ export default React.createClass({
 				loading: true,
 				idx: idx //index a ser editado
 			});
-	    }
+		}
+		
+
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_UPDATE_BUDGET_ELEMENT,
 			data: {
 				idBudgetElement: id,
 				subAction:this.refs['nameBudgetElement'+idx].value,
-				budgetLoa:parseFloat(this.refs['budgetLoaEdit'+idx].value)
+				budgetLoa:this.refs['budgetLoaEdit'+idx].value
 			}
 		});		
 
@@ -272,7 +298,7 @@ export default React.createClass({
 				 	onKeyPress={this.onKeyUp} defaultValue={model.subAction}/>
 				 	<div className="formAlertError" ref="formAlertErrorSubActionEdit"></div>
 				</td>
-				<td><input type='text' maxLength='255' className='budget-field-table' ref={'budgetLoaEdit'+idx} defaultValue={model.budgetLoa} onKeyPress={this.onlyNumber}
+				<td><input type='text' maxLength='255' className='budget-field-table' ref={'budgetLoaEdit'+idx} defaultValue={this.converteMoedaFloat(model.budgetLoa)} onKeyPress={this.onlyNumber}
 					onPaste={this.onlyNumberPaste}/>
 				 	<div className="formAlertError" ref="formAlertErrorBudgetLoaEdit"></div>
 				</td>
@@ -319,24 +345,6 @@ export default React.createClass({
 			})
 		}
 	},
-
-	formatEUA(num){
-	    var n = num.toFixed(2).toString(), p = n.indexOf('.');
-	    return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
-	        return p<0 || i<p ? ($0+',') : $0;
-	    });
-  	},
-
-  	formatBR(str){
-	    var x = str.split('.')[0];
-	    x = this.replaceAll(x,",",".");
-	    var decimal = str.split('.')[1];
-	    if(decimal == undefined){
-	      decimal = '00';
-	    }
-	    return x + "," + decimal;
-  	},
-
 	replaceAll(str, needle, replacement) {
 	    var i = 0;
 	    while ((i = str.indexOf(needle, i)) != -1) {
@@ -388,8 +396,8 @@ export default React.createClass({
 							return(
 								<tr key={"budget-element"+idx}>
 									<td id={'subAction'+idx}>{model.subAction.toUpperCase()}</td>
-									<td id={'budgetLoa'+idx}>{"R$" + (model.budgetLoa)}</td>
-									<td>{"R$" + (model.balanceAvailable)}</td>
+									<td id={'budgetLoa'+idx}>{"R$" + this.formatBR(this.formatEUA(model.budgetLoa))} </td>
+									<td> {"R$" + this.formatBR(this.formatEUA(model.balanceAvailable))}</td>
 									<td id={'linkedObjects'+idx}>{model.linkedObjects}</td>
 									<td> </td>
 									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 

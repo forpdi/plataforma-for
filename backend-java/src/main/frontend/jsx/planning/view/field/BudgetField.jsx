@@ -76,6 +76,12 @@ export default React.createClass({
 		}
 	},
 
+	converteMoedaFloat(valor){
+		var valorFormated = valor.toString();
+		valorFormated =  valorFormated.replace(".",",");		
+		return valorFormated;
+	 },
+
 	componentDidMount()	{
 		if (this.isMounted()) {
 			this.setState({
@@ -155,7 +161,7 @@ export default React.createClass({
 			return;
 		}
 		
-		this.props.newFunc(this.refs.subActions.state.value,validation.name,parseFloat(this.refs.budgetCommitted.value),parseFloat(this.refs.budgetRealized.value)); 
+		this.props.newFunc(this.refs.subActions.state.value,validation.name,this.refs.budgetCommitted.value,this.refs.budgetRealized.value); 
 	},
 
 	onKeyUp(evt){		
@@ -165,16 +171,24 @@ export default React.createClass({
 			return;
 		}
 	},
+
 	onlyNumber(evt){
 		var key = evt.which;
-		if(key == 13|| key != 46 && (key < 48 || key > 57)) {
+		if(key == 13|| key != 44 && (key < 48 || key > 57)) {
+			evt.preventDefault();
+			return;
+		}
+	},
+
+	onlyNumberPaste(evt){
+		var value = evt.clipboardData.getData('Text');
+		if (!(!isNaN(parseFloat(value)) && isFinite(value)) || parseFloat(value) < 0) {
 			evt.preventDefault();
 			return;
 		}
 	},
 
 	deleteBudget(id,budgetElement,committed,idx,evt){
-		console.log("AKI -- DELETE");
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
 			Modal.hide();
@@ -184,12 +198,15 @@ export default React.createClass({
 					idx: idx //index a ser deletado
 				});
 			}
+
+			console.log(committed);
+
 			BudgetStore.dispatch({
 				action: BudgetStore.ACTION_DELETE,
 				data: {
 					id: id,
 					idBudgetElement:budgetElement,
-					committed:committed
+					committed:this.converteMoedaFloat(committed)
 				}
 			});
 
@@ -237,8 +254,8 @@ export default React.createClass({
 				name:validation.name,
 				subAction:validation.subAction,
 				id: id,
-				committed:parseFloat(this.refs['editCommitted'+idx].value),
-				realized:parseFloat(this.refs['editRealized'+idx].value),
+				committed:this.refs['editCommitted'+idx].value,
+				realized:this.refs['editRealized'+idx].value,
 				idBudgetElement: this.refs["subActions-edit-"+idx].state.value
 			}
 		});
@@ -280,10 +297,10 @@ export default React.createClass({
 				<td> - </td>
 				<td> - </td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editCommitted'+idx}
-							defaultValue={model.budget.committed} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
+							defaultValue={this.converteMoedaFloat(model.budget.committed)} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
 				</td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editRealized'+idx}
-							defaultValue={model.budget.realized} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
+							defaultValue={this.converteMoedaFloat(model.budget.realized)} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
 				</td>
 				<td>				
                     <div className='displayFlex'>
@@ -395,10 +412,10 @@ export default React.createClass({
 								<tr key={"budget-"+idx}>
 									<td id={'subAction'+idx}>{model.budget.subAction}</td>
 									<td id={'name'+idx}>{model.budget.name}</td>	
-									<td id={'budgetLoa' + idx}>{model.budgetLoa}</td>
-									<td id = {'balanceAvailable' + idx}> {model.balanceAvailable}</td>
-									<td id = {'committed' + idx}>{model.budget.committed}</td>
-									<td id = {'realized' + idx}> {model.budget.realized}</td>
+									<td id={'budgetLoa' + idx}>{"R$"  + this.formatBR(this.formatEUA(model.budgetLoa))}</td>
+									<td id = {'balanceAvailable' + idx}> {"R$"  + this.formatBR(this.formatEUA(model.balanceAvailable))}</td>
+									<td id = {'committed' + idx}>{"R$" + this.formatBR(this.formatEUA(model.budget.committed))}</td>
+									<td id = {'realized' + idx}> {"R$" + this.formatBR(this.formatEUA(model.budget.realized))}</td>
 									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">

@@ -22,10 +22,10 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 	private String subAction;
 	
 	@Column(nullable=false)
-	private double budgetLoa;
+	private Double budgetLoa;
 	
 	@Column(nullable=false)
-	private double balanceAvailable;
+	private Double balanceAvailable;
 	
 	@Column(nullable=false)
 	private Long linkedObjects = 0l;

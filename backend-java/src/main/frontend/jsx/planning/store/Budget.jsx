@@ -42,7 +42,6 @@ var BudgetStore = Fluxbone.Store.extend({
 	model: BudgetModel,
 
 	delete(data){
-		console.log("AKI - DISPACHE");
 		var me = this;
 		$.ajax({
 			url: me.url+"/delete",
