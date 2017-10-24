@@ -6,7 +6,10 @@ import java.util.Date;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
+import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
@@ -80,6 +83,23 @@ public class BudgetBS extends HibernateBusiness {
 	public void deleteBudget(BudgetElement budgetElement) {
 		budgetElement.setDeleted(true);
 		this.persist(budgetElement);
+	}
+	
+	
+	/**
+	 * Buscar lista de Bugtes.
+	 * 
+	 * @param BudgetElement
+	 *           Elemento orçamentario.
+	 * @return PaginatedList<Budget> Lista de orçamentos.
+	 */
+	public PaginatedList<Budget> listBudgetsByBudgetElement(BudgetElement budgetElement) {
+		PaginatedList<Budget> list = new PaginatedList<Budget>();
+		Criteria criteria = this.dao.newCriteria(Budget.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("budgetElement",budgetElement));
+		list.setList(this.dao.findByCriteria(criteria, Budget.class));
+		
+		return list;
 	}
 
 }

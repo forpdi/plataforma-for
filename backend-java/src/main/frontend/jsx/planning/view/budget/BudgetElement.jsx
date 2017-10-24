@@ -282,6 +282,7 @@ export default React.createClass({
 				editingIdx: -1
 			});
 		}
+		this.forceUpdate();
 	},
 
 	editBudget(id, idx, evt){
@@ -292,6 +293,7 @@ export default React.createClass({
 				editingIdx: idx
 			});
 		}
+		this.forceUpdate();
 	},
 
 	renderEditLine(model, idx){		

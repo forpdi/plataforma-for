@@ -184,13 +184,13 @@ public class FieldsController extends AbstractController {
 			budget.setSubAction(budgetElement.getSubAction());
 			
 				
-			if (committed != null && committed <= budgetElement.getBudgetLoa()) {
-				 double budgetLoa= budgetElement.getBudgetLoa();
-				 budgetLoa -= committed;
-				 budgetElement.setBalanceAvailable(budgetLoa);
+			if (committed != null && committed <= budgetElement.getBalanceAvailable()) {
+				 double budgetBalanceAvailable = budgetElement.getBudgetLoa();
+				 budgetBalanceAvailable -= committed;
+				 budgetElement.setBalanceAvailable(budgetBalanceAvailable);
 				 this.budgetElementBs.update(budgetElement);
 			 } else {
-				 this.fail("Valor do empanhado não pode ser maior que o valor do orçamento LOA!");
+				 this.fail("Valor do empanhado não pode ser maior que o valor do saldo disponiuvel!");
 				 return;
 			 }
 			 

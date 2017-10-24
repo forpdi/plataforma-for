@@ -128,17 +128,33 @@ public class BudgetControler  extends AbstractController {
 				return;
 			}
 			
-			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
+			if (budgetLoa == null) {
+				this.fail("Oçamento Loa inválido.");
+				return;
+			}
 			
+			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
+			Double committedTotal = 0d;
 			
 			if (budgetLoa  < diferenca) {
 				this.fail("Orçamento loa não permitido.");
 				return;
+			} else {
+				PaginatedList<Budget> list = this.bs.listBudgetsByBudgetElement(budgetElement);
+				
+				for (Budget budget: list.getList()) {
+					committedTotal += budget.getCommitted();
+				}
+				
 			}
+			
+			Double budgetLoaTotal = budgetLoa - committedTotal;
+			
+			LOGGER.info(committedTotal);
 			
 			budgetElement.setSubAction(subAction);
 			budgetElement.setBudgetLoa(budgetLoa);
-			budgetElement.setBalanceAvailable(budgetLoa);
+			budgetElement.setBalanceAvailable(budgetLoaTotal);
 					
 			this.bs.update(budgetElement);
 			
