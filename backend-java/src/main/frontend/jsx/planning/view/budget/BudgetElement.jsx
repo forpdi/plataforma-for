@@ -234,6 +234,9 @@ export default React.createClass({
 					idx: idx //index a ser deletado
 				});
 			}
+
+			this.forceUpdate();
+
 			BudgetStore.dispatch({
 				action: BudgetStore.ACTION_DELETE_BUDGET_ELEMENT,
 				data: {
@@ -245,7 +248,6 @@ export default React.createClass({
 	},
 
 	acceptedEditbudget(id, idx){
-
 		var validation = Validate.validationEditBudgetElementField(this.refs, idx);	
 
 		if (validation.boolMsg) {
@@ -261,8 +263,9 @@ export default React.createClass({
 				idx: idx //index a ser editado
 			});
 		}
-		
-
+	
+		this.forceUpdate();
+	
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_UPDATE_BUDGET_ELEMENT,
 			data: {

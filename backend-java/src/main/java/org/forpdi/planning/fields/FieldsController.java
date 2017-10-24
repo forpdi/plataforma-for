@@ -68,7 +68,7 @@ public class FieldsController extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void save(@NotNull Long subAction, @NotEmpty String name,String committed,String realized, @NotNull Long instanceId) {
-		
+		Double committedD = 0d;
 		
 		try {
 			StructureLevelInstance instance = this.structureBs.retrieveLevelInstance(instanceId);
@@ -91,7 +91,7 @@ public class FieldsController extends AbstractController {
 			if (committed != null) {
 				String numberCommitted = committed;
 				String numberFormated = numberCommitted.replaceAll(",",".");
-				Double committedD = Double.parseDouble(numberFormated);
+				committedD = Double.parseDouble(numberFormated);
 				 
 				if (committedD > budgetElement.getBudgetLoa()) {
 					 this.fail("Valor do empanhado não pode ser maior que o valor do orçamento LOA!");
@@ -113,9 +113,15 @@ public class FieldsController extends AbstractController {
 			if (realized != null) {
 				String numberRealized = realized;
 				String numberFormated = numberRealized.replaceAll(",",".");
-				Double RealizedD = Double.parseDouble(numberFormated);
+				Double realizedD = Double.parseDouble(numberFormated);
 				
-				budget.setRealized(RealizedD);
+				if (realizedD > committedD) {
+					 this.fail("Valor do realizado não pode ser maior que o valor do empenhado!");
+					 return;
+				} else {
+					budget.setRealized(realizedD);
+				}
+				
 			}
 			
 			budget.setBudgetElement(budgetElement);
@@ -178,7 +184,7 @@ public class FieldsController extends AbstractController {
 			budget.setSubAction(budgetElement.getSubAction());
 			
 				
-			 if (committed != null && committed <= budgetElement.getBudgetLoa()) {
+			if (committed != null && committed <= budgetElement.getBudgetLoa()) {
 				 double budgetLoa= budgetElement.getBudgetLoa();
 				 budgetLoa -= committed;
 				 budgetElement.setBalanceAvailable(budgetLoa);
@@ -204,9 +210,15 @@ public class FieldsController extends AbstractController {
 			 budget.setCommitted(committed);
 			 budget.setBudgetElement(budgetElement);
 			 
-			 if (realized != null) {
-				 budget.setRealized(realized);
-			 }
+			if (realized != null) {
+				if (realized > committed) {
+					 this.fail("Valor do realizado não pode ser maior que o valor do empenhado!");
+					 return;
+				} else {
+					budget.setRealized(realized);
+				}
+				
+			}
 					
 			this.bs.update(budget);
 			BudgetDTO item = new BudgetDTO();

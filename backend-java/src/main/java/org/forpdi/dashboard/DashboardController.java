@@ -223,6 +223,13 @@ public class DashboardController extends AbstractController {
 			Double realized = 0.0;
 			Double committed = 0.0;
 			Double planned = 0.0;
+			boolean isId = false;
+			
+			List <Long> listIdBudgetsElement = new ArrayList<Long>(); 
+			if (list != null) {
+				listIdBudgetsElement.add(list.get(0).getBudgetElement().getId());
+				planned += list.get(0).getBudgetElement().getBudgetLoa();
+			}
 			
 			for (Budget budget : list) {
 				if (budget.getCommitted() != null) {
@@ -233,7 +240,18 @@ public class DashboardController extends AbstractController {
 					realized += budget.getRealized();
 				}
 				
-				planned += budget.getBudgetElement().getBudgetLoa();
+				for (Long id : listIdBudgetsElement) {
+					if (id != budget.getBudgetElement().getId()) {
+						isId = true;
+					}	
+				}
+				
+				if (isId) {
+					listIdBudgetsElement.add(budget.getBudgetElement().getId());
+					planned += budget.getBudgetElement().getBudgetLoa();
+				}
+				
+				isId = false;		
 			}
 			budgets.setCommitted(committed);
 			budgets.setConducted(realized);
