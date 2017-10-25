@@ -198,9 +198,6 @@ export default React.createClass({
 					idx: idx //index a ser deletado
 				});
 			}
-
-			console.log(committed);
-
 			BudgetStore.dispatch({
 				action: BudgetStore.ACTION_DELETE,
 				data: {

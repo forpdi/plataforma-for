@@ -93,11 +93,12 @@ export default React.createClass({
 		  },this);
 		  
 		  BudgetStore.on("budgetElementUpdated", model => {
-			if(model.data){
-				this.state.budgetElements[this.state.idx].subAction = model.data.subAction; 
-				this.state.budgetElements[this.state.idx].balanceAvailable=model.data.balanceAvailable; 
-				this.state.budgetElements[this.state.idx].budgetLoa = model.data.budgetLoa; 
-
+			if(model.data) {
+				if (this.state.idx != undefined) {
+					this.state.budgetElements[this.state.idx].subAction = model.data.subAction; 
+					this.state.budgetElements[this.state.idx].balanceAvailable=model.data.balanceAvailable; 
+					this.state.budgetElements[this.state.idx].budgetLoa = model.data.budgetLoa; 
+				}
 				//Toastr.remove();
 				//Toastr.success("Orçamento editado com sucesso!");
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.budgetEdited"));
@@ -262,10 +263,11 @@ export default React.createClass({
 				loading: true,
 				idx: idx //index a ser editado
 			});
+			
 		}
-	
+
 		this.forceUpdate();
-	
+
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_UPDATE_BUDGET_ELEMENT,
 			data: {
@@ -273,16 +275,18 @@ export default React.createClass({
 				subAction:this.refs['nameBudgetElement'+idx].value,
 				budgetLoa:this.refs['budgetLoaEdit'+idx].value
 			}
-		});		
-
+		});	
+		
+		
 	},
 	rejectEditbudget(idx){
 		if (this.isMounted()) {
 			this.setState({
 				editingIdx: -1
 			});
+			this.forceUpdate();
 		}
-		this.forceUpdate();
+		
 	},
 
 	editBudget(id, idx, evt){
@@ -293,7 +297,9 @@ export default React.createClass({
 				editingIdx: idx
 			});
 		}
+
 		this.forceUpdate();
+		
 	},
 
 	renderEditLine(model, idx){		
