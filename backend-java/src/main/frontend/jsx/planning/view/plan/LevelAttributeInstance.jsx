@@ -859,8 +859,8 @@ export default React.createClass({
 
 			         	<li>
 							<a onClick={this.deleteLevelAttribute} type="submit">
-								<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}> 
-									<span id="menu-levels"> {Messages.getEditable("label.delete","fpdi-nav-label")} </span>
+								<span id="cacando-a-pala" className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}> 
+									<span id="menu-levels"> {Messages.get("label.delete")}{/*Messages.getEditable("label.delete","fpdi-nav-label")*/} </span>
 								</span>
 							</a>
 			         	</li>
