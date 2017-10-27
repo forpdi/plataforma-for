@@ -20,7 +20,7 @@ import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 
 @Controller
-public class BudgetControler  extends AbstractController {
+public class BudgetController  extends AbstractController {
 	
 	@Inject
 	private BudgetBS bs;
@@ -47,6 +47,10 @@ public class BudgetControler  extends AbstractController {
 			Company company = this.companyBs.exists(companyId, Company.class);
 			if (company == null) {
 				this.fail("Empresa inválida!");
+				return;
+			}
+			if(this.bs.budgetElementExistsBySubActionAndCompany(subAction, company) != null){
+				this.fail("Nome de ação orcamentária já existente!");
 				return;
 			}
 			

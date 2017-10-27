@@ -61,6 +61,14 @@ public class BudgetBS extends HibernateBusiness {
 		return (BudgetElement) criteria.uniqueResult();
 	}
 	
+	public BudgetElement budgetElementExistsBySubActionAndCompany(String subAction, Company company) {
+		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("subAction", subAction))
+				.add(Restrictions.eq("company", company));
+		
+		return (BudgetElement) criteria.uniqueResult();
+	}
+	
 	/**
 	 * Update no elemento orçamentário.
 	 * 

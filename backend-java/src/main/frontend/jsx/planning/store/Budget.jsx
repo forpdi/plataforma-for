@@ -88,6 +88,7 @@ var BudgetStore = Fluxbone.Store.extend({
 				me.trigger("budgetElementSavedSuccess", model);
 			},
 			error(opts, status, errorMsg) {
+				me.trigger("budgetElementSavedError", opts);
 				me.handleRequestErrors([], opts);
 			}
 		});

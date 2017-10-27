@@ -18,7 +18,7 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 	public static final String TABLE = "fpdi_budget_element";
 	private static final long serialVersionUID = 1L;
 		
-	@Column(nullable=false, unique=true)
+	@Column(nullable=false)
 	private String subAction;
 	
 	@Column(nullable=false)

@@ -83,6 +83,10 @@ export default React.createClass({
 			}
             this.context.toastr.addAlertSuccess("Elemento orçamentário adicionado com sucesso");
         },this);
+
+        BudgetStore.on("budgetElementSavedError", (error) => {
+            this.context.toastr.addAlertError(error.responseJSON.message);
+        },this);
         
         BudgetStore.on("budgetElementRetrivied", (model) => {	
 			if (this.isMounted()) {		
