@@ -301,15 +301,20 @@ public class StructureController extends AbstractController {
 				parentId = null;
 			boolean haveBudget = false;
 			PaginatedList<StructureLevelInstance> list = this.bs.listLevelsInstance(level, plan, parentId);
-			for (Attribute atr : attributeList.getList()) {
+			/*for (Attribute atr : attributeList.getList()) {
 				if (atr.getType().matches("org.forpdi.planning.attribute.types.BudgetField")) {
 					haveBudget = true;
 				}
-
-			}
+			}*/
 			List<StructureLevelInstance> structureList = list.getList();
 			for (int count = 0; count < structureList.size(); count++) {
-				structureList.get(count).setHaveBudget(haveBudget);
+				
+				List<Budget> budgetList = this.budgetBS.listBudgetByLevelInstance(structureList.get(count));
+				if(!budgetList.isEmpty())
+					haveBudget = true;
+				else
+					haveBudget = false;
+				structureList.get(count).setHaveBudget(haveBudget);	
 			}
 			list.setList(structureList);
 			if (list.getTotal() > 0) {

@@ -142,9 +142,9 @@ export default React.createClass({
 	render() {
 		var iconCls = this.props.iconCls;
 		var me = this;
-		if(this.props.model && this.props.model.level && this.props.model.level.name == "Objetivo") {
+		/*if(this.props.model && this.props.model.level && this.props.model.level.name == "Objetivo") {
 			this.props.model.haveBudget = true;
-		}
+		}*/
 		return (
 			(this.state.newNode ? 
 				this.renderNewNode()
