@@ -389,7 +389,7 @@ export default React.createClass({
 					<thead/>
 						<thead>
 							<tr>
-								<th>{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
+								<th className="noWrap">{Messages.getEditable("label.budgetAction","fpdi-nav-label")}<span className = "fpdi-required"/></th>
 								<th>{Messages.getEditable("label.name","fpdi-nav-label")}<span className = "fpdi-required"/> </th>
 								<th>{Messages.getEditable("label.budgetLoa","fpdi-nav-label")}</th>
 								<th>{Messages.getEditable("label.balanceAvailable","fpdi-nav-label")}</th>
