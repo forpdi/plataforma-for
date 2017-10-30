@@ -133,6 +133,11 @@ public class BudgetController  extends AbstractController {
 				this.fail("Orçamento Loa inválido.");
 				return;
 			}
+			BudgetElement budgetElementNewName = this.bs.budgetElementExistsBySubActionAndCompany(subAction, budgetElement.getCompany());
+			if(budgetElementNewName != null && budgetElementNewName.getId() != budgetElement.getId()){
+				this.fail("Nome de ação orcamentária já existente!");
+				return;
+			}
 			
 			double diferenca =  budgetElement.getBudgetLoa() - budgetElement.getBalanceAvailable();
 			Double committedTotal = 0d;
