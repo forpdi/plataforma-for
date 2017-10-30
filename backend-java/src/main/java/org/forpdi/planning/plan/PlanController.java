@@ -108,6 +108,13 @@ public class PlanController extends AbstractController {
 			existent.setBegin(plan.getBegin());
 			existent.setEnd(plan.getEnd());
 			existent.setDocumented(plan.isDocumented());
+			
+			if(this.bs.listAllPlans(existent).isEmpty()){
+				existent.setHaveSons(false);	
+			} else {
+				existent.setHaveSons(true);
+			}
+			
 			this.bs.persist(existent);
 			this.success(existent);
 		} catch (Throwable e) {
