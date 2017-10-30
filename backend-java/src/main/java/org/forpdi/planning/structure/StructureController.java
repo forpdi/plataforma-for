@@ -33,6 +33,10 @@ import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.AttributeTypeFactory;
 import org.forpdi.planning.attribute.types.DateField;
 import org.forpdi.planning.attribute.types.ResponsibleField;
+import org.forpdi.planning.fields.FieldsBS;
+import org.forpdi.planning.fields.budget.Budget;
+import org.forpdi.planning.fields.budget.BudgetBS;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.ManageStructurePermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
@@ -73,6 +77,10 @@ public class StructureController extends AbstractController {
 	private NotificationBS notificationBS;
 	@Inject
 	private UserBS userBS;
+	@Inject
+	private BudgetBS budgetBS;
+	@Inject
+	private FieldsBS fieldBs;
 
 	/**
 	 * Listar os tipos de atributos existentes.
@@ -652,6 +660,20 @@ public class StructureController extends AbstractController {
 				if (indicator != null) {
 					this.fail("Não pode ser excluído, está agregado ao indicador " + indicator.getName() + ".");
 					return;
+				}
+				if(this.bs.checkHaveBudgetByLevel(existentLevelInstance.getLevel())){
+					List<Budget> budgetList = this.budgetBS.listBudgetByLevelInstance(existentLevelInstance);
+					for (Budget budget : budgetList) {
+						BudgetElement budgetElement = this.budgetBS.budgetElementExistsById(budget.getBudgetElement().getId());
+						if(budgetElement != null){
+							double balanceAvailable = budgetElement.getBalanceAvailable();
+							balanceAvailable += budget.getCommitted();
+							budgetElement.setBalanceAvailable(balanceAvailable);
+							budgetElement.setLinkedObjects(budgetElement.getLinkedObjects() - 1);
+							this.budgetBS.update(budgetElement);
+							this.fieldBs.deleteBudget(budget);
+						}
+					}				
 				}
 				existentLevelInstance.setDeleted(true);
 				this.bs.persist(existentLevelInstance);

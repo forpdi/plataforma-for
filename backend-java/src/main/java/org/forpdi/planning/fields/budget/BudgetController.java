@@ -125,12 +125,12 @@ public class BudgetController  extends AbstractController {
 			BudgetElement budgetElement = this.bs.budgetElementExistsById(idBudgetElement);
 			
 			if (budgetElement == null) {
-				this.fail("Oçamento inválido.");
+				this.fail("Orçamento inválido.");
 				return;
 			}
 			
 			if (budgetLoa == null) {
-				this.fail("Oçamento Loa inválido.");
+				this.fail("Orçamento Loa inválido.");
 				return;
 			}
 			

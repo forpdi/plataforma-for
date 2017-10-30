@@ -2307,5 +2307,16 @@ public class StructureBS extends HibernateBusiness {
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
 	}
 	
+	public boolean checkHaveBudgetByLevel(StructureLevel level){
+		PaginatedList<Attribute> attributeList = this.listAttributes(level);
+		boolean haveBudget = false;
+		for (Attribute atr : attributeList.getList()) {
+			if (atr.getType().matches("org.forpdi.planning.attribute.types.BudgetField")) {
+				haveBudget = true;
+			}
+		}
+		return haveBudget;
+	}
+	
 
 }

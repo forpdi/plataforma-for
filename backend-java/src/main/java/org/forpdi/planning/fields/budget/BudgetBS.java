@@ -1,6 +1,7 @@
 package org.forpdi.planning.fields.budget;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
@@ -104,6 +105,13 @@ public class BudgetBS extends HibernateBusiness {
 				.add(Restrictions.eq("budgetElement", budgetElement));
 		list.setList(this.dao.findByCriteria(criteria, Budget.class));
 
+		return list;
+	}
+	
+	public List<Budget> listBudgetByLevelInstance(StructureLevelInstance level){		
+		Criteria criteria = this.dao.newCriteria(Budget.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("levelInstance", level));
+		List<Budget> list = this.dao.findByCriteria(criteria, Budget.class);
 		return list;
 	}
 
