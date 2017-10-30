@@ -1,6 +1,5 @@
 package org.forpdi.planning.fields.budget;
 
-
 import java.util.Date;
 
 import javax.enterprise.context.RequestScoped;
@@ -17,20 +16,19 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 
 @RequestScoped
 public class BudgetBS extends HibernateBusiness {
-	
+
 	/**
 	 * Salva um elemento orçamentário.
 	 * 
 	 * @param budget
-	 *    		Elemento orçamentario a ser salvo.
+	 *            Elemento orçamentario a ser salvo.
 	 * @return void.
 	 */
 	public void saveBudgetElement(BudgetElement budgetElement) {
 		budgetElement.setDeleted(false);
 		this.persist(budgetElement);
 	}
-	
-	
+
 	/**
 	 * Retornar lista de elementos orçamentários.
 	 * 
@@ -42,11 +40,11 @@ public class BudgetBS extends HibernateBusiness {
 				.add(Restrictions.eq("company", company));
 
 		list.setList(this.dao.findByCriteria(criteria, BudgetElement.class));
-		
+
 		return list;
 
 	}
-	
+
 	/**
 	 * Buscar Elemento Orçamentário.
 	 * 
@@ -57,18 +55,18 @@ public class BudgetBS extends HibernateBusiness {
 	public BudgetElement budgetElementExistsById(Long id) {
 		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("id", id));
-		
+
 		return (BudgetElement) criteria.uniqueResult();
 	}
-	
+
 	public BudgetElement budgetElementExistsBySubActionAndCompany(String subAction, Company company) {
 		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subAction", subAction))
-				.add(Restrictions.eq("company", company));
-		
+				.add(Restrictions.eq("subAction", subAction).ignoreCase()).add(Restrictions.eq("company", company))
+				.setMaxResults(1);
+
 		return (BudgetElement) criteria.uniqueResult();
 	}
-	
+
 	/**
 	 * Update no elemento orçamentário.
 	 * 
@@ -80,7 +78,7 @@ public class BudgetBS extends HibernateBusiness {
 		budgetElement.setDeleted(false);
 		this.persist(budgetElement);
 	}
-	
+
 	/**
 	 * Deletar elemento orçamentário.
 	 * 
@@ -92,21 +90,20 @@ public class BudgetBS extends HibernateBusiness {
 		budgetElement.setDeleted(true);
 		this.persist(budgetElement);
 	}
-	
-	
+
 	/**
 	 * Buscar lista de Bugtes.
 	 * 
 	 * @param BudgetElement
-	 *           Elemento orçamentario.
+	 *            Elemento orçamentario.
 	 * @return PaginatedList<Budget> Lista de orçamentos.
 	 */
 	public PaginatedList<Budget> listBudgetsByBudgetElement(BudgetElement budgetElement) {
 		PaginatedList<Budget> list = new PaginatedList<Budget>();
 		Criteria criteria = this.dao.newCriteria(Budget.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("budgetElement",budgetElement));
+				.add(Restrictions.eq("budgetElement", budgetElement));
 		list.setList(this.dao.findByCriteria(criteria, Budget.class));
-		
+
 		return list;
 	}
 

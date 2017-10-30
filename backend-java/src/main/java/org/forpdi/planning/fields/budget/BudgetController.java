@@ -50,7 +50,7 @@ public class BudgetController  extends AbstractController {
 				return;
 			}
 			BudgetElement budget = this.bs.budgetElementExistsBySubActionAndCompany(subAction, company);
-			if(budget != null && budget.getSubAction().toLowerCase().equals(subAction.toLowerCase())){
+			if(budget != null){
 				this.fail("Nome de ação orcamentária já existente!");
 				return;
 			}
