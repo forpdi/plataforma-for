@@ -226,7 +226,7 @@ public class DashboardController extends AbstractController {
 			boolean isId = false;
 			
 			List <Long> listIdBudgetsElement = new ArrayList<Long>(); 
-			if (list != null) {
+			if (list != null && !list.isEmpty()) {
 				listIdBudgetsElement.add(list.get(0).getBudgetElement().getId());
 				planned += list.get(0).getBudgetElement().getBudgetLoa();
 			}
