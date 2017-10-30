@@ -1033,7 +1033,7 @@ public class UserController extends AbstractController {
 				companyUser.setBlocked(true);
 				this.bs.persist(companyUser);
 			}
-			this.success();
+			this.success(companyUser);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
@@ -1071,7 +1071,7 @@ public class UserController extends AbstractController {
 				companyUser.setBlocked(false);
 				this.bs.persist(companyUser);
 			}
-			this.success();
+			this.success(companyUser);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

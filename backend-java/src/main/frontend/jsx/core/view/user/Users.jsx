@@ -72,6 +72,7 @@ export default React.createClass({
 
 
 		UserStore.on("retrieve-user", (model) => {
+			console.log("retrieve-user");
 			me.setState({
 				loading: false,
 				models: model.data,
@@ -85,6 +86,10 @@ export default React.createClass({
 		UserStore.on("remove", (data) => {
 			if(data.data){
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.removerUser"));
+				me.setState({
+					models: [],
+					totalUsers: 0,
+				});
 				me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 				//me.refs["pagination"].reload();
 			}else{
@@ -100,6 +105,10 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success("Usuário bloqueado com sucesso.");
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.userBlock"));
+			me.setState({
+				models: [],
+				totalUsers: 0,
+			});
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
@@ -107,6 +116,10 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success("Usuário desbloqueado com sucesso.");
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.userUnblock"));
+			me.setState({
+				models: [],
+				totalUsers: 0,
+			});
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
@@ -192,13 +205,14 @@ export default React.createClass({
 				action: UserStore.ACTION_BLOCK,
 				data: id
 			});
+
 		},msg,this.cancelBlockUnblock);
 
 	},
 
 	unblockUser(id,nome, event) {
 		event && event.preventDefault();
-		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messsages.get("label.msg.unblockUser");
+		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messages.get("label.msg.unblockUser");
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			UserStore.dispatch({
@@ -434,7 +448,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
-							{Messages.getEditable("label.removeUser","fpdi-nav-label")};
+							{Messages.getEditable("label.removeUser","fpdi-nav-label")}
 						</a>
 					</li> : ""
 				)}
@@ -600,6 +614,31 @@ export default React.createClass({
 		document.getElementById("selectAll").checked = selectAll;
 	},
 
+	onKeyUp(evt){		
+		var key = evt.which;
+		if(key == 13) {
+			evt.preventDefault();
+			return;
+		}
+	},
+	onlyLetter(evt){
+		var regex = new RegExp("^[a-zA-Z]+$");
+	    var key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+	    if (!regex.test(key)) {
+	       evt.preventDefault();
+	       return false;
+	    }
+	},
+   
+   onlyLetterPaste(evt){
+   		var regex = new RegExp("^[a-zA-Z]+$");
+	   	var value = evt.clipboardData.getData('Text');
+	   	if (!regex.test(value)) {
+		   evt.preventDefault();
+		   return;
+	   	}
+   },
+
 
 
 	renderImportedUsers(users){
@@ -761,7 +800,7 @@ export default React.createClass({
 		        					<tbody>
 		        						<tr>
 		        							<td className="fdpi-table-cell"> 
-		        								<input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue=""/>
+		        								<input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue="" onKeyPress={this.onlyLetter} onPaste={this.onlyLetterPaste}/>
 		        								<div ref="formAlertNameUser" className="formAlertError"></div>
 	        								</td>
 		        							<td className="fdpi-table-cell">
@@ -832,7 +871,7 @@ export default React.createClass({
 		        					<tbody>
 		        						<tr>
 		        							<td className="fdpi-table-cell"> 
-		        								<input maxLength="255" className="budget-field-table" ref='newNameUser' type='text' defaultValue=""/>
+		        								<input maxLength="255" className="budget-field-table" ref='newNameUser' type='text' defaultValue=""  onKeyPress={this.onlyLetter} onPaste={this.onlyLetterPaste}/>
 		        								<div ref="formAlertNewNameUser" className="formAlertError"></div>
 	        								</td>
 		        							<td className="fdpi-table-cell">
@@ -921,7 +960,7 @@ export default React.createClass({
 														<span title={Messages.getEditable("label.actions","fpdi-nav-label")} className="mdi mdi-chevron-down" />
 													</a>
 													
-													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(model,cpf)}											
+													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(this.state.models[idx],cpf)}											
 												</span>
 												{model.name}
 											</td>
