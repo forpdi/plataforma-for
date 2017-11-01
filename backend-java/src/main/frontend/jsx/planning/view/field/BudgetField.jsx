@@ -295,9 +295,11 @@ export default React.createClass({
 				<td> - </td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editCommitted'+idx}
 							defaultValue={this.converteMoedaFloat(model.budget.committed)} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
+					<div className="formAlertError" ref="formAlertErrorCommited"></div>
 				</td>
 				<td> <input type='text' maxLength='255' className='budget-field-table' ref={'editRealized'+idx}
 							defaultValue={this.converteMoedaFloat(model.budget.realized)} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
+					<div className="formAlertError" ref="formAlertErrorRealized"></div>
 				</td>
 				<td>				
                     <div className='displayFlex'>
@@ -320,8 +322,11 @@ export default React.createClass({
 				</td>
 				<td>-</td>
 				<td>-</td>
-				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/></td>
-				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/></td>
+				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
+					<div className="formAlertError" ref="formAlertErrorCommited"></div>
+				</td>				
+				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
+					<div className="formAlertError" ref="formAlertErrorRealized"></div></td>
 				<td>				
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
