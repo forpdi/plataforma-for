@@ -365,8 +365,8 @@ export default React.createClass({
 					ref={this.state.fieldId}
 					placeholder={this.props.fieldDef.placeholder}
 					onChange={this.props.fieldDef.onChange || _.noop}
-					onKeyPress={this.onKeyUp}
-					onPaste={this.onKeyUp}
+					onKeyPress={this.props.fieldDef.onKeyPress || this.onKeyUp}
+					onPaste={this.props.fieldDef.onPaste || this.onKeyUp}
 				/>);
 			}
 		}

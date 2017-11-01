@@ -622,7 +622,7 @@ export default React.createClass({
 		}
 	},
 	onlyLetter(evt){
-		var regex = new RegExp("^[a-zA-Z]+$");
+		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
 	    var key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
 	    if (!regex.test(key)) {
 	       evt.preventDefault();
@@ -631,7 +631,7 @@ export default React.createClass({
 	},
    
    onlyLetterPaste(evt){
-   		var regex = new RegExp("^[a-zA-Z]+$");
+   		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
 	   	var value = evt.clipboardData.getData('Text');
 	   	if (!regex.test(value)) {
 		   evt.preventDefault();
