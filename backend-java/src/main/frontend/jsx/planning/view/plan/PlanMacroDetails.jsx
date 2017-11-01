@@ -3,6 +3,7 @@ import React from "react";
 import {Link} from 'react-router';
 
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 
 import PlanMacroTabPanel from "forpdi/jsx/planning/widget/plan/PlanMacroTabPanel.jsx";
 import PlanMacroTree from "forpdi/jsx/planning/widget/plan/PlanMacroTree.jsx";
@@ -42,6 +43,13 @@ export default React.createClass({
 			action: PlanMacroStore.ACTION_RETRIEVE,
 			data: this.props.params.id
 		});
+
+		PlanStore.on('delete', (response, data) => {
+			PlanMacroStore.dispatch({
+				action: PlanMacroStore.ACTION_CHECK_HAVE_SONS,
+				data: this.props.params.id
+			});
+		}, me);
 
 	},
 	componentWillUnmount() {

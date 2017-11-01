@@ -89,10 +89,9 @@ export default React.createClass({
 				me.setState({
 					model: model,
 					archived: model.attributes.archived,
-					undeletable: model.attributes.haveSons
+					/* undeletable: model.attributes.haveSons */
 				});
 			}
-			me.updateLoadingState(false);
 		}, me);
 
 		PlanMacroStore.on('plan-deleted', (response, data) => {
@@ -103,16 +102,16 @@ export default React.createClass({
             });
 		}, me);
 
-		PlanStore.on('delete', (response, data) => {
-			console.log("PlanStore.on(delete");
-			PlanMacroStore.dispatch({
-				action: PlanMacroStore.ACTION_RETRIEVE,
-				data: this.state.modelId
-			});
+		PlanMacroStore.on('haveSonsChecked', (data) => {
+			if(this.isMounted()){
+				me.setState({
+					undeletable: data.data
+				});
+			}
+			me.updateLoadingState(false);
 		}, me);
 
 		if (this.props.params.id) {
-			//_.defer(() => {me.context.tabPanel.addTab(me.props.location.pathname,"Editar plano macro");});
 			PlanMacroStore.dispatch({
 				action: PlanMacroStore.ACTION_RETRIEVE,
 				data: this.state.modelId

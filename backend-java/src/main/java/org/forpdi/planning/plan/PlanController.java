@@ -150,6 +150,28 @@ public class PlanController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	@Get(BASEPATH + "/planmacro/checkHaveSons/{id}")
+	@NoCache
+	@Permissioned
+	public void planMacroCheckHaveSons(Long id) {
+		try {
+			PlanMacro plan = this.bs.exists(id, PlanMacro.class);
+			if (plan == null) {
+				this.fail("O plano solicitado não foi encontrado.");
+			} else {
+				if(this.bs.listAllPlans(plan).size() > 0)
+					plan.setHaveSons(true);
+				else
+					plan.setHaveSons(false);
+				LOGGER.info("checkHaveSons" + plan.isHaveSons());
+				this.success(plan.isHaveSons());
+			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 
 	/**
 	 * Lista os planos macro da companhia.

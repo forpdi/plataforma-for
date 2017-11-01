@@ -52,6 +52,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 	ACTION_FIND_UNARCHIVED: 'planmacro-findUnarchived',
 	ACTION_SCHEDULE_RECALCULATION: "planmacro-scheduleRecalculation",
 	ACTION_MAIN_MENU_STATE: "planmacro-mainMenuState",
+	ACTION_CHECK_HAVE_SONS: "planmacro-checkHaveSons",
 	ACTION_DELETE: "planmacro-delete",
 	dispatchAcceptRegex: /^planmacro-[a-zA-Z0-9]+$/,
 
@@ -93,6 +94,22 @@ var PlanMacroStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("archivedplanmacrolisted", opts);
+			}
+		});
+	},
+
+	checkHaveSons(data){	
+		var me = this;
+		$.ajax({
+			url: me.url+"/checkHaveSons/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("haveSonsChecked", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("haveSonsCheckedError", opts);
 			}
 		});
 	},
