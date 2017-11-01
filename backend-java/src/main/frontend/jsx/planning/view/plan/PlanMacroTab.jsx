@@ -5,6 +5,7 @@ import {Link} from 'react-router';
 import _ from 'underscore';
 import moment from 'moment';
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SummaryTable from "forpdi/jsx/planning/widget/plan/SummaryTable.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
@@ -100,6 +101,14 @@ export default React.createClass({
 			PlanMacroStore.dispatch({
                 action: PlanMacroStore.ACTION_FIND
             });
+		}, me);
+
+		PlanStore.on('delete', (response, data) => {
+			console.log("PlanStore.on(delete");
+			PlanMacroStore.dispatch({
+				action: PlanMacroStore.ACTION_RETRIEVE,
+				data: this.state.modelId
+			});
 		}, me);
 
 		if (this.props.params.id) {
