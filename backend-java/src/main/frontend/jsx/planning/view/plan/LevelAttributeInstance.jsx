@@ -509,7 +509,10 @@ export default React.createClass({
 					model: newModel
 				})
 			};
-		},msg);
+		},msg,
+		() => {
+			Modal.hide();
+		});
 	},
 
 	deleteLevelAttribute() {
