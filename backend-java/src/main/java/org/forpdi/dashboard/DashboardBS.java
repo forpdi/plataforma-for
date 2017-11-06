@@ -235,6 +235,7 @@ public class DashboardBS extends HibernateBusiness {
 		criteria.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN);
 		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
 		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("macro.archived", false));
 		criteria.add(Restrictions.eq("deleted", false));
 
 		if (obj != null) {

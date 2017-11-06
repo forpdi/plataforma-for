@@ -346,21 +346,28 @@ export default React.createClass({
 	},
 
 	formatEUA(num){
-	    var n = num.toFixed(2).toString(), p = n.indexOf('.');
-	    return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
-	        return p<0 || i<p ? ($0+',') : $0;
-	    });
+		if(typeof num === 'undefined'){
+			return num;
+		}else{
+		    var n = num.toFixed(2).toString(), p = n.indexOf('.');
+		    return n.replace(/\d(?=(?:\d{3})+(?:\.|$))/g, function($0, i){
+		        return p<0 || i<p ? ($0+',') : $0;
+		    });
+		}
   	},
 
   	formatBR(str){
-   
-	    var x = str.split('.')[0];
-	    x = this.replaceAll(x,",",".");
-	    var decimal = str.split('.')[1];
-	    if(decimal == undefined){
-	      decimal = '00';
-	    }
-	    return x + "," + decimal;
+   		if(typeof str === 'undefined'){
+			return str;
+		}else{
+		    var x = str.split('.')[0];
+		    x = this.replaceAll(x,",",".");
+		    var decimal = str.split('.')[1];
+		    if(decimal == undefined){
+		      decimal = '00';
+		    }
+		    return x + "," + decimal;
+		}
   	},
 
 	replaceAll(str, needle, replacement) {

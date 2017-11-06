@@ -1140,6 +1140,9 @@ public class StructureBS extends HibernateBusiness {
 						budgetCopy.setLevelInstance(instanceClone);
 						budgetCopy.setName(budget.getName());
 						budgetCopy.setSubAction(budget.getSubAction());
+						budgetCopy.setBudgetElement(budget.getBudgetElement());
+						budgetCopy.setCommitted(budget.getCommitted());
+						budgetCopy.setRealized(budget.getRealized());
 						this.persist(budgetCopy);
 					}
 				} else if (attribute.getType().equals(ActionPlanField.class.getCanonicalName())) {
