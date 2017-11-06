@@ -335,9 +335,9 @@ export default React.createClass({
 						<option value={-1} data-placement="right" title={Messages.get("label.selectPerformance")}>{Messages.get("label.selectPerformance")} </option>
 						<option value={1} data-placement="right" title={Messages.get("label.goals.belowMinimum")}>{Messages.get("label.goals.belowMinimum")}</option>
 						<option value={2} data-placement="right" title={Messages.get("label.goals.belowExpected")}>{Messages.get("label.goals.belowExpected")}</option>
-						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.getEditable("label.goals.reached")}</option>
+						<option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached")}</option>
 						<option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected")}</option>
-						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.getEditable("label.goals.notStarted")}</option>
+						<option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted")}</option>
 		  			</select>                    
 		  			<div className="performance-strategic-btns floatRight">
 						<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>

@@ -207,9 +207,11 @@ public class FieldsController extends AbstractController {
 					return;
 				}
 			} else if (committed != null && committed <= budgetBalanceAvailable + budget.getCommitted()) {
+				LOGGER.info("committed: " + committed + " budgetBalanceAvailable + budget.getCommitted(): " + budgetBalanceAvailable + budget.getCommitted());
 				budgetBalanceAvailable += budget.getCommitted();
 				budgetBalanceAvailable -= committed;
 				budgetElement.setBalanceAvailable(budgetBalanceAvailable);
+				LOGGER.info("budgetBalanceAvailable: " + budgetBalanceAvailable);
 				this.budgetElementBs.update(budgetElement);
 			} else {
 				this.fail("Valor empenhado não pode ser maior que o valor do saldo disponível!");

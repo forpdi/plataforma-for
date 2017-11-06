@@ -1135,25 +1135,35 @@ var Validate = {
 
 	validationNewBudgetField: function(refs) {
 		var subAction = refs["subActions"].state.value;
+		var committed = refs['budgetCommitted'].value;
+		var realized = refs['budgetRealized'].value;
 		var name = refs["budgetNameText"].value;
 		var msg = Messages.get("label.form.error");
-		 var boolMsg = false;
+		var boolMsg = false;
 		 		 
-		 if (subAction == "") {
+		 if (subAction.trim() == "") {
 			boolMsg = true;
-			//Toastr.remove();
 			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs["subActions"].className += " borderError";
+		} else if (committed.toString().replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorCommited.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['budgetCommitted'].className += " borderError";
+		} else if (committed.toString().replace(",", ".") < realized.toString().replace(",", ".")) {
+			console.log(committed.toString().replace(",", "."));
+			console.log(realized.toString().replace(",", "."));
+			boolMsg = true;
+			refs.formAlertErrorRealized.innerHTML = "Valor realizado não pode ser maior que o empenhado";
+			refs['budgetRealized'].className += " borderError";
 		} else { 
 			refs.formAlertErrorSubAction.innerHTML = "";
-			//Toastr.remove();
 		}
 
-		if(name == "") {
+		if(name.trim() == "") {
 			boolMsg = true;
 			refs.formAlertErrorName.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.budgetNameText.className += " borderError";
-		} else {
+		}else {
 			if(refs.budgetNameText.className && refs.budgetNameText.className.indexOf('borderError')){
 				refs.budgetNameText.className = "budget-field-table";
 				refs.formAlertErrorName.innerHTML = "";
@@ -1170,12 +1180,13 @@ var Validate = {
 	validationEditBudgetField: function(refs, idx) {
 		var subAction = refs["subActions-edit-"+idx].state.value;
 		var name= refs['inputName'+idx].value;
+		var committed = refs['editCommitted'+idx].value;
+		var realized = refs['editRealized'+idx].value;
 		var subActionEdit = subAction;
 		var nomeEdit = name.trim();
 
 		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
-
 
 		if(name.trim() == "") {
 			boolMsg = true;
@@ -1190,12 +1201,18 @@ var Validate = {
 
 		if (subAction == "") {
 			boolMsg = true;
-			//Toastr.remove();
 			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs["subActions-edit-"+idx].className += " borderError";
+		} else if (committed.toString().replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorCommited.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['editCommitted'+idx].className += " borderError";
+		} else if (committed.toString().replace(",", ".") < realized.toString().replace(",", ".")) {
+			boolMsg = true;
+			refs.formAlertErrorRealized.innerHTML = "Valor realizado não pode ser maior que o empenhado";
+			refs['editRealized'+idx].className += " borderError";
 		} else { 
 			refs.formAlertErrorSubAction.innerHTML = "";
-			//Toastr.remove();
 		}
 		var aux = {
 			msg: msg,
@@ -1215,7 +1232,6 @@ var Validate = {
 
 		if (subAction == "") {
 			boolMsg = true;
-			//Toastr.remove();
 			refs.formAlertErrorSubActionEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs["nameBudgetElement"+idx].className += " borderError";
 		} else { 
@@ -1223,12 +1239,15 @@ var Validate = {
 				refs['nameBudgetElement'+idx].className = "budget-field-table";
 				refs.formAlertErrorSubActionEdit.innerHTML = "";
 			}
-			//Toastr.remove();
 		}
 
 		if(budgetLoa.trim() == "") {
 			boolMsg = true;
 			refs.formAlertErrorBudgetLoaEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs['budgetLoaEdit'+idx].className += " borderError";
+		} else if (budgetLoa.replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoaEdit.innerHTML = "Orçamento LOA deve ser maior que 0";
 			refs['budgetLoaEdit'+idx].className += " borderError";
 		} else {
 			if(refs['budgetLoaEdit'+idx].className && refs['budgetLoaEdit'+idx].className.indexOf('borderError')){
@@ -1258,7 +1277,6 @@ var Validate = {
 
 		if (subAction == "") {
 			boolMsg = true;
-			//Toastr.remove();
 			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs["subAction"].className += " borderError";
 		} else { 
@@ -1266,19 +1284,21 @@ var Validate = {
 				refs['subAction'].className = "budget-field-table";
 				refs.formAlertErrorSubAction.innerHTML = "";
 			}
-			//Toastr.remove();
 		}
 
 		if(budgetLoa.trim() == "") {
 			boolMsg = true;
 			refs.formAlertErrorBudgetLoa.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs['budgetLoa'].className += " borderError";
+		} else if (budgetLoa.replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoa.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['budgetLoa'].className += " borderError";
 		} else {
 			if(refs['budgetLoa'].className && refs['budgetLoa'].className.indexOf('borderError')){
 				refs['budgetLoa'].className = "budget-field-table";
 				refs.formAlertErrorBudgetLoa.innerHTML = "";
 			}
-
 		}
 
 		var aux = {

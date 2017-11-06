@@ -222,7 +222,9 @@ export default React.createClass({
 			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			maxLength:255,
 			value: model  ? model.name:null,
-			required: true
+			required: true,
+			onKeyPress: this.onlyLetter,
+			onPaste: this.onlyLetterPaste
 		},
 		{
 			name: "email",
@@ -666,6 +668,24 @@ export default React.createClass({
 			}
 		})
 	},
+
+	onlyLetter(evt){
+		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	    var key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+	    if (!regex.test(key)) {
+	       evt.preventDefault();
+	       return false;
+	    }
+	},
+   
+   onlyLetterPaste(evt){
+   		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	   	var value = evt.clipboardData.getData('Text');
+	   	if (!regex.test(value)) {
+		   evt.preventDefault();
+		   return;
+	   	}
+   },
 
 	render() {
 

@@ -1140,6 +1140,9 @@ public class StructureBS extends HibernateBusiness {
 						budgetCopy.setLevelInstance(instanceClone);
 						budgetCopy.setName(budget.getName());
 						budgetCopy.setSubAction(budget.getSubAction());
+						budgetCopy.setBudgetElement(budget.getBudgetElement());
+						budgetCopy.setCommitted(budget.getCommitted());
+						budgetCopy.setRealized(budget.getRealized());
 						this.persist(budgetCopy);
 					}
 				} else if (attribute.getType().equals(ActionPlanField.class.getCanonicalName())) {
@@ -1656,7 +1659,10 @@ public class StructureBS extends HibernateBusiness {
 		PaginatedList<Budget> result = new PaginatedList<>();
 		Criteria criteria = this.dao.newCriteria(Budget.class)
 				.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
-				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN).add(Restrictions.eq("deleted", false));
+				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("deleted", false))
+				.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("macro.archived", false));
 		if (plan != null) {
 			criteria.add(Restrictions.eq("levelInstance.plan", plan));
 		} else if (macro != null) {

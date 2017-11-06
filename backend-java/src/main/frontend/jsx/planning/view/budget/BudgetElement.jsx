@@ -379,7 +379,7 @@ export default React.createClass({
 
             <div className="panel panel-default">
                 <div className="panel-heading displayFlex">
-                    <b className="budget-title"> {Messages.getEditable("label.budget","fpdi-nav-label")}</b>
+                    <b className="budget-title"> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}</b>
                     {(this.state.adding)?
                         "":
                     <div className="budget-btns">

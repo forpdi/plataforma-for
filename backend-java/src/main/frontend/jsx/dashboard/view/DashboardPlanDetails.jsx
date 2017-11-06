@@ -105,7 +105,7 @@ export default React.createClass({
 							    <div className='dashboard-goals-title'>{Messages.getEditable("label.budget","fpdi-nav-label")}</div>
 							    {this.state.planDetails ? (this.state.planDetails.numberOfBudgets >= 1 ?
 							    	<div className="fontSize12">{Messages.getEditable("label.thereAre","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.getEditable("label.budgetaryElementsLinkedToTheObjectives","fpdi-nav-label")}</div>
-							    	: <div className="fontSize12">{Messages.getEditable("label.exist","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span>{Messages.getEditable("label.budgetaryElementLinkedToTheObjective","fpdi-nav-label")}</div>) : "0"}
+							    	: <div className="fontSize12">{Messages.getEditable("label.exist","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.getEditable("label.budgetaryElementLinkedToTheObjective","fpdi-nav-label")}</div>) : "0 "}
 							</div>
 						</div>}					    
 					</div>)}

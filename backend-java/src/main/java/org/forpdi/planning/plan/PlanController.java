@@ -639,8 +639,11 @@ public class PlanController extends AbstractController {
 			} else {
 				macro.setCompany(existent.getCompany());
 				macro.setId(null);
+				macro.setDocumented(existent.isDocumented());
 				macro = this.bs.duplicatePlanMacro(macro);
+				
 				if (macro != null) {
+					
 					if (keepPlanLevel) {
 						if (this.bs.duplicatePlanLevel(existent, macro, sbs, keepPlanContent)) {
 							LOGGER.info("Níveis do plano duplicados com sucesso.");
@@ -658,7 +661,6 @@ public class PlanController extends AbstractController {
 				} else {
 					this.fail("Não foi possível duplicar o plano.");
 				}
-				String url = domain.getBaseUrl() + "/#/plan/" + macro.getId();
 
 				/*
 				 * CompanyUser companyUser =

@@ -527,7 +527,8 @@ public class FieldsBS extends HibernateBusiness {
 	 */
 	public BudgetElement retrieveBudgetElement(String subAction) {
 		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subAction", subAction));
+				.add(Restrictions.eq("subAction", subAction))
+				.add(Restrictions.eq("company",this.domain.getCompany()));
 		return (BudgetElement) criteria.uniqueResult();
 	}
 
