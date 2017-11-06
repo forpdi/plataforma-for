@@ -947,7 +947,7 @@ export default React.createClass({
 									sameUser = (cpf.isEmpty() || UserSession.attributes.user == null ? false : cpf == UserSession.attributes.user.cpf);
 
 									return (<tr key={"user-"+idx} className={model.blocked ? "danger":""}>
-											<td  className={"col-sm-3"+(!model.active ? " warning":"")}>											
+											<td  className={"col-sm-3 break-text"+(!model.active ? " warning":"")}>											
 												<span className="dropdown">
 													<a
 														className="dropdown-toggle"
@@ -964,16 +964,16 @@ export default React.createClass({
 												</span>
 												{model.name}
 											</td>
-											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p id = "userNCadastrado"> {model.email} </p> </td> 
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p className="break-text"> {model.email} </p> </td> 
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												<p id = "userNCadastrado"> {!model.active ? "" :cpf.s} </p>
+												<p className="break-text"> {!model.active ? "" :cpf.s} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												<p id = "userNCadastrado">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
+												<p className="break-text">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
 												{!model.active ? (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") :
-													<p id = "userNCadastrado"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
+													<p className="break-text"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
 												: (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") : Messages.getEditable("label.regularUser","fpdi-nav-label"))}
 											</td>
 										</tr>);
