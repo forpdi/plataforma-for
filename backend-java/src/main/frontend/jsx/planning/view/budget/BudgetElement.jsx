@@ -231,7 +231,7 @@ export default React.createClass({
 	deleteBudget(id, idx,evt){
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgetElements[idx].subAction + "?";
 		
-		Modal.confirmCustom(() => {
+		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			if (this.isMounted()) {
 				this.setState({
