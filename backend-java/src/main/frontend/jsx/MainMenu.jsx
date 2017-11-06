@@ -219,6 +219,16 @@ export default React.createClass({
             :""}
 
             {((this.context.roles.ADMIN || _.contains(this.context.permissions,
+             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?    
+                <div className="fpdi-tabs-nav">
+                    <Link to="/budget-element" activeClassName="active">
+                        <span className="fpdi-nav-icon mdi mdi-coin icon-link"
+                        /> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}
+                    </Link>
+                </div>
+            :""}
+
+            {((this.context.roles.ADMIN || _.contains(this.context.permissions,
              PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) ?
                 <div>
                     <div className="fpdi-tabs-nav">
@@ -257,20 +267,7 @@ export default React.createClass({
                     :""}
                 </div>
             : ""}
-
-                                
-            {((this.context.roles.ADMIN || _.contains(this.context.permissions,
-             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?    
-                <div className="fpdi-tabs-nav">
-                    <Link to="/budget-element" activeClassName="active">
-                        <span className="fpdi-nav-icon mdi mdi-coin icon-link"
-                        /> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}
-                    </Link>
-                </div>
-            :""}
-
-
-            <div style={{height: "10px"}} />
+            <hr className="divider"></hr>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
                 <a onClick={this.tweakHidden}>
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
