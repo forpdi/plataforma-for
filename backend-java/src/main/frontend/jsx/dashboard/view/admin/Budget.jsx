@@ -23,14 +23,14 @@ export default React.createClass({
       plan:this.props.plan,
       subPlan:this.props.subPlan,
        options:{
-          title: Messages.getEditable("label.generalBudget","fpdi-nav-label"),
+          //title: Messages.getEditable("label.generalBudget","fpdi-nav-label"),
           hAxis: {title: '', minValue: 0, maxValue: 15},
           vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
           legend: 'none',
           bar: {groupWidth: '50%'}
         }
     };
-  },  
+  },
 
   componentWillReceiveProps(newProps){
     var me = this;
@@ -45,7 +45,7 @@ export default React.createClass({
 
         StructureStore.dispatch({
           action: StructureStore.ACTION_GET_OBJECTIVES,
-          data: {            
+          data: {
             planId: newProps.subPlan.id,
             macroId: newProps.plan.id
           }
@@ -55,10 +55,10 @@ export default React.createClass({
           action: DashboardStore.ACTION_GET_GENERAL_BUDGETS,
           data: {
             macro: (newProps.plan != -1)?(newProps.plan.id):(null),
-            plan:(newProps.subPlan != -1)?(newProps.subPlan.id):(null)          
+            plan:(newProps.subPlan != -1)?(newProps.subPlan.id):(null)
           }
         });
-    }    
+    }
   },
 
   componentDidMount() {
@@ -70,10 +70,10 @@ export default React.createClass({
         });
     }
 
-    StructureStore.on("objectivesretrivied", (model) => { 
+    StructureStore.on("objectivesretrivied", (model) => {
       if(this.isMounted()) {
         me.setState({
-          objectives: model.data          
+          objectives: model.data
         });
         me.forceUpdate();
       }
@@ -98,25 +98,25 @@ export default React.createClass({
 
 
      DashboardStore.on("generalbudgetsretrivied", (store) => {
-  	   var plannedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.planned));         
+  	   var plannedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.planned));
        var conductedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.conducted));
        var committedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.committed));
-     	
+
 
         if(this.isMounted()) {
-          this.setState({      
-              data: [ 
+          this.setState({
+              data: [
                 ['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-                [Messages.get("label.budget.planned"), store.data.planned, '#A7E2D2', plannedTooltipText],            
+                [Messages.get("label.budget.planned"), store.data.planned, '#A7E2D2', plannedTooltipText],
                 [Messages.get("label.budget.committed"), store.data.committed , '#3AB795', committedTooltipText],
-                [Messages.get("label.budget.conducted"), store.data.conducted , '#76D3BA', conductedTooltipText]            
+                [Messages.get("label.budget.conducted"), store.data.conducted , '#76D3BA', conductedTooltipText]
               ],
               loading: false
           });
         }
     });
 
-    if(this.isMounted()) {    	
+    if(this.isMounted()) {
     	this.setState({
         options:{
           title: Messages.get("label.generalBudget"),
@@ -125,12 +125,12 @@ export default React.createClass({
           legend: 'none',
           bar: {groupWidth: '50%'}
         },
-        data: [ 
+        data: [
         	['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-       		[Messages.get("label.budget.planned"), 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],            
+       		[Messages.get("label.budget.planned"), 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],
         	[Messages.get("label.budget.committed"), 0 , '#3AB795', "R$ "+this.formatBR(this.formatEUA(0))],
-        	[Messages.get("label.budget.conducted"), 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]            
-      	]      
+        	[Messages.get("label.budget.conducted"), 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]
+      	]
       });
     }
   },
@@ -166,7 +166,7 @@ export default React.createClass({
       this.setState({
         selectedObjectives:this.state.objectives[this.refs.selectObjectives.value],
         loading: true
-      });      
+      });
       BudgetStore.dispatch({
         action: BudgetStore.ACTION_FIND,
         data: {
@@ -195,7 +195,7 @@ export default React.createClass({
         selectedactionBudget:this.state.actionBudgets[this.refs.selectSubAction.value],
         loading: true
       });
-      
+
       DashboardStore.dispatch({
           action: DashboardStore.ACTION_GET_GENERAL_BUDGETS,
           data: {
@@ -214,7 +214,7 @@ export default React.createClass({
   },
 
   formatBR(str){
-   
+
     var x = str.split('.')[0];
     x = this.replaceAll(x,",",".");
     var decimal = str.split('.')[1];
@@ -235,7 +235,7 @@ export default React.createClass({
 
   render() {
     return (
-      <div id = {!this.state.hide ? "budgetSection" : ""} className="panel panel-default">     
+      <div id = {!this.state.hide ? "budgetSection" : ""} className="panel panel-default">
         <div className="panel-heading dashboard-panel-title">
             <div className="performance-strategic-btns floatRight">
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
@@ -244,29 +244,29 @@ export default React.createClass({
               <b className="budget-graphic-title"> {Messages.getEditable("label.budget","fpdi-nav-label")} </b>
               <select onChange={this.objectiveChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
               <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
-              {this.state.objectives ? 
+              {this.state.objectives ?
                 this.state.objectives.map((attr, idy) =>{
                   return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 15).concat("...").toString()):(attr.name)}
                     </option>);
                 }) : ""
               }
-              </select>                                                     
-              <select  onChange={this.subActionChange} ref="selectSubAction" className="form-control dashboard-select-box-graphs marginLeft10" 
+              </select>
+              <select  onChange={this.subActionChange} ref="selectSubAction" className="form-control dashboard-select-box-graphs marginLeft10"
                disabled={(this.state.selectedObjectives<0)?("disabled"):("")}>
                 <option value={-1} data-placement="right" title="Todas as sub-ações">{Messages.get("label.allSubActions")}</option>
                 {(this.state.actionBudgets)?(this.state.actionBudgets.map((attr, idy) =>{
                   return(<option key={attr.id} value={idy} data-placement="right" title={attr.subAction}>{attr.subAction}</option>);
                   }) ):("")
                 }
-              </select> 
+              </select>
             </div>
-              
+
         </div>
         {!this.state.hide ?
             <div className={this.state.profile.ADMIN ? 'paddingTopBottom35' :  'paddingBottom84'}>
-                {this.state.loading ? <LoadingGauge/> : 
-                    <ForPDIChart 
+                {this.state.loading ? <LoadingGauge/> :
+                    <ForPDIChart
                     chartType="ColumnChart"
                     data={this.state.data}
                     options={this.state.options}
@@ -274,7 +274,7 @@ export default React.createClass({
                     width={"100%"}
                     height={"300px"}
                     legend_toggle={true} />
-                }               
+                }
             </div>
         :""}
     </div>);
