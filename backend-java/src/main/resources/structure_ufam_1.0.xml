@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="forpdi_structure_1.0.xsd">
+	<structureName>UFAM</structureName>
+	<structureDescription>
+		Estrutura de PDI utilizada pela Universidade de Bras&#237;lia (UnB).
+	</structureDescription>
+	<structureLevels>
+
+		<level>
+			<name>Vetor</name>
+			<description>Quais os vetores do seu PDI</description>
+			<indicator>false</indicator>
+			<goal>false</goal>
+			<objective>false</objective>
+			<attributes>
+				<attribute required="true" visibleInTables="true">
+					<type>ResponsibleField</type>
+					<label>Respons&#225;vel</label>
+					<description>Informe um respons&#225;vel</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+				<attribute required="true" visibleInTables="true">
+					<type>TextArea</type>
+					<label>Descri&#231;&#227;o</label>
+					<description>Descri&#231;&#227;o da diretriz institucional</description>
+					<optionsField></optionsField>
+					<scheduleOptions>
+						<periodicity></periodicity>
+						<scheduleValues></scheduleValues>
+					</scheduleOptions>
+				</attribute>
+			</attributes>
+			<level>
+				<name>Objetivo</name>
+				<description>Objetivo para cada diretriz institucional</description>
+				<indicator>false</indicator>
+				<goal>false</goal>
+				<objective>true</objective>
+				<attributes>
+					<attribute required="true" visibleInTables="true">
+						<type>ResponsibleField</type>
+						<label>Respons&#225;vel</label>
+						<description>Informe um respons&#225;vel</description>
+						<optionsField></optionsField>
+						<scheduleOptions>
+							<periodicity></periodicity>
+							<scheduleValues></scheduleValues>
+						</scheduleOptions>
+					</attribute>
+					<attribute required="true" visibleInTables="false">
+						<type>TextArea</type>
+						<label>Descri&#231;&#227;o</label>
+						<description>Descri&#231;&#227;o do objetivo</description>
+						<optionsField></optionsField>
+						<scheduleOptions>
+							<periodicity></periodicity>
+							<scheduleValues></scheduleValues>
+						</scheduleOptions>
+					</attribute>
+					<attribute required="true" visibleInTables="true"
+						bscField="true">
+						<type>SelectField</type>
+						<label>Perspectiva do BSC</label>
+						<description>Selecione uma perspectiva</description>
+						<optionsField>
+							<optionLabel>
+								<label>Sociedade</label>
+							</optionLabel>
+							<optionLabel>
+								<label>Foco de atua&#231;&#227;o</label>
+							</optionLabel>
+							<optionLabel>
+								<label>Desenvolvimento institucional</label>
+							</optionLabel>
+						</optionsField>
+						<scheduleOptions>
+							<periodicity></periodicity>
+							<scheduleValues></scheduleValues>
+						</scheduleOptions>
+					</attribute>
+					<attribute required="false" visibleInTables="false">
+						<type>BudgetField</type>
+						<label>Or&#231;amento</label>
+						<description>Descri&#231;&#227;o do or&#231;amento</description>
+						<optionsField></optionsField>
+						<scheduleOptions>
+							<periodicity></periodicity>
+							<scheduleValues></scheduleValues>
+						</scheduleOptions>
+					</attribute>
+				</attributes>
+				<level>
+					<name>Indicador</name>
+					<description>Indicadores para cada objetivo</description>
+					<indicator>true</indicator>
+					<goal>false</goal>
+					<objective>false</objective>
+					<attributes>
+						<attribute required="true" visibleInTables="true">
+							<type>ResponsibleField</type>
+							<label>Respons&#225;vel</label>
+							<description>Informe um respons&#225;vel</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false">
+							<type>TextArea</type>
+							<label>Descri&#231;&#227;o</label>
+							<description>Descri&#231;&#227;o do indicador</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false"
+							periodicityField="true">
+							<label>Periodicidade </label>
+							<type>SelectField</type>
+							<description>Escolha uma periodicidade</description>
+							<optionsField>
+								<optionLabel>
+									<label>Anual</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Semestral</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Trimestral</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Bimestral</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Mensal</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Quinzenal</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Semanal</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Bienal</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Di&#225;ria</label>
+								</optionLabel>
+							</optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false"
+							polarityField="true">
+							<label>Polaridade</label>
+							<type>SelectField</type>
+							<description>Escolha uma polaridade </description>
+							<optionsField>
+								<optionLabel>
+									<label>Maior-melhor</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Menor-melhor</label>
+								</optionLabel>
+							</optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false"
+							formatField="true">
+							<label>Formato</label>
+							<type>SelectField</type>
+							<description>Escolha um formato </description>
+							<optionsField>
+								<optionLabel>
+									<label>Porcentagem</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Num&#233;rico</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Monet&#225;rio(R$)</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Horas</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Dias</label>
+								</optionLabel>
+								<optionLabel>
+									<label>Meses</label>
+								</optionLabel>
+								<!-- <optionLabel> <label>Booleano (Sim ou N&#227;o)</label> </optionLabel> 
+									<optionLabel> <label>Textual</label> </optionLabel> -->
+							</optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="true"
+							beginField="true">
+							<type>DateField</type>
+							<label>In&#237;cio</label>
+							<description>Data de in&#237;cio</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="true"
+							endField="true">
+							<type>DateField</type>
+							<label>Fim</label>
+							<description>Data de fim</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false">
+							<type>TextField</type>
+							<label>Descri&#231;&#227;o do c&#225;lculo</label>
+							<description>Descri&#231;&#227;o do C&#225;lculo</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="false" visibleInTables="false">
+							<type>TextField</type>
+							<label>&#211;rg&#227;o Respons&#225;vel</label>
+							<description>&#211;rg&#227;o respons&#225;vel pelo indicador</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="true" visibleInTables="false">
+							<type>ActionPlanField</type>
+							<label>Plano de a&#231;&#227;o</label>
+							<description>Plano de a&#231;&#227;o atual</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+						<attribute required="false" visibleInTables="false">
+							<type>AttachmentField</type>
+							<label>Anexar arquivos</label>
+							<description>Anexe arquivos referente a esse indicador</description>
+							<optionsField></optionsField>
+							<scheduleOptions>
+								<periodicity></periodicity>
+								<scheduleValues></scheduleValues>
+							</scheduleOptions>
+						</attribute>
+					</attributes>
+					<level>
+						<name>Meta</name>
+						<description>Metas para cada indicador</description>
+						<indicator>false</indicator>
+						<goal>true</goal>
+						<objective>false</objective>
+						<attributes>
+							<attribute required="true" visibleInTables="true">
+								<type>ResponsibleField</type>
+								<label>Respons&#225;vel</label>
+								<description>Informe um respons&#225;vel</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="true" visibleInTables="false">
+								<label>Descri&#231;&#227;o</label>
+								<type>TextArea</type>
+								<description>Descri&#231;&#227;o da meta</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<!--<attribute required="true"> <type>NumberField</type> <label>Margem</label> 
+								<description>Margem da meta</description> <optionsField></optionsField> <scheduleOptions> 
+								<periodicity></periodicity> <scheduleValues></scheduleValues> </scheduleOptions> 
+								</attribute> -->
+
+							<attribute required="true" visibleInTables="true"
+								finishDate="true">
+								<type>DateField</type>
+								<label>Vencimento</label>
+								<description>Data de vencimento</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="true" visibleInTables="true"
+								expectedField="true">
+								<type>NumberField</type>
+								<label>Esperado</label>
+								<description>O que &#233; esperado da meta</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="true" visibleInTables="false"
+								minimumField="true">
+								<type>NumberField</type>
+								<label>M&#237;nimo </label>
+								<description>M&#237;nimo da meta</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="true" visibleInTables="false"
+								maximumField="true">
+								<type>NumberField</type>
+								<label>M&#225;ximo</label>
+								<description>M&#225;ximo da meta</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="false" visibleInTables="true"
+								reachedField="true">
+								<type>NumberField</type>
+								<label>Alcan&#231;ado</label>
+								<description>O que foi alcan&#231;ado na meta</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+							<attribute required="false" visibleInTables="true"
+								justificationField="true">
+								<type>TextArea</type>
+								<label>Justificativa</label>
+								<description>Justificativa do alcan&#231;ado</description>
+								<optionsField></optionsField>
+								<scheduleOptions>
+									<periodicity></periodicity>
+									<scheduleValues></scheduleValues>
+								</scheduleOptions>
+							</attribute>
+						</attributes>
+					</level>
+				</level>
+			</level>
+		</level>
+	</structureLevels>
+</structure>

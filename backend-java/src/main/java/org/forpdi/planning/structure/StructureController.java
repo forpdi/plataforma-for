@@ -291,12 +291,12 @@ public class StructureController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void listLevelInstance(Long levelId, Long planId, Long parentId) {
+	public void listLevelInstance(Long sequence, Long planId, Long parentId) {
 		try {
-			StructureLevel level = this.bs.retrieveById(levelId);
+			Plan plan = this.planBS.retrieveById(planId);
+			StructureLevel level = this.bs.retrieveNextLevel(plan.getStructure(), sequence.intValue());
 			PaginatedList<Attribute> attributeList = this.bs.listAttributes(level);
 
-			Plan plan = this.planBS.retrieveById(planId);
 			if (parentId == 0)
 				parentId = null;
 			boolean haveBudget = false;
@@ -308,7 +308,6 @@ public class StructureController extends AbstractController {
 			}*/
 			List<StructureLevelInstance> structureList = list.getList();
 			for (int count = 0; count < structureList.size(); count++) {
-				
 				List<Budget> budgetList = this.budgetBS.listBudgetByLevelInstance(structureList.get(count));
 				if(!budgetList.isEmpty())
 					haveBudget = true;
