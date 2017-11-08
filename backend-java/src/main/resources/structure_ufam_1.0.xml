@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="forpdi_structure_1.0.xsd">
 	<structureName>UFAM</structureName>
 	<structureDescription>
-		Estrutura de PDI utilizada pela Universidade de Bras&#237;lia (UnB).
+		Estrutura de PDI utilizada pela Universidade Federal do Amazonas (UFAM).
 	</structureDescription>
 	<structureLevels>
 
