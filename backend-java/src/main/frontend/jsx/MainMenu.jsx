@@ -239,35 +239,35 @@ export default React.createClass({
                                 </span>
                         </Link>
                     </div>
-                    {this.state.archivedPlans && (this.state.archivedPlans.length > 0) ?
-                        <div>
-                            <div className="fpdi-tabs-nav">
-                                <a onClick={this.listArchivedPlans}>
-                                    <span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
-                                        /> <span className="fpdi-nav-label">
-                                            Planos arquivados
-                                        </span>
-                                        {this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
-
-                                </a>
-                            </div>
-                            {!this.state.archivedPlansHidden && !this.state.hidden ?
-                                this.state.archivedPlans.map((plan, index) => {
-                                    return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
-                                        <Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
-                                            <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
-                                                />  <span className="fpdi-nav-label" title = {plan.name}>
-                                                    {(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}
-                                                </span>
-                                        </Link>
-                                    </div>;
-                                })
-                            :""}
-                        </div>
-                    :""}
                 </div>
             : ""}
             <hr className="divider"></hr>
+			{this.state.archivedPlans && (this.state.archivedPlans.length > 0) ?
+				<div>
+					<div className="fpdi-tabs-nav">
+						<a onClick={this.listArchivedPlans}>
+							<span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
+								/> <span className="fpdi-nav-label">
+									Planos arquivados
+								</span>
+								{this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
+
+						</a>
+					</div>
+					{!this.state.archivedPlansHidden && !this.state.hidden ?
+						this.state.archivedPlans.map((plan, index) => {
+							return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
+								<Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
+									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
+										/>  <span className="fpdi-nav-label" title = {plan.name}>
+											{(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}
+										</span>
+								</Link>
+							</div>;
+						})
+					:""}
+				</div>
+			:""}
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
                 <a onClick={this.tweakHidden}>
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
