@@ -1140,6 +1140,9 @@ var Validate = {
 		var name = refs["budgetNameText"].value;
 		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
+
+		console.log(parseFloat(committed.toString().replace(",", ".")));
+		console.log(parseFloat(realized.toString().replace(",", ".")));
 		 		 
 		 if (subAction.trim() == "") {
 			boolMsg = true;
@@ -1149,9 +1152,7 @@ var Validate = {
 			boolMsg = true;
 			refs.formAlertErrorCommited.innerHTML = "Orçamento LOA deve ser maior que 0";
 			refs['budgetCommitted'].className += " borderError";
-		} else if (committed.toString().replace(",", ".") < realized.toString().replace(",", ".")) {
-			console.log(committed.toString().replace(",", "."));
-			console.log(realized.toString().replace(",", "."));
+		} else if (parseFloat(committed.toString().replace(",", ".")) < parseFloat(realized.toString().replace(",", "."))) {
 			boolMsg = true;
 			refs.formAlertErrorRealized.innerHTML = "Valor realizado não pode ser maior que o empenhado";
 			refs['budgetRealized'].className += " borderError";
