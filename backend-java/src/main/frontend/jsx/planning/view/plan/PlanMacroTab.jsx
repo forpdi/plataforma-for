@@ -343,7 +343,7 @@ export default React.createClass({
 		return <div>
 			<div className="media-list">
 				<div className="media-header">
-					<h1>{this.context.planMacro.get("name")}&nbsp;{
+					<h1>{this.context.planMacro.get("name").length <= 24?this.context.planMacro.get("name"):this.context.planMacro.get("name").split("",20).concat(" ...")}&nbsp;{
 						(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) ? 
 						(<span className="dropdown">
 							<a
@@ -358,7 +358,6 @@ export default React.createClass({
 							</a>
 							
 							{this.state.archived ? this.renderUnarchivePlan() : this.renderArchivePlan()}
-							
 						</span>	
 
 						):""}

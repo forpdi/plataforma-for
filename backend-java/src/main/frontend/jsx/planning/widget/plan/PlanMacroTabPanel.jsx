@@ -210,7 +210,7 @@ export default React.createClass({
 			<div className="fpdi-tabs">
 
 				<ul  className={"fpdi-tabs-nav"+(this.state.tabs.length < 2 ? " hide-close":" show-close")}  role="tablist">
-				    {this.state.tabs}
+				{this.state.tabs}
 					{this.state.tabsHidden.length>0 ?
 				    	(
 				    		<div className={"fpdi-tabs-hidden"+(this.state.showTabsHidden ? " show-border":"")} 
@@ -224,7 +224,7 @@ export default React.createClass({
 					: ""}
 				</ul>
 				<div className="fpdi-tabs-content container-fluid">
-					{this.props.children}
+				{this.props.children}
 				</div>
 			</div>
 		);

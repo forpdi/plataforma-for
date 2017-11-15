@@ -252,7 +252,7 @@ export default React.createClass({
 		<div className="summary-table">
 			<div className="summary-table-header">
 				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Recalcular</button>
-				{Messages.getEditable("label.summaryTable","fpdi-nav-label")} - {this.props.planMacro.get("name")}
+				{Messages.getEditable("label.summaryTable","fpdi-nav-label")} - {this.props.planMacro.get("name").length <= 24?this.props.planMacro.get("name"):this.props.planMacro.get("name").split("",20).concat(" ...")}
 			</div>
 			<table>
 				<thead>
