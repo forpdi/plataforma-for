@@ -635,7 +635,7 @@ public class UserController extends AbstractController {
 			} else {
 				boolean deleted = this.bs.userIsDeleted(email);
 				if (deleted && this.bs.existsByEmail(email) != null) {
-					this.fail("Este usuário foi deletado. Entre em contato com o administrador do sistema.");
+					this.fail("Usuário inexistente. Entre em contato com o administrador do sistema.");
 				} else {
 					this.fail("E-mail e/ou senha inválido(s).");
 				}
@@ -752,7 +752,7 @@ public class UserController extends AbstractController {
 			} else {
 				boolean userInactive = this.bs.userIsDeleted(email);
 				if (userInactive) {
-					this.fail("Este usuário foi deletado. Entre em contato com o administrador do sistema.");
+					this.fail("Usuário inexistente. Entre em contato com o administrador do sistema.");
 				} else if (companyUser.isBlocked()) {
 					this.fail("Este usuário foi bloqueado. Entre em contato com o administrador do sistema.");
 				} else if (!companyUser.getUser().isActive()) {
