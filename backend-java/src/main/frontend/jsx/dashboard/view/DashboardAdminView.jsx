@@ -20,7 +20,7 @@ export default React.createClass({
         };
     },
 
-    componentWillReceiveProps(newProps){        
+    componentWillReceiveProps(newProps){
         if(this.isMounted()) {
     		this.setState({
     			plan:newProps.plan,
@@ -30,22 +30,42 @@ export default React.createClass({
     },
 
     componentDidMount(){
-    
+
     },
 
 	render() {
 		return (
             <div className='marginLeft30'>
-                <div className = "row">
-                    <div className="col-md-7">
-                        <StrategicAxis plan={this.state.plan} subPlan={this.state.subPlan} />
-                        <GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan} />
-                    </div>
-                    <div className="col-md-5">
-                        <Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile}/>
-                        <DashboardPlanDetails plan={this.state.plan}  subPlan={this.state.subPlan} />
-                    </div>
-			     </div>
+                {(EnvInfo.company && EnvInfo.company.showBudgetElement == true) ?
+                    (<div className = "row">
+						<div className="col-md-7">
+							<StrategicAxis plan={this.state.plan} subPlan={this.state.subPlan} />
+							<GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan} />
+						</div>
+						<div className="col-md-5">
+							<Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile}/>
+							<DashboardPlanDetails plan={this.state.plan}  subPlan={this.state.subPlan} />
+						</div>
+					</div>)
+                :
+					(<div>
+						<div className = "row">
+							<div className="col-md-12">
+								<StrategicAxis plan={this.state.plan} subPlan={this.state.subPlan} />
+							</div>
+						</div>
+						<div className = "row">
+							<div className="col-md-12">
+								<div className="col-md-6">
+									<GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan} />
+								</div>
+								<div className="col-md-6">
+									<DashboardPlanDetails plan={this.state.plan}  subPlan={this.state.subPlan} />
+								</div>
+							</div>
+						</div>
+					</div>)
+                }
             </div>
 
 		);

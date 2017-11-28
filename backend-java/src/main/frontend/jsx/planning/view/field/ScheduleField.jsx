@@ -14,6 +14,7 @@ import moment from 'moment';
 import 'react-date-picker/index.css'
 import _ from "underscore";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 //import Toastr from 'toastr';
 
@@ -79,7 +80,7 @@ export default React.createClass({
 				});
 				//Toastr.remove();
 				//Toastr.success("Informações salvas com sucesso");
-				this.context.toastr.addAlertSuccess("Informações salvas com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 			}
 		}, this);
 		ScheduleStore.on("scheduleUpdated", model => {
@@ -92,7 +93,7 @@ export default React.createClass({
 				});
 				//Toastr.remove();
 				//Toastr.success("Cronograma editado com sucesso");
-				this.context.toastr.addAlertSuccess("Cronograma editado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.scheduleEdit"));
 				this.cancelNewSchedule();
 			}
 		},this);
@@ -106,7 +107,7 @@ export default React.createClass({
 				});
 				//Toastr.remove();
 				//Toastr.success("Exclusão realizada com sucesso");
-				this.context.toastr.addAlertSuccess("Exclusão realizada com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.deletion"));
 			}
 		},this);
 	},
@@ -298,8 +299,8 @@ export default React.createClass({
 				: <td></td>}
 				<td>				
                     <div className='displayFlex'>
-                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewSchedule} title="Salvar"></span>
-                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewSchedule} title="Cancelar"></span>
+                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewSchedule} title={Messages.get("label.submitLabel")}></span>
+                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewSchedule} title={Messages.get("label.cancel")}></span>
                    	</div>
 	            </td>
 			</tr>
@@ -409,8 +410,8 @@ export default React.createClass({
 					})
 				: <td></td>}
 				<td className="edit-budget-col floatRight scheduleRenderIcons">
-	               	<span className='mdi mdi-check accepted-budget' onClick={this.acceptEditSchedule.bind(this,model.id,idx)} title="Salvar"></span>
-	              	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewSchedule} title="Cancelar"></span>
+	               	<span className='mdi mdi-check accepted-budget' onClick={this.acceptEditSchedule.bind(this,model.id,idx)} title={Messages.get("label.submitLabel")}></span>
+	              	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewSchedule} title={Messages.get("label.cancel")}></span>
 		        </td>
 			</tr>
 		);
@@ -434,7 +435,7 @@ export default React.createClass({
 			this.state.title = this.refs['edit-input'].value;
 			this.cancelEditing();
 		}else{
-			this.context.toastr.addAlertError("Preencha o nome do cronograma");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeSchedule"));
 		}
 	},
 
@@ -444,8 +445,8 @@ export default React.createClass({
 			<div className="edit-section-attribute"> 
 				<input defaultValue={this.props.fieldDef.label == "" ? this.state.title : this.props.fieldDef.label} className="edit-section-attribute-input" ref="edit-input"/>
 				<div className=' displayFlex'>
-                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title="Salvar"></span>
-                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title="Cancelar"></span>
+                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
+                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title={Messages.get("label.cancel")}></span>
                	</div>
 			</div>
 			</div>
@@ -465,13 +466,13 @@ export default React.createClass({
 					{!!this.props.isDocument ? ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
 													PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ? 
 					<span className="mdi mdi-pencil attribute-input-edit atribute-input-edit-schedule inner" 
-					title="Alterar campo" onClick={this.edit}/> :"") : ""}
+					title={Messages.get("label.title.changeField")} onClick={this.edit}/> :"") : ""}
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
 					{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ?
-						<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newSchedule}>Novo</button>
+						<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newSchedule}>{Messages.get("label.new")}</button>
 					:""}
 						<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
 					</div>}
@@ -481,10 +482,10 @@ export default React.createClass({
 					<thead>
 						<tr>
 							<th>#</th>
-							<th>Atividade</th>
-							<th>Início</th>
-							<th>Fim</th>
-							{this.state.schedule.periodicityEnable ? <th>Periodicidade</th> : <th></th>}
+							<th>{Messages.getEditable("label.activity","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.begin","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.end","fpdi-nav-label")}</th>
+							{this.state.schedule.periodicityEnable ? <th>{Messages.getEditable("label.title.periodicity","fpdi-nav-label")}</th> : <th></th>}
 							{this.state.schedule.scheduleStructures.length >0 ?
 								this.state.schedule.scheduleStructures.map((model, idx) => {
 									return(

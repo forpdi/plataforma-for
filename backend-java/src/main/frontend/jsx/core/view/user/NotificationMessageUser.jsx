@@ -1,6 +1,7 @@
 import React from "react";
 import string from 'string';
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 
@@ -60,7 +61,7 @@ export default React.createClass({
                                                                
                     );
                 })
-                : <div className="fpdi-noNotifications">{"Você ainda não possui nenhuma notificação registada no sistema."}</div>}
+                : <div className="fpdi-noNotifications">{Messages.getEditable("notification.noNotifications","fpdi-nav-label")}</div>}
             </div>
         );
     }

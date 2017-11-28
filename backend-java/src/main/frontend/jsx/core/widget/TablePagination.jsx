@@ -3,6 +3,7 @@ import React from "react";
 import {Store} from 'forpdi/jsx/core/store/Fluxbone.jsx';
 import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import $ from 'jquery';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	getDefaultProps() {
@@ -110,14 +111,14 @@ export default React.createClass({
 				<div className="pagination-ctn">
 					<span className="page-number">
 						{"Página "+this.state.page+" de "+this.state.pages}
-						<span className="marginLeft20">{"Mostrar até: "}</span>
+						<span className="marginLeft20">{ Messages.get ("label.show") + " "}</span>
 						<select onChange={this.changePageSize} id={this.props.tableName} className="page-size-dropdown">
-							<option value="5">5 itens</option>
-							<option value="10">10 itens</option>
-							<option value="15">15 itens</option>
-							<option value="20">20 itens</option>
-							<option value="25">25 itens</option>
-							<option value="50">50 itens</option>
+							<option value="5">{Messages.get("label.fiveItems")}</option>
+							<option value="10">{Messages.get("label.tenItems")}</option>
+							<option value="15">{Messages.get("label.fifteenItems")}</option>
+							<option value="20">{Messages.get("label.twentyItems")}</option>
+							<option value="25">{Messages.get("label.twentyFiveItems")}</option>
+							<option value="50">{Messages.get("label.fiftyItems")}</option>
 						</select>
 					</span>				
 					<nav aria-label="Page navigation" className="floatRight">
@@ -125,14 +126,14 @@ export default React.createClass({
 					    <li>
 					      <a aria-label="Previous" className={this.state.page <= 1 ? "page_disabled page-nr" : "page-nr"}
 					      onClick={this.state.page > 1 ? this.loadPage.bind(this,Number(this.state.page)-1) : _.noop}>
-					        <span aria-hidden="true">Anterior</span>
+					        <span aria-hidden="true">{Messages.get("label.previous")}</span>
 					      </a>
 					    </li>
 					    {this.renderPages()}								    
 					    <li>
 					      <a aria-label="Next" className={this.state.page >= this.state.pages ? "page_disabled page-nr" : "page-nr"}
 					       onClick={this.state.page < this.state.pages ? this.loadPage.bind(this,Number(this.state.page)+1) : _.noop}>
-					        <span aria-hidden="true">Próximo</span>
+					        <span aria-hidden="true">{Messages.get("label.next")}</span>
 					      </a>
 					    </li>
 					  </ul>

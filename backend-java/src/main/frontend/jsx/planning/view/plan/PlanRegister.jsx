@@ -50,7 +50,7 @@ export default React.createClass({
 				maxLength:255,
 				required: true,
 				placeholder: "",
-				label: "Nome",
+				label: Messages.getEditable("label.name","fpdi-nav-label"),
 				value: this.state.model ? this.state.model.get("name"):null
 			});
 		}
@@ -59,7 +59,7 @@ export default React.createClass({
 			type: AttributeTypes.DATE_FIELD,
 			required: true,
 			placeholder: "",
-			label: "Data de Início",
+			label: Messages.get("label.dateBegin"),
 			onChange:this.onChangeBegin,
 			value: this.state.model ? this.state.model.get("begin").split(" ")[0]:(this.context.planMacro?this.context.planMacro.get("begin").split(" ")[0]:null)
 		},{
@@ -67,7 +67,7 @@ export default React.createClass({
 			type: AttributeTypes.DATE_FIELD,
 			required: true,
 			placeholder: "",
-			label: "Data de Término",
+			label: Messages.get("label.dateEnd"),
 			onChange:this.onChangeEnd,
 			value: this.state.model ? this.state.model.get("end").split(" ")[0]:(this.context.planMacro?this.context.planMacro.get("end").split(" ")[0]:null)
 		});
@@ -77,8 +77,8 @@ export default React.createClass({
 			type: AttributeTypes.SELECT_STRUCTURE,
 			required: true,
 			disabled: this.state.modelId ? true : false,
-			placeholder: '-- Selecione uma Estrutura --',
-			label: "Estrutura do Plano",
+			placeholder: Messages.get("label.select.structurePlan"),
+			label: Messages.get("label.structurePlan"),
 			value: this.state.model ? this.state.model.get("structure").id : null,
 			valueLabel: this.state.model ? this.state.model.get("structure").name : null,
 			options: this.state.structures,
@@ -90,7 +90,7 @@ export default React.createClass({
 			type: AttributeTypes.TEXT_AREA_FIELD,
 			placeholder: "",
 			maxLength: 9000,
-			label: "Descrição do Plano",
+			label: Messages.getEditable("label.descriptionPlan","fpdi-nav-label"),
 			value: this.state.model ? this.state.model.get("description"):null
 		});
 
@@ -121,7 +121,7 @@ export default React.createClass({
 	componentDidMount() {		
 		var me = this;
 
-		PlanStore.on("sync", (model) => {		
+		PlanStore.on("sync", (model) => {	
 			if (me.context.tabPanel) {
 				me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			}
@@ -139,6 +139,8 @@ export default React.createClass({
 				});
 				dateBegin = model.get("begin").split(" ")[0];
 				dateEnd = model.get("end").split(" ")[0];
+				me.forceUpdate();
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}else{
 				me.setState({
 					model: null,
@@ -149,8 +151,6 @@ export default React.createClass({
 				me.context.tabPanel.removeTabByPath(me.state.tabPath);
 				me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			}
-
-
 			me.updateLoadingState(false);
 		}, me);	
 
@@ -167,7 +167,7 @@ export default React.createClass({
 				vizualization: true,
 				fields: me.getFields(true)
 			});
-			me.context.toastr.addAlertSuccess("Plano de metas alterado com sucesso");
+			me.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedGoalPlan"));
 		}, me);	
 
 		StructureStore.on("find", (store) => {
@@ -179,19 +179,18 @@ export default React.createClass({
 					structureError:true
 				});
 				if(me.context.roles.SYSADMIN) {
-					me.context.toastr.addAlertError("Antes de criar o plano de metas é necessário importar a estrutura do plano! Acesse: Menu lateral direito > Estruturas dos planos de metas");
+					me.context.toastr.addAlertError(Messages.get("label.msg.beforeGoalPlan"));
 				} else {
-					me.context.toastr.addAlertError("Antes de criar o plano de metas é necessário importar uma estrutura do plano! Entre em contato com o administrador do sistema!");
+					me.context.toastr.addAlertError(Messages.get("label.msg.beforeGoalPlanAdmin"));
 				}
 			}
 			me.updateLoadingState(true);
 		}, me);
 
-		PlanStore.on('destroy', store => {
+		PlanStore.on('delete', store => {
 			me.context.tabPanel.removeTabByPath(me.state.tabPath);		
 			me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
-			me.context.toastr.addAlertSuccess(store.attributes.name + " excluído com sucesso.");
-			//http://localhost:8080/forpdi/#/plan/1/details/overview
+			me.context.toastr.addAlertSuccess(store.attributes.name + " " + Messages.get("label.successDeleted"));
 		}, me);
 
 		me.refreshData(me.props, me.context);
@@ -224,20 +223,19 @@ export default React.createClass({
 
 		if (props.params.subplanId) {
 			PlanStore.dispatch({
-				action: PlanStore.ACTION_RETRIEVE,
+				action: PlanStore.ACTION_RETRIEVE_PLAN,
 				data: props.params.subplanId
 			});
 		} else {
 			this.setState({
-				title: "Novo plano de metas",
+				title: Messages.getEditable("label.newGoalPlan","fpdi-nav-label"),
 				vizualization: false
 			});
 			if (this.state.structures) {
 				_.defer(() => {this.updateLoadingState(true);});
 			}
+			_.defer(() => {context.tabPanel.addTab(props.location.pathname, Messages.get("label.newGoalPlan"));});
 		}
-
-		_.defer(() => {context.tabPanel.addTab(props.location.pathname, props.params.subplanId ? (this.state.title ? this.state.title : "Plano de metas") :"Novo plano de metas");});
 	},
 
 	onChangeStructure(){
@@ -254,7 +252,7 @@ export default React.createClass({
 		var me = this;
 
 		if(this.state.structureError){
-			this.context.toastr.addAlertError("Antes de criar o plano de metas é necessário importar uma estrutura do plano! Acesse menu lateral direito > Estruturas dos planos de metas");
+			this.context.toastr.addAlertError(Messages.get("label.msg.beforeGoalPlan"));
 			return;
 		}
 
@@ -281,9 +279,9 @@ export default React.createClass({
 			var newEndDate = moment(data.end,"D/M/YYYY").toDate(); // data fim nova
 			var msg = "";
 			if(oldEndDate > newEndDate || oldEndDate < newEndDate || oldBeginDate > newBeginDate || oldBeginDate < newBeginDate){ // se houver alguma alteração de datas
-				msg = "Você alterou as datas do plano de metas. Após a confirmação verifique se as datas dos indicadores e das metas estão adequadas. Deseja continuar?";
+				msg = Messages.get("label.modifyDate");
 			}else{
-				msg = "Os dados serão atualizados. Deseja continuar essa ação?";
+				msg = Messages.get("label.msgUpdate");
 			}
 			Modal.confirmCustom(() => {
 				me.state.model.set(data);
@@ -329,18 +327,23 @@ export default React.createClass({
 	deletePlan() {
 		var me = this;
 		if (me.state.model != null) {
-			var msg = "Você tem certeza que deseja excluir esse plano de metas?"
+			/*var msg = "Você tem certeza que deseja excluir esse plano de metas?"
 			Modal.confirmCustom(() => {
 				Modal.hide();
 				PlanStore.dispatch({
-					action: PlanStore.ACTION_DESTROY,
+					action: PlanStore.ACTION_DELETE_PLAN,
 					data: me.state.model
 				});				
-			},msg,me.refreshCancel);
-		}
-
-
-		
+			},msg,me.refreshCancel);*/
+			var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
+			Modal.confirmCancelCustom(() => {				
+				Modal.hide();
+				PlanStore.dispatch({
+					action: PlanStore.ACTION_DELETE_PLAN,
+					data: me.state.model
+				});	
+			},msg,()=>{Modal.hide();me.refreshCancel;});
+		}	
 	},
 
 	renderArchivePlanMacro() {
@@ -348,8 +351,8 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				<li> 
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-pencil disabledIcon" title="Impossível editar plano arquivado"> 
-							<span id="menu-levels">	Impossível editar plano arquivado </span>
+						<span className="mdi mdi-pencil disabledIcon" title={Messages.get("label.title.unableArchivedPlan")}> 
+							<span id="menu-levels">	{Messages.getEditable("label.title.unableArchivedPlan","fpdi-nav-label")} </span>
 						</span>
 					</a>
 				</li>
@@ -365,8 +368,8 @@ export default React.createClass({
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.changeVizualization}>
-						<span className="mdi mdi-pencil cursorPointer" title="Editar informações"> 
-							<span id="menu-levels"> Editar informações </span>
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}> 
+							<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
@@ -374,8 +377,8 @@ export default React.createClass({
 		         <li>
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}>
-						<span className="mdi mdi-delete disabledIcon cursorPointer" title={"Não pode ser excluído, pois possui níveis filhos"}> 
-							<span id="menu-levels"> Excluir plano de metas </span>
+						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}> 
+							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")}</span>
 						</span>
 					</Link>
 		         </li>
@@ -384,8 +387,8 @@ export default React.createClass({
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.deletePlan}>
-						<span className="mdi mdi-delete cursorPointer" title="Excluir plano de metas"> 
-							<span id="menu-levels"> Excluir plano de metas </span>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanGoals")}> 
+							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
@@ -430,9 +433,9 @@ export default React.createClass({
 							data-toggle="dropdown"
 							aria-haspopup="true"
 							aria-expanded="true"
-							title="Ações"
+							title={Messages.get("label.actions")}
 						>
-							<span className="sr-only">Ações</span>
+							<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 							<span className="mdi mdi-chevron-down" />
 						</a>
 
@@ -448,7 +451,7 @@ export default React.createClass({
 				onSubmit={this.onSubmit}
 				fields={this.state.fields}
 				store={PlanStore}
-				submitLabel="Salvar"
+				submitLabel={Messages.get("label.submitLabel")}
 				dateBegin={dateBegin}
 				dateEnd={dateEnd}
 			/>

@@ -1,5 +1,6 @@
 import React from 'react';
 import UserStore from "forpdi/jsx/core/store/User.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var onClickOutside = require('react-onclickoutside');
 
@@ -61,12 +62,12 @@ export default onClickOutside(React.createClass({
                     data-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="true"
-                    title="Configurações"
+                    title={Messages.getEditable("label.settings","fpdi-nav-label")}
                     >
                         <span className="mdi mdi-settings cursorPointer floatRight"/>
                 </a>
                 <div className="dropdown-menu dropdown-menu-right width250" aria-labelledby="notifications-settings-menu">
-                    <p>Recebimento de notificações:</p>
+                    <p>{Messages.getEditable("notification.receiving","fpdi-nav-label")}</p>
                     <div className="radio" id="notificationSettingRadio" onClick={this.setNotificationConfig}>
                         <div key={'field-opt-1'}><label><input
                             type="radio"
@@ -74,7 +75,7 @@ export default onClickOutside(React.createClass({
                             id="notificationSetting1"
                             defaultChecked={this.state.model.notificationSettings == 1 ? true : false}
                             value="1"
-                            />Manter recebimento padrão
+                            />{Messages.getEditable("notification.standard","fpdi-nav-label")}
                             <span className="fpdi-required">&nbsp;</span>
                         </label></div>
                         <div key={'field-opt-2'}><label><input
@@ -83,7 +84,7 @@ export default onClickOutside(React.createClass({
                             id="notificationSetting2"
                             defaultChecked={this.state.model.notificationSettings == 2 ? true : false}
                             value="2"
-                            />Receber todas por e-mail
+                            />{Messages.getEditable("notification.emailType","fpdi-nav-label")}
                         </label></div>
                         <div key={'field-opt-3'}><label><input
                             type="radio"
@@ -91,11 +92,10 @@ export default onClickOutside(React.createClass({
                             id="notificationSetting3"
                             defaultChecked={this.state.model.notificationSettings == 3 ? true : false}
                             value="3"
-                            />Não receber e-mail
+                            />{Messages.getEditable("notification.noEmailType","fpdi-nav-label")}
                         </label></div>
                     </div>
-                    <p className="notificationSettingsDropdown"><span className="fpdi-required"></span> No recebimento padrão, as notificações de planos criados, meta concluída, vencimento de planos
-                    e conclusão do plano de ações do indicador são exibidas apenas no sistema.</p>
+                    <p className="notificationSettingsDropdown"><span className="fpdi-required"></span> {Messages.getEditable("notification.typeInformation","fpdi-nav-label")}</p>
                 </div>
             </div>
         );

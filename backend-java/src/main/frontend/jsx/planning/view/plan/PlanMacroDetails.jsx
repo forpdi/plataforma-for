@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Link} from 'react-router';
 
@@ -66,7 +65,7 @@ export default React.createClass({
 		}
 		if(this.state.model.attributes.deleted){
 			return(<div className="fpdi-plan-details">
-					<h1 className="marginLeft30">Esse plano encontra-se indisponível.</h1>
+					<h1 className="marginLeft30">{Messages.getEditable("label.planUnavailable","fpdi-nav-label")}</h1>
 				</div>);
 		}
 		if(this.state.model.attributes.archived){
@@ -85,7 +84,7 @@ export default React.createClass({
 				);
 			}else{
 				return(<div className="fpdi-plan-details">
-					<h1 className="marginLeft30">Esse plano encontra-se arquivado e você não possui permissão para acessá-lo.</h1>
+					<h1 className="marginLeft30">{Messages.getEditable("label.planFiledNoPermission","fpdi-nav-label")}</h1>
 				</div>);
 			}
 		}else{

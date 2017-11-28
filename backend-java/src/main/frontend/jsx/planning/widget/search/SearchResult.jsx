@@ -2,6 +2,7 @@ import moment from 'moment';
 import React from 'react';
 import {Link} from 'react-router';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 export default React.createClass({
@@ -87,7 +88,7 @@ export default React.createClass({
 		return (
 			<div className="fpdi-search">		
 				<div className = "fpdi-search-view">
-					<p>Sua pesquisa retornou {total} {total == 1 ? "resultado" : "resultados"}</p>
+					<p>{Messages.getEditable("label.searchReturned","fpdi-nav-label")} {total} {total == 1 ? Messages.getEditable("label.result","fpdi-nav-label") : Messages.getEditable("label.results","fpdi-nav-label")}</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ? 
 					<div>
@@ -101,7 +102,7 @@ export default React.createClass({
 										<Link
 											to={"/plan/"+this.props.planId+"/details/subplan/level/"+model.id}
 											activeClassName="active"
-											title="ver mais"
+											title={Messages.get("label.title.viewMore")}
 											>
 											{model.name}
 										</Link>
@@ -111,7 +112,7 @@ export default React.createClass({
 						})}
 						{this.state.resultSearchMore.length < this.state.resultSearchTotal ? 
 							<div className="textAlignCenter marginTop20">
-	        					<a onClick={this.showMoreOccurencesSearches}>ver mais...</a>
+	        					<a onClick={this.showMoreOccurencesSearches}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
 	    					</div>
 	    				: ""}
     				</div>

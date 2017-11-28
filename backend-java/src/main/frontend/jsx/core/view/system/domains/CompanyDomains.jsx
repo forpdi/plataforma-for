@@ -98,7 +98,7 @@ export default React.createClass({
 	},
 
 	deleteRecord(model, event) {
-		var msg = "Você tem certeza que deseja excluir " + model.host + "?";
+		var msg = Messages.get("label.deleteConfirmation") + model.host + "?";
 		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
@@ -120,7 +120,7 @@ export default React.createClass({
 
 	renderRecords() {
 		if (!this.state.models || (this.state.models.length <= 0)) {
-			return <p><i>Nenhum domínio cadastrado ainda.</i></p>;
+			return <p><i>{Messages.getEditable("label.noDomainRegistered","fpdi-nav-label")}</i></p>;
 		}
 		return (<div className="row">
 			{this.state.models.map((model, idx) => {
@@ -143,7 +143,7 @@ export default React.createClass({
 			})}
 			<br /><br /><br />
 			{this.state.total && this.state.models && this.state.models.length < this.state.total ?
-				<div className="showMore"><a onClick={this.findDomains.bind(this, this.state.page)}>Ver mais</a></div>
+				<div className="showMore"><a onClick={this.findDomains.bind(this, this.state.page)}>{Messages.getEditable("label.title.viewMore","fpdi-nav-label")}</a></div>
 			: ""}
 		</div>);
 	},
@@ -153,11 +153,11 @@ export default React.createClass({
 			return this.props.children;
 		}
 		return (<div className="container-fluid animated fadeIn">
-			<h1>{Messages.get("label.domains")}</h1>
+			<h1>{Messages.getEditable("label.domains","fpdi-nav-label")}</h1>
 			<ul className="fpdi-action-list text-right">
 				<Link to="/system/domains/new" className="btn btn-sm btn-primary">
 					{/*<span className="mdi mdi-plus"
-					/>*/} Adicionar domínio
+					/>*/} {Messages.getEditable("label.addDomain","fpdi-nav-label")}
 				</Link>
 			</ul>
 

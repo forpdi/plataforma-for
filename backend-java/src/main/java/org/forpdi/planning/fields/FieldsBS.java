@@ -9,6 +9,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.mail.EmailException;
+import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
@@ -22,7 +23,7 @@ import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
 import org.forpdi.planning.fields.budget.BudgetDTO;
-import org.forpdi.planning.fields.budget.BudgetSimulationDB;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.forpdi.planning.fields.schedule.Schedule;
 import org.forpdi.planning.fields.schedule.ScheduleInstance;
 import org.forpdi.planning.fields.schedule.ScheduleStructure;
@@ -64,7 +65,6 @@ public class FieldsBS extends HibernateBusiness {
 	 */
 	public void saveBudget(Budget budget) {
 		budget.setDeleted(false);
-		budget.setCreation(new Date());
 		this.persist(budget);
 	}
 
@@ -421,37 +421,16 @@ public class FieldsBS extends HibernateBusiness {
 	public List<BudgetDTO> getBudgets(StructureLevelInstance levelInstance) {
 		PaginatedList<Budget> budgetList = this.listBudgetsByInstance(levelInstance);
 		List<BudgetDTO> budgetItemlist = new ArrayList<BudgetDTO>();
-		BudgetSimulationDB data;
+		BudgetElement data;
 		for (int i = 0; i < budgetList.getTotal(); i++) {
 			BudgetDTO item = new BudgetDTO();
-			data = this.retrieveBudgetSimulation(budgetList.getList().get(i).getSubAction());
+			data = this.retrieveBudgetElement(budgetList.getList().get(i).getSubAction());
 			item.setBudget(budgetList.getList().get(i));
-			item.setCommitted(data.getCommitted());
-			item.setConducted(data.getConducted());
-			item.setPlanned(data.getPlanned());
+			item.setBudgetLoa(data.getBudgetLoa());
+			item.setBalanceAvailable(data.getBalanceAvailable());
 			budgetItemlist.add(item);
 		}
 		return budgetItemlist;
-	}
-
-	/**
-	 * Buscar cronograma à partir de uma ação orçamentária.
-	 * 
-	 * @param budget
-	 *            Cronograma para ser buscado.
-	 * @return getBudgetBySubAction Cronograma.
-	 */
-	public BudgetDTO getBudgetBySubAction(Budget budget) {
-		Criteria criteria = this.dao.newCriteria(BudgetSimulationDB.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subAction", budget.getSubAction()));
-		BudgetSimulationDB simulation = (BudgetSimulationDB) criteria.uniqueResult();
-		BudgetDTO dto = new BudgetDTO();
-		dto.setBudget(budget);
-		dto.setCommitted(simulation.getCommitted());
-		dto.setConducted(simulation.getConducted());
-		dto.setPlanned(simulation.getPlanned());
-
-		return dto;
 	}
 
 	/**
@@ -546,22 +525,24 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Ação orçamentária.
 	 * @return BudgetSimulationDB Ação orçamentária.
 	 */
-	public BudgetSimulationDB retrieveBudgetSimulation(String subAction) {
-		Criteria criteria = this.dao.newCriteria(BudgetSimulationDB.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subAction", subAction));
-		return (BudgetSimulationDB) criteria.uniqueResult();
+	public BudgetElement retrieveBudgetElement(String subAction) {
+		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("subAction", subAction))
+				.add(Restrictions.eq("company",this.domain.getCompany()));
+		return (BudgetElement) criteria.uniqueResult();
 	}
 
 	/**
 	 * Retornar lista de ação orçamentária.
 	 * 
-	 * @return BudgetSimulationDB Lista de ação orçamentária.
+	 * @return BudgetElement Lista de elementos orçamentários.
 	 */
-	public PaginatedList<BudgetSimulationDB> listBudgetSimulation() {
-		PaginatedList<BudgetSimulationDB> list = new PaginatedList<BudgetSimulationDB>();
-		Criteria criteria = this.dao.newCriteria(BudgetSimulationDB.class).add(Restrictions.eq("deleted", false));
+	public PaginatedList<BudgetElement> listBudget(Company company) {
+		PaginatedList<BudgetElement> list = new PaginatedList<BudgetElement>();
+		Criteria criteria = this.dao.newCriteria(BudgetElement.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("company", company));
 
-		list.setList(this.dao.findByCriteria(criteria, BudgetSimulationDB.class));
+		list.setList(this.dao.findByCriteria(criteria, BudgetElement.class));
 		return list;
 
 	}
@@ -573,17 +554,17 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Ação orçamentária para simular os valores.
 	 * @return BudgetSimulationDB Ação orçamentária com os valores simulados.
 	 */
-	public BudgetSimulationDB saveRandomBudgetSimulation(String subAction) {
-		BudgetSimulationDB simulation = new BudgetSimulationDB();
+	public BudgetElement saveRandomBudgetSimulation(String subAction) {
+		BudgetElement simulation = new BudgetElement();
 		simulation.setSubAction(subAction);
 		simulation.setDeleted(false);
 		Random r = new Random();
 		Double randomPlanned = 80000 + (150000 - 80000) * r.nextDouble();
 		Double randomCommitted = 80000 + (130000 - 80000) * r.nextDouble();
 		Double randomConducted = 80000 + (120000 - 80000) * r.nextDouble();
-		simulation.setCommitted(randomCommitted);
-		simulation.setConducted(randomConducted);
-		simulation.setPlanned(randomPlanned);
+		//simulation.setCommitted(randomCommitted);
+		//simulation.setConducted(randomConducted);
+		//simulation.setPlanned(randomPlanned);
 
 		this.persist(simulation);
 		return simulation;
@@ -883,5 +864,6 @@ public class FieldsBS extends HibernateBusiness {
 			this.deleteAttachment(attachment);
 		}
 	}
+	
 
 }

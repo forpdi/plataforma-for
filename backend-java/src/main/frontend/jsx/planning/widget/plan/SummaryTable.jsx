@@ -86,7 +86,7 @@ export default React.createClass({
         }, me);
 
 		PlanMacroStore.on("recalculation-scheduled", () => {			
-			me.context.toastr.addAlertSuccess("Recálculo agendado, em breve os valores estarão atualizados.");
+			me.context.toastr.addAlertSuccess(Messages.get("label.recalculationScheduled"));
 		}, me);
 		
 		this.refreshPlans(this.props.planMacro.get("id"));
@@ -252,34 +252,34 @@ export default React.createClass({
 		<div className="summary-table">
 			<div className="summary-table-header">
 				<button onClick={this.scheduleSummaryCalculation} className="btn btn-primary">Recalcular</button>
-				Tabela de Resumo - {this.props.planMacro.get("name")}
+				{Messages.getEditable("label.summaryTable","fpdi-nav-label")} - {this.props.planMacro.get("name").length <= 24?this.props.planMacro.get("name"):this.props.planMacro.get("name").split("",20).concat(" ...")}
 			</div>
 			<table>
 				<thead>
 					<tr>
 						<th></th>
 						<th></th>
-						<th className="text-center">Desempenho por mês</th>
+						<th className="text-center">{Messages.getEditable("label.monthPerformance","fpdi-nav-label")}</th>
 					</tr>
 					<tr>
 						<th>Nível</th>
-						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>Rendimento</th>
+						<th className="text-center" style={{width: '100px', maxWidth: '100px'}}>{Messages.getEditable("label.profit","fpdi-nav-label")}</th>
 						<td className="summary-table-calendar-cell">
 							<table>
 								<tbody>
 									<tr>
-										<td>Jan</td>
-										<td>Fev</td>
-										<td>Mar</td>
-										<td>Abr</td>
-										<td>Mai</td>
-										<td>Jun</td>
-										<td>Jul</td>
-										<td>Ago</td>
-										<td>Set</td>
-										<td>Out</td>
-										<td>Nov</td>
-										<td>Dez</td>
+										<td>{Messages.getEditable("label.month.abbr.january","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.february","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.march","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.april","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.may","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.june","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.july","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.august","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.september","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.october","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.november","fpdi-nav-label")}</td>
+										<td>{Messages.getEditable("label.month.abbr.december","fpdi-nav-label")}</td>
 									</tr>
 								</tbody>
 							</table>

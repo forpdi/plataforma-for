@@ -1,5 +1,10 @@
 package org.forpdi.core.company;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.context.RequestScoped;
 
 import org.hibernate.Criteria;
@@ -10,6 +15,7 @@ import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Renato R. R. de Oliveira
@@ -56,6 +62,38 @@ public class CompanyBS extends HibernateBusiness {
 		Criteria criteria  = this.dao.newCriteria(CompanyDomain.class).add(Restrictions.eq("company",company));
 			
 		return (CompanyDomain) criteria.uniqueResult();
+	}
+
+	public List<CompanyMessage> retrieveMessages(Company company) {
+		Criteria criteria = this.dao.newCriteria(CompanyMessage.class);
+		criteria.add(Restrictions.eq("company", company));
+		return this.dao.findByCriteria(criteria, CompanyMessage.class);
+	}
+	
+	public Map<String, String> retrieveMessagesOverlay(Company company) {
+		List<CompanyMessage> messages = this.retrieveMessages(company);
+		Map<String, String> overlay = new HashMap<String, String>();
+		if (!GeneralUtils.isEmpty(messages)) {
+			for (CompanyMessage message : messages) {
+				overlay.put(message.getMessageKey(), message.getMessageValue());
+			}
+		}
+		return overlay;
+	}
+
+	public void updateMessageOverlay(Company company, String key, String value) {
+		Criteria criteria = this.dao.newCriteria(CompanyMessage.class);
+		criteria.add(Restrictions.eq("company", company));
+		criteria.add(Restrictions.eq("messageKey", key));
+		CompanyMessage message = (CompanyMessage) criteria.uniqueResult();
+		if (message == null) {
+			message = new CompanyMessage();
+			message.setCompany(company);
+			message.setMessageKey(key);
+		}
+		message.setLastUpdated(new Date());
+		message.setMessageValue(value);
+		this.dao.persist(message);
 	}
 
 	/**

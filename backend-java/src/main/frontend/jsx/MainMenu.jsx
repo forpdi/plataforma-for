@@ -26,11 +26,17 @@ export default React.createClass({
             plans: [],
             domainError:true,
             archivedPlans: [],
-            archivedPlansHidden:true
+            archivedPlansHidden:true,
+            showBudgetElement:false
         };
     },
-    componentDidMount() {        
+    componentDidMount() {
         var me = this;
+        
+        me.setState({
+            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
+        });
+
         if (this.state.logged && EnvInfo.company != null) {
             me.refreshPlans();
         }
@@ -39,7 +45,7 @@ export default React.createClass({
                 user: session.get("user"),
                 logged: true
             });
-            
+
             if(EnvInfo.company != null){
                 me.refreshPlans();
             }
@@ -54,11 +60,11 @@ export default React.createClass({
 
         PlanMacroStore.on("unarchivedplanmacrolisted", (store) => {
              if(store.status == 400){
-                me.setState({           
+                me.setState({
                     domainError:true
                 });
             }else if(store.status == 200 || store.status == undefined){
-                me.setState({ 
+                me.setState({
                     plans:  store.data,
                     domainError:false
                 });
@@ -67,24 +73,24 @@ export default React.createClass({
 
         PlanMacroStore.on("archivedplanmacrolisted", (store) => {
             if(store.status == 400){
-                me.setState({           
+                me.setState({
                     domainError:true
                 });
             }else if(store.status == 200 || store.status == undefined){
-                me.setState({           
+                me.setState({
                     archivedPlans: store.data,
                     domainError:false
                 });
             }
         }, me);
 
-        PlanMacroStore.on("planmacroarchived", (model) => { 
-            me.setState({           
+        PlanMacroStore.on("planmacroarchived", (model) => {
+            me.setState({
                 archivedPlansHidden:false
             });
-        }, me);    
-        
-        PlanMacroStore.on("sync", (model) => { 
+        }, me);
+
+        PlanMacroStore.on("sync", (model) => {
             for(var i = 0; i < this.state.plans.length; i++) {
                 if(this.state.plans[i].id == model.attributes.id) {
                     var plans = this.state.plans;
@@ -94,7 +100,7 @@ export default React.createClass({
                     })
                 }
             }
-        }, me); 
+        }, me);
 
         StructureStore.on("retrieve-level-instance-performance", (models) => {
             if (models && (models.length > 0)) {
@@ -124,6 +130,13 @@ export default React.createClass({
         PlanMacroStore.off(null, null, this);
         StructureStore.off(null, null, this);
     },
+
+    componentWillReceiveProps() {
+        this.setState({
+            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
+        });
+       
+    },
     checkRoute(pathname) {
         this.setState({
             hidden: false
@@ -138,7 +151,7 @@ export default React.createClass({
             });
         }*/
     },
-        
+
 
     onLogout() {
         UserSession.dispatch({
@@ -153,7 +166,7 @@ export default React.createClass({
         Observables.ResizeMenu.notify();
 
         PlanMacroStore.dispatch({
-            action: PlanMacroStore.ACTION_MAIN_MENU_STATE, 
+            action: PlanMacroStore.ACTION_MAIN_MENU_STATE,
             data: hidden
         });
     },
@@ -184,13 +197,11 @@ export default React.createClass({
             return <div style={{display: 'none'}} />;
         }
         return (<div className={(this.state.hidden ? 'fpdi-app-sidebar-hidden':'fpdi-app-sidebar')+' fpdi-tabs-stacked'}>
-            
+
             <div className="fpdi-tabs-nav">
     			<Link to="/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
-                        /> <span className="fpdi-nav-label">
-                            {Messages.get("label.dashboard")}
-                        </span>
+                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
                 </Link>
     		</div>
             <div style={{height: "10px"}} />
@@ -200,61 +211,68 @@ export default React.createClass({
                         <Link to={"/plan/"+plan.id+"/"} activeClassName="active">
                             <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
                                 />  <span className="fpdi-nav-label" title = {plan.name}>
-                                    {(plan.name).length <= 24?plan.name:(plan.name).split("",20).concat(" ...")}       
+                                    {(plan.name).length <= 24?plan.name:(plan.name).split("",20).concat(" ...")}
                                 </span>
                         </Link>
                     </div>;
                 })
             :""}
-         
+
+            {((this.context.roles.ADMIN || _.contains(this.context.permissions,
+             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?    
+                <div className="fpdi-tabs-nav">
+                    <Link to="/budget-element" activeClassName="active">
+                        <span className="fpdi-nav-icon mdi mdi-coin icon-link"
+                        /> {Messages.getEditable("label.budgetElement","fpdi-nav-label")}
+                    </Link>
+                </div>
+            :""}
+
             {((this.context.roles.ADMIN || _.contains(this.context.permissions,
              PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) ?
                 <div>
                     <div className="fpdi-tabs-nav">
                         <Link to="/plan/new" activeClassName="active">
-                            <span className="fpdi-nav-icon mdi mdi-plus icon-link"/> 
+                            <span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
                                 <span className="fpdi-nav-label">
-                                    {Messages.get("label.newplan")}
+                                    {Messages.getEditable("label.newPlan","fpdi-nav-label")}
                                 </span>
                         </Link>
                     </div>
-                    {this.state.archivedPlans && (this.state.archivedPlans.length > 0) ? 
-                        <div>
-                            <div className="fpdi-tabs-nav">
-                                <a onClick={this.listArchivedPlans}>
-                                    <span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
-                                        /> <span className="fpdi-nav-label">
-                                            Planos arquivados
-                                        </span>
-                                        {this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
-                                    
-                                </a>
-                            </div> 
-                            {!this.state.archivedPlansHidden && !this.state.hidden ?
-                                this.state.archivedPlans.map((plan, index) => {
-                                    return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
-                                        <Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
-                                            <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
-                                                />  <span className="fpdi-nav-label" title = {plan.name}>
-                                                    {(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}       
-                                                </span>
-                                        </Link>
-                                    </div>;
-                                })
-                            :""}
-                        </div> 
-                    :""}
                 </div>
             : ""}
+            <hr className="divider"></hr>
+			{this.state.archivedPlans && (this.state.archivedPlans.length > 0) ?
+				<div>
+					<div className="fpdi-tabs-nav">
+						<a onClick={this.listArchivedPlans}>
+							<span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
+								/> <span className="fpdi-nav-label">
+									Planos arquivados
+								</span>
+								{this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
 
-                    
-
-            <div style={{height: "10px"}} />
+						</a>
+					</div>
+					{!this.state.archivedPlansHidden && !this.state.hidden ?
+						this.state.archivedPlans.map((plan, index) => {
+							return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
+								<Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
+									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
+										/>  <span className="fpdi-nav-label" title = {plan.name}>
+											{(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}
+										</span>
+								</Link>
+							</div>;
+						})
+					:""}
+				</div>
+			:""}
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
                 <a onClick={this.tweakHidden}>
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
                         /> <span className="fpdi-nav-label">
-                            Recolher menu
+                            {Messages.getEditable("label.collapseMenu","fpdi-nav-label")}
                         </span>
                 </a>
             </div>

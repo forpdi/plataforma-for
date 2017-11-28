@@ -1,4 +1,3 @@
-
 import S from 'string';
 import React from "react";
 import _ from 'underscore';
@@ -14,6 +13,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+
 
 var NewFieldValidation = Validation.validate;
 var VerticalForm = AttributeForm.VerticalForm;
@@ -88,7 +88,7 @@ export default React.createClass({
 				this.refs["new-column-name"].className = "form-control";
 			}
 			//Retorna o erro
-			this.context.toastr.addAlertError("Preencha o nome e o tipo da nova coluna.");
+			this.context.toastr.addAlertError(Messages.get("label.error.nameTypeColumnEmpty"));
 			return;
 		}
 
@@ -124,7 +124,7 @@ export default React.createClass({
 
 	save(){		
 		if(this.state.columns == undefined || this.state.columns.length == 0){
-			this.context.toastr.addAlertError("Você deve inserir ao menos uma coluna!");
+			this.context.toastr.addAlertError(Messages.get("label.error.insertColumns"));
 			return;
 		}
 		this.props.confirmFunc(this.state.columns);
@@ -164,31 +164,31 @@ export default React.createClass({
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
-					<strong>Configuração da tabela</strong>
+					<strong>{Messages.getEditable("label.configTable","fpdi-nav-label")}</strong>
 				</div>
 				<div className="panel-body">
 					<div className="row">					
 						<div className="col-sm-6 col-md-4">
-							<label htmlFor="new-column-name">Nome da coluna:</label>
+							<label htmlFor="new-column-name">{Messages.getEditable("label.columnName","fpdi-nav-label")}</label>
 						    <input
 								type="text"
 								spellCheck={false} 
 								className="form-control"
 								ref="new-column-name"
-								placeholder="Nome do campo"
+								placeholder={Messages.get("label.field.name")}
 								id="new-column-name" />
 						</div>
 						<div className="col-sm-6 col-md-4">
-							<label htmlFor="select-new-column-type">Tipo:</label>
+							<label htmlFor="select-new-column-type">{Messages.get("label.type")}</label>
 						    <select
 								type="text"
 								spellCheck={false} 
 								className="form-control"
 								ref="new-column-type"
-								placeholder="Tipo"
+								placeholder={Messages.get("label.typeLegend")}
 								id="select-new-column-type">
-								<option value="" data-placement="right" title="Selecione o tipo do campo">
-									-- Selecione o tipo do campo --
+								<option value="" data-placement="right" title={Messages.get("label.title.selectTypeField")}>
+									{Messages.get("label.selectTypeField")}
 								</option>
 								{this.state.types.map((type, idx) => {
 									return <option value={type.id} key={"attr-type-"+idx} data-placement="right" title={type.label}>
@@ -199,7 +199,7 @@ export default React.createClass({
 						<div className="col-sm-6 col-md-4">
 							<label htmlFor="add-column">&nbsp;</label>
 							<button className="btn btn-sm btn-info form-control" id="add-column" onClick={this.insertColumn}>
-								Inserir coluna
+								{Messages.get("label.insertColumn")}
 							</button>
 						</div>
 					</div>					
@@ -214,19 +214,19 @@ export default React.createClass({
 					  								<input defaultValue={column.label} ref={"edit-field-"+idx}/>
 					  								<span>&nbsp;</span>
 					  								<span className="mdi mdi-check btn btn-sm btn-success padding2" 
-					  								onClick={this.confirmEdit.bind(this,idx)} title="Salvar"/>
+					  								onClick={this.confirmEdit.bind(this,idx)} title={Messages.get("label.submitLabel")}/>
 									            	<span>&nbsp;</span>
 									            	<span className="mdi mdi-close btn btn-sm btn-danger padding2" 
-									            	onClick={this.cancelEdit} title="Cancelar"/>
+									            	onClick={this.cancelEdit} title={Messages.get("label.cancel")}/>
 					  							</th>
 					  							: 
 					  							<th className="textAlignCenter" key={"col-"+idx}>
 								  					{column.label}
 								  					<span>&nbsp;</span>
 						  							<span className="mdi mdi-pencil cursorPointer" onClick={this.editColumn.bind(this,idx)}
-						  							 title="Editar informações"></span>
+						  							 title={Messages.get("label.title.editInformation")}></span>
 						  							<span className="mdi mdi-delete cursorPointer" onClick={this.deleteColumn.bind(this,idx)}
-						  							 title="Excluir"></span>
+						  							 title={Messages.get("label.delete")}></span>
 						  						</th>
 						  					)
 					  					)
@@ -245,9 +245,9 @@ export default React.createClass({
 					  	</table>					 	
 					</div>	 						  
 					<div className="col-sm-12 col-md-4" >
-						<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.save} title="Salvar"/>
+						<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.save} title={Messages.get("label.submitLabel")}/>
 		            	<span>&nbsp;</span>
-		            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.cancel} title="Cancelar"/>
+		            	<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.cancel} title={Messages.get("label.cancel")}/>
 					</div>											
 				</div>
 			</div>

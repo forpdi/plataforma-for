@@ -38,25 +38,48 @@ export default React.createClass({
 	render() {
 		return (
 			<div className='marginLeft30'>
-				<div className="row">
-                    <div className="col-md-7">
-				        <PerformanceIndicators plan={this.state.plan} subPlan={this.state.subPlan}  profile={this.state.profile}/>                        
-                    </div>
-                    <div className="col-md-5">
-                        <Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile} />  
-                    </div>
-				</div>				
-                <div className="row">
-                    <div className="col-md-7">
-                        <GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan}/>                     
-                    </div>
-                    <div className="col-md-5">
-				        <IndicatorsHistory plan={this.state.plan} subPlan={this.state.subPlan}/>
-                    </div>
-				</div>
-                <div>
-					<GoalsInfoTable plan={this.state.plan} subPlan={this.state.subPlan}/>
-				</div>				
+				{(EnvInfo.company && EnvInfo.company.showBudgetElement == true) ?
+                    (<div>
+						<div className="row">
+							<div className="col-md-7">
+								<PerformanceIndicators plan={this.state.plan} subPlan={this.state.subPlan}  profile={this.state.profile}/>
+							</div>
+							<div className="col-md-5">
+								<Budget plan={this.state.plan} subPlan={this.state.subPlan} profile={this.state.profile} />
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-md-7">
+								<GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan}/>
+							</div>
+							<div className="col-md-5">
+								<IndicatorsHistory plan={this.state.plan} subPlan={this.state.subPlan}/>
+							</div>
+						</div>
+						<div>
+							<GoalsInfoTable plan={this.state.plan} subPlan={this.state.subPlan}/>
+						</div>
+					</div>)
+                :
+					(<div>
+						<div className="row">
+							<div className="col-md-12">
+								<PerformanceIndicators plan={this.state.plan} subPlan={this.state.subPlan}  profile={this.state.profile}/>
+							</div>
+						</div>
+						<div className="row">
+							<div className="col-md-7">
+								<GoalsInfo plan={this.state.plan} subPlan={this.state.subPlan}/>
+							</div>
+							<div className="col-md-5">
+								<IndicatorsHistory plan={this.state.plan} subPlan={this.state.subPlan}/>
+							</div>
+						</div>
+						<div>
+							<GoalsInfoTable plan={this.state.plan} subPlan={this.state.subPlan}/>
+						</div>
+					</div>)
+                }
 			</div>
         );
 	}

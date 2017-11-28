@@ -260,9 +260,25 @@ public class UserController extends AbstractController {
 
 		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail())
 				|| userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
-
-			if (userRetrieveCpf.getId() == user.getId() && userRetrieveEmail.getId() == user.getId()
-					&& userRetrieveCellphone.getId() == user.getId()) {
+			if (userRetrieveCpf.getId().equals(user.getId())) {
+				userRetrieveCpf = null;
+			} else {
+				this.fail("Verifique se o campo CPF já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveEmail.getId().equals(user.getId())) {
+				userRetrieveEmail = null;
+			} else {
+				this.fail("Verifique se o campo E-MAIL já está cadastrado no sistema");
+			}
+		
+			if (userRetrieveCellphone.getId().equals(user.getId())) {
+				userRetrieveCellphone = null;
+			} else {
+				this.fail("Verifique se o campo CELULAR já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveCpf == null && userRetrieveEmail == null && userRetrieveCellphone == null) {
 				try {
 					User existent = this.bs.exists(this.userSession.getUser().getId(), User.class);
 
@@ -298,13 +314,9 @@ public class UserController extends AbstractController {
 					LOGGER.error("Erro no login.", e);
 					this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 				}
-
 			} else {
-
 				this.fail("Verifique se os campos E-MAIL, CPF ou CELULAR já estão cadastrados no sistema");
-
 			}
-
 		} else {
 			try {
 				User existent = this.bs.exists(this.userSession.getUser().getId(), User.class);
@@ -332,19 +344,15 @@ public class UserController extends AbstractController {
 					} else {
 						this.fail("Sua senha atual está incorreta");
 					}
-
 				} else {
 					this.bs.persist(existent);
 					this.success(existent);
 				}
-
 			} catch (Throwable e) {
 				LOGGER.error("Erro no login.", e);
 				this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 			}
-
 		}
-
 	}
 
 	/**
@@ -366,7 +374,7 @@ public class UserController extends AbstractController {
 		User userRetrieveCpf = null;
 		User userRetrieveEmail = null;
 		User userRetrieveCellphone = null;
-
+		
 		userRetrieveCpf = bs.existsByCpf(user.getCpf());
 		userRetrieveEmail = bs.existsByEmail(user.getEmail());
 		userRetrieveCellphone = bs.existsByCellphone(user.getCellphone());
@@ -376,6 +384,7 @@ public class UserController extends AbstractController {
 			userRetrieveCpf.setId(user.getId());
 			userRetrieveCpf.setCpf("");
 		}
+		
 		if (userRetrieveEmail == null) {
 			userRetrieveEmail = new User();
 			userRetrieveEmail.setEmail("");
@@ -388,11 +397,26 @@ public class UserController extends AbstractController {
 			userRetrieveCellphone.setId(user.getId());
 		}
 
-		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail())
-				|| userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
-
-			if (userRetrieveCpf.getId() == user.getId() && userRetrieveEmail.getId() == user.getId()
-					&& userRetrieveCellphone.getId() == user.getId()) {
+		if (userRetrieveCpf.getCpf().equals(user.getCpf()) || userRetrieveEmail.getEmail().equals(user.getEmail()) || userRetrieveCellphone.getCellphone().equals(user.getCellphone())) {
+			if (userRetrieveCpf.getId().equals(user.getId())) {
+				userRetrieveCpf = null;
+			} else {
+				this.fail("Verifique se o campo CPF já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveEmail.getId().equals(user.getId())) {
+				userRetrieveEmail = null;
+			} else {
+				this.fail("Verifique se o campo E-MAIL já está cadastrado no sistema");
+			}
+		
+			if (userRetrieveCellphone.getId().equals(user.getId())) {
+				userRetrieveCellphone = null;
+			} else {
+				this.fail("Verifique se o campo CELULAR já está cadastrado no sistema");
+			}
+			
+			if (userRetrieveCpf == null && userRetrieveEmail == null && userRetrieveCellphone == null) {
 				try {
 					User existent = this.bs.existsByUser(user.getId());
 					CompanyUser companyUser = this.bs.retrieveCompanyUser(existent, this.domain.getCompany());
@@ -440,20 +464,14 @@ public class UserController extends AbstractController {
 						}
 					}
 					this.success(existent);
-
 				} catch (Throwable e) {
 					LOGGER.error("Erro no login.", e);
 					this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 				}
-
 			} else {
-
 				this.fail("Verifique se os campos E-MAIL, CPF ou CELULAR já estão cadastrados no sistema");
-
 			}
-
 		} else {
-
 			try {
 				User existent = this.bs.existsByUser(user.getId());
 				CompanyUser companyUser = this.bs.retrieveCompanyUser(existent, this.domain.getCompany());
@@ -502,9 +520,7 @@ public class UserController extends AbstractController {
 				LOGGER.error("Erro no login.", e);
 				this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 			}
-
 		}
-
 	}
 
 	/**
@@ -619,7 +635,7 @@ public class UserController extends AbstractController {
 			} else {
 				boolean deleted = this.bs.userIsDeleted(email);
 				if (deleted && this.bs.existsByEmail(email) != null) {
-					this.fail("Este usuário foi deletado. Entre em contato com o administrador do sistema.");
+					this.fail("Usuário inexistente. Entre em contato com o administrador do sistema.");
 				} else {
 					this.fail("E-mail e/ou senha inválido(s).");
 				}
@@ -736,7 +752,7 @@ public class UserController extends AbstractController {
 			} else {
 				boolean userInactive = this.bs.userIsDeleted(email);
 				if (userInactive) {
-					this.fail("Este usuário foi deletado. Entre em contato com o administrador do sistema.");
+					this.fail("Usuário inexistente. Entre em contato com o administrador do sistema.");
 				} else if (companyUser.isBlocked()) {
 					this.fail("Este usuário foi bloqueado. Entre em contato com o administrador do sistema.");
 				} else if (!companyUser.getUser().isActive()) {
@@ -744,7 +760,7 @@ public class UserController extends AbstractController {
 				} else {
 					UserRecoverRequest req = this.bs.requestRecover(user);
 
-					String url = request.getRequestURL().toString().replaceAll("api/user/recover", "#/reset-password/")
+					String url = request.getRequestURL().toString().replaceAll("forpdi/api/user/recover", "#/reset-password/")
 							+ req.getToken();
 					this.notificationBS.sendNotificationEmail(NotificationType.RECOVER_PASSWORD, url, "", user, null);
 					this.success(email);
@@ -1017,7 +1033,7 @@ public class UserController extends AbstractController {
 				companyUser.setBlocked(true);
 				this.bs.persist(companyUser);
 			}
-			this.success();
+			this.success(companyUser);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
@@ -1055,7 +1071,7 @@ public class UserController extends AbstractController {
 				companyUser.setBlocked(false);
 				this.bs.persist(companyUser);
 			}
-			this.success();
+			this.success(companyUser);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

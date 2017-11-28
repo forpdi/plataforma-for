@@ -1,5 +1,6 @@
 import React from "react";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 
@@ -49,7 +50,7 @@ export default React.createClass({
 				<div className="panel panel-default">
 					<div className="panel-heading dashboard-panel-title">
 						<b className="budget-graphic-title"> 
-							{"Informações gerais das metas"+(this.state.plan != -1 ? " - "+this.state.plan.get("name") + 
+							{Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - "+this.state.plan.get("name") + 
 								(this.state.subPlan != -1 ? " - "+this.state.subPlan.name : "")
 								:"")
 							}
@@ -62,22 +63,22 @@ export default React.createClass({
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.belowMininum}</h1>
 							<h4>{"("+this.state.info.belowMinimumPercentage+"%)"}</h4>
-							<p>Abaixo do mínimo</p>
+							<p>{Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.belowExpected}</h1>
 							<h4>{"("+this.state.info.belowExpectedPercentage+"%)"}</h4>
-							<p>Abaixo do esperado</p>
+							<p>{Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.reached}</h1>
 							<h4>{"("+this.state.info.reachedPercentage+"%)"}</h4>
-							<p>Suficiente</p>
+							<p>{Messages.getEditable("label.goals.reached","fpdi-nav-label")}</p>
 						</div>
 						<div className="dashboard-goal-info col-sm-3">
 							<h1>{this.state.info.aboveExpected}</h1>
 							<h4>{"("+this.state.info.aboveExpectedPercentage+"%)"}</h4>
-							<p>Acima do máximo</p>
+							<p>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</p>
 						</div>
 					</div> : ""}
 				</div>

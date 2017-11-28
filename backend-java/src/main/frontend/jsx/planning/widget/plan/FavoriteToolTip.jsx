@@ -1,6 +1,7 @@
 import moment from 'moment';
 import React from 'react';
 import ImgTooltip from 'forpdi/img/tooltipFavorite.png';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	
@@ -25,7 +26,7 @@ export default React.createClass({
 		return (
 			<div className="fpdi-favoriteTooltip">	
 				<div className="tooltipText">
-					Favorite os níveis desejados através do menu do nível.<br/>
+					{Messsages.get("label.favoriteLevels")}<br/>
 					<div className="tooltipImage"
 						style={{
 							backgroundImage: 'url('+ImgTooltip+')',
@@ -35,7 +36,7 @@ export default React.createClass({
 							height:'38px'
 						}}
 					/>
-					Lembre-se: você pode ter no máximo 10 favoritos.
+					{Messages.getEditable("label.maxTenFavorites","fpdi-nav-label")}
 				</div>
 			</div>
 		);

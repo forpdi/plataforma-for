@@ -1,5 +1,6 @@
 import React from "react";
 import {Chart} from 'react-google-charts';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 export default React.createClass({
@@ -16,14 +17,14 @@ export default React.createClass({
         options:{
           title: '',
           hAxis: {title: '', minValue: 0, maxValue: 15},
-          vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue: 15},
+          vAxis: {title: Messages.get("label.expectedReached"), minValue: 0, maxValue: 15},
           legend: 'none',
           bar: {groupWidth: "75%"},
           isStacked: true
         },
 
         data: [ 
-          ["Genero","Alcançado ", "Esperado"], // Esperado, Alcançado, "annotation"
+          [Messages.get("label.genre"),Messages.get("label.reached"),Messages.get("label.goals.expected")], // Esperado, Alcançado, "annotation"
           ["4 cursos em 2015",10, 15],    
           ["6 cursos em 2016",10,20], // Valor do Esperado sera (esperado - alcancado)           
           ["4 cursos em 2017",5,15]
@@ -50,7 +51,7 @@ export default React.createClass({
     return (
       <div className="panel panel-default">
         <div className="panel-heading">
-          <b className="budget-graphic-title"> Desempenho dos indicadores </b>
+          <b className="budget-graphic-title"> {Messages.getEditable("label.indicatorsPerformance","fpdi-nav-label")} </b>
           <div className="performance-strategic-btns floatRight">
             <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
           </div>

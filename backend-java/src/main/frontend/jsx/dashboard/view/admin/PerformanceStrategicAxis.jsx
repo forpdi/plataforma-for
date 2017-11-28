@@ -6,6 +6,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import string from 'string';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -63,8 +64,8 @@ export default React.createClass({
 
         if (model.data.length == 0) {
             data.push(['Element', 'Rendimento']);
-            data.push(['Não possui objetivos',parseFloat(0)]);
-            element.push(['Não possui objetivos',parseFloat(0)]);
+            data.push([Messages.get("label.haveNoObjectives"),parseFloat(0)]);
+            element.push([Messages.get("label.haveNoObjectives"),parseFloat(0)]);
         } else {
             data.push(['Element', 'Rendimento', { role: 'style' }]);
             var value;
@@ -119,7 +120,7 @@ export default React.createClass({
         
         
         var bool = (model ? model.data.length > 0 : true);     
-        var hTitle = (model && model.data.length > 0 ? "Objetivos" : "");   
+        var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");   
         this.setState({
             data:data,
             elements:element,
@@ -150,8 +151,8 @@ export default React.createClass({
 
             if (model.data.length == 0) {
                 data.push(['Element', 'Rendimento']);
-                data.push(['Não possui eixos temáticos',parseFloat(0)]);
-                element.push(['Não possui eixos temáticos',parseFloat(0)]);
+                data.push([Messages.get("label.haveNoThematicAxes"),parseFloat(0)]);
+                element.push([Messages.get("label.haveNoThematicAxes"),parseFloat(0)]);
             } else {
                 data.push(['Element', 'Rendimento', { role: 'style' }]);
             
@@ -200,7 +201,7 @@ export default React.createClass({
 
 
             var bool = (model ? model.data.length > 0 : true);
-            var hTitle = (model && model.data.length > 0 ? "Eixos temáticos" : "");  
+            var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");  
             this.setState({
                 data:data,
                 elements:element,
@@ -241,7 +242,7 @@ export default React.createClass({
         url = window.location.origin+window.location.pathname+"#/plan/"+
         level.plan.parent.id+"/details/subplan/level/"+level.id;
         
-        var msg = "Você deseja ir para o nível selecionado?";                            
+        var msg = Messages.get("label.askGoToSelectedLevel");                            
         Modal.confirmCustom(() => {
             Modal.hide();           
             location.assign(url);
@@ -291,9 +292,9 @@ export default React.createClass({
         <div>            
             <div id= {!this.state.hide ? "panelSection" :""} className="panel panel-default">
                 <div className="panel-heading dashboard-panel-title">
-                    <b className="budget-graphic-title"> Desempenho dos eixos temáticos </b>
+                    <b className="budget-graphic-title"> {Messages.getEditable("label.thematicAxesPerformance","fpdi-nav-label")} </b>
                         <select onChange={this.onThematicAxesChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectThematicAxes">
-                            <option value={-1} data-placement="right" title="Todos os Eixos Temáticos"> Todos os Eixos Temáticos </option>
+                            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}> {Messages.get("label.viewAll")} </option>
                             {
                                 this.state.thematicAxes.map((attr, idy) =>{
                                     return(
@@ -324,10 +325,10 @@ export default React.createClass({
                              onChangePage={this.getInfo}
                              chartEvents={this.state.chartEvents} />
                             <div className="colaborator-goal-performance-legend">                            
-                                <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
-                                <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
+                                <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</span>
                             </div>
                         </div>
                     )

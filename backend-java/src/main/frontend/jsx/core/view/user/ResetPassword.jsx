@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
@@ -6,6 +5,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import Toastr from 'toastr';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AppLogo from "forpdi/img/logoLogin.png";
 
@@ -19,13 +19,13 @@ export default React.createClass({
 				type: "password",
 				required:true,
 				placeholder: "",
-				label: "Senha"
+				label: Messages.getEditable("label.password","fpdi-nav-label")
 			},{
 				name: "passwordconfirm",
 				type: "password",
 				required:true,
 				placeholder: "",
-				label: "Confirme a senha"
+				label: Messages.getEditable("label.passwordConfirm","fpdi-nav-label")
 			},{
 				name: "token",
 				type: "hidden",
@@ -46,7 +46,7 @@ export default React.createClass({
 		var me = this;
 		UserSession.on("resetpassword", model => {
 			Toastr.remove();
-			Toastr.success("A sua senha de acesso foi redefinida com sucesso.");	
+			Toastr.success(Messages.get("label.sucess.passwordReset"));	
 			
 			location.assign("#/");
 		}, me);
@@ -75,8 +75,8 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
-							<h3 className="fpdi-login-subtitle">Plataforma Aberta para Gestão e Acompanhamento do<br/>Plano de Desenvolvimento Institucional - PDI</h3>
+							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
+							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -88,15 +88,15 @@ export default React.createClass({
 							<div className="col-md-4 col-md-offset-4">
 								<div className="fpdi-card-login">		
 									<div className="panel panel-default">
-									  <div className="panel-heading"><p className="fpdi-login-title">Redefinir sua senha</p></div>
+									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.resetPassword","fpdi-nav-label")}</p></div>
 									  	<div className="panel-body">
-									  		  <p className="fpdi-recover-password-title">Informe sua nova senha de acesso.</p>
+									  		  <p className="fpdi-recover-password-title">{Messages.getEditable("label.title.newPassword","fpdi-nav-label")}</p>
 										<div className="fpdi-login-body">
 										<VerticalForm
 											onSubmit={this.onSubmit}
 											fields={this.state.fields}
 											store={UserSession}
-											submitLabel="Redefinir senha"
+											submitLabel={Messages.get("label.submit.resetPassword")}
 											blockButtons={true}
 											cancelUrl={'/login'}
 										/>
@@ -109,8 +109,8 @@ export default React.createClass({
 						:
 						<div className="col-md-4 col-md-offset-4">
 							<div className="fpdi-login-header">
-								<h1>Esta página não está mais disponível.</h1>
-								<p><a className="btn btn-sm btn-primary" href="#/">Retornar à página inicial</a></p>
+								<h1> {Messages.getEditable("label.pageNotAvailable","fpdi-nav-label")}.</h1>
+								<p><a className="btn btn-sm btn-primary" href="#/">{Messages.getEditable("label.returnToHomePage","fpdi-nav-label")}</a></p>
 							</div>
 						</div>
 					}

@@ -2,6 +2,7 @@ import React from "react";
 import {Link} from 'react-router';
 import _ from 'underscore';
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -32,9 +33,9 @@ export default React.createClass({
 				<table className="budget-field-table table">	
 					<thead>
 						<tr>
-							<th className="width30percent">Plano de metas</th>
-							<th>Objetivo</th>
-							<th>Perspectiva do BSC</th>
+							<th className="width30percent">{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.objective","fpdi-nav-label")}</th>
+							<th>{Messages.getEditable("label.perspectiveBsc", "fpdi-nav-label")}</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -49,7 +50,7 @@ export default React.createClass({
 											<Link
 												to={"/plan/"+model.plan.parent.id+"/details/subplan/level/"+model.id}
 												activeClassName="active"
-												title="ver mais"
+												title={Messages.get("label.title.viewMore")}
 												>
 												{model.name}
 											</Link>
@@ -78,7 +79,7 @@ export default React.createClass({
 											<Link
 												to={"/plan/"+model.plan.parent.id+"/details/subplan/level/"+model.id}
 												activeClassName="active"
-												title="ver mais"
+												title={Messages.get("label.title.viewMore")}
 												>
 												{model.name}
 											</Link>
@@ -104,7 +105,7 @@ export default React.createClass({
 			);
 		} else {
 			return(
-				<div className='table-empty-sons'>Não possui nenhum objetivo</div>
+				<div className='table-empty-sons'>{Messages.get("label.noObjective")}</div>
 			);
 		}
 	}

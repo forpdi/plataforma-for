@@ -18,6 +18,7 @@ import TextArea from "forpdi/jsx/planning/view/field/TextAreaField.jsx";
 import SelectField from "forpdi/jsx/planning/view/field/SelectField.jsx";
 import SelectStructure from "forpdi/jsx/planning/view/field/SelectStructureField.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -94,7 +95,7 @@ export default React.createClass({
 	},
 	maxLengthMask(){
 		if(this.refs[this.state.fieldId].value.length >= this.refs[this.state.fieldId].maxLength){
-			this.context.toastr.addAlertError("Limite de "+this.refs[this.state.fieldId].maxLength+" caracteres atingido!");
+			this.context.toastr.addAlertError( Messages.get("label.error.limit") + " " +this.refs[this.state.fieldId].maxLength+" " + Messages.get("label.error.limitCaracteres"));
 		}
 	},
 	onlyNumber(evt){
@@ -164,7 +165,7 @@ export default React.createClass({
 			this.props.editFunc(this.refs['edit-input'].value, this.props.index);
 			this.cancelEditing();
 		}else{
-			this.context.toastr.addAlertError("Por favor, preencha o campo");
+			this.context.toastr.addAlertError(Messages.get("label.completedField"));
 		}
 	},
 
@@ -173,8 +174,8 @@ export default React.createClass({
 			<div className="edit-section-attribute"> 
 				<input defaultValue={this.props.fieldDef.label} className="edit-section-attribute-input" maxLength="255" ref="edit-input"/>
 				<div className='displayFlex'>
-                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title="Salvar"></span>
-                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title="Cancelar"></span>
+                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
+                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEditing} title={Messages.get("label.cancel")}></span>
                	</div>
 			</div>
 		);
@@ -188,12 +189,12 @@ export default React.createClass({
 				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 					(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
-				 		title="Excluir campo" onClick={this.delete}/> : "")
+				 		title={Messages.get("label.title.deleteField")} onClick={this.delete}/> : "")
 				: ""}
 				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 					(!!this.props.alterable ? <span className="mdi mdi-pencil attribute-input-edit inner" 
-							title="Alterar campo" onClick={this.edit}/> : "")
+							title={Messages.get("label.title.changeField")} onClick={this.edit}/> : "")
 				:""}
 			</div>
 		);
@@ -255,7 +256,7 @@ export default React.createClass({
 							onPaste={this.onKeyUp}
 						/>
 						<div className="textAreaMaxLenght documentText">
-							<span>Máx. 10000 caracteres</span>
+							<span>{Messages.getEditable("label.maxTenThousandCaracteres","fpdi-nav-label")}</span>
 						</div>
 					</div>
 				);			
@@ -277,10 +278,10 @@ export default React.createClass({
 								onKeyPress={this.onKeyUp}
 								onPaste={this.onKeyUp}
 								disabled
-								title={"Você não tem permissão para editar este campo."}
+								title={Messages.get("label.haveNoPermissionToEdit")}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>Máx. 4000 caracteres</span>
+								<span>{Messages.getEditable("label.fourThousandCaracteres","fpdi-nav-label")}</span>
 							</div>
 						</div>
 					);
@@ -302,7 +303,7 @@ export default React.createClass({
 								onPaste={this.onKeyUp}
 							/>
 							<div className="textAreaMaxLenght">
-								<span>Máx. 4000 caracteres</span>
+								<span>{Messages.getEditable("label.fourThousandCaracteres","fpdi-nav-label")}</span>
 							</div>
 						</div>
 					);
@@ -332,13 +333,13 @@ export default React.createClass({
 				fieldEl = (
 					<input
 						className="form-control"
-						placeholder="Não existe usuário cadastrado"
+						placeholder={Messages.get("label.noRegisteredUser")}
 						name={this.props.fieldDef.name}
 						id={this.state.fieldId}
 						ref={this.state.fieldId}
 						type={this.props.fieldDef.type}
 						disabled
-						title="É necessário realizar o cadastro de usuários para prosseguir"
+						title={Messages.get("label.needRegisterUsersToProceed")}
 						>
 					</input>
 				);
@@ -354,7 +355,7 @@ export default React.createClass({
 						onChange={this.props.fieldDef.onChange || _.noop}
 						defaultValue={this.props.fieldDef.value}
 						disabled
-						title={"Você não tem permissão para editar este campo."}
+						title={Messages.get("label.haveNoPermissionToEdit")}
 						>
 							{this.props.fieldDef.users ? this.props.fieldDef.users.map((user,idx) => {
 								return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={user.id}
@@ -414,8 +415,8 @@ export default React.createClass({
 						ref={this.state.fieldId}
 						type={this.props.fieldDef.type}
 						>
-						<option key='field-opt-' data-placement="right" title="Nenhum plano de metas cadastrado ainda">
-							Nenhum plano de metas cadastrado ainda
+						<option key='field-opt-' data-placement="right" title={Messages.get("label.NoGoalPlanRegistered")}>
+							{Messages.getEditable("label.NoGoalPlanRegistered","fpdi-nav-label")}
 						</option>
 					</select>
 				);
@@ -485,7 +486,7 @@ export default React.createClass({
 					maxLength='255'
 					showYearDropdown  
 					disabled
-					title={"Você não tem permissão para editar este campo."}
+					title={Messages.get("label.haveNoPermissionToEdit")}
 				/></div>);
 			} else {
 				fieldEl = (<div><DatePicker
@@ -523,7 +524,7 @@ export default React.createClass({
 	 				placeholder={this.props.fieldDef.placeholder}
 	 				onChange={this.props.fieldDef.onChange || _.noop}
 	 				disabled
-	 				title={"Você não tem permissão para editar este campo."}
+	 				title={Messages.get("label.haveNoPermissionToEdit")}
 	 			/>);
 	 		 } else {
 	 		 	fieldEl = (<input
@@ -573,7 +574,7 @@ export default React.createClass({
 				onKeyPress={this.onKeyUp}
 				maxLength='255'
 				disabled={this.props.fieldDef.disabled}
-				title={this.props.fieldDef.disabled ? "Você não tem permissão para editar este campo." : ""}
+				title={this.props.fieldDef.disabled ? Messages.get("label.haveNoPermissionToEdit") : ""}
 			/>);
 		}
 			
@@ -591,7 +592,7 @@ export default React.createClass({
 						onChange={this.onStrategicObjectivesSelectPlanChange}
 						defaultValue={this.props.fieldDef.value}
 						>
-						<option value={-1} data-placement="right" title="Todos os planos de metas">Todos os planos de metas </option>
+						<option value={-1} data-placement="right" title={Messages.get("label.allGoalPlans")}>{Messages.get("label.allGoalPlans")} </option>
 							{this.props.fieldDef.selectPlans.map((opt,idx) => {
 								return (<option key={'field-opt-'+this.props.fieldId+"-"+idx} value={opt.id} data-placement="right" title={opt.name}>
 									 {(opt.name.length>20)?(string(opt.name).trim().substr(0, 15).concat("...").toString()):(opt.name)}
@@ -609,8 +610,8 @@ export default React.createClass({
 						ref={this.props.fieldId}
 						type={this.props.fieldDef.type}
 						>
-						<option key='field-opt-' data-placement="right" title="Nenhum plano de metas cadastrado ainda">
-							Nenhum plano de metas cadastrado ainda
+						<option key='field-opt-' data-placement="right" title={Messages.get("label.noGoalPlanRegistered")}>
+							{Messages.getEditable("label.noGoalPlanRegistered","fpdi-nav-label")}
 						</option>
 					</select>
 				)
@@ -633,7 +634,7 @@ export default React.createClass({
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
 									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 								(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
-									title="Excluir campo" onClick={this.delete}/> : "")
+									title={Messages.get("label.deleteField")} onClick={this.delete}/> : "")
 							: ""}
 							<div className="clearfix"/>
 						</div>

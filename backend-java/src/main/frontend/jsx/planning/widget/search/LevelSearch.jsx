@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var onClickOutside = require('react-onclickoutside');
 
@@ -15,7 +16,7 @@ export default onClickOutside(React.createClass({
 
 	getDefaultProps() {
 		return {
-			searchText: "Pesquisa",
+			searchText: Messages.get("label.search"),
 			subplans: null,
 			submit: null,
 			plan:null,
@@ -179,7 +180,7 @@ export default onClickOutside(React.createClass({
 
 	maxLengthMask(){
 		if(this.refs.termPesquisa.value.length >= 255){
-			this.context.toastr.addAlertError("Limite de 255 caracteres atingido!");
+			this.context.toastr.addAlertError(Messages.get("label.limitCaracteres"));
 		}
 	},
 
@@ -272,18 +273,18 @@ export default onClickOutside(React.createClass({
 				<div className="level-search">
 		  
   	               <div className='displayFlex-level-search'>
-   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title="Fechar"></span>
+   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
   	               	</div>
-					<h1>Pesquisa Avançada</h1>
+					<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
 					
 					<div className="level-search-keyword">
-						<h3>Palavra-chave</h3>
+						<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
 						<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
 					</div> 
 			
 
 				<div className="level-search-checkbox">
-					<h3>Plano de metas</h3>
+					<h3>{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}</h3>
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'subplan-opt-0'}>
@@ -316,7 +317,7 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-checkbox">
-					<h3>Níveis</h3>					
+					<h3>{Messages.getEditable("label.levels","fpdi-nav-label")}</h3>					
 								
 					<div className="level-search-checkbox-inputs">
 						<div key={'level-opt-0'}>
@@ -326,7 +327,7 @@ export default onClickOutside(React.createClass({
 								key={'level-opt-0'}
 								type="checkbox" 
 								defaultChecked = {true} />
-							Todos
+							{Messages.getEditable("label.all","fpdi-nav-label")}
 						</div>
 
 						{this.props.subplans[0] ? this.props.subplans[0].structure.levels.map( (opt,idx) => {							
@@ -364,7 +365,7 @@ export default onClickOutside(React.createClass({
 				{!this.state.hideDate ?
 					(<div className="level-search-date">
 						<div className="level-search-date-init">
-							<h3>Data de início</h3>
+							<h3>{Messages.getEditable("label.dateBegin","fpdi-nav-label")}</h3>
 							<DatePicker
 								type="datepicker"
 								ref='begin' 
@@ -377,7 +378,7 @@ export default onClickOutside(React.createClass({
 						</div>
 
 						<div className="level-search-date-init">
-						<h3>Data de fim</h3>
+						<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
 							<DatePicker
 								type="datepicker"
 								ref='end' 
@@ -404,8 +405,8 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-buttons">
-					<input type="submit" className="level-search-button-search" value="Pesquisar" onClick={this.sendSearch} />
-					<input type="submit" className="level-search-button-clear" value="Limpar" onClick={this.clearSearch} />
+					<input type="submit" className="level-search-button-search" value={Messages.get("label.research")} onClick={this.sendSearch} />
+					<input type="submit" className="level-search-button-clear" value={Messages.get("label.clean")} onClick={this.clearSearch} />
 				</div>
 			
 			</div>);

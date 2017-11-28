@@ -235,6 +235,7 @@ public class DashboardBS extends HibernateBusiness {
 		criteria.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN);
 		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
 		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("macro.archived", false));
 		criteria.add(Restrictions.eq("deleted", false));
 
 		if (obj != null) {
@@ -318,16 +319,17 @@ public class DashboardBS extends HibernateBusiness {
 	 * @return void.
 	 */
 	public void saveIndicatorHistory(StructureLevelInstance instance, Periodicity periodicity) {
-		LevelInstanceHistory history = new LevelInstanceHistory();
-		history.setCreation(new Date());
-		history.setDeleted(false);
-		history.setLevelInstance(instance);
-		if (instance.getLevelValue() == null)
-			history.setValue(0.0);
-		else
-			history.setValue(instance.getLevelValue());
-		this.dao.persist(history);
-
+		if (instance.getNextSave() != null) {
+			LevelInstanceHistory history = new LevelInstanceHistory();
+			history.setCreation(new Date());
+			history.setDeleted(false);
+			history.setLevelInstance(instance);
+			if (instance.getLevelValue() == null)
+				history.setValue(0.0);
+			else
+				history.setValue(instance.getLevelValue());
+			this.dao.persist(history);
+		}
 		Calendar calendar = Calendar.getInstance();
 		if (instance.getNextSave() == null)
 			calendar.setTime(new Date());

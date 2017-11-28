@@ -27,6 +27,11 @@
 	margin-right: auto;
 }
 
+
+.marginBottom5{
+	margin-bottom: 5px;
+}
+
 .marginBottom10{
 	margin-bottom: 10px;
 }
@@ -53,8 +58,12 @@
 	margin-right: 13px;
 }
 
+.marginRight20{
+	margin-right: 20px;
+}
+
 .marginLeft115{
-	margin-left: 115px;	
+	margin-left: 115px;
 }
 
 .marginTop20{
@@ -86,7 +95,7 @@
 }
 
 .height10{
-	height: 10px;	
+	height: 10px;
 }
 
 #titleUser {
@@ -110,7 +119,7 @@
 }
 
 .tabItemDisable {
-	cursor:pointer;	
+	cursor:pointer;
 	background-color:transparent;
 	color: #AAAAAA;
 }
@@ -145,7 +154,7 @@ span.cursorDefault {
 }
 
 .checkbox {
-	cursor:pointer;	
+	cursor:pointer;
 }
 
 #row-hidden-xs-user {
@@ -166,8 +175,8 @@ span.cursorDefault {
   outline : 0;
 }
 
-.inner-addon { 
-	position: relative; 
+.inner-addon {
+	position: relative;
 }
 
 /* style icon */
@@ -209,29 +218,29 @@ span.cursorDefault {
 
 
 .right-addon .mdiBsc {
-	position: absolute; 
+	position: absolute;
 	background-color:#D3D3D3;
-	width: 25px; 
+	width: 25px;
 	height: 30px;
 	padding-left:5px;
-	color:#666666;	
+	color:#666666;
 	margin-left: 15px;
 
 }
 .right-addon .mdiConsulta {
-	position: absolute; 
+	position: absolute;
 	right: 21px;
-	width: 25px; 
+	width: 25px;
 	height: 30px;
 }
 
 .right-addonPesquisa .mdiIconPesquisa {
-	position: absolute; 
+	position: absolute;
 	right: 0px;
-	width: 35px; 
+	width: 35px;
 	height: 30px;
 	padding: 9px;
-	background-color:$brand-primary;	
+	background-color:$brand-primary;
 	color:#FFFFFF;
 }
 
@@ -252,7 +261,7 @@ span.cursorDefault {
 
 .btnBusca {
 	position: absolute;
-	width: 10px; 
+	width: 10px;
 	height: 30px;
 }
 
@@ -260,7 +269,7 @@ span.cursorDefault {
 
 #title-profile-user {
 	margin-bottom: 20px;
-}	
+}
 
 .fpdi-container-profile{
 text-align:center;
@@ -277,7 +286,7 @@ text-align:center;
 	font-size: 9px;
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	padding:4px;
-	color: #FFFFFF;	
+	color: #FFFFFF;
 }
 
 #value-proceeds{
@@ -317,7 +326,7 @@ text-align:center;
 	height: 120px;
 	width: 120px;
 	border-radius: 75px;
-	
+
 }
 
 .fpdi-containerIcons {
@@ -425,7 +434,7 @@ span.inner{
 
 .mdi-pencil:hover{
 	color: darken($brand-primary, 12%);
-} 
+}
 
 .mdi-delete:hover{
 	color: darken($brand-primary, 12%);
@@ -433,7 +442,7 @@ span.inner{
 
 .mdi-settings:hover{
 	color: darken($brand-primary, 12%);
-} 
+}
 
 .scheduleRenderIcons{
 	width: 100%;
@@ -449,7 +458,7 @@ span.inner{
 .divider {
   height: 1px;
   width:100%;
-  display:block; 
+  display:block;
   margin: 9px 0;
   overflow: hidden;
   background-color: #e5e5e5;
@@ -556,7 +565,7 @@ label{
 
 .mdi-clock-late-goal {
 	color:#8B0000;
-	
+
 }
 
 #profile-user-picture {
@@ -618,7 +627,7 @@ label{
 }
 
 #line-tab-edit-user {
-	border-top: 1px solid $brand-primary	
+	border-top: 1px solid $brand-primary
 }
 
 .panel-default-user {
@@ -636,6 +645,14 @@ label{
 
 .marginTop40{
 	margin-top: 40px;
+}
+
+.marginTop5{
+	margin-top: 5px !important;
+}
+
+.marginTop15{
+	margin-top: 15px;
 }
 
 .marginBottom20{
@@ -680,7 +697,7 @@ label{
 }
 
 .lockGoal-close {
-	color:#00A740; 
+	color:#00A740;
 	cursor: pointer;
 }
 
@@ -694,7 +711,7 @@ label{
 	color:#757575;
 	cursor: pointer;
 	outline: 0;
-	
+
 }
 
 
@@ -742,7 +759,7 @@ label{
 
 
 .periodicity-checkbox {
-	position: relative;    
+	position: relative;
 	left: 31%;
 	margin-top: 7px;
 	height: 20px;
@@ -750,7 +767,7 @@ label{
 }
 
 .user-checkbox {
-	position: relative;    
+	position: relative;
 	height: 20px;
 	width: 30px;
 }
@@ -783,7 +800,7 @@ label{
 }
 #table-scroll {
   height:280px;
-  overflow:auto;  
+  overflow:auto;
 
 }
 #table-wrapper table {
@@ -791,7 +808,7 @@ label{
 }
 
 #table-wrapper table thead tr th .column-goals-perfomance {
-  position:absolute;   
+  position:absolute;
   top:-20px;
   z-index:2;
   height:20px;
@@ -892,6 +909,10 @@ label{
 
 }
 
+.paddingLeft0{
+	padding-left:0px !important;
+}
+
 .requiredColor{
 	color: red;
 }
@@ -946,8 +967,8 @@ label{
 	border-bottom-color: #E5E5E5 !important;
 	border-top-color: #E5E5E5 !important;
 
-	/* Sobreescrever sombra - 
-		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow 
+	/* Sobreescrever sombra -
+		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow
 	*/
 	-webkit-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6) !important;
 	-moz-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6) !important;
@@ -982,7 +1003,7 @@ label{
 }
 
 /*******************************************************************************************
-		Centralizar horizontalmente os ícones do menu dropdown - LevelAttributeInstance 
+		Centralizar horizontalmente os ícones do menu dropdown - LevelAttributeInstance
 *******************************************************************************************/
 
 #level-menu.dropdown-menu .mdi::before {
@@ -992,7 +1013,7 @@ label{
 }
 
 /*******************************************************************************************
-										Fim centralizar 
+										Fim centralizar
 *******************************************************************************************/
 
 .marginLeft105 {
@@ -1004,7 +1025,7 @@ label{
 }
 
 #field-mensagem {
-	height: 100px;	
+	height: 100px;
 }
 
 #field-message {
@@ -1049,7 +1070,7 @@ label{
 }
 
 /*******************************************************************************************
-						Configurações da Tooltip - Favoritos 
+						Configurações da Tooltip - Favoritos
 *******************************************************************************************/
 
 .fpdi-favoriteTooltip {
@@ -1065,8 +1086,8 @@ label{
 	border-bottom-color: #E5E5E5 !important;
 	border-top-color: #E5E5E5 !important;
 
-	/* Sobreescrever sombra - 
-		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow 
+	/* Sobreescrever sombra -
+		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow
 	*/
 	-webkit-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6);
 	-moz-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6);
@@ -1091,8 +1112,8 @@ label{
 
 .__react_component_tooltip.type-light.place-top:after {
 	border-top-color: #fff;
-	border-top-style: solid !important; 
-	border-top-width: 0px !important; 
+	border-top-style: solid !important;
+	border-top-width: 0px !important;
 }
 
 .fpdi-favoriteTooltip .tooltipText {
@@ -1114,11 +1135,11 @@ label{
 }
 
 /*******************************************************************************************
-					Fim configurações da Tooltip - Favoritos 
+					Fim configurações da Tooltip - Favoritos
 *******************************************************************************************/
 
 /*******************************************************************************************
-						Ajuste do ícone de adicionar novo campo - Documento 
+						Ajuste do ícone de adicionar novo campo - Documento
 *******************************************************************************************/
 
 #addIconDocument.btn-sm .mdi::before {
@@ -1126,11 +1147,11 @@ label{
 }
 
 /*******************************************************************************************
-						Fim ajuste do ícone de adicionar novo campo - Documento 
+						Fim ajuste do ícone de adicionar novo campo - Documento
 *******************************************************************************************/
 
 /*******************************************************************************************
-						Adicionar limite de caracteres - TextArea 
+						Adicionar limite de caracteres - TextArea
 *******************************************************************************************/
 
 .textAreaMaxLenght {
@@ -1139,7 +1160,7 @@ label{
 }
 
 /*******************************************************************************************
-						Fim adicionar limite de caracteres - TextArea 
+						Fim adicionar limite de caracteres - TextArea
 *******************************************************************************************/
 
 .emptyUsersToImport {
@@ -1147,7 +1168,7 @@ label{
 }
 
 /*******************************************************************************************
-						Centralizar os ícones do header - Header 
+						Centralizar os ícones do header - Header
 *******************************************************************************************/
 
 #top-bar-notification.mdi::before {
@@ -1266,8 +1287,8 @@ label{
 	border-bottom-color: #E5E5E5 !important;
 	border-top-color: #E5E5E5 !important;
 
-	/* Sobreescrever sombra - 
-		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow 
+	/* Sobreescrever sombra -
+		pra ajudar no futuro :B http://www.cssmatic.com/box-shadow
 	*/
 	-webkit-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6);
 	-moz-box-shadow: 5px 5px 5px 0px rgba(204,204,204,0.6);
@@ -1356,4 +1377,29 @@ label{
 
 .displayInline {
 	display: inline !important;
+}
+
+.fpdi-message-edit-popup {
+	display: block;
+	position: absolute;
+	z-index: 99;
+	width: 200px;
+	height: auto;
+	padding: 10px;
+	border-radius: 3px;
+	box-shadow: 0px 0px 10px #000;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	&.hidden {
+		display: none;
+	}
+}
+
+.fpdi-budget-element {
+	padding: 10px 40px 10px 40px !important;
+}
+
+.break-text{
+	white-space: pre-line;
+    word-break: break-all;
 }

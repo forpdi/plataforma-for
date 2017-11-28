@@ -195,6 +195,7 @@ public class DashboardController extends AbstractController {
 		}
 	}
 
+	
 	/**
 	 * Usuário recupera lista de orçamentos
 	 * 
@@ -209,9 +210,9 @@ public class DashboardController extends AbstractController {
 	 * @return budgets lista de orçamentos recuperados
 	 * 
 	 */
-	@Get(BASEPATH + "/dashboard/admin/budget")
-	@NoCache
-	@Permissioned
+		@Get(BASEPATH + "/dashboard/admin/budget")
+		@NoCache
+		@Permissioned
 	public void listBudgets(Long macro, Long plan, Long objective, String subAction) {
 		try {
 			PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
@@ -219,17 +220,41 @@ public class DashboardController extends AbstractController {
 			StructureLevelInstance obj = this.sbs.retrieveLevelInstance(objective);
 			List<Budget> list = this.bs.listBudgets(planMacro, plan2, obj, subAction);
 			GeneralBudgets budgets = new GeneralBudgets();
-			Double conducted = 0.0;
-			Double commited = 0.0;
+			Double realized = 0.0;
+			Double committed = 0.0;
 			Double planned = 0.0;
-			for (Budget budget : list) {
-				BudgetDTO dto = this.fbs.getBudgetBySubAction(budget);
-				conducted += dto.getConducted();
-				commited += dto.getCommitted();
-				planned += dto.getPlanned();
+			boolean isId = false;
+			
+			List <Long> listIdBudgetsElement = new ArrayList<Long>(); 
+			if (list != null && !list.isEmpty()) {
+				listIdBudgetsElement.add(list.get(0).getBudgetElement().getId());
+				planned += list.get(0).getBudgetElement().getBudgetLoa();
 			}
-			budgets.setCommitted(commited);
-			budgets.setConducted(conducted);
+			
+			for (Budget budget : list) {
+				if (budget.getCommitted() != null) {
+					committed += budget.getCommitted();
+				}
+				
+				if (budget.getRealized() != null) {
+					realized += budget.getRealized();
+				}
+				
+				for (Long id : listIdBudgetsElement) {
+					if (id != budget.getBudgetElement().getId()) {
+						isId = true;
+					}	
+				}
+				
+				if (isId) {
+					listIdBudgetsElement.add(budget.getBudgetElement().getId());
+					planned += budget.getBudgetElement().getBudgetLoa();
+				}
+				
+				isId = false;		
+			}
+			budgets.setCommitted(committed);
+			budgets.setConducted(realized);
 			budgets.setPlanned(planned);
 			this.success(budgets);
 		} catch (Throwable ex) {
@@ -238,6 +263,7 @@ public class DashboardController extends AbstractController {
 
 		}
 	}
+
 
 	/**
 	 * Usuário recupera lista de indicadores e suas informações

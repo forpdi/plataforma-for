@@ -14,6 +14,7 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import _ from "underscore";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 import NotificationMessageUser from "forpdi/jsx/core/view/user/NotificationMessageUser.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 //import Toastr from 'toastr';
@@ -106,7 +107,7 @@ export default React.createClass({
 			
 			//Toastr.remove();
 			//Toastr.success("Foto alterada com sucesso.");
-			this.context.toastr.addAlertSuccess("Foto alterada com sucesso.");			
+			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));			
 		}, me);
 
 		UserStore.dispatch({
@@ -157,7 +158,7 @@ export default React.createClass({
 					});
 				}
 
-				this.context.toastr.addAlertSuccess("Dados editados com sucesso.");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.dataEdited"));
 				me.updateLoadingState();
 				
 				if (this.isMounted()) {
@@ -174,7 +175,7 @@ export default React.createClass({
 
 
 		UserSession.on("sendMessage",(store) => {
-			this.context.toastr.addAlertSuccess("Mensagem enviada com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.sendMessage"));
 			this.onClear();
 
 			UserSession.dispatch({
@@ -193,7 +194,7 @@ export default React.createClass({
 					editingPermission: false
 				});
 			}
-			this.context.toastr.addAlertSuccess("Permissões editadas com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.editedSuccessfully"));
 			me.updateLoadingState();
 
 		}, me);
@@ -218,32 +219,34 @@ export default React.createClass({
 			name: "name",
 			type: "text",
 			placeholder: "",
-			label: "Nome",
+			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			maxLength:255,
 			value: model  ? model.name:null,
-			required: true
+			required: true,
+			onKeyPress: this.onlyLetter,
+			onPaste: this.onlyLetterPaste
 		},
 		{
 			name: "email",
 			type: "email",
 			placeholder: "",
-			label: "E-mail",
+			label: Messages.getEditable("label.email","fpdi-nav-label"),
 			maxLength:255,
 			value:  model ? model.email:null,
 			required: true,
 			disabled: this.context.roles.SYSADMIN || (model && UserSession.get("user").id == model.id) ? false : true,
-			disableMsg: "Este campo só pode ser editado pelo próprio usuário."
+			disableMsg: Messages.get("label.disabled.cpf")
 		},
 
 		{
 			name: "cpf",
 			type: "cpf",
 			placeholder: "",
-			label: "CPF",
+			label: Messages.getEditable("label.cpf","fpdi-nav-label"),
 			value:  model ? model.cpf:null,
 			required: true,
 			disabled: this.context.roles.SYSADMIN || (model && UserSession.get("user").id == model.id) ? false : true,
-			disableMsg: "Este campo só pode ser editado pelo próprio usuário."
+			disableMsg: Messages.get("label.disabled.cpf")
 		}, 
 		
 		{
@@ -251,7 +254,7 @@ export default React.createClass({
 			type: "date",
 			required: true,
 			placeholder: "",
-			label: "Data de Nascimento",
+			label: Messages.getEditable("label.birthdate","fpdi-nav-label"),
 			onChange: this.onStartDateChange,
 			value: 	model ? model.birthdate:null,
 			required: true
@@ -261,7 +264,7 @@ export default React.createClass({
 			name: "cellphone",
 			type: "tel",
 			placeholder: "",
-			label: "Celular",
+			label: Messages.getEditable("label.cellphone","fpdi-nav-label"),
 			value:  model ? model.cellphone:null,
 			required: true
 		},
@@ -269,7 +272,7 @@ export default React.createClass({
 			name: "phone",
 			type: "tel",
 			placeholder: "",
-			label: "Telefone",
+			label: Messages.getEditable("label.phone","fpdi-nav-label"),
 			value: 	model? model.phone:null,
 		},
 
@@ -277,7 +280,7 @@ export default React.createClass({
 			name: "department",
 			type: "text",
 			placeholder: "",
-			label: "Departamento",
+			label: Messages.getEditable("label.department","fpdi-nav-label"),
 			maxLength:255,
 			value:  model ? model.department:null,
 		},
@@ -285,8 +288,8 @@ export default React.createClass({
 			name: 'accessLevel',
 			type: 'select',
 			maxLength: 255,
-			placeholder: '-- Selecione um Nível de Usuário --',
-			label: "Tipo de Usuário",
+			placeholder: Messages.get("label.userLevel"),
+			label: Messages.get("label.userType"),
 			required: true,
 			value: model ? model.accessLevel :null,
 			displayField: 'name',
@@ -304,7 +307,7 @@ export default React.createClass({
 			name: "newPassword",
 			type: "password",
 			placeholder: "",
-			label: "Nova Senha",
+			label: Messages.getEditable("label.newPassword","fpdi-nav-label"),
 			value: "",
 			required: false	
 		}]
@@ -317,7 +320,7 @@ export default React.createClass({
 			name: "assunto",
 			type: "subject",
 			placeholder: "",
-			label: "Assunto",
+			label: Messages.getEditable("label.subject","fpdi-nav-label"),
 			maxLength:70,
 			value: null,
 			required: true
@@ -326,7 +329,7 @@ export default React.createClass({
 			name: "mensagem",
 			type: "message",
 			placeholder: "",
-			label: "Mensagem",
+			label: Messages.getEditable("label.msg","fpdi-nav-label"),
 			maxLength:255,
 			value: null,
 			required: true
@@ -372,7 +375,7 @@ export default React.createClass({
 		if (errorField) {
 			//Toastr.remove();
 			//Toastr.error("Erro ao salvar os dados do formulário.Corrija-os e tente salvar novamente");
-			this.context.toastr.addAlertError("Erro ao enviar mensagem ao usuário. Corrija-os e tente enviar novamente");
+			this.context.toastr.addAlertError(Messages.get("label.error.MsgUser"));
 		} else {
 			UserSession.dispatch({
 				action: UserSession.ACTION_SEND_MESSAGE,
@@ -433,11 +436,11 @@ export default React.createClass({
 		if (errorField) {
 			//Toastr.remove();
 			//Toastr.error("Erro ao salvar os dados do formulário.Corrija-os e tente salvar novamente");
-			this.context.toastr.addAlertError("Erro ao salvar os dados do formulário. Corrija-os e tente salvar novamente");
+			this.context.toastr.addAlertError(Messages.get("label.errorSavingdata"));
 		} else {
 			
 			if (me.props.params.modelId) {
-				var msg = "Os dados serão atualizados. Deseja continuar essa ação?";
+				var msg = Messages.get("label.msgUpdate");
 				Modal.confirmCustom(() => {
 					Modal.hide();
 					UserStore.dispatch({
@@ -449,7 +452,7 @@ export default React.createClass({
 					});
 				},msg,this.refreshCancel);
 			} else {
-				var msg = "O usuário será criado. Deseja continuar essa ação?";
+				var msg = Messages.get("label.msgCreateUser");
 				Modal.confirmCustom(() => {
 					Modal.hide();
 					UserStore.dispatch({
@@ -529,7 +532,7 @@ export default React.createClass({
 				deleteFieldsPassword.push({
 					name: "senha",
 					type: "changePassword",
-					placeholder: "Alterar Senha",
+					placeholder: Messages.get("label.changePassword"),
 					onClick: this.changePassword
 				})
 		}
@@ -540,7 +543,7 @@ export default React.createClass({
 			})
 		}
 
-		var msg = "Você não salvou as modificações. Deseja continuar?";
+		var msg = Messages.get("label.msgEdit");
 
 		Modal.confirmCancelCustom(this.refreshAccept,msg,this.refreshCancel);
 
@@ -558,10 +561,10 @@ export default React.createClass({
 		var formatsBlocked = "(exe*)";
 		var me = this;
 		Modal.uploadFile(
-			"Enviar Documento",
+			Messages.get("label.submitDocument"),
 			(<div>
 				<p>
-					Selecione um documento.
+					{Messages.get("label.selectDocument")}
 				</p>
 			</div>),
 			FileStore.url+"/upload",
@@ -666,6 +669,24 @@ export default React.createClass({
 		})
 	},
 
+	onlyLetter(evt){
+		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	    var key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+	    if (!regex.test(key)) {
+	       evt.preventDefault();
+	       return false;
+	    }
+	},
+   
+   onlyLetterPaste(evt){
+   		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	   	var value = evt.clipboardData.getData('Text');
+	   	if (!regex.test(value)) {
+		   evt.preventDefault();
+		   return;
+	   	}
+   },
+
 	render() {
 
 		if (this.state.loading) {
@@ -685,12 +706,12 @@ export default React.createClass({
 		
 		return (
   				<div className="fpdi-profile-user padding40">
-				 	<h1  id = "title-profile-user"> Editar Usuário </h1>  
+				 	<h1  id = "title-profile-user"> {Messages.getEditable("label.editUser","fpdi-nav-label")} </h1>  
 						<div className="marginBottom20">
 							<span>
 								<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
 									to={"/users"}
-									title={"Usuários"}>Usuários</Link>
+									title={"Usuários"}>{Messages.getEditable("label.users","fpdi-nav-label")}</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>
 							
@@ -704,10 +725,10 @@ export default React.createClass({
 								{this.state.isEditUser == false ?
 
    	 								<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading">Dados do usuário
+      									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}
       										{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ?  
-      											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.confirmEdit} title="Editar perfil do usuário"/>
+      											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.confirmEdit} title={Messages.get("label.title.editUserProfile")}/>
       											: ""
       										}
       									</div>
@@ -719,34 +740,34 @@ export default React.createClass({
 												{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 												<div className="fpdi-container-profile-icon">
-  													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title="Alterar imagem de perfil do usuário"/>
+  													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.changeProfileImage")}/>
   												</div> : "")}
   												
   												<div>
   													<form>
   														<div className="form-group form-profile">
-  															<label className = "fpdi-text-label"> NOME </label>
+  															<label className = "fpdi-text-label"> {Messages.getEditable("label.name","fpdi-nav-label")} </label>
   																<p id = "p-profileUser"> {(this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)} </p>
 
-  															<label className = "fpdi-text-label"> E-MAIL </label>
+  															<label className = "fpdi-text-label"> {Messages.getEditable("label.email","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.email} </p>
     														
-    														<label className = "fpdi-text-label"> CPF </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.cpf","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.cpf} </p>
 
-    														<label className = "fpdi-text-label"> DATA DE NASCIMENTO </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.birthdate","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.birthdate == null ? this.state.model.birthdate : this.state.model.birthdate.split(" ")[0]} </p>
 
-    														<label className = "fpdi-text-label">CELULAR</label>
+    														<label className = "fpdi-text-label">{Messages.getEditable("label.cellphone","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.cellphone} </p>
 
-															<label className = "fpdi-text-label">TELEFONE</label>
+															<label className = "fpdi-text-label">{Messages.getEditable("label.phone","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.phone}  </p>
     																	
-    														<label className = "fpdi-text-label"> DEPARTAMENTO</label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.department","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.department == null ? this.state.model.department: (this.state.model.department.length>25)?(string(this.state.model.department).trim().substr(0,25).concat("...").toString()):(this.state.model.department)} </p>
 
-    														<label className = "fpdi-text-label"> TIPO DE USUÁRIO </label>
+    														<label className = "fpdi-text-label"> {Messages.getEditable("label.userType","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {AccessLevels.mapped[this.state.model.accessLevel]} </p> 	
   														</div>
   													</form>
@@ -758,7 +779,7 @@ export default React.createClass({
    							 		: 
 
    							 		<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading">Dados do usuário </div>
+      									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}</div>
       										<div className="panel-body">
       											
       											<div className="fpdi-container-profile">
@@ -767,7 +788,7 @@ export default React.createClass({
 												{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 												<div className="fpdi-container-profile-icon">
-  													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title="Alterar imagem de perfil do usuário"/>
+  													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.changeProfileImage")}/>
   												</div> : "")}												
   												
   												<div className="panel-body">
@@ -776,7 +797,7 @@ export default React.createClass({
 															onSubmit={this.onSubmit}
 															fields={this.state.fields}
 															store={UserStore}
-															submitLabel="Salvar"
+															submitLabel={Messages.get("label.submitLabel")}
 															onCancel = {this.onCancel}
 														/>
 														
@@ -791,10 +812,10 @@ export default React.createClass({
 
 								<div className="col-sm-3">
 									<div className="panel panel-default panel-default-user">
-      									<div className="panel-heading"> Permissões do usuário 
+      									<div className="panel-heading"> {Messages.getEditable("label.userPermissions","fpdi-nav-label")}
       										{(this.state.editingPermission || !(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
 														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ? "" : 
-      											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.editPermissions} title="Editar permissões"/>)}
+      											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.editPermissions} title={Messages.get("label.title.editPermissions")}/>)}
       									</div>
       									<div className="padding5">
 											{this.state.permissions.map((item, idx) => {
@@ -819,8 +840,8 @@ export default React.createClass({
 											})}
 											{!!this.state.editingPermission ?
 												(<div className="form-group user-permission-btn-ctn">
-													<button className="btn btn-success user-permission-btn-save" onClick={this.savePermissions}>Salvar</button>
-													<button className="btn btn-default" onClick={this.editPermissions}>Cancelar</button>												
+													<button className="btn btn-success user-permission-btn-save" onClick={this.savePermissions}>{Messages.getEditable("label.submitLabel","fpdi-nav-label")}</button>
+													<button className="btn btn-default" onClick={this.editPermissions}>{Messages.getEditable("label.cancel","fpdi-nav-label")}</button>												
 												</div>)
 												:
 												""
@@ -830,7 +851,7 @@ export default React.createClass({
 								</div>
 								<div className="col-sm-6">
 									<div className="panel panel-default panel-default-user">
-										<div className="panel-heading"> Enviar mensagens </div>
+										<div className="panel-heading">{Messages.getEditable("label.sendMessages","fpdi-nav-label")}</div>
 										<div className="padding5">
 											<div className="panel-body">
 												<VerticalForm
@@ -838,8 +859,8 @@ export default React.createClass({
 													onSubmit={this.onSubmitMenssage}
 													fields={this.state.fieldsMessage}
 													store={UserStore}
-													submitLabel="Enviar"
-													cancelLabel="Limpar"
+													submitLabel={Messages.get("label.send")}
+													cancelLabel={Messages.get("label.clean")}
 													onCancel = {this.onClear}
 												/>
 											</div>
@@ -847,13 +868,13 @@ export default React.createClass({
 									</div>
 									
 									<div className = "panel panel-default panel-message">
-										<div className="panel-heading"> Histórico de mensagens </div>
+										<div className="panel-heading"> {Messages.getEditable("label.messageHistory","fpdi-nav-label")} </div>
 										<div className="padding5">
 											<div className="panel-body">
 												<NotificationMessageUser ref="pagination"/>
         										{this.state.hideShowMoreMessages == false ?
         											<div className="textAlignCenter">
-                    									<a onClick={this.showMoreMessages}>ver mais...</a>
+                    									<a onClick={this.showMoreMessages}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
                 									</div>
                 								:""}
 											</div>

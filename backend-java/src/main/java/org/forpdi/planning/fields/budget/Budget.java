@@ -15,21 +15,38 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 @Entity(name = Budget.TABLE)
 @Table(name = Budget.TABLE)
-public class Budget extends SimpleLogicalDeletableEntity{
+public class Budget extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "fpdi_budget";
 	private static final long serialVersionUID = 1L;
-	
-	@Column(nullable=false, length=255)
-	private String name;
-	
-	@Column(nullable=false, unique=false, length=4)
+
+	@Column(nullable = false, unique = false)
 	private String subAction;
-	
+
+	@Column(nullable = false, length = 255)
+	private String name;
+
+	@Column(nullable = true)
+	private Double committed; // empenhado
+
+	@Column(nullable = true)
+	private Double realized; // realizado
+
+	private Date creation = new Date();
+
+	@ManyToOne(targetEntity = BudgetElement.class, optional = false, fetch = FetchType.EAGER)
+	private BudgetElement budgetElement;
+
 	@SkipSerialization
-	@ManyToOne(targetEntity=StructureLevelInstance.class, optional=false, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
-	
-	private Date creation;
+
+	public String getSubAction() {
+		return subAction;
+	}
+
+	public void setSubAction(String subAction) {
+		this.subAction = subAction;
+	}
 
 	public String getName() {
 		return name;
@@ -39,12 +56,20 @@ public class Budget extends SimpleLogicalDeletableEntity{
 		this.name = name;
 	}
 
-	public String getSubAction() {
-		return subAction;
+	public Double getCommitted() {
+		return committed;
 	}
 
-	public void setSubAction(String subAction) {
-		this.subAction = subAction;
+	public void setCommitted(Double committed) {
+		this.committed = committed;
+	}
+
+	public Double getRealized() {
+		return realized;
+	}
+
+	public void setRealized(Double realized) {
+		this.realized = realized;
 	}
 
 	public Date getCreation() {
@@ -55,6 +80,14 @@ public class Budget extends SimpleLogicalDeletableEntity{
 		this.creation = creation;
 	}
 
+	public BudgetElement getBudgetElement() {
+		return budgetElement;
+	}
+
+	public void setBudgetElement(BudgetElement budgetElement) {
+		this.budgetElement = budgetElement;
+	}
+
 	public StructureLevelInstance getLevelInstance() {
 		return levelInstance;
 	}
@@ -62,6 +95,5 @@ public class Budget extends SimpleLogicalDeletableEntity{
 	public void setLevelInstance(StructureLevelInstance levelInstance) {
 		this.levelInstance = levelInstance;
 	}
-	
-	
+
 }

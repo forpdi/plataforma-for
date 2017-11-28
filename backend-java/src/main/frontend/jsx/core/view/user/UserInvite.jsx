@@ -30,21 +30,21 @@ export default React.createClass({
 				maxLength: 255,
 				required:true,
 				placeholder: "",
-				label: Messages.get("label.name")
+				label: Messages.getEditable("label.name","fpdi-nav-label")
 			},{
 				name: "email",
 				type: "email",
 				maxLength: 255,
 				required:true,
 				placeholder: "",
-				label: Messages.get("label.email")
+				label: Messages.getEditable("label.email","fpdi-nav-label")
 			},{
 				name: "accessLevel",
 				type: "select",
 				maxLength: 255,
 				required: true,
-				placeholder: "-- Selecione um nível de permissão --",
-				label: "Permissão",
+				placeholder: Messages.get("label.permissionLevel"),
+				label: Messages.getEditable("label.permission","fpdi-nav-label"),
 				displayField: 'name',
 				valueField: 'accessLevel',
 				options: AccessLevels.list.filter((level) => {
@@ -62,7 +62,7 @@ export default React.createClass({
 		UserStore.on("sync", (model) => {
 			//Toastr.remove();
 			//Toastr.success("Usuário convidado com sucesso. Um e-mail foi enviado para que ele conclua o cadastro");
-			this.context.toastr.addAlertSuccess("Usuário convidado com sucesso. Um e-mail foi enviado para que ele conclua o cadastro");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.userInvitation"));
 			me.context.router.push("/users");
 		}, me);
 		UserStore.on("fail", msg =>{
@@ -79,8 +79,8 @@ export default React.createClass({
 		var me = this;
 		var msg = "";
 		if (S(data.name).trim().isEmpty()) {
-			msg = "Existem erros no formulário";
-			this.refs.userInviteForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg = Messages.get("label.alert.fieldEmpty");
+			this.refs.userInviteForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.userInviteForm.refs.name.refs["field-name"].className += " borderError";
 		} else {
 			if(this.refs.userInviteForm.refs.name.refs["field-name"].className && this.refs.userInviteForm.refs.name.refs["field-name"].className.indexOf('borderError')){
@@ -89,8 +89,8 @@ export default React.createClass({
 			}
 		}
 		if (S(data.email).trim().isEmpty()) {
-			msg = "Existem erros no formulário";
-			this.refs.userInviteForm.refs.email.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg =  Messages.get("label.alert.fieldEmpty");
+			this.refs.userInviteForm.refs.email.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.userInviteForm.refs.email.refs["field-email"].className += " borderError";
 		} else {
 			if(this.refs.userInviteForm.refs.email.refs["field-email"].className && this.refs.userInviteForm.refs.email.refs["field-email"].className.indexOf('borderError')){
@@ -99,8 +99,8 @@ export default React.createClass({
 			}
 		}
 		if(S(data.accessLevel).trim().isEmpty()) {
-			msg = "Existem erros no formulário";
-			this.refs.userInviteForm.refs.accessLevel.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg =  Messages.get("label.alert.fieldEmpty");
+			this.refs.userInviteForm.refs.accessLevel.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			this.refs.userInviteForm.refs.accessLevel.refs["field-accessLevel"].className += " borderError";
 		} else {
 			if(this.refs.userInviteForm.refs.accessLevel.refs["field-accessLevel"].className && this.refs.userInviteForm.refs.accessLevel.refs["field-accessLevel"].className.indexOf('borderError')){
@@ -126,15 +126,15 @@ export default React.createClass({
 	render() {
 		return (<div className="fpdi-card container animated fadeIn" style={{maxWidth: '600px'}}>
 					<h1>
-						Convidar usuário
+						{Messages.getEditable("label.inviteUser","fpdi-nav-label")}
 					</h1>
-					<p>Digite o nome e e-mail do novo usuário. Um e-mail com um link para finalizar o cadastro será enviado para ele.</p>
+					<p>{Messages.getEditable("label.msg.newEmailUser","fpdi-nav-label")}</p>
 					<VerticalForm
 						ref="userInviteForm"
 						onSubmit={this.onSubmit}
 						fields={this.state.fields}
 						store={UserStore}
-						submitLabel="Enviar convite"
+						submitLabel={Messages.get("label.submit.sendInvitation")}
 					/>
 		</div>);
 	}

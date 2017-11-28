@@ -9,6 +9,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Filter from "forpdi/jsx/dashboard/view/community/FilterCommunity.jsx";
 
 import Logo from 'forpdi/img/logo.png';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var ReactToastr = require("react-toastr");
 var {ToastContainer} = ReactToastr; 
@@ -59,11 +60,11 @@ export default React.createClass({
 			<div className="fpdi-top-bar">
 				<div className="col-md-2 marginRight0">
 			        <div className="fpdi-top-bar-brand">
-						{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt="ForPDI Logo" src={Logo}/>):(<img alt="ForPDI Logo" src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
+						{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>):(<img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
 			        </div>
 		        </div>
 		        <div className="col-md-8 textAlignCenter marginRight0">
-		        	<h1>Plano de Desenvolvimento Institucional</h1>
+		        	<h1>{Messages.getEditable("label.institutionalDevelopmentPlan","fpdi-nav-label")}</h1>
 		        </div>
 		        <div className="col-md-2"></div>
 				
@@ -78,7 +79,7 @@ export default React.createClass({
 					  	</div>)
 					  :
 					  	(<div>
-					  		<h1 className="dashboard-noCommunity">O dashboard da comunidade não está habilitado para esta instituição.</h1>
+					  		<h1 className="dashboard-noCommunity">{Messages.getEditable("label.unableCommunityDashboard","fpdi-nav-label")}</h1>
 				  		</div>)}
 			</div>
 		</main>);

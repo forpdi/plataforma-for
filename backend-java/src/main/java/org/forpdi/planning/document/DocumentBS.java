@@ -1978,7 +1978,7 @@ public class DocumentBS extends HibernateBusiness {
 									NumberFormat moedaFormat = NumberFormat.getCurrencyInstance(ptBr);
 
 									// Planejado - valor
-									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getPlanned()), texto));
+									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudgetLoa()), texto));
 									cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 									// centraliza verticalmente
 									cell.setPadding(padding);
@@ -1989,7 +1989,7 @@ public class DocumentBS extends HibernateBusiness {
 									table.addCell(cell);
 
 									// Empenhado - valor
-									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getCommitted()), texto));
+									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getCommitted()), texto));
 									cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 									// centraliza verticalmente
 									cell.setPadding(padding);
@@ -2000,7 +2000,7 @@ public class DocumentBS extends HibernateBusiness {
 									table.addCell(cell);
 
 									// Realizado - valor
-									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getConducted()), texto));
+									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getRealized()), texto));
 									cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 									// centraliza verticalmente
 									cell.setPadding(padding);
@@ -2638,15 +2638,15 @@ public class DocumentBS extends HibernateBusiness {
 							NumberFormat moedaFormat = NumberFormat.getCurrencyInstance(ptBr);
 
 							// Planejado - valor
-							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getPlanned()), texto));
+							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudgetLoa()), texto));
 							table.addCell(cell);
 
 							// Empenhado - valor
-							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getCommitted()), texto));
+							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getCommitted()), texto));
 							table.addCell(cell);
 
 							// Realizado - valor
-							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getConducted()), texto));
+							cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getRealized()), texto));
 							table.addCell(cell);
 						}
 						document.add(table);

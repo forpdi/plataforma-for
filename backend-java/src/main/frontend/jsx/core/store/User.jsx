@@ -72,7 +72,7 @@ var UserStore = Fluxbone.Store.extend({
 			url: me.url+"/"+id+"/block",
 			dataType: 'json',
 			success(data) {
-				me.trigger("block");
+				me.trigger("block", data);
 			},
 			error: (model,response,opts) => {
 				me.handleRequestErrors([], response);
@@ -87,7 +87,7 @@ var UserStore = Fluxbone.Store.extend({
 			url: me.url+"/"+id+"/unblock",
 			dataType: 'json',
 			success(data) {
-				me.trigger("unblock");
+				me.trigger("unblock", data);
 			},
 			error: (model,response,opts) => {
 				me.handleRequestErrors([], response);

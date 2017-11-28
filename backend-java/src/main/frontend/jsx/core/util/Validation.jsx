@@ -1,6 +1,7 @@
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import moment from 'moment';
 import S from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var Validate = {
     validateTitle: function (data, idx, editFunc) {
@@ -11,7 +12,7 @@ var Validate = {
                 editFunc(data.refs['edit-input'].value, idx);
                 return true;
             }else{
-                data.refs['formAlertError-edit-input'].innerHTML = "Este campo deve ser preenchido";
+                data.refs['formAlertError-edit-input'].innerHTML = Messages.get("label.thisFieldMustBeFilled");
                 data.refs['edit-input'].className = "form-control borderError";
                 return false;
             }
@@ -24,7 +25,7 @@ var Validate = {
 
 	validateSectionTitle : function(data,dataTitle) {
 		if (data.value.trim() == "") {
-			 dataTitle.innerHTML = "Este campo deve ser preenchido";
+			 dataTitle.innerHTML = Messages.get("label.thisFieldMustBeFilled");
 			 data.className = "form-control borderError";
 			return true
 
@@ -47,7 +48,7 @@ var Validate = {
 		var cmpTxtArea;
 		var nome = levelForm.refs['name'].getValue();		
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 		
 		var positionExpec = -1;
@@ -62,7 +63,7 @@ var Validate = {
 		if (nome.trim() == "") {
 			boolMsg = true;
 			levelForm.refs.name.refs["field-name"].className += " borderError";
-			levelForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			levelForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 		} else {
 			if(levelForm.refs.name.refs["field-name"].className && levelForm.refs.name.refs["field-name"].className.indexOf('borderError')){
 				levelForm.refs.name.refs["field-name"].className = "form-control";
@@ -84,7 +85,7 @@ var Validate = {
 			if(model.data.level.attributes[i-init].required){			
 				if ((tr.trim() == "" || tr == null) && model.data.level.attributes[i-init].type != AttributeTypes.NUMBER_FIELD) {
 					boolMsg = true;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco";
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError"
 				} else {
 				//if(levelForm.refs["attribute"+(i-init)].className && levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className.indexOf('borderError')){
@@ -98,12 +99,12 @@ var Validate = {
 					
 					if (tr == "") {
 						boolMsg = true;
-						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco";
+						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 						levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
 					}
 					else if (isNaN(data[Object.keys(data)[i]].replace(",","."))) {
 						boolMsg = true;
-						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Preencha este campo apenas com números";
+						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.fillFieldNumbersOnly");
 						levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
 					}
 					else {
@@ -130,12 +131,12 @@ var Validate = {
 				begin = levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ");
 				begin = moment(begin,"DD/MM/YYYY").toDate();
 				if (levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ") == "") {
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco";
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className = " form-control borderError";
 				} else if(begin < planMacroDateBegin) {
 					boolMsg = true;
 					var month=planMacroDateBegin.getMonth() + 1;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Data não pode ser anterior à data inicial do plano de metas " + planMacroDateBegin.getDate() + "/" + month + "/" + planMacroDateBegin.getFullYear();
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeEarlierThanTargetDateOfGoalPlan") +" " + planMacroDateBegin.getDate() + "/" + month + "/" + planMacroDateBegin.getFullYear();
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
 				} else {
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className= "form-control";
@@ -147,16 +148,16 @@ var Validate = {
 				end = levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ");
 				end = moment(end,"DD/MM/YYYY").toDate();
 				if (levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ") == "") {
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco";
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className+= " borderError";
 				} else if(end > planMacroDateEnd) {
 					boolMsg = true;
 					var month=planMacroDateEnd.getMonth() + 1;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Data não pode ser posterior à data final do plano de metas " + planMacroDateEnd.getDate() + "/" + month + "/" + planMacroDateEnd.getFullYear();
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeLaterThanEndDateOfGoalPlan") +" " + planMacroDateEnd.getDate() + "/" + month + "/" + planMacroDateEnd.getFullYear();
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
 				} else if (end < begin) {
 					boolMsg = true;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Data inicial não pode ser posterior à data final";
+					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateBeginAfterDateEnd");
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
 				} else {
 					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className = "form-control";
@@ -175,10 +176,10 @@ var Validate = {
 				} else {
 					positionExpec = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "Campo Esperado não pode conter letras";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedFieldCantContainLetters");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
 					expec = null;
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 
@@ -190,10 +191,10 @@ var Validate = {
 				} else {
 					positionMin = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMin].refs.formAlertError.innerHTML = "Campo Mínimo não pode conter letras";
+					levelForm.refs["attribute"+positionMin].refs.formAlertError.innerHTML = Messages.get("label.minFieldCantContainLetters");
 					levelForm.refs["attribute"+positionMin].refs["field-attribute"+positionMin].className += " borderError";
 					min = null;
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 
@@ -206,10 +207,10 @@ var Validate = {
 				} else {
 					positionMax = i-1;
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "Campo Máximo não pode conter letras";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxFieldCantContainLetters");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
 					max = null;
-					msg = "Existem erros no formulário";	
+					msg = Messages.get("label.form.error");	
 				}
 			}
 
@@ -217,7 +218,7 @@ var Validate = {
 				if (tr != ""){
 					if (isNaN(data[Object.keys(data)[i]].replace(",","."))) {
 							boolMsg = true;
-							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "Campo Alcançado não pode conter letras";
+							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.reachedFieldCantContainLetters");
 							levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
 					}
 				}
@@ -226,39 +227,39 @@ var Validate = {
 		}		
 		
 		if (expec != null && min != null && max != null) {
-			if (model.data.polarity == "Menor-melhor") {
+			if (model.data.polarity == Messages.get("label.lowerBest")) {
 				if (max > min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxCantBeGreaterThanMin") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec > min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o mínimo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeGreaterThanMin") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec < max) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o máximo. Verifique a polaridade do indicador.";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeLessThanMax") +" "+ Messages.get("label.checkIndicatorPolarity");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			} else {
 				if (max < min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = "O máximo não pode ser menor que o mínimo";
+					levelForm.refs["attribute"+positionMax].refs.formAlertError.innerHTML = Messages.get("label.maxCantBeLessThanMin");
 					levelForm.refs["attribute"+positionMax].refs["field-attribute"+positionMax].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec < min) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser menor que o mínimo";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeLessThanMin");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				} if (expec > max) {
 					boolMsg = true;
-					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = "O esperado não pode ser maior que o máximo";
+					levelForm.refs["attribute"+positionExpec].refs.formAlertError.innerHTML = Messages.get("label.expectedCantBeGreaterThanMax");
 					levelForm.refs["attribute"+positionExpec].refs["field-attribute"+positionExpec].className += " borderError";
-					msg = "Existem erros no formulário";
+					msg = Messages.get("label.form.error");
 				}
 			}
 		}
@@ -282,7 +283,7 @@ var Validate = {
     },
 
     validationDuplicatePlan: function(data, planMacroEditForm) {
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 
 		// Parte do codigo para contonar erro de datas
 		var valDateBegin,valDateFinal;
@@ -291,7 +292,7 @@ var Validate = {
 		
 		var boolMsg = false;
 		if(Number.isNaN(data.begin.getDate())){
-			planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.begin.refs["field-begin"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -305,7 +306,7 @@ var Validate = {
 			}
 		}
 		if(Number.isNaN(data.end.getDate())){
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -326,12 +327,12 @@ var Validate = {
 		}
 
 		if (!dataError && dataBegin.getTime() == dataEnd.getTime()) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		// dataFinal - data Inicio caso menor 86400000 (um dia em milesegundos), quer dizer que a data inicio e maior data final
 		} else if (!dataError && difference < 86400000) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
@@ -339,7 +340,7 @@ var Validate = {
 
 		if(data.name == "" ||  !!data.name.match(/^(\s)+$/) ){
 			boolMsg = true;
-			planMacroEditForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.name.refs["field-name"].className += " borderError";
 		}else{
 			if(planMacroEditForm.refs.name.refs["field-name"].className && planMacroEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
@@ -355,7 +356,7 @@ var Validate = {
     },
 
     validationPlanMacroEdit: function(data, planMacroEditForm) {
-        var msg = "Existem erros no formulário";
+        var msg = Messages.get("label.form.error");
 		var dataError = false;
 		var boolMsg = false;
 
@@ -372,7 +373,7 @@ var Validate = {
 		//}
 		
 		if(data.begin== null){
-			planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.begin.refs["field-begin"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -387,7 +388,7 @@ var Validate = {
 			
 		}
 		if(data.end== null){
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			dataError = true;
 			boolMsg = true;
@@ -408,18 +409,18 @@ var Validate = {
 			difference = valDateFinal - valDateBegin;
 		}
 		if (!dataError && dataBegin.getTime() == dataEnd.getTime()) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		// dataFinal - data Inicio caso menor 86400000 (um dia em milesegundos), quer dizer que a data inicio e maior data final
 		} else if (!dataError && difference < 86400000) {
-			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planMacroEditForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			planMacroEditForm.refs.end.refs["field-end"].refs.input.refs.input.className += " borderError";
 			boolMsg = true;
 		}
 		if(data.name == "" ||  !!data.name.match(/^(\s)+$/) ){
 			boolMsg = true;
-			planMacroEditForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planMacroEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planMacroEditForm.refs.name.refs["field-name"].className += " borderError";
 		}else{
 			if(planMacroEditForm.refs.name.refs["field-name"].className && planMacroEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
@@ -441,13 +442,13 @@ var Validate = {
 		dateBeginPlanMacro = moment(dateBeginPlanMacro,"DD/MM/YYYY").toDate();
 		var dataEndPlanMacro = planMacro.get("end").split(" ");
 		dataEndPlanMacro = moment(dataEndPlanMacro,"DD/MM/YYYY").toDate();
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		var innerHtml = "";
 
 		if(data.name == "" || data.name == undefined || data.name.trim() == "") {
 			boolMsg = true;
-			planRegisterForm.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planRegisterForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			planRegisterForm.refs.name.refs["field-name"].className = "form-control borderError";
 		}else{
 			planRegisterForm.refs.name.refs.formAlertError.innerHTML = "";
@@ -461,7 +462,7 @@ var Validate = {
 		if(Number.isNaN(begin.getDate())){
 			dataError = true;
 			boolMsg = true;
-			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			document.getElementById("field-begin").className = "form-control borderError";
 		}
 		else{
@@ -472,7 +473,7 @@ var Validate = {
 		var end = planRegisterForm.refs["end"].props.fieldDef.value.split(" ");
 		end = moment(end,"DD/MM/YYYY").toDate();
 		if(Number.isNaN(end.getDate())){
-			planRegisterForm.refs.end.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			planRegisterForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			document.getElementById("field-end").className = "form-control borderError";
 			dataError = true;
 			boolMsg = true;
@@ -483,11 +484,11 @@ var Validate = {
 		}
 		
 		if (!dataError && dataBegin>=dataEnd) {
-			planRegisterForm.refs.end.refs.formAlertError.innerHTML = "Data de término deve ser posterior à data de início";
+			planRegisterForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.endDateMustBeAfterBeginDate");
 			document.getElementById("field-end").className = "form-control borderError";
 			boolMsg = true;
 		}else{
-			if(planRegisterForm.refs.end.refs.formAlertError == "Data de término deve ser posterior à data de início"){
+			if(planRegisterForm.refs.end.refs.formAlertError == Messages.get("label.endDateMustBeAfterBeginDate")){
 				planRegisterForm.refs.end.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-end").className = "form-control";
 			}
@@ -495,24 +496,24 @@ var Validate = {
 		} 		
 
 		if(dateBeginPlanMacro>dataBegin){
-			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = "Data de início do plano de metas é menor que a data de início do plano macro";
+			planRegisterForm.refs.begin.refs.formAlertError.innerHTML = Messages.get("label.goalPlanBeginDateLessThanBeginDateOfMacroPlan");
 			document.getElementById("field-begin").className = "form-control borderError";
 			dataError = true;
 			boolMsg = true;
 		}else{
 			
-			if(planRegisterForm.refs.begin.refs.formAlertError.innerHTML == "Data de início do plano de metas é menor que a data de início do plano macro"){
+			if(planRegisterForm.refs.begin.refs.formAlertError.innerHTML == Messages.get("label.goalPlanBeginDateLessThanBeginDateOfMacroPlan")){
 				planRegisterForm.refs.begin.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-begin").className = "form-control";
 			}
 		}
 		if(dataEndPlanMacro<dataEnd){
-			planRegisterForm.refs.end.refs.formAlertError.innerHTML = "Data de término do plano de metas é maior que a data de término do plano macro";
+			planRegisterForm.refs.end.refs.formAlertError.innerHTML = Messages.get("label.goalPlanEndDateGreaterThanEndDateOfMacroPlan");
 			document.getElementById("field-end").className = "form-control borderError";
 			dataError = true;
 			boolMsg = true;
 		}else{
-			if(planRegisterForm.refs.end.refs.formAlertError.innerHTML == "Data de término do plano de metas é maior que a data de término do plano macro"){
+			if(planRegisterForm.refs.end.refs.formAlertError.innerHTML == Messages.get("label.goalPlanEndDateGreaterThanEndDateOfMacroPlan")){
 				planRegisterForm.refs.end.refs.formAlertError.innerHTML = "";
 				document.getElementById("field-end").className = "form-control";
 			}
@@ -528,8 +529,8 @@ var Validate = {
 	validationCompanyDomainEdit: function(data, companyDomainEditForm) {
 		var msg="";
 		if(data.host == "" ||  !!data.host.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
-			companyDomainEditForm.refs.host.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg = Messages.get("label.form.error");
+			companyDomainEditForm.refs.host.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.host.refs["field-host"].className += " borderError";
 		} else {
 			if(companyDomainEditForm.refs.host.refs["field-host"].className && companyDomainEditForm.refs.host.refs["field-host"].className.indexOf('borderError')){
@@ -538,8 +539,8 @@ var Validate = {
 			}
 		}
 		if(data.baseUrl == ""){
-			msg = "Existem erros no formulário";
-			companyDomainEditForm.refs.baseUrl.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg = Messages.get("label.form.error");
+			companyDomainEditForm.refs.baseUrl.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.baseUrl.refs["field-baseUrl"].className += " borderError";
 		} else {
 			if(companyDomainEditForm.refs.host.refs["field-host"].className && companyDomainEditForm.refs.host.refs["field-host"].className.indexOf('borderError')){
@@ -548,8 +549,8 @@ var Validate = {
 			}
 		}
 		if(data.theme == "" ||  !!data.theme.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
-			companyDomainEditForm.refs.theme.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg = Messages.get("label.form.error");
+			companyDomainEditForm.refs.theme.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.theme.refs["field-theme"].className += " borderError";
 		} else {
 			if(companyDomainEditForm.refs.host.refs["field-host"].className && companyDomainEditForm.refs.host.refs["field-host"].className.indexOf('borderError')){
@@ -558,13 +559,39 @@ var Validate = {
 			}
 		}
 		if(data.company.id == "" ||  !!data.company.id.match(/^(\s)+$/) ){
-			msg = "Existem erros no formulário";
-			companyDomainEditForm.refs.company.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			msg = Messages.get("label.form.error");
+			companyDomainEditForm.refs.company.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			companyDomainEditForm.refs.company.refs["field-company"].className += " borderError";
 		} else {
 			if(companyDomainEditForm.refs.host.refs["field-host"].className && companyDomainEditForm.refs.host.refs["field-host"].className.indexOf('borderError')){
 				companyDomainEditForm.refs.company.refs["field-company"].className = "form-control";
 				companyDomainEditForm.refs.company.refs.formAlertError.innerHTML = "";
+			}
+		}
+
+		return msg;
+	},
+
+	validationCompanyEdit: function(data, companyEditForm) {
+		var msg="";
+		if(data.name.trim() == "" ){
+			msg = Messages.get("label.form.error");
+			companyEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+			companyEditForm.refs.name.refs["field-name"].className += " borderError";
+		} else {
+			if(companyEditForm.refs.name.refs["field-name"].className && companyEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
+				companyEditForm.refs.name.refs["field-name"].className = "form-control";
+				companyEditForm.refs.name.refs.formAlertError.innerHTML = "";
+			}
+		}
+		if(data.localization.trim() == ""){
+			msg = Messages.get("label.form.error");
+			companyEditForm.refs.localization.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+			companyEditForm.refs.localization.refs["field-localization"].className += " borderError";
+		} else {
+			if(companyEditForm.refs.localization.refs["field-localization"].className && companyEditForm.refs.localization.refs["field-localization"].className.indexOf('borderError')){
+				companyEditForm.refs.localization.refs["field-localization"].className = "form-control";
+				companyEditForm.refs.localization.refs.formAlertError.innerHTML = "";
 			}
 		}
 
@@ -602,7 +629,7 @@ var Validate = {
 		var errorField = false;
 
 		if (data.assunto.trim() == "") {
-			profileEditUser.refs.assunto.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			profileEditUser.refs.assunto.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			profileEditUser.refs.assunto.refs["field-assunto"].className += " borderError";
 			errorField = true;
 		} else {
@@ -611,7 +638,7 @@ var Validate = {
 		}
 
 		if (data.mensagem.trim() == "") {
-			profileEditUser.refs.mensagem.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			profileEditUser.refs.mensagem.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			profileEditUser.refs.mensagem.refs["field-mensagem"].className += " borderError";
 			errorField = true;
 		} else {
@@ -645,7 +672,7 @@ var Validate = {
 		}
 
 		if (data.name.trim() == "") {
-			profileEditUser.refs.name.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			profileEditUser.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			profileEditUser.refs.name.refs["field-name"].className += " borderError";
 			errorField = true;
 		} else {
@@ -654,9 +681,9 @@ var Validate = {
 		}
 
 		if (celNumber.length < 10) {
-			msg = "Existem erros no formulário";
+			msg = Messages.get("label.form.error");
 			profileEditUser.refs.cellphone.refs["field-cellphone"].input.className = "form-control borderError";
-			profileEditUser.refs.cellphone.refs.formAlertError.innerHTML = "Número inválido, por favor verifique o número e o DDD cadastrados";
+			profileEditUser.refs.cellphone.refs.formAlertError.innerHTML = Messages.get("label.invalidPhoneNumber");
 			errorField = true;
 		} else if(profileEditUser.refs.cellphone.refs["field-cellphone"].input.className && profileEditUser.refs.cellphone.refs["field-cellphone"].input.className.indexOf('borderError')){
 			profileEditUser.refs.cellphone.refs["field-cellphone"].input.className = "form-control";
@@ -664,11 +691,11 @@ var Validate = {
 		}
 
 		if (data.birthdate == undefined) {
-			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			profileEditUser.refs.birthdate.refs["field-birthdate"].refs.input.refs.input.className = "form-control borderError";
 			errorField = true;
 		} else if (birthdate > currentDate) {
-			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = "Data de nascimento não pode ser superior à data atual!";
+			profileEditUser.refs.birthdate.refs.formAlertError.innerHTML = Messages.get("label.invalidBirthDate");
 			profileEditUser.refs.birthdate.refs["field-birthdate"].refs.input.refs.input.className = "form-control borderError";
 			errorField = true;
 		} else {
@@ -677,11 +704,11 @@ var Validate = {
 		}
 
 		if(data.cpf == "" ||  !!data.cpf.match(/^(\s)+$/) ){
-			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 			profileEditUser.refs.cpf.refs["field-cpf"].input.className = "form-control borderError";
 			errorField = true;
 		}else if(!this.validarCPF(data.cpf)){	
-			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = "CPF inválido!";
+			profileEditUser.refs.cpf.refs.formAlertError.innerHTML = Messages.get("label.cpfInvalid");
 			profileEditUser.refs.cpf.refs["field-cpf"].input.className = "form-control borderError";
 			errorField = true;
 		} else {
@@ -693,7 +720,7 @@ var Validate = {
 
 		if (data.email != undefined) {
 			if (data.email.trim() == "") {
-				profileEditUser.refs.email.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				profileEditUser.refs.email.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.email.refs["field-email"].className += " borderError";
 				errorField = true;	
 			} else {
@@ -704,7 +731,7 @@ var Validate = {
 
 		if (data.accessLevel != undefined) {
 			if (data.accessLevel.trim() == "") {
-				profileEditUser.refs.accessLevel.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				profileEditUser.refs.accessLevel.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.accessLevel.refs["field-accessLevel"].className += " borderError";
 				errorField = true;	
 			} else {
@@ -716,7 +743,7 @@ var Validate = {
 		if(data.currentPassword != undefined) {
 			
 			if (data.currentPassword.trim() == "") {
-				profileEditUser.refs.currentPassword.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				profileEditUser.refs.currentPassword.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.currentPassword.refs["field-currentPassword"].className += " borderError";
 				errorField = true;
 			} else {
@@ -728,12 +755,12 @@ var Validate = {
 		if(data.newPassword != undefined) {
 
 			if (data.newPassword.trim() == "" && profileEditUser.refs.newPassword.props.fieldDef.required) {
-				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 				errorField = true;
 			} else if (data.newPassword.length < 5 && data.newPassword.length > 0) {
-				msg = "Existem erros no formulário";
-				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
+				msg =Messages.get("label.form.error");
+				profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 				profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 				errorField = true;
 			} else {
@@ -745,7 +772,7 @@ var Validate = {
 		if(data.newPasswordTwo != undefined) {
 			
 			if (data.newPasswordTwo.trim() == "") {
-				profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
 				errorField = true;
 			} else {
@@ -758,8 +785,8 @@ var Validate = {
 			
 			if (data.newPassword.trim() != "" && data.newPasswordTwo.trim() != "" ) {
 				if (data.newPassword.trim().localeCompare(data.newPasswordTwo.trim()) != 0) {
-					profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = "As senhas não correspondem";
-					profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = "As senhas não correspondem";
+					profileEditUser.refs.newPassword.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
+					profileEditUser.refs.newPasswordTwo.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
 					profileEditUser.refs.newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
 					profileEditUser.refs.newPassword.refs["field-newPassword"].className += " borderError";
 					errorField = true;
@@ -775,8 +802,8 @@ var Validate = {
 
 		} else if (data.password != undefined) {
 			if(data.password == "" ||  !!data.password.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
-				profileEditUser.refs.password.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				msg = Messages.get("label.form.error");
+				profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.password.refs["field-password"].className += " borderError";
 				errorField = true;
 			} else {
@@ -786,8 +813,8 @@ var Validate = {
 				}
 			}
 			if(data.password.length < 5 ||  !!data.password.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
-				profileEditUser.refs.password.refs.formAlertError.innerHTML = "Senha deve conter no mínimo 5 dígitos";
+				msg = Messages.get("label.form.error");
+				profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 				profileEditUser.refs.password.refs["field-password"].className += " borderError";
 				errorField = true;
 			} else {
@@ -797,14 +824,14 @@ var Validate = {
 				}
 			}
 			if(data.passwordconfirm == "" ||  !!data.passwordconfirm.match(/^(\s)+$/) ){
-				msg = "Existem erros no formulário";
-				profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = "Você não pode deixar esse campo em branco!";
+				msg = Messages.get("label.form.error");
+				profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
 				profileEditUser.refs.passwordconfirm.refs["field-passwordconfirm"].className += " borderError";
 				errorField = true;
 			} else {
 				if(data.password.trim().localeCompare(data.passwordconfirm.trim()) != 0) {
-					profileEditUser.refs.password.refs.formAlertError.innerHTML = "As senhas não correspondem";
-					profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = "As senhas não correspondem";
+					profileEditUser.refs.password.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
+					profileEditUser.refs.passwordconfirm.refs.formAlertError.innerHTML = Messages.get("label.passwordNotMatch");
 					profileEditUser.refs.password.refs["field-password"].className += " borderError";
 					profileEditUser.refs.passwordconfirm.refs["field-passwordconfirm"].className += " borderError";
 					errorField = true;
@@ -837,7 +864,7 @@ var Validate = {
 	validationConviteUser: function(refs) {
 		var errorField = false;
 		if (refs.nameUser.value.trim() == "") {
-			refs.formAlertNameUser.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertNameUser.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.nameUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -845,11 +872,11 @@ var Validate = {
 			refs.nameUser.className = "budget-field-table";
 		}
 		if (refs.emailUser.value.trim() == "") {
-			refs.formAlertEmail.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertEmail.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.emailUser.className += " borderError";
 			errorField = true;
 		} else if (!this.emailIsValid(refs.emailUser.value.trim())) {
-			refs.formAlertEmail.innerHTML = "Email inválido";
+			refs.formAlertEmail.innerHTML = Messages.get("label.emailInvalid");
 			refs.emailUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -857,7 +884,7 @@ var Validate = {
 			refs.emailUser.className = "budget-field-table";
 		}
 		if(refs.selectAccessLevels.value.trim() == "-1") {
-			refs.formAlertTypeAccont.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertTypeAccont.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.selectAccessLevels.className += " borderError";
 			errorField = true;
 		} else {
@@ -870,7 +897,7 @@ var Validate = {
 	validationCreateUser: function(refs) {
 		var errorField = false;
 		if (refs.newNameUser.value.trim() == "") {
-			refs.formAlertNewNameUser.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertNewNameUser.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.newNameUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -878,11 +905,11 @@ var Validate = {
 			refs.newNameUser.className = "budget-field-table";
 		}
 		if (refs.newEmailUser.value.trim() == "") {
-			refs.formAlertNewEmail.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertNewEmail.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.newEmailUser.className += " borderError";
 			errorField = true;
 		} else if (!this.emailIsValid(refs.newEmailUser.value.trim())) {
-			refs.formAlertNewEmail.innerHTML = "Email inválido";
+			refs.formAlertNewEmail.innerHTML = Messages.get("label.emailInvalid");
 			refs.newEmailUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -890,11 +917,11 @@ var Validate = {
 			refs.newEmailUser.className = "budget-field-table";
 		}
 		if (refs.newPasswordUser.value.trim() == "") {
-			refs.formAlertNewPasswordUser.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertNewPasswordUser.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.newPasswordUser.className += " borderError";
 			errorField = true;
 		} else if (refs.newPasswordUser.value.trim().length < 5) {
-			refs.formAlertNewPasswordUser.innerHTML = "A senha deve conter no mínimo 5 caracteres!";
+			refs.formAlertNewPasswordUser.innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
 			refs.newPasswordUser.className += " borderError";
 			errorField = true;
 		} else {
@@ -902,7 +929,7 @@ var Validate = {
 			refs.newPasswordUser.className = "budget-field-table";
 		}
 		if(refs.newSelectAccessLevels.value.trim() == "-1") {
-			refs.formAlertNewTypeAccont.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertNewTypeAccont.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.newSelectAccessLevels.className += " borderError";
 			errorField = true;
 		} else {
@@ -921,7 +948,7 @@ var Validate = {
 		if (name.isEmpty() || type.isEmpty()) {
 			if(newfield['newfield-name'].value.trim() == "") {
 				newfield['newfield-name'].className = "form-control borderError";
-				newfield['formAlertErrorName'].innerHTML = "Você não pode deixar esse campo em branco!";
+				newfield['formAlertErrorName'].innerHTML = Messages.get("label.alert.fieldEmpty");
 				errorField = true;
 			} else {
 				newfield['newfield-name'].className = "form-control";
@@ -930,7 +957,7 @@ var Validate = {
 
 			if(newfield['newfield-type'].value.trim() == "") {
 				newfield['newfield-type'].className = "form-control borderError";
-				newfield['formAlertErrorType'].innerHTML = "Você não pode deixar esse campo em branco!";
+				newfield['formAlertErrorType'].innerHTML = Messages.get("label.alert.fieldEmpty");
 				errorField = true;
 			} else {
 				newfield['newfield-type'].className = "form-control";
@@ -951,7 +978,7 @@ var Validate = {
 		var dataBegin = new Date ();
 		var dataEnd = new Date ();
 		var dateError = false;
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		
 
@@ -962,7 +989,7 @@ var Validate = {
 		}else {
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorBegin.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorBegin.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.begin.refs.input.refs.input.className += " borderError"; 
 		}
 		
@@ -976,7 +1003,7 @@ var Validate = {
 			
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorEnd.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorEnd.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.end.refs.input.refs.input.className += " borderError";  
 		}
 
@@ -984,7 +1011,7 @@ var Validate = {
 		rps = refs.responsavel.value.trim();
 
 		if (!dateError && dataBegin.getTime() > dataEnd.getTime()) {		
- 			refs.formAlertErrorEnd.innerHTML = "Data término deve ser posterior à data de início";		
+ 			refs.formAlertErrorEnd.innerHTML = Messages.get("label.dateEndAfterDataBegin");		
  			refs.end.refs.input.refs.input.className += " borderError"; 		
  			boolMsg = true;		
  		} else if(!dateError) {		
@@ -992,7 +1019,7 @@ var Validate = {
  			refs.end.refs.input.refs.input.className = "budget-field-table";		
  		}
 		if (dsc.length > 3999) {
-			refs.formAlertErrorDescription.innerHTML = "Descrição muito grande, máximo 4000 caracteres";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.descLimitCaracteres");
 			refs.descricao.className += " borderError"; 
 			boolMsg = true;
 		} else {
@@ -1001,7 +1028,7 @@ var Validate = {
 		}
 
 		if (dsc == "") {
-			refs.formAlertErrorDescription.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.descricao.className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1010,7 +1037,7 @@ var Validate = {
 		}
 
 		if (rps == "") {
-			refs.formAlertErrorResponsible.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorResponsible.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.responsavel.className += " borderError";
 			boolMsg = true;			
 		} else {
@@ -1042,7 +1069,7 @@ var Validate = {
 
 		var dateError = false;
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 		
 		if(state.initDate != undefined){
@@ -1053,7 +1080,7 @@ var Validate = {
 		}else{
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorBeginEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorBeginEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.begin.refs.input.refs.input.className += " borderError"; 
 		}
 
@@ -1065,13 +1092,13 @@ var Validate = {
 		}else{
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorEndEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.end.refs.input.refs.input.className += " borderError";  
 		}
 
 		if (!dateError) {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
-				refs.formAlertErrorEndEdit.innerHTML = "Data término deve ser posterior à data de início";
+				refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.dateEndAfterDataBegin");
 				refs.end.refs.input.refs.input.className += " borderError";
 				boolMsg = true;
 			} else {
@@ -1081,7 +1108,7 @@ var Validate = {
 		}
 
 		if (dscEdt == "") {
-			refs.formAlertErrorDescriptionEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorDescriptionEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.descricaoEdit.className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1089,7 +1116,7 @@ var Validate = {
 			refs.descricaoEdit.className = "budget-field-table";
 		} 
 		if (rpsvEdt == "") {
-			refs.formAlertErrorResponsibleEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorResponsibleEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.responsavelEdit.className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1107,63 +1134,64 @@ var Validate = {
 	},
 
 	validationNewBudgetField: function(refs) {
-		var name = refs.budgetNameText.value.trim();
-		var subAction = refs.subActions.value.trim();
-		var msg = "Existem erros no formulário";
- 		var boolMsg = false;
+		var subAction = refs["subActions"].state.value;
+		var committed = refs['budgetCommitted'].value;
+		var realized = refs['budgetRealized'].value;
+		var name = refs["budgetNameText"].value;
+		var msg = Messages.get("label.form.error");
+		var boolMsg = false;
 
-
- 		//if (name.length > 255) {
- 			//Toastr.remove();
- 			//Toastr.error("Limite de caractres atingido nos campo(s) abaixo: " + "Nome");
-			//this.context.toastr.addAlertError("Limite de caractres atingido nos campo(s) abaixo: " + "Nome");
- 			//return;
- 		//}
-
-		if(name == "") {
+		console.log(parseFloat(committed.toString().replace(",", ".")));
+		console.log(parseFloat(realized.toString().replace(",", ".")));
+		 		 
+		 if (subAction.trim() == "") {
 			boolMsg = true;
-			refs.formAlertErrorName.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["subActions"].className += " borderError";
+		} else if (committed.toString().replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorCommited.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['budgetCommitted'].className += " borderError";
+		} else if (parseFloat(committed.toString().replace(",", ".")) < parseFloat(realized.toString().replace(",", "."))) {
+			boolMsg = true;
+			refs.formAlertErrorRealized.innerHTML = "Valor realizado não pode ser maior que o empenhado";
+			refs['budgetRealized'].className += " borderError";
+		} else { 
+			refs.formAlertErrorSubAction.innerHTML = "";
+		}
+
+		if(name.trim() == "") {
+			boolMsg = true;
+			refs.formAlertErrorName.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.budgetNameText.className += " borderError";
-		} else {
+		}else {
 			if(refs.budgetNameText.className && refs.budgetNameText.className.indexOf('borderError')){
 				refs.budgetNameText.className = "budget-field-table";
 				refs.formAlertErrorName.innerHTML = "";
 			}
 		}
-
-		if (subAction == "") {
-			boolMsg = true;
-			//Toastr.remove();
-			refs.formAlertErrorSubAction.innerHTML = "Você não pode deixar esse campo em branco!";
-			refs.subActions.className += " borderError";
-		} else {
-			if(refs.subActions.className && refs.subActions.className.indexOf('borderError')){
-				refs.subActions.className = "";
-				refs.formAlertErrorSubAction.innerHTML = "";
-			}
-		}
 		var aux = {
 			msg: msg,
 			boolMsg: boolMsg,
-			name: name,
-			subAction: subAction
+			name: name
 		};
 		return aux;
 	},
 	
 	validationEditBudgetField: function(refs, idx) {
-		var subAction = refs["subActions-edit-"+idx].value;
+		var subAction = refs["subActions-edit-"+idx].state.value;
 		var name= refs['inputName'+idx].value;
-		var subActionEdit = subAction.trim();
+		var committed = refs['editCommitted'+idx].value;
+		var realized = refs['editRealized'+idx].value;
+		var subActionEdit = subAction;
 		var nomeEdit = name.trim();
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
-
 
 		if(name.trim() == "") {
 			boolMsg = true;
-			refs.formAlertErrorName.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorName.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs['inputName'+idx].className += " borderError";
 		} else {
 			if(refs['inputName'+idx].className && refs['inputName'+idx].className.indexOf('borderError')){
@@ -1174,12 +1202,18 @@ var Validate = {
 
 		if (subAction == "") {
 			boolMsg = true;
-			//Toastr.remove();
-			refs.formAlertErrorSubAction.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs["subActions-edit-"+idx].className += " borderError";
+		} else if (committed.toString().replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorCommited.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['editCommitted'+idx].className += " borderError";
+		} else if (committed.toString().replace(",", ".") < realized.toString().replace(",", ".")) {
+			boolMsg = true;
+			refs.formAlertErrorRealized.innerHTML = "Valor realizado não pode ser maior que o empenhado";
+			refs['editRealized'+idx].className += " borderError";
 		} else { 
 			refs.formAlertErrorSubAction.innerHTML = "";
-			//Toastr.remove();
 		}
 		var aux = {
 			msg: msg,
@@ -1190,11 +1224,101 @@ var Validate = {
 		return aux;
 	},
 
+	validationEditBudgetElementField: function(refs, idx) {
+		var subAction = refs["nameBudgetElement"+idx].value;
+		var budgetLoa = refs["budgetLoaEdit"+idx].value
+		
+		var msg = Messages.get("label.form.error");
+ 		var boolMsg = false;
+
+		if (subAction == "") {
+			boolMsg = true;
+			refs.formAlertErrorSubActionEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["nameBudgetElement"+idx].className += " borderError";
+		} else { 
+			if(refs['nameBudgetElement'+idx].className && refs['nameBudgetElement'+idx].className.indexOf('borderError')){
+				refs['nameBudgetElement'+idx].className = "budget-field-table";
+				refs.formAlertErrorSubActionEdit.innerHTML = "";
+			}
+		}
+
+		if(budgetLoa.trim() == "") {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoaEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs['budgetLoaEdit'+idx].className += " borderError";
+		} else if (budgetLoa.replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoaEdit.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['budgetLoaEdit'+idx].className += " borderError";
+		} else {
+			if(refs['budgetLoaEdit'+idx].className && refs['budgetLoaEdit'+idx].className.indexOf('borderError')){
+				refs['budgetLoaEdit'+idx].className = "budget-field-table";
+				refs.formAlertErrorBudgetLoaEdit.innerHTML = "";
+			}
+
+		}
+
+		var aux = {
+			msg: msg,
+			boolMsg: boolMsg,
+			name: name,
+			subAction: subAction
+		};
+
+		
+		return aux;
+	},
+
+	validationNewBudgetElementField: function(refs) {
+		var subAction = refs["subAction"].value;
+		var budgetLoa = refs["budgetLoa"].value
+		
+		var msg = Messages.get("label.form.error");
+ 		var boolMsg = false;
+
+		if (subAction == "") {
+			boolMsg = true;
+			refs.formAlertErrorSubAction.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs["subAction"].className += " borderError";
+		} else { 
+			if(refs['subAction'].className && refs['subAction'].className.indexOf('borderError')){
+				refs['subAction'].className = "budget-field-table";
+				refs.formAlertErrorSubAction.innerHTML = "";
+			}
+		}
+
+		if(budgetLoa.trim() == "") {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoa.innerHTML = Messages.get("label.alert.fieldEmpty");
+			refs['budgetLoa'].className += " borderError";
+		} else if (budgetLoa.replace(",", ".") <= 0.0) {
+			boolMsg = true;
+			refs.formAlertErrorBudgetLoa.innerHTML = "Orçamento LOA deve ser maior que 0";
+			refs['budgetLoa'].className += " borderError";
+		} else {
+			if(refs['budgetLoa'].className && refs['budgetLoa'].className.indexOf('borderError')){
+				refs['budgetLoa'].className = "budget-field-table";
+				refs.formAlertErrorBudgetLoa.innerHTML = "";
+			}
+		}
+
+		var aux = {
+			msg: msg,
+			boolMsg: boolMsg,
+			name: name,
+			subAction: subAction
+		};
+
+
+		return aux;
+
+	},
+
 	validationNewSchedule: function(refs, state) {
 		var dataBegin = new Date ();
 		var data;
 		var initDate;
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 		var boolMsg = false;
 		var dateError = false;
 
@@ -1206,7 +1330,7 @@ var Validate = {
 		}else{
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorBegin.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorBegin.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.begin.className += " borderError"; 
 		}
 
@@ -1220,7 +1344,7 @@ var Validate = {
 		}else{
 			dateError=true;
 			boolMsg=true;
-			refs.formAlertErrorEnd.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorEnd.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.end.className += " borderError";  
 		}
 		var desc,peri;
@@ -1231,7 +1355,7 @@ var Validate = {
 
 		if (!dateError) {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
-				refs.formAlertErrorEnd.innerHTML = "Data término deve ser posterior à data de início";
+				refs.formAlertErrorEnd.innerHTML = Messages.get("label.dateEndAfterDataBegin");
 				refs.end.className += " borderError";
 				boolMsg = true;
 			} else {
@@ -1244,12 +1368,12 @@ var Validate = {
 
 		if (desc == "") {
 			boolMsg = true;
-			refs.formAlertErrorDescription.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.scheduleDescription.className += " borderError";
 		} else {
 			if (desc.length > 4000) {
 				boolMsg = true;
-				refs.formAlertErrorDescription.innerHTML = "A descrição deve ter no máximo 4000 caracteres!";
+				refs.formAlertErrorDescription.innerHTML = Messages.get("label.descLimitCaracteres");
 				refs.scheduleDescription.className += " borderError";
 			} else if(refs.scheduleDescription.className && refs.scheduleDescription.className.indexOf('borderError')){
 				refs.scheduleDescription.className = "budget-field-table";
@@ -1258,7 +1382,7 @@ var Validate = {
 		} 
 		if (state.schedule.periodicityEnable && peri == "") {
 			boolMsg = true;			
-			refs.formAlertErrorPediodicity.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorPediodicity.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.schedulePeriodicity.className += " borderError";
 		} else {
 			if(state.schedule.periodicityEnable && refs.schedulePeriodicity.className && refs.schedulePeriodicity.className.indexOf('borderError')){
@@ -1291,7 +1415,7 @@ var Validate = {
 		if(state.schedule.periodicityEnable)
 			peri = refs.periodicityEdit.value.trim();
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
  		var boolMsg = false;
 		var dataError = false;
 
@@ -1299,7 +1423,7 @@ var Validate = {
 			dataError = true;
 			boolMsg = true;
 
-			refs.formAlertErrorBeginEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorBeginEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.begin.className += " borderError";
 
 		} else {
@@ -1314,7 +1438,7 @@ var Validate = {
 			dataError = true;
 			boolMsg = true;
 
-			refs.formAlertErrorEndEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.end.className += " borderError";
 
 		} else {
@@ -1329,7 +1453,7 @@ var Validate = {
 			if (dataBegin.getTime() > dataEnd.getTime()) {
 			boolMsg = true;
 
-			refs.formAlertErrorEndEdit.innerHTML = "Data final anterior à data de início";
+			refs.formAlertErrorEndEdit.innerHTML = Messages.get("label.dateEndBeforeDataBegin");
 			refs.end.className += " borderError";
 
 			} else {
@@ -1343,12 +1467,12 @@ var Validate = {
 
 		if (desc == "") {
 			boolMsg = true;
-			refs.formAlertErrorDescriptionEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorDescriptionEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.descriptionEdit.className += " borderError";
 		} else {
 			if (desc.length > 4000) {
 				boolMsg = true;
-				refs.formAlertErrorDescriptionEdit.innerHTML = "A descrição deve ter no máximo 4000 caracteres!";
+				refs.formAlertErrorDescriptionEdit.innerHTML = Messages.get("label.descLimitCaracteres");
 				refs.descriptionEdit.className += " borderError";
 			} else if(refs.descriptionEdit.className && refs.descriptionEdit.className.indexOf('borderError')){
 				refs.descriptionEdit.className = "budget-field-table";
@@ -1356,7 +1480,7 @@ var Validate = {
 			}
 		} if (state.schedule.periodicityEnable && peri == "") {
 			boolMsg = true;			
-			refs.formAlertErrorPediodicityEdit.innerHTML = "Você não pode deixar esse campo em branco!";
+			refs.formAlertErrorPediodicityEdit.innerHTML = Messages.get("label.alert.fieldEmpty");
 			refs.periodicityEdit.className += " borderError";
 		} else {
 			if(state.schedule.periodicityEnable && refs.periodicityEdit.className && refs.periodicityEdit.className.indexOf('borderError')){
@@ -1384,10 +1508,10 @@ var Validate = {
 		var maximumGoal = document.getElementById("maximumGoal");
 		var boolMsg = false;
 
-		var msg = "Existem erros no formulário";
+		var msg = Messages.get("label.form.error");
 
 		if (nameGoal.value.trim() == "") {
-			refs.formAlertErrorName.innerHTML = "Você não pode deixar o nome em branco!";
+			refs.formAlertErrorName.innerHTML = Messages.get("label.notNameEmpty");
 			refs["nameGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1396,7 +1520,7 @@ var Validate = {
 		}
 
 		if (responsibleGoal.value.trim() == "") {
-			refs.formAlertErrorResponsavel.innerHTML = "Você não pode deixar o responsável em branco!";
+			refs.formAlertErrorResponsavel.innerHTML = Messages.get("label.notRespEmpty");
 			refs["responsibleGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1405,7 +1529,7 @@ var Validate = {
 		}
 
 		if (descriptionGoal.value.trim() == "") {
-			refs.formAlertErrorDescription.innerHTML = "Você não pode deixar a descrição branco!";
+			refs.formAlertErrorDescription.innerHTML = Messages.get("label.notDescEmpty");
 			refs["descriptionGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1414,7 +1538,7 @@ var Validate = {
 		}
 
 		if (expectedGoal.value.trim() == "" || isNaN(expectedGoal.value)) {
-			refs.formAlertErrorExpected.innerHTML = "Valor inválido para o esperado!";
+			refs.formAlertErrorExpected.innerHTML = Messages.get("label.valueInvalidExpected");
 			refs["expectedGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1423,7 +1547,7 @@ var Validate = {
 		}
 
 		if (minimumGoal.value.trim() == "" || isNaN(minimumGoal.value)) {
-			refs.formAlertErrorMinimum.innerHTML = "Valor inválido para o mínimo!";
+			refs.formAlertErrorMinimum.innerHTML = Messages.get("label.valueInvalidMin");
 			refs["minimumGoal"].className += " borderError";
 			boolMsg = true;
 		} else {
@@ -1432,7 +1556,7 @@ var Validate = {
 		}
 
 		if (maximumGoal.value.trim() == "" || isNaN(maximumGoal.value)) {
-			refs.formAlertErrorMaximum.innerHTML = "Valor inválido para o máximo!";
+			refs.formAlertErrorMaximum.innerHTML = Messages.get("label.valueInvalidMax");
 			refs["maximumGoal"].className += " borderError";
 			boolMsg = true;
 		} else {

@@ -20,7 +20,7 @@ import javax.servlet.ServletContext;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
-import org.forpdi.planning.fields.budget.BudgetSimulationDB;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.jboss.logging.Logger;
@@ -135,10 +135,10 @@ public class ApplicationSetup {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				String subAction = line.split(" ")[0];
-				criteria = dao.newCriteria(BudgetSimulationDB.class).add(Restrictions.eq("subAction", subAction));
-				BudgetSimulationDB simulation = (BudgetSimulationDB) criteria.uniqueResult();
+				criteria = dao.newCriteria(BudgetElement.class).add(Restrictions.eq("subAction", subAction));
+				BudgetElement simulation = (BudgetElement) criteria.uniqueResult();
 				if (simulation == null) {
-					simulation = new BudgetSimulationDB();
+					simulation = new BudgetElement();
 					simulation.setSubAction(subAction);
 				}
 				simulation.setDeleted(false);
@@ -146,9 +146,9 @@ public class ApplicationSetup {
 				Double planned = Double.valueOf(line.split(" ")[1]);
 				Double committed = Double.valueOf(line.split(" ")[2]);
 				Double conducted = Double.valueOf(line.split(" ")[3]);
-				simulation.setCommitted(planned);
-				simulation.setConducted(committed);
-				simulation.setPlanned(conducted);
+				//simulation.setCommitted(planned);
+				//simulation.setConducted(committed);
+				//simulation.setPlanned(conducted);
 				dao.persist(simulation);
 			}
 			scanner.close();

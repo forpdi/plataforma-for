@@ -316,7 +316,6 @@ public class StructureBS extends HibernateBusiness {
 		} else if (ordResult == 2) {
 			criteria.addOrder(Order.desc("creation"));
 		}
-
 		results = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		return results;
 	}
@@ -342,7 +341,8 @@ public class StructureBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
 				.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
 				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("plan.parent", macro));
+				.add(Restrictions.eq("plan.parent", macro))
+				.add(Restrictions.eq("levelInstance.deleted", false));
 		
 		if (terms != null && !terms.isEmpty()) {
 			criteria.add(Restrictions.like("value", "%" + terms + "%").ignoreCase());
@@ -395,7 +395,9 @@ public class StructureBS extends HibernateBusiness {
 
 			criteria.add(Restrictions.eq("deleted", false));
 			criteria.add(Restrictions.eq("attribute.deleted", false));
-			criteria.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()));
+			criteria.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+			.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("levelInstance.deleted", false));
 			List<AttributeInstance> attrInsts = this.dao.findByCriteria(criteria, AttributeInstance.class);
 
 			for (AttributeInstance attrInst : attrInsts) {
@@ -1138,6 +1140,9 @@ public class StructureBS extends HibernateBusiness {
 						budgetCopy.setLevelInstance(instanceClone);
 						budgetCopy.setName(budget.getName());
 						budgetCopy.setSubAction(budget.getSubAction());
+						budgetCopy.setBudgetElement(budget.getBudgetElement());
+						budgetCopy.setCommitted(budget.getCommitted());
+						budgetCopy.setRealized(budget.getRealized());
 						this.persist(budgetCopy);
 					}
 				} else if (attribute.getType().equals(ActionPlanField.class.getCanonicalName())) {
@@ -1654,7 +1659,10 @@ public class StructureBS extends HibernateBusiness {
 		PaginatedList<Budget> result = new PaginatedList<>();
 		Criteria criteria = this.dao.newCriteria(Budget.class)
 				.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
-				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN).add(Restrictions.eq("deleted", false));
+				.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("deleted", false))
+				.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("macro.archived", false));
 		if (plan != null) {
 			criteria.add(Restrictions.eq("levelInstance.plan", plan));
 		} else if (macro != null) {
@@ -2304,5 +2312,17 @@ public class StructureBS extends HibernateBusiness {
 
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
 	}
+	
+	public boolean checkHaveBudgetByLevel(StructureLevel level){
+		PaginatedList<Attribute> attributeList = this.listAttributes(level);
+		boolean haveBudget = false;
+		for (Attribute atr : attributeList.getList()) {
+			if (atr.getType().matches("org.forpdi.planning.attribute.types.BudgetField")) {
+				haveBudget = true;
+			}
+		}
+		return haveBudget;
+	}
+	
 
 }

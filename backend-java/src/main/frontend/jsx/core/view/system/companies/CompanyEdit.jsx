@@ -9,8 +9,11 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 //import Toastr from 'toastr';
+import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
+//import Toastr from 'toastr';
 
+var Validate = Validation.validate;
 var VerticalForm = Form.VerticalForm;
 var errorField = false;
 
@@ -34,14 +37,14 @@ export default React.createClass({
 			placeholder: "",
 			maxLength:255,
 			required:true,
-			label: "Nome",
+			label: Messages.getEditable("label.name", "fpdi-nav-label"),
 			value: model ? model.get("name"):null
 		},{
 			name: "logo",
 			type: "text",
 			maxLength:255,
 			placeholder: "",
-			label: "URL da Logo (Para melhor visualização insira imagem com medidas: 203x100)",
+			label: Messages.getEditable("label.system.companyLogo", "fpdi-nav-label"),
 			value: model ? model.get("logo"):null,
 			onChange: this.isImg
 		},{
@@ -49,7 +52,7 @@ export default React.createClass({
 			type: 'textarea',
 			maxLength:10000,
 			placeholder: '',
-			label: "Descrição",
+			label: Messages.getEditable("label.description", "fpdi-nav-label"),
 			value: model ? model.get("description"):null
 
 		},{
@@ -58,14 +61,14 @@ export default React.createClass({
 			maxLength:255,
 			placeholder: 'Cidade/Estado',
 			required:true,
-			label: "Cidade/Estado",
+			label: Messages.getEditable("label.cityState", "fpdi-nav-label"),
 			value: model ? model.get("localization"):null	
 		},{
 			name: "showDashboard",
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: "Habilitar dashboard da comunidade",
+			label: Messages.getEditable("label.enableCommunityDashboard", "fpdi-nav-label"), 
 			value: model ? model.get("showDashboard") : true,
 			onChange: this.fieldsDashboardBoardCommunity
 		},{
@@ -73,8 +76,16 @@ export default React.createClass({
 			type: "checkbox",
 			placeholder: "",
 			required:true,
-			label: "Exibir data de vencimento para a comunidade",
+			label: Messages.getEditable("label.showMaturityDateToCommunity", "fpdi-nav-label"),  
 			value: model ? model.get("showMaturity") : true
+		},
+		{
+			name: "showBudgetElement",
+			type: "checkbox",
+			placeholder: "",
+			required:true,
+			label: Messages.getEditable("label.showBudgetElement", "fpdi-nav-label"),  
+			value: model ? model.get("showBudgetElement") : true
 		}];
 	},
 	componentDidMount() {
@@ -86,7 +97,8 @@ export default React.createClass({
 				EnvInfo.company.logo = model.get("logo");
 				EnvInfo.company.description = model.get("description");
 				EnvInfo.company.showDashboard = model.get("showDashboard");
-				EnvInfo.company.showMaturity = model.get("showMaturity");				
+				EnvInfo.company.showMaturity = model.get("showMaturity");
+				EnvInfo.company.showBudgetElement = model.get("showBudgetElement");
 			}
 			me.context.router.push("/system/companies");				
 		}, me);
@@ -128,7 +140,7 @@ export default React.createClass({
 				errorField = false;
 			}
 			img.onerror = function() {
-				me.context.toastr.addAlertError("Endereço de imagem inválido.");
+				me.context.toastr.addAlertError(Messages.get("label.invalidImageUrl"));
 				errorField = true;
 				me.refs.CompanyEditInstitution.refs.logo.refs["field-logo"].className += " borderError";
 			}
@@ -141,7 +153,7 @@ export default React.createClass({
 		var me = this;
 		var msg="";
 
-		if ( (data.name.trim() == "") && (data.localization.trim() == "")){
+		/*if ( (data.name.trim() == "") && (data.localization.trim() == "")){
 			msg+= "Os campos nome e cidade/estado estão vazios!";
 		} else if (data.name.trim() == "")  {
 			msg+= "O campo nome está vazio!";
@@ -149,7 +161,8 @@ export default React.createClass({
 			msg+= "O campo de cidade/estado está vazio!";
 		} else if (errorField) {
 			msg+= " Endereço de imagem inválido!";
-		}
+		}*/
+		var msg = Validate.validationCompanyEdit(data, this.refs.CompanyEditInstitution);
 
 		if(msg!= ""){
 			//Toastr.remove();
@@ -165,7 +178,7 @@ export default React.createClass({
 				data: me.state.model
 			});
 			msg = Messages.get("notification.institution.update");
-			msg = "Instituição atualizada com sucesso."
+			//msg = "Instituição atualizada com sucesso."
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.update"));
 			this.context.toastr.addAlertSuccess(msg);
@@ -177,7 +190,7 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.save"));
 			//this.context.toastr.addAlertSuccess(Messages.get("notification.institution.save"));
-			msg = "Instituição criada com sucesso."
+			msg = Messages.get("notification.institution.save");
 			this.context.toastr.addAlertSuccess(msg);
 		}
 	},
@@ -186,14 +199,14 @@ export default React.createClass({
 		return (<div className="col-sm-offset-3 col-sm-6 animated fadeIn">
 			{this.state.loading ? <LoadingGauge />:<div>
 				<h1>
-					{this.state.model ? "Editar instituição":"Adicionar nova instituição"}
+					{this.state.model ? Messages.get("label.editCompany"):Messages.get("label.addNewCompany")}
 				</h1>
 				<VerticalForm
 					ref = "CompanyEditInstitution"
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={CompanyStore}
-					submitLabel="Salvar"
+					submitLabel={Messages.get("label.save")}
 				/>
 			</div>}
 		</div>);

@@ -1,4 +1,3 @@
-
 import _ from "underscore";
 import React from "react";
 import MaskedInput from 'react-maskedinput';
@@ -6,7 +5,7 @@ import string from 'string';
 import {Link} from "react-router";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import moment from 'moment';
 import 'react-date-picker/index.css'
 import Toastr from 'toastr';
@@ -119,9 +118,9 @@ export default React.createClass({
 		if(this.refs[this.state.fieldId].value.length >= this.props.fieldDef.maxLength){
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
-				Toastr.error("Limite de "+this.props.fieldDef.maxLength+" caracteres atingido!");	
+				Toastr.error(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength+" " + Messages.get("label.error.limitCaracteres"));	
 			}else{			
-				this.context.toastr.addAlertError("Limite de "+this.props.fieldDef.maxLength+" caracteres atingido!");
+				this.context.toastr.addAlertError(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
 			}
 		}
 	},
@@ -248,7 +247,7 @@ export default React.createClass({
 						onKeyPress={this.onKeyUp}
 						onPaste={this.onKeyUp}/> 
 						<div id = "field-subject">
-							<span> Max 70 </span>
+							<span> {Messages.get("label.maxCaracteresSeventy")} </span>
 						</div>
 			</div>);
 		} else if (this.props.fieldDef.type == 'message') {
@@ -266,7 +265,7 @@ export default React.createClass({
 						onPaste={this.onKeyUp}
 						onKeyPress={this.onKeyUp}/>
 						<div id = "field-message">
-							<span> Max 255 </span>
+							<span> {Messages.get("label.maxCaracteresTwoHundred")} </span>
 						</div>
 			</div>);
 		} else if (this.props.fieldDef.type == 'cpf') {
@@ -366,8 +365,8 @@ export default React.createClass({
 					ref={this.state.fieldId}
 					placeholder={this.props.fieldDef.placeholder}
 					onChange={this.props.fieldDef.onChange || _.noop}
-					onKeyPress={this.onKeyUp}
-					onPaste={this.onKeyUp}
+					onKeyPress={this.props.fieldDef.onKeyPress || this.onKeyUp}
+					onPaste={this.props.fieldDef.onPaste || this.onKeyUp}
 				/>);
 			}
 		}

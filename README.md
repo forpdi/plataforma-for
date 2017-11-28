@@ -68,7 +68,7 @@ Após realizar o build do frontend você já pode construir o arquivo WAR para p
 
 #### Construindo o .war para publicação
 O ForPDI utiliza o Apache Maven para realizar o processo de packaging da aplicação em um arquivo `.war` que pode ser implantado em um servidor de aplicação que suporta Java.
-Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do do [Maven 3.x](http://ftp.unicamp.br/pub/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip).
+Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do [Maven 3.x](http://ftp.unicamp.br/pub/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip).
 Após o download do Maven, descompacte o arquivo em uma pasta. Neste passo a passo será considerado que o Maven foi descompactado na pasta `/opt/maven`.
 Em seguida, confkgure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
 
@@ -150,7 +150,7 @@ Primeiramente, baixe e instale o JDK 1.8 para seu sistema operacional configuran
 Em seguida faça o download do [Wildfly 9.0.2](http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip) e descompacte-o em alguma pasta de seu servidor.
 Neste passo a passo, será assumido que o Wildfly foi descompactado na pasta `/opt/wildfly`.
 
-Antes de publicar a aplicação no WIldfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
+Antes de publicar a aplicação no Wildfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
 Esse banco de dados deve possuir o nome definido no arquivo `prd.properties` na hora do build (propriedade `db.name`). A codificação de caracteres deve ser o *UTF-8*.
 Crie o banco de dados através do comando SQL:
 

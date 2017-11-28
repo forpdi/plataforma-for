@@ -33,6 +33,10 @@ import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.AttributeTypeFactory;
 import org.forpdi.planning.attribute.types.DateField;
 import org.forpdi.planning.attribute.types.ResponsibleField;
+import org.forpdi.planning.fields.FieldsBS;
+import org.forpdi.planning.fields.budget.Budget;
+import org.forpdi.planning.fields.budget.BudgetBS;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.ManageStructurePermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
@@ -73,6 +77,10 @@ public class StructureController extends AbstractController {
 	private NotificationBS notificationBS;
 	@Inject
 	private UserBS userBS;
+	@Inject
+	private BudgetBS budgetBS;
+	@Inject
+	private FieldsBS fieldBs;
 
 	/**
 	 * Listar os tipos de atributos existentes.
@@ -283,25 +291,29 @@ public class StructureController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void listLevelInstance(Long levelId, Long planId, Long parentId) {
+	public void listLevelInstance(Long sequence, Long planId, Long parentId) {
 		try {
-			StructureLevel level = this.bs.retrieveById(levelId);
+			Plan plan = this.planBS.retrieveById(planId);
+			StructureLevel level = this.bs.retrieveNextLevel(plan.getStructure(), sequence.intValue());
 			PaginatedList<Attribute> attributeList = this.bs.listAttributes(level);
 
-			Plan plan = this.planBS.retrieveById(planId);
 			if (parentId == 0)
 				parentId = null;
 			boolean haveBudget = false;
 			PaginatedList<StructureLevelInstance> list = this.bs.listLevelsInstance(level, plan, parentId);
-			for (Attribute atr : attributeList.getList()) {
+			/*for (Attribute atr : attributeList.getList()) {
 				if (atr.getType().matches("org.forpdi.planning.attribute.types.BudgetField")) {
 					haveBudget = true;
 				}
-
-			}
+			}*/
 			List<StructureLevelInstance> structureList = list.getList();
 			for (int count = 0; count < structureList.size(); count++) {
-				structureList.get(count).setHaveBudget(haveBudget);
+				List<Budget> budgetList = this.budgetBS.listBudgetByLevelInstance(structureList.get(count));
+				if(!budgetList.isEmpty())
+					haveBudget = true;
+				else
+					haveBudget = false;
+				structureList.get(count).setHaveBudget(haveBudget);	
 			}
 			list.setList(structureList);
 			if (list.getTotal() > 0) {
@@ -313,7 +325,7 @@ public class StructureController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
-	
+
 	/** Listar instâncias de níveis para exibição de performance. */
 	@Get(BASEPATH + "/structure/levelinstance/performance")
 	@Consumes
@@ -329,11 +341,11 @@ public class StructureController extends AbstractController {
 			for (StructureLevelInstance levelInstance : list.getList()) {
 				levelInstanceDetailedList = this.bs.listLevelInstanceDetailed(levelInstance);
 				levelInstance.setLevelInstanceDetailedList(new ArrayList<StructureLevelInstanceDetailed>());
-				for (int i=0; i<12; i++) {
+				for (int i = 0; i < 12; i++) {
 					StructureLevelInstanceDetailed levelInstDetailed = null;
 					for (StructureLevelInstanceDetailed levelInstanceDetailed : levelInstanceDetailedList) {
 						levelInstanceDetailed.setLevelInstance(null);
-						if (levelInstanceDetailed.getMonth() == i+1) {
+						if (levelInstanceDetailed.getMonth() == i + 1) {
 							levelInstDetailed = levelInstanceDetailed;
 						}
 					}
@@ -483,7 +495,8 @@ public class StructureController extends AbstractController {
 	@Post(BASEPATH + "/structure/levelattributes")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanPermission.class })
+	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
+	// ManagePlanPermission.class })
 	@Permissioned(value = AccessLevels.COLABORATOR)
 	public void saveLevelAttributesInstance(StructureLevelInstance levelInstance, String url) {
 		try {
@@ -492,11 +505,11 @@ public class StructureController extends AbstractController {
 			String userId = "";
 			String urlAux = "";
 
-			String mainUrl[] = url.split("\\?"); // remoção de parâmetro na url			
-			if(mainUrl.length>0){
+			String mainUrl[] = url.split("\\?"); // remoção de parâmetro na url
+			if (mainUrl.length > 0) {
 				url = mainUrl[0];
 			}
-			
+
 			StructureLevelInstance existentLevelInstance = this.bs.retrieveLevelInstance(levelInstance.getId());
 			if (existentLevelInstance == null) {
 				this.fail("Estrutura incorreta!");
@@ -528,8 +541,8 @@ public class StructureController extends AbstractController {
 							}
 						}
 						if (attribute.getType().equals(DateField.class.getCanonicalName())) {
-							if(attributeInstance.getValue() != null){
-								if(!attributeInstance.getValue().equals(attInst.getValue())) {
+							if (attributeInstance.getValue() != null) {
+								if (!attributeInstance.getValue().equals(attInst.getValue())) {
 									changeDate = true;
 								}
 							}
@@ -616,7 +629,7 @@ public class StructureController extends AbstractController {
 					attrInst = this.attrHelper.retrievePolarityAttributeInstance(existentLevelInstance.getParent());
 				if (attrInst != null)
 					existentLevelInstance.setPolarity(attrInst.getValue());
-				
+
 				List<Attribute> attributeList = this.bs.retrieveLevelAttributes(existentLevelInstance.getLevel());
 				attributeList = this.bs.setAttributesInstances(existentLevelInstance, attributeList);
 				existentLevelInstance.getLevel().setAttributes(attributeList);
@@ -651,6 +664,20 @@ public class StructureController extends AbstractController {
 				if (indicator != null) {
 					this.fail("Não pode ser excluído, está agregado ao indicador " + indicator.getName() + ".");
 					return;
+				}
+				if(this.bs.checkHaveBudgetByLevel(existentLevelInstance.getLevel())){
+					List<Budget> budgetList = this.budgetBS.listBudgetByLevelInstance(existentLevelInstance);
+					for (Budget budget : budgetList) {
+						BudgetElement budgetElement = this.budgetBS.budgetElementExistsById(budget.getBudgetElement().getId());
+						if(budgetElement != null){
+							double balanceAvailable = budgetElement.getBalanceAvailable();
+							balanceAvailable += budget.getCommitted();
+							budgetElement.setBalanceAvailable(balanceAvailable);
+							budgetElement.setLinkedObjects(budgetElement.getLinkedObjects() - 1);
+							this.budgetBS.update(budgetElement);
+							this.fieldBs.deleteBudget(budget);
+						}
+					}				
 				}
 				existentLevelInstance.setDeleted(true);
 				this.bs.persist(existentLevelInstance);

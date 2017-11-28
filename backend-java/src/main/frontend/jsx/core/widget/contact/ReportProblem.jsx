@@ -2,6 +2,7 @@ import _ from "underscore";
 import React from "react";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import ContactStore from "forpdi/jsx/core/store/Contact.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var VerticalForm = Form.VerticalForm;
 
@@ -15,21 +16,21 @@ export default React.createClass({
 				name: "screen",
 				type: "select",
 				options: [
-					{'screen': "Dashboard"},
-					{'screen': "Cadastro de Desafios"},
-					{'screen': "Planos"},
-					{'screen': "Configurações"}
+					{'screen': Messages.get("label.painelBordo")},
+					{'screen': Messages.get("label.contractUs")},
+					{'screen': Messages.get("label.plans")},
+					{'screen': Messages.get("label.settings")}
 				],
 				valueField: 'screen',
 				displayField: 'screen',
-				placeholder: "-- Selecione uma tela --",
-				label: "Tela onde o problema ocorreu"
+				placeholder: Messages.get("label.selectView"),
+				label: Messages.get("label.screenProblemOccurred")
 			},{
 				name: "description",
 				type: "textarea",
 				rows: 4,
 				placeholder: "",
-				label: "Descreva melhor o problema"
+				label: Messages.get("label.describeProblemBetter")
 			}]
 		};
 	},
@@ -60,8 +61,8 @@ export default React.createClass({
 					onSubmit={this.onSubmit}
 					fields={this.state.fields}
 					store={ContactStore}
-					cancelLabel="Descartar"
-					submitLabel="Enviar"
+					cancelLabel={Messages.get("label.discard")}
+					submitLabel={Messages.get("label.send")}
 				/>
 			</div>
 		);

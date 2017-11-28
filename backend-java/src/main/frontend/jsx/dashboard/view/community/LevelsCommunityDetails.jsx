@@ -4,6 +4,7 @@ import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import LoadingGaugeWhite from "forpdi/jsx/core/widget/LoadingGaugeWhite.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 
@@ -81,7 +82,7 @@ export default React.createClass({
 	  	var dashboardTitle = "";
 	  	
       	if (this.state.subplan == -1)
-       	 	dashboardTitle = " - Todos os planos de metas";
+       	 	dashboardTitle = " - "+ Messages.get("label.allGoalPlans");
      	else if (this.state.subplan)
         	dashboardTitle = " - "+this.state.subplan.name;
 
@@ -114,29 +115,29 @@ export default React.createClass({
 							<div>
 								<div className="dashboard-indicator-container-commmunity">
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header-axis">Eixos Temáticos </div>
+										<div className="dashboard-indicator-header-axis">{Messages.getEditable("label.thematicAxes","fpdi-nav-label")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicatorsThematicAxis}</div>
 									</div>
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Objetivos</div>
+										<div className="dashboard-indicator-header">{Messages.getEditable("label.objective","fpdi-nav-label")}s</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfObjectives}</div> 
 									</div>
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Indicadores</div>
+										<div className="dashboard-indicator-header">{Messages.getEditable("label.indicators","fpdi-nav-label")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfIndicators}</div>
 									</div> 
 									<div className="col-sm-3 dashboard-plan-details-column">
-										<div className="dashboard-indicator-header">Metas</div>
+										<div className="dashboard-indicator-header">{Messages.getEditable("label.goals","fpdi-nav-label")}</div>
 										<div className="dashboard-indicator-number">{this.state.planDetails.numberOfGoals}</div>
 									</div> 
 								</div>
 								<div className="dashboard-goals-information-commmunity">
-								    <div className='dashboard-goals-title'>Metas Alcançadas </div>
+								    <div className='dashboard-goals-title'>{Messages.getEditable("label.reachedGoals","fpdi-nav-label")} </div>
 								    <div className="fontSize12 ">
 								   		<div className="dashboard-goals-head">
 									   		<span className='fontWeightBold'>
 									   			{this.state.planDetails.goalsDelayedPerCent.toFixed(2)}%
-									   		</span> das metas estão alcançadas 
+									   		</span>{Messages.get("label.ofTheGoalsAreReached")}
 									   		<span className='fontWeightBold floatRight'>100%</span>
 								   		</div>
 								   	</div>

@@ -3,7 +3,7 @@ import React from "react";
 import {Link} from 'react-router';
 
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -52,7 +52,7 @@ export default React.createClass({
 							<ul className="structure-preview-list">
 								{level.attributes.map((attr, idy) => {
 									return <li key={"li-"+idy} >
-										{attr.label}, <i>{attr.required ? "obrigatório":"opcional"}</i>.
+										{attr.label}, <i>{attr.required ? Messages.getEditable("label.required","fpdi-nav-label"):Messages.getEditable("label.optional","fpdi-nav-label")}</i>.
 									</li>;
 								})}
 							</ul>
@@ -79,7 +79,7 @@ export default React.createClass({
 							<span>
 								<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
 									to={"/structures"}
-									title={"Estruturas dos planos de metas"}>Estruturas dos planos de metas
+									title={Messages.get("label.structures")}>{Messages.getEditable("label.structures","fpdi-nav-label")}
 								</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>

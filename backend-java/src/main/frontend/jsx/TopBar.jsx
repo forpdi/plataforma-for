@@ -118,7 +118,7 @@ export default React.createClass({
 				
 				Modal.hide();
 			},
-			"Realmente deseja sair do sistema ?",
+			Messages.get("label.logoffConfirmation"),
 			() => {Modal.hide()}
 		);	
         
@@ -163,7 +163,7 @@ export default React.createClass({
 		}
 		return (<div className="fpdi-top-bar">
 	        <Link to='/home' className="fpdi-top-bar-brand">
-				{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt="ForPDI Logo" src={Logo}/>):(<img alt="ForPDI Logo" src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
+				{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>):(<img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
 	        </Link>
 	
 			<span className="fpdi-fill" />
@@ -219,13 +219,13 @@ export default React.createClass({
 					aria-expanded="true"
 					title="Menu de Opções"
 					>
-						<span className="sr-only">Menu de Opções</span>
+						<span className="sr-only">{Messages.get("label.optionMenu")}</span>
 						<span id="align-top-bar-menu" className="mdi mdi-menu icon-link" />
 				</a>
 				<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
 					<li>
 						<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-							<span className="mdi mdi-account-circle icon-link"/> Meu Perfil
+							<span className="mdi mdi-account-circle icon-link"/> {Messages.getEditable("label.myProfile","fpdi-nav-label")}
 						</Link>
 					</li>
 					
@@ -234,7 +234,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company ? <li>
 						<Link to="/users">
 		                	<span className="mdi mdi-account-multiple icon-link"
-		                    	/> {Messages.get("label.users")}
+		                    	/> {Messages.getEditable("label.users","fpdi-nav-label")}
 		            	</Link>
 		            </li>:""}
 					
@@ -251,14 +251,14 @@ export default React.createClass({
 			        {this.context.roles.SYSADMIN ? <li>
 						<Link to="/system/companies">
 			                <span className="mdi mdi-chemical-weapon icon-link"
-			                    /> {Messages.get("label.system")}
+			                    /> {Messages.getEditable("label.system","fpdi-nav-label")}
 			            </Link>
 					</li>:""}
 					
 					{this.context.roles.SYSADMIN ? <li>
 						<Link to="/structures">
 			                <span className="mdi mdi-note-text icon-link"
-			                    /> {Messages.get("label.structures")}
+			                    /> {Messages.getEditable("label.structures","fpdi-nav-label")}
 			            </Link>
 					</li>:""}
 
@@ -267,7 +267,7 @@ export default React.createClass({
 					<li role="separator" className="divider"></li>
 					<li>
 						<a onClick={this.onLogout}>
-							<span className="mdi mdi-logout icon-link" /> Sair
+							<span className="mdi mdi-logout icon-link" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
 						</a>
 					</li>
 				</ul>

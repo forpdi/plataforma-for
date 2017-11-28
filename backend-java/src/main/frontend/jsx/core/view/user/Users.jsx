@@ -72,6 +72,7 @@ export default React.createClass({
 
 
 		UserStore.on("retrieve-user", (model) => {
+			console.log("retrieve-user");
 			me.setState({
 				loading: false,
 				models: model.data,
@@ -84,11 +85,15 @@ export default React.createClass({
 
 		UserStore.on("remove", (data) => {
 			if(data.data){
-				this.context.toastr.addAlertSuccess("Usuário removido com sucesso.");
+				this.context.toastr.addAlertSuccess(Messages.get("label.success.removerUser"));
+				me.setState({
+					models: [],
+					totalUsers: 0,
+				});
 				me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 				//me.refs["pagination"].reload();
 			}else{
-				this.context.toastr.addAlertError("Impossível excluir esse usuário pois ele é responsável por algum nível do plano de metas.");
+				this.context.toastr.addAlertError(Messages.get("label.error.unableDeleteUser"));
 				
 			}
 
@@ -99,14 +104,22 @@ export default React.createClass({
 		UserStore.on("block", () => {
 			//Toastr.remove();
 			//Toastr.success("Usuário bloqueado com sucesso.");
-			this.context.toastr.addAlertSuccess("Usuário bloqueado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.userBlock"));
+			me.setState({
+				models: [],
+				totalUsers: 0,
+			});
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
 		UserStore.on("unblock", () => {
 			//Toastr.remove();
 			//Toastr.success("Usuário desbloqueado com sucesso.");
-			this.context.toastr.addAlertSuccess("Usuário desbloqueado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.userUnblock"));
+			me.setState({
+				models: [],
+				totalUsers: 0,
+			});
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		}, me);
@@ -114,7 +127,7 @@ export default React.createClass({
 			//Toastr.remove();
 			//Toastr.success("Convite reenviado com sucesso.");
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
-			this.context.toastr.addAlertSuccess("Convite reenviado com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.invitionUserAgain"));
 		}, me);
 		UserStore.on("sync", (model) => {
 			//Toastr.remove();
@@ -122,7 +135,7 @@ export default React.createClass({
 				loadingSend: false
 			});
 
-			this.context.toastr.addAlertSuccess("Um e-mail de convite foi enviado para "  + model.attributes.email + ", no qual o usuário precisa completar o cadastro.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.emailSent") + " "  + model.attributes.email + Messages.get("label.success.userCompleteRegister"));
 
 			this.refs.nameUser.value = "";
 			this.refs.emailUser.value = "";
@@ -136,7 +149,7 @@ export default React.createClass({
 			this.setState({
 				loadingCreate: false
 			});
-			this.context.toastr.addAlertSuccess("Usuário cadastrado com sucesso: " +model.data.email);
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.registredUser") +model.data.email);
 
 			this.refs.newNameUser.value = "";
 			this.refs.newEmailUser.value = "";
@@ -150,7 +163,7 @@ export default React.createClass({
 			});
 		},me)
 		UserStore.on("users-imported", (data) =>{
-			this.context.toastr.addAlertSuccess("Usuários importados com sucesso.");
+			this.context.toastr.addAlertSuccess(Messages.get("label.success.importedUser"));
 			me.getUsers(this.refs.pagination.state.page, this.refs.pagination.state.pageSize);
 			//me.refs["pagination"].reload();
 		},me)
@@ -172,7 +185,7 @@ export default React.createClass({
 
 	removeUser(id, event) {
 		event && event.preventDefault();
-		var msg = "Tem certeza que deseja remover este usuário?"
+		var msg = Messages.get("label.msg.removeUser");
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			UserStore.dispatch({
@@ -184,7 +197,7 @@ export default React.createClass({
 	
 	blockUser(id,nome, event) {
 		event && event.preventDefault();
-		var msg =  "O usuário " + nome + " será bloqueado.Deseja continuar ?";
+		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messages.get("label.msg.blockUser");
 
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
@@ -192,13 +205,14 @@ export default React.createClass({
 				action: UserStore.ACTION_BLOCK,
 				data: id
 			});
+
 		},msg,this.cancelBlockUnblock);
 
 	},
 
 	unblockUser(id,nome, event) {
 		event && event.preventDefault();
-		var msg =  "O usuário " + nome + " será desbloqueado.Deseja continuar ?";
+		var msg = Messages.get("label.msg.user") + " " + nome + " " + Messages.get("label.msg.unblockUser");
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			UserStore.dispatch({
@@ -214,7 +228,7 @@ export default React.createClass({
 			action: UserStore.ACTION_RESEND_INVITATION,
 			data: id
 		});
-		this.context.toastr.addAlertSuccess("O convite foi reenviado ao usuário");
+		this.context.toastr.addAlertSuccess(Messages.get("label.resendInviteUser"));
 	},
 
 	hideFieldsUser() {
@@ -253,7 +267,7 @@ export default React.createClass({
 		if (errorField){
 			//Toastr.remove();
 			//Toastr.error(msg);
-			this.context.toastr.addAlertError("É necessário preencher todos os campos do formulário");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllForm"));
 			return;
 		} else {
 			this.setState({
@@ -275,7 +289,7 @@ export default React.createClass({
 				}
 			});
 		} else {
-			this.context.toastr.addAlertError("O convite para este email já foi enviado, utilize a opção de reenviar na tabela Usuários do Sistema");
+			this.context.toastr.addAlertError(Messages.get("label.resendEmail"));
 			this.setState({
 				loadingSend: false
 			});
@@ -289,7 +303,7 @@ export default React.createClass({
 		var errorField = Validate.validationCreateUser(this.refs);
 
 		if (errorField){
-			this.context.toastr.addAlertError("É necessário preencher todos os campos do formulário");
+			this.context.toastr.addAlertError(Messages.get("label.error.completeAllForm"));
 			return;
 		} else {
 			this.setState({
@@ -312,7 +326,7 @@ export default React.createClass({
 				}
 			});
 		} else {
-			this.context.toastr.addAlertError("Já foi cadastrado um usuário com este e-mail.");
+			this.context.toastr.addAlertError(Messages.get("label.equalEmail"));
 			this.setState({
 				loadingCreate: false
 			});
@@ -378,10 +392,10 @@ export default React.createClass({
     		var successful = document.execCommand('copy');
     		document.body.removeChild(textArea);
     		if (successful)
-    			this.context.toastr.addAlertSuccess("A url foi copiada para a área de transferência.")
+    			this.context.toastr.addAlertSuccess(Messages.get(label.copiedUrl));
   		} catch (err) {
   			document.body.removeChild(textArea);
-    		window.prompt("Copie a url para a área de transferência:", url);
+    		window.prompt(Messages.get("label.copyUrl"), url);
   		}
     },
 
@@ -390,7 +404,7 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				<li>
 					<Link  to = {"/users/profilerUser/" +UserSession.attributes.user.id}>
-						Meu Perfil
+						{Messages.getEditable("label.myProfile","fpdi-nav-label")}
 					</Link>
 				</li>
 			</ul>
@@ -402,18 +416,18 @@ export default React.createClass({
 			<ul className="dropdown-menu">
 				{!model.active ? <li>
 					<a onClick={this.copyInviteToken.bind(this, model.inviteToken)}>
-						Copiar link para cadastro</a>
+						{Messages.getEditable("label.copyLinkRegister","fpdi-nav-label")}</a>
 				</li> : ""}
 				{!model.active ? <li>
 					<a onClick={this.resendInvitation.bind(this, model.id)}>
-						Reenviar convite</a>
+						{Messages.getEditable("label.resendInvitation","fpdi-nav-label")}</a>
 				</li> : ""}
 				{model.active && (this.context.roles.MANAGER  || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions, 
 					"org.forpdi.core.user.authz.permission.ViewUsersPermission"))? 
 				<li>
 					<Link to={"/users/"+model.id+"/edit"}>
-						Visualizar usuário
+						{Messages.getEditable("label.viewUser","fpdi-nav-label")}
 					</Link>
 				</li>:""}
 				{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
@@ -421,11 +435,11 @@ export default React.createClass({
 					<li>
 						{model.blocked ?
 							<a onClick={this.unblockUser.bind(this, model.id,model.name)}>
-								Desbloquear usuário
+								{Messages.getEditable("label.unblockUser","fpdi-nav-label")}
 							</a>
 							:
 							<a onClick={this.blockUser.bind(this, model.id,model.name)}>
-								Bloquear usuário
+								{Messages.getEditable("label.blockUser","fpdi-nav-label")}
 							</a>
 						}
 					</li> : ""
@@ -434,7 +448,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
-							Remover usuário
+							{Messages.getEditable("label.removeUser","fpdi-nav-label")}
 						</a>
 					</li> : ""
 				)}
@@ -445,10 +459,10 @@ export default React.createClass({
 	readCSVFile(){
 		var me = this;
 		Modal.readFile(
-			"Importar usuários",
+			Messages.get("label.importUsers"),
 			(<div>
 				<p>
-					Faça upload de um arquivo no formato .csv. O arquivo deve conter somente as colunas "nome" e "e-mail".
+					{Messages.getEditable("label.fileCsv","fpdi-nav-label")}
 				</p>
 			</div>),
 			".csv",
@@ -462,7 +476,7 @@ export default React.createClass({
 					reader.readAsText(file);
 			      	reader.onload = function(event){
 				  		var fileArr = event.target.result.split('\n');      
-				  		var msg = "Lista de usuários";
+				  		var msg = Messages.get("label.userList");
 				  		function User() {
 			                var name;
 			                var email;
@@ -490,7 +504,7 @@ export default React.createClass({
 					      		emptyUsersToImport: false
 					   	 	})
 					  		Modal.importUsers(
-					  			"Importar Usuários",
+					  			Messages.get("label.importUsers"),
 					  			me.renderImportedUsers(userList),
 					  			() => {
 					  				me.selectedUsersToImport();
@@ -499,12 +513,12 @@ export default React.createClass({
 					  		);
 					  	}else{
 					  		var errorTag = document.getElementById("upload-error-span");
-		      				errorTag.innerHTML = "O arquivo não está dentro dos padrões.";
+		      				errorTag.innerHTML = Messages.get("label.fileNoCsv");
 					  	}
 			      	};
 		      	}else{
 		      		var errorTag = document.getElementById("upload-error-span");
-		      		errorTag.innerHTML = "O arquivo deve ter extensão '.csv'";
+		      		errorTag.innerHTML = Messages.get("label.fileExtCsv");
 		      	}     	
 			}
 		);
@@ -600,6 +614,31 @@ export default React.createClass({
 		document.getElementById("selectAll").checked = selectAll;
 	},
 
+	onKeyUp(evt){		
+		var key = evt.which;
+		if(key == 13) {
+			evt.preventDefault();
+			return;
+		}
+	},
+	onlyLetter(evt){
+		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	    var key = String.fromCharCode(!evt.charCode ? evt.which : evt.charCode);
+	    if (!regex.test(key)) {
+	       evt.preventDefault();
+	       return false;
+	    }
+	},
+   
+   onlyLetterPaste(evt){
+   		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
+	   	var value = evt.clipboardData.getData('Text');
+	   	if (!regex.test(value)) {
+		   evt.preventDefault();
+		   return;
+	   	}
+   },
+
 
 
 	renderImportedUsers(users){
@@ -608,16 +647,16 @@ export default React.createClass({
 					<thead className="import-table-header">
 						<tr>
 							<th className = "column-goals-perfomance col-xs-1"> 
-								<input id="selectAll" value="selectAll" type="checkbox" title="Todos" onChange={me.selectAll}/>
+								<input id="selectAll" value="selectAll" type="checkbox" title={Messages.get("label.all")} onChange={me.selectAll}/>
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								Nome
+								{Messages.getEditable("label.name","fpdi-nav-label")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-4"> 
-								Email
+								{Messages.getEditable("label.email","fpdi-nav-label")}
 							</th>
 							<th className = "column-goals-perfomance col-xs-3"> 
-								Tipo de conta
+								{Messages.getEditable("label.accountType","fpdi-nav-label")}
 							</th>
 						</tr>										
 					</thead>
@@ -669,16 +708,16 @@ export default React.createClass({
 				</tbody>
 			</table>
 				<div>
-					<strong ><span id="qntdSelectedUsers">0</span> usuários selecionados.</strong>
+					<strong ><span id="qntdSelectedUsers">0</span> {Messages.getEditable("label.selectUsers","fpdi-nav-label")}</strong>
 					<span className="floatRight">
-						<strong>Arquivo: </strong>
+						<strong>{Messages.getEditable("label.file","fpdi-nav-label")} </strong>
 							<span id="fileName">{this.state.importFileName}
 						</span>
 					</span>
 				</div>
 				{this.state.emptyUsersToImport ? 
 					(<div className="emptyUsersToImport">
-						Você não selecionou <strong>nenhum usuário</strong> para importar!
+						{Messages.getEditable("label.notSelect","fpdi-nav-label")} <strong>{Messages.getEditable("label.noUser","fpdi-nav-label")}</strong> {Messages.getEditable("label.toImport","fpdi-nav-label")}
 					</div>) 
 					: ""
 				}
@@ -739,9 +778,9 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsNewUser}>
-	        				<b className="budget-graphic-title"> Convidar usuário </b>
+	        				<b className="budget-graphic-title"> {Messages.getEditable("label.inviteUser","fpdi-nav-label")} </b>
 	        				<div className="performance-strategic-btns floatRight">
-	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> Importar usuários </button>
+	        					<button type="button" className="btn btn-primary budget-new-btn" onClick={this.readCSVFile}> {Messages.getEditable("label.importUsers","fpdi-nav-label")} </button>
 	                			<span  className={(this.state.hideNewUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsNewUser}/>
 	              			</div>
 	        			</div>
@@ -750,18 +789,18 @@ export default React.createClass({
 	        					<LoadingGauge />
 	        				:
 		        				<table className="table fpdi-table">
-		        					<thead className="hidden-xs">	
+		        					<thead className="hidden-xs">
 		        						<tr>
-		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">Tipo de Conta <span className="fpdi-required"></span>  </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.accountType","fpdi-nav-label")} <span className="fpdi-required"></span>  </th>
 		        							<th className="col-sm-3"> </th>
 		        						</tr>      				
 		        					</thead>
 		        					<tbody>
 		        						<tr>
 		        							<td className="fdpi-table-cell"> 
-		        								<input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue=""/>
+		        								<input maxLength="255" className="budget-field-table" ref='nameUser' type='text' defaultValue="" onKeyPress={this.onlyLetter} onPaste={this.onlyLetterPaste}/>
 		        								<div ref="formAlertNameUser" className="formAlertError"></div>
 	        								</td>
 		        							<td className="fdpi-table-cell">
@@ -770,7 +809,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="selectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.getEditable("label.selectAccountType","fpdi-nav-label")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -789,14 +828,14 @@ export default React.createClass({
 												<div ref="formAlertTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> Enviar convite </button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitConviteUser}> {Messages.getEditable("label.submit.sendInvitation","fpdi-nav-label")} </button>
 											</td>
 										</tr>  
 		        						
 										<tr>
 											<td colSpan="4" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													Obs: Utilize preferencialmente e-mail institucional ou gmail. Pode acontecer de alguns e-mail irem para caixa de spam. {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
+													{Messages.getEditable("label.typeEmail","fpdi-nav-label")} {/*Atenção: Evite convidar usuários utilizando e-mails do MSN, Hotmail, Outlook e Windows Live Mail*/}
 												</div>
 											</td>
 										</tr>
@@ -810,7 +849,7 @@ export default React.createClass({
 					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 					<div className="panel panel-default"> 
 	        			<div className="panel-heading displayFlex cursorPointer" onClick={this.hideFieldsCreateUser}>
-	        				<b className="budget-graphic-title"> Cadastrar usuário </b>
+	        				<b className="budget-graphic-title"> {Messages.getEditable("label.RegisterUser","fpdi-nav-label")} </b>
 	        				<div className="performance-strategic-btns floatRight">
 	                			<span  className={(this.state.hideCreateUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsCreateUser}/>
 	              			</div>
@@ -822,17 +861,17 @@ export default React.createClass({
 		        				<table className="table fpdi-table">
 		        					<thead className="hidden-xs">	
 		        						<tr>
-		        							<th className="col-sm-3">{Messages.get("label.name")}  <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-3">{Messages.get("label.email")} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">{"Senha"} <span className="fpdi-required"></span> </th>
-		        							<th className="col-sm-2">Tipo de Conta <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.getEditable("label.password","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
+		        							<th className="col-sm-2">{Messages.getEditable("label.accountType","fpdi-nav-label")} <span className="fpdi-required"></span> </th>
 		        							<th className="col-sm-2"> </th>
 		        						</tr>      				
 		        					</thead>
 		        					<tbody>
 		        						<tr>
 		        							<td className="fdpi-table-cell"> 
-		        								<input maxLength="255" className="budget-field-table" ref='newNameUser' type='text' defaultValue=""/>
+		        								<input maxLength="255" className="budget-field-table" ref='newNameUser' type='text' defaultValue=""  onKeyPress={this.onlyLetter} onPaste={this.onlyLetterPaste}/>
 		        								<div ref="formAlertNewNameUser" className="formAlertError"></div>
 	        								</td>
 		        							<td className="fdpi-table-cell">
@@ -845,7 +884,7 @@ export default React.createClass({
 	        								</td>
 		        							<td className="fdpi-table-cell"> 
 		        								<select  className="form-control user-select-box" ref="newSelectAccessLevels" defaultValue={-1}>
-													<option value={-1} disabled data-placement="right" title="Selecione o tipo de conta">Selecione o tipo de conta </option>
+													<option value={-1} disabled data-placement="right" title={Messages.get("label.selectAccountType")}>{Messages.getEditable("label.selectAccountType","fpdi-nav-label")} </option>
 													{this.context.roles.SYSADMIN ?
 														AccessLevels.list.map((attr, idy) =>{
 			                    							return(<option key={attr.accessLevel} value={attr.accessLevel}
@@ -864,13 +903,13 @@ export default React.createClass({
 												<div ref="formAlertNewTypeAccont" className="formAlertError"></div>
 											</td>
 											<td className="fdpi-table-cell">
-												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>Cadastrar</button>
+												<button type="button" className="btn btn-primary budget-new-btn" onClick={this.onSubmitCreateUser}>{Messages.getEditable("label.register","fpdi-nav-label")}</button>
 											</td>
 										</tr>
 										<tr>
 											<td colSpan="5" className="fdpi-table-cell">
 												<div className="notUseEmail">
-													Obs: Ao cadastrar um usuário diretamente no sistema, ele não receberá confirmação por e-mail.
+													{Messages.getEditable("label.noConfirmToEmail","fpdi-nav-label")}
 												</div>
 											</td>
 										</tr>  
@@ -883,7 +922,7 @@ export default React.createClass({
 
 			<div className="panel panel-default">     
         		<div className="panel-heading cursorPointer" onClick={this.hideFieldsUser}>
-        			<b className="budget-graphic-title"> Usuários do Sistema </b>
+        			<b className="budget-graphic-title"> {Messages.getEditable("label.systemUsers","fpdi-nav-label")} </b>
         			<div className="performance-strategic-btns floatRight">
                 		<span  className={(this.state.hideUser)?("mdi mdi-chevron-right marginLeft15 cursorPointer"):("mdi mdi-chevron-down marginLeft15 cursorPointer")}  onClick={this.hideFieldsUser}/>
               		</div>
@@ -893,13 +932,13 @@ export default React.createClass({
 						<table className="table fpdi-table">
 							<thead className="hidden-xs">
 								<tr>
-									<th className="col-sm-3">{Messages.get("label.name")}  <span className={this.state.sortIconStatus == "desc"?"mdi mdi-sort-ascending cursorPointer":
+									<th className="col-sm-3">{Messages.getEditable("label.name","fpdi-nav-label")}  <span className={this.state.sortIconStatus == "desc"?"mdi mdi-sort-ascending cursorPointer":
                        					(this.state.sortIconStatus =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                        					onClick={(this.state.sortIconStatus == "" || this.state.sortIconStatus =="desc") ? this.quickSortByUsersName.bind(this,"asc") :  this.quickSortByUsersName.bind(this,"desc")} title="Ordenar"> </span></th>
-									<th className="col-sm-3">{Messages.get("label.email")}</th>
-									<th className="col-sm-3">{Messages.get("label.cpf")}</th>
-									<th className="col-sm-3">Tipo de Conta </th>
-									<th className="col-sm-3"> Situação </th>		
+									<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")}</th>
+									<th className="col-sm-3">{Messages.getEditable("label.cpf","fpdi-nav-label")}</th>
+									<th className="col-sm-3">{Messages.getEditable("label.accountType","fpdi-nav-label")}</th>
+									<th className="col-sm-3"> {Messages.getEditable("label.situation","fpdi-nav-label")} </th>		
 								</tr>
 							</thead>
 							<tbody>
@@ -908,34 +947,34 @@ export default React.createClass({
 									sameUser = (cpf.isEmpty() || UserSession.attributes.user == null ? false : cpf == UserSession.attributes.user.cpf);
 
 									return (<tr key={"user-"+idx} className={model.blocked ? "danger":""}>
-											<td  className={"col-sm-3"+(!model.active ? " warning":"")}>											
+											<td  className={"col-sm-3 break-text"+(!model.active ? " warning":"")}>											
 												<span className="dropdown">
 													<a
 														className="dropdown-toggle"
 														data-toggle="dropdown"
 														aria-haspopup="true"
 														aria-expanded="true"
-														title="Ações"
+														title={Messages.getEditable("label.actions","fpdi-nav-label")}
 													>
-														<span className="sr-only">Ações</span>
-														<span title="Ações" className="mdi mdi-chevron-down" />
+														<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+														<span title={Messages.getEditable("label.actions","fpdi-nav-label")} className="mdi mdi-chevron-down" />
 													</a>
 													
-													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(model,cpf)}											
+													{sameUser ? this.renderSameUserOptions() : this.renderAnotherUser(this.state.models[idx],cpf)}											
 												</span>
 												{model.name}
 											</td>
-											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p id = "userNCadastrado"> {model.email} </p> </td> 
+											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p className="break-text"> {model.email} </p> </td> 
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												<p id = "userNCadastrado"> {!model.active ? "" :cpf.s} </p>
+												<p className="break-text"> {!model.active ? "" :cpf.s} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												<p id = "userNCadastrado">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
+												<p className="break-text">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
-												{!model.active ? (model.blocked ? "Bloqueado" :
-													<p id = "userNCadastrado"><small>O usuário ainda não concluiu o cadastro.</small></p>)
-												: (model.blocked ? "Bloqueado" : "Regular")}
+												{!model.active ? (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") :
+													<p className="break-text"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
+												: (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") : Messages.getEditable("label.regularUser","fpdi-nav-label"))}
 											</td>
 										</tr>);
 									})}
@@ -955,7 +994,7 @@ export default React.createClass({
 		/* Colocar no render devido o processo assíncrono */
 		if (this.state.emptyUsersToImport){
 			Modal.importUsers(
-	  			"Importar Usuários",
+	  			Messages.get("label.importUsers"),
 	  			this.renderImportedUsers(this.state.usersToImport),
 	  			() => {
 	  				this.selectedUsersToImport();
@@ -968,7 +1007,7 @@ export default React.createClass({
 		}
 		return (<div className="fpdi-profile-user padding40">
 			<div className="fpdi-tabs-content container-fluid animated fadeIn">
-				<h1>{Messages.get("label.users")}</h1>
+				<h1>{Messages.getEditable("label.users","fpdi-nav-label")}</h1>
 				{/*
 					<ul className="fpdi-action-list text-right">
 						<Link to="/users/new" className="btn btn-sm btn-primary">

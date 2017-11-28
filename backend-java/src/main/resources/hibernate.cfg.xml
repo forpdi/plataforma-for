@@ -44,6 +44,7 @@
 
   		<mapping class="org.forpdi.core.company.Company"/>
   		<mapping class="org.forpdi.core.company.CompanyDomain"/>
+  		<mapping class="org.forpdi.core.company.CompanyMessage"/>
   		<mapping class="org.forpdi.core.company.CompanyUser"/>
   		<mapping class="org.forpdi.core.notification.MessageHistory"/>
   		<mapping class="org.forpdi.core.notification.Notification"/>
@@ -65,7 +66,7 @@
   		<mapping class="org.forpdi.planning.structure.StructureLevelInstance"/>
   		<mapping class="org.forpdi.planning.structure.StructureLevelInstanceDetailed"/>
   		<mapping class="org.forpdi.planning.fields.budget.Budget"/>
-  		<mapping class="org.forpdi.planning.fields.budget.BudgetSimulationDB"/>
+  		<mapping class="org.forpdi.planning.fields.budget.BudgetElement"/>
   		<mapping class="org.forpdi.planning.fields.actionplan.ActionPlan"/>
   		<mapping class="org.forpdi.planning.fields.attachment.Attachment"/>
   		<mapping class="org.forpdi.planning.fields.schedule.Schedule"/>

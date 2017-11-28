@@ -1,4 +1,3 @@
-
 import React from "react";
 import {Link} from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
@@ -28,13 +27,13 @@ export default React.createClass({
 				type: "email",
 				placeholder: "",
 				required:true,
-				label: Messages.get("label.email")
+				label: Messages.getEditable("label.email","fpdi-nav-label")
 			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
 				required:true,
-				label: Messages.get("label.password")
+				label: Messages.getEditable("label.password","fpdi-nav-label")
 			}]
 		};
 	},
@@ -78,8 +77,8 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
-							<h3 className="fpdi-login-subtitle">Plataforma Aberta para Gestão e Acompanhamento do<br/>Plano de Desenvolvimento Institucional - PDI</h3>
+							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.getEditable("label.forPdiLogo","fpdi-nav-label")} />
+							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -89,7 +88,7 @@ export default React.createClass({
 				<div className="col-md-4 col-md-offset-4">	
 					<div className="fpdi-card-login">		
 						<div className="panel panel-default">
-						  <div className="panel-heading"><p className="fpdi-login-title">Login</p></div>
+						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.login","fpdi-nav-label")}</p></div>
 							  <div className="panel-body">
 									<div className="fpdi-login-body">
 										<VerticalForm
@@ -98,7 +97,7 @@ export default React.createClass({
 											fields={this.state.fields}
 											store={UserSession}
 											hideCanel={true}
-											submitLabel="Fazer login"
+											submitLabel={Messages.get("label.LogIn")}
 											blockButtons={true}
 											confirmKey={13}
 											id="login-form"
@@ -108,7 +107,7 @@ export default React.createClass({
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">
-												<Link to="/recover-password">Esqueceu sua senha?</Link>
+												<Link to="/recover-password">{Messages.getEditable("label.recoverPassword","fpdi-nav-label")}</Link>
 											</div>
 										</div>
 									</div>
@@ -117,8 +116,8 @@ export default React.createClass({
 					</div>
 
 					<div className="fpdi-browsers-info">
-						Para uma melhor experiência utilize os seguintes navegadores:<br/>
-						<i>Mozilla Firefox v52.0 - Google Chrome v56.0 - Opera v43.0</i>
+						{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
+						<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
 					</div>
 				</div>
 			</div>

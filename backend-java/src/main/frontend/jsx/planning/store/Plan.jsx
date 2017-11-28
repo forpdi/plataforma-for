@@ -31,9 +31,11 @@ var PlanStore = Fluxbone.Store.extend({
 	ACTION_FIND: 'plan-find',
 	ACTION_FIND_TERMS:'plan-findTerms',
 	ACTION_RETRIEVE: 'plan-retrieve',
+	ACTION_RETRIEVE_PLAN: 'plan-retrievePlan',
 	ACTION_RETRIEVE_PERFORMANCE: 'plan-retrievePerformance',
 	ACTION_UPDATE: 'plan-update',
 	ACTION_CUSTOM_UPDATE: 'plan-customUpdate',
+	ACTION_DELETE_PLAN: 'plan-deletePlan',
 	dispatchAcceptRegex: /^plan-[a-zA-Z0-9]+$/,
 
 	url: URL,
@@ -86,6 +88,38 @@ var PlanStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], opts);
 			}
 		});
+	},
+
+	retrievePlan(id) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: me.url + "/" + id,
+			success(model, response, options) {
+				me.trigger("retrieve", model);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
+	deletePlan(model) {
+		var me = this;
+		if (!model) {
+			console.error("Store: You must pass a model on the payload to request a destroy.");
+		} else {
+			model.destroy({
+				wait: true,
+				url: me.url + "/" + model.get("id"),
+				success(model, response, options) {
+					me.trigger("delete", model);
+				},
+				error(model, response, options) {
+					me.handleRequestErrors([], options.xhr);
+				}
+			});
+		}
 	}
 
 });

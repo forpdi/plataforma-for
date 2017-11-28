@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import _ from 'underscore';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 
 var initialIndicatorsSelected = [];
@@ -165,42 +166,42 @@ export default React.createClass({
 			var calculationLabel;
 			switch(this.state.calculationType){
 				case 0:
-					calculationLabel = "Média aritmética";
+					calculationLabel = Messages.get("label.arithmeticMean");
 					break;	
 				case 1:
-					calculationLabel = "Média ponderada";
+					calculationLabel = Messages.get("label.weightedAverage");
 					break;
 				case 2:
-					calculationLabel = "Somatório";
+					calculationLabel = Messages.get("label.sum");
 					break;	
 			}			
 			return(
 				<div className="fpdi-marginTop20">
-					<label className="fpdi-text-label">Forma de Acumulação {this.props.visualization? "" : <span className="fpdi-required">&nbsp;</span>}</label>
+					<label className="fpdi-text-label">{Messages.getEditable("label.accumulationForm","fpdi-nav-label")} {this.props.visualization? "" : <span className="fpdi-required">&nbsp;</span>}</label>
 					{this.props.visualization ? 
 						<span className="pdi-normal-text">{calculationLabel}</span>
 					:
 						<select
 							className="form-control"
-							placeholder="Selecione um Cálculo"
+							placeholder={Messages.get("label.selectCalculation")}
 							name="indicator-calculation-type"
 							id="indicator-calculation-type"
 							ref="indicator-calculation-type"						
 							onChange = {this.onChangeCalculation}
 							defaultValue={this.state.calculationType}
 							>						
-								<option key='calc-opt-avg' value={0}  data-placement="right" title="Média aritmética">
-									Média aritmética</option>;
-								<option key='calc-opt-weighted-avg' value={1}  data-placement="right" title="Média ponderada">
-									Média ponderada</option>;
-								<option key='calc-opt-sum' value={2}  data-placement="right" title="Somatório">
-									Somatório</option>;
+								<option key='calc-opt-avg' value={0}  data-placement="right" title={Messages.get("label.arithmeticMean")}>
+									{Messages.get("label.arithmeticMean")}</option>;
+								<option key='calc-opt-weighted-avg' value={1}  data-placement="right" title={Messages.get("label.weightedAverage")}>
+									{Messages.get("label.weightedAverage")}</option>;
+								<option key='calc-opt-sum' value={2}  data-placement="right" title={Messages.get("label.sum")}>
+									{Messages.get("label.sum")}</option>;
 						</select>
 					}
 					{this.props.visualization ? ""
 					:
 						<div className="fpdi-indicators">
-							<label className="fpdi-text-label">Indicadores</label>
+							<label className="fpdi-text-label">{Messages.getEditable("label.indicators","fpdi-nav-label")}</label>
 							<div className="form-control fpdi-indicators-ctn">
 								{
 									this.state.indicators.length > 1 ?
@@ -232,20 +233,20 @@ export default React.createClass({
 											);
 										}
 									})) : <span className="indicator-list-truncate">
-											{"Não há indicadores simples para serem selecionados"}
+											{Messages.getEditable("label.haveNoSimpleIndicatorsToSelect","fpdi-nav-label")}
 										</span>								
 								}
 							</div>
 						</div>	
 					}					
 					<div className="panel panel-default">						  
-					  <div className="panel-heading">Indicadores selecionados</div>
+					  <div className="panel-heading">{Messages.getEditable("label.selectedIndicators","fpdi-nav-label")}</div>
 					  <table className="table">
 					    <thead>
 					    	<tr>
-						    	<th>Nome</th>	
+						    	<th>{Messages.getEditable("label.name","fpdi-nav-label")}</th>	
 						    	<th/>					    	
-						    	{this.state.calculationType == 1 ? <th>Peso</th> : <th/>}
+						    	{this.state.calculationType == 1 ? <th>{Messages.getEditable("label.weight","fpdi-nav-label")}</th> : <th/>}
 						    </tr>
 					    </thead>
 					    <tbody>
@@ -285,7 +286,7 @@ export default React.createClass({
 						    			<b>{this.state.total+'%'}</b>						    			
 						    		</td>						    		
 						    		<td className="fpdi-indicator-weigth-total-text">
-						    			{this.state.total != 100 ? "O total precisa ser 100%" : ""}
+						    			{this.state.total != 100 ? Messages.getEditable("label.totalMustBe100","fpdi-nav-label") : ""}
 						    		</td>						    		
 						    	</tr>
 					    	: <tr/>}

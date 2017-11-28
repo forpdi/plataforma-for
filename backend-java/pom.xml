@@ -32,6 +32,7 @@
 		<version.vraptor.boilerplate>1.0.0</version.vraptor.boilerplate>
 		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
 		<propertiesfile>dev.properties</propertiesfile>
+		<war.frontenddir>development</war.frontenddir>
 	</properties>
 
 	<profiles>
@@ -39,18 +40,21 @@
 			<id>test</id>
 			<properties>
 				<propertiesfile>test.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 		<profile>
 			<id>mirror</id>
 			<properties>
 				<propertiesfile>mirror.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 		<profile>
 			<id>prd</id>
 			<properties>
 				<propertiesfile>prd.properties</propertiesfile>
+				<war.frontenddir>production</war.frontenddir>
 			</properties>
 		</profile>
 	</profiles>

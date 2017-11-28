@@ -5,6 +5,7 @@ import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -18,7 +19,7 @@ export default React.createClass({
           data: [],
           options:{
             title: '',
-            hAxis: {title: this.props.dashboardAxis, minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
+            hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
             vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
             legend: 'none',
             explorer: { axis: 'horizontal' },
@@ -39,7 +40,7 @@ export default React.createClass({
             levelInstance: newProps.levelInstance,        
             options:{
               title: '',
-              hAxis: {title: newProps.dashboardAxis, minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
+              hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
               vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
               legend: 'none',
               explorer: { axis: 'horizontal' },
@@ -193,15 +194,15 @@ export default React.createClass({
     render() {
         var dashboardTitle = "";
         if (this.state.levelInstance == -1 && this.state.subPlan == -1)
-            dashboardTitle = "Desempenho dos eixos temáticos - Todos os planos de metas";
+            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - Todos os "+Messages.get("label.goalsPlan");
         else if (this.state.levelInstance == -1)
-            dashboardTitle = "Desempenho dos eixos temáticos - "+this.state.subPlan.name;
+            dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+this.state.subPlan.name;
         else if (this.state.levelInstance.parent == null) 
-            dashboardTitle = "Desempenho dos objetivos - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.objectivesPerformance") + " - "+this.state.levelInstance.name;
         else if (this.state.levelInstance.level.objective)
-            dashboardTitle = "Desempenho dos indicadores - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.indicatorsPerformance") + " - "+this.state.levelInstance.name;
         else if (this.state.levelInstance.level.indicator)
-            dashboardTitle = "Desempenho das metas - "+this.state.levelInstance.name;
+            dashboardTitle = Messages.get("label.goalsPerformance") + " - "+this.state.levelInstance.name;
         return (
             <div className="panel panel-default">
                 <div className="panel-heading dashboard-panel-title">
@@ -228,7 +229,7 @@ export default React.createClass({
                         <div className="aggregate-indicator-without-goals-legend"> 
                             {this.state.aggregateIndicator ? 
                             <span className="legend-item"> 
-                                    <p id = "aggregate-indicator-goals"> Este é um indicador agregado, composto por outros indicadores.</p>
+                                    <p id = "aggregate-indicator-goals">{Messages.getEditable("label.aggIndicatorText","fpdi-nav-label")}</p>
                             </span>
                             :<div className="height10">                                 
                             </div>}

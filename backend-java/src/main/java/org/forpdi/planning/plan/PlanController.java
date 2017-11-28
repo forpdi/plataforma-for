@@ -108,6 +108,13 @@ public class PlanController extends AbstractController {
 			existent.setBegin(plan.getBegin());
 			existent.setEnd(plan.getEnd());
 			existent.setDocumented(plan.isDocumented());
+			
+			if(this.bs.listAllPlans(existent).isEmpty()){
+				existent.setHaveSons(false);	
+			} else {
+				existent.setHaveSons(true);
+			}
+			
 			this.bs.persist(existent);
 			this.success(existent);
 		} catch (Throwable e) {
@@ -559,6 +566,7 @@ public class PlanController extends AbstractController {
 					levelInstances.getList().add(levelInstance);
 				}
 			}
+
 			
 			levelInstances.setTotal((long) count);
 			this.success(levelInstances);
@@ -585,14 +593,18 @@ public class PlanController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
-			existent.setDeleted(true);
-			List<StructureLevelInstance> planStructures = this.sbs.listLevelInstanceByPlan(existent);
-			for(StructureLevelInstance structure : planStructures){
-				structure.setDeleted(true);
-				this.sbs.persist(structure);
+			if(this.sbs.listLevelsInstance(existent, null).getList().size()>0){
+				this.fail("Impossível excluir plano de metas com níveis filhos");
+			}else{			
+				existent.setDeleted(true);
+				List<StructureLevelInstance> planStructures = this.sbs.listLevelInstanceByPlan(existent);
+				for(StructureLevelInstance structure : planStructures){
+					structure.setDeleted(true);
+					this.sbs.persist(structure);
+				}
+				this.bs.persist(existent);
+				this.success();
 			}
-			this.bs.persist(existent);
-			this.success();
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
@@ -627,8 +639,11 @@ public class PlanController extends AbstractController {
 			} else {
 				macro.setCompany(existent.getCompany());
 				macro.setId(null);
+				macro.setDocumented(existent.isDocumented());
 				macro = this.bs.duplicatePlanMacro(macro);
+				
 				if (macro != null) {
+					
 					if (keepPlanLevel) {
 						if (this.bs.duplicatePlanLevel(existent, macro, sbs, keepPlanContent)) {
 							LOGGER.info("Níveis do plano duplicados com sucesso.");
@@ -646,7 +661,6 @@ public class PlanController extends AbstractController {
 				} else {
 					this.fail("Não foi possível duplicar o plano.");
 				}
-				String url = domain.getBaseUrl() + "/#/plan/" + macro.getId();
 
 				/*
 				 * CompanyUser companyUser =

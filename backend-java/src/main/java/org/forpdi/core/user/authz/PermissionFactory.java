@@ -1,12 +1,12 @@
 package org.forpdi.core.user.authz;
 
 import org.forpdi.core.abstractions.ComponentFactory;
+import org.forpdi.core.user.authz.permission.EditMessagesPermission;
 import org.forpdi.core.user.authz.permission.ManageUsersPermission;
 import org.forpdi.core.user.authz.permission.ViewUsersPermission;
 import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
-import org.forpdi.planning.permissions.ManageStructurePermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
 
 public final class PermissionFactory extends ComponentFactory<Permission> {
@@ -21,7 +21,9 @@ public final class PermissionFactory extends ComponentFactory<Permission> {
 		// this.register(new SystemAdminPermission());
 		this.register(new ManageUsersPermission());
 		this.register(new ViewUsersPermission());
+		this.register(new EditMessagesPermission());
 		// this.register(new ManageStructurePermission());
+		// FIXME Isso não pode estar aqui, viola as dependências dos módulos.
 		this.register(new ManagePlanMacroPermission());
 		this.register(new ManageDocumentPermission());
 		this.register(new ManagePlanPermission());

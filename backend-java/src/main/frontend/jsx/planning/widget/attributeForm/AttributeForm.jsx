@@ -10,6 +10,8 @@ import ScheduleField from "forpdi/jsx/planning/view/field/ScheduleField.jsx";
 import TableField from "forpdi/jsx/planning/view/field/TableField.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 
 var Title = Validation.validate;
 
@@ -68,7 +70,7 @@ var VerticalForm =  React.createClass({
 					&& field.type != AttributeTypes.TABLE_FIELD) {
 						if(this.props.isDocument) {
 							if(!Title.validateTitle(this.refs[field.name], idx, this.props.editFunc)){
-								this.context.toastr.addAlertError("Existem erros no formulário");
+								this.context.toastr.addAlertError(Messages.get("label.form.error"));
 								error = true;
 							}
 						} 
@@ -212,7 +214,7 @@ var VerticalForm =  React.createClass({
 			})}
 			{showButtons && requiredFields ? 
 				<p className="help-block">
-					<span className="fpdi-required" /> Campos obrigatórios.
+					<span className="fpdi-required" /> {Messages.getEditable("label.requiredFields","fpdi-nav-label")}
 				</p>
 			: ""}
 			{alerts}
@@ -238,7 +240,7 @@ var VerticalForm =  React.createClass({
 				)
 			: ""}
 			{this.props.fields.map((field,idx) => {
-				if(field.type == AttributeTypes.BUDGET_FIELD){
+				if(field.type == AttributeTypes.BUDGET_FIELD && (EnvInfo.company && EnvInfo.company.showBudgetElement == true)){
 					return(<BudgetField key={field.name} data={field.budgets} newFunc={field.extra}/>);
 				} else if(field.type == AttributeTypes.ACTION_PLAN_FIELD){
 					return(<ActionPlanField key={field.name} responsible={this.props.userResponsible}

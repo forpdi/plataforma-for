@@ -1,4 +1,3 @@
-
 import $ from 'jquery';
 import Toastr from 'toastr';
 import React from "react";
@@ -6,6 +5,8 @@ import {Link, hashHistory} from "react-router";
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 
 var VerticalForm =  React.createClass({
 	contextTypes: {
@@ -20,8 +21,8 @@ var VerticalForm =  React.createClass({
 			store: null,
 			hideCanel: false,
 			cancelUrl: null,
-			cancelLabel: "Cancelar",
-			submitLabel: "Enviar",
+			cancelLabel: Messages.get("label.cancel"),
+			submitLabel: Messages.get("label.send"),
 			blockButtons: false
 		};
 	},
@@ -57,7 +58,7 @@ var VerticalForm =  React.createClass({
 		return data;
 	},
 	backWrapper() {
-		var msg = "Você não salvou as modificações. Deseja continuar?";
+		var msg = Messages.get("label.msgEdit");
 
 		Modal.confirmCancelCustom(()=>{hashHistory.goBack(); Modal.hide()},msg,this.refreshCancel);
 		//hashHistory.goBack();
@@ -113,9 +114,9 @@ var VerticalForm =  React.createClass({
 		} else {			
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
-				Toastr.error("Um erro inesperado ocorreu.");
+				Toastr.error(Messages.get("label.errorUnexpected"));
 			}else{			
-				this.context.toastr.addAlertError("Um erro inesperado ocorreu.");
+				this.context.toastr.addAlertError(Messages.get("label.errorUnexpected"));
 			}
 		}
 		/*this.setState({
@@ -133,20 +134,20 @@ var VerticalForm =  React.createClass({
 		if (this.state.error) {
 			if (typeof this.state.errorMessage == 'string') {
 				alerts = (<div className="alert alert-danger animated fadeIn" role="alert">
-					<span className="close mdi mdi-close" aria-label="Fechar Alerta" onClick={this.closeAlerts} />
+					<span className="close mdi mdi-close" aria-label={Messages.get("label.closeAlert")} onClick={this.closeAlerts} />
 					{this.state.errorMessage}
 				</div>);
 			} else if (typeof this.state.errorMessage == 'object') {
 				var errNo = 0;
 				alerts = (<div className="alert alert-danger animated fadeIn" role="alert">
-					<span className="close mdi mdi-close" aria-label="Fechar Alerta" onClick={this.closeAlerts} />
+					<span className="close mdi mdi-close" aria-label={Messages.get("label.closeAlert")} onClick={this.closeAlerts} />
 					{this.state.errorMessage.map(err => {
 						return <li key={"errmsg-"+(errNo++)}>{err}</li>;
 					})}
 				</div>);
 			} else {
 				alerts = (<div className="alert alert-danger animated fadeIn" role="alert">
-					<span className="close mdi mdi-close" aria-label="Fechar Alerta" onClick={this.closeAlerts} />
+					<span className="close mdi mdi-close" aria-label={Messages.get("label.closeAlert")} onClick={this.closeAlerts} />
 					An unexpected error occurred.
 				</div>);
 			}
@@ -165,7 +166,7 @@ var VerticalForm =  React.createClass({
 			})}
 
 			<p className="help-block">
-				<span className="fpdi-required" /> Campos obrigatórios.
+				<span className="fpdi-required" /> {Messages.getEditable("label.requiredFields","fpdi-nav-label")}
 			</p>
 			{alerts}
 

@@ -8,6 +8,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import ForPDIChart from "forpdi/jsx/core/widget/ForPDIChart.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var numeral = require('numeral');
 
@@ -59,8 +60,8 @@ export default React.createClass({
 
     updateChartOptions(model){
         var bool = (model ? model.data.length > 0 : true);
-        var hTitle1 = (model && model.data.length > 0 ? "Indicadores" : ""); 
-        var hTitle2 = (model && model.data.length > 0 ? "Metas" : ""); 
+        var hTitle1 = (model && model.data.length > 0 ? Messages.get("label.indicators") : ""); 
+        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
         this.setState({            
             options:{
                 title: '',
@@ -117,8 +118,8 @@ export default React.createClass({
                 });
                 
                 if(model.data.length == 0){
-                    elements.push(["Não possui metas",0,'',0]);
-                    data.push(["Não possui metas",0,'',0]);
+                    elements.push([Messages.get("label.haveNoGoals"),0,'',0]);
+                    data.push([Messages.get("label.haveNoGoals"),0,'',0]);
                 }else{
                     model.data.map((ind, idx) => {
                         data.push(elements[idx]);
@@ -183,7 +184,7 @@ export default React.createClass({
                     });                   
             
                     if(model.data.length==0){
-                        vet[0] = "Não possui indicadores";
+                        vet[0] = Messages.get("label.haveNoIndicators");
                         vet[1] = 0;
                         vet[2] = "#FFFFFF";
                         elements.push(vet);
@@ -301,7 +302,7 @@ export default React.createClass({
         } else {
             sufix = format;
         }
-        if(goal.polarity == "Maior-melhor"){
+        if(goal.polarity == Messages.get("label.highestBest")){
             if(reachedField<minimumField){
                 graphItem[1] = {
                     v: reachedField,
@@ -343,7 +344,7 @@ export default React.createClass({
                 };
                 graphItem[2] = "#4EB4FE";
             }
-        } else if (goal.polarity == "Menor-melhor"){
+        } else if (goal.polarity == Messages.get("label.lowerBest")){
             if(reachedField > minimumField){
                 graphItem[1] = {
                     v: reachedField,
@@ -483,7 +484,7 @@ export default React.createClass({
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
             }
             
-            var msg = "Você deseja ir para o nível selecionado?";                            
+            var msg = Messages.get("label.askGoToSelectedLevel");
             Modal.confirmCustom(() => {
                 Modal.hide();           
                 location.assign(url);
@@ -502,9 +503,9 @@ export default React.createClass({
                <div className="panel panel-default" id = {!this.state.hide ? "panelSection" : ""}>
                    <div className="panel-heading dashboard-panel-title">
                          <div>
-                             <b className="budget-graphic-title"> Desempenho dos indicadores</b>
+                             <b className="budget-graphic-title"> {Messages.getEditable("label.indicatorsPerformance","fpdi-nav-label")}</b>
                              <select onChange={me.onObjectivesSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-                                 <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos </option>
+                                 <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")}</option>
                                  {
                                      me.state.objectives.map((attr, idy) =>{
                                          return(
@@ -516,7 +517,7 @@ export default React.createClass({
                                  }
                               </select>
                              <select defaultValue={-1} onChange={me.indicatorChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicators" >
-                                 <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores</option>
+                                 <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
                                       {
                                         (me.state.indicators) ? (me.state.indicators.map((attr, idy) =>{
                                               return(
@@ -551,12 +552,12 @@ export default React.createClass({
                              (
                                  <div className="colaborator-goal-performance-legend">   
                                      
-                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
                                     <br/>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
-                                     <span className="legend-item"><input type="text"  className="legend-goals-difference-expected marginLeft10" disabled/> Esperado</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</span>
+                                     <span className="legend-item"><input type="text"  className="legend-goals-difference-expected marginLeft10" disabled/>{Messages.getEditable("label.goals.expected","fpdi-nav-label")} </span>
                                  </div>
                              ) :
 
@@ -565,15 +566,15 @@ export default React.createClass({
                                     <div className="aggregate-indicator-without-goals-legend"> 
                                             <span className="legend-item"> 
                                                     {me.state.aggregateIndicator == true ? 
-                                                         <p id = "aggregate-indicator-goals"> Esse indicador não possui metas, pois é do tipo agregado.</p>
+                                                         <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
                                                         :
                                                     <p>&nbsp;</p>}
                                             </span>
                                     </div> 
-                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> Abaixo do mínimo</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> Abaixo do esperado</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> Suficiente</span>
-                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> Acima do máximo</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
+                                    <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</span>
                                  </div>
                              )                   
                          } 

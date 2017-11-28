@@ -37,52 +37,52 @@ export default React.createClass({
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.name")
+				label: Messages.getEditable("label.name","fpdi-nav-label")
 			},{
 				name: "cpf",
 				type: "cpf",
 				placeholder: "",
 				required: true,
-				label: Messages.get("label.cpf")
+				label: Messages.getEditable("label.cpf","fpdi-nav-label")
 			},{
 				name: "birthdate",
 				type: "date",
 				placeholder: "",
 				required: true,
 				onChange:this.onBirthDateChange,
-				label: Messages.get("label.birthdate")
+				label: Messages.getEditable("label.birthdate","fpdi-nav-label")
 				
 			},{
 				name: "cellphone",
 				type: "tel",
 				placeholder: "",
 				required: true,
-				label: Messages.get("label.cellphone")
+				label: Messages.getEditable("label.cellphone","fpdi-nav-label")
 			},{
 				name: "phone",
 				type: "tel",
 				placeholder: "",
-				label: Messages.get("label.phone")
+				label: Messages.getEditable("label.phone","fpdi-nav-label")
 			},{
 				name: "department",
 				type: "text",
 				placeholder: "",
 				maxLength:255,
-				label: Messages.get("label.department")
+				label: Messages.getEditable("label.department","fpdi-nav-label")
 			},{
 				name: "password",
 				type: "password",
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.password")
+				label: Messages.getEditable("label.password","fpdi-nav-label")
 			},{
 				name: "passwordconfirm",
 				type: "password",
 				placeholder: "",
 				required: true,
 				maxLength:255,
-				label: Messages.get("label.passwordconfirm")
+				label: Messages.getEditable("label.passwordConfirm","fpdi-nav-label")
 			}],
 			loading: true,
 			valid: false
@@ -96,7 +96,7 @@ export default React.createClass({
 		}
 		var me = this;
 		UserSession.on("register", model => {
-			me.addAlertSuccess("O seu cadastro foi concluído com sucesso.");
+			me.addAlertSuccess(Messages.get("label.sucess.registrationCompleted"));
 			me.setState({
 				valid: false,
 				confirmed: true
@@ -184,7 +184,7 @@ export default React.createClass({
 		var errorField = Validate.validationProfileUser(data, this.refs.registerForm);
 		
 		if(errorField){
-			this.addAlertError("Existem erros no formulário");
+			this.addAlertError(Messages.get("label.error.form"));
 			return;
 		}
 
@@ -206,8 +206,8 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt="ForPDI Logo" />
-							<h3 className="fpdi-login-subtitle">Plataforma Aberta para Gestão e Acompanhamento do<br/>Plano de Desenvolvimento Institucional - PDI</h3>
+							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
+							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
 						</div>
 					</div>
 				</div>
@@ -217,16 +217,16 @@ export default React.createClass({
 							<div className="col-md-4 col-md-offset-4">
 								<div className="fpdi-card-login">		
 									<div className="panel panel-default">
-									  <div className="panel-heading"><p className="fpdi-login-title">Completar cadastro</p></div>
+									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.completeRegistration","fpdi-nav-label")}</p></div>
 									  	<div className="panel-body">
-									  		  <p className="fpdi-recover-password-title">Informe seus dados para completar o cadastro no ForPDI.</p>
+									  		  <p className="fpdi-recover-password-title">{Messages.getEditable("label.dataCompleteRegistration","fpdi-nav-label")}</p>
 												<div className="fpdi-login-body">
 														<VerticalForm
 															ref="registerForm"
 															onSubmit={this.onSubmit}
 															fields={this.state.fields}
 															store={UserSession}
-															submitLabel="Finalizar cadastro"
+															submitLabel={Messages.get("label.submit.finishRegistration")}
 															blockButtons={true}
 														/>
 												</div>
@@ -237,9 +237,9 @@ export default React.createClass({
 						:
 						<div className="col-md-4 col-md-offset-4">
 							<div className="fpdi-login-header">
-								<h1>{this.state.confirmed ? "Parabéns! Seu cadastro foi concluído com sucesso."  :
-								 "Esta página não está mais disponível."}</h1>
-								<p><a className="btn btn-sm btn-primary" href="#/">Retornar à página inicial</a></p>
+								<h1>{this.state.confirmed ? Messages.getEditable("label.registrationSuccessfullyCompleted","fpdi-nav-label")  :
+								 Messages.getEditable("label.pageNotAvailable","fpdi-nav-label")}</h1>
+								<p><a className="btn btn-sm btn-primary" href="#/">{Messages.getEditable("label.returnToHomePage","fpdi-nav-label")}</a></p>
 							</div>
 						</div>
 					}

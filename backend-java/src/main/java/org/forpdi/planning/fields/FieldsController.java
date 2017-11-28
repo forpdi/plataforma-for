@@ -11,13 +11,16 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.company.Company;
+import org.forpdi.core.company.CompanyBS;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
+import org.forpdi.planning.fields.budget.BudgetBS;
 import org.forpdi.planning.fields.budget.BudgetDTO;
-import org.forpdi.planning.fields.budget.BudgetSimulationDB;
+import org.forpdi.planning.fields.budget.BudgetElement;
 import org.forpdi.planning.fields.schedule.Schedule;
 import org.forpdi.planning.fields.schedule.ScheduleInstance;
 import org.forpdi.planning.fields.schedule.ScheduleStructure;
@@ -42,6 +45,10 @@ public class FieldsController extends AbstractController {
 	private FieldsBS bs;
 	@Inject
 	private StructureBS structureBs;
+	@Inject
+	private CompanyBS companyBs;
+	@Inject
+	private BudgetBS budgetElementBs;
 
 	/**
 	 * Salvar um novo orçamento no banco de dados, relacionando a uma instancia
@@ -60,28 +67,80 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void save(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long instanceId) {
+	public void save(@NotNull Long subAction, @NotEmpty String name, String committed, String realized,
+			@NotNull Long instanceId) {
+		Double committedD = 0d;
+
 		try {
 			StructureLevelInstance instance = this.structureBs.retrieveLevelInstance(instanceId);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(subAction);
+
 			if (instance == null) {
 				this.fail("Estrutura inválida!");
 				return;
 			}
-			Budget budget = new Budget();
-			budget.setLevelInstance(instance);
-			budget.setName(name);
-			budget.setSubAction(subAction);
-			BudgetSimulationDB simulation = this.bs.retrieveBudgetSimulation(subAction);
-			if (simulation == null) {
-				this.fail("Sub-ação inválida!");
+
+			if (budgetElement == null) {
+				this.fail("Sub ação inválida!");
 				return;
 			}
+
+			Budget budget = new Budget();
+			budget.setSubAction(budgetElement.getSubAction());
+			budget.setName(name);
+
+			if (committed != null) {
+				String numberCommitted = committed;
+				String numberFormated = numberCommitted.replaceAll(",", ".");
+				committedD = Double.parseDouble(numberFormated);
+
+				if (committedD > budgetElement.getBudgetLoa()) {
+					this.fail("Valor empanhado não pode ser maior que o valor do orçamento LOA!");
+					return;
+				} else {
+					if (committedD > budgetElement.getBalanceAvailable()) {
+						this.fail("Valor do empanhado não pode ser maior que o saldo disponível!");
+						return;
+					} else {
+						budget.setCommitted(committedD);
+						double balanceAvailable = budgetElement.getBalanceAvailable();
+						balanceAvailable -= committedD;
+						budgetElement.setBalanceAvailable(balanceAvailable);
+					}
+
+				}
+			}
+
+			if (realized != null) {
+				String numberRealized = realized;
+				String numberFormated = numberRealized.replaceAll(",", ".");
+				Double realizedD = Double.parseDouble(numberFormated);
+
+				if (realizedD > committedD) {
+					this.fail("Valor do realizado não pode ser maior que o valor do empenhado!");
+					return;
+				} else {
+					budget.setRealized(realizedD);
+				}
+
+			}
+
+			budget.setBudgetElement(budgetElement);
+			budget.setLevelInstance(instance);
+
+			Long linkedObjects = budgetElement.getLinkedObjects();
+			linkedObjects += 1;
+			budgetElement.setLinkedObjects(linkedObjects);
+
+			this.budgetElementBs.update(budgetElement);
+
 			this.bs.saveBudget(budget);
+
 			BudgetDTO item = new BudgetDTO();
 			item.setBudget(budget);
-			item.setCommitted(simulation.getCommitted());
-			item.setConducted(simulation.getConducted());
-			item.setPlanned(simulation.getPlanned());
+			item.setBudgetLoa(budgetElement.getBudgetLoa());
+			item.setBalanceAvailable(budgetElement.getBalanceAvailable());
+
 			this.success(item);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -105,30 +164,79 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void update(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long id) {
+	public void update(@NotEmpty String name, @NotEmpty String subAction, @NotNull Long id, Double committed,
+			Double realized, @NotNull Long idBudgetElement) {
 		try {
 			Budget budget = this.bs.budgetExistsById(id);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(idBudgetElement);
+
 			if (budget == null) {
 				LOGGER.error("Orçamento inexistente para ser editado.");
-				this.fail("Oçamento inválido.");
+				this.fail("Orçamento inválido.");
 			}
 
-			BudgetSimulationDB simulation = this.bs.retrieveBudgetSimulation(subAction);
-			if (simulation == null) {
-				LOGGER.error("Não existe ação orçamentária!");
-				this.fail("Não existe ação orçamentária!");
+			if (budgetElement == null) {
+				this.fail("Sub ação inválida!");
+				return;
+			}
+
+			budget.setName(name);
+			budget.setSubAction(budgetElement.getSubAction());
+
+			double budgetBalanceAvailable = budgetElement.getBalanceAvailable();
+			if (budget.getBudgetElement().getId() != budgetElement.getId()) {
+				BudgetElement budgetElementUpdate = budget.getBudgetElement();
+				Double balanceAvaliableUpdate = budgetElementUpdate.getBalanceAvailable();
+				Double newBudgetBalanceAvaliableUpdate = budgetElement.getBalanceAvailable();
+				if (committed <= newBudgetBalanceAvaliableUpdate) {
+					balanceAvaliableUpdate += budget.getCommitted();
+					budgetElementUpdate.setBalanceAvailable(balanceAvaliableUpdate);
+					Long linkedObjects = budgetElementUpdate.getLinkedObjects();
+					linkedObjects -= 1;
+					budgetElementUpdate.setLinkedObjects(linkedObjects);
+					this.budgetElementBs.update(budgetElementUpdate);
+
+					newBudgetBalanceAvaliableUpdate -= committed;
+					budgetElement.setBalanceAvailable(newBudgetBalanceAvaliableUpdate);
+					Long newLinkedObjects = budgetElement.getLinkedObjects();
+					newLinkedObjects += 1;
+					budgetElement.setLinkedObjects(newLinkedObjects);
+					this.budgetElementBs.update(budgetElement);
+				} else {
+					this.fail("Valor empenhado não pode ser maior que o valor do saldo disponível!");
+					return;
+				}
+			} else if (committed != null && committed <= budgetBalanceAvailable + budget.getCommitted()) {
+				LOGGER.info("committed: " + committed + " budgetBalanceAvailable + budget.getCommitted(): " + budgetBalanceAvailable + budget.getCommitted());
+				budgetBalanceAvailable += budget.getCommitted();
+				budgetBalanceAvailable -= committed;
+				budgetElement.setBalanceAvailable(budgetBalanceAvailable);
+				LOGGER.info("budgetBalanceAvailable: " + budgetBalanceAvailable);
+				this.budgetElementBs.update(budgetElement);
 			} else {
-				budget.setName(name);
-				budget.setSubAction(subAction);
-				this.bs.update(budget);
-				BudgetDTO item = new BudgetDTO();
-				item.setBudget(budget);
-				item.setCommitted(simulation.getCommitted());
-				item.setConducted(simulation.getConducted());
-				item.setPlanned(simulation.getPlanned());
-
-				this.success(item);
+				this.fail("Valor empenhado não pode ser maior que o valor do saldo disponível!");
+				return;
 			}
+
+			budget.setCommitted(committed);
+			budget.setBudgetElement(budgetElement);
+
+			if (realized != null) {
+				if (realized > committed) {
+					this.fail("Valor do realizado não pode ser maior que o valor do empenhado!");
+					return;
+				} else {
+					budget.setRealized(realized);
+				}
+
+			}
+
+			this.bs.update(budget);
+			BudgetDTO item = new BudgetDTO();
+			item.setBudget(budget);
+			item.setBudgetLoa(budgetElement.getBudgetLoa());
+			item.setBalanceAvailable(budgetElement.getBalanceAvailable());
+			this.success(item);
 
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -147,9 +255,19 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void deleteBdget(@NotNull Long id) {
+	public void deleteBudget(@NotNull Long id, @NotNull Long idBudgetElement, Double committed) {
 		try {
 			Budget budget = this.bs.budgetExistsById(id);
+			BudgetElement budgetElement = this.budgetElementBs.budgetElementExistsById(idBudgetElement);
+
+			if (committed != null) {
+				double balanceAvailable = budgetElement.getBalanceAvailable();
+				balanceAvailable += committed;
+				budgetElement.setBalanceAvailable(balanceAvailable);
+				budgetElement.setLinkedObjects(budgetElement.getLinkedObjects() - 1);
+				this.budgetElementBs.update(budgetElement);
+			}
+
 			this.bs.deleteBudget(budget);
 			this.success(budget);
 		} catch (Throwable e) {
@@ -472,12 +590,20 @@ public class FieldsController extends AbstractController {
 	 * 
 	 * @return list, todos as simulações de orçamento
 	 */
-	@Get(BASEPATH + "/field/budget/simulation")
+	@Get(BASEPATH + "/field/budget/budget")
 	@NoCache
 	@Permissioned
-	public void listBudgetAction() {
+	public void listBudgetAction(@NotNull Long companyId) {
+		LOGGER.info("companyID");
+		LOGGER.info(companyId);
 		try {
-			PaginatedList<BudgetSimulationDB> list = this.bs.listBudgetSimulation();
+			Company company = this.companyBs.exists(companyId, Company.class);
+			if (company == null) {
+				this.fail("Empresa inválida!");
+				return;
+			}
+
+			PaginatedList<BudgetElement> list = this.bs.listBudget(company);
 			this.success(list);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -540,12 +666,13 @@ public class FieldsController extends AbstractController {
 
 	/**
 	 * Lista com os atributos do plano de ação para serem mostrados
+	 * 
 	 * @param id
-	 * 			Id do plano
+	 *            Id do plano
 	 * @param page
-	 * 			Número da página
+	 *            Número da página
 	 * @param pageSize
-	 * 			Tamanho da página (quantidade de registros por busca)
+	 *            Tamanho da página (quantidade de registros por busca)
 	 */
 	@Get(BASEPATH + "/field/actionplan/listActionPlanAttribute")
 	@Consumes

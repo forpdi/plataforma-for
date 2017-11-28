@@ -4,12 +4,13 @@ import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
   getInitialState() {
     return {
         options: {
-          title: "Histórico de Indicadores",
+          //title: Messages.getEditable("label.indicatorsHistory","fpdi-nav-label"),
           vAxis: {
             title: 'Desempenho (%)', minValue: 0
           },
@@ -18,7 +19,7 @@ export default React.createClass({
           },
           legend: 'none',
           "width":"100%"
-        },        
+        },
         data: [],
         plan: -1,
         subPlan: -1,
@@ -31,8 +32,8 @@ export default React.createClass({
   },
 
 
-  componentWillReceiveProps(newProps){ 
-    if(this.isMounted()) {   
+  componentWillReceiveProps(newProps){
+    if(this.isMounted()) {
       this.setState({
         plan: newProps.plan,
         subPlan: newProps.subPlan,
@@ -52,11 +53,11 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    var me = this;  
-    DashboardStore.on("indicatorsHistoryRetrivied", (store) => {      
-      var data = [];      
+    var me = this;
+    DashboardStore.on("indicatorsHistoryRetrivied", (store) => {
+      var data = [];
       data.push(['Período', 'Desempenho (%)']);
-      if(store.data.length > 0){        
+      if(store.data.length > 0){
         store.data.map( (item) => {
           var valueForGraph = {
               v: item.value,
@@ -77,7 +78,7 @@ export default React.createClass({
       }
     });
     StructureStore.on("indicatorsByMacroAndPlanRetrivied", (store) => {
-      if(this.isMounted()) {      
+      if(this.isMounted()) {
         me.setState({
           indicators: store.data,
           loading: false
@@ -91,9 +92,9 @@ export default React.createClass({
       StructureStore.off(null, null, this);
   },
 
-  indicatorsChange(){    
+  indicatorsChange(){
     this.state.selectedIndicator = this.state.indicators[this.refs['selectIndicator'].value] || {id: null};
-    this.setState({      
+    this.setState({
       loading: true
     });
 
@@ -123,24 +124,24 @@ export default React.createClass({
   render() {
     return (
       <div className="panel panel-default">
-        <div className="panel-heading dashboard-panel-title"> 
-          <b className="budget-graphic-title"> Histórico dos Indicadores </b>
+        <div className="panel-heading dashboard-panel-title">
+          <b className="budget-graphic-title"> {Messages.getEditable("label.indicatorsHistory","fpdi-nav-label")} </b>
           <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")} onClick={this.hideFields}/>
           <select onChange={this.indicatorsChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
-              <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores </option>
+              <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")} </option>
                 {this.state.indicators.map((attr, idy) =>{
                   return(
                     <option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                         {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
                     </option>);
-                })}              
+                })}
           </select>
         </div>
         {!this.state.hide ?
-            (this.state.loading ? <LoadingGauge/> : 
+            (this.state.loading ? <LoadingGauge/> :
                 <div>
                     <ForPDIChart
-                      chartType="LineChart"          
+                      chartType="LineChart"
                       options={this.state.options}
                       data={this.state.data}
                       graph_id="ScatterChart"

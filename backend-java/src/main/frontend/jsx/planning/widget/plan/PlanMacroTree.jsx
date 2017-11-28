@@ -22,7 +22,7 @@ export default React.createClass({
 		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired		
+		permissions: React.PropTypes.array.isRequired
 	},
 	propTypes: {
 		plan: React.PropTypes.object.isRequired
@@ -61,7 +61,7 @@ export default React.createClass({
 				}
 			}
 		}, me);
-		PlanStore.on("find", (store, raw, opts) => {			
+		PlanStore.on("find", (store, raw, opts) => {
 			var tree = raw.map((plan, index) => {
 				var to = '/plan/'+this.props.plan.get("id")+'/details/subplan/'+plan.id;
 				return {
@@ -73,16 +73,16 @@ export default React.createClass({
 					model: plan,
 					id: plan.id,
 					onExpand: this.expandRoot,
-					onShrink: this.shrinkRoot                    
+					onShrink: this.shrinkRoot
 				};
 			});
 
 			var toNew = '/plan/'+this.props.plan.get("id")+'/details/subplans/new';
 			if(!this.props.plan.attributes.archived){
 				tree.push({
-					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
 							PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-					label: "Novo(a) Plano de metas",
+					label: Messages.get("label.newPlanGoals"),
 					labelCls:'fpdi-new-node-label',
 				  	iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 				  	expandable: false,
@@ -90,7 +90,7 @@ export default React.createClass({
 					key: "newPlan"
 				});
 			}
-			
+
 			if(this.isMounted()){
 				me.setState({
 					subplans: raw,
@@ -99,7 +99,8 @@ export default React.createClass({
 			}
 		}, me);
 
-        PlanStore.on("sync", (model) =>{        	
+        PlanStore.on("sync", (model) =>{
+
         	if(model.get('updated')){
         		me.state.tree.map((child,idx) => {
         			if(child.id == model.get("id")){
@@ -124,24 +125,24 @@ export default React.createClass({
             if(model.get("updated")){
             	//Toastr.remove();
 			    //Toastr.success("Plano de metas alterado com sucesso");
-				this.context.toastr.addAlertSuccess("Plano de metas alterado com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedGoalPlan"));
             }else{
 	        	//Toastr.remove();
 				//Toastr.success("Plano de metas salvo com sucesso");
-				this.context.toastr.addAlertSuccess("Plano de metas salvo com sucesso");
+				this.context.toastr.addAlertSuccess(Messages.get("label.successSavedGoalPlan"));
 			}
 
 			//this.refreshPlans(this.props.plan.get("id"));
-			
+
         },me);
 
         StructureStore.on("levelInstanceFind", (models, opts) =>{
             var children = [];
             if(models && models.length > 0){
-	            children = models.map((model, index) => {	            	
+	            children = models.map((model, index) => {
                     var to = "/plan/"+me.props.plan.get("id")+"/details/subplan/level/"+model.id;
                     var node = {
-	                    label: model.name,                    
+	                    label: model.name,
 	                    expanded: false,
 	                    expandable: !model.level.leaf && !model.aggregate,
                 		labelCls:'fpdi-node-label',
@@ -161,7 +162,7 @@ export default React.createClass({
 			if(!this.props.plan.attributes.archived){
 	            var label = "Novo(a) "+(models.length == undefined ? models.name : models[0].level.name);
 	            children.push({
-					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
 	         			PermissionsTypes.MANAGE_PLAN_PERMISSION)),
 	                label: label,
 	                iconCls: 'mdi mdi-plus fpdi-new-node-icon',
@@ -174,7 +175,7 @@ export default React.createClass({
 	                parent: opts.node
 	            });
         	}
-            
+
             opts.node.children = children;
             if(me.isMounted()){
 	            me.forceUpdate();
@@ -182,9 +183,10 @@ export default React.createClass({
         }, me);
 
         StructureStore.on("levelInstanceCreated", (model, opts) => {
+        	//this.refreshPlans(this.props.plan.get("id"));
         	var actualParent = opts.node.parent;
         	var to = "/plan/"+me.props.plan.get("id")+"/details/subplan/level/"+model.id;
-        	
+
         	var newNode = {
                 label: model.name,
                 expanded: false,
@@ -205,7 +207,7 @@ export default React.createClass({
 
             //Toastr.remove();
 			//Toastr.success('"'+ model.name+'" criado com sucesso.');
-			this.context.toastr.addAlertSuccess('"'+ model.name+'" criado com sucesso.');     
+			this.context.toastr.addAlertSuccess('"'+ model.name+'" criado com sucesso.');
             me.context.router.push(newNode.to);
         }, me);
 
@@ -221,7 +223,7 @@ export default React.createClass({
         	}
         }, me);
 
-		StructureStore.on('deletegoals', (model) => {			
+		StructureStore.on('deletegoals', (model) => {
 			for (var j=0; j<model.data.length; j++) {
 				for (var i=0; i<me.state.tree.length; i++) {
         			me.deleteNode(model.data[j], me.state.tree[i]);
@@ -236,7 +238,6 @@ export default React.createClass({
 		}, me);
 
         PlanStore.on("planFind", (model, data) => {
-        
         	this.setState({
 				dataInitSearch:data.dataInit,
 				dataEndSearch:data.dataEnd,
@@ -250,13 +251,13 @@ export default React.createClass({
 			if (model != null && this.isMounted()) {
 				this.setState({
            			resultSearch:model.data
-        		});	
+        		});
 			}
-		}, me);	
-		
+		}, me);
+
 		DocumentStore.on("sectionAttributesSaved", (model) => {
 			var nodeActive = document.getElementsByClassName("active");
-			
+
 			if(nodeActive.length > 0) {
 				var idx = nodeActive[2].innerText.split(" - ")[0];
 				if(model.data.name.length > 50) {
@@ -272,23 +273,23 @@ export default React.createClass({
         	}
 		}, me);
         DocumentStore.on("retrieve", (model) => {
-        	var documentId;       	
-        	var tree = [];        	
+        	var documentId;
+        	var tree = [];
         	var sections = model.get("sections");
-        	
+
 
         	var unnumberedSections = 0;
 
         	if (sections) {
 	        	tree = sections.map((section,idx) => {
-	        		
+
 	        		if(section.preTextSection){
 	        			var node = me.createDocumentNodeDef(section, undefined, 0);
 	        			unnumberedSections++;
 	        		}else{
 	        			var node = me.createDocumentNodeDef(section, undefined, idx-unnumberedSections+1);
 						node.children.push({
-							hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+							hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions,
 								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.props.plan.attributes.archived),
 							label: "Nova subseção",
 	               			labelCls:'fpdi-new-node-label',
@@ -300,7 +301,7 @@ export default React.createClass({
 			                parent: node,
 			                parentId: section.id,
 	                		documentId: model.get("document").id,
-			                newNodePlaceholder: "Digite o título da subseção"
+			                newNodePlaceholder: Messages.get("label.inputSubsectionTitle")
 						});
 					}
 	                return node;
@@ -309,15 +310,15 @@ export default React.createClass({
 
 	        if (model.get("document") == undefined) {
 	        	documentId = null ;
-	        	
+
 	        } else {
 	        	documentId = model.get("document").id;
 	        }
 
 	        tree.push({
-				hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				hidden: !((this.context.roles.MANAGER || _.contains(this.context.permissions,
 				    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.props.plan.attributes.archived),
-				label: "Nova seção",
+				label: Messages.get("label.newSection"),
                 iconCls: 'mdi mdi-plus',
                 labelCls:'fpdi-new-node-label',
                 expandable: false,
@@ -325,7 +326,7 @@ export default React.createClass({
                 onNewNode: me.newDocumentSection,
                 key: 'newNode',
                 documentId: documentId,
-                newNodePlaceholder: "Digite o título da seção"
+                newNodePlaceholder: Messages.get("label.inputSectionTitle")
 			});
 			if(this.isMounted()){
 	        	me.setState({
@@ -333,20 +334,20 @@ export default React.createClass({
 	        		unnumberedSections: unnumberedSections
 	        	});
 	        }
-        	
+
         }, me);
 
-		DocumentStore.on("sectioncreated", (model, opts) => {			
+		DocumentStore.on("sectioncreated", (model, opts) => {
         	var actualParent = opts.node.parent;
         	var newNode;
-        	if (actualParent) {        		
+        	if (actualParent) {
         		newNode = me.createDocumentNodeDef(model, (actualParent.index)+".", actualParent.children.length);
            		actualParent.children.splice(actualParent.children.length-1, 0, newNode);
         	} else {
         		newNode = me.createDocumentNodeDef(model, undefined, this.state.documentTree.length-this.state.unnumberedSections);
         		newNode.children.push({
 					hidden: !(this.context.roles.MANAGER),
-					label: "Nova subseção",
+					label: Messages.get("label.newSubsection"),
 					labelCls:'fpdi-new-node-label',
 	                iconCls: 'mdi mdi-plus',
 	                className: "fpdi-new-node-label",
@@ -357,7 +358,7 @@ export default React.createClass({
 	                parent: newNode,
 	                parentId: model.id,
             		documentId: model.documentId,
-	                newNodePlaceholder: "Digite o título da subseção"
+	                newNodePlaceholder: Messages.get("label.inputSubsectionTitle")
 				});
            		me.state.documentTree.splice(me.state.documentTree.length-1, 0, newNode);
         	}
@@ -365,7 +366,7 @@ export default React.createClass({
             //Toastr.remove();
 
 			//Toastr.success('Seção "'+ model.name+'" criada com sucesso.');
-			this.context.toastr.addAlertSuccess('Seção "'+ model.name+'" criada com sucesso.');     
+			this.context.toastr.addAlertSuccess('Seção "'+ model.name+'" criada com sucesso.');
             me.context.router.push(newNode.to);
         }, me);
 
@@ -379,7 +380,7 @@ export default React.createClass({
 		}
 
 		this.retrieveFilledSections();
-		
+
 	},
 
 	componentWillUnmount() {
@@ -391,8 +392,8 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps) {
 	    if(document.URL.indexOf('details/overview')>=0)  {
-	    	this.refreshPlans(newProps.plan.get("id"));	
-		} 
+	    	this.refreshPlans(newProps.plan.get("id"));
+		}
 		if(newProps.treeType == this.state.actualType){
 			return;
 		} else if(this.isMounted()){
@@ -400,7 +401,7 @@ export default React.createClass({
 				actualType: newProps.treeType
 			});
 			this.refreshPlans(newProps.plan.id);
-		}		
+		}
 		if(newProps.treeType == "document"){
 			DocumentStore.dispatch({
 				action: DocumentStore.ACTION_RETRIEVE,
@@ -408,7 +409,7 @@ export default React.createClass({
 			});
 		}
 	},
-	
+
 	createDocumentNodeDef(section, namePrefix, idx) {
 		namePrefix = namePrefix || "";
 		var to = "/plan/"+this.props.plan.get("id")+"/document/section/"+section.id;
@@ -458,7 +459,7 @@ export default React.createClass({
     	if (!!title.match(/^(\s)*$/)){
         	//Toastr.remove();
         	//Toastr.error("O campo deve ser preenchido com o título da seção.");
-			this.context.toastr.addAlertError("O campo deve ser preenchido com o título da seção.");
+			this.context.toastr.addAlertError(Messages.get("label.mustFillWithSectionTitle"));
         	return false;
         }
         DocumentStore.dispatch({
@@ -475,11 +476,11 @@ export default React.createClass({
         return true;
     },
 
-    newLevelInstance(name, nodeProps){    	
+    newLevelInstance(name, nodeProps){
     	if(nodeProps.parent.model.aggregate){
     		//Toastr.remove();
         	//Toastr.error("Indicadores agregados não podem ter metas.");
-			this.context.toastr.addAlertError("Indicadores agregados não podem ter metas.");
+			this.context.toastr.addAlertError(Messages.get("label.aggIndicatorCantHaveGoals"));
         	return false;
     	}
     	var model = nodeProps.parent.model;
@@ -489,9 +490,9 @@ export default React.createClass({
     	if(name ==""  || !!name.match(/^(\s)*$/)){
         	//Toastr.remove();
         	//Toastr.error("O campo deve ser preenchido com o nome do "+nodeProps.label.toLowerCase()+"!");
-			this.context.toastr.addAlertError("O campo deve ser preenchido com o nome do "+nodeProps.label.toLowerCase()+"!");
+			this.context.toastr.addAlertError(Messages.get("label.fieldComplete") + " " + nodeProps.label.toLowerCase()+"!");
         	return false;
-        }        
+        }
         StructureStore.dispatch({
             action: StructureStore.ACTION_CREATE_LEVELINSTANCE,
             data: {
@@ -537,7 +538,7 @@ export default React.createClass({
 						var me = this;
 						var to = "/plan/"+me.props.plan.get("id")+"/details/subplan/level/"+data.levelInstances[j].id;
 	                    var node = {
-		                    label: data.levelInstances[j].name,                    
+		                    label: data.levelInstances[j].name,
 		                    expanded: false,
 		                    expandable: !data.levelInstances[j].level.leaf,
 	                		labelCls:'fpdi-node-label',
@@ -553,7 +554,7 @@ export default React.createClass({
 		                }
 		                if (nodes[i].children)
 		                	nodes[i].children.splice(nodes[i].children.length-1, 0, node);
-		                else 
+		                else
 		                	nodes[i].children = [node];
 					}
 					if(this.isMounted()){
@@ -600,7 +601,7 @@ export default React.createClass({
             StructureStore.dispatch({
                 action: StructureStore.ACTION_RETRIEVE_LEVEL_INSTANCE,
                 data: {
-                    levelId: nodeProps.model.structure.levels[0].id,
+                    sequence: nodeProps.model.structure.levels[0].sequence,
                     planId: nodeProps.id,
                     parentId: 0
                 },
@@ -614,7 +615,7 @@ export default React.createClass({
         	StructureStore.dispatch({
                 action: StructureStore.ACTION_RETRIEVE_LEVEL_INSTANCE,
                 data: {
-                    levelId: nodeProps.model.level.sequence+2,                
+                    sequence: nodeProps.model.level.sequence+1,
                     planId: nodeProps.model.plan.id,
                     parentId: nodeProps.id
                 },
@@ -650,7 +651,7 @@ export default React.createClass({
         });
 	},
 
-	
+
 
 	treeSearch() {
 		this.displayResult()
@@ -676,7 +677,7 @@ export default React.createClass({
 
 	retrieveFilledSections(){
 	    var me = this;
-	    DocumentStore.on("filledSectionsRetrieved", (model) => { 
+	    DocumentStore.on("filledSectionsRetrieved", (model) => {
 		    var tree = [];
 	        var sections = model;
 	        var empty = true;
@@ -693,10 +694,10 @@ export default React.createClass({
 			}
 			if(me.isMounted()) {
 			    if (empty) {
-			    	this.context.toastr.addAlertError("Nenhum campo do documento foi preenchido.");
+			    	this.context.toastr.addAlertError(Messages.get("label.noDocumentFieldsFilled"));
 			    } else {
 					Modal.exportDocument(
-						"Confirmação de exportação",
+						Messages.get("label.exportConfirmation"),
 						this.renderRecords(),
 						() => {
 							var i = 0;
@@ -709,11 +710,11 @@ export default React.createClass({
 									sections = sections.concat(this.state.rootSections[i].id+"%2C");
 								}
 							}
-							
+
 							var lista = sections.substring(0, sections.length - 3);
 							var elemError = document.getElementById("paramError");
 							if(sections=='' || author.trim()=='' || title.trim()==''){
-								elemError.innerHTML = "Erro ao exportar documento. Preencha os campos autor e título, e selecione pelo menos uma seção.";
+								elemError.innerHTML = Messages.get("label.exportError");
 								if(author.trim()=='') {
 									document.getElementById("documentAuthor").className = "borderError";
 								}
@@ -741,13 +742,13 @@ export default React.createClass({
 			    }
 			}
 		});
-	       
+
 	},
 	selectAll(){
 		var i;
 		for(i=0; i<this.state.rootSections.length; i++){
 			if(document.getElementById("checkbox-"+i).disabled == false){
-				document.getElementById("checkbox-"+i).checked = document.getElementById("selectall").checked;					
+				document.getElementById("checkbox-"+i).checked = document.getElementById("selectall").checked;
 			}
 		}
 	},
@@ -755,7 +756,7 @@ export default React.createClass({
 		var i;
 		var selectedAll = true;
 		for(i=0; i<this.state.rootSections.length; i++){
-			if(document.getElementById("checkbox-"+i).disabled == false && !document.getElementById("checkbox-"+i).checked){	
+			if(document.getElementById("checkbox-"+i).disabled == false && !document.getElementById("checkbox-"+i).checked){
 				selectedAll = false;
 			}
 		}
@@ -780,7 +781,7 @@ export default React.createClass({
 							{rootSection.name}
 						</label>
 					</div>
-					
+
 				</div>:
 				<div key={"rootSection-"+idx}>
 					<div className="checkbox disabled marginLeft5 col-md-10">
@@ -821,7 +822,7 @@ export default React.createClass({
 		return (
 		<div className="fpdi-tabs">
 			<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-			
+
 				{this.props.plan.get('documented') ?
 				 <Link
 					role="tab"
@@ -829,31 +830,31 @@ export default React.createClass({
 					title="Documento"
 					activeClassName="active"
 					className="tabTreePanel">
-						Documento do PDI
+						{Messages.getEditable("label.pdiDocument","fpdi-nav-label")}
 				</Link> : undefined}
 				<Link
 					role="tab"
 					to={"/plan/"+this.props.plan.get("id")+"/details"}
-					title="Planos de metas"					
+					title="Planos de metas"
 					activeClassName="active"
 					className="tabTreePanel">
-						Planos de metas
+						{Messages.getEditable("label.goalsPlan","fpdi-nav-label")}
 				</Link>
-					
+
 			</ul>
 			{this.context.router.isActive("/plan/"+this.props.plan.get("id")+"/details") ?
 			<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-				{this.state.subplans.length > 0 ? 
+				{this.state.subplans.length > 0 ?
 					<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title="Limpar"> </i>
+						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")}> </i>
 	    				<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown}/>
-	    				<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title="Pesquisa avançada"> </i>
-	    				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title="Pesquisar"> </i>
+	    				<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}> </i>
+	    				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 					</div>
 				: ""}
 
 				{this.state.hiddenResultSearch ?
-					<SearchResult 
+					<SearchResult
 						resultSearch = {this.state.resultSearch}
 						planId = {this.props.plan.get("id")}
 						terms = {this.state.termsSearch}
@@ -863,8 +864,8 @@ export default React.createClass({
 						dataInit = {this.state.dataInitSearch}
 						dataEnd = {this.state.dataEndSearch}
 						ordResult = {this.state.ordResultSearch}
-					/> 
-				: 	
+					/>
+				:
 					<div>
 						{this.context.roles.SYSADMIN ? "" : <FavoriteTree />}
 						<TreeView tree={this.state.tree} />
@@ -873,15 +874,15 @@ export default React.createClass({
 
 				{this.state.hiddenSearch ?
 					<div className = "container Pesquisa-Avancada">
-						<LevelSearch 
+						<LevelSearch
  							searchText= {this.refs.term.value}
   							subplans= {this.state.subplans}
   							plan= {this.props.plan.get("id")}
  							submit={this.treeSearch}
  							hiddenSearch = {this.searchFilter}
  							displayResult = {this.displayResult}
- 							
-  						/> 
+
+  						/>
   					</div> : ""
 
 				}
@@ -892,11 +893,11 @@ export default React.createClass({
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0" style={{borderLeft: "none"}}>
 					<TreeView tree={this.state.documentTree} />
 					<hr className="divider"></hr>
-					{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
-					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ? 
+					{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
 						<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
 							<span /*className="mdi mdi-export"*/
-							/> Exportar documento
+							/> {Messages.getEditable("label.exportDocument","fpdi-nav-label")}
 						</a> : ""
 					}
 				</div>

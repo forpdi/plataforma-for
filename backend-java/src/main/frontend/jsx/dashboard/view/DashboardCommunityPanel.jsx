@@ -11,7 +11,7 @@ import ReactTooltip from 'react-tooltip';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import string from 'string';
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
-
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
     contextTypes: {
@@ -285,13 +285,13 @@ export default React.createClass({
 	render() {
         var dashboardAxis = "";
         if (this.state.selectedLevelInstance == -1)
-          dashboardAxis = "Eixos Temáticos";
+          dashboardAxis = Messages.get("label.thematicAxes");
         else if (this.state.selectedLevelInstance.parent == null) 
-          dashboardAxis = "Objetivos";
+          dashboardAxis = Messages.get("label.objectives");
         else if (this.state.selectedLevelInstance.level.objective)
-          dashboardAxis = "Indicadores";
+          dashboardAxis = Messages.get("label.indicators");
         else if (this.state.selectedLevelInstance.level.indicator)
-          dashboardAxis = (this.state.aggregateIndicator ? "Indicadores" : "Metas");
+          dashboardAxis = (this.state.aggregateIndicator ? Messages.get("label.indicators") : Messages.get("label.goals"));
         
 		return (
         <div className="fpdi-tabs-nav">
@@ -306,7 +306,7 @@ export default React.createClass({
                             <a onClick={this.tweakOpen}>
                                 <span className="fpdi-nav-icon mdi mdi-filter mdi24px cursorPointer"/>
                                 <span className="fpdi-nav-label">
-                                    Filtros
+                                    {Messages.getEditable("label.filters","fpdi-nav-label")}
                                 </span>
                             </a>
                         </div>
@@ -316,7 +316,8 @@ export default React.createClass({
                                 {(!this.state.loaded) ? (
                                     (EnvInfo.company != null) ? (<LoadingGauge />) : ("") ) 
                                 : (<div className="filtersCommunity">
-                                    <select defaultValue={this.state.planId} onChange={this.planMacroChange} className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" ref="selectPlanMacro">
+                                    <span className = "dashboard-community-text-selectBox marginLeft15"> {Messages.getEditable("label.title.plan","fpdi-nav-label")} </span>
+                                    <select defaultValue={this.state.planId} onChange={this.planMacroChange} className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" ref="selectPlanMacro">
                                         {this.state.plans.map((attr, idy) => {
                                             var attrId = attr.id || attr.get('id');
                                             var attrName = attr.name || attr.get("name");
@@ -325,36 +326,40 @@ export default React.createClass({
                                             </option>);
                                         })}
                                     </select>
-                                    <select defaultValue={this.state.subPlanId} onChange={this.subplanChange} ref="selectSubplan" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.goalsPlan","fpdi-nav-label")}: </span>
+                                    <select defaultValue={this.state.subPlanId} onChange={this.subplanChange} ref="selectSubplan" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os planos de metas">Todos os planos de metas</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
                                             {(this.state.subplans) ? (this.state.subplans.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                    <select defaultValue={this.state.strategicAxisId} onChange={this.strategicAxisChange} ref="selectStrategicAxis" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.thematicAxes","fpdi-nav-label")}: </span>
+                                    <select defaultValue={this.state.strategicAxisId} onChange={this.strategicAxisChange} ref="selectStrategicAxis" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedSubplan<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os eixos temáticos">Todos os eixos temáticos</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
                                             {(this.state.strategicAxis) ? (this.state.strategicAxis.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                    <select defaultValue={this.state.objectiveId} onChange={this.objectiveChange} ref="selectObjective" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.objectives","fpdi-nav-label")}: </span>
+                                    <select defaultValue={this.state.objectiveId} onChange={this.objectiveChange} ref="selectObjective" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedStrategicAxis<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os objetivos">Todos os objetivos</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
                                             {(this.state.objectives) ? (this.state.objectives.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
                                                 </option>);
                                             }) ) : ("")}
                                     </select>
-                                    <select defaultValue={this.state.indicatorId} onChange={this.indicatorChange} ref="selectIndicator" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox" 
+                                     <span className = "dashboard-community-text-selectBox marginLeft15 marginTop15"> {Messages.getEditable("label.indicators","fpdi-nav-label")}: </span>
+                                    <select defaultValue={this.state.indicatorId} onChange={this.indicatorChange} ref="selectIndicator" className="dashboard-community-selectBox form-control dashboard-select-box dashboard-community-text-selectBox marginTop5" 
                                         disabled={(this.state.selectedObjective<0)?("disabled"):("")}>
-                                            <option value={-1} data-placement="right" title="Todos os indicadores">Todos os indicadores</option>
+                                            <option value={-1} data-placement="right" title={Messages.get("label.viewAll")}>{Messages.get("label.viewAll")}</option>
                                             {(this.state.indicators) ? (this.state.indicators.map((attr, idy) =>{
                                                 return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
                                                     {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -367,7 +372,7 @@ export default React.createClass({
                                     <a onClick={this.tweakHidden}>
                                         <span className={"fpdi-nav-icon mdi mdi-arrow-left-bold-circle"}
                                             /> <span className="fpdi-nav-label">
-                                                Recolher Menu
+                                                {Messages.getEditable("label.collapseMenu","fpdi-nav-label")}
                                             </span>
                                     </a>
                                 </div>
@@ -390,7 +395,7 @@ export default React.createClass({
                 
                 <div className={!this.state.hidden ? "col-md-10 col81pct" : "col-md-11 col-96pct"}>
                     <div className="dashboard-community-graphs">
-                        <h1>Painel de bordo da comunidade <span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
+                        <h1>{Messages.getEditable("label.communityDashboard","fpdi-nav-label")}<span data-tip  data-type = 'light'  data-for='toolTipNotification' data-class='community-tool-tip'  > <i className="mdi mdi-information-outline cursorPointer" id="notificationIcons"/> </span> </h1>
                         <div className = "row">
                             <div className="col-md-8">
                                 <PerformanceLevels plan={this.state.selectedPlan} subPlan={this.state.selectedSubplan} levelInstance={this.state.selectedLevelInstance} dashboardAxis={dashboardAxis} isAggregateIndicator = {this.state.aggregateIndicator} isIndicator = {this.state.indicator} />
