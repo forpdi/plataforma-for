@@ -175,8 +175,8 @@ export default React.createClass({
 								title={this.props.label}
 							>
 							{
-							this.props.label.length > 50 ?
-								string(this.props.label).trim().substr(0, 50).concat("...").toString()
+							this.props.label.length > 30 ?
+								string(this.props.label).trim().substr(0, 30).concat("...").toString()
 							:
 								this.props.label
 							}
