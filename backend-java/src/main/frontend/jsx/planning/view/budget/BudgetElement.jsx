@@ -395,10 +395,10 @@ export default React.createClass({
                 <thead/>					
                     <thead>
                         <tr>
-                            <th>{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
-                            <th>{Messages.getEditable("label.budgetLoa","fpdi-nav-label")} <span className = "fpdi-required"/> </th>
-                            <th>{Messages.getEditable("label.balanceAvailable","fpdi-nav-label")}</th>
-                            <th>{Messages.getEditable("label.linkedObjects","fpdi-nav-label")}</th>
+                            <th className="textAlignCenter">{Messages.getEditable("label.budgetAction","fpdi-nav-label")} <span className = "fpdi-required"/></th>
+                            <th className="textAlignCenter">{Messages.getEditable("label.budgetLoa","fpdi-nav-label")} <span className = "fpdi-required"/> </th>
+                            <th className="textAlignCenter">{Messages.getEditable("label.balanceAvailable","fpdi-nav-label")}</th>
+                            <th className="textAlignCenter">{Messages.getEditable("label.linkedObjects","fpdi-nav-label")}</th>
                             <th> </th>
                         </tr>
                     </thead>
@@ -410,10 +410,10 @@ export default React.createClass({
 							}
 							return(
 								<tr key={"budget-element"+idx}>
-									<td id={'subAction'+idx}>{model.subAction.toUpperCase()}</td>
-									<td id={'budgetLoa'+idx}>{"R$" + this.formatBR(this.formatEUA(model.budgetLoa))} </td>
-									<td> {"R$" + this.formatBR(this.formatEUA(model.balanceAvailable))}</td>
-									<td id={'linkedObjects'+idx}>{model.linkedObjects}</td>
+									<td id={'subAction'+idx} className="textAlignCenter">{model.subAction.toUpperCase()}</td>
+									<td id={'budgetLoa'+idx} className="textAlignCenter">{"R$" + this.formatBR(this.formatEUA(model.budgetLoa))} </td>
+									<td className="textAlignCenter"> {"R$" + this.formatBR(this.formatEUA(model.balanceAvailable))}</td>
+									<td id={'linkedObjects'+idx} className="textAlignCenter">{model.linkedObjects}</td>
 									<td> </td>
 									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
