@@ -9,6 +9,7 @@ import UserStore from "forpdi/jsx/core/store/User.jsx";
 import Logo from 'forpdi/img/logo.png';
 import _ from 'underscore';
 import string from 'string';
+import LinkInformation from "forpdi/jsx/LinkInformation.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -207,7 +208,21 @@ export default React.createClass({
 						
 					</ul>
 			</div>	
-
+			<div className="dropdown">
+				<a
+					id="top-bar-notification"
+					className="mdi mdi-help-circle dropdown-toggle"
+					data-toggle="dropdown"
+					aria-haspopup="true"
+					aria-expanded="true"
+					title="Menu de Opções"
+					>
+				</a>
+				<div className="dropdown-menu dropdown-menu-right">
+					<LinkInformation />
+			  	</div>
+				
+			</div>
 		
 
 			<div className="dropdown">
