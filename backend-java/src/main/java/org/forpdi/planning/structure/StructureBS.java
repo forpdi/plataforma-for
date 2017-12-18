@@ -1527,7 +1527,7 @@ public class StructureBS extends HibernateBusiness {
 			pageSize = PAGESIZE;
 		}
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
+		/*Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
 		criteria.createAlias("level", "level", JoinType.INNER_JOIN);
 		criteria.createAlias("plan", "plan", JoinType.INNER_JOIN);
 		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
@@ -1535,6 +1535,23 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("level.goal", true));
 		criteria.setFirstResult((page - 1) * pageSize);
 		criteria.setMaxResults(pageSize);
+		*/
+		
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance.level", "level", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
+		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("attribute.finishDate", true));
+		criteria.add(Restrictions.eq("levelInstance.deleted", false));
+		criteria.add(Restrictions.eq("level.goal", true));
+		criteria.setFirstResult((page - 1) * pageSize);
+		criteria.setMaxResults(pageSize);
+		criteria.addOrder(Order.asc("valueAsDate"));
+		
+		
+		
 		Criteria counting = this.dao.newCriteria(StructureLevelInstance.class);
 		counting.createAlias("level", "level", JoinType.INNER_JOIN);
 		counting.createAlias("plan", "plan", JoinType.INNER_JOIN);
@@ -1544,12 +1561,18 @@ public class StructureBS extends HibernateBusiness {
 		counting.setProjection(Projections.count("id"));
 
 		if (indicator != null) {
-			criteria.add(Restrictions.eq("parent", indicator.getId()));
+			criteria.add(Restrictions.eq("levelInstance.parent", indicator.getId()));
 			counting.add(Restrictions.eq("parent", indicator.getId()));
 		}
-
-		List<StructureLevelInstance> list = this.filter.filterAndList(criteria, StructureLevelInstance.class,
-				"macro.company");
+		
+		List<AttributeInstance> attList = this.dao.findByCriteria(criteria, AttributeInstance.class);
+		List<StructureLevelInstance> list = new ArrayList<StructureLevelInstance>();
+		for(AttributeInstance attribute : attList){
+			list.add(attribute.getLevelInstance());
+		}
+		
+		/*List<StructureLevelInstance> list = this.filter.filterAndList(criteria, StructureLevelInstance.class,
+				"macro.company");*/
 		Long total = this.filter.filterAndFind(counting, "macro.company");
 		result.setList(list);
 		result.setTotal(total);
