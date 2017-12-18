@@ -58,6 +58,7 @@ export default React.createClass({
     var me = this;
 
     this.getInfo(1, this.state.pageSize);
+
     DashboardStore.on("objectivesByThematicAxisRetrived", (model) => {        
         var data = [];
         var element = [];
@@ -120,7 +121,7 @@ export default React.createClass({
         
         
         var bool = (model ? model.data.length > 0 : true);     
-        var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");   
+        var hTitle = (model && model.data.length > 0 ? Messages.get("label.objectives") : "");   
         this.setState({
             data:data,
             elements:element,

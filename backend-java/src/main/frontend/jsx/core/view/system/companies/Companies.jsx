@@ -122,7 +122,7 @@ export default React.createClass({
 					<div className="fpdi-card fpdi-card-full fpdi-card-company">
 						<div className="row">
 							<div className="fpdi-card-title col-md-8">
-								<span title = {model.name} className = "cursorPointer"> {(model.name.length>20)?(string(model.name).trim().substr(0,20).concat("...").toString()):(model.name)} </span>
+								<span title = {model.name} className = "cursorPointer truncate"> {model.name} </span>
 							</div>
 							<div className="text-right col-md-4">
 								<Link to={"/system/companies/edit/"+model.id} className="mdi mdi-pencil-box" title="Editar" />

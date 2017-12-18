@@ -29,7 +29,8 @@ export default React.createClass({
 			budgets: this.props.data,
 			loading: false,
 			hide: false,
-			editingIdx: -1
+			editingIdx: -1,
+			budgetsLength: 0,
 		};
 	},
 
@@ -39,7 +40,8 @@ export default React.createClass({
 	    		adding: true,
 	    		hide:false
 	    	}); 
-    	}   	
+    	}
+
 	},
 	formatReal( int ){
 		int = int *100;
@@ -138,6 +140,22 @@ export default React.createClass({
 				});
 			}
 		},this);
+
+		BudgetStore.dispatch({
+			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
+			data: {
+				companyId: EnvInfo.company.id 
+			}      
+      	});	
+
+		BudgetStore.on("budgetElementRetrivied", (model) => {	
+			if (this.isMounted()) {		
+			    this.setState({
+			    	budgetsLength: model.data.length,
+			    	loading: false,
+			    });	 
+		    } 	
+		  });
 	},
 
 	componentWillUnmount() {
@@ -312,29 +330,39 @@ export default React.createClass({
 	},
 
 	renderNewBudget(){
-		return(			
-			<tr key='new-budget'>
-				<td ref="tdSubAction"><SubActionSelectBox className="" ref="subActions"/>
-					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
-				</td>
-				<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetNameText" onKeyPress={this.onKeyUp}/>
-					<div className="formAlertError" ref="formAlertErrorName"></div>	
-				</td>
-				<td>-</td>
-				<td>-</td>
-				<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
-					<div className="formAlertError" ref="formAlertErrorCommited"></div>
-				</td>				
-				<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
-					<div className="formAlertError" ref="formAlertErrorRealized"></div></td>
-				<td>				
-                    <div className='displayFlex'>
-                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
-                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewBudget} title={Messages.get("label.cancel")}></span>
-                   	</div>
-	            </td>
-			</tr>
-		);
+		if(this.state.budgetsLength > 0){
+			return(			
+				<tr key='new-budget'>
+					<td ref="tdSubAction"><SubActionSelectBox className="" ref="subActions"/>
+						<div className="formAlertError" ref="formAlertErrorSubAction"></div>
+					</td>
+					<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetNameText" onKeyPress={this.onKeyUp}/>
+						<div className="formAlertError" ref="formAlertErrorName"></div>	
+					</td>
+					<td>-</td>
+					<td>-</td>
+					<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
+						<div className="formAlertError" ref="formAlertErrorCommited"></div>
+					</td>				
+					<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
+						<div className="formAlertError" ref="formAlertErrorRealized"></div></td>
+					<td>				
+	                    <div className='displayFlex'>
+	                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
+	                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewBudget} title={Messages.get("label.cancel")}></span>
+	                   	</div>
+		            </td>
+				</tr>
+			);
+		} else {
+			return(		
+				<tr key='new-budget'>
+					<td colSpan={6} >
+						Não há elementos orçamentários cadastrados ainda
+					</td>
+				</tr>
+			);
+		}
 	},
 
 	hideFields() {
