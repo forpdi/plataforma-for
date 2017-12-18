@@ -936,9 +936,9 @@ export default React.createClass({
                        					(this.state.sortIconStatus =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
                        					onClick={(this.state.sortIconStatus == "" || this.state.sortIconStatus =="desc") ? this.quickSortByUsersName.bind(this,"asc") :  this.quickSortByUsersName.bind(this,"desc")} title="Ordenar"> </span></th>
 									<th className="col-sm-3">{Messages.getEditable("label.email","fpdi-nav-label")}</th>
-									<th className="col-sm-3">{Messages.getEditable("label.cpf","fpdi-nav-label")}</th>
+									<th className="col-sm-2">{Messages.getEditable("label.cpf","fpdi-nav-label")}</th>
 									<th className="col-sm-3">{Messages.getEditable("label.accountType","fpdi-nav-label")}</th>
-									<th className="col-sm-3"> {Messages.getEditable("label.situation","fpdi-nav-label")} </th>		
+									<th className="col-sm-4"> {Messages.getEditable("label.situation","fpdi-nav-label")} </th>		
 								</tr>
 							</thead>
 							<tbody>
@@ -965,15 +965,15 @@ export default React.createClass({
 												{model.name}
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}> <p className="break-text"> {model.email} </p> </td> 
-											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
+											<td className={"col-sm-2"+(!model.active ? " warning":"")}>
 												<p className="break-text"> {!model.active ? "" :cpf.s} </p>
 											</td>
 											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
 												<p className="break-text">{model.accessLevel ? AccessLevels.mapped[model.accessLevel] : AccessLevels.mapped[this.state.accessLevelSelect]} </p>
 											</td>
-											<td className={"col-sm-3"+(!model.active ? " warning":"")}>
+											<td className={"col-sm-4"+(!model.active ? " warning":"")}>
 												{!model.active ? (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") :
-													<p className="break-text"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
+													<p className="break-text white-space"><small> {Messages.getEditable("label.userNoRegister","fpdi-nav-label")}</small></p>)
 												: (model.blocked ? Messages.getEditable("label.blockedUser","fpdi-nav-label") : Messages.getEditable("label.regularUser","fpdi-nav-label"))}
 											</td>
 										</tr>);
