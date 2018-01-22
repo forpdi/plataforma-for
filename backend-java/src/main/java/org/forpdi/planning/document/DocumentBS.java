@@ -937,7 +937,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
@@ -1241,7 +1241,7 @@ public class DocumentBS extends HibernateBusiness {
 									.getPath();
 							resourcesPath = resourcesPath.replace("example.html", "");
 							resourcesPath = resourcesPath.replace("%20", " ");
-							// resourcesPath = "/tmp"; // corrigir para usar
+							resourcesPath = "/tmp"; // corrigir para usar
 							// um caminho
 							// dinamico
 							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
@@ -1486,7 +1486,7 @@ public class DocumentBS extends HibernateBusiness {
 											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
 									resourcesPath = resourcesPath.replace("example.html", "");
 									resourcesPath = resourcesPath.replace("%20", " ");
-									// resourcesPath = "/tmp"; // corrigir
+									resourcesPath = "/tmp"; // corrigir
 									// para
 									// usar
 									// um caminho
@@ -2406,7 +2406,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		// resourcesPath = "/tmp"; // corrigir para salvar com um caminho
+		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 		// dinamico
 		resourcesPath = resourcesPath.replace("example.pdf", "");
 		resourcesPath = resourcesPath.replace("%20", " ");
