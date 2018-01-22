@@ -41,8 +41,8 @@ public enum FormatValue {
 	NumberFormat moedaFormat = NumberFormat.getCurrencyInstance(ptBr);
 	DecimalFormat decimalFormatDbl = new DecimalFormat("#,##0.00");
 	DecimalFormat decimalFormatInt = new DecimalFormat("#,##0");
-	
-	private FormatValue(int value, String name){
+
+	private FormatValue(int value, String name) {
 		this.value = value;
 		this.name = name;
 	}
@@ -54,27 +54,31 @@ public enum FormatValue {
 	public String getName() {
 		return name;
 	}
-	
-	public String format(String value){
-		switch(this.value){
-		case 1:
-			return decimalFormatDbl.format(Double.valueOf(value))+"%";
-		case 2:
-			return decimalFormatDbl.format(Double.valueOf(value));
-		case 3: 
-			return moedaFormat.format(Double.valueOf(value));
-		case 4:
-			return decimalFormatInt.format(Double.valueOf(value)) + " hrs";
-		case 5:
+
+	public String format(String value) {
+		if (value != null) {
+			switch (this.value) {
+			case 1:
+				return decimalFormatDbl.format(Double.valueOf(value)) + "%";
+			case 2:
+				return decimalFormatDbl.format(Double.valueOf(value));
+			case 3:
+				return moedaFormat.format(Double.valueOf(value));
+			case 4:
+				return decimalFormatInt.format(Double.valueOf(value)) + " hrs";
+			case 5:
 				if (Double.valueOf(value) > 1) {
 					return decimalFormatInt.format(Double.valueOf(value)) + " dias";
 				} else {
 					return decimalFormatInt.format(Double.valueOf(value)) + " dia";
 				}
-		case 6:
-			return decimalFormatInt.format(Double.valueOf(value)) + " meses";
-		default:
-			return "valor inválido";
+			case 6:
+				return decimalFormatInt.format(Double.valueOf(value)) + " meses";
+			default:
+				return "valor inválido";
+			}
+		} else {
+			return new String("");
 		}
 	}
 }
