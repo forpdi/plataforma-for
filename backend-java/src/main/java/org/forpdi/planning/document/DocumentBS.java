@@ -95,6 +95,7 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
+import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -282,13 +283,12 @@ public class DocumentBS extends HibernateBusiness {
 		return list;
 	}
 
-	
 	/**
 	 * Recupera uma seção do documento pelo id
+	 * 
 	 * @param sectionId
-	 * 			Id da seção do documento
-	 * @return documentSection 
-	 * 			Seção do documento
+	 *            Id da seção do documento
+	 * @return documentSection Seção do documento
 	 */
 	public DocumentSection retrieveSectionById(Long sectionId) {
 		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
@@ -296,12 +296,12 @@ public class DocumentBS extends HibernateBusiness {
 		DocumentSection documentSection = (DocumentSection) criteria.uniqueResult();
 		return documentSection;
 	}
-	
-	
+
 	/**
 	 * Retorna o número de atributos da seção
+	 * 
 	 * @param documentSection
-	 * 		Seção do documento
+	 *            Seção do documento
 	 * @return
 	 */
 	public Long countAttributesPerSection(DocumentSection documentSection) {
@@ -314,12 +314,12 @@ public class DocumentBS extends HibernateBusiness {
 
 	/**
 	 * Retorna a lista de atributos de uma seção do documento
+	 * 
 	 * @param documentSection
-	 * 			Seção do documento
+	 *            Seção do documento
 	 * @param planId
-	 * 			Id do Plano 
-	 * @return List<DocumentAttribute> list
-	 * 			Lista de atributos
+	 *            Id do Plano
+	 * @return List<DocumentAttribute> list Lista de atributos
 	 */
 	public List<DocumentAttribute> listAttributesBySection(DocumentSection documentSection, Long planId) {
 		Criteria criteria = this.dao.newCriteria(DocumentAttribute.class);
@@ -1467,8 +1467,9 @@ public class DocumentBS extends HibernateBusiness {
 									StyleSheet styles = new StyleSheet();
 									styles.loadTagStyle("p", "text-indent", "1.25cm");
 
-									String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
-											+ "<p style=\"text-indent: 1.25cm; \">";
+									String str = "<html>" + "<head>"
+											+ "</head><body style=\"text-indent: 1.25cm; font-size: 12pt !important;\">"
+											+ "<p style=\"text-indent: 1.25cm; font-size: 12pt !important;\">";
 									Queue<String> allMatches = new LinkedList<>();
 									String value = a.getValue();
 									if (a.getValue().contains("<img")) {
@@ -1499,6 +1500,7 @@ public class DocumentBS extends HibernateBusiness {
 
 									List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()),
 											styles);
+
 									for (int k = 0; k < p.size(); ++k) {
 										if (p.get(k) instanceof Paragraph) {
 											Paragraph att = (Paragraph) p.get(k);
@@ -1517,6 +1519,7 @@ public class DocumentBS extends HibernateBusiness {
 											} else {
 												att.setFirstLineIndent(firstLineIndent);
 												document.add(att);
+
 											}
 										} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
 											com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
@@ -1726,13 +1729,12 @@ public class DocumentBS extends HibernateBusiness {
 		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(DEST));
 		newDocument.open();
 
-		
 		PdfReader summary = new PdfReader(FINALSUMMARY);
 		PdfReader content;
-		//int unnumberedPgsCount = summaryCountPages;
+		// int unnumberedPgsCount = summaryCountPages;
 		// CAPA
 		n = cover.getNumberOfPages();
-		//unnumberedPgsCount += n;
+		// unnumberedPgsCount += n;
 		for (int i = 0; i < n;) {
 			page = copy.getImportedPage(cover, ++i);
 			copy.addPage(page);
@@ -1741,7 +1743,7 @@ public class DocumentBS extends HibernateBusiness {
 			preText = new PdfReader(PRETEXT);
 			// SEÇÕES PRE TEXTUAIS
 			n = preText.getNumberOfPages();
-			//unnumberedPgsCount += n;
+			// unnumberedPgsCount += n;
 			for (int i = 0; i < n;) {
 				page = copy.getImportedPage(preText, ++i);
 				copy.addPage(page);
@@ -1989,7 +1991,8 @@ public class DocumentBS extends HibernateBusiness {
 									table.addCell(cell);
 
 									// Empenhado - valor
-									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getCommitted()), texto));
+									cell = new PdfPCell(
+											new Phrase(moedaFormat.format(b.getBudget().getCommitted()), texto));
 									cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 									// centraliza verticalmente
 									cell.setPadding(padding);
@@ -2000,7 +2003,8 @@ public class DocumentBS extends HibernateBusiness {
 									table.addCell(cell);
 
 									// Realizado - valor
-									cell = new PdfPCell(new Phrase(moedaFormat.format(b.getBudget().getRealized()), texto));
+									cell = new PdfPCell(
+											new Phrase(moedaFormat.format(b.getBudget().getRealized()), texto));
 									cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 									// centraliza verticalmente
 									cell.setPadding(padding);
@@ -2167,8 +2171,8 @@ public class DocumentBS extends HibernateBusiness {
 												if (a.isExpectedField()) { // esperado
 													for (AttributeInstance at : attInst) {
 														if (at.getAttribute().getId() == a.getId()) {
-
-															at.setFormattedValue(formatValue.format(at.getValue()));
+															at.setFormattedValue(formatValue
+																	.format(at.getValue().replace(',', '.')));
 															expected.add(at.getFormattedValue());
 															values.add(at.getFormattedValue());
 														}
@@ -2309,8 +2313,8 @@ public class DocumentBS extends HibernateBusiness {
 			table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
 		}
 		table.setWidthPercentage(100);
-		//int[] sizes = new int[tabStructList.size()];
-		//int i = 0;
+		// int[] sizes = new int[tabStructList.size()];
+		// int i = 0;
 
 		// ajuste de widths
 		/*
@@ -2344,11 +2348,7 @@ public class DocumentBS extends HibernateBusiness {
 						if (integerTest == (int) integerTest) {
 							table.addCell(new Paragraph(tv.getValue(), textoTabela));
 						} else {
-							table.addCell(
-									new Paragraph(
-											FormatValue.NUMERIC
-													.format(tv.getValue()),
-											textoTabela));
+							table.addCell(new Paragraph(FormatValue.NUMERIC.format(tv.getValue()), textoTabela));
 						}
 					} else if (tv.getTableStructure().getType().equals(ResponsibleField.class.getCanonicalName())) {
 						table.addCell(new Paragraph(this.userBS.existsByUser(Long.valueOf(tv.getValue())).getName(),
@@ -2388,10 +2388,12 @@ public class DocumentBS extends HibernateBusiness {
 		}
 		return table;
 	}
+
 	/**
 	 * Exportar para pdf atributos de um level
+	 * 
 	 * @param levelId
-	 * 			Id do level
+	 *            Id do level
 	 * @return
 	 * @throws MalformedURLException
 	 * @throws IOException
@@ -2418,16 +2420,16 @@ public class DocumentBS extends HibernateBusiness {
 		Font textoItalico = FontFactory.getFont(FontFactory.TIMES_ITALIC, 12.0f);
 
 		Font titulo = FontFactory.getFont(FontFactory.TIMES_BOLD, 12.0f);
-		//Font tituloCapa = FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f);
+		// Font tituloCapa = FontFactory.getFont(FontFactory.TIMES_BOLD, 14.0f);
 		// Cor cinza - cabeçalho das tabelas
-		//CMYKColor headerBgColor = new CMYKColor(55, 45, 42, 7);
+		// CMYKColor headerBgColor = new CMYKColor(55, 45, 42, 7);
 
 		// 0,8 cm acima e abaixo
 		float paragraphSpacing = 22.6772f;
 		// Parágrafo com 1,25 cm na primeira linha
-		//float firstLineIndent = 35.43307f;
+		// float firstLineIndent = 35.43307f;
 		// 1,5 entrelinhas
-		//float interLineSpacing = texto.getCalculatedLeading(1.5f);
+		// float interLineSpacing = texto.getCalculatedLeading(1.5f);
 		// Formato A4 do documento
 		document.setPageSize(PageSize.A4);
 		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
@@ -2437,7 +2439,8 @@ public class DocumentBS extends HibernateBusiness {
 
 		// CABEÇALHO
 		String companyLogoUrl = domain.getCompany().getLogo();
-		String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";//new File(classLoader.getResource("logo.png").getFile()).getPath();
+		String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";// new
+																		// File(classLoader.getResource("logo.png").getFile()).getPath();
 		if (!companyLogoUrl.trim().isEmpty()) {
 			Image companyLogo = Image.getInstance(new URL(companyLogoUrl));
 			Image fpdiLogo = Image.getInstance(fpdiLogoUrl);
@@ -2486,7 +2489,6 @@ public class DocumentBS extends HibernateBusiness {
 		// PLANO MACRO
 		Paragraph planMacroParagraph = new Paragraph(planMacroName, titulo);
 		document.add(planMacroParagraph);
-		
 
 		// PLANO DE METAS
 		Paragraph planParagraph = new Paragraph(planName, titulo);
@@ -2980,9 +2982,10 @@ public class DocumentBS extends HibernateBusiness {
 
 		return in;
 	}
-	
+
 	/**
 	 * Realiza as funções necessárias para gerar o PDF
+	 * 
 	 * @param src
 	 * @param dest
 	 * @param document
