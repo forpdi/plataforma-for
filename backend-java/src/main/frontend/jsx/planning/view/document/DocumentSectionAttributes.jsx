@@ -161,6 +161,11 @@ export default React.createClass({
 			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
 		});
 
+		DocumentStore.on("attributedeletedError", (error) => {
+			this.context.toastr.addAlertError(error.responseJSON.message);
+			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
+        },this);
+
 		
 
 		StructureStore.on("attributetypes", (models) => {			

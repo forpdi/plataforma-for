@@ -143,6 +143,7 @@ var DocumentStore = Fluxbone.Store.extend({
 	},
 
 	deleteAttribute(data){
+		console.log("DELETE");
 		var me = this;
 		$.ajax({
 			url: me.url+"/sectionattribute/delete",
@@ -153,6 +154,7 @@ var DocumentStore = Fluxbone.Store.extend({
 				me.trigger("attributedeleted", response.data);
 			},
 			error(opts, status, errorMsg) {
+				me.trigger("attributedeletedError", opts);
 				me.handleRequestErrors([], opts);
 			}
 		});
