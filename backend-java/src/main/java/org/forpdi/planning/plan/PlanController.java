@@ -19,6 +19,7 @@ import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.planning.attribute.AttributeInstance;
+import org.forpdi.planning.document.Document;
 import org.forpdi.planning.document.DocumentBS;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
@@ -113,6 +114,12 @@ public class PlanController extends AbstractController {
 				existent.setHaveSons(false);	
 			} else {
 				existent.setHaveSons(true);
+			}
+			
+			Document document = this.dbs.retrieveByPlan(existent);
+			if (document != null) {
+				document.setTitle("Documento - " + plan.getName());
+				this.bs.persist(document);
 			}
 			
 			this.bs.persist(existent);
