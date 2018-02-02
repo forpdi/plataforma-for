@@ -15,7 +15,7 @@ export default React.createClass({
     return {
         plan:this.props.plan,
         loading: true,
-        subPlan:this.props.subPlan,        
+        subPlan:this.props.subPlan,
         elements:[],
         data: [],
         options:{
@@ -24,7 +24,7 @@ export default React.createClass({
             vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
             legend: 'none',
             explorer: {axis: 'horizontal'},
-            bar: {groupWidth: '50%'},        
+            bar: {groupWidth: '50%'},
         },
         thematicAxes:[],
         selectedThematicAxes: -1,
@@ -33,7 +33,7 @@ export default React.createClass({
                 eventName : 'select',
                 callback  : this.onChartClick
             },
-        ],        
+        ],
         pageSize: 10
     };
   },
@@ -43,15 +43,15 @@ export default React.createClass({
     if(this.isMounted()) {
       me.setState({
         plan: newProps.plan,
-        subPlan: newProps.subPlan,        
-        loading: true        
+        subPlan: newProps.subPlan,
+        loading: true
       });
 
       if(!this.state.loading){
         this.refs.selectThematicAxes.value = -1;
       }
       this.getInfo(1, this.state.pageSize, newProps);
-    }    
+    }
   },
 
   componentDidMount() {
@@ -59,7 +59,7 @@ export default React.createClass({
 
     this.getInfo(1, this.state.pageSize);
 
-    DashboardStore.on("objectivesByThematicAxisRetrived", (model) => {        
+    DashboardStore.on("objectivesByThematicAxisRetrived", (model) => {
         var data = [];
         var element = [];
 
@@ -72,13 +72,13 @@ export default React.createClass({
             var value;
             model.data.map((item) => {
                 value = item.levelValue;
-                var color; 
+                var color;
 
                 if (value == undefined) {
                     value = 0;
                 } else {
                     value = parseFloat(item.levelValue);
-                }         
+                }
                 /*
                 if(value < 40){
                     color = "#E74C3C";
@@ -105,7 +105,7 @@ export default React.createClass({
                     v: value,
                     f: numeral(parseFloat(value)).format('0,0.00')+"%"
                 };
-            
+
                 if(item.name.length > 50){
                     element.push([item.name.substring(0, 50).concat("..."),valueForGraph, color]);
                 }else{
@@ -113,15 +113,15 @@ export default React.createClass({
                 }
             });
         }
-        
-        
+
+
         model.data.map((item, idx) => {
             data.push(element[idx]);
-        })   
-        
-        
-        var bool = (model ? model.data.length > 0 : true);     
-        var hTitle = (model && model.data.length > 0 ? Messages.get("label.objectives") : "");   
+        })
+
+
+        var bool = (model ? model.data.length > 0 : true);
+        var hTitle = (model && model.data.length > 0 ? Messages.get("label.objectives") : "");
         this.setState({
             data:data,
             elements:element,
@@ -137,7 +137,7 @@ export default React.createClass({
         })
     },me);
 
-    DashboardStore.on("performanceStrategicAxisRetrived", (model) => {        
+    DashboardStore.on("performanceStrategicAxisRetrived", (model) => {
         if(this.isMounted()) {
             me.setState({
                 thematicAxes:model.data,
@@ -156,10 +156,10 @@ export default React.createClass({
                 element.push([Messages.get("label.haveNoThematicAxes"),parseFloat(0)]);
             } else {
                 data.push(['Element', 'Rendimento', { role: 'style' }]);
-            
+
                 model.data.map((item) => {
                     var value = parseFloat(item.levelValue);
-                    var color;          
+                    var color;
 
                     /*
                     if(value < 40){
@@ -183,12 +183,12 @@ export default React.createClass({
                         color = "#51D466";
                     else
                         color = "#4EB4FE";
-  
+
                     var valueForGraph = {
                         v: value,
                         f: numeral(parseFloat(value)).format('0,0.00')+"%"
                     };
-                
+
                     if(item.name.length > 50){
                         element.push([item.name.substring(0, 50).concat("..."),valueForGraph, color]);
                     }else{
@@ -202,7 +202,7 @@ export default React.createClass({
 
 
             var bool = (model ? model.data.length > 0 : true);
-            var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");  
+            var hTitle = (model && model.data.length > 0 ? Messages.get("label.thematicAxes") : "");
             this.setState({
                 data:data,
                 elements:element,
@@ -216,7 +216,7 @@ export default React.createClass({
                 }
             })
         }
-    },me); 
+    },me);
 
   },
 
@@ -238,21 +238,21 @@ export default React.createClass({
             level = me.state.thematicAxes[Chart.chart.getSelection()[0].row];
         } else {
             level = me.state.objectives[Chart.chart.getSelection()[0].row];
-        }        
-        
+        }
+
         url = window.location.origin+window.location.pathname+"#/plan/"+
         level.plan.parent.id+"/details/subplan/level/"+level.id;
-        
-        var msg = Messages.get("label.askGoToSelectedLevel");                            
+
+        var msg = Messages.get("label.askGoToSelectedLevel");
         Modal.confirmCustom(() => {
-            Modal.hide();           
+            Modal.hide();
             location.assign(url);
         },msg,
         ()=>{
             Chart.chart.setSelection([]);
             Modal.hide();
         });
-    }    
+    }
   },
 
   onThematicAxesChange(){
@@ -260,7 +260,7 @@ export default React.createClass({
   },
 
   getInfo(page, pageSize, opt){
-    opt = opt || this.state;    
+    opt = opt || this.state;
     if (this.refs.selectThematicAxes.value == -1) {
         DashboardStore.dispatch({
             action: DashboardStore.ACTION_PERFORMANCE_STRATEGICAXIS,
@@ -270,10 +270,14 @@ export default React.createClass({
                 page: page,
                 pageSize: pageSize
             }
-        });
+		});
+
+		this.setState ({
+            selectedThematicAxes: -1,
+		});
     } else {
         DashboardStore.dispatch({
-        action: DashboardStore.ACTION_GET_THEMATIC_AXIS_INFORMATION, 
+        action: DashboardStore.ACTION_GET_THEMATIC_AXIS_INFORMATION,
         data: {
                 macro: (opt.plan != -1)?(opt.plan.id):(null),
                 plan:(opt.subPlan != -1)?(opt.subPlan.id):(null),
@@ -281,7 +285,7 @@ export default React.createClass({
             }
 
         });
-        
+
         this.setState ({
             selectedThematicAxes: opt.thematicAxes[this.refs.selectThematicAxes.value]
         });
@@ -290,7 +294,7 @@ export default React.createClass({
 
   render() {
     return (
-        <div>            
+        <div>
             <div id= {!this.state.hide ? "panelSection" :""} className="panel panel-default">
                 <div className="panel-heading dashboard-panel-title">
                     <b className="budget-graphic-title"> {Messages.getEditable("label.thematicAxesPerformance","fpdi-nav-label")} </b>
@@ -311,9 +315,9 @@ export default React.createClass({
                         </div>
                 </div>
                 {!this.state.hide ?
-                    (this.state.loading ? <LoadingGauge/> : 
-                        <div>                           
-                            <ForPDIChart 
+                    (this.state.loading ? <LoadingGauge/> :
+                        <div>
+                            <ForPDIChart
                              chartType="ColumnChart"
                              data={this.state.data}
                              options={this.state.options}
@@ -325,7 +329,7 @@ export default React.createClass({
                              total={this.state.total}
                              onChangePage={this.getInfo}
                              chartEvents={this.state.chartEvents} />
-                            <div className="colaborator-goal-performance-legend">                            
+                            <div className="colaborator-goal-performance-legend">
                                 <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
                                 <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
                                 <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
@@ -334,7 +338,7 @@ export default React.createClass({
                         </div>
                     )
                 :""}
-            </div>             
+            </div>
         </div>
     );
 
