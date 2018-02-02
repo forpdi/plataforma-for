@@ -309,9 +309,16 @@ public class DocumentController extends AbstractController {
 	public void deleteSectionAttribute(Long id) {
 		try {
 			DocumentAttribute attr = this.bs.retrieveDocumentAttribute(id);
-			attr.setDeleted(true);
-			this.bs.persist(attr);
-			this.success(attr);
+			
+			if (attr.getSection().isPreTextSection()) {
+				this.fail("O campo dessa seção não pode ser deletado");
+				return;
+			} else {
+				attr.setDeleted(true);
+				this.bs.persist(attr);
+				this.success(attr);
+			}
+			
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
