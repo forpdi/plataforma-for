@@ -215,7 +215,7 @@ export default React.createClass({
 					data-toggle="dropdown"
 					aria-haspopup="true"
 					aria-expanded="true"
-					title="Menu de Opções"
+					title="Informações"
 					>
 				</a>
 				<div className="dropdown-menu dropdown-menu-right">

@@ -10,7 +10,7 @@ export default React.createClass({
                     <span className ="fpdi-nav-label fontSize12"> Portal ForPDI </span>
                 </a>
                 <br />
-                <a href="http://forpdi.org/" target="_blanck">
+                <a href="http://forpdi.org/metodologia.php" target="_blanck">
 				    <span className ="fpdi-nav-label fontSize12"> Download do Livro </span>
                 </a>
                 <a href="https://www.youtube.com/channel/UC1DP0ZGoTm0OlX-vOc-Ns5Q/videos" target="_blanck">
