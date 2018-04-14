@@ -9,9 +9,10 @@ Author: Brett Terpstra
 Description: Github README style. Includes theme for Pygmentized code blocks.
 */
 
-*:not('#mkdbuttons') {
+*:not(#mkdbuttons) {
   margin: 0;
-  padding: 0; }
+  padding: 0;
+}
 
 #wrapper {
   font-size: 14px;
