@@ -11,15 +11,17 @@ import java.util.ResourceBundle;
  *
  */
 public final class SystemConfigs {
-	
+
 	/** O bundle com as configura��es do sistema. */
 	private static final ResourceBundle BUNDLE = PropertyResourceBundle.getBundle("properties.system");
 
 	/** Mapa singleton com as configura��es. */
 	private static Map<String, String> CONFIG_MAP;
-	
+
 	public static String getConfig(String key) {
 		try {
+			if(System.getProperties().containsKey(key))
+				return System.getProperty(key);
 			return SystemConfigs.BUNDLE.getString(key);
 		} catch (Exception ex) {
 			return "???"+key+"???";
