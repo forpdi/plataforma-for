@@ -110,7 +110,7 @@ public class PlanController extends AbstractController {
 			existent.setEnd(plan.getEnd());
 			existent.setDocumented(plan.isDocumented());
 			
-			if(this.bs.listAllPlans(existent).isEmpty()){
+			if(this.bs.listPlansForPlanMacro(existent).isEmpty()){
 				existent.setHaveSons(false);	
 			} else {
 				existent.setHaveSons(true);
@@ -146,7 +146,7 @@ public class PlanController extends AbstractController {
 			if (plan == null) {
 				this.fail("O plano solicitado não foi encontrado.");
 			} else {
-				if(this.bs.listAllPlans(plan).size() > 0)
+				if(this.bs.listPlansForPlanMacro(plan).size() > 0)
 					plan.setHaveSons(true);
 				else
 					plan.setHaveSons(false);
@@ -174,7 +174,7 @@ public class PlanController extends AbstractController {
 			if (this.domain != null) {
 				PaginatedList<PlanMacro> plans = this.bs.listMacros(this.domain.getCompany(), false, page);
 				for(PlanMacro p : plans.getList()){
-					if(this.bs.listAllPlans(p).size() > 0)
+					if(this.bs.listPlansForPlanMacro(p).size() > 0)
 						p.setHaveSons(true);
 					else
 						p.setHaveSons(false);
@@ -408,7 +408,7 @@ public class PlanController extends AbstractController {
 	public void retrievePlansPerformance(Long parentId) {
 		try {
 			PlanMacro macro = this.bs.exists(parentId, PlanMacro.class);
-			List<Plan> list = this.bs.listAllPlans(macro);
+			List<Plan> list = this.bs.listPlansForPlanMacro(macro);
 			List<Plan> result = new ArrayList<Plan>(list.size());
 			
 			List<PlanDetailed> planDetailedList = new ArrayList<PlanDetailed>();

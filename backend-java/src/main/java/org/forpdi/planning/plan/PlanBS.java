@@ -12,7 +12,6 @@ import org.forpdi.planning.jobs.OnLevelInstanceUpdateTask;
 import org.forpdi.planning.structure.Structure;
 import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
@@ -137,7 +136,18 @@ public class PlanBS extends HibernateBusiness {
 		return results;
 	}
 	
-	public List<Plan> listAllPlans(PlanMacro macro) {
+	public List<Plan> listAllPlansForPlanMacro(PlanMacro macro) {
+		Criteria criteria =
+			this.dao.newCriteria(Plan.class)
+			.add(Restrictions.eq("parent", macro))
+			.addOrder(Order.desc("begin"))
+			.addOrder(Order.desc("end"))
+			.addOrder(Order.asc("name"))
+		;	
+		return this.dao.findByCriteria(criteria, Plan.class);
+	}
+	
+	public List<Plan> listPlansForPlanMacro(PlanMacro macro) {
 		Criteria criteria =
 			this.dao.newCriteria(Plan.class)
 			.add(Restrictions.eq("deleted", false))

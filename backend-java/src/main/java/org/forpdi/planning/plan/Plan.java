@@ -59,21 +59,15 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	private Double minimumAverage;
 	private Double maximumAverage;
 	
-	@Transient
-	private boolean updated = false;
+	// Transient fields
+	@Transient private boolean updated = false;
+	@Transient private List<StructureLevelInstance> levelInstances;
+	@Transient private Double auxValue;
+	@Transient private List<PlanDetailed> planDetailedList;
+	@Transient private boolean haveSons;
+	@Transient private Long exportStructureId;
 	
-	@Transient
-	private List<StructureLevelInstance> levelInstances;
 	
-	@Transient
-	private Double auxValue;
-	
-	@Transient
-	private List<PlanDetailed> planDetailedList;
-	
-	@Transient
-	private boolean haveSons;
-
 	public boolean isHaveSons() {
 		return haveSons;
 	}
@@ -207,6 +201,14 @@ public class Plan extends SimpleLogicalDeletableEntity {
 
 	public void setPlanDetailedList(List<PlanDetailed> planDetailedList) {
 		this.planDetailedList = planDetailedList;
+	}
+
+	public Long getExportStructureId() {
+		return exportStructureId;
+	}
+
+	public void setExportStructureId(Long exportStructureId) {
+		this.exportStructureId = exportStructureId;
 	}
 
 }
