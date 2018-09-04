@@ -7,9 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,10 +44,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import com.ibm.icu.text.SimpleDateFormat;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
+import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
 import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
@@ -73,9 +71,12 @@ public class DatabaseBackup extends HibernateBusiness  {
 		
 		Compact(zos, PlanMacro.class);
     	Compact(zos, Structure.class);
-    	Compact(zos, Document.class);
     	Compact(zos, Plan.class);
+    	Compact(zos, Document.class);
     	Compact(zos, StructureLevel.class);
+    	
+
+    	
     	
     	Compact(zos, LevelInstanceHistory.class);
     	Compact(zos, AggregateIndicator.class);
@@ -108,7 +109,7 @@ public class DatabaseBackup extends HibernateBusiness  {
      * @throws IOException 
 	 *
 	 */
-    private void Compact(ZipOutputStream zos, Class clazz) throws IOException {
+    private void Compact(ZipOutputStream zos, Class<?> clazz) throws IOException {
     	
     	Gson gson = gsonBuilder.create();
     	String classe=clazz.getSimpleName();
@@ -128,9 +129,13 @@ public class DatabaseBackup extends HibernateBusiness  {
     				return;
     				
        			case "Structure" :
-    				ZipAdd(zos, classe,  gson.toJson(object));
-    				return;
-    				
+       				
+					//jsonArray.add(gson.toJson(object));
+    				//ZipAdd(zos, classe,  gson.toJson(object));
+    				//return;
+					jsonArray.add(Makejson(object, classe, (Long[]) null));
+    				break;
+					
     			case "Document" :    				
     				//juntar Doc com o plan_id
     				for (Object doc : object ) {
@@ -142,7 +147,7 @@ public class DatabaseBackup extends HibernateBusiness  {
     			case "Plan"	:
     				//juntar Plan com o parent_id, structure_id
     				for (Object plan : object ) {
-    					jsonArray.add(Makejson(plan, classe,((Plan) plan).getParent().getId(),((Plan) plan).getStructure().getId()));
+    					jsonArray.add(Makejson(plan, classe, ((Plan) plan).getStructure().getId(),((Plan) plan).getParent().getId()));
     				}
     				break;   				
  
@@ -154,7 +159,7 @@ public class DatabaseBackup extends HibernateBusiness  {
     				break;
     				
  
-    			default:
+    			default: return;
     		
     		}
     		
@@ -187,6 +192,8 @@ public class DatabaseBackup extends HibernateBusiness  {
     	Map<Long,Long> map_id_planomacro= new HashMap<Long,Long>();
     	Map<Long,Long> map_id_documento= new HashMap<Long,Long>();
     	Map<Long,Long> map_id_structure= new HashMap<Long,Long>();
+    	Map<Long,Long> map_id_structure_level= new HashMap<Long,Long>();
+    	Map<Long,Long> map_id_plan= new HashMap<Long,Long>();
     	
     	for(File f : files) {
     		
@@ -194,17 +201,16 @@ public class DatabaseBackup extends HibernateBusiness  {
     		Long id_old;
     		String name=f.getName().split("_")[0];
     		JSONParser parser = new JSONParser();
-    		JSONObject obj;
+    		//JSONObject obj;
     		JSONArray array;
     		
     		//company passado na hora da importação
 			Company company = new Company(); 
 			company.setId((long) 1);
 
-			
+
     		switch(name) {
-    			case "PlanMacro" :
-    				    				
+    			case "PlanMacro" :		
     				PlanMacro pm= gson.fromJson(register, PlanMacro.class);
     				id_old=pm.getId();
     				pm.setId(null);
@@ -212,38 +218,111 @@ public class DatabaseBackup extends HibernateBusiness  {
     				this.dao.persist(pm);
 	    			map_id_planomacro.put(id_old, pm.getId());
 	    			break;
-	    			
-
+	    							
+				case "Structure" :
+					JSONObject jsonobj = (JSONObject) parser.parse(register);
+					array = (JSONArray)jsonobj.get("json");
+					array=(JSONArray) ((JSONObject)array.get(0)).get("Structure");
+					
+					for(int i=0; i<array.size(); i++) {
+						Structure st = gson.fromJson(array.get(i).toString(), Structure.class);
+						id_old=st.getId();
+						st.setCompany(company);
+						st.setId(null);
+						this.dao.persist(st);
+						map_id_structure.put(id_old, st.getId());
+					}
+					
+				break;
+				
+				case "Plan" :
+					Readjson(register, Plan.class, map_id_plan, map_id_structure, map_id_planomacro);
+					break;
+				
+				case "StructureLevel" :   				
+    				Readjson(register, StructureLevel.class, map_id_structure_level, map_id_structure, null);
+    				break;
+    				
     			case "Document" :
-
-    				obj= (JSONObject) parser.parse(register);
-    				array = (JSONArray)obj.get("json");
-    				
-    				for(int i=0; i<array.size(); i++) {
-    					
-    					JSONObject jo=(JSONObject) array.get(i);
-    					Document doc = gson.fromJson(jo.get("Document").toString(), Document.class);
-    					id_old=Long.parseLong(jo.get("foreign_key_1").toString());
-    					
-    					Criteria criteria= this.dao.newCriteria(PlanMacro.class);
-    					criteria.add(Restrictions.eq("id",map_id_planomacro.get(id_old)));
-    					
-    					doc.setPlan((PlanMacro) criteria.uniqueResult());
-    					doc.setId(null);
-    					
-    					this.dao.persist(doc);
-						map_id_documento.put(id_old, doc.getId());
-    				}
-    				
+    				Readjson(register, Document.class, map_id_documento, map_id_planomacro, null);
     				break;
 
     			default: 
     				break;
     		}
     	}
-
     }
 
+    
+    
+    /**
+	* adiciona dados ao banco a partir do json
+	* 
+	* @param register
+	*		json do registro
+	*
+	* @param clazz
+	* 		classe a ser lida
+	* 
+	* @param map_atual
+	* 		mapa do id da classe que está sendo importada
+	* 
+	* @param map_fkey_1
+	* 		mapa do id da primeira foreign key desta classe
+	* 
+	* @param map_fkey_2
+	* 		mapa do id da segunda foreign key desta classe
+	* 
+	* @throws org.json.simple.parser.ParseException 
+	* 
+	*/
+	private void Readjson( String register, Class<?> clazz, Map<Long,Long> map_atual, Map<Long,Long> map_fkey_1, Map<Long, Long> map_fkey_2) throws org.json.simple.parser.ParseException {
+		
+		Gson gson = gsonBuilder.create();
+		JSONParser parser = new JSONParser();
+		JSONObject jsonobj = (JSONObject) parser.parse(register);
+		JSONArray array = (JSONArray)jsonobj.get("json");
+		
+		for(int i=0; i<array.size(); i++) {
+			
+			JSONObject jo=(JSONObject) array.get(i);
+			
+			Object obj = gson.fromJson(jo.get(clazz.getSimpleName()).toString(), clazz);
+			long id_old = Long.parseLong(jo.get("foreign_key_1").toString());
+			Criteria criteria;
+			
+		
+			switch(clazz.getSimpleName()){
+				case "Document" :
+					criteria= this.dao.newCriteria(PlanMacro.class);
+					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old)));
+					(((Document) obj)).setPlan((PlanMacro) criteria.uniqueResult());
+					break;
+					
+				case "StructureLevel" :
+					criteria= this.dao.newCriteria(Structure.class);
+					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old)));
+					(((StructureLevel) obj)).setStructure((Structure) criteria.uniqueResult());
+					break;
+				
+				case "Plan"	:
+					criteria= this.dao.newCriteria(Structure.class);
+					criteria.add(Restrictions.eq("id",map_fkey_1.get(id_old)));
+					(((Plan) obj)).setStructure((Structure) criteria.uniqueResult());
+					
+					criteria= this.dao.newCriteria(PlanMacro.class);
+					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old)));
+					(((Plan) obj)).setParent((PlanMacro) criteria.uniqueResult());
+					break;
+			}
+			
+			((SimpleLogicalDeletableEntity) clazz.cast(obj)).setId(null);
+			
+			this.dao.persist((Serializable) clazz.cast(obj));
+			
+			map_atual.put(id_old, ((SimpleLogicalDeletableEntity) clazz.cast(obj)).getId());
+		}
+	}
     
 
     /**
@@ -268,9 +347,11 @@ public class DatabaseBackup extends HibernateBusiness  {
 		JsonElement jsonElement1= gson.toJsonTree(object);
 		jsonObject.add(clazz, jsonElement1);
 			
-		for(int i=0 ; i < f_id.length; i++) {
-			JsonElement jsonElement = gson.toJsonTree(f_id[i]);
-			jsonObject.add("foreign_key_"+String.valueOf(i+1), jsonElement);	
+		if(f_id!=null) {
+			for(int i=0 ; i < f_id.length; i++) {
+				JsonElement jsonElement = gson.toJsonTree(f_id[i]);
+				jsonObject.add("foreign_key_"+String.valueOf(i+1), jsonElement);	
+			}
 		}
 			
 		return jsonObject;
