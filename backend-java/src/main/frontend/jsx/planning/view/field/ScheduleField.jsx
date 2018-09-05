@@ -1,5 +1,5 @@
+
 import React from "react";
-import {Link} from 'react-router';
 
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -9,9 +9,7 @@ import ScheduleStore from "forpdi/jsx/planning/store/Schedule.jsx";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import {DateField, Calendar}  from "react-date-picker";
 import moment from 'moment';
-import 'react-date-picker/index.css'
 import _ from "underscore";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
@@ -48,7 +46,7 @@ export default React.createClass({
 	},
 
 	getInitialState() {
-		return {			
+		return {
 			schedule: this.props.data,
 			title: this.props.title,
 			loading: false,
@@ -62,7 +60,7 @@ export default React.createClass({
     	this.setState({
     		adding: true,
     		hide: false
-    	});    	
+    	});
 	},
 
 	componentDidMount()	{
@@ -97,7 +95,7 @@ export default React.createClass({
 				this.cancelNewSchedule();
 			}
 		},this);
-		ScheduleStore.on("scheduleDeleted", model => {			
+		ScheduleStore.on("scheduleDeleted", model => {
 			if (model.responseText) {
 				//console.log(model.responseText);
 			} else {
@@ -135,7 +133,7 @@ export default React.createClass({
 		//Seta as variáveis de data como nulo para que a proxima inserção elas estejam com nenhuma data definida
 		this.state.initDate = null;
 		this.state.endDate = null;
-		
+
 		var scheduleValues = [];
 		if (this.state.schedule.scheduleStructures.length >0) {
 			this.state.schedule.scheduleStructures.map((model, idx) => {
@@ -173,7 +171,7 @@ export default React.createClass({
 				}
 			});
 		});
-	},	
+	},
 
 
 	acceptEditSchedule(id, idx){
@@ -231,7 +229,7 @@ export default React.createClass({
     	});
 	},
 
-	onKeyUp(evt){		
+	onKeyUp(evt){
 		var key = evt.which;
 		if(key == 13) {
 			evt.preventDefault();
@@ -253,7 +251,7 @@ export default React.createClass({
 	},
 
 	renderNewSchedule(){
-		return(			
+		return(
 			<tr key='new-schedule'>
 				<td></td>
 				<td><input type='text' className='budget-field-table' ref="scheduleDescription" onKeyPress={this.onKeyUp}/>
@@ -261,29 +259,29 @@ export default React.createClass({
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='begin' 
-					className='budget-field-table' 
+					ref='begin'
+					className='budget-field-table'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.initDate}
 					onChange={this.onChangeInit}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
 					<div className="formAlertError" ref="formAlertErrorBegin"></div>
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='end' 
-					className='budget-field-table' 
+					ref='end'
+					className='budget-field-table'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.endDate}
 					onChange={this.onChangeEnd}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
-					<div className="formAlertError" ref="formAlertErrorEnd"></div>	
+					<div className="formAlertError" ref="formAlertErrorEnd"></div>
 				</td>
-				{this.state.schedule.periodicityEnable ? 
+				{this.state.schedule.periodicityEnable ?
 					<td><input type='text' className='budget-field-table' ref="schedulePeriodicity" onKeyPress={this.onKeyUp}/>
 						<div className="formAlertError" ref="formAlertErrorPeriodicity"></div>
 					</td>
@@ -297,7 +295,7 @@ export default React.createClass({
 						);
 					})
 				: <td></td>}
-				<td>				
+				<td>
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewSchedule} title={Messages.get("label.submitLabel")}></span>
                       	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewSchedule} title={Messages.get("label.cancel")}></span>
@@ -323,7 +321,7 @@ export default React.createClass({
 					<td>{model.description}</td>
 					<td>{model.begin.split(" ")[0]}</td>
 					<td>{model.end.split(" ")[0]}</td>
-					{model.periodicityEnable ? 
+					{model.periodicityEnable ?
 						<td>{model.periodicity}</td>
 					: <td></td>}
 					{model.scheduleValues.length >0 ?
@@ -334,14 +332,14 @@ export default React.createClass({
 						})
 					: <td></td>}
 
-					{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')?
 						<td className="edit-budget-col floatRight scheduleRenderIcons">
 							<span className="mdi mdi-pencil" onClick={this.editSchedule.bind(this,model.id,idx)}/>
 							<span className="mdi mdi-delete" onClick={this.deleteSchedule.bind(this,model.id,idx)}/>
 						</td>
 					: <td></td>}
-				</tr>	
+				</tr>
 			);
 		}
 	},
@@ -368,7 +366,7 @@ export default React.createClass({
 		if(!this.state.endChanged){
 			this.state.endDate = dataEnd;
 		}
-		return(		
+		return(
 			<tr key={"schedule"+idx}>
 				<td>{model.number}</td>
 				<td><input type='text' ref='descriptionEdit' className='budget-field-table' defaultValue={model.description} />
@@ -376,33 +374,33 @@ export default React.createClass({
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='begin' 
-					className='budget-field-table' 
+					ref='begin'
+					className='budget-field-table'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.initDate}
 					onChange={this.onChangeInit}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
 					<div className="formAlertError" ref="formAlertErrorBeginEdit"></div>
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='end' 
+					ref='end'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.endDate}
 					onChange={this.onChangeEnd}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
 					<div className="formAlertError" ref="formAlertErrorEndEdit"></div>
 				</td>
-	            {model.periodicityEnable ? 
+	            {model.periodicityEnable ?
 					<td><input type='text' ref='periodicityEdit' className='budget-field-table' defaultValue={model.periodicity} onKeyPress={this.onKeyUp}/>
 						<div className="formAlertError" ref="formAlertErrorPeriodicityEdit"></div>
 					</td>
 				: <td></td>}
-				{model.scheduleValues.length >0 ? 
+				{model.scheduleValues.length >0 ?
 					model.scheduleValues.map((mod, i) => {
 						<td><input type='text' ref='valueEdit' id={'valueSchedule'+mod.i} className='budget-field-table' defaultValue={mod.value} onKeyPress={this.onKeyUp}/>
 							<div className="formAlertError" ref="formAlertErrorValueEdit"></div>
@@ -442,7 +440,7 @@ export default React.createClass({
 	renderEditTitle(){
 		return(
 			<div className="panel-heading attribute-input-opts">
-			<div className="edit-section-attribute"> 
+			<div className="edit-section-attribute">
 				<input defaultValue={this.props.fieldDef.label == "" ? this.state.title : this.props.fieldDef.label} className="edit-section-attribute-input" ref="edit-input"/>
 				<div className=' displayFlex'>
                    	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
@@ -459,18 +457,18 @@ export default React.createClass({
 		}
 		return(
 			<div className="panel panel-default panel-margins">
-				{!!this.state.editing ? this.renderEditTitle() 
+				{!!this.state.editing ? this.renderEditTitle()
 				:
 				<div className="panel-heading displayFlex attribute-input-opts">
 					<b className="budget-title" ref="titleSchedule">{this.state.title}</b>
-					{!!this.props.isDocument ? ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-													PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ? 
-					<span className="mdi mdi-pencil attribute-input-edit atribute-input-edit-schedule inner" 
+					{!!this.props.isDocument ? ((this.context.roles.MANAGER || _.contains(this.context.permissions,
+													PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ?
+					<span className="mdi mdi-pencil attribute-input-edit atribute-input-edit-schedule inner"
 					title={Messages.get("label.title.changeField")} onClick={this.edit}/> :"") : ""}
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
-					{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') ?
 						<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newSchedule}>{Messages.get("label.new")}</button>
 					:""}
@@ -478,7 +476,7 @@ export default React.createClass({
 					</div>}
 				</div>
 				}
-				<table className="budget-field-table table">	
+				<table className="budget-field-table table">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -500,7 +498,7 @@ export default React.createClass({
 						{!this.state.hide ? this.state.schedule.scheduleInstances.map((model, idx) => {
 							return this.renderScheduleField((model.id == this.state.editingScheduleID),model,idx);
 						}) : <th></th>}
-					</tbody>				
+					</tbody>
 				</table>
 			</div>
 		);

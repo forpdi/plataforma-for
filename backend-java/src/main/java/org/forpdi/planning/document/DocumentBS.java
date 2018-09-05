@@ -95,7 +95,6 @@ import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfAction;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
-import com.itextpdf.text.pdf.PdfDocument;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
@@ -451,84 +450,6 @@ public class DocumentBS extends HibernateBusiness {
 		}
 		return attributesList;
 	}
-
-	/*
-	 * public PaginatedList<DocumentSection> listFilledDocumentSections(long
-	 * documentId) { String sql =
-	 * "SELECT doc_sec.id AS id, doc_sec.name AS name " //+
-	 * "	CASE WHEN sub_cons.parent IS NULL THEN 0 ELSE 1 END AS filled " +
-	 * "	FROM forpdi_db.fpdi_document_section AS doc_sec " +
-	 * "	LEFT JOIN (SELECT doc_sec.id AS secId, CASE WHEN doc_sec.parent_id is null then doc_sec.id else "
-	 * +
-	 * "	doc_sec.parent_id end as parent FROM fpdi_document_attribute AS doc_att "
-	 * +
-	 * "	INNER JOIN fpdi_document_section AS doc_sec ON doc_att.section_id = doc_sec.id "
-	 * + "	LEFT JOIN (SELECT doc_sec.id, doc_sec.name " +
-	 * "	FROM forpdi_db.fpdi_document_section doc_sec) AS doc_sec_parent " +
-	 * "	ON doc_sec.parent_id = doc_sec_parent.id " +
-	 * "  LEFT JOIN fpdi_table_field AS tab_field ON doc_att.id = tab_field.attributeId "
-	 * +
-	 * "	LEFT JOIN fpdi_table_instance AS tab_inst ON tab_field.id = tab_inst.tableFields_id "
-	 * +
-	 * "	LEFT JOIN (SELECT tableFields_id AS tabFieldId, COUNT(id) AS qtdCols FROM "
-	 * +
-	 * "	forpdi_db.fpdi_table_structure GROUP BY tableFields_id) AS qtd_cols "
-	 * + "	ON tab_field.id = qtd_cols.tabFieldId LEFT JOIN (SELECT " +
-	 * "	tab_inst.tableFields_id AS tabFieldId, COUNT(tab_val.id) AS qtdRows "
-	 * +
-	 * "	FROM forpdi_db.fpdi_table_values AS tab_val INNER JOIN fpdi_table_instance "
-	 * + "	AS tab_inst ON tab_val.tableInstance_id = tab_inst.id " +
-	 * "	GROUP BY tab_inst.tableFields_id) AS qtd_rows ON tab_field.id = qtd_rows.tabFieldId "
-	 * +
-	 * "	LEFT JOIN fpdi_table_structure AS tab_struct ON tab_field.id = tab_struct.tableFields_id "
-	 * +
-	 * "	LEFT JOIN fpdi_table_values AS tab_val ON tab_struct.id = tab_val.tableStructure_id "
-	 * +
-	 * "	LEFT JOIN fpdi_schedule AS sch_field ON doc_att.id = sch_field.attributeId "
-	 * +
-	 * "	LEFT JOIN fpdi_schedule_instance AS sch_inst ON sch_field.id = sch_inst.schedule_id "
-	 * +
-	 * "	LEFT JOIN (SELECT count(sch_inst.id) schRows, sch.id FROM forpdi_db.fpdi_schedule_instance "
-	 * +
-	 * "	sch_inst INNER JOIN fpdi_schedule sch ON sch_inst.schedule_id = sch.id GROUP BY sch.id ) "
-	 * +
-	 * "	as sch_rows ON sch_inst.schedule_id = sch_rows.id LEFT JOIN fpdi_plan_macro AS plan_macro "
-	 * +
-	 * "	ON doc_att.value = plan_macro.id WHERE    ((doc_att.value IS NOT NULL AND doc_att.value <> '' AND doc_att.value <> '<p><br></p>') "
-	 * +
-	 * "	OR tab_val.value IS NOT NULL OR sch_inst.description IS NOT NULL)AND doc_att.deleted = 0 "
-	 * +
-	 * "	GROUP BY tab_val.id, sch_inst.id, doc_att.id ORDER BY doc_sec.id , doc_att.id , tab_inst.id , "
-	 * +
-	 * "	tab_val.id, sch_inst.id) AS sub_cons ON doc_sec.id = sub_cons.parent WHERE doc_sec.parent_id IS NULL "
-	 * + "	AND doc_sec.deleted=0 AND doc_sec.document_id=" + documentId +
-	 * " GROUP BY doc_sec.id";
-	 */
-	/*
-	 * String sql = "SELECT doc_sec.id as id, doc_sec.name as name, \n"; sql +=
-	 * "CASE WHEN replace(subconsulta.value, ',', '') IS NULL OR \n"; sql +=
-	 * "replace(subconsulta.value, ',', '') = '' THEN false ELSE true END AS filled \n"
-	 * ; sql += "FROM fpdi_document_section AS doc_sec \n"; sql +=
-	 * "INNER JOIN (SELECT \n"; sql +=
-	 * "CASE WHEN doc_sec.parent_id is null then doc_sec.id else \n"; sql +=
-	 * "doc_sec.parent_id end as parent, \n"; sql +=
-	 * "group_concat(doc_att.value) as value \n"; sql +=
-	 * "FROM forpdi_db.fpdi_document_section as doc_sec \n"; sql +=
-	 * "LEFT JOIN fpdi_document_attribute AS doc_att \n"; sql +=
-	 * "ON doc_sec.id = doc_att.section_id \n"; sql += "WHERE document_id=" +
-	 * documentId + " \n"; sql += "GROUP BY parent \n"; sql +=
-	 * "ORDER BY parent \n"; sql += ") AS subconsulta \n"; sql +=
-	 * "ON doc_sec.id = subconsulta.parent \n"; sql +=
-	 * "WHERE doc_sec.parent_id IS NULL AND \n"; sql += "doc_sec.document_id ="
-	 * + documentId + " AND doc_sec.deleted = 0;\n";
-	 */
-	/*
-	 * SQLQuery query = this.dao.newSQLQuery(sql);
-	 * PaginatedList<DocumentSection> result = new
-	 * PaginatedList<DocumentSection>();
-	 * //query.setResultTransformer(Transformers.aliasToBean(DocumentSection.
-	 * class)); result.setList(query.list()); return result; }
-	 */
 
 	/**
 	 * Lista todas as seções de um documento.

@@ -1,11 +1,13 @@
+
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill';
+
 import React from 'react';
-import ReactDOM from 'react-dom';
 import ReactQuill from 'react-quill';
 import RichTextToolbar from 'forpdi/jsx/vendor/RichTextToolbar.jsx';
 import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx";
-import 'react-quill/node_modules/quill/dist/quill.snow.css';
-import 'react-quill/node_modules/quill/dist/quill.base.css';
 
 export default React.createClass({
 
@@ -15,10 +17,10 @@ export default React.createClass({
 
     getInitialState(){
         this.value = this.props.defaultValue;
-        return {            
+        return {
             toolbarOptions: {
                 toolbar: {
-                    container: '#'+this.props.id                    
+                    container: '#'+this.props.id
                 }
             },
             selectedTxt: "",
@@ -27,7 +29,7 @@ export default React.createClass({
     },
 
     componentDidMount(){
-        
+
     },
 
     onLinkClick(){
@@ -40,7 +42,7 @@ export default React.createClass({
             start = this.selection.start;
             end = this.selection.end;
             text = this.quill.getText().substring(start,end);
-        }        
+        }
         Modal.confirm("Insira o endereço",
             <p className="fpdi-richtext-link-ctn">
                 <label htmlFor="url-input" className="fpdi-richtext-link-label">Link:</label>
@@ -52,15 +54,15 @@ export default React.createClass({
     },
 
     insertLink(text, start, end){
-        var url = document.getElementById("url-input").value;        
+        var url = document.getElementById("url-input").value;
         if(text == ""){
             text = url;
             this.quill.insertText(start, text, 'link', url);
-        } else {            
+        } else {
             this.quill.deleteText(start, end);
-            this.quill.insertText(start, text, 'link', url);            
+            this.quill.insertText(start, text, 'link', url);
         }
-        
+
         Modal.hide();
     },
 
@@ -71,13 +73,13 @@ export default React.createClass({
         var url = FileStore.url+"/upload";
         var fileType = "image/*";
         var typesBlocked = "(exe*)";
-        var onSuccess = function (resp){            
+        var onSuccess = function (resp){
             var image = resp.message.replace("https://", "http://");
             Modal.hide();
             this.quill.insertEmbed(this.quill.editor.delta.length(), 'image', image);
             this.quill.focus();
         }
-        var onFailure = function (resp){            
+        var onFailure = function (resp){
             Modal.hide();
         }
         var validSamples = "jpg, jpeg, gif, png, svg.";
@@ -87,7 +89,7 @@ export default React.createClass({
 
     onChange(content, delta, source, editor){
         this.quill = this.refs['quill'].state.editor;
-        var length = this.quill.getLength();        
+        var length = this.quill.getLength();
         if(length > this.props.maxLength){
             this.context.toastr.addAlertError("Limite de "+this.props.maxLength+" caracteres atingido!");
             var text = this.quill.getText();
@@ -97,7 +99,7 @@ export default React.createClass({
         this.value = content;
     },
 
-    onKeyPress(evt){        
+    onKeyPress(evt){
         this.quill = this.refs['quill'].state.editor;
         var length = this.quill.getLength();
         if(length >= this.props.maxLength){
@@ -109,7 +111,7 @@ export default React.createClass({
 
     render(){
         return (
-            <div>                
+            <div>
                 <ReactQuill theme="snow"
                 modules={this.state.toolbarOptions}
                 onChange={this.onChange}

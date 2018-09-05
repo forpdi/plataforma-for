@@ -1,64 +1,93 @@
-var path = require('path');
-var node_modules_dir = path.resolve(__dirname, 'node_modules');
-var Webpack = require("webpack");
+
+const Webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
-	context: __dirname,
-    devtool: "cheap-module-source-map",
-    entry: ["./favicon.ico", "./index.html", "./app.js"],
-    output: {
-        path: path.resolve(__dirname, 'build/development'),
-        filename: "app.js"
+  context: __dirname,
+
+  devtool: '#eval-cheap-module-source-map',
+  entry: ["./favicon.ico", "./index.html", "./app.js"],
+  output: {
+    path: path.join(__dirname, 'build/development'),
+    filename: 'bundle.js',
+    publicPath: '/',
+    pathinfo: true,
+  },
+
+  devServer: {
+    historyApiFallback: {
+      disableDotRule: true,
     },
-    resolve: {
-        extensions: [".js", ".jsx", ".webpack.js", ".web.js"],
-    	alias: {
-    		"forpdi": __dirname,
-            "jquery.ui.widget": "./vendor/jquery.ui.widget.js",
-            "jquery-ui/ui/widget": "./vendor/jquery.ui.widget.js"
-    	}
+    compress: true,
+    proxy: {
+      '/evojus-rest-api/**': {
+        target: 'http://localhost:8080',
+        secure: false,
+      },
     },
-    plugins: [
-              new Webpack.ProvidePlugin({
-                  $: "jquery",
-                  jQuery: "jquery"
-              }),
-              new Webpack.DefinePlugin({
-                  'process.env':{
-                      'NODE_ENV': JSON.stringify('development')
-                  }
-              })
+  },
+
+  resolve: {
+    extensions: ['.js', '.jsx', '.json', '.scss', '.css'],
+    alias: {
+      '@': path.resolve(__dirname, 'jsx'),
+	  "forpdi": __dirname,
+	  "jquery.ui.widget": "./vendor/jquery.ui.widget.js",
+	  "jquery-ui/ui/widget": "./vendor/jquery.ui.widget.js"
+    },
+  },
+
+  plugins: [
+    new Webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(false),
+      'process.env': {
+		'NODE_ENV': JSON.stringify('development')
+	  }
+    }),
+	new Webpack.ProvidePlugin({
+		$: "jquery",
+		jQuery: "jquery"
+	}),
+  ],
+
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        loaders: ['babel-loader'],
+      }, {
+        test: /theme-[a-z]+\.scss$/,
+        loaders: [
+          'file-loader?name=[name].css',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      }, {
+        test: /_[a-z\-]+\.scss$/,
+        loaders: [
+          'style-loader',
+          'css-loader',
+          'postcss-loader',
+          'sass-loader',
+        ],
+      }, {
+        test: /\.pdf$/,
+        loaders: ['file-loader?name=documents/[name].[ext]'],
+      }, {
+        test: /\.css$/,
+        loaders: ['style-loader', 'css-loader', 'postcss-loader'],
+      }, {
+        test: /\.(html|ico)$/,
+        loader: 'file-loader?name=[name].[ext]',
+      }, {
+        test: /\.(jpg|jpeg|png|svg|gif)(\?v=[0-9].[0-9].[0-9])?$/,
+        loader: 'file-loader?name=images/[name].[ext]',
+      }, {
+        test: /\.(woff|woff2|ttf|eot)(\?v=[0-9].[0-9].[0-9])?$/,
+        loader: 'file-loader?name=fonts/[name].[ext]',
+      },
     ],
-    module: {
-        noParse: /node_modules\/quill\/dist\/quill.js/,
-        loaders: [{
-            test: /\.jsx$/,
-            exclude: [node_modules_dir],
-            loader: "babel-loader",
-            query: {
-                presets: ['es2015','react']
-            }
-        },{
-            test: /\.json$/,
-            loader: "json-loader"
-        },{
-            test: /theme-[a-z]+\.scss$/,
-            loader: "file-loader?name=[name].css!sass-loader"
-        },{
-            test: /_[a-z\-]+\.scss$/,
-            loader: "style-loader!css-loader!sass-loader"
-        },{
-        	test: /\.css$/,
-        	loader: "style-loader!css-loader"
-        },{
-        	test: /\.html$|\.ico$/,
-        	loader: "file-loader?name=[name].[ext]"
-        },{
-        	test: /\.(woff|woff2)$/,
-        	loader: "url-loader?limit=10000&mimetype=application/font-woff"
-        },{
-        	test: /\.ttf$|\.eot$|\.svg$|\.png$|\.jpe?g$|\.gif$/,
-        	loader: "file-loader?name=images/[name].[ext]"
-        }]
-    }
+  },
+
 };

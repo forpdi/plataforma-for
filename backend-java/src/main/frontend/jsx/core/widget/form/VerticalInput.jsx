@@ -1,13 +1,12 @@
+
 import _ from "underscore";
 import React from "react";
 import MaskedInput from 'react-maskedinput';
 import string from 'string';
-import {Link} from "react-router";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import moment from 'moment';
-import 'react-date-picker/index.css'
 import Toastr from 'toastr';
 
 export default React.createClass({
@@ -73,10 +72,10 @@ export default React.createClass({
 	onKeyUp(evt){
 		this.maxLengthMask();
 		var key = evt.which;
-		if(key == 13 && key != this.props.confirmKey) {			
+		if(key == 13 && key != this.props.confirmKey) {
 			evt.preventDefault();
 			return;
-		} 
+		}
 
 		{/*else if(key == this.props.confirmKey){
 			evt.preventDefault();
@@ -118,13 +117,13 @@ export default React.createClass({
 		if(this.refs[this.state.fieldId].value.length >= this.props.fieldDef.maxLength){
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
-				Toastr.error(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength+" " + Messages.get("label.error.limitCaracteres"));	
-			}else{			
+				Toastr.error(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength+" " + Messages.get("label.error.limitCaracteres"));
+			}else{
 				this.context.toastr.addAlertError(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
 			}
 		}
 	},
-	
+
 	render() {
 		var fieldEl;
 		if (this.props.fieldDef.type == 'checkbox') {
@@ -137,7 +136,7 @@ export default React.createClass({
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					onChange={this.props.fieldDef.onChange || _.noop}
-				/> 
+				/>
 				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 					<span id = "lbl-checkbox"> {this.props.fieldDef.label} </span>
 					{this.props.fieldDef.required ? <span className="fpdi-required">&nbsp;</span>:""}
@@ -209,7 +208,7 @@ export default React.createClass({
 			fieldEl = (<div><DatePicker
 					className="form-control"
 					type="datepicker"
-					ref={this.state.fieldId} 
+					ref={this.state.fieldId}
 					dateFormat="DD/MM/YYYY"
 					id={this.state.fieldId}
 					selected={(this.props.fieldDef.value)?(moment(this.props.fieldDef.value, "DD/MM/YYYY")):(null)}
@@ -217,7 +216,7 @@ export default React.createClass({
 					onKeyPress={this.onKeyUp}
 					onPaste={this.onKeyUp}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/></div>);
 		} else if (this.props.fieldDef.type == 'daterange') {
 			fieldEl = (<input
@@ -245,7 +244,7 @@ export default React.createClass({
 						placeholder={this.props.fieldDef.placeholder}
 						onChange={this.props.fieldDef.onChange || _.noop}
 						onKeyPress={this.onKeyUp}
-						onPaste={this.onKeyUp}/> 
+						onPaste={this.onKeyUp}/>
 						<div id = "field-subject">
 							<span> {Messages.get("label.maxCaracteresSeventy")} </span>
 						</div>
@@ -320,17 +319,17 @@ export default React.createClass({
 			fieldEl = (
 				<div>
 					<a className="btn btn-sm btn-primary" onClick={this.props.fieldDef.extraFunction}>
-						<span className="mdi mdi-import"/> 
+						<span className="mdi mdi-import"/>
 						{this.props.fieldDef.placeholder}
-					</a> 
-				</div>    
+					</a>
+				</div>
 			);
 		} else if (this.props.fieldDef.type == 'changePassword') {
 			fieldEl = (
 				<div>
 					<label className = "fpdi-text-label"> SENHA </label>
 					<br/>
-					<a className="senhaUser" onClick={this.props.fieldDef.onClick}> 
+					<a className="senhaUser" onClick={this.props.fieldDef.onClick}>
 						{this.props.fieldDef.placeholder}
 					</a>
 				</div>
@@ -373,7 +372,7 @@ export default React.createClass({
 
 		return (
 			<div className={"form-group form-group-sm" + (this.props.fieldDef.type == 'hidden' ? " hidden":"")}>
-				{this.props.fieldDef.type != 'checkbox' ? 
+				{this.props.fieldDef.type != 'checkbox' ?
 					<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 						{this.props.fieldDef.label}
 						{this.props.fieldDef.required ? <span className="fpdi-required">&nbsp;</span>:""}
