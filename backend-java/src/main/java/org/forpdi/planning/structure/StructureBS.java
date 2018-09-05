@@ -11,6 +11,7 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +27,7 @@ import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
@@ -1176,7 +1178,7 @@ public class StructureBS extends HibernateBusiness {
 	 * @return id Id da estrutura encontrada.
 	 */
 	public BigInteger retrieveStructureIdByLevel(StructureLevel level) {
-		String sql = "SELECT structure_id AS id FROM forpdi_db.fpdi_structure_level WHERE id=" + level.getId();
+		String sql = String.format("SELECT structure_id AS id FROM %s.fpdi_structure_level WHERE id=%d", SystemConfigs.getConfig("db.name"), level.getId());
 		SQLQuery query = this.dao.newSQLQuery(sql);
 		return (BigInteger) query.uniqueResult();
 	}
@@ -2327,7 +2329,7 @@ public class StructureBS extends HibernateBusiness {
 	 * @return query Lista das intâncias dos leveis.
 	 */
 	public List<StructureLevelInstanceDetailed> listLevelInstanceDetailed(StructureLevelInstance levelInstance) {
-		int year = new Date().getYear()+1900;
+		int year = LocalDate.now().getYear();
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
