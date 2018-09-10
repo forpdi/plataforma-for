@@ -9,6 +9,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.forpdi.planning.plan.PlanMacro;
 
@@ -33,6 +34,16 @@ public class Document extends SimpleLogicalDeletableEntity  {
 
 	@OneToOne(targetEntity=PlanMacro.class, optional=false, fetch=FetchType.EAGER)
 	private PlanMacro plan;
+	
+	@Transient private Long exportPlanMacroId;
+
+	public Long getExportPlanMacroId() {
+		return exportPlanMacroId;
+	}
+
+	public void setExportPlanMacroId(Long exportPlanMacroId) {
+		this.exportPlanMacroId = exportPlanMacroId;
+	}
 
 	public Date getCreation() {
 		return creation;

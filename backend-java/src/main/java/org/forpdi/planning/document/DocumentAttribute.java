@@ -61,6 +61,9 @@ public class DocumentAttribute extends SimpleLogicalDeletableEntity {
 	@Transient
 	private List<StructureLevelInstance> strategicObjectives;
 
+	@Transient
+	private Long exportDocumentSectionId;
+	
 	public String getName() {
 		return name;
 	}
@@ -156,5 +159,11 @@ public class DocumentAttribute extends SimpleLogicalDeletableEntity {
 	public void setStrategicObjectives(List<StructureLevelInstance> strategicObjectives) {
 		this.strategicObjectives = strategicObjectives;
 	}
-	
+	public Long getExportDocumentSectionId() {
+		return exportDocumentSectionId;
+	}
+
+	public void setExportDocumentSectionId(Long exportDocumentSectionId) {
+		this.exportDocumentSectionId = exportDocumentSectionId;
+	}
 }

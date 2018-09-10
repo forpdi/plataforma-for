@@ -791,6 +791,20 @@ public class StructureBS extends HibernateBusiness {
 		List<StructureLevelInstance> list = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		return list;
 	}
+	
+	/**
+	 * Listar instâncias dos leveis pelo plano. Inclusive deletados.
+	 * 
+	 * @param plan
+	 *            Plano de metas.
+	 * @return list Lista de instâncias dos leveis.
+	 */
+	public List<StructureLevelInstance> listAllLevelInstanceByPlan(Plan plan) {
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
+		criteria.add(Restrictions.eq("plan", plan));
+		List<StructureLevelInstance> list = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
+		return list;
+	}
 
 	/**
 	 * Listar as instâncias do level principal.
@@ -2335,6 +2349,20 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
 		criteria.add(Restrictions.eq("year", year));
 
+		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
+	}
+	
+	/**
+	 * Listar as instãncias dos leveis detalhadas. Inclusive deletados.
+	 * 
+	 * @param levelInstance
+	 *            Instância de um level.
+	 * @return query Lista das intâncias dos leveis.
+	 */
+	public List<StructureLevelInstanceDetailed> listAllLevelInstanceDetailed(StructureLevelInstance levelInstance) {
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
 	}
 	

@@ -53,6 +53,12 @@ public class AttributeInstance extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private String formattedValue;
+	
+	@Transient
+	private Long exportAttributeId;
+
+	@Transient
+	private Long exportStructureLevelInstanceId;
 
 	public String getFormattedValue() {
 		return formattedValue;
@@ -117,6 +123,20 @@ public class AttributeInstance extends SimpleLogicalDeletableEntity {
 				+ ", formattedValue=" + formattedValue + "]";
 	}
 
-	
+	public Long getExportAttributeId() {
+		return exportAttributeId;
+	}
+
+	public void setExportAttributeId(Long exportAttributeId) {
+		this.exportAttributeId = exportAttributeId;
+	}
+
+	public Long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+
+	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
+	}
 	
 }

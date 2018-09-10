@@ -49,7 +49,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * Restaura tabelas a partir de um arquivo
 	 *          
 	 */
-	@Post("/structure/restore")
+	@Post("/plan/restore")
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
 	public void  DoRestore(UploadedFile file) {
 		try {

@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
@@ -29,10 +30,12 @@ public class StructureLevelInstanceDetailed extends SimpleLogicalDeletableEntity
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
 	
+	@Transient
+	private Long exportStructureLevelInstanceId;
+	
 	private Double levelValue;
 	private Double levelMinimum;
 	private Double levelMaximum;
-	
 	
 	public int getMonth() {
 		return month;
@@ -71,4 +74,11 @@ public class StructureLevelInstanceDetailed extends SimpleLogicalDeletableEntity
 		this.levelMaximum = levelMaximum;
 	}
 
+	public Long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
+	}
+	
 }

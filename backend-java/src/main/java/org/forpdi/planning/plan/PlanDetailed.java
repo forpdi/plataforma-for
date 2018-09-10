@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 
@@ -27,10 +28,11 @@ public class PlanDetailed extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity = Plan.class, optional = false, fetch = FetchType.EAGER)
 	private Plan plan;
 	
+	@Transient private Long exportPlanId;
+	
 	private Double performance;
 	private Double minimumAverage;
 	private Double maximumAverage;
-	
 	
 	public int getMonth() {
 		return month;
@@ -67,6 +69,12 @@ public class PlanDetailed extends SimpleLogicalDeletableEntity {
 	}
 	public void setMaximumAverage(Double maximumAverage) {
 		this.maximumAverage = maximumAverage;
+	}
+	public Long getExportPlanId() {
+		return exportPlanId;
+	}
+	public void setExportPlanId(Long exportPlanId) {
+		this.exportPlanId = exportPlanId;
 	}
 	
 }

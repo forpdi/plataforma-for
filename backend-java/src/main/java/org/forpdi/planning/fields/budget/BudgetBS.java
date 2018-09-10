@@ -108,9 +108,29 @@ public class BudgetBS extends HibernateBusiness {
 		return list;
 	}
 	
+	/**
+	 * Buscar lista de Bugtes.
+	 * 
+	 * @param StructureLevelInstance
+	 *            structure instance level
+	 * @return List<Budget> Lista de orçamentos.
+	 */
 	public List<Budget> listBudgetByLevelInstance(StructureLevelInstance level){		
 		Criteria criteria = this.dao.newCriteria(Budget.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("levelInstance", level));
+		List<Budget> list = this.dao.findByCriteria(criteria, Budget.class);
+		return list;
+	}
+	
+	/**
+	 * Buscar lista de Bugtes. Inclusive deletados.
+	 * 
+	 * @param StructureLevelInstance
+	 *            structure instance level
+	 * @return List<Budget> Lista de orçamentos.
+	 */
+	public List<Budget> listAllBudgetByLevelInstance(StructureLevelInstance level){		
+		Criteria criteria = this.dao.newCriteria(Budget.class).add(Restrictions.eq("levelInstance", level));
 		List<Budget> list = this.dao.findByCriteria(criteria, Budget.class);
 		return list;
 	}

@@ -105,8 +105,10 @@ public class Attribute extends SimpleLogicalDeletableEntity {
 	private List<OptionsField> optionsField;
 	@Transient
 	private List<User> users;
+	@Transient
+	private Long exportStructureLevelId;
 	
-	
+
 	public String getLabel() {
 		return label;
 	}
@@ -332,8 +334,12 @@ public class Attribute extends SimpleLogicalDeletableEntity {
 	}
 	
 	
-	
-	
-	
+	public Long getExportStructureLevelId() {
+		return exportStructureLevelId;
+	}
 
+	public void setExportStructureLevelId(Long exportStructureLevelId) {
+		this.exportStructureLevelId = exportStructureLevelId;
+	}
+	
 }

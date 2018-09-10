@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.forpdi.planning.structure.StructureLevelInstance;
@@ -29,6 +30,10 @@ public class AggregateIndicator extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable = false)
 	private Double percentage;
+	
+	@Transient private Long exportAggregateId;
+	
+	@Transient private Long exportIndicatorId;
 
 	public StructureLevelInstance getIndicator() {
 		return indicator;
@@ -60,6 +65,20 @@ public class AggregateIndicator extends SimpleLogicalDeletableEntity {
 				+ "]";
 	}
 	
-	
+	public Long getExportAggregateId() {
+		return exportAggregateId;
+	}
+
+	public void setExportAggregateId(Long exportAggregateId) {
+		this.exportAggregateId = exportAggregateId;
+	}
+
+	public Long getExportIndicatorId() {
+		return exportIndicatorId;
+	}
+
+	public void setExportIndicatorId(Long exportIndicatorId) {
+		this.exportIndicatorId = exportIndicatorId;
+	}
 
 }

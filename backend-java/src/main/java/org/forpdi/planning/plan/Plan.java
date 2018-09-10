@@ -66,8 +66,9 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	@Transient private List<PlanDetailed> planDetailedList;
 	@Transient private boolean haveSons;
 	@Transient private Long exportStructureId;
+	@Transient private Long exportPlanMacroId;
 	
-	
+
 	public boolean isHaveSons() {
 		return haveSons;
 	}
@@ -209,6 +210,14 @@ public class Plan extends SimpleLogicalDeletableEntity {
 
 	public void setExportStructureId(Long exportStructureId) {
 		this.exportStructureId = exportStructureId;
+	}
+	
+	public Long getExportPlanMacroId() {
+		return exportPlanMacroId;
+	}
+
+	public void setExportPlanMacroId(Long exportPlanMacroId) {
+		this.exportPlanMacroId = exportPlanMacroId;
 	}
 
 }

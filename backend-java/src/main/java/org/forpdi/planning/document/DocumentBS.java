@@ -405,6 +405,22 @@ public class DocumentBS extends HibernateBusiness {
 		return list;
 	}
 
+	
+	/**
+	 * Retorna a lista de atributos de uma seção do documento
+	 * 
+	 * @param documentSection
+	 *            Seção do documento
+	 * @return List<DocumentAttribute> list Lista de atributos
+	 */
+	public List<DocumentAttribute> listAllAttributesBySection(DocumentSection documentSection) {
+		Criteria criteria = this.dao.newCriteria(DocumentAttribute.class);
+		criteria.add(Restrictions.eq("section", documentSection)).addOrder(Order.asc("sequence"));
+
+		return criteria.list();
+	}
+	
+	
 	/**
 	 * Retorna um atributo do documento a partir do id passado por parâmetro.
 	 * 
@@ -461,6 +477,21 @@ public class DocumentBS extends HibernateBusiness {
 	public List<DocumentSection> listSectionsByDocument(Document doc) {
 		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
 		criteria.add(Restrictions.eq("document", doc)).add(Restrictions.eq("deleted", false));
+		List<DocumentSection> list = this.dao.findByCriteria(criteria, DocumentSection.class);
+
+		return list;
+	}
+	
+	/**
+	 * Lista todas as seções de um documento. Inclusive deletados
+	 * 
+	 * @param doc
+	 *            Documento a partir do qual se deseja listar as seções.
+	 * @return List<DocumentSection> Lista de seções do documento.
+	 */
+	public List<DocumentSection> listAllSectionsByDocument(Document doc) {
+		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
+		criteria.add(Restrictions.eq("document", doc));
 		List<DocumentSection> list = this.dao.findByCriteria(criteria, DocumentSection.class);
 
 		return list;

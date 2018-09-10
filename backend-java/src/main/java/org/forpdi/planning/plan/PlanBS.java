@@ -289,5 +289,19 @@ public class PlanBS extends HibernateBusiness {
 
 		return this.dao.findByCriteria(criteria, PlanDetailed.class);
 	}
+	
+	/**
+	 * Listar os planos detalhados
+	 * 
+	 * @param plan
+	 *            Plano de metas.
+	 * @return query Lista dos planos.
+	 */
+	public List<PlanDetailed> listAllPlanDetailed(Plan plan) {
+		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
+		criteria.add(Restrictions.eq("plan", plan));
+		
+		return this.dao.findByCriteria(criteria, PlanDetailed.class);
+	}
 
 }

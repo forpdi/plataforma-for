@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.planning.structure.StructureLevelInstance;
 
@@ -39,7 +40,10 @@ public class Budget extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
-
+	
+	@Transient private long exportBudgetElementId;
+	@Transient private long exportStructureLevelInstanceId;
+	
 	public String getSubAction() {
 		return subAction;
 	}
@@ -94,6 +98,22 @@ public class Budget extends SimpleLogicalDeletableEntity {
 
 	public void setLevelInstance(StructureLevelInstance levelInstance) {
 		this.levelInstance = levelInstance;
+	}
+	
+	public long getExportBudgetElementId() {
+		return exportBudgetElementId;
+	}
+
+	public void setExportBudgetElementId(long exportBudgetElementId) {
+		this.exportBudgetElementId = exportBudgetElementId;
+	}
+	
+	public long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+
+	public void setExportStructureLevelInstanceId(long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
 	}
 
 }

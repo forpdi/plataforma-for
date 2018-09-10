@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.forpdi.planning.structure.StructureLevelInstance;
 
@@ -30,6 +31,9 @@ public class LevelInstanceHistory extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
 
+	@Transient
+	private Long exportStructureLevelInstanceId;
+	
 	public Date getCreation() {
 		return creation;
 	}
@@ -54,4 +58,11 @@ public class LevelInstanceHistory extends SimpleLogicalDeletableEntity {
 		this.levelInstance = indicator;
 	}
 
+	public Long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+
+	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
+	}
 }

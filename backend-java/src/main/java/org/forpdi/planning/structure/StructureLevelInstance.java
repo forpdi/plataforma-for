@@ -120,6 +120,10 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private List<StructureLevelInstanceDetailed> levelInstanceDetailedList;
+	
+	@Transient private Long exportLevelId;
+	
+	@Transient private Long exportPlanId;
 
 	public List<Attribute> getAttributeList() {
 		return attributeList;
@@ -341,4 +345,19 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 		this.levelInstanceDetailedList = levelInstanceDetailedList;
 	}
 
+	public Long getExportLevelId() {
+		return exportLevelId;
+	}
+
+	public void setExportLevelId(Long exportLevelId) {
+		this.exportLevelId = exportLevelId;
+	}
+
+	public Long getExportPlanId() {
+		return exportPlanId;
+	}
+
+	public void setExportPlanId(Long exportPlanId) {
+		this.exportPlanId = exportPlanId;
+	}
 }

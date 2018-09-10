@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.forpdi.planning.structure.StructureLevelInstance;
 
@@ -45,6 +46,17 @@ public class ActionPlan extends SimpleLogicalDeletableEntity {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private Date creation = new Date();
+	
+	@Transient
+	private Long exportStructureLevelInstanceId;
+
+	public Long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+
+	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
+	}
 
 	public boolean isChecked() {
 		return checked;

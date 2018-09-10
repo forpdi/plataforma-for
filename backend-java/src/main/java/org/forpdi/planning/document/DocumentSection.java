@@ -50,6 +50,10 @@ public class DocumentSection extends SimpleLogicalDeletableEntity   {
 	@Transient
 	private boolean filled;
 	
+	@Transient private long exportDocumentId;
+	
+	@Transient private long exportDocumentSectionId;
+	
 	public String getName() {
 		return name;
 	}
@@ -107,7 +111,17 @@ public class DocumentSection extends SimpleLogicalDeletableEntity   {
 	public void setPreTextSection(boolean preTextSection) {
 		this.preTextSection = preTextSection;
 	}
+	public long getExportDocumentSectionId() {
+		return exportDocumentSectionId;
+	}
+	public void setExportDocumentSectionId(long exportDocumentSectionId) {
+		this.exportDocumentSectionId = exportDocumentSectionId;
+	}
 	
-	
-	
+	public long getExportDocumentId() {
+		return exportDocumentId;
+	}
+	public void setExportDocumentId(long exportDocumentId) {
+		this.exportDocumentId = exportDocumentId;
+	}
 }
