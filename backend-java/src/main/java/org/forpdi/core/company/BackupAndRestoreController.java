@@ -1,4 +1,4 @@
-package org.forpdi.planning.plan;
+package org.forpdi.core.company;
 
 
 import java.time.LocalDateTime;
@@ -28,9 +28,12 @@ public class BackupAndRestoreController extends AbstractController  {
 	
 	/**
 	 * Backup das tabelas
-	 *          
+	 * 
+	 *@param id 
+	 *		id plano macro
+	 *
 	 */
-	@Get("/plan/{id}/export")
+	@Get("/company/{id}/export")
 	public Download export(Long id) {
 		try {
 			byte[] exportData = dbbackup.export(id);
@@ -47,17 +50,22 @@ public class BackupAndRestoreController extends AbstractController  {
 	
 	/**
 	 * Restaura tabelas a partir de um arquivo
-	 *          
+	 *         
+	 * @param file
+	 * 		arquivo para restore
+	 *  
+	 * @param id
+	 * 		id company
 	 */
-	@Post("/plan/restore")
+	@Post("/company/{id}/restore")
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
-	public void  DoRestore(UploadedFile file) {
+	public void  DoRestore(UploadedFile file, Long id) {
 		try {
 			if (file==null) {
 				this.fail("Nenhum arquivo selecionado");
 				return;
 			}
-			dbbackup.restore(file);
+			dbbackup.restore(file, id);
 			this.success("sucess");
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

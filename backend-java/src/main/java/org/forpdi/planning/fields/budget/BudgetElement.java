@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
@@ -34,6 +35,9 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 	
 	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
 	private Company company;
+
+	@Transient
+	private Long exportCompanyId;
 
 	public String getSubAction() {
 		return subAction;
@@ -83,4 +87,12 @@ public class BudgetElement extends SimpleLogicalDeletableEntity{
 		this.company = company;
 	}
 	
+	public Long getExportCompanyId() {
+		return exportCompanyId;
+	}
+
+	public void setExportCompanyId(Long exportCompanyId) {
+		this.exportCompanyId = exportCompanyId;
+	}
+
 }

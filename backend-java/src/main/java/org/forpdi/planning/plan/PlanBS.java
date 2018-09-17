@@ -74,6 +74,28 @@ public class PlanBS extends HibernateBusiness {
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
+	
+	
+	/**
+	 * Lista os planos macro de uma companhia.
+	 * @param company
+	 * 			Companhia da qual se deseja obter os planos macro.
+	 * 
+	 * @return PaginatedList<PlanMacro>
+	 * 			Lista de planos macro.
+	 */
+	public PaginatedList<PlanMacro> listAllMacros(Company company) {
+		PaginatedList<PlanMacro> results = new PaginatedList<PlanMacro>();
+		Criteria criteria = this.dao.newCriteria(PlanMacro.class).add(Restrictions.eq("company", company))
+				.addOrder(Order.desc("begin")).addOrder(Order.desc("end")).addOrder(Order.asc("name"));
+		
+		Criteria count = this.dao.newCriteria(PlanMacro.class).add(Restrictions.eq("company", company))
+				.setProjection(Projections.countDistinct("id"));
+				
+		results.setList(this.dao.findByCriteria(criteria, PlanMacro.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+	}
 
 	/**
 	 * Lista planos de meta de um plano macro.

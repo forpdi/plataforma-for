@@ -37,6 +37,9 @@ public class Structure extends SimpleLogicalDeletableEntity {
 	@Transient
 	private List<StructureLevel> levels;
 	
+	@Transient
+	private Long exportCompanyId;
+
 	public String getName() {
 		return name;
 	}
@@ -69,4 +72,11 @@ public class Structure extends SimpleLogicalDeletableEntity {
 		this.company = company;
 	}
 	
+	public Long getExportCompanyId() {
+		return exportCompanyId;
+	}
+
+	public void setExportCompanyId(Long exportCompanyId) {
+		this.exportCompanyId = exportCompanyId;
+	}
 }

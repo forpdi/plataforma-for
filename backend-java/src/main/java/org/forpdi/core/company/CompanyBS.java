@@ -63,6 +63,20 @@ public class CompanyBS extends HibernateBusiness {
 			
 		return (CompanyDomain) criteria.uniqueResult();
 	}
+	
+	/**
+	 * Recupera uma instância do objeto CompanyDomain utilizando um id
+	 * 
+	 * @param id
+	 *             à ser utilizado na query
+	 * @return Domínio que utiliza o host epecificado
+	 */
+	
+	public Company retrieveCompanyById (Long id) {
+		Criteria criteria  = this.dao.newCriteria(Company.class).add(Restrictions.eq("id",id));
+
+		return (Company) criteria.uniqueResult();
+	}
 
 	public List<CompanyMessage> retrieveMessages(Company company) {
 		Criteria criteria = this.dao.newCriteria(CompanyMessage.class);

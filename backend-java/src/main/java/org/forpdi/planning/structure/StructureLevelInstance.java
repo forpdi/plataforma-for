@@ -100,6 +100,9 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private int favoriteTotal;
+	
+	@Transient
+	private String exportResponsibleMail;
 
 	public Date getNextSave() {
 		return nextSave;
@@ -359,5 +362,13 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 
 	public void setExportPlanId(Long exportPlanId) {
 		this.exportPlanId = exportPlanId;
+	}
+	
+	public String getExportResponsibleMail() {
+		return exportResponsibleMail;
+	}
+
+	public void setExportResponsibleMail(String exportResponsibleMail) {
+		this.exportResponsibleMail = exportResponsibleMail;
 	}
 }
