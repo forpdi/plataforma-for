@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.dashboard.manager.LevelInstanceHistory;
@@ -52,7 +52,6 @@ import org.json.simple.parser.JSONParser;
 
 import com.google.gson.Gson;
 
-
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -70,6 +69,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	@Inject private BudgetBS budgetBS;
 	@Inject private CompanyBS companyBS;
 	@Inject private UserBS userBS;
+	@Inject @Current private CompanyDomain domain;
 	
 	@Inject
 	public BackupAndRestoreHelper(GsonSerializerBuilder gsonBuilder) {
@@ -389,8 +389,13 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws             org.json.simple.parser.ParseException
 	 * 
 	 */
-	public void restore(UploadedFile file, Long company_id) throws IOException, org.json.simple.parser.ParseException {
-
+	public void restore(UploadedFile file) throws IOException, org.json.simple.parser.ParseException {
+		Company company = this.domain.getCompany();
+		// company passado na hora da importação
+		if (company == null) {
+			throw new IllegalArgumentException("Company not found.");
+		}
+		
 		List<File> files = decompact(file.getFile());
 		Map<Long, Long> map_id_company = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_plan_macro = new HashMap<Long, Long>();
@@ -411,13 +416,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			String name = f.getName().split(".json")[0];
 			JSONParser parser = new JSONParser();
 			JSONArray array;
-			
-			// company passado na hora da importação
-			Company company = this.companyBS.retrieveCompanyById(company_id);
-			if (company == null) {
-				throw new IllegalArgumentException("Company not found.");
-			}
-			
+
 			switch (name) {
 			
 			case "Company" :

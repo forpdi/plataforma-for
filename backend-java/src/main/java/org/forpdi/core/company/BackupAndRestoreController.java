@@ -57,16 +57,12 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * @param id
 	 * 		id company
 	 */
-	@Post("/company/{id}/restore")
+	@Post("/company/restore")
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
-	public void  DoRestore(UploadedFile file, Long id) {
+	public void  DoRestore(UploadedFile file) {
 		try {
-			if (file==null) {
-				this.fail("Nenhum arquivo selecionado");
-				return;
-			}
-			dbbackup.restore(file, id);
-			this.success("sucess");
+			dbbackup.restore(file);
+			this.success("Dados importados com sucesso.");
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

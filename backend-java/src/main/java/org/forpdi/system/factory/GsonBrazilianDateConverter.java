@@ -33,12 +33,13 @@ public class GsonBrazilianDateConverter extends DateGsonConverter
 	@Override
 	public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		try {
-			return GeneralUtils.parseDate(json.getAsString());
-		} catch (Throwable e) {}
-		try {
 			return GeneralUtils.parseDateTime(json.getAsString());
 		} catch (Throwable e) {
-			throw new RuntimeException(e);
+			try {
+				return GeneralUtils.parseDate(json.getAsString());
+			} catch (Throwable e2) {
+				throw new RuntimeException(e2);
+			}
 		}
 	}
 }
