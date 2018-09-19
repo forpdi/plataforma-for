@@ -87,8 +87,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws IOException
 	 *
 	 */
-	public byte[] export(Long companyId) throws IOException {
-		Company company = this.companyBS.retrieveCompanyById(companyId);
+	public byte[] export(Company company) throws IOException {
 		if (company == null) {
 			throw new IllegalArgumentException("Company not found.");
 		}

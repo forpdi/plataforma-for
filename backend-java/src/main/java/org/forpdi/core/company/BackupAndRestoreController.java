@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import javax.inject.Inject;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.event.Current;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -21,8 +22,8 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 public class BackupAndRestoreController extends AbstractController  {
 
 
-	@Inject
-	private BackupAndRestoreHelper dbbackup;
+	@Inject private BackupAndRestoreHelper dbbackup;
+	@Inject @Current private CompanyDomain domain;
 	
 	
 	
@@ -33,13 +34,13 @@ public class BackupAndRestoreController extends AbstractController  {
 	 *		id plano macro
 	 *
 	 */
-	@Get("/company/{id}/export")
-	public Download export(Long id) {
+	@Get("/company/export")
+	public Download export() {
 		try {
-			byte[] exportData = dbbackup.export(id);
+			byte[] exportData = dbbackup.export(this.domain.getCompany());
 			//this.success("sucess");
 			return new ByteArrayDownload(exportData, "application/octet-stream",
-				String.format("plan-%d-%s.fbk", id, LocalDateTime.now().toString()));
+				String.format("plan-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
