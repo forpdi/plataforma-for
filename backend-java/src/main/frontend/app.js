@@ -1,6 +1,6 @@
 
-require("forpdi/css/animate.css");
-require("forpdi/css/html5-boilerplate/normalize.css");
+import "forpdi/css/animate.css";
+import "forpdi/css/html5-boilerplate/normalize.css";
 require("forpdi/css/html5-boilerplate/main.css");
 require("forpdi/sass/materialdesignicons/_materialdesignicons.scss");
 require("forpdi/jsx/core/Themes.jsx");

@@ -32,7 +32,7 @@ export default React.createClass({
     },
     componentDidMount() {
         var me = this;
-        
+
         me.setState({
             showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
         });
@@ -135,7 +135,7 @@ export default React.createClass({
         this.setState({
             showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
         });
-       
+
     },
     checkRoute(pathname) {
         this.setState({
@@ -190,7 +190,12 @@ export default React.createClass({
                     archivedPlansHidden: true
             });
         }
-    },
+	},
+
+	importPlans(event) {
+		event && event.preventDefault();
+		// TODO Chamar modal de file upload.
+	},
 
     render() {
         if (!this.state.logged) {
@@ -219,7 +224,7 @@ export default React.createClass({
             :""}
 
             {((this.context.roles.ADMIN || _.contains(this.context.permissions,
-             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?    
+             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) && !this.state.domainError) &&  this.state.showBudgetElement ?
                 <div className="fpdi-tabs-nav">
                     <Link to="/budget-element" activeClassName="active">
                         <span className="fpdi-nav-icon mdi mdi-coin icon-link"
@@ -273,6 +278,22 @@ export default React.createClass({
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
                         /> <span className="fpdi-nav-label">
                             {Messages.getEditable("label.collapseMenu","fpdi-nav-label")}
+                        </span>
+                </a>
+            </div>
+            <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+                <a onClick={this.importPlans}>
+                    <span className="fpdi-nav-icon mdi mdi-file-import icon-link"
+                        /> <span className="fpdi-nav-label">
+                            {Messages.getEditable("label.importPlans","fpdi-nav-label")}
+                        </span>
+                </a>
+            </div>
+            <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+                <a href="/forpdi/company/export">
+                    <span className="fpdi-nav-icon mdi mdi-file-export icon-link"
+                        /> <span className="fpdi-nav-label">
+                            {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
                         </span>
                 </a>
             </div>

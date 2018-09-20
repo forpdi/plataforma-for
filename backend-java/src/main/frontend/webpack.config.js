@@ -4,6 +4,7 @@ const path = require('path');
 
 module.exports = {
   context: __dirname,
+  mode: 'development',
 
   devtool: '#eval-cheap-module-source-map',
   entry: ["./favicon.ico", "./index.html", "./app.js"],
@@ -20,7 +21,7 @@ module.exports = {
     },
     compress: true,
     proxy: {
-      '/evojus-rest-api/**': {
+      '/forpdi/**': {
         target: 'http://localhost:8080',
         secure: false,
       },
