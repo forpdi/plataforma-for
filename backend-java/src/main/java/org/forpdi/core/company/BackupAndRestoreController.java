@@ -37,8 +37,10 @@ public class BackupAndRestoreController extends AbstractController  {
 	@Get("/company/export")
 	public Download export() {
 		try {
+			LOGGER.warn("Starting import Plan Macro");
 			byte[] exportData = dbbackup.export(this.domain.getCompany());
 			//this.success("sucess");
+			LOGGER.warn("Stopping import Plan Macro");
 			return new ByteArrayDownload(exportData, "application/octet-stream",
 				String.format("plan-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
 		} catch (Throwable ex) {

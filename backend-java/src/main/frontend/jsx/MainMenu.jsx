@@ -7,6 +7,7 @@ import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 import Logo from 'forpdi/img/logo.png';
 
@@ -195,6 +196,29 @@ export default React.createClass({
 	importPlans(event) {
 		event && event.preventDefault();
 		// TODO Chamar modal de file upload.
+		var me = this;
+		var formatsBlocked = "(exe*)";
+
+
+		Modal.uploadFile(
+			Messages.get("label.importPlans"),
+			<p>{Messages.get("label.uploadFbk")}</p>,
+			"company/restore",
+			"fbk",
+			formatsBlocked,
+			(response) => {
+				me.refs['paginator'].load(0);
+				Modal.hide();
+				//Toastr.remove();
+				//Toastr.success("Estrutura " +response.data.name + " importada com sucesso.");
+				this.context.toastr.addAlertSuccess( Messages.get("label.planmacro") + " " +response.data.name + " " + Messages.get("label.success.importing2"));
+			},
+			(response) => {
+				Modal.hide();
+				this.context.toastr.addAlertError(response.message);
+			},
+			"xml."
+		);
 	},
 
     render() {
@@ -290,7 +314,7 @@ export default React.createClass({
                 </a>
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
-                <a href="/forpdi/company/export">
+                <a href="company/export">
                     <span className="fpdi-nav-icon mdi mdi-file-export icon-link"
                         /> <span className="fpdi-nav-label">
                             {Messages.getEditable("label.exportPlans","fpdi-nav-label")}

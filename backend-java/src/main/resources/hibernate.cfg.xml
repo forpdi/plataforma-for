@@ -5,7 +5,7 @@
 	<session-factory>
   		<property name="org.hibernate">true</property>
 
-		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false</property>
+		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo</property>
 		<property name="connection.username">${db.username}</property>
 		<property name="connection.password">${db.password}</property>
 		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
