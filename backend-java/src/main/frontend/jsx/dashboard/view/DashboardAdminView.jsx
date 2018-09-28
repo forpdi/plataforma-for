@@ -21,12 +21,10 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        if(this.isMounted()) {
-    		this.setState({
-    			plan:newProps.plan,
-    			subPlan: newProps.subPlan
-    		});
-        }
+		this.setState({
+			plan:newProps.plan,
+			subPlan: newProps.subPlan
+		});
     },
 
     componentDidMount(){

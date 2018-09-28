@@ -40,18 +40,16 @@ export default React.createClass({
 
   componentWillReceiveProps(newProps){
     var me = this;
-    if(this.isMounted()) {
-      me.setState({
-        plan: newProps.plan,
-        subPlan: newProps.subPlan,
-        loading: true
-      });
+	me.setState({
+	plan: newProps.plan,
+	subPlan: newProps.subPlan,
+	loading: true
+	});
 
-      if(!this.state.loading){
-        this.refs.selectThematicAxes.value = -1;
-      }
-      this.getInfo(1, this.state.pageSize, newProps);
-    }
+	if(!this.state.loading){
+	this.refs.selectThematicAxes.value = -1;
+	}
+	this.getInfo(1, this.state.pageSize, newProps);
   },
 
   componentDidMount() {
@@ -138,14 +136,10 @@ export default React.createClass({
     },me);
 
     DashboardStore.on("performanceStrategicAxisRetrived", (model) => {
-        if(this.isMounted()) {
-            me.setState({
-                thematicAxes:model.data,
-                loading: false
-            });
-            me.forceUpdate();
-        }
-
+		me.setState({
+			thematicAxes:model.data,
+			loading: false
+		});
         if (this.refs.selectThematicAxes.value == -1) {
             var data = [];
             var element = [];

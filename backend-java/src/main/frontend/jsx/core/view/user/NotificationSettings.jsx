@@ -13,14 +13,12 @@ export default onClickOutside(React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        if(this.isMounted()) {
-            this.setState({
-                model: newProps.model,
-            });
-        }
+		this.setState({
+			model: newProps.model,
+		});
     },
 
-    setNotificationConfig(){		
+    setNotificationConfig(){
 		var me = this;
 		var notificationSettingOption;
 		var update = false;
@@ -50,7 +48,7 @@ export default onClickOutside(React.createClass({
 				model: model
 			})
 		}
-		
+
 	},
 
     render() {

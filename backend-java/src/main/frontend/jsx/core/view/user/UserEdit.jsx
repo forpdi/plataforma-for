@@ -56,7 +56,7 @@ export default React.createClass({
 		};
 	},
 
-	
+
 
 	componentDidMount() {
 		var me = this;
@@ -65,28 +65,22 @@ export default React.createClass({
 		// 	return;
 		// }
 
-		UserStore.on("retrieve-permissions", (model) => {			
-			if(me.isMounted()){
-				model.data.map((item, idx) => {
-					if(item.granted)
-						this.state.selectedPermissions.push(idx);
-				});		
-				if (me.isMounted()) {		
-					me.setState({
-						permissions: model.data
-					});
-				}
-			}
+		UserStore.on("retrieve-permissions", (model) => {
+			model.data.map((item, idx) => {
+				if(item.granted)
+					this.state.selectedPermissions.push(idx);
+			});
+			me.setState({
+				permissions: model.data
+			});
 		}, me);
 
 		UserStore.on("retrieve", (model) => {
-			if (me.isMounted()) {
-				me.setState({
-					model: model.attributes,
-				});
-			}
+			me.setState({
+				model: model.attributes,
+			});
 			this.getPermissionsList();
-			
+
 			UserSession.dispatch({
 			action: UserSession.ACTION_LIST_MESSAGES,
 				data: {
@@ -99,15 +93,14 @@ export default React.createClass({
 		}, me);
 
 		UserStore.on("update-picture-user", (model) => {
-
 			UserStore.dispatch({
 				action: UserStore.ACTION_RETRIEVE,
 				data: this.props.params.modelId
 			});
-			
+
 			//Toastr.remove();
 			//Toastr.success("Foto alterada com sucesso.");
-			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));			
+			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));
 		}, me);
 
 		UserStore.dispatch({
@@ -119,60 +112,43 @@ export default React.createClass({
 			//console.log(model);
 
 			if ((this.state.totalMessages + model.data.length) >= model.total) {
-				if (me.isMounted()) {
-					me.setState({
-						hideShowMoreMessages: true
-					});
-				}
-			}
-			if (me.isMounted()) {
 				me.setState({
-					totalMessages: model.data.length + this.state.totalMessages
+					hideShowMoreMessages: true
 				});
 			}
+			me.setState({
+				totalMessages: model.data.length + this.state.totalMessages
+			});
 		},me);
 
-		
+
 		UserSession.on("retrieve-messages",(model) => {
-
 			if (model.data.length >= model.total || model.data.length <= 0) {
-				if (me.isMounted()) {
-					me.setState({
-						hideShowMoreMessages: true
-					});
-				}
-			}
-			if (me.isMounted()) {
 				me.setState({
-					totalMessages: model.data.length
+					hideShowMoreMessages: true
 				});
 			}
+			me.setState({
+				totalMessages: model.data.length
+			});
 		},me);
 
 
-		UserStore.on("editUser", (store) => {						
+		UserStore.on("editUser", (store) => {
 			if (store.data) {
-				if (this.isMounted()) {
-					this.setState({
-						model: store.data,
-					});
-				}
-
+				this.setState({
+					model: store.data,
+				});
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.dataEdited"));
 				me.updateLoadingState();
-				
-				if (this.isMounted()) {
-					this.setState({
-						isEditUser: false
-					});
-				}
-				
+				this.setState({
+					isEditUser: false
+				});
 			} else {
 				var errorMsg = JSON.parse(store.responseText)
 				this.context.toastr.addAlertError(errorMsg.message);
-			}		
+			}
 		}, me);
-
 
 		UserSession.on("sendMessage",(store) => {
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.sendMessage"));
@@ -185,22 +161,19 @@ export default React.createClass({
 					limit: 3
 				}
 			});
-			
+
 		},me);
 
 		UserStore.on("permissions-saved", (store) => {
-			if(me.isMounted()){
-				me.setState({
-					editingPermission: false
-				});
-			}
+			me.setState({
+				editingPermission: false
+			});
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.editedSuccessfully"));
 			me.updateLoadingState();
-
 		}, me);
 	},
 
-	getPermissionsList(){		
+	getPermissionsList(){
 		UserStore.dispatch({
 			action: UserStore.ACTION_LIST_PERMISSIONS,
 			data: {
@@ -214,7 +187,6 @@ export default React.createClass({
 	},
 
 	getFields(model) {
-	 
 		return [{
 			name: "name",
 			type: "text",
@@ -247,8 +219,8 @@ export default React.createClass({
 			required: true,
 			disabled: this.context.roles.SYSADMIN || (model && UserSession.get("user").id == model.id) ? false : true,
 			disableMsg: Messages.get("label.disabled.cpf")
-		}, 
-		
+		},
+
 		{
 			name: "birthdate",
 			type: "date",
@@ -284,7 +256,7 @@ export default React.createClass({
 			maxLength:255,
 			value:  model ? model.department:null,
 		},
-		{	
+		{
 			name: 'accessLevel',
 			type: 'select',
 			maxLength: 255,
@@ -294,11 +266,11 @@ export default React.createClass({
 			value: model ? model.accessLevel :null,
 			displayField: 'name',
 			valueField: 'accessLevel',
-			options: this.context.roles.SYSADMIN ? 
+			options: this.context.roles.SYSADMIN ?
 				AccessLevels.list.filter((level) => {
 					return level.accessLevel <= this.context.accessLevel
 				})
-			:	
+			:
 				AccessLevels.listNoSysAdm.filter((level) => {
 					return level.accessLevel <= this.context.accessLevel;
 				})
@@ -309,7 +281,7 @@ export default React.createClass({
 			placeholder: "",
 			label: Messages.getEditable("label.newPassword","fpdi-nav-label"),
 			value: "",
-			required: false	
+			required: false
 		}]
 
 	},
@@ -344,11 +316,9 @@ export default React.createClass({
 			this.refs.messageUser.refs.mensagem.refs['field-mensagem'].value = '';
 		} else {
 			var fields = this.getFieldsMessage();
-			if (this.isMounted()) {
-				this.setState({
-					fieldsMessage: fields
-				});
-			}
+			this.setState({
+				fieldsMessage: fields
+			});
 		}
 	},
 
@@ -361,12 +331,10 @@ export default React.createClass({
     			limit: 3,
     			page: newPage
     		}
-    	});	
-    	if (this.isMounted()) {
-	    	this.setState({
-	    		page: newPage
-	    	})
-	    }
+    	});
+		this.setState({
+			page: newPage
+		});
 	},
 
 	onSubmitMenssage(data) {
@@ -381,7 +349,7 @@ export default React.createClass({
 				action: UserSession.ACTION_SEND_MESSAGE,
 					data: {
 						subject:data.assunto,
-						message:data.mensagem, 
+						message:data.mensagem,
 						userId:this.state.model.id
 					}
 				});
@@ -391,21 +359,17 @@ export default React.createClass({
 
 	onStartDateChange(data){
 		var model = this.state.model;
-		if (this.isMounted()) {
-			this.setState({
-				model:model,
-			});
-		}
+		this.setState({
+			model:model,
+		});
 		this.refs.editUser.refs.birthdate.props.fieldDef.value = data.format('DD/MM/YYYY');
 	},
 
 	updateLoadingState() {
-		if (this.isMounted()) {
-			this.setState({
-				fields: this.getFields(this.state.model),
-				loading: (this.props.params.modelId && !this.state.model)		
-			});
-		}
+		this.setState({
+			fields: this.getFields(this.state.model),
+			loading: (this.props.params.modelId && !this.state.model)
+		});
 	},
 
 	validarCPF(cpf){
@@ -432,13 +396,13 @@ export default React.createClass({
 		data.birthdate = this.refs.editUser.refs.birthdate.props.fieldDef.value;
 		var msg;
 		var errorField = Validate.validationProfileUser(data, this.refs.editUser);
-	
+
 		if (errorField) {
 			//Toastr.remove();
 			//Toastr.error("Erro ao salvar os dados do formulário.Corrija-os e tente salvar novamente");
 			this.context.toastr.addAlertError(Messages.get("label.errorSavingdata"));
 		} else {
-			
+
 			if (me.props.params.modelId) {
 				var msg = Messages.get("label.msgUpdate");
 				Modal.confirmCustom(() => {
@@ -447,7 +411,7 @@ export default React.createClass({
 						action: UserStore.ACTION_UPDATE_USER,
 						data: {
 							user:data,
-							newPassword: data.newPassword == "" ? null : data.newPassword 
+							newPassword: data.newPassword == "" ? null : data.newPassword
 						}
 					});
 				},msg,this.refreshCancel);
@@ -468,65 +432,54 @@ export default React.createClass({
 				});*/
 			}
 		}
-		
+
 	},
 
 
-	
+
 	showPlanGoals () {
-		if (this.isMounted()) {
-			this.setState({
-				infoPlanGoals: !this.state.infoPlanGoals		
-			});
-		}
+		this.setState({
+			infoPlanGoals: !this.state.infoPlanGoals
+		});
 	},
 
 	showDocumen () {
-		if (this.isMounted()) {
-			this.setState({
-				infoDocument: !this.state.infoDocument	
-			});
-		}
+		this.setState({
+			infoDocument: !this.state.infoDocument
+		});
 	},
 
 	showGoal () {
-		if (this.isMounted()) {
-			this.setState({
-				infoGoal: !this.state.infoGoal	
-			});
-		}
+		this.setState({
+			infoGoal: !this.state.infoGoal
+		});
 	},
 
 	refreshCancel () {
 		Modal.hide();
 		//this.setState({
 		//	editUser: false
-		//	
+		//
 		//});
 	},
 
 
 	refreshAccept () {
 		Modal.hide();
-		if (this.isMounted()) {
-			this.setState({
-				isEditUser: false	
-			});
-		}
+		this.setState({
+			isEditUser: false
+		});
 	},
 
 	onCancel () {
-
 		var deleteFieldsPassword;
 		var tamDeleteFieldsPassword;
 
 		deleteFieldsPassword = this.state.fields;
 		tamDeleteFieldsPassword = deleteFieldsPassword.length - 1;
 
-	
-
 		if (deleteFieldsPassword[tamDeleteFieldsPassword].name == "newPasswordTwo") {
-				deleteFieldsPassword.pop();	
+				deleteFieldsPassword.pop();
 				deleteFieldsPassword.pop();
 				deleteFieldsPassword.pop();
 				deleteFieldsPassword.push({
@@ -536,25 +489,18 @@ export default React.createClass({
 					onClick: this.changePassword
 				})
 		}
-		
-		if (this.isMounted()) {
-			this.setState({
-				fields:deleteFieldsPassword
-			})
-		}
 
+		this.setState({
+			fields:deleteFieldsPassword
+		})
 		var msg = Messages.get("label.msgEdit");
-
 		Modal.confirmCancelCustom(this.refreshAccept,msg,this.refreshCancel);
-
 	},
 
 	confirmEdit () {
-		if (this.isMounted()) {
-			this.setState({
-				isEditUser: true
-			});
-		}
+		this.setState({
+			isEditUser: true
+		});
 	},
 
 	uploadFile() {
@@ -571,10 +517,8 @@ export default React.createClass({
 			"image/*",
 			formatsBlocked,
 			(resp) => {
-				if (me.isMounted()) {
-					me.setState({url: resp.message});
-				}
-				Modal.hide();				
+				me.setState({url: resp.message});
+				Modal.hide();
 				UserStore.dispatch({
 					action: UserStore.ACTION_UPDATE_PICTURE_EDIT_USER,
 					data: {
@@ -586,9 +530,7 @@ export default React.createClass({
 			},
 			(resp) => {
 				Modal.hide();
-				if (me.isMounted()) {
-					me.setState({error: resp.message});	
-				}			
+				me.setState({error: resp.message});
 			},
 			"jpg, jpeg, gif, png, svg."
 		);
@@ -615,20 +557,16 @@ export default React.createClass({
 			array.splice(array.indexOf(idx), 1);
 		} else {
 			array.push(idx);
-		}		
-		if (this.isMounted()) {
-			this.setState({
-				detailed: array
-			});
 		}
+		this.setState({
+			detailed: array
+		});
 	},
 
 	editPermissions(){
-		if (this.isMounted()) {
-			this.setState({
-				editingPermission: !this.state.editingPermission
-			});
-		}
+		this.setState({
+			editingPermission: !this.state.editingPermission
+		});
 	},
 
 	selectPermission(idx){
@@ -639,13 +577,10 @@ export default React.createClass({
 		} else {
 			this.state.permissions[idx].granted = true;
 			array.push(idx);
-		}	
-		if (this.isMounted()) {	
-			this.setState({
-				selectedPermissions: array
-			});		
 		}
-
+		this.setState({
+			selectedPermissions: array
+		});
 	},
 
 	savePermissions(){
@@ -659,7 +594,7 @@ export default React.createClass({
 				revoked: !permission.granted
 			});
 		});
-		
+
 		UserStore.dispatch({
 			action: UserStore.ACTION_SAVE_PERMISSIONS,
 			data: {
@@ -677,7 +612,7 @@ export default React.createClass({
 	       return false;
 	    }
 	},
-   
+
    onlyLetterPaste(evt){
    		var regex = new RegExp("^[a-zA-ZáàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$");
 	   	var value = evt.clipboardData.getData('Text');
@@ -703,10 +638,10 @@ export default React.createClass({
 				+ "/" + this.state.model.birthdate.getFullYear();
 			}
 		}
-		
+
 		return (
   				<div className="fpdi-profile-user padding40">
-				 	<h1  id = "title-profile-user"> {Messages.getEditable("label.editUser","fpdi-nav-label")} </h1>  
+				 	<h1  id = "title-profile-user"> {Messages.getEditable("label.editUser","fpdi-nav-label")} </h1>
 						<div className="marginBottom20">
 							<span>
 								<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
@@ -714,35 +649,35 @@ export default React.createClass({
 									title={"Usuários"}>{Messages.getEditable("label.users","fpdi-nav-label")}</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>
-							
+
 							<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
 								{this.state.model.name}
 							</span>
 						</div>
 						<div className="row">
-						
+
 							<div className="col-sm-3">
 								{this.state.isEditUser == false ?
 
    	 								<div className="panel panel-default panel-default-user">
       									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}
-      										{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
-														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ?  
+      										{(this.context.roles.ADMIN  || _.contains(this.context.permissions,
+														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ?
       											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.confirmEdit} title={Messages.get("label.title.editUserProfile")}/>
       											: ""
       										}
       									</div>
       										<div className="panel-body">
-      										
+
 												<div className="fpdi-container-profile">
 													<img className="fpdi-image-profile" src={this.state.model.picture == null ?(Logo):this.state.model.picture}/>
 												</div>
-												{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
-														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
+												{(this.context.roles.ADMIN  || _.contains(this.context.permissions,
+														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 												<div className="fpdi-container-profile-icon">
   													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.changeProfileImage")}/>
   												</div> : "")}
-  												
+
   												<div>
   													<form>
   														<div className="form-group form-profile">
@@ -751,7 +686,7 @@ export default React.createClass({
 
   															<label className = "fpdi-text-label"> {Messages.getEditable("label.email","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.email} </p>
-    														
+
     														<label className = "fpdi-text-label"> {Messages.getEditable("label.cpf","fpdi-nav-label")} </label>
     															<p id = "p-profileUser"> {this.state.model.cpf} </p>
 
@@ -763,34 +698,34 @@ export default React.createClass({
 
 															<label className = "fpdi-text-label">{Messages.getEditable("label.phone","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.phone}  </p>
-    																	
+
     														<label className = "fpdi-text-label"> {Messages.getEditable("label.department","fpdi-nav-label")}</label>
     															<p id = "p-profileUser"> {this.state.model.department == null ? this.state.model.department: (this.state.model.department.length>25)?(string(this.state.model.department).trim().substr(0,25).concat("...").toString()):(this.state.model.department)} </p>
 
     														<label className = "fpdi-text-label"> {Messages.getEditable("label.userType","fpdi-nav-label")} </label>
-    															<p id = "p-profileUser"> {AccessLevels.mapped[this.state.model.accessLevel]} </p> 	
+    															<p id = "p-profileUser"> {AccessLevels.mapped[this.state.model.accessLevel]} </p>
   														</div>
   													</form>
   												</div>
-      											
-      										</div>
-   							 			</div> 
 
-   							 		: 
+      										</div>
+   							 			</div>
+
+   							 		:
 
    							 		<div className="panel panel-default panel-default-user">
       									<div className="panel-heading">{Messages.getEditable("label.userData","fpdi-nav-label")}</div>
       										<div className="panel-body">
-      											
+
       											<div className="fpdi-container-profile">
 													<img className="fpdi-image-profile" src={this.state.model.picture == null ?(Logo):this.state.model.picture}/>
 												</div>
-												{(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
-														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ? 
+												{(this.context.roles.ADMIN  || _.contains(this.context.permissions,
+														"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
 												<div className="fpdi-container-profile-icon">
   													<span className="mdi mdi-camera mdi-camera-attributes cursorPointer" onClick={this.uploadFile} title={Messages.get("label.title.changeProfileImage")}/>
-  												</div> : "")}												
-  												
+  												</div> : "")}
+
   												<div className="panel-body">
    							 							<VerticalForm
 				    										ref="editUser"
@@ -800,36 +735,36 @@ export default React.createClass({
 															submitLabel={Messages.get("label.submitLabel")}
 															onCancel = {this.onCancel}
 														/>
-														
+
 												</div>
-      											
+
       										</div>
-   							 					
-   							 		
-   							 		</div> }	
-      							
+
+
+   							 		</div> }
+
 							</div>
 
 								<div className="col-sm-3">
 									<div className="panel panel-default panel-default-user">
       									<div className="panel-heading"> {Messages.getEditable("label.userPermissions","fpdi-nav-label")}
-      										{(this.state.editingPermission || !(this.context.roles.ADMIN  || _.contains(this.context.permissions, 
-														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ? "" : 
+      										{(this.state.editingPermission || !(this.context.roles.ADMIN  || _.contains(this.context.permissions,
+														"org.forpdi.core.user.authz.permission.ManageUsersPermission")) ? "" :
       											<span className="mdi mdi-pencil cursorPointer floatRight" onClick={this.editPermissions} title={Messages.get("label.title.editPermissions")}/>)}
       									</div>
       									<div className="padding5">
 											{this.state.permissions.map((item, idx) => {
-												if(item.granted || this.state.model.accessLevel >= item.accessLevel || 
+												if(item.granted || this.state.model.accessLevel >= item.accessLevel ||
 													(this.state.editingPermission && this.context.accessLevel >= item.accessLevel)){
 													return(
 														<div key={"perm-"+idx} className="user-permission-list-item">
-															{(this.state.editingPermission ? 
+															{(this.state.editingPermission ?
 																<input type="checkbox" defaultChecked={item.granted || this.state.model.accessLevel >= item.accessLevel}
-															 		className="user-permission-checkbox" disabled={this.state.model.accessLevel >= item.accessLevel || 
+															 		className="user-permission-checkbox" disabled={this.state.model.accessLevel >= item.accessLevel ||
 															 		this.context.accessLevel < item.accessLevel} onClick={this.selectPermission.bind(this, idx)}/> : ""
 															 	)
 															}
-															
+
 															{item.permission}
 															<span className={"mdi cursorPointer floatRight "+(_.contains(this.state.detailed, idx) ?
 															 "mdi-chevron-down" : "mdi-chevron-right")} onClick={this.details.bind(this, idx)}/>
@@ -841,13 +776,13 @@ export default React.createClass({
 											{!!this.state.editingPermission ?
 												(<div className="form-group user-permission-btn-ctn">
 													<button className="btn btn-success user-permission-btn-save" onClick={this.savePermissions}>{Messages.getEditable("label.submitLabel","fpdi-nav-label")}</button>
-													<button className="btn btn-default" onClick={this.editPermissions}>{Messages.getEditable("label.cancel","fpdi-nav-label")}</button>												
+													<button className="btn btn-default" onClick={this.editPermissions}>{Messages.getEditable("label.cancel","fpdi-nav-label")}</button>
 												</div>)
 												:
 												""
 											}
-										</div>										
-      								</div>      																
+										</div>
+      								</div>
 								</div>
 								<div className="col-sm-6">
 									<div className="panel panel-default panel-default-user">
@@ -866,7 +801,7 @@ export default React.createClass({
 											</div>
 										</div>
 									</div>
-									
+
 									<div className = "panel panel-default panel-message">
 										<div className="panel-heading"> {Messages.getEditable("label.messageHistory","fpdi-nav-label")} </div>
 										<div className="padding5">
@@ -879,12 +814,12 @@ export default React.createClass({
                 								:""}
 											</div>
 										</div>
-									</div> 
+									</div>
 
 								</div>
 							</div>
 					</div>);
-			
+
 	}
 
 });

@@ -14,7 +14,7 @@ export default React.createClass({
         return {
           plan:this.props.plan,
           subPlan:this.props.subPlan,
-          levelInstance:this.props.levelInstance,      
+          levelInstance:this.props.levelInstance,
           elements:[],
           data: [],
           options:{
@@ -33,136 +33,132 @@ export default React.createClass({
 
     componentWillReceiveProps(newProps){
         var me = this;
-        if(me.isMounted()) {
-          me.setState({
-            plan: newProps.plan,
-            subPlan: newProps.subPlan,
-            levelInstance: newProps.levelInstance,        
-            options:{
-              title: '',
-              hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
-              vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
-              legend: 'none',
-              explorer: { axis: 'horizontal' },
-            },
-            loading: true,
-            aggregateIndicator:newProps.isAggregateIndicator,
-            indicator: newProps.isIndicator
-          });
-          me.getInfos(1, me.state.pageSize, newProps);
-        }
+		me.setState({
+		plan: newProps.plan,
+		subPlan: newProps.subPlan,
+		levelInstance: newProps.levelInstance,
+		options:{
+			title: '',
+			hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
+			vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+			legend: 'none',
+			explorer: { axis: 'horizontal' },
+		},
+		loading: true,
+		aggregateIndicator:newProps.isAggregateIndicator,
+		indicator: newProps.isIndicator
+		});
+		me.getInfos(1, me.state.pageSize, newProps);
     },
 
     componentDidMount() {
-        var me = this;        
+        var me = this;
         DashboardStore.on("levelSonsGraphRetrivied", (model) => {
-            if(me.isMounted()){
-                var data = [];
-                var elements=[];
-                if (me.state.aggregateIndicator == true) {
-                    data = [
-                        ['Element', 'Rendimento', { role: 'style' }]];                    
-                    elements=[];
-                    var vet = [];
+			var data = [];
+			var elements=[];
+			if (me.state.aggregateIndicator == true) {
+				data = [
+					['Element', 'Rendimento', { role: 'style' }]];
+				elements=[];
+				var vet = [];
 
-                    me.state.indicator.indicatorList.map((ind) => {
-                        vet = [];
-                        vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
-                        if(ind.aggregate.levelValue == undefined){
-                            vet[1] = 0;
-                        }else{
-                            vet[1] = {
-                                v: parseFloat(ind.aggregate.levelValue),
-                                f: numeral(parseFloat(ind.aggregate.levelValue)).format('0,0.00') + "%"
-                            };
-                        }
-                        /*
-                        if(ind.aggregate.levelValue < 40){
-                            vet[2] = "#E74C3C";
-                        }else if(ind.aggregate.levelValue < 70){
-                            vet[2] = "#FFCC33";
-                        }else if(ind.aggregate.levelValue < 100){
-                            vet[2] = "#51D466";
-                        }else{
-                            vet[2] = "#4EB4FE";
-                        }
-                        */
-                        if (!ind.aggregate.levelValue)
-                            vet[2] = "#A9A9A9";
-                        else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
-                            vet[2] = "#E74C3C";
-                        else if (ind.aggregate.levelValue < 100.0)
-                            vet[2] = "#FFCC33";
-                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum || ind.aggregate.levelMaximum == 100.0)
-                            vet[2] = "#51D466";
-                        else
-                            vet[2] = "#4EB4FE";
-                        
-                        elements.push(vet);
-                    });                     
-                    if(me.state.indicator.indicatorList.length == 0){
-                        elements.push(["",0,'']);
-                        data.push(["",0,'']);
-                    }else{
-                        me.state.indicator.indicatorList.map((ind, cont) => {
-                            data.push(elements[cont]);
-                        });
-                    }
-                } else {
-                    if (model.data.length == 0) {
-                        data.push(['Element', 'Rendimento']);
-                        data.push(['',parseFloat(0)]);
-                        elements.push(['',parseFloat(0)]);
-                    } else {
-                        data.push(['Element', 'Rendimento', { role: 'style' }]); 
-                        model.data.map((item) => {
-                            var value =  {
-                                v: parseFloat(item.levelValue),
-                                f: numeral(parseFloat(item.levelValue)).format('0,0.00') + "%"
-                            }
+				me.state.indicator.indicatorList.map((ind) => {
+					vet = [];
+					vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
+					if(ind.aggregate.levelValue == undefined){
+						vet[1] = 0;
+					}else{
+						vet[1] = {
+							v: parseFloat(ind.aggregate.levelValue),
+							f: numeral(parseFloat(ind.aggregate.levelValue)).format('0,0.00') + "%"
+						};
+					}
+					/*
+					if(ind.aggregate.levelValue < 40){
+						vet[2] = "#E74C3C";
+					}else if(ind.aggregate.levelValue < 70){
+						vet[2] = "#FFCC33";
+					}else if(ind.aggregate.levelValue < 100){
+						vet[2] = "#51D466";
+					}else{
+						vet[2] = "#4EB4FE";
+					}
+					*/
+					if (!ind.aggregate.levelValue)
+						vet[2] = "#A9A9A9";
+					else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+						vet[2] = "#E74C3C";
+					else if (ind.aggregate.levelValue < 100.0)
+						vet[2] = "#FFCC33";
+					else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum || ind.aggregate.levelMaximum == 100.0)
+						vet[2] = "#51D466";
+					else
+						vet[2] = "#4EB4FE";
 
-                            var color;
-                            /*          
-                            if(value < 40){
-                                color = "#E74C3C";
-                            }else if(value < 70){
-                                color = "#FFCC33";
-                            }else if(value < 100){
-                                color = "#51D466";
-                            }else{
-                                color = "#4EB4FE";
-                            }*/
+					elements.push(vet);
+				});
+				if(me.state.indicator.indicatorList.length == 0){
+					elements.push(["",0,'']);
+					data.push(["",0,'']);
+				}else{
+					me.state.indicator.indicatorList.map((ind, cont) => {
+						data.push(elements[cont]);
+					});
+				}
+			} else {
+				if (model.data.length == 0) {
+					data.push(['Element', 'Rendimento']);
+					data.push(['',parseFloat(0)]);
+					elements.push(['',parseFloat(0)]);
+				} else {
+					data.push(['Element', 'Rendimento', { role: 'style' }]);
+					model.data.map((item) => {
+						var value =  {
+							v: parseFloat(item.levelValue),
+							f: numeral(parseFloat(item.levelValue)).format('0,0.00') + "%"
+						}
 
-                            if(value.v < item.levelMinimum){
-                                color = "#E74C3C";
-                            }else if(value.v < 100){
-                                color = "#FFCC33";
-                            }else if(value.v < item.levelMaximum || item.levelMaximum == 100){
-                                color = "#51D466";
-                            }else{
-                                color = "#4EB4FE";
-                            }
+						var color;
+						/*
+						if(value < 40){
+							color = "#E74C3C";
+						}else if(value < 70){
+							color = "#FFCC33";
+						}else if(value < 100){
+							color = "#51D466";
+						}else{
+							color = "#4EB4FE";
+						}*/
 
-                            if(item.name.length > 50){
-                                elements.push([item.name.substring(0, 50).concat("..."),value, color]);
-                            }else{
-                                elements.push([item.name,value, color]);
-                            }
-                        });
-                    }                    
-                    model.data.map((item, cont) => {
-                        data.push(elements[cont]);
-                    });                                   
-                }
-                me.setState({
-                    data:data,
-                    elements:elements,
-                    loading: false,
-                    total: model.total
-                });
-            }
-    },me);  
-  },
+						if(value.v < item.levelMinimum){
+							color = "#E74C3C";
+						}else if(value.v < 100){
+							color = "#FFCC33";
+						}else if(value.v < item.levelMaximum || item.levelMaximum == 100){
+							color = "#51D466";
+						}else{
+							color = "#4EB4FE";
+						}
+
+						if(item.name.length > 50){
+							elements.push([item.name.substring(0, 50).concat("..."),value, color]);
+						}else{
+							elements.push([item.name,value, color]);
+						}
+					});
+				}
+				model.data.map((item, cont) => {
+					data.push(elements[cont]);
+				});
+			}
+			me.setState({
+				data:data,
+				elements:elements,
+				loading: false,
+				total: model.total
+			});
+		},me);
+	},
 
     componentWillUnmount() {
         DashboardStore.off(null, null, this);
@@ -175,7 +171,7 @@ export default React.createClass({
             hide: !this.state.hide
         })
     },
-  
+
 
     getInfos(page, pageSize, opt){
         opt = opt || this.state;
@@ -187,7 +183,7 @@ export default React.createClass({
               levelInstance: (opt.levelInstance == -1 ? null : opt.levelInstance.id),
               page: page,
               pageSize: pageSize
-            }    
+            }
         });
     },
 
@@ -197,7 +193,7 @@ export default React.createClass({
             dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - Todos os "+Messages.get("label.goalsPlan");
         else if (this.state.levelInstance == -1)
             dashboardTitle = Messages.get("label.thematicAxesPerformance") + " - "+this.state.subPlan.name;
-        else if (this.state.levelInstance.parent == null) 
+        else if (this.state.levelInstance.parent == null)
             dashboardTitle = Messages.get("label.objectivesPerformance") + " - "+this.state.levelInstance.name;
         else if (this.state.levelInstance.level.objective)
             dashboardTitle = Messages.get("label.indicatorsPerformance") + " - "+this.state.levelInstance.name;
@@ -225,16 +221,16 @@ export default React.createClass({
                          pageSize={this.state.pageSize}
                          total={this.state.total}
                          onChangePage={this.getInfos} />
-                        {this.state.levelInstance == -1 || !this.state.levelInstance.level.indicator ? <div className="aggregate-indicator-without-goals-legend height30"> </div>: 
-                        <div className="aggregate-indicator-without-goals-legend"> 
-                            {this.state.aggregateIndicator ? 
-                            <span className="legend-item"> 
+                        {this.state.levelInstance == -1 || !this.state.levelInstance.level.indicator ? <div className="aggregate-indicator-without-goals-legend height30"> </div>:
+                        <div className="aggregate-indicator-without-goals-legend">
+                            {this.state.aggregateIndicator ?
+                            <span className="legend-item">
                                     <p id = "aggregate-indicator-goals">{Messages.getEditable("label.aggIndicatorText","fpdi-nav-label")}</p>
                             </span>
-                            :<div className="height10">                                 
+                            :<div className="height10">
                             </div>}
-                        </div>}                                     
-                    </div>)            
+                        </div>}
+                    </div>)
                 :""}
             </div>
         );

@@ -14,9 +14,9 @@ export default React.createClass({
     return {
       hide:false,
       goalsInformation:null,
-      tamGoalsInformation:null,      
+      tamGoalsInformation:null,
       indicator:-1,
-      indicators:[], 
+      indicators:[],
       plan: this.props.plan,
       subPlan: this.props.subPlan,
       performance: -1,
@@ -26,14 +26,12 @@ export default React.createClass({
 
 
   componentWillReceiveProps(newProps){
-    if(this.isMounted()) {
-      this.setState({
-        subPlan:newProps.subPlan,
-        plan: newProps.plan,
-        performance: -1
-      });
-      this.getInfos(1, 5, newProps)
-    }
+	this.setState({
+	subPlan:newProps.subPlan,
+	plan: newProps.plan,
+	performance: -1
+	});
+	this.getInfos(1, 5, newProps);
   },
 
   getInfos(page, pageSize, opt){
@@ -59,36 +57,32 @@ export default React.createClass({
   },
 
   componentDidMount() {
-    var me = this;  
+    var me = this;
     this.getInfos(1, 5);
 
-    DashboardStore.on("goalsinfotableretrivied", (store) =>{        
-        if(this.isMounted()) {            
-            me.setState({
-                goalsInformation: store.data,
-                tamGoalsInformation: store.total
-            });
-        }     
+    DashboardStore.on("goalsinfotableretrivied", (store) =>{
+		me.setState({
+			goalsInformation: store.data,
+			tamGoalsInformation: store.total
+		});
     });
 
-    /*DashboardStore.on("generalObjectivesInformation", (store) =>{     
-          me.setState({      
+    /*DashboardStore.on("generalObjectivesInformation", (store) =>{
+          me.setState({
             objectivesInformation: store.data,
             hide:false
-          });         
+          });
         });*/
-    
+
     StructureStore.dispatch({
       action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
     });
     StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
-        if(this.isMounted()) {  
-            this.setState({
-                indicators:model.data,
-                hide:false
-            });
-            me.forceUpdate();
-        }
+		this.setState({
+			indicators:model.data,
+			hide:false
+		});
+		me.forceUpdate();
     }, me);
 
     PlanStore.on("find", (store, raw, opts) => {
@@ -97,7 +91,7 @@ export default React.createClass({
         data: {
                 macroId:(this.state.plan != -1)?(this.state.plan.get("id")):(null),
                 planId:(this.state.subPlan != -1)?(this.state.subPlan.id):(null)
-            }      
+            }
       });
       DashboardStore.dispatch({
         action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
@@ -105,7 +99,7 @@ export default React.createClass({
             macro: (this.state.plan != -1)?(this.state.plan.get("id")):(null),
             plan:(this.state.subPlan != -1)?(this.state.subPlan.id):(null),
             indicator:(this.state.indicator !=-1)?(this.state.indicator.id):(null)
-        }   
+        }
       });
     });
     PlanMacroStore.on("find", (store) => {
@@ -131,17 +125,17 @@ export default React.createClass({
     });
 
     this.getInfos(1, 5);
-        
+
   },
 
   /*onObjectivesSelectChange(){
       DashboardStore.dispatch({
-          action: DashboardStore.ACTION_GET_GOALS_INFO_TABLE, 
+          action: DashboardStore.ACTION_GET_GOALS_INFO_TABLE,
           data: {
                 macro: (this.state.plan != -1)?this.props.plan.id:(null),
                 plan:(this.state.subPlan != -1)?(this.state.subPlan.id):(null),
                 objective:(this.refs.selectObjectives.value!=-1)?(this.state.objectivesInformation[this.refs.selectObjectives.value].id):(null)
-            }         
+            }
       });
     },*/
 
@@ -155,32 +149,32 @@ export default React.createClass({
     })
   },
 
- 
+
   quickSortByIndicatorName(sorting){
     var data = [];
     var iconStatusAux = ["", sorting, "", "","", "", ""];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "asc"){
 
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.indicatorName < b.indicatorName) {
           return -1;
          }
          if (a.indicatorName > b.indicatorName) {
           return 1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     } else if(sorting == "desc"){
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.indicatorName < b.indicatorName) {
           return 1;
          }
          if (a.indicatorName > b.indicatorName) {
           return -1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     }
 
@@ -193,28 +187,28 @@ export default React.createClass({
   quickSortByObjectiveName(sorting){
     var data = [];
     var iconStatusAux = [sorting, "", "", "","", "", ""];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "asc"){
 
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.objectiveName < b.objectiveName) {
           return -1;
          }
          if (a.objectiveName > b.objectiveName) {
           return 1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     } else if(sorting == "desc"){
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.objectiveName < b.objectiveName) {
           return 1;
          }
          if (a.objectiveName > b.objectiveName) {
           return -1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     }
 
@@ -227,28 +221,28 @@ export default React.createClass({
   quickSortByGoalName(sorting){
     var data = [];
     var iconStatusAux = ["", "", sorting, "", "", "", ""];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "asc"){
 
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.goalName < b.goalName) {
           return -1;
          }
          if (a.goalName > b.goalName) {
           return 1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     } else if(sorting == "desc"){
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.goalName < b.goalName) {
           return 1;
          }
          if (a.goalName > b.goalName) {
           return -1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     }
 
@@ -261,11 +255,11 @@ export default React.createClass({
   quickSortByFinishDate(sorting){
     var data = [];
     var iconStatusAux = ["", "", "", sorting];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "desc"){
 
-        data.sort(function(a, b) { 
+        data.sort(function(a, b) {
             var d1, d2;
             if(a.finishDate == null){
                 d1 = moment(1, "x"); // setando uma data muito baixa
@@ -282,11 +276,11 @@ export default React.createClass({
             }
             if (d1.isAfter(d2)){
                 return -1;
-            }       
-            return 0; 
+            }
+            return 0;
         })
     } else if(sorting == "asc"){
-        data.sort(function(a, b) { 
+        data.sort(function(a, b) {
             var d1, d2;
             if(a.finishDate == null){
                 d1 = moment(1, "x"); // setando uma data muito baixa
@@ -298,15 +292,15 @@ export default React.createClass({
             }else{
                 d2 = moment(b.finishDate,"DD/MM/YYYY");
             }
-            
-            
+
+
             if (d1.isAfter(d2)){
                 return 1;
             }
             if (d1.isBefore(d2)){
                 return -1;
-            }       
-            return 0; 
+            }
+            return 0;
         })
     }
 
@@ -319,28 +313,28 @@ export default React.createClass({
   quickSortByExpected(sorting){
     var data = [];
     var iconStatusAux = ["", "", "", "", "", sorting, ""];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "asc"){
 
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.expected < b.expected) {
           return -1;
          }
          if (a.expected > b.expected) {
           return 1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     } else if(sorting == "desc"){
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
          if (a.expected < b.expected) {
           return 1;
          }
          if (a.expected > b.expected) {
           return -1;
-         }       
-         return 0; 
+         }
+         return 0;
       })
     }
 
@@ -353,11 +347,11 @@ export default React.createClass({
   quickSortByReached(sorting){
     var data = [];
     var iconStatusAux = ["", "", "", "", "", "", sorting];
-    
+
     data = this.state.goalsInformation;
     if(sorting == "asc"){
 
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
         if(isNaN(Number(a.reached)) && isNaN(Number(b.reached)) ){
           return 0;
         } else if(isNaN(Number(a.reached))){
@@ -370,12 +364,12 @@ export default React.createClass({
          }
          if (a.reached > b.reached) {
           return 1;
-         }       
-         return 0; 
+         }
+         return 0;
        }
       })
     } else if(sorting == "desc"){
-      data.sort(function(a, b) { 
+      data.sort(function(a, b) {
         if(isNaN(Number(a.reached)) && isNaN(Number(b.reached)) ){
           return 0;
         } else if(isNaN(Number(a.reached))){
@@ -388,8 +382,8 @@ export default React.createClass({
          }
          if (a.reached > b.reached) {
           return -1;
-         }       
-         return 0; 
+         }
+         return 0;
        }
       })
     }
@@ -401,7 +395,7 @@ export default React.createClass({
   },
 
   render() {
-    if (this.state.tamGoalsInformation <= (0)) {        
+    if (this.state.tamGoalsInformation <= (0)) {
         return (
         <div className="panel panel-default">
           <div className="panel-heading">
@@ -422,7 +416,7 @@ export default React.createClass({
                     <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached")}</option>
                     <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected")}</option>
                     <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted")}</option>
-                </select>                    
+                </select>
 
               <div className="performance-strategic-btns floatRight">
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
@@ -435,41 +429,41 @@ export default React.createClass({
                 <tr>
                     <th id = "column-goals-perfomance">{Messages.getEditable("label.objective","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                      (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                      onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
+                      (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                      onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc")
                       ? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
-                    
+
                     <th id = "column-goals-perfomance">{Messages.getEditable("label.indicator","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                      (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                      onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
+                      (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                      onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc")
                       ? this.quickSortByIndicatorName.bind(this,"asc") :  this.quickSortByIndicatorName.bind(this,"desc")} > </span></th>
-                    
-                    <th id = "column-goals-perfomance">{Messages.getEditable("label.goal","fpdi-nav-label")}                    
+
+                    <th id = "column-goals-perfomance">{Messages.getEditable("label.goal","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                      (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                      onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
+                      (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                      onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc")
                       ? this.quickSortByGoalName.bind(this,"asc") :  this.quickSortByGoalName.bind(this,"desc")} > </span></th>
-                    
+
                     <th id = "column-goals-perfomance">{Messages.getEditable("label.maturity","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[3] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                      (this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                      onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc") 
+                      (this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                      onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc")
                       ? this.quickSortByFinishDate.bind(this,"asc") :  this.quickSortByFinishDate.bind(this,"desc")} > </span></th>
 
                     <th id = "column-goals-perfomance">{Messages.getEditable("label.status","fpdi-nav-label")}</th>
 
                     <th id = "column-goals-perfomance">{Messages.getEditable("label.goals.expected","fpdi-nav-label")} </th>
 
-                    <th id = "column-goals-perfomance">{Messages.getEditable("label.reached","fpdi-nav-label")}                    
+                    <th id = "column-goals-perfomance">{Messages.getEditable("label.reached","fpdi-nav-label")}
                       <span className={this.state.sortIconStatus[6] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                      (this.state.sortIconStatus[6] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                      onClick={(this.state.sortIconStatus[6] == "" || this.state.sortIconStatus[6] =="desc") 
+                      (this.state.sortIconStatus[6] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                      onClick={(this.state.sortIconStatus[6] == "" || this.state.sortIconStatus[6] =="desc")
                       ? this.quickSortByReached.bind(this,"asc") :  this.quickSortByReached.bind(this,"desc")} > </span></th>
                 </tr>
               </thead>
               <tbody>
-                <tr> 
+                <tr>
                   <td id = "GoalsInformationTable"> {this.state.indicator && this.state.indicator.aggregate ? Messages.getEditable("label.aggIndicatorHaveNoGoals","fpdi-nav-label") : Messages.getEditable("label.noRegister","fpdi-nav-label")} </td>
                 </tr>
              </tbody>
@@ -478,7 +472,7 @@ export default React.createClass({
         :""}
         </div>
       );
-    } else {        
+    } else {
         return (
           <div className="panel panel-default">
             <div className="panel-heading">
@@ -492,7 +486,7 @@ export default React.createClass({
                               })
                             }
                           </select> : ""*/}
-             
+
               <select onChange={this.onIndicatorSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
                             <option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
                             {this.state.indicators.map((attr, idy) =>{
@@ -509,7 +503,7 @@ export default React.createClass({
                             <option value={3} data-placement="right" title={Messages.get("label.goals.reached")}>{Messages.get("label.goals.reached","fpdi-nav-label")}</option>
                             <option value={4} data-placement="right" title={Messages.get("label.goals.aboveExpected")}>{Messages.get("label.goals.aboveExpected","fpdi-nav-label")}</option>
                             <option value={5} data-placement="right" title={Messages.get("label.goals.notStarted")}>{Messages.get("label.goals.notStarted","fpdi-nav-label")}</option>
-              </select>                    
+              </select>
               <div className="performance-strategic-btns floatRight">
                 <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
               </div>
@@ -521,41 +515,41 @@ export default React.createClass({
                     <tr>
                         <th id = "column-goals-perfomance">{Messages.getEditable("label.objective","fpdi-nav-label")}
                           <span className={this.state.sortIconStatus[0] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                          (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                          onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc") 
+                          (this.state.sortIconStatus[0] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                          onClick={(this.state.sortIconStatus[0] == "" || this.state.sortIconStatus[0] =="desc")
                           ? this.quickSortByObjectiveName.bind(this,"asc") :  this.quickSortByObjectiveName.bind(this,"desc")} > </span></th>
-                        
+
                         <th id = "column-goals-perfomance">{Messages.getEditable("label.indicator","fpdi-nav-label")}
                           <span className={this.state.sortIconStatus[1] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                          (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                          onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc") 
+                          (this.state.sortIconStatus[1] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                          onClick={(this.state.sortIconStatus[1] == "" || this.state.sortIconStatus[1] =="desc")
                           ? this.quickSortByIndicatorName.bind(this,"asc") :  this.quickSortByIndicatorName.bind(this,"desc")} > </span></th>
-                        
-                        <th id = "column-goals-perfomance">{Messages.getEditable("label.goal","fpdi-nav-label")}                    
+
+                        <th id = "column-goals-perfomance">{Messages.getEditable("label.goal","fpdi-nav-label")}
                           <span className={this.state.sortIconStatus[2] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                          (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                          onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc") 
+                          (this.state.sortIconStatus[2] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                          onClick={(this.state.sortIconStatus[2] == "" || this.state.sortIconStatus[2] =="desc")
                           ? this.quickSortByGoalName.bind(this,"asc") :  this.quickSortByGoalName.bind(this,"desc")} > </span></th>
-                        
+
                         <th id = "column-goals-perfomance">{Messages.getEditable("label.maturity","fpdi-nav-label")}
                           <span className={this.state.sortIconStatus[3] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                          (this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                          onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc") 
+                          (this.state.sortIconStatus[3] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                          onClick={(this.state.sortIconStatus[3] == "" || this.state.sortIconStatus[3] =="desc")
                           ? this.quickSortByFinishDate.bind(this,"asc") :  this.quickSortByFinishDate.bind(this,"desc")} > </span></th>
 
                         <th id = "column-goals-perfomance">{Messages.getEditable("label.status","fpdi-nav-label")}</th>
 
                         <th id = "column-goals-perfomance">{Messages.getEditable("label.goals.expected","fpdi-nav-label")} </th>
 
-                        <th id = "column-goals-perfomance">{Messages.getEditable("label.reached","fpdi-nav-label")}                  
+                        <th id = "column-goals-perfomance">{Messages.getEditable("label.reached","fpdi-nav-label")}
                           <span className={this.state.sortIconStatus[6] == "desc"?"mdi mdi-sort-ascending cursorPointer":
-                          (this.state.sortIconStatus[6] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")} 
-                          onClick={(this.state.sortIconStatus[6] == "" || this.state.sortIconStatus[6] =="desc") 
+                          (this.state.sortIconStatus[6] =="asc" ? "mdi mdi-sort-descending cursorPointer" : "mdi mdi-sort cursorPointer")}
+                          onClick={(this.state.sortIconStatus[6] == "" || this.state.sortIconStatus[6] =="desc")
                           ? this.quickSortByReached.bind(this,"asc") :  this.quickSortByReached.bind(this,"desc")} > </span></th>
                     </tr>
-                   
+
                     {
-                        this.state.goalsInformation.map((goal, idx) => {                            
+                        this.state.goalsInformation.map((goal, idx) => {
                            return (
                             <tr key={"goal-"+idx} name={"goal-"+idx}>
                               <td className="fdpi-table-cell">{goal.objectiveName}</td>
@@ -563,7 +557,7 @@ export default React.createClass({
                               <td className="fdpi-table-cell">{goal.goalName}</td>
                               <td className="fdpi-table-cell">{goal.finishDate ?
                                     goal.finishDate.split(" ")[0] : ""}</td>
-                              <td className="fdpi-table-cell">{goal.deadLineStatus == 3 ? 
+                              <td className="fdpi-table-cell">{goal.deadLineStatus == 3 ?
                                 <div className = "lateGoalInfo">{goal.goalStatus} </div> :
                                 <div className = "inDayGoalInfo">{goal.goalStatus} </div>}
                                  {Messages.getEditable("label.lastUpdate","fpdi-nav-label")} {goal.lastModification}</td>
@@ -571,10 +565,10 @@ export default React.createClass({
                               <td className="fdpi-table-cell">{goal.reached}</td>
                             </tr>);
                         })
-                    }            
+                    }
                  </tbody>
                 </table>
-                <TablePagination 
+                <TablePagination
                   total={this.state.goalsInformation == undefined || this.state.goalsInformation == null ? 0 : this.state.tamGoalsInformation}
                   onChangePage={this.getInfos}
                   tableName={"goalsInfoColaborator-table"}

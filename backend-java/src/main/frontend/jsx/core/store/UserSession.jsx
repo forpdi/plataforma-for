@@ -7,7 +7,7 @@ import string from 'string';
 import Toastr from 'toastr';
 
 var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; 
+var {ToastContainer} = ReactToastr;
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage);
 Toastr.options.positionClass = "toast-top-full-width";
 Toastr.options.timeOut = 4000;
@@ -131,7 +131,8 @@ var UserSession = Backbone.Model.extend({
 			}
 			this.trigger("fail", resp.message);
 		} else {
-			this.trigger("fail", "Unexpected server error "+opts.status+" "+opts.statusText+": "+opts.responseJSON.message);
+			console.error(opts.responseText);
+			this.trigger("fail", `Unexpected server error: ${opts.status} ${opts.statusText}`);
 		}
 	},
 
@@ -150,8 +151,8 @@ var UserSession = Backbone.Model.extend({
 			if (!(data.password) || (data.password == '')) {
 				errors.push("Por favor, digite sua senha");
 			}
-		}	
-		
+		}
+
 		if (errors.length > 0) {
 			me.trigger("fail", errors);
 			this.context.toastr.addAlertError(errors);
@@ -375,7 +376,7 @@ var UserSession = Backbone.Model.extend({
 	},
 
 	listNotifications(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
 			url:  BACKEND_URL + "notification/notifications",
 			method: 'GET',
@@ -418,13 +419,13 @@ var UserSession = Backbone.Model.extend({
 	},
 
 	listMessages(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: BACKEND_URL +"structure/listmessages",	
+			url: BACKEND_URL +"structure/listmessages",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: data,		
+			data: data,
 			success(model) {
 				if (data && data.page)
 					me.trigger("retrieve-showMoreMessages", model);

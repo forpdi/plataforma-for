@@ -33,57 +33,50 @@ export default React.createClass({
 
 
   componentWillReceiveProps(newProps){
-    if(this.isMounted()) {
-      this.setState({
-        plan: newProps.plan,
-        subPlan: newProps.subPlan,
-        indicators: [],
-        loading: true
-      });
+		this.setState({
+		plan: newProps.plan,
+		subPlan: newProps.subPlan,
+		indicators: [],
+		loading: true
+		});
 
-      StructureStore.dispatch({
-        action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
-        data: {
-          macroId: (newProps.plan!= -1)?(newProps.plan.id):(null),
-          planId: (newProps.subPlan != -1)?(newProps.subPlan.id):(null)
-        }
-      });
-      this.getInfos(1, this.state.pageSize, newProps);
-    }
+		StructureStore.dispatch({
+		action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
+		data: {
+			macroId: (newProps.plan!= -1)?(newProps.plan.id):(null),
+			planId: (newProps.subPlan != -1)?(newProps.subPlan.id):(null)
+		}
+		});
+		this.getInfos(1, this.state.pageSize, newProps);
   },
 
   componentDidMount() {
     var me = this;
     DashboardStore.on("indicatorsHistoryRetrivied", (store) => {
-      var data = [];
-      data.push(['Período', 'Desempenho (%)']);
-      if(store.data.length > 0){
-        store.data.map( (item) => {
-          var valueForGraph = {
-              v: item.value,
-              f: parseFloat(item.value.toFixed(2))+"%"
-          };
-          data.push([item.period, valueForGraph]);
-        });
-      } else {
-        data.push(["Nenhum Histórico Encontrado", 0]);
-      }
-
-      if(this.isMounted()) {
-        me.setState({
-          data: data,
-          loading: false,
-          total: store.total
-        });
-      }
+		var data = [];
+		data.push(['Período', 'Desempenho (%)']);
+		if(store.data.length > 0){
+			store.data.map( (item) => {
+			var valueForGraph = {
+				v: item.value,
+				f: parseFloat(item.value.toFixed(2))+"%"
+			};
+			data.push([item.period, valueForGraph]);
+			});
+		} else {
+			data.push(["Nenhum Histórico Encontrado", 0]);
+		}
+		me.setState({
+			data: data,
+			loading: false,
+			total: store.total
+		});
     });
     StructureStore.on("indicatorsByMacroAndPlanRetrivied", (store) => {
-      if(this.isMounted()) {
-        me.setState({
-          indicators: store.data,
-          loading: false
-        });
-      }
+		me.setState({
+			indicators: store.data,
+			loading: false
+		});
     });
   },
 

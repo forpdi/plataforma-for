@@ -13,19 +13,15 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        if(this.isMounted()) {
-            if (newProps.notifications) {
-                this.setState({
-                    notifications: newProps.notifications
-                });
-            }
-        }
+		if (newProps.notifications) {
+			this.setState({
+				notifications: newProps.notifications
+			});
+		}
     },
 
     componentDidMount() {
         var me = this;
-
-
         UserSession.on("retrieve-notifications", (model) => {
             me.setState ({
                 notifications:model.data
@@ -47,15 +43,14 @@ export default React.createClass({
                 notifications: notifications
             });
         }, me);
-    
+
     },
 
     componentWillUnmount() {
         UserSession.off(null, null, this);
-    
     },
 
-    render() {    
+    render() {
         return (
             <div>
                 {(this.state.notifications && this.state.notifications.length > 0) ?
@@ -63,7 +58,7 @@ export default React.createClass({
                         return (
                             <div key={"notification-"+idx} className = {item.vizualized == true && !item.vizualizeNow ? "" : "backgroundNotification"}>
                                 <div className = "row paddingNotification">
-                                   
+
                                     {item.url != undefined ?
 
                                         (<Link to={item.url.split("#")[1]}>
@@ -76,10 +71,10 @@ export default React.createClass({
                                                 </div>
 
                                                 <div className="col-md-3">
-                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
+                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>
                                                 </div>
                                             </Link>
-                                        ) 
+                                        )
                                         : (
                                             <div>
                                                  <div className="col-md-1">
@@ -91,7 +86,7 @@ export default React.createClass({
                                                 </div>
 
                                                 <div className="col-md-3">
-                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>  
+                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>
                                                 </div>
                                             </div>
                                         )

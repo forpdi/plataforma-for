@@ -20,11 +20,9 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		CompanyStore.on("find", (store) => {
-			if (me.isMounted()) {
-				me.setState({
-					companies: store.models
-				});
-			}
+			me.setState({
+				companies: store.models
+			});
 			me.updateLoadingState();
 		}, me);
 		CompanyStore.dispatch({
@@ -35,18 +33,15 @@ export default React.createClass({
 			action: CompanyStore.ACTION_FIND_THEMES,
 			data: null
 		});
-		
+
 	},
 	componentWillUnmount() {
-		
+
 	},
 	updateLoadingState() {
-		if (this.isMounted()) {
-			this.setState({
-				loading:
-					!this.state.companies
-			});
-		}
+		this.setState({
+			loading: !this.state.companies
+		});
 	},
 
 	render() {
@@ -54,8 +49,8 @@ export default React.createClass({
 			{this.state.loading ? <LoadingGauge />:<div>
 			<ul className="fpdi-tabs-nav" role="tablist">
 			    {(false)?(
-				 <Link role="tab" to="/system/general" activeClassName="active"> 
-			   		{Messages.getEditable("label.general","fpdi-nav-label")} 
+				 <Link role="tab" to="/system/general" activeClassName="active">
+			   		{Messages.getEditable("label.general","fpdi-nav-label")}
 			   	</Link>):("")
 			    }
 
@@ -63,7 +58,7 @@ export default React.createClass({
 			    <Link role="tab" to="/system/companies" activeClassName="active">
 			   		{Messages.getEditable("label.institutions","fpdi-nav-label")}
 			    </Link>
-			    {this.state.companies.length <= 0 ? 
+			    {this.state.companies.length <= 0 ?
 				    <div title={Messages.get("label.noCompanyRegistered")}><span className="cursorDefault" >
 				    	<Link role="tab" to={this.props.location.pathname} activeClassName="tabItemDisable"  >
 				   		{	Messages.getEditable("label.domains","fpdi-nav-label")}

@@ -49,24 +49,19 @@ export default React.createClass({
 					list.push(store.data[i]);
 				}
 			}
-			if (me.isMounted()) {
-				me.setState({
-					loading: false,
-					models: list,
-					page: this.state.page+1,
-					total: store.total
-				});
-			}
-			me.forceUpdate();
+			me.setState({
+				loading: false,
+				models: list,
+				page: this.state.page+1,
+				total: store.total
+			});
 		}, me);
 
 		CompanyStore.on('sync', model => {
 			me.findCompanies(1);
-			if (me.isMounted()) {
-				me.setState({
-					page: 1
-				})
-			}
+			me.setState({
+				page: 1
+			})
 		}, me);
 
 		CompanyStore.on("fail", (msg) => {
@@ -90,7 +85,7 @@ export default React.createClass({
 	cancelBlockUnblock () {
 		Modal.hide();
 	},
-	
+
 	deleteRecord(model, event) {
 		var msg = Messages.get("label.deleteConfirmation") + "essa instituição?";
 		event.preventDefault();

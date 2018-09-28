@@ -8,7 +8,6 @@ import Budget from "forpdi/jsx/dashboard/view/admin/Budget.jsx";
 
 
 export default React.createClass({
-
     contextTypes: {
         roles: React.PropTypes.object.isRequired
     },
@@ -22,18 +21,15 @@ export default React.createClass({
     },
 
 	componentWillReceiveProps(newProps){
-        if(this.isMounted()){
-    		this.setState({
-                plan: newProps.plan,
-    			subPlan: newProps.subPlan
-    		});
-        }
+		this.setState({
+			plan: newProps.plan,
+			subPlan: newProps.subPlan
+		});
     },
 
     componentDidMount(){
     	var me = this;
     },
-
 
 	render() {
 		return (

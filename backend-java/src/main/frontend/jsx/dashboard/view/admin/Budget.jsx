@@ -34,31 +34,29 @@ export default React.createClass({
 
   componentWillReceiveProps(newProps){
     var me = this;
-    if(this.isMounted()) {
-      me.setState({
-        objectives: [],
-        actionBudgets: [],
-        plan:newProps.plan,
-        subPlan:newProps.subPlan,
-        loading: true
-      });
+	me.setState({
+	objectives: [],
+	actionBudgets: [],
+	plan:newProps.plan,
+	subPlan:newProps.subPlan,
+	loading: true
+	});
 
-        StructureStore.dispatch({
-          action: StructureStore.ACTION_GET_OBJECTIVES,
-          data: {
-            planId: newProps.subPlan.id,
-            macroId: newProps.plan.id
-          }
-        });
+	StructureStore.dispatch({
+		action: StructureStore.ACTION_GET_OBJECTIVES,
+		data: {
+		planId: newProps.subPlan.id,
+		macroId: newProps.plan.id
+		}
+	});
 
-        DashboardStore.dispatch({
-          action: DashboardStore.ACTION_GET_GENERAL_BUDGETS,
-          data: {
-            macro: (newProps.plan != -1)?(newProps.plan.id):(null),
-            plan:(newProps.subPlan != -1)?(newProps.subPlan.id):(null)
-          }
-        });
-    }
+	DashboardStore.dispatch({
+		action: DashboardStore.ACTION_GET_GENERAL_BUDGETS,
+		data: {
+		macro: (newProps.plan != -1)?(newProps.plan.id):(null),
+		plan:(newProps.subPlan != -1)?(newProps.subPlan.id):(null)
+		}
+	});
   },
 
   componentDidMount() {
@@ -71,16 +69,12 @@ export default React.createClass({
     }
 
     StructureStore.on("objectivesretrivied", (model) => {
-      if(this.isMounted()) {
-        me.setState({
-          objectives: model.data
-        });
-        me.forceUpdate();
-      }
+		me.setState({
+			objectives: model.data
+		});
     }, me);
 
     BudgetStore.on("find", (model, raw, opts) => {
-      if(this.isMounted()) {
         me.setState({
           actionBudgets: raw,
           loading: false
@@ -93,7 +87,6 @@ export default React.createClass({
               objective: this.state.selectedObjectives.id
           }
         });
-      }
    },me);
 
 
@@ -101,38 +94,31 @@ export default React.createClass({
   	   var plannedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.planned));
        var conductedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.conducted));
        var committedTooltipText = "R$ "+this.formatBR(this.formatEUA(store.data.committed));
-
-
-        if(this.isMounted()) {
-          this.setState({
-              data: [
-                ['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-                [Messages.get("label.budget.planned"), store.data.planned, '#A7E2D2', plannedTooltipText],
-                [Messages.get("label.budget.committed"), store.data.committed , '#3AB795', committedTooltipText],
-                [Messages.get("label.budget.conducted"), store.data.conducted , '#76D3BA', conductedTooltipText]
-              ],
-              loading: false
-          });
-        }
+		this.setState({
+			data: [
+			['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
+			[Messages.get("label.budget.planned"), store.data.planned, '#A7E2D2', plannedTooltipText],
+			[Messages.get("label.budget.committed"), store.data.committed , '#3AB795', committedTooltipText],
+			[Messages.get("label.budget.conducted"), store.data.conducted , '#76D3BA', conductedTooltipText]
+			],
+			loading: false
+		});
     });
-
-    if(this.isMounted()) {
-    	this.setState({
-        options:{
-          title: Messages.get("label.generalBudget"),
-          hAxis: {title: '', minValue: 0, maxValue: 15},
-          vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
-          legend: 'none',
-          bar: {groupWidth: '50%'}
-        },
-        data: [
-        	['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
-       		[Messages.get("label.budget.planned"), 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],
-        	[Messages.get("label.budget.committed"), 0 , '#3AB795', "R$ "+this.formatBR(this.formatEUA(0))],
-        	[Messages.get("label.budget.conducted"), 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]
-      	]
-      });
-    }
+	this.setState({
+		options:{
+		title: Messages.get("label.generalBudget"),
+		hAxis: {title: '', minValue: 0, maxValue: 15},
+		vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
+		legend: 'none',
+		bar: {groupWidth: '50%'}
+		},
+		data: [
+			['Element', 'Verba', { role: 'style' }, {role: 'tooltip'}],
+			[Messages.get("label.budget.planned"), 0, '#A7E2D2',"R$ "+ this.formatBR(this.formatEUA(0))],
+			[Messages.get("label.budget.committed"), 0 , '#3AB795', "R$ "+this.formatBR(this.formatEUA(0))],
+			[Messages.get("label.budget.conducted"), 0 , '#76D3BA', "R$ "+this.formatBR(this.formatEUA(0))]
+		]
+	});
   },
 
   componentWillUnmount() {

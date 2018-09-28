@@ -17,34 +17,29 @@ export default React.createClass({
 
     componentWillReceiveProps(newProps){
     	var me = this;
-    	if(this.isMounted()) {
-	    	me.setState({
-	    		plan:newProps.plan,
-	    		subplan:newProps.subPlan,
-	    		loading: true
-	    	});	    	
-	    	DashboardStore.dispatch({
-	            action: DashboardStore.ACTION_GET_PLAN_DETAILS,
-	             data: {            
-	           	 	plan: newProps.subPlan.id,
-	           	 	macro: newProps.plan.id
-	          	}          
-	        });
-	    }	    
+		me.setState({
+			plan:newProps.plan,
+			subplan:newProps.subPlan,
+			loading: true
+		});
+		DashboardStore.dispatch({
+			action: DashboardStore.ACTION_GET_PLAN_DETAILS,
+				data: {
+				plan: newProps.subPlan.id,
+				macro: newProps.plan.id
+			}
+		});
     },
 
     componentDidMount(){
     	var me = this;
 
-    	DashboardStore.on("planDetailsRetrieved", (store) =>{
-    		if(this.isMounted()) {    			
-	        	me.setState({        		
-	        		planDetails: store.data,
-	        		loading: false
-	        	})
-	        }
-        });        
-        
+    	DashboardStore.on("planDetailsRetrieved", (store) => {
+			me.setState({
+				planDetails: store.data,
+				loading: false
+			});
+        });
     },
 
     hideFields() {
@@ -52,23 +47,23 @@ export default React.createClass({
 	    	hide: !this.state.hide
 	    })
 	},
-	
+
 
 	componentWillUnmount() {
 		DashboardStore.off(null, null, this);
 	},
 
 
-	render() {		
+	render() {
 		var title = Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + this.state.plan.get("name") :"");
 		return (
 			<div className={this.props.className}>
 				<div className="panel">
 					<div className="dashboard-plan-details-header">
 						<span title={title}>{(this.state.plan == -1)?(Messages.get("label.allPlans")):
-								((this.state.plan != -1 ? (this.state.plan.get("name").length > 30 ? 
-									this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) + 
-									(this.state.subplan != -1 ? " - "+ (this.state.subplan.name.length > 30 ? 
+								((this.state.plan != -1 ? (this.state.plan.get("name").length > 30 ?
+									this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) +
+									(this.state.subplan != -1 ? " - "+ (this.state.subplan.name.length > 30 ?
 									this.state.subplan.name.substr(0,30).contat("...") : this.state.subplan.name) : "")
 									:"")
 								)
@@ -78,9 +73,9 @@ export default React.createClass({
 		                	<span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
 		              	</div>
 					</div>
-					{(this.state.hide)?(""):(						
+					{(this.state.hide)?(""):(
 					<div className="dashboard-plan-details-body">
-						{this.state.loading ? <LoadingGaugeWhite/> : 
+						{this.state.loading ? <LoadingGaugeWhite/> :
 						<div>
 								<div className="dashboard-indicator-container">
 							<div className="col-sm-4 dashboard-plan-details-column">
@@ -107,7 +102,7 @@ export default React.createClass({
 							    	<div className="fontSize12">{Messages.getEditable("label.thereAre","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.getEditable("label.budgetaryElementsLinkedToTheObjectives","fpdi-nav-label")}</div>
 							    	: <div className="fontSize12">{Messages.getEditable("label.exist","fpdi-nav-label")} <span className="fontWeightBold">{this.state.planDetails.numberOfBudgets}</span> {Messages.getEditable("label.budgetaryElementLinkedToTheObjective","fpdi-nav-label")}</div>) : "0 "}
 							</div>
-						</div>}					    
+						</div>}
 					</div>)}
 				</div>
 			</div>

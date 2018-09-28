@@ -28,12 +28,10 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		CompanyDomainStore.on('find', store => {
-			if (me.isMounted()) {
-				me.setState({
-					loading: false,
-					models: store.models
-				});
-			}
+			me.setState({
+				loading: false,
+				models: store.models
+			});
 		}, me);
 
 		CompanyDomainStore.on('remove', store => {
@@ -51,32 +49,25 @@ export default React.createClass({
 					list.push(store.data[i]);
 				}
 			}
-			if (me.isMounted()) {
-				me.setState({
-					loading: false,
-					models: list,
-					page: this.state.page+1,
-					total: store.total
-				});
-			}
-			me.forceUpdate();
+			me.setState({
+				loading: false,
+				models: list,
+				page: this.state.page+1,
+				total: store.total
+			});
 		}, me);
 
 		CompanyDomainStore.on('sync', model => {
 			me.findDomains(1);
-			if (me.isMounted()) {
-				me.setState({
-					page: 1
-				})
-			}
+			me.setState({
+				page: 1
+			})
 		}, me);
 
 		CompanyDomainStore.on("fail", (msg) => {
-			if (me.isMounted()) {
-				me.setState({
-					error: msg
-				});
-			}
+			me.setState({
+				error: msg
+			});
 		}, this);
 
 		me.findDomains(1);
@@ -86,11 +77,9 @@ export default React.createClass({
 	},
 
 	closeAlert() {
-		if (this.isMounted()) {
-			this.setState({
-				error: null
-			});
-		}
+		this.setState({
+			error: null
+		});
 	},
 
 	cancelBlockUnblock () {

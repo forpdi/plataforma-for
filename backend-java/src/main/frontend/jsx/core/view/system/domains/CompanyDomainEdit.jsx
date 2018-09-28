@@ -46,7 +46,7 @@ export default React.createClass({
 			type: "url",
 			placeholder: "",
 			maxLength: 255,
-			label: Messages.getEditable("label.baseUrl", "fpdi-nav-label"), 
+			label: Messages.getEditable("label.baseUrl", "fpdi-nav-label"),
 			required:true,
 			helpBox: "Ex: http://app.forpdi.org/",
 			value: this.state.model ? this.state.model.get("baseUrl"):null
@@ -73,15 +73,13 @@ export default React.createClass({
 		}];
 	},
 	updateLoadingState() {
-		if (this.isMounted()) {
-			this.setState({
-				fields: this.getFields(),
-				loading:
-					!this.state.companies
-					|| !this.state.themes
-					|| (this.props.params.modelId && !this.state.model)
-			});
-		}
+		this.setState({
+			fields: this.getFields(),
+			loading:
+				!this.state.companies
+				|| !this.state.themes
+				|| (this.props.params.modelId && !this.state.model)
+		});
 	},
 	componentDidMount() {
 		var me = this;
@@ -92,28 +90,22 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.save") + " "+ Messages.get("notification.pageRefreshRequest"));
 		}, me);
 		CompanyDomainStore.on("retrieve", (model) => {
-			if (me.isMounted()) {
-				me.setState({
-					model: model
-				});
-			}
+			me.setState({
+				model: model
+			});
 			me.updateLoadingState();
 		}, me);
 
 		CompanyStore.on("find", (store) => {
-			if (me.isMounted()) {
-				me.setState({
-					companies: store.models
-				});
-			}
+			me.setState({
+				companies: store.models
+			});
 			me.updateLoadingState();
 		}, me);
 		CompanyStore.on("themes", (themes) => {
-			if (me.isMounted()) {
-				me.setState({
-					themes: themes
-				});
-			}
+			me.setState({
+				themes: themes
+			});
 			me.updateLoadingState();
 		}, me);
 
@@ -136,11 +128,11 @@ export default React.createClass({
 		CompanyDomainStore.off(null, null, this);
 		CompanyStore.off(null, null, this);
 	},
-	
+
 	onSubmit(data) {
 		var me = this;
 		data.company = {id: data.company};
-		
+
 		var msg = Validate.validationCompanyDomainEdit(data, this.refs.CompanyDomainEditForm);
 
 		if(msg!= ""){

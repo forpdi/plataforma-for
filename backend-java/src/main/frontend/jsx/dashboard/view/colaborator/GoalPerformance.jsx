@@ -18,9 +18,9 @@ export default React.createClass({
         return {
             loading: true,
             indicator:-1,
-            indicators:[], 
+            indicators:[],
         	plan: this.props.plan,
-        	subPlan: this.props.subPlan,            
+        	subPlan: this.props.subPlan,
             elements:[],
             aggregateIndicator: false,
             chartEvents: [
@@ -28,21 +28,19 @@ export default React.createClass({
                     eventName : 'select',
                     callback  : this.onChartClick
                 },
-            ],            
+            ],
             pageSize: 20,
             total: 0
         };
     },
     componentWillReceiveProps(newProps){
     	var me = this;
-        if(this.isMounted()) {
-        	me.setState({
-        		plan:newProps.plan,
-        		subPlan:newProps.subPlan,                
-                indicator:-1,
-                loading: true                
-        	});
-        }
+		me.setState({
+			plan:newProps.plan,
+			subPlan:newProps.subPlan,
+			indicator:-1,
+			loading: true
+		});
         this.refs.selectIndicator.value = -1;
 
         StructureStore.dispatch({
@@ -53,32 +51,26 @@ export default React.createClass({
     },
     componentDidMount(){
     	var me = this;
-        if(this.isMounted()) {
-        	this.setState({
-    	        options:{
-                    title: '',
-                    colors: ['#CCCCCC','#333333'],
-                    vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
-                    hAxis: {slantedText:true,slantedTextAngle:45},
-                    legend: {position: 'none'},
-                    bar: {groupWidth: '50%'},
-                    seriesType: 'bars',
-                    series: {1: {type: 'line', pointsVisible: true, pointSize:4}}
-                },
-                data: [ 
-                    ['titulo', 'Alcançado', { role: 'style' }, 'Esperado'],
-                    ["",0,'',0]
-                  ]
-          	});
-        }
-
-        StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {  
-            if(this.isMounted()) {
-           		this.setState({
-           			indicators:model.data,
-           		});
-                me.forceUpdate();
-            }
+		this.setState({
+			options:{
+				title: '',
+				colors: ['#CCCCCC','#333333'],
+				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+				hAxis: {slantedText:true,slantedTextAngle:45},
+				legend: {position: 'none'},
+				bar: {groupWidth: '50%'},
+				seriesType: 'bars',
+				series: {1: {type: 'line', pointsVisible: true, pointSize:4}}
+			},
+			data: [
+				['titulo', 'Alcançado', { role: 'style' }, 'Esperado'],
+				["",0,'',0]
+				]
+		});
+        StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
+			this.setState({
+				indicators:model.data,
+			});
         }, me);
 
        	PlanStore.on("find", (store, raw, opts) => {
@@ -87,7 +79,7 @@ export default React.createClass({
 		        data: {
                     macroId:(this.state.plan != -1)?(this.state.plan.get("id")):(null),
                     planId:(this.state.subPlan != -1)?(this.state.subPlan.id):(null)
-                }      
+                }
 	        });
 	        this.getGoalsInfo(1, this.state.pageSize);
        	});
@@ -100,43 +92,40 @@ export default React.createClass({
         }, me);
 
         DashboardStore.on("goalsInformationColaborator",(model)=>{
-            if(this.isMounted()) {                          
-                var elements =[];
-                var data = [['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
-                var goalValue;   
+			var elements =[];
+			var data = [['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
+			var goalValue;
 
-                model.data.map((goal) => {
-                    goalValue = this.getGoalsValues(goal);
-                    elements.push(goalValue);
-                });
-                if(model.data.length == 0){
-                    data = [['Element', 'Alcançado']];
-                    elements.push([Messages.get("label.haveNoGoals"),0]);
-                    data.push([Messages.get("label.haveNoGoals"),0]);
-                }else{
-                    model.data.map((goal, idx) => {
-                        data.push(elements[idx]);
-                    });
-                }
-                
-                this.setState({
-                    elements:elements,
-                    data:data,                    
-                    goals: model.data,
-                    loading: false,
-                    total: model.total
-                });
-                this.updateChartOptions(model);
-            }
-        	
+			model.data.map((goal) => {
+				goalValue = this.getGoalsValues(goal);
+				elements.push(goalValue);
+			});
+			if(model.data.length == 0){
+				data = [['Element', 'Alcançado']];
+				elements.push([Messages.get("label.haveNoGoals"),0]);
+				data.push([Messages.get("label.haveNoGoals"),0]);
+			}else{
+				model.data.map((goal, idx) => {
+					data.push(elements[idx]);
+				});
+			}
+
+			this.setState({
+				elements:elements,
+				data:data,
+				goals: model.data,
+				loading: false,
+				total: model.total
+			});
+			this.updateChartOptions(model);
         },me);
 
     },
 
     updateChartOptions(model){
         var bool = (model ? model.data.length > 0 : true);
-        var hTitle = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
-        this.setState({            
+        var hTitle = (model && model.data.length > 0 ? Messages.get("label.goals") : "");
+        this.setState({
             options:{
                 title: '',
                 colors: ['#CCCCCC','#333333'],
@@ -150,13 +139,13 @@ export default React.createClass({
         });
     },
 
-    getGoalsValues(goal){ 
+    getGoalsValues(goal){
     	var expectedField, maximumField,minimumField,reachedField;
         var index;
-        var fExp, fMax, fMin, fRec;        
+        var fExp, fMax, fMin, fRec;
         for(var cont=1;cont<goal.attributeList.length;cont++){
             index = cont;
-            if (goal.attributeInstanceList[index]) {  
+            if (goal.attributeInstanceList[index]) {
                 if(goal.attributeList[cont].expectedField){
                     expectedField = goal.attributeInstanceList[index].valueAsNumber || 0;
                     fExp = goal.attributeInstanceList[index].formattedValue || "0";
@@ -176,13 +165,13 @@ export default React.createClass({
         if(goal.name.length > 50){
             graphItem[0] = goal.name.slice(0,50)+"...";
         } else {
-            graphItem[0] = goal.name;            
+            graphItem[0] = goal.name;
         }
 
         if(reachedField == undefined){
             reachedField = 0;
         }
-        
+
         var format = fExp.replace(/[0-9.,]/gi,"");
         var prefix = "", sufix = "";
         if(fExp.indexOf(format) == 0){
@@ -274,7 +263,7 @@ export default React.createClass({
                 };
                 graphItem[2] = "#4EB4FE";
             }
-        }        
+        }
         return graphItem;
     },
 
@@ -298,7 +287,7 @@ export default React.createClass({
             endIndex:19,
             loading: true
 		});
-        
+
        	this.getGoalsInfo(1,this.state.pageSize);
 
 
@@ -314,22 +303,22 @@ export default React.createClass({
            }
         }
 
-       
+
 	},
 
     onChartClick(Chart){
-        var me = this;        
+        var me = this;
         if(Chart.chart.getSelection().length > 0){
             var level, url;
-            level = me.state.goals[Chart.chart.getSelection()[0].row];   
-            
+            level = me.state.goals[Chart.chart.getSelection()[0].row];
+
             if (level) {
                 url = window.location.origin+window.location.pathname+"#/plan/"+
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
-                
-                var msg = Messages.get("label.askGoToSelectedLevel");                            
+
+                var msg = Messages.get("label.askGoToSelectedLevel");
                 Modal.confirmCustom(() => {
-                    Modal.hide();           
+                    Modal.hide();
                     location.assign(url);
                 },msg,
                 ()=>{
@@ -341,7 +330,7 @@ export default React.createClass({
     },
 
     getGoalsInfo(page, pageSize, opt){
-        opt = opt || this.state;       
+        opt = opt || this.state;
         if(this.refs.selectIndicator != undefined) {
             DashboardStore.dispatch({
                 action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
@@ -351,7 +340,7 @@ export default React.createClass({
                     indicator:(this.refs.selectIndicator.value == -1)?(null):(opt.indicators[this.refs.selectIndicator.value].id),
                     page: page,
                     pageSize: pageSize
-                }   
+                }
             });
         }
     },
@@ -375,8 +364,8 @@ export default React.createClass({
 					            </select>
 							</div>
                             {!this.state.hide ?
-                                (this.state.loading ? <LoadingGauge/> : 
-                                <div>                                    
+                                (this.state.loading ? <LoadingGauge/> :
+                                <div>
                                     <ForPDIChart
                                      chartType="ComboChart"
                                      data={this.state.data}
@@ -390,14 +379,14 @@ export default React.createClass({
                                      total={this.state.total}
                                      onChangePage={this.getGoalsInfo} />
                                     <div className="colaborator-goal-performance-legend">
-                                        <div className="aggregate-indicator-without-goals-legend"> 
-                                                <span className="legend-item"> 
-                                                    {this.state.aggregateIndicator ? 
+                                        <div className="aggregate-indicator-without-goals-legend">
+                                                <span className="legend-item">
+                                                    {this.state.aggregateIndicator ?
                                                         <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
                                                         :
                                                         <p>&nbsp;</p>}
                                                 </span>
-                                        </div>                                        
+                                        </div>
                                         <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
                                         <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
                                         <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
@@ -407,7 +396,7 @@ export default React.createClass({
                                 </div>)
                             :""}
 
-					</div>				
+					</div>
 				</div>
             </div>
         );

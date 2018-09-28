@@ -20,7 +20,7 @@ export default React.createClass({
         	plan: this.props.plan,
         	subPlan: this.props.subPlan,
             profile: this.props.profile,
-            loading: true,            
+            loading: true,
             elements:[],
             objectives:[],
             indicators:[],
@@ -28,41 +28,39 @@ export default React.createClass({
             selectedObjective: -1,
             selectedIndicator: -1,
             typeGraph: "",
-            indicator:null,            
+            indicator:null,
             pageSize: 10
         };
     },
 
     componentWillReceiveProps(newProps){
     	var me = this;
-        if(this.isMounted()) {
-        	me.setState({
-        		plan:newProps.plan,
-        		subPlan:newProps.subPlan,
-                loading: true                
-        	});
-            if(!this.state.loading){
-                this.refs.selectObjectives.value = -1;
-                this.refs.selectIndicators.value = -1;
-            }
+		me.setState({
+			plan:newProps.plan,
+			subPlan:newProps.subPlan,
+			loading: true
+		});
+		if(!this.state.loading){
+			this.refs.selectObjectives.value = -1;
+			this.refs.selectIndicators.value = -1;
+		}
 
-            this.getInfos(1, this.state.pageSize, newProps);
+		this.getInfos(1, this.state.pageSize, newProps);
 
-            StructureStore.dispatch({
-                action: StructureStore.ACTION_GET_OBJECTIVES,
-                data: {
-                    macroId: (newProps.plan && newProps.plan != -1)?(newProps.plan.get("id")):(null),
-                    planId:(newProps.subPlan && newProps.subPlan != -1)?(newProps.subPlan.id):(null)
-                }      
-            });
-        }
+		StructureStore.dispatch({
+			action: StructureStore.ACTION_GET_OBJECTIVES,
+			data: {
+				macroId: (newProps.plan && newProps.plan != -1)?(newProps.plan.get("id")):(null),
+				planId:(newProps.subPlan && newProps.subPlan != -1)?(newProps.subPlan.id):(null)
+			}
+		});
     },
 
     updateChartOptions(model){
         var bool = (model ? model.data.length > 0 : true);
-        var hTitle1 = (model && model.data.length > 0 ? Messages.get("label.indicators") : ""); 
-        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
-        this.setState({            
+        var hTitle1 = (model && model.data.length > 0 ? Messages.get("label.indicators") : "");
+        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : "");
+        this.setState({
             options:{
                 title: '',
                 hAxis: {title:hTitle1, minValue: 0, maxValue: 100,slantedText: bool,slantedTextAngle:30},
@@ -95,180 +93,173 @@ export default React.createClass({
             ]
         });
         me.updateChartOptions();
-  
-        StructureStore.on("objectivesretrivied", (model) => { 
-            if(me.isMounted()) { 
-                me.setState({
-                    objectives: model.data,
-                    loading: false
-                });
-                me.forceUpdate();
-            }
+
+        StructureStore.on("objectivesretrivied", (model) => {
+			me.setState({
+				objectives: model.data,
+				loading: false
+			});
         }, me);
 
         DashboardStore.on("generalGoalsInformation",(model)=> {
-            if(me.isMounted()) {                
-                var elements =[];
-                var data = [
-                    ['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
-                var goalValue;
-                model.data.map((goal) => {
-                    goalValue = me.getGoalsValues(goal);
-                    elements.push(goalValue);
-                });
-                
-                if(model.data.length == 0){
-                    elements.push([Messages.get("label.haveNoGoals"),0,'',0]);
-                    data.push([Messages.get("label.haveNoGoals"),0,'',0]);
-                }else{
-                    model.data.map((ind, idx) => {
-                        data.push(elements[idx]);
-                    }); 
-                }
-                
-                me.setState({
-                    elements:elements,
-                    data:data,
-                    startIndex:0,
-                    endIndex:9,
-                    loading: false,
-                    goals: model.data,
-                    total: model.total
-                });
-                me.updateChartOptions(model);
-            }
+			var elements =[];
+			var data = [
+				['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
+			var goalValue;
+			model.data.map((goal) => {
+				goalValue = me.getGoalsValues(goal);
+				elements.push(goalValue);
+			});
+
+			if(model.data.length == 0){
+				elements.push([Messages.get("label.haveNoGoals"),0,'',0]);
+				data.push([Messages.get("label.haveNoGoals"),0,'',0]);
+			}else{
+				model.data.map((ind, idx) => {
+					data.push(elements[idx]);
+				});
+			}
+
+			me.setState({
+				elements:elements,
+				data:data,
+				startIndex:0,
+				endIndex:9,
+				loading: false,
+				goals: model.data,
+				total: model.total
+			});
+			me.updateChartOptions(model);
         },me);
 
-        DashboardStore.on("generalIndicatorsInformation",(model)=> {            
-            if(me.isMounted()) {
-                var data = [
-                        ['Element', 'Rendimento', { role: 'style' }]];
-                var elements=[];
-                if (me.refs.selectIndicators.value == -1) {
-                    var vet = [];                    
-                    model.data.map((ind) => {
-                        vet = [];
-                        vet[0] = (ind.name.length > 60 ? ind.name.substr(0,60).concat("...") : ind.name);
-                        if(ind.levelValue == undefined){
-                            vet[1] = 0;
-                        }else{
-                            vet[1] = {
-                                v: ind.levelValue,
-                                f: numeral(parseFloat(parseFloat(ind.levelValue))).format('0,0.00') + "%"
-                            };
-                        }
-                        /*
-                        if(ind.levelValue<40){
-                            vet[2] = "#E74C3C";
-                        }else if(ind.levelValue<70){
-                            vet[2] = "#FFCC33";
-                        }else if(ind.levelValue<100){
-                            vet[2] = "#51D466";
-                        }else{
-                            vet[2] = "#4EB4FE";
-                        }
-                        */
+        DashboardStore.on("generalIndicatorsInformation",(model)=> {
+			var data = [
+					['Element', 'Rendimento', { role: 'style' }]];
+			var elements=[];
+			if (me.refs.selectIndicators.value == -1) {
+				var vet = [];
+				model.data.map((ind) => {
+					vet = [];
+					vet[0] = (ind.name.length > 60 ? ind.name.substr(0,60).concat("...") : ind.name);
+					if(ind.levelValue == undefined){
+						vet[1] = 0;
+					}else{
+						vet[1] = {
+							v: ind.levelValue,
+							f: numeral(parseFloat(parseFloat(ind.levelValue))).format('0,0.00') + "%"
+						};
+					}
+					/*
+					if(ind.levelValue<40){
+						vet[2] = "#E74C3C";
+					}else if(ind.levelValue<70){
+						vet[2] = "#FFCC33";
+					}else if(ind.levelValue<100){
+						vet[2] = "#51D466";
+					}else{
+						vet[2] = "#4EB4FE";
+					}
+					*/
 
-                        if (!ind.levelValue)
-                            vet[2] = "#A9A9A9";
-                        else if (ind.levelValue < ind.levelMinimum)
-                            vet[2] = "#E74C3C";
-                        else if (ind.levelValue < 100.0)
-                            vet[2] = "#FFCC33";
-                        else if (ind.levelValue < ind.levelMaximum || ind.levelMaximum == 100.0)
-                            vet[2] = "#51D466";
-                        else
-                            vet[2] = "#4EB4FE";
+					if (!ind.levelValue)
+						vet[2] = "#A9A9A9";
+					else if (ind.levelValue < ind.levelMinimum)
+						vet[2] = "#E74C3C";
+					else if (ind.levelValue < 100.0)
+						vet[2] = "#FFCC33";
+					else if (ind.levelValue < ind.levelMaximum || ind.levelMaximum == 100.0)
+						vet[2] = "#51D466";
+					else
+						vet[2] = "#4EB4FE";
 
-                        elements.push(vet);
-                    });                   
-            
-                    if(model.data.length==0){
-                        vet[0] = Messages.get("label.haveNoIndicators");
-                        vet[1] = 0;
-                        vet[2] = "#FFFFFF";
-                        elements.push(vet);
-                        data.push(vet);
-                    } else{
-                        model.data.map((ind, idx) => {
-                            data.push(elements[idx]);
-                        });
-                    }
-                    me.setState({                        
-                        indicators: model.data
-                    });
+					elements.push(vet);
+				});
 
-                    me.updateChartOptions(model);
-                    me.setState({
-                        total: model.total
-                    });
-                } else {
-                    var vet = [];                    
-                    me.state.indicators[this.refs.selectIndicators.value].indicatorList.map((ind) => {
-                        vet = [];
-                        vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
-                        if(ind.aggregate.levelValue == undefined){
-                            vet[1] = 0;
-                        }else{
-                            vet[1] = {
-                                v: parseFloat(ind.aggregate.levelValue),
-                                f: numeral(parseFloat(parseFloat(ind.aggregate.levelValue))).format('0,0.00') + "%"
-                            };
-                        }
-                        /*
-                        if(ind.aggregate.levelValue < 40){
-                            vet[2] = "#E74C3C";
-                        }else if(ind.aggregate.levelValue < 70){
-                            vet[2] = "#FFCC33";
-                        }else if(ind.aggregate.levelValue < 100){
-                            vet[2] = "#51D466";
-                        }else{
-                            vet[2] = "#4EB4FE";
-                        }
-                        */
-                        
-                        if (!ind.aggregate.levelValue)
-                            vet[2] = "#A9A9A9";
-                        else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
-                            vet[2] = "#E74C3C";
-                        else if (ind.aggregate.levelValue < 100.0)
-                            vet[2] = "#FFCC33";
-                        else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum || ind.aggregate.levelMaximum == 100.0)
-                            vet[2] = "#51D466";
-                        else
-                            vet[2] = "#4EB4FE"; 
-                        
-                        elements.push(vet);
-                    });
+				if(model.data.length==0){
+					vet[0] = Messages.get("label.haveNoIndicators");
+					vet[1] = 0;
+					vet[2] = "#FFFFFF";
+					elements.push(vet);
+					data.push(vet);
+				} else{
+					model.data.map((ind, idx) => {
+						data.push(elements[idx]);
+					});
+				}
+				me.setState({
+					indicators: model.data
+				});
 
-                    if(me.state.indicators[this.refs.selectIndicators.value].indicatorList.length == 0){
-                       elements.push(["",0,'']);
-                        data.push(["",0,'']);
-                    }else{
-                        me.state.indicators[this.refs.selectIndicators.value].indicatorList.map((ind, idx) => {
-                            data.push(elements[idx]);                            
-                        });
-                    }
-                    me.setState({
-                        total: me.state.indicators[this.refs.selectIndicators.value].indicatorList.length
-                    });
-                }
-                me.setState({
-                    data:data,
-                    elements:elements,                        
-                    loading: false                    
-                });
-            }
-        },me);       
+				me.updateChartOptions(model);
+				me.setState({
+					total: model.total
+				});
+			} else {
+				var vet = [];
+				me.state.indicators[this.refs.selectIndicators.value].indicatorList.map((ind) => {
+					vet = [];
+					vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
+					if(ind.aggregate.levelValue == undefined){
+						vet[1] = 0;
+					}else{
+						vet[1] = {
+							v: parseFloat(ind.aggregate.levelValue),
+							f: numeral(parseFloat(parseFloat(ind.aggregate.levelValue))).format('0,0.00') + "%"
+						};
+					}
+					/*
+					if(ind.aggregate.levelValue < 40){
+						vet[2] = "#E74C3C";
+					}else if(ind.aggregate.levelValue < 70){
+						vet[2] = "#FFCC33";
+					}else if(ind.aggregate.levelValue < 100){
+						vet[2] = "#51D466";
+					}else{
+						vet[2] = "#4EB4FE";
+					}
+					*/
+
+					if (!ind.aggregate.levelValue)
+						vet[2] = "#A9A9A9";
+					else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+						vet[2] = "#E74C3C";
+					else if (ind.aggregate.levelValue < 100.0)
+						vet[2] = "#FFCC33";
+					else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum || ind.aggregate.levelMaximum == 100.0)
+						vet[2] = "#51D466";
+					else
+						vet[2] = "#4EB4FE";
+
+					elements.push(vet);
+				});
+
+				if(me.state.indicators[this.refs.selectIndicators.value].indicatorList.length == 0){
+					elements.push(["",0,'']);
+					data.push(["",0,'']);
+				}else{
+					me.state.indicators[this.refs.selectIndicators.value].indicatorList.map((ind, idx) => {
+						data.push(elements[idx]);
+					});
+				}
+				me.setState({
+					total: me.state.indicators[this.refs.selectIndicators.value].indicatorList.length
+				});
+			}
+			me.setState({
+				data:data,
+				elements:elements,
+				loading: false
+			});
+        },me);
   	},
 
-    getGoalsValues(goal){ 
+    getGoalsValues(goal){
         var expectedField, maximumField,minimumField,reachedField;
         var index;
-        var fExp, fMax, fMin, fRec;        
+        var fExp, fMax, fMin, fRec;
         for(var cont=1;cont<goal.attributeList.length;cont++){
             index = cont;
-            if (goal.attributeInstanceList[index]) {  
+            if (goal.attributeInstanceList[index]) {
                 if(goal.attributeList[cont].expectedField){
                     expectedField = goal.attributeInstanceList[index].valueAsNumber || 0;
                     fExp = goal.attributeInstanceList[index].formattedValue || "0";
@@ -288,13 +279,13 @@ export default React.createClass({
         if(goal.name.length > 50){
             graphItem[0] = goal.name.slice(0,50)+"...";
         } else {
-            graphItem[0] = goal.name;            
+            graphItem[0] = goal.name;
         }
 
         if(reachedField == undefined){
             reachedField = 0;
         }
-        
+
         var format = fExp.replace(/[0-9.,]/gi,"");
         var prefix = "", sufix = "";
         if(fExp.indexOf(format) == 0){
@@ -386,7 +377,7 @@ export default React.createClass({
                 };
                 graphItem[2] = "#4EB4FE";
             }
-        }        
+        }
         return graphItem;
     },
 
@@ -403,7 +394,7 @@ export default React.createClass({
     	});
     },
 
-    onObjectivesSelectChange() {        
+    onObjectivesSelectChange() {
         if (this.refs.selectObjectives.value == -1) {
             this.setState ({
                 typeGraph:"ColumnChart"
@@ -412,15 +403,15 @@ export default React.createClass({
 
     	this.getInfos(1, this.state.pageSize);
         this.refs.selectIndicators.value = -1;
-        this.setState({  
-            selectedObjective: this.state.objectives[this.refs.selectObjectives.value],          
+        this.setState({
+            selectedObjective: this.state.objectives[this.refs.selectObjectives.value],
             loading: true
         });
     },
 
     indicatorChange() {
         this.getInfos(1, this.state.pageSize);
-    }, 
+    },
 
     hideFields() {
         this.setState({
@@ -428,18 +419,18 @@ export default React.createClass({
         })
     },
 
-    getInfos(page, pageSize, opt){        
-        opt = opt || this.state;        
+    getInfos(page, pageSize, opt){
+        opt = opt || this.state;
         if (this.refs.selectIndicators.value == -1 || this.state.indicators[this.refs.selectIndicators.value].aggregate) {
             DashboardStore.dispatch({
-                action: DashboardStore.ACTION_GET_INDICATORS_INFORMATION, 
+                action: DashboardStore.ACTION_GET_INDICATORS_INFORMATION,
                 data: {
                     macro: (opt.plan == -1 ? null : opt.plan.id),
                     plan:(opt.subPlan == -1)? null : (opt.subPlan.id),
                     objective:(this.refs.selectObjectives.value == -1 ? null : this.state.objectives[this.refs.selectObjectives.value].id),
-                    page: page, 
+                    page: page,
                     pageSize: pageSize
-                }                
+                }
             });
             this.setState({
                 typeGraph: "ColumnChart"
@@ -451,7 +442,7 @@ export default React.createClass({
                     macro: (opt.plan == -1 ? null : opt.plan.id),
                     plan:(opt.subPlan == -1)? null : (opt.subPlan.id),
                     indicator:(this.refs.selectIndicators.value == -1 ? null : this.state.indicators[this.refs.selectIndicators.value].id),
-                    page: page, 
+                    page: page,
                     pageSize: pageSize
                 }
             });
@@ -460,16 +451,16 @@ export default React.createClass({
             });
         }
 
-        this.setState({            
-            aggregateIndicator: (this.state.indicators[this.refs.selectIndicators.value] ? 
+        this.setState({
+            aggregateIndicator: (this.state.indicators[this.refs.selectIndicators.value] ?
                 this.state.indicators[this.refs.selectIndicators.value].aggregate : false)
-        });  
+        });
     },
 
     onChartClick(Chart){
         var me = this;
         if(Chart.chart.getSelection().length > 0){
-            var level, url;                            
+            var level, url;
             if(me.state.indicator && me.state.indicator.aggregate){
                 level = me.state.indicator.indicatorList[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
@@ -478,28 +469,28 @@ export default React.createClass({
                 level = me.state.indicators[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
-            } else {                                
+            } else {
                 level = me.state.goals[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
             }
-            
+
             var msg = Messages.get("label.askGoToSelectedLevel");
             Modal.confirmCustom(() => {
-                Modal.hide();           
+                Modal.hide();
                 location.assign(url);
             },msg,
             ()=>{
                 Chart.chart.setSelection([]);
                 Modal.hide();
             });
-        }                    
+        }
     },
 
     render() {
         var me = this;
         return (
-           <div>               
+           <div>
                <div className="panel panel-default" id = {!this.state.hide ? "panelSection" : ""}>
                    <div className="panel-heading dashboard-panel-title">
                          <div>
@@ -530,18 +521,18 @@ export default React.createClass({
                             </select>
                                <span  className={(me.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")}  onClick={me.hideFields}/>
                           </div>
-         
+
                    </div>
                  {!me.state.hide ?
-                     (me.state.loading ? <LoadingGauge/> : 
-                     <div>          
-                        <ForPDIChart 
+                     (me.state.loading ? <LoadingGauge/> :
+                     <div>
+                        <ForPDIChart
                              chartType= {me.state.typeGraph}
-                             data={me.state.data} 
-                             options={me.state.typeGraph == "ColumnChart" ? me.state.options : me.state.optionsGraphComboChart} 
-                             graph_id="ColumnChart-Budget-Mananger"  
-                             width={"100%"} 
-                             height={"300px"}  
+                             data={me.state.data}
+                             options={me.state.typeGraph == "ColumnChart" ? me.state.options : me.state.optionsGraphComboChart}
+                             graph_id="ColumnChart-Budget-Mananger"
+                             width={"100%"}
+                             height={"300px"}
                              legend_toggle={true}
                              pageSize={me.state.pageSize}
                              total={me.state.total}
@@ -550,8 +541,8 @@ export default React.createClass({
 
                          {me.state.typeGraph == "ComboChart" ?
                              (
-                                 <div className="colaborator-goal-performance-legend">   
-                                     
+                                 <div className="colaborator-goal-performance-legend">
+
                                      <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
                                      <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
                                      <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
@@ -563,24 +554,24 @@ export default React.createClass({
 
                              (
                                  <div className={me.state.profile.ADMIN ? "colaborator-goal-performance-legend":"colaborator-goal-performance-legend-manager"}>
-                                    <div className="aggregate-indicator-without-goals-legend"> 
-                                            <span className="legend-item"> 
-                                                    {me.state.aggregateIndicator == true ? 
+                                    <div className="aggregate-indicator-without-goals-legend">
+                                            <span className="legend-item">
+                                                    {me.state.aggregateIndicator == true ?
                                                          <p id = "aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
                                                         :
                                                     <p>&nbsp;</p>}
                                             </span>
-                                    </div> 
+                                    </div>
                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedabove marginLeft10" disabled/> {Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</span>
                                  </div>
-                             )                   
-                         } 
-                     </div>)                   
-                 :""}               
-               </div>              
+                             )
+                         }
+                     </div>)
+                 :""}
+               </div>
             </div>
           );
     }

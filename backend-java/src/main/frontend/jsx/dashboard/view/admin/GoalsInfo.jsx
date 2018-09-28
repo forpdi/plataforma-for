@@ -40,19 +40,17 @@ export default React.createClass({
     },
 
 	componentDidMount(){
-		var me = this;		
+		var me = this;
 		if(EnvInfo && EnvInfo.company == null){
 			me.setState({
 				loading: false
 			});
 		}
 		DashboardStore.on("goalsinfoadminretrivied", (store) =>{
-			if(this.isMounted()) {
-	        	me.setState({        		
-	        		info: store.data,
-	        		loading: false
-	        	});
-	        }
+			me.setState({
+				info: store.data,
+				loading: false
+			});
         });
     },
 
@@ -63,21 +61,19 @@ export default React.createClass({
 	},
 
     componentWillReceiveProps(newProps){
-    	if(this.isMounted()) {
-	    	this.setState({    			
-	    		plan: newProps.plan,
-	    		subPlan: newProps.subPlan,
-	    		loading: true
-	    	});
-	    
-	    	DashboardStore.dispatch({
-	            action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
-	            data: {
-	                macro: (newProps.plan == -1 ? null : newProps.plan.get("id")),
-	                plan: (newProps.subPlan == -1 ? null : newProps.subPlan.id)
-	            }
-	        });
-	    }
+		this.setState({
+			plan: newProps.plan,
+			subPlan: newProps.subPlan,
+			loading: true
+		});
+
+		DashboardStore.dispatch({
+			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
+			data: {
+				macro: (newProps.plan == -1 ? null : newProps.plan.get("id")),
+				plan: (newProps.subPlan == -1 ? null : newProps.subPlan.id)
+			}
+		});
     },
 
     hide(){
@@ -87,16 +83,16 @@ export default React.createClass({
     },
 
 	render() {
-		var title = Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + this.state.plan.get("name") + 
+		var title = Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + this.state.plan.get("name") +
 					(this.state.subPlan != -1 ? " - "+ this.state.subPlan.name : "") :"");
 		return (
 			<div className={this.props.className}>
 				<div className="panel panel-default dashboard-goals-info-ctn">
 					<div className="panel-heading dashboard-panel-title">
-						<b className="budget-graphic-title" title={title}> 
-							{Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + (this.state.plan.get("name").length > 30 ? 
-								this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) + 
-								(this.state.subPlan != -1 ? " - "+ (this.state.subPlan.name.length > 30 ? 
+						<b className="budget-graphic-title" title={title}>
+							{Messages.get("label.generalGoalInfo")+(this.state.plan != -1 ? " - " + (this.state.plan.get("name").length > 30 ?
+								this.state.plan.get("name").substr(0,30).concat("...") : this.state.plan.get("name")) +
+								(this.state.subPlan != -1 ? " - "+ (this.state.subPlan.name.length > 30 ?
 								this.state.subPlan.name.substr(0,30).contat("...") : this.state.subPlan.name) : "")
 								:"")
 							}
@@ -106,7 +102,7 @@ export default React.createClass({
 					</div>
 					{this.state && this.state.info && !this.state.hide ?
 						<div className="panel-body dash-board-goals-info-adm text-center">
-							{this.state.loading ? <LoadingGauge/> : 
+							{this.state.loading ? <LoadingGauge/> :
 								<div>
 									<div className="row">
 									<div className="dashboard-goal-info col-sm-2">
@@ -127,12 +123,12 @@ export default React.createClass({
 										<h4>{"("+numeral(this.state.info.latePercentage).format('0,0.00')+"%)"}</h4>
 										<p>{Messages.getEditable("label.goals.late","fpdi-nav-label")}</p>
 									</div>
-									
+
 									<div className="dashboard-goal-info col-sm-2">
 										<h1>{this.state.info.notStarted}</h1>
 										<h4>{"("+numeral(this.state.info.notStartedPercentage).format('0,0.00')+"%)"}</h4>
 										<p>{Messages.getEditable("label.goals.notStarted","fpdi-nav-label")}</p>
-									</div>						
+									</div>
 								</div>
 								<div className="row">
 									<div className="dashboard-goal-info col-sm-2">
@@ -155,7 +151,7 @@ export default React.createClass({
 										<h4>{"("+numeral(this.state.info.aboveExpectedPercentage).format('0,0.00')+"%)"}</h4>
 										<p>{Messages.getEditable("label.goals.aboveExpected","fpdi-nav-label")}</p>
 									</div>
-								</div>						
+								</div>
 							</div>}
 						</div>
 						: ""}
