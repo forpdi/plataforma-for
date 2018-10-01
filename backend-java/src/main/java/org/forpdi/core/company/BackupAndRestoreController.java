@@ -68,7 +68,9 @@ public class BackupAndRestoreController extends AbstractController  {
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
 	public void  DoRestore(UploadedFile file) {
 		try {
+			LOGGER.infof("Starting restoration for company '%s'...", this.domain.getCompany().getName());
 			dbbackup.restore(file);
+			LOGGER.infof("Done restoration for company '%s'.", this.domain.getCompany().getName());
 			this.success("Dados importados com sucesso.");
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

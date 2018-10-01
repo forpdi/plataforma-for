@@ -67,15 +67,6 @@
 	<filteredResources>
 		<filter>
 			<id>0</id>
-			<name>src/main/frontend</name>
-			<type>10</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-node_modules</arguments>
-			</matcher>
-		</filter>
-		<filter>
-			<id>0</id>
 			<name>src/main/frontend-angular</name>
 			<type>10</type>
 			<matcher>
