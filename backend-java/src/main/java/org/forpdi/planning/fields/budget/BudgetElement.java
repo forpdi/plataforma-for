@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
+
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 
 
@@ -18,7 +19,7 @@ import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 public class BudgetElement extends SimpleLogicalDeletableEntity{	
 	public static final String TABLE = "fpdi_budget_element";
 	private static final long serialVersionUID = 1L;
-		
+	
 	@Column(nullable=false)
 	private String subAction;
 	

@@ -26,8 +26,8 @@ public class GsonBrazilianDateConverter extends DateGsonConverter
 	private static final Logger LOG = Logger.getLogger(GsonBrazilianDateConverter.class);
 
 	public static final Locale DEFAULT_LOCALE = new Locale("pt", "BR");
-	public static final DateFormat DATETIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, DEFAULT_LOCALE);
-	public static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.FULL, DEFAULT_LOCALE);
+	public static final DateFormat DATETIME_FORMAT = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, DEFAULT_LOCALE);
+	public static final DateFormat DATE_FORMAT = DateFormat.getDateInstance(DateFormat.MEDIUM, DEFAULT_LOCALE);
 	
 	public GsonBrazilianDateConverter() {
 		//LOG.info("Utilizado parser custom.");
