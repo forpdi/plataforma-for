@@ -4,7 +4,7 @@
 <hibernate-configuration>
 	<session-factory>
   		<property name="org.hibernate">true</property>
-
+  		
 		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo</property>
 		<property name="connection.username">${db.username}</property>
 		<property name="connection.password">${db.password}</property>
@@ -28,9 +28,9 @@
 		<property name="hibernate.c3p0.acquireRetryAttempts">5</property>
 		<property name="hibernate.c3p0.acquireIncrement">4</property>
 		<property name="hibernate.c3p0.idleConnectionTestPeriod">60</property>
-		<property name="hibernate.c3p0.initialPoolSize">10</property>
-		<property name="hibernate.c3p0.minPoolSize">10</property>
-		<property name="hibernate.c3p0.maxPoolSize">32</property>
+		<property name="hibernate.c3p0.initialPoolSize">16</property>
+		<property name="hibernate.c3p0.minPoolSize">16</property>
+		<property name="hibernate.c3p0.maxPoolSize">64</property>
 		<property name="hibernate.c3p0.maxIdleTime">150</property>
 		<property name="hibernate.c3p0.checkoutTimeout">25000</property>
 		<property name="hibernate.c3p0.maxStatements">10000</property>

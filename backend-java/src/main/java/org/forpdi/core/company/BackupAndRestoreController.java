@@ -7,6 +7,10 @@ import javax.inject.Inject;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.user.authz.permission.ExportDataPermission;
+import org.forpdi.core.user.authz.permission.RestoreDataPermission;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -35,14 +39,13 @@ public class BackupAndRestoreController extends AbstractController  {
 	 *
 	 */
 	@Get("/company/export")
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
 	public Download export() {
 		try {
 			LOGGER.warn("Starting import Plan Macro");
 			byte[] exportData = dbbackup.export(this.domain.getCompany());
-			//this.success("sucess");
-			LOGGER.warn("Stopping import Plan Macro");
 			return new ByteArrayDownload(exportData, "application/octet-stream",
-				String.format("plan-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
+				String.format("plans-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
@@ -61,6 +64,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * 		id company
 	 */
 	@Post("/company/restore")
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
 	public void  DoRestore(UploadedFile file) {
 		try {

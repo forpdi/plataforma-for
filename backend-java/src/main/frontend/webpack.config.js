@@ -9,7 +9,7 @@ module.exports = {
   devtool: '#eval-cheap-module-source-map',
   entry: ["./favicon.ico", "./index.html", "./app.js"],
   output: {
-    path: path.join(__dirname, 'build/development'),
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/',
     pathinfo: true,
@@ -21,7 +21,7 @@ module.exports = {
     },
     compress: true,
     proxy: {
-      '/**': {
+      '/forpdi/**': {
         target: 'http://localhost:8080',
         secure: false,
       },
@@ -75,7 +75,7 @@ module.exports = {
         ],
       }, {
         test: /\.pdf$/,
-        loaders: ['file-loader?name=forpdi/documents/[name].[ext]'],
+        loaders: ['file-loader?name=documents/[name].[ext]'],
       }, {
         test: /\.css$/,
         loaders: ['style-loader', 'css-loader', 'postcss-loader'],
@@ -84,10 +84,10 @@ module.exports = {
         loader: 'file-loader?name=[name].[ext]',
       }, {
         test: /\.(jpg|jpeg|png|svg|gif)(\?v=[0-9].[0-9].[0-9])?$/,
-        loader: 'file-loader?name=forpdi/images/[name].[ext]',
+        loader: 'file-loader?name=images/[name].[ext]',
       }, {
         test: /\.(woff|woff2|ttf|eot)(\?v=[0-9].[0-9].[0-9])?$/,
-        loader: 'file-loader?name=forpdi/fonts/[name].[ext]',
+        loader: 'file-loader?name=fonts/[name].[ext]',
       },
     ],
   },

@@ -2,7 +2,9 @@ package org.forpdi.core.user.authz;
 
 import org.forpdi.core.abstractions.ComponentFactory;
 import org.forpdi.core.user.authz.permission.EditMessagesPermission;
+import org.forpdi.core.user.authz.permission.ExportDataPermission;
 import org.forpdi.core.user.authz.permission.ManageUsersPermission;
+import org.forpdi.core.user.authz.permission.RestoreDataPermission;
 import org.forpdi.core.user.authz.permission.ViewUsersPermission;
 import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
@@ -28,6 +30,9 @@ public final class PermissionFactory extends ComponentFactory<Permission> {
 		this.register(new ManageDocumentPermission());
 		this.register(new ManagePlanPermission());
 		this.register(new UpdateGoalPermission());
+
+		this.register(new ExportDataPermission());
+		this.register(new RestoreDataPermission());
 	}
 
 	public class SystemAdminPermission extends Permission {

@@ -314,7 +314,7 @@ export default React.createClass({
                 </a>
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
-                <a href="company/export">
+                <a href="/forpdi/company/export">
                     <span className="fpdi-nav-icon mdi mdi-file-export icon-link"
                         /> <span className="fpdi-nav-label">
                             {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
