@@ -203,7 +203,7 @@ export default React.createClass({
 		Modal.uploadFile(
 			Messages.get("label.importPlans"),
 			<p>{Messages.get("label.uploadFbk")}</p>,
-			"company/restore",
+			"/forpdi/company/restore",
 			"fbk",
 			formatsBlocked,
 			(response) => {
