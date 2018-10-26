@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  * @author Renato R. R. de Oliveira
@@ -36,6 +37,7 @@ public class CompanyMessage implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable=false)
 	private Date lastUpdated = new Date();
+
 
 	public Company getCompany() {
 		return company;

@@ -35,6 +35,9 @@ public class TableStructure extends SimpleLogicalDeletableEntity{
 	
 	@Transient
 	private List<OptionsField> optionsField;
+	
+	@Transient
+	private Long exportTableFieldsId;
 
 	public String getLabel() {
 		return label;
@@ -74,6 +77,14 @@ public class TableStructure extends SimpleLogicalDeletableEntity{
 
 	public void setInTotal(boolean isInTotal) {
 		this.isInTotal = isInTotal;
+	}
+
+	public Long getExportTableFieldsId() {
+		return exportTableFieldsId;
+	}
+
+	public void setExportTableFieldsId(Long exportTableFieldsId) {
+		this.exportTableFieldsId = exportTableFieldsId;
 	}
 
 }

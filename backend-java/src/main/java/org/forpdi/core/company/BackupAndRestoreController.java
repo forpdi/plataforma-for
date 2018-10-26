@@ -42,7 +42,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
 	public Download export() {
 		try {
-			LOGGER.warn("Starting import Plan Macro");
+			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
 			byte[] exportData = dbbackup.export(this.domain.getCompany());
 			return new ByteArrayDownload(exportData, "application/octet-stream",
 				String.format("plans-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));

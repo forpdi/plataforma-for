@@ -2963,5 +2963,48 @@ public class DocumentBS extends HibernateBusiness {
 		stamper.close();
 		reader.close();
 	}
+	
+	
+	/**
+	 * Lista com os valores dos campos
+	 * 
+	 * @param instance
+	 * @return List<ScheduleValues> Lista com os valores da tabela.
+	 */
+	public List<ScheduleValues> listScheduleValuesByInstance(ScheduleInstance instance) {
+		Criteria criteria = this.dao.newCriteria(ScheduleValues.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("scheduleInstance", instance));
+		return this.dao.findByCriteria(criteria, ScheduleValues.class);
+	}
+
+	/**
+	 * Listar os valores do campo tabela
+	 * 
+	 * @param structure
+	 *            Estrutura para listar os campos.
+	 * @return List<TableValues> Lista dos valores com os campos de tabela.
+	 */
+	public List<ScheduleValues> listScheduleValuesByStructure(ScheduleStructure structure) {
+		Criteria criteria = this.dao.newCriteria(ScheduleValues.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("scheduleStructure", structure));
+		return this.dao.findByCriteria(criteria, ScheduleValues.class);
+	}
+
+	/**
+	 * Buscar campos na tabela à partir de um atributo.
+	 * 
+	 * @param attributeId
+	 *            Atributo para buscar os campos.
+	 * @param isDocument
+	 *            Verificar se o campo pertence ao documento ou plano.
+	 * @return Schedule Campo da tabela.
+	 */
+	public Schedule scheduleByAttribute(Long attributeId, boolean isDocument) {
+		Criteria criteria = this.dao.newCriteria(Schedule.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
+				.addOrder(Order.asc("id"));
+		Schedule schedule = (Schedule) criteria.uniqueResult();
+		return schedule;
+	}
 
 }

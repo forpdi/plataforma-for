@@ -31,10 +31,20 @@ import org.forpdi.planning.document.Document;
 import org.forpdi.planning.document.DocumentAttribute;
 import org.forpdi.planning.document.DocumentBS;
 import org.forpdi.planning.document.DocumentSection;
+import org.forpdi.planning.fields.FieldsBS;
+import org.forpdi.planning.fields.OptionsField;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.budget.Budget;
 import org.forpdi.planning.fields.budget.BudgetBS;
 import org.forpdi.planning.fields.budget.BudgetElement;
+import org.forpdi.planning.fields.schedule.Schedule;
+import org.forpdi.planning.fields.schedule.ScheduleInstance;
+import org.forpdi.planning.fields.schedule.ScheduleStructure;
+import org.forpdi.planning.fields.schedule.ScheduleValues;
+import org.forpdi.planning.fields.table.TableFields;
+import org.forpdi.planning.fields.table.TableInstance;
+import org.forpdi.planning.fields.table.TableStructure;
+import org.forpdi.planning.fields.table.TableValues;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanBS;
 import org.forpdi.planning.plan.PlanDetailed;
@@ -69,6 +79,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	@Inject private BudgetBS budgetBS;
 	@Inject private CompanyBS companyBS;
 	@Inject private UserBS userBS;
+	@Inject	private FieldsBS fieldsBS;
 	@Inject @Current private CompanyDomain domain;
 	
 	@Inject
@@ -112,15 +123,42 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		List<DocumentSection> documentsection = new ArrayList<>();
 		List<BudgetElement> budgetelement = new ArrayList<>();
 		List<Attribute> attribute = new ArrayList<>();
+		List<TableFields> tableFields= new ArrayList<>();
+		List<TableInstance> tableInstance= new ArrayList<>();
+		List<TableStructure> tableStructure= new ArrayList<>();
+		List<TableValues> tableValues= new ArrayList<>();
+		List<Schedule> schedule= new ArrayList<>();
+		List<ScheduleInstance> scheduleInstance= new ArrayList<>();
+		List<ScheduleStructure> scheduleStructure= new ArrayList<>();
+		List<ScheduleValues> scheduleValues= new ArrayList<>();
+		List<CompanyMessage> companyMessage= new ArrayList<>();
+		List<OptionsField> optionsField= new ArrayList<>();
 		
 		HashMap<Long, Structure> structuresMap = new HashMap<>();
 		HashMap<Long, StructureLevel> structuresLevelMap = new HashMap<>();
 		HashMap<Long, BudgetElement> budgetElementMap = new HashMap<>();
 		HashMap<Long, Attribute> attributeMap = new HashMap<>();
-
-	
+		HashMap<Long, TableFields> tableFieldsMap = new HashMap<>();
+		HashMap<Long, TableInstance> tableInstanceMap = new HashMap<>();
+		HashMap<Long, TableStructure> tableStructureMap = new HashMap<>();
+		HashMap<Long, TableValues> tableValuesMap = new HashMap<>();
+		
+		HashMap<Long, Schedule> scheduleMap = new HashMap<>();
+		HashMap<Long, ScheduleInstance> scheduleInstanceMap = new HashMap<>();
+		HashMap<Long, ScheduleStructure> scheduleStructureMap = new HashMap<>();
+		HashMap<Long, ScheduleValues> scheduleValuesMap = new HashMap<>();
+		HashMap<Long, OptionsField> optionsFieldMap = new HashMap<>();
+		
+		companyMessage = companyBS.retrieveMessages(company);
+		
+		/*companyMessage.stream().forEach(it->{
+			it.setExportCompanyId(it.getCompany().getId());
+			it.setCompany(null);
+		});*/
+		
 		for(PlanMacro planMacro : plansMacroList.getList()) {
 				
+			
 			//Exportando o Plano Macro
 			planMacro.setExportCompanyId(planMacro.getCompany().getId());
 			planMacro.setCompany(null);
@@ -128,6 +166,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			plansMacro.add(planMacro);
 
 			List<Plan> plan = this.planBS.listAllPlansForPlanMacro(planMacro);
+			
 			
 			//Exportando os planos de metas
 			for (Plan plan_pm : plan) {
@@ -141,6 +180,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					structuresMap.put(structure.getId(), structure);
 				}
 		
+				
 				//Exporta plano detalhado
 				List<PlanDetailed> plansdetailed = this.planBS.listAllPlanDetailed(plan_pm);
 				for (PlanDetailed pd : plansdetailed) {
@@ -148,6 +188,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					pd.setExportPlanId(plan_pm.getId());
 					plandetailed.add(pd);
 				}
+				
 				
 				//Exportando as estruturas level instance necessárias.
 				List<StructureLevelInstance> structurelevelsinstance = this.structureBS.listAllLevelInstanceByPlan(plan_pm);
@@ -178,6 +219,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			}	
 		}
 			
+		
 		//Exportando as estruturas level necessárias.
 		structuresLevelMap.values().stream().forEach(structureLevel -> {
 			structureLevel.setExportStructureId(structureLevel.getStructure().getId());
@@ -187,12 +229,14 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			structureLevel.setStructure(null);
 			structurelevel.add(structureLevel);		
 			
+			
 			//Exportando atributos
 			for(Attribute sl : structureBS.listAttributes(structureLevel).getList()) {
 				attributeMap.put(sl.getId(),sl);
 			}
 		});
 
+		
 		//Exportando as estruturas necessárias.
 		structuresMap.values().stream().forEach(structure -> {
 			structure.setExportCompanyId(structure.getCompany().getId());
@@ -203,15 +247,16 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		
 		for(PlanMacro pm: plansMacro ) {
 			
+			
 			//Exportando os documentos
 			Document doc =  this.docBS.retrieveDocumentByPlan(pm);	
-
 			if(doc !=null){
 				
 				doc.setExportPlanMacroId(pm.getId());
 				doc.setPlan(null);
 				documents.add(doc);
 		
+				
 				//Exportando as seções documentos
 				List<DocumentSection> documentsection_temp = this.docBS.listAllSectionsByDocument(doc);
 				HashMap<Long, DocumentSection> documentsectionMap =   new HashMap<>();
@@ -251,6 +296,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			}
 		}
 		
+		
 		//Exportando document attribute
 		documentsection.stream().forEach(ds->{
 			List<DocumentAttribute> list = this.docBS.listAllAttributesBySection(ds);
@@ -262,13 +308,13 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 
 		});
 			
+		
 		//Exportando planos de ação
 		//Exportando level instance history
 		//Exportando structure level instance detailed
 		//Exportando aggregate indicator
 		//Exportando budget
-		structurelevelinstance.stream().forEach( 
-				sli->{
+		structurelevelinstance.stream().forEach(sli->{
 			actionplan.addAll((List<ActionPlan>) this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("levelInstance", sli)).list());
 			levelinstancehistory.addAll((List<LevelInstanceHistory>) this.dao.newCriteria(LevelInstanceHistory.class).add(Restrictions.eq("levelInstance", sli)).list());
 			slid.addAll((List<StructureLevelInstanceDetailed>) structureBS.listAllLevelInstanceDetailed(sli));	
@@ -276,29 +322,24 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			attributeinstance.addAll((List<AttributeInstance>) this.dao.newCriteria(AttributeInstance.class).add(Restrictions.eq("levelInstance", sli)).list());
 			aggregateindicator.addAll((List<AggregateIndicator>) this.dao.newCriteria(AggregateIndicator.class).add(Restrictions.eq("aggregate", sli)).list());
 		});
-
 		actionplan.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
 			it.setLevelInstance(null);	
 		});
-		
 		levelinstancehistory.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
 			it.setLevelInstance(null);	
 		});
-		
 		slid.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
 			it.setLevelInstance(null);	
 		});
-		
 		aggregateindicator.stream().forEach(it->{
 			it.setExportAggregateId(it.getAggregate().getId());
 			it.setExportIndicatorId(it.getIndicator().getId());
 			it.setAggregate(null);
 			it.setIndicator(null);
 		});
-		
 		budget.stream().forEach(it->{
 			budgetElementMap.put(it.getBudgetElement().getId(),it.getBudgetElement());
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
@@ -307,12 +348,14 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			it.setBudgetElement(null);
 		});
 		
+		
 		//Exportando budget element
 		budgetElementMap.values().stream().forEach(be -> {
 			be.setExportCompanyId(be.getCompany().getId());
 			be.setCompany(null);
 			budgetelement.add(be);
 		});
+
 		
 		//Exportando atributos
 		attributeinstance.stream().forEach(it->{
@@ -322,19 +365,182 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			it.setLevelInstance(null);	
 			it.setAttribute(null);
 		});
-	
 		attributeMap.values().stream().forEach(a -> {
 			a.setExportStructureLevelId(a.getLevel().getId());
 			a.setLevel(null);
 			attribute.add(a);
 		});
+			
 		
+		
+		//Exportando table field
+		//Exportando option field
+		//Exportando schedule
+		documentattribute.stream().forEach(it->{
 			
+			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(), true);
+			if (tablefields!=null) {
+				if(tablefields.isDocument()) {
+					tableFieldsMap.put(tablefields.getId(),tablefields);
+				}
+			}
 			
+			PaginatedList<OptionsField> optionsfield = fieldsBS.getOptionsField(it.getId());
+			
+			if (optionsfield!=null) {
+				optionsfield.getList().forEach(of->{
+					if(of.isDocument()) {
+						optionsFieldMap.put(of.getId(), of);
+					}
+				});
+			}
+			
+			Schedule s = docBS.scheduleByAttribute(it.getId(), true);
+
+			if(s != null) {
+				if(s.isDocument()) {
+					s.setExportAttributeId(s.getAttributeId());
+					scheduleMap.put(s.getId(), s);
+				}
+			}
+		});
+		attribute.stream().forEach(it->{
+			
+			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(),false);
+			if (tablefields!=null) {
+				tableFieldsMap.put(tablefields.getId(),tablefields);
+			}
+			
+			PaginatedList<OptionsField> optionsfield = fieldsBS.getOptionsField(it.getId());
+			
+			if (optionsfield!=null) {
+				optionsfield.getList().forEach(of->{
+					if(!of.isDocument()) {
+						optionsFieldMap.put(of.getId(), of);
+					}
+				});
+			}
+			
+		});
+		tableFieldsMap.values().stream().forEach(tf -> {
+			
+			tf.getTableInstances().stream().forEach(ti -> {
+				tableInstanceMap.put(ti.getId(),ti);
+				
+				List<TableValues> tablevalues = fieldsBS.listTableValuesByInstance(ti);
+				
+				//Exportando table values
+				tablevalues.stream().forEach(tv -> {
+					tableValuesMap.put(tv.getId(), tv);
+				});
+				
+			});
+			tf.getTableStructures().stream().forEach(ts -> {
+				tableStructureMap.put(ts.getId(), ts);
+				
+				List<TableValues> tablevalues = fieldsBS.listTableValuesByStructure(ts);
+				
+				//Exportando table values
+				tablevalues.stream().forEach(tv -> {
+					tableValuesMap.put(tv.getId(), tv);
+				});
+			});
+			
+			tf.setExportAttributeId(tf.getAttributeId());
+			tf.setTableStructures(null);
+			tf.setTableInstances(null);
+			tf.setAttributeId(null);
+			tableFields.add(tf);
+		});
+		scheduleMap.values().stream().forEach(s -> {
+			
+			s.getScheduleStructures().stream().forEach(ss -> {
+				scheduleStructureMap.put(ss.getId(), ss);
+				
+				 List<ScheduleValues> schedulevalues = docBS.listScheduleValuesByStructure(ss);
+				
+				//Exportando schedule values
+				 schedulevalues.stream().forEach(tv -> {
+					 scheduleValuesMap.put(tv.getId(), tv);
+				});
+			});
+			
+			s.getScheduleInstances().stream().forEach(si -> {
+				scheduleInstanceMap.put(si.getId(),si);
+				
+				List<ScheduleValues> schedulevalues = docBS.listScheduleValuesByInstance(si);
+				
+				//Exportando schedule values
+				 schedulevalues.stream().forEach(tv -> {
+					 scheduleValuesMap.put(tv.getId(), tv);
+				});
+			});	
+
+			s.setExportAttributeId(s.getAttributeId());
+			s.setAttributeId(null);
+			s.setScheduleInstances(null);
+			s.setScheduleStructures(null);
+			schedule.add(s);
+		});
+		
+		
+		//Exportando table instance
+		//Exportando table structure
+		//Exportando table values
+		tableInstanceMap.values().stream().forEach(ti -> {
+			ti.setExportTableFieldsId(ti.getTableFields().getId());
+			ti.setTableFields(null);
+			tableInstance.add(ti);
+		});
+		tableStructureMap.values().stream().forEach(ts -> {
+			ts.setExportTableFieldsId(ts.getTableFields().getId());
+			ts.setTableFields(null);
+			tableStructure.add(ts);
+		});
+		tableValuesMap.values().stream().forEach(tv -> {
+			tv.setExportTableStructureId(tv.getTableStructure().getId());
+			tv.setExportTableInstanceId(tv.getTableInstance().getId());
+			tv.setTableInstance(null);
+			tv.setTableStructure(null);
+			tableValues.add(tv);
+		});
+	
+		
+		//Exportando schedule instance
+		//Exportando schedule structure
+		//Exportando schedule values
+		scheduleInstanceMap.values().stream().forEach(si -> {
+			si.setExportScheduleId(si.getSchedule().getId());
+			si.setSchedule(null);
+			scheduleInstance.add(si);
+		});
+		scheduleStructureMap.values().stream().forEach(si -> {
+			si.setExportScheduleId(si.getSchedule().getId());
+			si.setSchedule(null);
+			scheduleStructure.add(si);
+		});
+		scheduleValuesMap.values().stream().forEach(sv -> {
+			sv.setExportScheduleStructureId(sv.getScheduleStructure().getId());
+			sv.setExportScheduleInstanceId(sv.getScheduleInstance().getId());
+			sv.setScheduleInstance(null);
+			sv.setScheduleStructure(null);
+			scheduleValues.add(sv);
+		});
+		
+		optionsFieldMap.values().stream().forEach(of -> {
+			of.setExportAttributeId(of.getAttributeId());
+			of.setAttributeId(null);
+			optionsField.add(of);
+		});
+		
+		
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		ZipOutputStream zos = new ZipOutputStream(bos);	
 		
 		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
+		if(!companyMessage.isEmpty())
+			zipAdd(zos, CompanyMessage.class.getSimpleName(), this.gson.toJson(companyMessage));
+		
 		if(!plansMacro.isEmpty())
 		 zipAdd(zos, PlanMacro.class.getSimpleName(), this.gson.toJson(plansMacro));
 		if(!budgetelement.isEmpty())
@@ -358,7 +564,6 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!documentsection.isEmpty())
 			zipAdd(zos, DocumentSection.class.getSimpleName(), this.gson.toJson(documentsection));
 		
-
 		if(!actionplan.isEmpty())
 			zipAdd(zos, ActionPlan.class.getSimpleName(), this.gson.toJson(actionplan));
 		if(!levelinstancehistory.isEmpty())
@@ -372,10 +577,32 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!documentattribute.isEmpty())
 			zipAdd(zos, DocumentAttribute.class.getSimpleName(), this.gson.toJson(documentattribute));
 		if(!aggregateindicator.isEmpty())
-		zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateindicator));
+			zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateindicator));
+		
+		if(!tableFields.isEmpty())
+			zipAdd(zos, TableFields.class.getSimpleName(), this.gson.toJson(tableFields));
+		if(!tableStructure.isEmpty())
+			zipAdd(zos, TableStructure.class.getSimpleName(), this.gson.toJson(tableStructure));
+		if(!tableInstance.isEmpty())
+			zipAdd(zos, TableInstance.class.getSimpleName(), this.gson.toJson(tableInstance));
+		if(!tableValues.isEmpty())
+			zipAdd(zos, TableValues.class.getSimpleName(), this.gson.toJson(tableValues));
+		
+		if(!schedule.isEmpty())
+			zipAdd(zos, Schedule.class.getSimpleName(), this.gson.toJson(schedule));
+		if(!scheduleStructure.isEmpty())
+			zipAdd(zos, ScheduleStructure.class.getSimpleName(), this.gson.toJson(scheduleStructure));
+		if(!scheduleInstance.isEmpty())
+			zipAdd(zos, ScheduleInstance.class.getSimpleName(), this.gson.toJson(scheduleInstance));
+		if(!scheduleValues.isEmpty())
+			zipAdd(zos, ScheduleValues.class.getSimpleName(), this.gson.toJson(scheduleValues));
+		
+		if(!optionsField.isEmpty())
+			zipAdd(zos, OptionsField.class.getSimpleName(), this.gson.toJson(optionsField));
+		
 		
 		zos.close();
-
+			
 		return bos.toByteArray();
 	}
 
@@ -398,14 +625,21 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		List<File> files = decompact(file.getFile());
 		Map<Long, Long> map_id_company = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_plan_macro = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_documento = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_documento_section = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_structure = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_structure_level = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_structure_level_instance = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_plan = new HashMap<Long, Long>();
 		Map<Long, Long> map_budget_element = new HashMap<Long, Long>();
-		Map<Long, Long> map_attribute = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_attribute = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_document = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_document_section = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_document_attribute= new HashMap<Long, Long>();
+		Map<Long, Long> map_id_table_field = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_table_instance = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_table_structure = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_schedule = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_schedule_instance = new HashMap<Long, Long>();
+		Map<Long, Long> map_id_schedule_structure = new HashMap<Long, Long>();
 		
 		
 		for (File f : files) {
@@ -416,97 +650,148 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			JSONParser parser = new JSONParser();
 			JSONArray array;
 
+			LOGGER.warn("Restoring " +name);
 			switch (name) {
 			
-			case "Company" :
-				Company c = gson.fromJson(register, Company.class);
-				map_id_company.put(c.getId(), company.getId());
-				break;
+				case "Company" :
+					Company c = gson.fromJson(register, Company.class);
+					map_id_company.put(c.getId(), company.getId());
+					break;
+					
+				case "CompanyMessage" :
+					
+					array = (JSONArray) parser.parse(register);
+					for (int i = 0; i < array.size(); i++) {
+						CompanyMessage cm = gson.fromJson(array.get(i).toString(), CompanyMessage.class);
+						//long id_old_company =cm.getExportCompanyId();
+						cm.setCompany(company);
+						this.dao.persist(cm);
+					}
+					break;
+	
+					
+				case "PlanMacro":
+					readJson(register, PlanMacro.class, map_id_plan_macro, map_id_company, null);
+					break;
+	
+				case "Structure":
+					array = (JSONArray) parser.parse(register);
+					for (int i = 0; i < array.size(); i++) {
+						Structure st = gson.fromJson(array.get(i).toString(), Structure.class);
+						id_old = st.getId();
+						st.setCompany(company);
+						st.setId(null);
+						this.dao.persist(st);
+						map_id_structure.put(id_old, st.getId());
+					}
+					break;
+					
+				case "BudgetElement" :
+					array = (JSONArray) parser.parse(register);
+					for (int i = 0; i < array.size(); i++) {
+						BudgetElement be = gson.fromJson(array.get(i).toString(), BudgetElement.class);
+						id_old = be.getId();
+						be.setCompany(company);
+						be.setId(null);
+						this.dao.persist(be);
+						map_budget_element.put(id_old, be.getId());
+					}
+					break;
+	
+				case "Plan":
+					readJson(register, Plan.class, map_id_plan, map_id_structure, map_id_plan_macro);
+					break;
+					
+				case "PlanDetailed":
+					readJson(register, PlanDetailed.class, null, map_id_plan, null);
+					break;
+	
+				case "StructureLevel":
+					readJson(register, StructureLevel.class, map_id_structure_level, map_id_structure, null);
+					break;
+					
+				case "StructureLevelInstance":
+					readJson(register, StructureLevelInstance.class, map_id_structure_level_instance, map_id_structure_level, map_id_plan);
+					break;
+	
+				case "Document":
+					readJson(register, Document.class, map_id_document, map_id_plan_macro, null);
+					break;
+					
+				case "DocumentSection":
+					readJson(register, DocumentSection.class, map_id_document_section, map_id_document_section, map_id_document);
+					break;
+					
+				case "DocumentAttribute":
+					readJson(register, DocumentAttribute.class, map_id_document_attribute, map_id_document_section, null);
+					break;
+							
+				case "ActionPlan" :
+					readJson(register, ActionPlan.class, null, map_id_structure_level_instance, null);
+					break;
+					
+				case "LevelInstanceHistory" :
+					readJson(register, LevelInstanceHistory.class, null, map_id_structure_level_instance, null);
+					break;	
+					
+				case "StructureLevelInstanceDetailed" :
+					readJson(register, StructureLevelInstanceDetailed.class, null, map_id_structure_level_instance, null);
+					break;
+					
+				case "Budget" :
+					readJson(register, Budget.class, null, map_id_structure_level_instance, map_budget_element);
+					break;
+					
+				case "Attribute" :
+					readJson(register, Attribute.class, map_id_attribute, map_id_structure_level, null);
+					break;	
+					
+				case "AttributeInstance" :
+					readJson(register, AttributeInstance.class, null, map_id_structure_level_instance, map_id_attribute);
+					break;
+					
+				case "AggregateIndicator" :
+					readJson(register, AggregateIndicator.class, null, map_id_structure_level_instance, null);
+					break;
+					
+				case "TableFields":
+					readJson(register, TableFields.class, map_id_table_field, map_id_document_attribute, map_id_attribute);
+					break;
 				
-			case "PlanMacro":
-				readJson(register, PlanMacro.class, map_id_plan_macro, map_id_company, null);
-				break;
-
-			case "Structure":
-				array = (JSONArray) parser.parse(register);
-				for (int i = 0; i < array.size(); i++) {
-					Structure st = gson.fromJson(array.get(i).toString(), Structure.class);
-					id_old = st.getId();
-					st.setCompany(company);
-					st.setId(null);
-					this.dao.persist(st);
-					map_id_structure.put(id_old, st.getId());
-				}
-				break;
+				case "TableStructure":
+					readJson(register, TableStructure.class, map_id_table_structure, map_id_table_field, null);
+					break;
+					
+				case "TableInstance":
+					readJson(register, TableInstance.class, map_id_table_instance, map_id_table_field, null);
+					break;
+					
+				case "TableValues":
+					readJson(register, TableValues.class, null, map_id_table_structure, map_id_table_instance);
+					break;
 				
-			case "BudgetElement" :
-				array = (JSONArray) parser.parse(register);
-				for (int i = 0; i < array.size(); i++) {
-					BudgetElement be = gson.fromJson(array.get(i).toString(), BudgetElement.class);
-					id_old = be.getId();
-					be.setCompany(company);
-					be.setId(null);
-					this.dao.persist(be);
-					map_budget_element.put(id_old, be.getId());
-				}
-				break;
-
-			case "Plan":
-				readJson(register, Plan.class, map_id_plan, map_id_structure, map_id_plan_macro);
-				break;
+				case "Schedule":
+					readJson(register, Schedule.class, map_id_schedule, map_id_document_attribute, map_id_attribute);
+					break;
 				
-			case "PlanDetailed":
-				readJson(register, PlanDetailed.class, null, map_id_plan, null);
-				break;
-
-			case "StructureLevel":
-				readJson(register, StructureLevel.class, map_id_structure_level, map_id_structure, null);
-				break;
-				
-			case "StructureLevelInstance":
-				readJson(register, StructureLevelInstance.class, map_id_structure_level_instance, map_id_structure_level, map_id_plan);
-				break;
-
-			case "Document":
-				readJson(register, Document.class, map_id_documento, map_id_plan_macro, null);
-				break;
-				
-			case "DocumentSection":
-				readJson(register, DocumentSection.class, map_id_documento_section, map_id_documento_section, map_id_documento);
-				break;
-				
-			case "DocumentAttribute":
-				readJson(register, DocumentAttribute.class, null, map_id_documento_section, null);
-				break;
-						
-			case "ActionPlan" :
-				readJson(register, ActionPlan.class, null, map_id_structure_level_instance, null);
-				break;
-				
-			case "LevelInstanceHistory" :
-				readJson(register, LevelInstanceHistory.class, null, map_id_structure_level_instance, null);
-				break;	
-				
-			case "StructureLevelInstanceDetailed" :
-				readJson(register, StructureLevelInstanceDetailed.class, null, map_id_structure_level_instance, null);
-				break;
-				
-			case "Budget" :
-				readJson(register, Budget.class, null, map_id_structure_level_instance, map_budget_element);
-				break;
-			case "Attribute" :
-				readJson(register, Attribute.class, map_attribute, map_id_structure_level, null);
-				break;	
-				
-			case "AttributeInstance" :
-				readJson(register, AttributeInstance.class, null, map_id_structure_level_instance, map_attribute);
-				break;
-				
-			case "AggregateIndicator" :
-				readJson(register, AggregateIndicator.class, null, map_id_structure_level_instance, null);
-				break;
-			default:
-				break;
+				case "ScheduleStructure":
+					readJson(register, ScheduleStructure.class, map_id_schedule_structure, map_id_schedule, null);
+					break;
+					
+				case "ScheduleInstance":
+					readJson(register, ScheduleInstance.class, map_id_schedule_instance, map_id_schedule, null);
+					break;
+					
+				case "ScheduleValues":
+					readJson(register, ScheduleValues.class, null, map_id_schedule_structure, map_id_schedule_instance);
+					break;	
+					
+				case "OptionsField":
+					readJson(register, OptionsField.class, null, map_id_document_attribute, map_id_attribute);
+					break;
+					
+				default:
+					break;
 			}
 		}
 	}
@@ -528,7 +813,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws org.json.simple.parser.ParseException
 	 * 
 	 */
-	private void readJson(String register, Class<?> clazz, Map<Long, Long>  map_atual , Map<Long, Long> map_fkey_1,Map<Long, Long> map_fkey_2) throws org.json.simple.parser.ParseException {
+	private void readJson(String register, Class<?> clazz, Map<Long, Long>  map_atual , Map<Long, Long> map_fkey_1, Map<Long, Long> map_fkey_2) throws org.json.simple.parser.ParseException {
 		JSONParser parser = new JSONParser();
 		JSONArray array = (JSONArray) parser.parse(register);
 		
@@ -606,6 +891,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			JSONObject jo = (JSONObject) array.get(i);
 
 			Object obj = gson.fromJson(jo.toString(), clazz);
+			long id_old_company;
 			long id_old = 0;
 			long id_old_structure;
 			long id_old_planmacro;
@@ -613,19 +899,21 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			long id_old_structure_level_instance;
 			long id_old_plan;
 			long id_old_document_section;
+			long id_old_attribute;
+			long id_old_instance;
+			boolean isDocument;
 			Criteria criteria;
 
 			switch (clazz.getSimpleName()) {
-			
+					
 				case "PlanMacro" :
 
-					long id_old_company = Long.parseLong(jo.get("exportCompanyId").toString());
+					id_old_company = Long.parseLong(jo.get("exportCompanyId").toString());
 					
 					criteria = this.dao.newCriteria(Company.class);
 					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_company)));
 					((PlanMacro) obj).setCompany((Company) criteria.uniqueResult());
 					id_old=((PlanMacro) obj).getId();
-			
 					break;
 					
 				case "Plan":
@@ -683,6 +971,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					criteria = this.dao.newCriteria(DocumentSection.class);
 					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_document_section)));
 					((DocumentAttribute) obj).setSection((DocumentSection) criteria.uniqueResult());
+					id_old=((DocumentAttribute) obj).getId();
 					break;
 					
 				case "StructureLevel":
@@ -749,7 +1038,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				case "AttributeInstance" :
 					
 					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					long id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
+					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
 					
 					//atualiza id do responsável que possui o mesmo email neste banco 
 					if(attributeMap.get(map_fkey_2.get(id_old_attribute)).getLabel().equals("Responsável")) {
@@ -777,6 +1066,115 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					criteria = this.dao.newCriteria(StructureLevelInstance.class);
 					StructureLevelInstance id_new_indicator = (StructureLevelInstance)  criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_indicator))).uniqueResult();
 					((AggregateIndicator) obj).setIndicator(id_new_indicator);			
+					break;
+					
+				case "TableFields" :
+					
+					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
+					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
+					
+					if(isDocument) {
+						((TableFields) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
+					}else {
+						((TableFields) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
+					}
+					
+					id_old=((TableFields) obj).getId();
+					break;
+			
+				case "TableStructure" :
+					
+					id_old_structure = Long.parseLong(jo.get("exportTableFieldsId").toString());
+					
+					criteria = this.dao.newCriteria(TableFields.class);
+					TableFields id_new_tablefield = (TableFields) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure))).uniqueResult();
+					((TableStructure) obj).setTableFields(id_new_tablefield);
+					id_old=((TableStructure) obj).getId();
+					break;
+					
+				case "TableInstance" :
+					
+					id_old_instance = Long.parseLong(jo.get("exportTableFieldsId").toString());
+					
+					criteria = this.dao.newCriteria(TableFields.class);
+					id_new_tablefield = (TableFields) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_instance))).uniqueResult();
+					((TableInstance) obj).setTableFields(id_new_tablefield);
+					id_old=((TableInstance) obj).getId();
+					break;
+					
+				case "TableValues" :
+					
+					id_old_structure = Long.parseLong(jo.get("exportTableStructureId").toString());
+					id_old_instance = Long.parseLong(jo.get("exportTableInstanceId").toString());
+					
+					criteria = this.dao.newCriteria(TableStructure.class);
+					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
+					((TableValues) obj).setTableStructure((TableStructure) criteria.uniqueResult());
+		
+					criteria = this.dao.newCriteria(TableInstance.class);
+					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_instance)));
+					((TableValues) obj).setTableInstance((TableInstance) criteria.uniqueResult());
+					id_old=((TableValues) obj).getId();
+					break;	
+
+				case "Schedule" :
+					
+					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
+					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
+					
+					if(isDocument) {
+						((Schedule) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
+					}else {
+						((Schedule) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
+					}
+					
+					id_old=((Schedule) obj).getId();
+					break;
+			
+				case "ScheduleStructure" :
+					
+					id_old_structure = Long.parseLong(jo.get("exportScheduleId").toString());
+					
+					criteria = this.dao.newCriteria(Schedule.class);
+					Schedule id_new_schedule = (Schedule) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure))).uniqueResult();
+					((ScheduleStructure) obj).setSchedule(id_new_schedule);
+					id_old=((ScheduleStructure) obj).getId();
+					break;
+					
+				case "ScheduleInstance" :
+					
+					id_old_instance = Long.parseLong(jo.get("exportScheduleId").toString());
+					
+					criteria = this.dao.newCriteria(Schedule.class);
+					id_new_schedule = (Schedule) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_instance))).uniqueResult();
+					((ScheduleInstance) obj).setSchedule(id_new_schedule);
+					id_old=((ScheduleInstance) obj).getId();
+					break;
+					
+				case "ScheduleValues" :
+					
+					id_old_structure = Long.parseLong(jo.get("exportScheduleStructureId").toString());
+					id_old_instance = Long.parseLong(jo.get("exportScheduleInstanceId").toString());
+					
+					criteria = this.dao.newCriteria(ScheduleStructure.class);
+					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
+					((ScheduleValues) obj).setScheduleStructure((ScheduleStructure) criteria.uniqueResult());
+		
+					criteria = this.dao.newCriteria(ScheduleInstance.class);
+					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_instance)));
+					((ScheduleValues) obj).setScheduleInstance((ScheduleInstance) criteria.uniqueResult());
+					id_old=((ScheduleValues) obj).getId();
+					break;	
+					
+				case "OptionsField":
+					
+					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
+					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
+					if(isDocument) {
+						((OptionsField) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
+					}else {
+						((OptionsField) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
+					}
 					break;
 			}
 

@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -37,6 +38,9 @@ public class Schedule extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable = true)
 	private boolean isDocument = false;
+	
+	@Transient
+	private Long exportAttributeId;
 
 	public boolean isPeriodicityEnable() {
 		return periodicityEnable;
@@ -76,6 +80,14 @@ public class Schedule extends SimpleLogicalDeletableEntity {
 
 	public void setIsDocument(boolean isDocument) {
 		this.isDocument = isDocument;
+	}
+	
+	public Long getExportAttributeId() {
+		return exportAttributeId;
+	}
+
+	public void setExportAttributeId(Long exportAttributeId) {
+		this.exportAttributeId = exportAttributeId;
 	}
 
 }

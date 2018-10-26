@@ -39,6 +39,9 @@ public class TableInstance extends SimpleLogicalDeletableEntity{
 	
 	@Transient
 	private Long tableFieldsId;
+	
+	@Transient
+	private Long exportTableFieldsId;
 
 	public Date getCreation() {
 		return creation;
@@ -70,6 +73,14 @@ public class TableInstance extends SimpleLogicalDeletableEntity{
 
 	public void setTableFieldsId(Long tableFieldsId) {
 		this.tableFieldsId = tableFieldsId;
+	}
+	
+	public Long getExportTableFieldsId() {
+		return exportTableFieldsId;
+	}
+
+	public void setExportTableFieldsId(Long exportTableFieldsId) {
+		this.exportTableFieldsId = exportTableFieldsId;
 	}
 	
 }

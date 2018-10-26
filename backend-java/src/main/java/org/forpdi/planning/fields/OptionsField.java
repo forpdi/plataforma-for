@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.forpdi.planning.attribute.Attribute;
 
@@ -37,6 +38,8 @@ public class OptionsField extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private Date creation = new Date();
 
+	@Transient private Long exportAttributeId;
+	
 	public String getLabel() {
 		return label;
 	}
@@ -76,4 +79,12 @@ public class OptionsField extends SimpleLogicalDeletableEntity {
 	public void setDocument(boolean isDocument) {
 		this.isDocument = isDocument;
 	}	
+
+	public Long getExportAttributeId() {
+		return exportAttributeId;
+	}
+
+	public void setExportAttributeId(Long exportAttributeId) {
+		this.exportAttributeId = exportAttributeId;
+	}
 }

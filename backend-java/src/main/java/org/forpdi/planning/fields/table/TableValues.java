@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -33,6 +34,13 @@ public class TableValues extends SimpleLogicalDeletableEntity{
 	@ManyToOne(targetEntity=TableStructure.class, optional=false, fetch=FetchType.EAGER)
 	private TableStructure tableStructure;
 
+	@Transient
+	private Long exportTableStructureId;
+
+	@Transient
+	private Long exportTableInstanceId;
+	
+	
 	public String getValue() {
 		return value;
 	}
@@ -71,6 +79,21 @@ public class TableValues extends SimpleLogicalDeletableEntity{
 
 	public void setTableStructure(TableStructure tableStructure) {
 		this.tableStructure = tableStructure;
+	}
+	public Long getExportTableStructureId() {
+		return exportTableStructureId;
+	}
+
+	public void setExportTableStructureId(Long exportTableStructureId) {
+		this.exportTableStructureId = exportTableStructureId;
+	}
+
+	public Long getExportTableInstanceId() {
+		return exportTableInstanceId;
+	}
+
+	public void setExportTableInstanceId(Long exportTableInstanceId) {
+		this.exportTableInstanceId = exportTableInstanceId;
 	}
 	
 }

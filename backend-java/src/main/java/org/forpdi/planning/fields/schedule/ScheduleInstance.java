@@ -53,6 +53,8 @@ public class ScheduleInstance extends SimpleLogicalDeletableEntity{
 	@OneToMany(fetch=FetchType.LAZY, mappedBy="scheduleInstance", targetEntity=ScheduleValues.class)
 	@Cascade(CascadeType.ALL)
 	private List<ScheduleValues> scheduleValues;
+	
+	@Transient private Long exportScheduleId;
 
 	public Long getNumber() {
 		return number;
@@ -116,6 +118,14 @@ public class ScheduleInstance extends SimpleLogicalDeletableEntity{
 
 	public void setScheduleValues(List<ScheduleValues> scheduleValues) {
 		this.scheduleValues = scheduleValues;
+	}
+	
+	public Long getExportScheduleId() {
+		return exportScheduleId;
+	}
+
+	public void setExportScheduleId(Long exportScheduleId) {
+		this.exportScheduleId = exportScheduleId;
 	}
 	
 }

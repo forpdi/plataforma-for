@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -32,6 +33,10 @@ public class ScheduleValues extends SimpleLogicalDeletableEntity{
 	
 	@ManyToOne(targetEntity=ScheduleStructure.class, optional=false, fetch=FetchType.EAGER)
 	private ScheduleStructure scheduleStructure;
+
+	@Transient private Long exportScheduleStructureId;
+	
+	@Transient private Long exportScheduleInstanceId;
 
 	public String getValue() {
 		return value;
@@ -71,6 +76,22 @@ public class ScheduleValues extends SimpleLogicalDeletableEntity{
 
 	public void setScheduleStructure(ScheduleStructure scheduleStructure) {
 		this.scheduleStructure = scheduleStructure;
+	}
+	
+	public Long getExportScheduleStructureId() {
+		return exportScheduleStructureId;
+	}
+
+	public void setExportScheduleStructureId(Long exportScheduleStructureId) {
+		this.exportScheduleStructureId = exportScheduleStructureId;
+	}
+
+	public Long getExportScheduleInstanceId() {
+		return exportScheduleInstanceId;
+	}
+
+	public void setExportScheduleInstanceId(Long exportScheduleInstanceId) {
+		this.exportScheduleInstanceId = exportScheduleInstanceId;
 	}
 	
 }

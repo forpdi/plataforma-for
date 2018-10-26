@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -35,6 +36,10 @@ public class TableFields extends SimpleLogicalDeletableEntity{
 	@Column(nullable = true)
 	private boolean isDocument = false;
 
+	@Transient
+	private Long exportAttributeId;
+	
+
 	public List<TableStructure> getTableStructures() {
 		return tableStructures;
 	}
@@ -59,12 +64,20 @@ public class TableFields extends SimpleLogicalDeletableEntity{
 		this.attributeId = attributeId;
 	}
 
-	public boolean getIsDocument() {
+	public boolean isDocument() {
 		return isDocument;
 	}
 
 	public void setIsDocument(boolean isDocument) {
 		this.isDocument = isDocument;
+	}
+	
+	public Long getExportAttributeId() {
+		return exportAttributeId;
+	}
+
+	public void setExportAttributeId(Long exportAttributeId) {
+		this.exportAttributeId = exportAttributeId;
 	}
 	
 }
