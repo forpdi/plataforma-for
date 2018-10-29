@@ -1,7 +1,10 @@
 package org.forpdi.core.company;
 
 
+import java.io.File;
+import java.util.List;
 import java.time.LocalDateTime;
+
 
 import javax.inject.Inject;
 
@@ -25,11 +28,10 @@ import br.com.caelum.vraptor.observer.upload.UploadedFile;
 @Controller
 public class BackupAndRestoreController extends AbstractController  {
 
-
 	@Inject private BackupAndRestoreHelper dbbackup;
 	@Inject @Current private CompanyDomain domain;
 	
-	
+	private static UploadedFile file=null;
 	
 	/**
 	 * Backup das tabelas
@@ -52,7 +54,7 @@ public class BackupAndRestoreController extends AbstractController  {
 			return null;
 		}
 	}
-	
+
 	
 	/**
 	 * Restaura tabelas a partir de um arquivo
@@ -63,15 +65,69 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * @param id
 	 * 		id company
 	 */
-	@Post("/company/restore")
+	@Post("/company/fbkupload")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
-	public void  DoRestore(UploadedFile file) {
+	public void  fbkupload(UploadedFile file) {
+		
+		if (file == null) {
+			this.fail("upload falhou");
+			return;
+		}else if (BackupAndRestoreController.file != null) {
+			this.fail("processo de importação já em andamento");
+			return;
+		}else{ 
+			try {
+			
+				BackupAndRestoreController.file=file;
+				this.success("upload completo.");
+			} catch (Throwable ex) {
+				LOGGER.error("IO error", ex);
+				this.fail("Erro inesperado: " + ex.getMessage());
+			}	
+		}
+	}
+	
+
+	/**
+	 * Restaura tabelas a partir de um arquivo
+	 *         
+	 */
+	@Post("api/company/restore")
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
+	public void  restore() {
+		
+		if (BackupAndRestoreController.file == null) {
+			this.fail("arquivo não especificado");
+		}
+		
 		try {
 			LOGGER.infof("Starting restoration for company '%s'...", this.domain.getCompany().getName());
-			dbbackup.restore(file);
+			dbbackup.restore(BackupAndRestoreController.file);
 			LOGGER.infof("Done restoration for company '%s'.", this.domain.getCompany().getName());
+			
+			BackupAndRestoreController.file = null;
+			
 			this.success("Dados importados com sucesso.");
+		} catch (Throwable ex) {
+			
+			BackupAndRestoreController.file = null;
+			
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Estado do upload atual
+	 * 
+	 */
+	@Get("api/company/state")
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
+	public void  state() {
+		try {
+			String  porcent =String.valueOf(dbbackup.getPorcentagem());
+			this.success(porcent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

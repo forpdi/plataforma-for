@@ -1,4 +1,4 @@
-package org.forpdi.core.company;
+ 	package org.forpdi.core.company;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,6 +59,7 @@ import org.hibernate.criterion.Restrictions;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
 
@@ -72,6 +73,9 @@ import br.com.caelum.vraptor.serialization.gson.GsonSerializerBuilder;
 public class BackupAndRestoreHelper extends HibernateBusiness {
 
 	private Gson gson;
+	private int porcentagem;
+	private static int quantity;
+	private static int quantityTotal;
 
 	@Inject private PlanBS planBS;
 	@Inject private DocumentBS docBS;
@@ -606,23 +610,30 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		return bos.toByteArray();
 	}
 
+
 	/**
 	 * adiciona dados ao banco a partir do arquivo
 	 * 
 	 * @param file arquivo a ser importado
 	 * 
 	 * @throws IOException
-	 * @throws             org.json.simple.parser.ParseException
+	 * 
+	 * @throws ParseException
 	 * 
 	 */
-	public void restore(UploadedFile file) throws IOException, org.json.simple.parser.ParseException {
-		Company company = this.domain.getCompany();
+	public void restore(UploadedFile file) throws IOException, ParseException {
 		// company passado na hora da importação
+		Company company = this.domain.getCompany();
+		
 		if (company == null) {
 			throw new IllegalArgumentException("Company not found.");
 		}
 		
 		List<File> files = decompact(file.getFile());
+		
+		//contar quantidade de registros que serão salvos;
+		quantityTotal=quantityTotal(files);
+
 		Map<Long, Long> map_id_company = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_plan_macro = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_structure = new HashMap<Long, Long>();
@@ -641,6 +652,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		Map<Long, Long> map_id_schedule_instance = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_schedule_structure = new HashMap<Long, Long>();
 		
+		quantity=0;
 		
 		for (File f : files) {
 
@@ -666,6 +678,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						//long id_old_company =cm.getExportCompanyId();
 						cm.setCompany(company);
 						this.dao.persist(cm);
+						quantity+=1;
 					}
 					break;
 	
@@ -683,6 +696,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						st.setId(null);
 						this.dao.persist(st);
 						map_id_structure.put(id_old, st.getId());
+						quantity+=1;
 					}
 					break;
 					
@@ -695,6 +709,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						be.setId(null);
 						this.dao.persist(be);
 						map_budget_element.put(id_old, be.getId());
+						quantity+=1;
 					}
 					break;
 	
@@ -855,7 +870,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						
 						s.setId(null);
 						this.dao.persist((Serializable) s);
-
+						quantity+=1;
+						
 						if(map_atual !=null) {
 							map_atual.put(id_old, ((SimpleLogicalDeletableEntity) s).getId());
 						}				
@@ -1185,8 +1201,43 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			if(map_atual !=null) {
 				map_atual.put(id_old, ((SimpleLogicalDeletableEntity) clazz.cast(obj)).getId());
 			}
+			
+			quantity+=1;
 		}
 	}
+	
+
+	/**
+	 * Ler Todos os arquivo do zip
+	 * 
+	 * @param file arquivo do upload
+	 * 
+	 * @return int quantidade de registros
+	 * 
+	 * @throws IOException 
+	 * @throws ParseException 
+	 *
+	 */
+	public int quantityTotal(List<File> files) throws IOException, ParseException {
+		
+		int count=0;
+		for (File f : files) {
+		
+			if(!f.getName().split(".json")[0].equals("Company")) {
+				String register = IOUtils.toString(new FileInputStream(f), StandardCharsets.UTF_8);
+				JSONParser parser = new JSONParser();
+				JSONArray array;
+			
+				array = (JSONArray) parser.parse(register);
+				for (int i = 0; i < array.size(); i++) {
+					count+=1;
+				}
+			}
+		}
+			
+		return count;
+	}
+	
 	
 	/**
 	 * Recuperar Todos os arquivo do zip
@@ -1241,6 +1292,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		zos.closeEntry();
 	}
 
+	
+	
 	/**
 	 * Lista Modelo
 	 * 
@@ -1253,4 +1306,33 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		return modelo;
 	}
 
+	public int getQuantity() {
+		return quantity;
+	}
+	
+	public int getPorcentagem(){
+		if(getQuantityTotal()==0) {
+			return -1;
+		}
+		return Math.floorDiv(100*getQuantity(), getQuantityTotal());
+	}
+
+	public void setPorcentagem(int p){
+		porcentagem = p;
+	}
+
+	public int getQuantityTotal(){
+		return quantityTotal;
+	}
+
+	public void setQuantityTotal(int q){
+		quantityTotal = q;
+	}
+
 }
+
+//reseta porcentagem
+//porcentagem=0;
+/*if (porcent.equals("100")) {
+	porcentagem=0;
+}*/

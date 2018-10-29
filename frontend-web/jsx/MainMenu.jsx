@@ -11,14 +11,17 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 import Logo from 'forpdi/img/logo.png';
 
+import $ from 'jquery';
+import Toastr from 'toastr';
+
 export default React.createClass({
     contextTypes: {
         router: React.PropTypes.object,
         accessLevel: React.PropTypes.number.isRequired,
         accessLevels: React.PropTypes.object.isRequired,
         permissions: React.PropTypes.array.isRequired,
-        roles: React.PropTypes.object.isRequired
-    },
+		roles: React.PropTypes.object.isRequired,
+	},
     getInitialState() {
         return {
             user: UserSession.get("user"),
@@ -193,29 +196,78 @@ export default React.createClass({
         }
 	},
 
+
 	importPlans(event) {
 		event && event.preventDefault();
-		// TODO Chamar modal de file upload.
+
 		var me = this;
 		var formatsBlocked = "(exe*)";
 
-
 		Modal.uploadFile(
 			Messages.get("label.importPlans"),
-			<p>{Messages.get("label.uploadFbk")}</p>,
-			"/forpdi/company/restore",
+			<p id="fbkupload">{Messages.get("label.uploadFbk")}</p>,
+			"/forpdi/company/fbkupload",
 			"fbk",
 			formatsBlocked,
 			(response) => {
-				me.refs['paginator'].load(0);
-				Modal.hide();
-				//Toastr.remove();
-				//Toastr.success("Estrutura " +response.data.name + " importada com sucesso.");
-				this.context.toastr.addAlertSuccess( Messages.get("label.planmacro") + " " +response.data.name + " " + Messages.get("label.success.importing2"));
+
+				jQuery.ajax({
+					method: "POST",
+					url: BACKEND_URL + "/company/restore",
+					dataType: 'json',
+					success(data, status, opts) {
+						if (data.success) {
+							Toastr.success("Planos estão sendo restaurados em background.");
+							console.log("Planos estão sendo restaurados em background.");
+						}else{
+							console.log("import fail");
+						}
+					},
+					error(opts, status, errorMsg) {
+						console.log(errorMsg+": import fail");
+						Modal.hide();
+					}
+				});
+
+
+				var restored=false;
+
+				var interval= setInterval(function() {
+
+					jQuery.ajax({
+						method: "GET",
+						url: BACKEND_URL + "/company/state",
+						dataType: 'json',
+						success(data, status, opts) {
+							if (data.success) {
+								console.log("restoring... " + data.message+"%");
+
+								$("#fbkupload").text('restaurando planos...'+ data.message+"%");
+
+								if(data.message=="100"){
+									restored=true;
+									if(restored){
+										clearInterval(interval);
+										Modal.hide();
+									}
+									console.log("Planos restaurados");
+									return;
+								}
+							}
+						},
+						error(opts, status, errorMsg) {
+							console.log(errorMsg+": get state fail");
+							clearInterval(interval);
+							Modal.hide();
+						}
+					});
+				},5000);
+
 			},
 			(response) => {
 				Modal.hide();
-				this.context.toastr.addAlertError(response.message);
+				console.log("import fail");
+				Toastr.addAlertError("import fail");
 			},
 			"xml."
 		);
@@ -326,3 +378,4 @@ export default React.createClass({
        	</div>);
     }
 });
+
