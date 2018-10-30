@@ -708,10 +708,12 @@ label{
 
 
 .edit-close {
-	color:#757575;
-	cursor: pointer;
+	color: #AAAAAA;
+	cursor: auto;
 	outline: 0;
-
+	&:hover {
+		color: #AAAAAA;
+	}
 }
 
 

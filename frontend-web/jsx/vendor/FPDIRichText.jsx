@@ -1,7 +1,5 @@
 
-import 'quill/dist/quill.core.css';
-import 'quill/dist/quill.snow.css';
-import 'quill';
+import 'react-quill/dist/quill.snow.css';
 
 import React from 'react';
 import ReactQuill from 'react-quill';
@@ -10,21 +8,14 @@ import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx";
 
 export default React.createClass({
-
     contextTypes: {
         toastr: React.PropTypes.object.isRequired
     },
-
     getInitialState(){
-        this.value = this.props.defaultValue;
         return {
-            toolbarOptions: {
-                toolbar: {
-                    container: '#'+this.props.id
-                }
-            },
             selectedTxt: "",
-            newLink: false
+			newLink: false,
+			value: this.props.defaultValue,
         }
     },
 
@@ -33,7 +24,6 @@ export default React.createClass({
     },
 
     onLinkClick(){
-        this.quill = this.refs['quill'].state.editor;
         this.selection = this.refs['quill'].state.selection;
         var text = "";
         var start = undefined;
@@ -67,7 +57,6 @@ export default React.createClass({
     },
 
     onImageClick(){
-        this.quill = this.refs['quill'].state.editor;
         var title = "Insira uma imagem";
         var msg = (<div><p>Escolha uma imagem para ser adicionanda ao campo.</p></div>);
         var url = FileStore.url+"/upload";
@@ -88,45 +77,32 @@ export default React.createClass({
     },
 
     onChange(content, delta, source, editor){
-        this.quill = this.refs['quill'].state.editor;
-        var length = this.quill.getLength();
+		var length = editor.getLength();
         if(length > this.props.maxLength){
             this.context.toastr.addAlertError("Limite de "+this.props.maxLength+" caracteres atingido!");
-            var text = this.quill.getText();
-            var newText = text.slice(0, this.props.maxLength);
-            this.quill.setText(newText);
-        }
-        this.value = content;
-    },
-
-    onKeyPress(evt){
-        this.quill = this.refs['quill'].state.editor;
-        var length = this.quill.getLength();
-        if(length >= this.props.maxLength){
-            this.context.toastr.addAlertError("Limite de "+this.props.maxLength+" caracteres atingido!");
-            evt.preventDefault();
-            return;
-        }
+        } else {
+			this.setState({
+				value: content,
+			});
+		}
     },
 
     render(){
+		const toolbarId = `${this.props.id}-toolbar`;
         return (
             <div>
+				<RichTextToolbar imageHandler={this.onImageClick} linkHandler={this.onLinkClick} id={toolbarId}/>
                 <ReactQuill theme="snow"
-                modules={this.state.toolbarOptions}
-                onChange={this.onChange}
-                onKeyPress={this.onKeyPress}
-                onKeyDown={this.onKeyDown}
-                onKeyUp={this.onKeyUp}
-                value={this.value}
-                ref="quill">
-                    <RichTextToolbar imageHandler={this.onImageClick} linkHandler={this.onLinkClick} id={this.props.id}/>
-                    <div key="editor"
-                        ref="editor"
-                        className="quill-contents resizeVertical minHeight200"
-                        spellCheck={true}
-                        dangerouslySetInnerHTML={{__html:(this.value)}}/>
-                </ReactQuill>
+					modules={this.state.toolbarOptions}
+					onChange={this.onChange}
+					value={this.state.value}
+					ref={(c) => { this.quill = (c && c.editor) || this.quill; }}
+					modules={{
+						toolbar: {
+							container: `#${toolbarId}`,
+						}
+					}}
+				/>
             </div>
         );
     }

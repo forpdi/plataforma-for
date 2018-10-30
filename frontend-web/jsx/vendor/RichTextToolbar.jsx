@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import ReactQuill from 'react-quill';
 
 export default React.createClass({
 	render(){
@@ -14,11 +12,11 @@ export default React.createClass({
 		            {/*<option value="arial">Arial</option>
 		            <option value="times">Times</option>*/}
 		        </select>
-		        <select title="Size" className="ql-size" defaultValue="13px">		            
+		        <select title="Size" className="ql-size" defaultValue="13px">
 		            <option value="13px">Normal</option>
 		            <option value="18px">Grande</option>
 		            <option value="32px">Enorme</option>
-		        </select>		        
+		        </select>
 		    </span>
 		    <span className="ql-format-group">
 		        <span title="Bold" className="ql-format-button ql-bold"/>
@@ -27,8 +25,8 @@ export default React.createClass({
 		        <span className="ql-format-separator"/>
 		        <span title="Underline" className="ql-format-button ql-underline"/>
 		        <span className="ql-format-separator"/>
-		        <span title="Strikethrough" className="ql-format-button ql-strike"/>		        
-		    </span>		    
+		        <span title="Strikethrough" className="ql-format-button ql-strike"/>
+		    </span>
 		    <span className="ql-format-group">
 		        <select title="Text Color" className="ql-color" defaultValue="rgb(0, 0, 0)">
 		          <option value="rgb(0, 0, 0)" style={{backgroundColor:'rgb(0, 0, 0)'}}/>

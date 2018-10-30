@@ -41,8 +41,9 @@ export default React.createClass({
 			undeletable: false
 		};
 	},
-	getFields(showName) {
+	getFields() {
 		var fields = [];
+		const showName = !this.state.vizualization;
 		if (showName) {
 			fields.push({
 				name: "name",
@@ -71,7 +72,7 @@ export default React.createClass({
 			onChange:this.onChangeEnd,
 			value: this.state.model ? this.state.model.get("end").split(" ")[0]:(this.context.planMacro?this.context.planMacro.get("end").split(" ")[0]:null)
 		});
-				
+
 		fields.push({
 			name: 'structure',
 			type: AttributeTypes.SELECT_STRUCTURE,
@@ -118,10 +119,10 @@ export default React.createClass({
 				|| (this.props.params.modelId && !this.state.model)
 		});
 	},
-	componentDidMount() {		
+	componentDidMount() {
 		var me = this;
 
-		PlanStore.on("sync", (model) => {	
+		PlanStore.on("sync", (model) => {
 			if (me.context.tabPanel) {
 				me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			}
@@ -135,7 +136,8 @@ export default React.createClass({
 					modelId: model.get("id"),
 					title: model.get("name"),
 					vizualization: true,
-					undeletable: model.attributes.haveSons
+					undeletable: model.attributes.haveSons,
+					fields: this.getFields(false)
 				});
 				dateBegin = model.get("begin").split(" ")[0];
 				dateEnd = model.get("end").split(" ")[0];
@@ -152,7 +154,7 @@ export default React.createClass({
 				me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			}
 			me.updateLoadingState(false);
-		}, me);	
+		}, me);
 
 		PlanStore.on("planUpdated", (model) => {
 			var mod = this.state.model;
@@ -168,7 +170,7 @@ export default React.createClass({
 				fields: me.getFields(true)
 			});
 			me.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedGoalPlan"));
-		}, me);	
+		}, me);
 
 		StructureStore.on("find", (store) => {
 			me.setState({
@@ -188,7 +190,7 @@ export default React.createClass({
 		}, me);
 
 		PlanStore.on('delete', store => {
-			me.context.tabPanel.removeTabByPath(me.state.tabPath);		
+			me.context.tabPanel.removeTabByPath(me.state.tabPath);
 			me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			me.context.toastr.addAlertSuccess(store.attributes.name + " " + Messages.get("label.successDeleted"));
 		}, me);
@@ -270,11 +272,11 @@ export default React.createClass({
 		data.structure = {
 			id: (this.state.structureId ? this.state.structureId : 1)
 		};
-		
-		if (this.state.modelId) {	
+
+		if (this.state.modelId) {
 			var oldBeginDate = moment(me.state.model.attributes.begin,"DD/MM/YYYY").toDate(); // data início que estava no banco
 			var oldEndDate = moment(me.state.model.attributes.end,"DD/MM/YYYY").toDate(); // data fim que estava no banco
-			
+
 			var newBeginDate = moment(data.begin,"D/M/YYYY").toDate(); // data início nova
 			var newEndDate = moment(data.end,"D/M/YYYY").toDate(); // data fim nova
 			var msg = "";
@@ -333,31 +335,31 @@ export default React.createClass({
 				PlanStore.dispatch({
 					action: PlanStore.ACTION_DELETE_PLAN,
 					data: me.state.model
-				});				
+				});
 			},msg,me.refreshCancel);*/
 			var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
-			Modal.confirmCancelCustom(() => {				
+			Modal.confirmCancelCustom(() => {
 				Modal.hide();
 				PlanStore.dispatch({
 					action: PlanStore.ACTION_DELETE_PLAN,
 					data: me.state.model
-				});	
+				});
 			},msg,()=>{Modal.hide();me.refreshCancel;});
-		}	
+		}
 	},
 
 	renderArchivePlanMacro() {
 		return (
 			<ul className="dropdown-menu">
-				<li> 
+				<li>
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-pencil disabledIcon" title={Messages.get("label.title.unableArchivedPlan")}> 
+						<span className="mdi mdi-pencil disabledIcon" title={Messages.get("label.title.unableArchivedPlan")}>
 							<span id="menu-levels">	{Messages.getEditable("label.title.unableArchivedPlan","fpdi-nav-label")} </span>
 						</span>
 					</a>
 				</li>
-			</ul>	
-		);	
+			</ul>
+		);
 
 	},
 
@@ -368,16 +370,16 @@ export default React.createClass({
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.changeVizualization}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}> 
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}>
 							<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
-		         {this.state.undeletable ? 
+		         {this.state.undeletable ?
 		         <li>
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}>
-						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}> 
+						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}>
 							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")}</span>
 						</span>
 					</Link>
@@ -387,13 +389,13 @@ export default React.createClass({
 					<Link
 						to={"/plan/"+this.state.model.get("parent").id+"/details/subplan/"+this.state.model.get("id")}
 						onClick={this.deletePlan}>
-						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanGoals")}> 
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanGoals")}>
 							<span id="menu-levels"> {Messages.getEditable("label.deletePlanGoals","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 		         </li>
 		     	}
-		         
+
 			</ul>
 		);
 	},
@@ -421,12 +423,12 @@ export default React.createClass({
 		}
 		return <div>
 			{this.state.model ? this.renderBreadcrumb() : ""}
-		
+
 			<div className="fpdi-card fpdi-card-full floatLeft">
-			
+
 			<h1>
 				{(this.state.title)}
-				{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ? 
+				{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
 					(<span className="dropdown">
 						<a
 							className="dropdown-toggle"
@@ -439,17 +441,17 @@ export default React.createClass({
 							<span className="mdi mdi-chevron-down" />
 						</a>
 
-						{this.context.planMacro.attributes.archived ? this.renderArchivePlanMacro() : this.renderUnarchivePlanMacro()} 
-						
-					</span>	
+						{this.context.planMacro.attributes.archived ? this.renderArchivePlanMacro() : this.renderUnarchivePlanMacro()}
+
+					</span>
 				):""}
-			</h1>	
+			</h1>
 			<VerticalForm
 				vizualization={this.state.vizualization}
 			    ref='planRegisterForm'
 			    onCancel={this.onCancel}
 				onSubmit={this.onSubmit}
-				fields={this.state.fields}
+				fields={this.getFields()}
 				store={PlanStore}
 				submitLabel={Messages.get("label.submitLabel")}
 				dateBegin={dateBegin}

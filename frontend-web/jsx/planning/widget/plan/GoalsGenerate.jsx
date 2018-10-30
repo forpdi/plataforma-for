@@ -18,7 +18,7 @@ export default onClickOutside(React.createClass({
 		toastr: React.PropTypes.object.isRequired
 	},
 
-	getInitialState() {				
+	getInitialState() {
 		return {
 			sonsGeneratedByGoals:undefined,
 			loading: false
@@ -31,7 +31,7 @@ export default onClickOutside(React.createClass({
 		};
 	},
 
-	componentDidMount(){ 		
+	componentDidMount(){
 		var me = this;
 		StructureStore.on("goalsGenerated", (model) => {
 			this.setState({
@@ -49,7 +49,7 @@ export default onClickOutside(React.createClass({
 
 	onlyNumber(evt){
 		var key = evt.which;
-		if(key == 13|| key != 46 && (key < 48 || key > 57)) {			
+		if(key == 13|| key != 46 && (key < 48 || key > 57)) {
 			evt.preventDefault();
 			return;
 		}
@@ -75,7 +75,7 @@ export default onClickOutside(React.createClass({
 		}
 
 		Modal.confirm(
-			Messages.get("label.attention"), 
+			Messages.get("label.attention"),
 			Messages.get("label.goalsGeneratedInSecondPlan"),
 			() => {
 				Modal.hide();
@@ -90,8 +90,8 @@ export default onClickOutside(React.createClass({
 						minimum: validation.minimumGoal.value,
 						maximum: validation.maximumGoal.value
 					}
-				});			
-			});	
+				});
+			});
 	},
 
 	handleClickOutside: function(evt) {
@@ -102,16 +102,17 @@ export default onClickOutside(React.createClass({
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
+		const  { users } = this.props;
 		return (
-			
+
 			<div className="level-search">
-		  
+
   	    		<div className='displayFlex-level-search'>
    	        		<span className='mdi-level-search mdi mdi-close-circle pointer closeButton' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
   	        	</div>
 
 				<h1>{Messages.getEditable("label.generatGoals","fpdi-nav-label")}</h1>
-					
+
 				<div className="level-search-keyword">
 					<h3>{Messages.getEditable("label.name","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 					<input className="form-control" type="text" ref="nameGoal" id="nameGoal" maxLength="200"/>
@@ -121,22 +122,22 @@ export default onClickOutside(React.createClass({
 						className="form-control fontSize12"
 						name="responsibleGoal"
 						ref="responsibleGoal"
-						id="responsibleGoal"	
-						defaultValue={this.props.users ? this.props.users[0].id : ""}
-						>			
-							{this.props.users ? 
-								this.props.users.map((opt,idx) => {
+						id="responsibleGoal"
+						defaultValue={users && users.length > 0 ? this.props.users[0].id : ""}
+						>
+							{users && users.maxLength > 0 ?
+								users.map((opt,idx) => {
 									return (<option key={'goal-opt-'+idx} value={opt.id}
 										 data-placement="right" title={opt.name}>
 											{opt.name}</option>);
 							}): ""}
 					</select>
 					<div className="formAlertError" ref="formAlertErrorResponsavel"></div>
-					
+
 					<h3>{Messages.getEditable("label.description","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
 					<textarea  className="form-control" ref="descriptionGoal" id="descriptionGoal" maxLength="3000" rows="3"></textarea>
 					<div className="formAlertError" ref="formAlertErrorDescription"></div>
-					
+
 					<div className="row">
 						<div className="col-md-4">
 						<h3>{Messages.getEditable("label.goals.expected","fpdi-nav-label")}<span className="requiredColor">*</span></h3>
@@ -145,23 +146,23 @@ export default onClickOutside(React.createClass({
 					</div>
 
 
-					<div className="col-md-4">	
+					<div className="col-md-4">
 						<h3>{Messages.getEditable("label.min","fpdi-nav-label")} <span className="requiredColor">*</span></h3>
 						<input className="form-control" type="text" ref="minimumGoal" id="minimumGoal" onKeyPress={this.onlyNumber} type="number"/>
 						<div className="formAlertError" ref="formAlertErrorMinimum"></div>
 					</div>
-						
+
 						<div className="col-md-4">
 							<h3>{Messages.getEditable("label.max","fpdi-nav-label")} <span className="requiredColor">*</span></h3>
-						<input className="form-control" type="text" ref="maximumGoal" id="maximumGoal" onKeyPress={this.onlyNumber} type="number"/>	
+						<input className="form-control" type="text" ref="maximumGoal" id="maximumGoal" onKeyPress={this.onlyNumber} type="number"/>
 						<div className="formAlertError" ref="formAlertErrorMaximum"></div>
 					</div>
 					</div>
-					
+
 					<h3>{Messages.getEditable("label.goalsWillBeGeneratedAccordingIndicatorPeriodicity","fpdi-nav-label")}</h3>
 					<p className="requiredColor">* {Messages.getEditable("label.requiredFields","fpdi-nav-label")}</p>
-				</div> 
-			
+				</div>
+
 				<div className="level-search-buttons">
 					<input type="submit" className="level-search-button-search" value="Gerar metas" onClick={this.goalsGenerate} />
 					<input type="submit" className="level-search-button-clear" value="Cancelar" onClick={this.cancel} />
@@ -169,5 +170,5 @@ export default onClickOutside(React.createClass({
 
 			</div>);
 	}
-	
+
 }));
