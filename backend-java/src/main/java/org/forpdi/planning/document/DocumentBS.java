@@ -33,6 +33,7 @@ import javax.inject.Inject;
 
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.planning.attribute.AggregateIndicator;
@@ -101,7 +102,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
@@ -887,35 +887,35 @@ public class DocumentBS extends HibernateBusiness {
 		com.itextpdf.text.Document preTextDocument = new com.itextpdf.text.Document();
 		com.itextpdf.text.Document summaryDocument = new com.itextpdf.text.Document();
 
-		ClassLoader classLoader = getClass().getClassLoader();
-		String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
-		resourcesPath = "/tmp"; // corrigir para salvar com um caminho
-		// dinamico
-		resourcesPath = resourcesPath.replace("example.pdf", "");
-		resourcesPath = resourcesPath.replace("%20", " ");
-		File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
+		File outputDir;
+		final String storagePath = SystemConfigs.getConfig("store.pdfs");
+		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {
+			outputDir = File.createTempFile("fpdi-document-export", ".pdf").getParentFile();
+		} else {
+			outputDir = new File(storagePath);
+			if (!outputDir.exists()) {
+				if (!outputDir.mkdirs()) {
+					throw new RuntimeException("Failed to create storage directory.");
+				}
+			} else if (!outputDir.isDirectory()) {
+				throw new RuntimeException("The configured storage path is not a directory.");
+			}
+		}
+		
+		final String prefix = String.format("fpdi-doc-export-%d", System.currentTimeMillis());
 
-		String SRC = pdfFile.getAbsolutePath();
-		String DEST = pdfFile.getAbsolutePath() + "mounted.pdf";
-		String SUMMARY = pdfFile.getAbsolutePath() + "summary.pdf";
-		String FINALSUMMARY = pdfFile.getAbsolutePath() + "finalSummary.pdf";
-		String PRETEXT = pdfFile.getAbsolutePath() + "preText.pdf";
-		String COVER = pdfFile.getAbsolutePath() + "cover.pdf";
-		String FINAL = pdfFile.getAbsolutePath() + "final.pdf";
+		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
+		File preTextPdfFile = new File(outputDir, String.format("%s-pre-text.pdf", prefix));
+		File summaryPdfFile = new File(outputDir, String.format("%s-summary.pdf", prefix));
+		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
+		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));
+		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
+		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
 
-		File coverPdfFile = new File(COVER);
-		File preTextPdfFile = new File(PRETEXT);
-		File summaryPdfFile = new File(SUMMARY);
-		File finalSummaryPdfFile = new File(FINALSUMMARY);
-		File file = new File(DEST);
-		File finalPdfFile = new File(FINAL);
-		file.getParentFile().mkdirs();
-
-		InputStream in = new FileInputStream(pdfFile);
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
 		PdfWriter coverWriter = PdfWriter.getInstance(coverDocument, new FileOutputStream(coverPdfFile));
-		PdfWriter preTextWriter = PdfWriter.getInstance(preTextDocument, new FileOutputStream(preTextPdfFile));
-		PdfWriter summaryWriter = PdfWriter.getInstance(summaryDocument, new FileOutputStream(summaryPdfFile));
+		PdfWriter.getInstance(preTextDocument, new FileOutputStream(preTextPdfFile));
+		PdfWriter.getInstance(summaryDocument, new FileOutputStream(summaryPdfFile));
 
 		TOCEvent event = new TOCEvent();
 		writer.setPageEvent(event);
@@ -1000,16 +1000,6 @@ public class DocumentBS extends HibernateBusiness {
 		int secIndex = 0, subSecIndex = 0;
 
 		boolean lastAttWasPlan = false;
-		boolean lastSecWasPreText = false;
-
-		DocumentSection summarySection = new DocumentSection();
-		List<DocumentSection> summarySectionSons = new ArrayList<DocumentSection>();
-
-		// table to store placeholder for all chapters and sections
-		final Map<String, PdfTemplate> tocPlaceholder = new HashMap<>();
-
-		// store the chapters and sections with their title here.
-		final Map<String, Integer> pageByTitle = new HashMap<>();
 
 		document.setPageSize(PageSize.A4);
 		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
@@ -1021,7 +1011,6 @@ public class DocumentBS extends HibernateBusiness {
 		preTextDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
 		preTextDocument.open();
 
-		boolean endPreText = false;
 		boolean havePreText = false;
 		boolean haveContent = false;
 
@@ -1071,7 +1060,6 @@ public class DocumentBS extends HibernateBusiness {
 							preTextDocument.add(table);
 							preTextDocument.newPage();
 							lastAttWasPlan = false;
-							lastSecWasPreText = true;
 						}
 					}
 				}
@@ -1189,15 +1177,8 @@ public class DocumentBS extends HibernateBusiness {
 							}
 							str += value + "</p></body></html>";
 
-							resourcesPath = new File(classLoader.getResource("/reports/html/example.html").getFile())
-									.getPath();
-							resourcesPath = resourcesPath.replace("example.html", "");
-							resourcesPath = resourcesPath.replace("%20", " ");
-							resourcesPath = "/tmp"; // corrigir para usar
-							// um caminho
-							// dinamico
-							File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
-							FileWriter fw = new FileWriter(htmlFile.getPath(), true);
+							File htmlFile = new File(outputDir, String.format("%s-1.html", prefix));
+							FileWriter fw = new FileWriter(htmlFile, true);
 							BufferedWriter conexao = new BufferedWriter(fw);
 							conexao.write(str);
 							conexao.newLine();
@@ -1434,17 +1415,8 @@ public class DocumentBS extends HibernateBusiness {
 									}
 									str += value + "</p></body></html>";
 
-									resourcesPath = new File(
-											classLoader.getResource("/reports/html/example.html").getFile()).getPath();
-									resourcesPath = resourcesPath.replace("example.html", "");
-									resourcesPath = resourcesPath.replace("%20", " ");
-									resourcesPath = "/tmp"; // corrigir
-									// para
-									// usar
-									// um caminho
-									// dinamico
-									File htmlFile = File.createTempFile("output.", ".html", new File(resourcesPath));
-									FileWriter fw = new FileWriter(htmlFile.getPath(), true);
+									File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
+									FileWriter fw = new FileWriter(htmlFile, true);
 									BufferedWriter conexao = new BufferedWriter(fw);
 									conexao.write(str);
 									conexao.newLine();
@@ -1641,22 +1613,21 @@ public class DocumentBS extends HibernateBusiness {
 			summaryDocument.add(p);
 		}
 		summaryDocument.close();
-		PdfReader summaryAux = new PdfReader(SUMMARY);
-		PdfReader cover = new PdfReader(COVER);
+		PdfReader summaryAux = new PdfReader(summaryPdfFile.getPath());
+		PdfReader cover = new PdfReader(coverPdfFile.getPath());
 		summaryCountPages = summaryAux.getNumberOfPages() + cover.getNumberOfPages();
 		PdfReader preText;
 		if (havePreText) {
-			preText = new PdfReader(PRETEXT);
+			preText = new PdfReader(preTextPdfFile.getPath());
 			summaryCountPages += preText.getNumberOfPages();
 		}
 
 		com.itextpdf.text.Document finalSummaryDocument = new com.itextpdf.text.Document();
+		PdfWriter.getInstance(finalSummaryDocument, new FileOutputStream(finalSummaryPdfFile));
 		// Formato A4 do documento
 		finalSummaryDocument.setPageSize(PageSize.A4);
 		// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
 		finalSummaryDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
-		PdfWriter finalSummaryWriter = PdfWriter.getInstance(finalSummaryDocument,
-				new FileOutputStream(finalSummaryPdfFile));
 		finalSummaryDocument.open();
 
 		finalSummaryDocument.add(summaryTitle);
@@ -1678,10 +1649,10 @@ public class DocumentBS extends HibernateBusiness {
 
 		PdfImportedPage page;
 		int n;
-		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(DEST));
+		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
 		newDocument.open();
 
-		PdfReader summary = new PdfReader(FINALSUMMARY);
+		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
 		PdfReader content;
 		// int unnumberedPgsCount = summaryCountPages;
 		// CAPA
@@ -1692,7 +1663,7 @@ public class DocumentBS extends HibernateBusiness {
 			copy.addPage(page);
 		}
 		if (havePreText) {
-			preText = new PdfReader(PRETEXT);
+			preText = new PdfReader(preTextPdfFile.getPath());
 			// SEÇÕES PRE TEXTUAIS
 			n = preText.getNumberOfPages();
 			// unnumberedPgsCount += n;
@@ -1708,7 +1679,7 @@ public class DocumentBS extends HibernateBusiness {
 				page = copy.getImportedPage(summary, ++i);
 				copy.addPage(page);
 			}
-			content = new PdfReader(SRC);
+			content = new PdfReader(contentFile.getPath());
 			// CONTEÚDO
 			n = content.getNumberOfPages();
 			for (int i = 0; i < n;) {
@@ -1719,7 +1690,7 @@ public class DocumentBS extends HibernateBusiness {
 
 		newDocument.close();
 
-		manipulatePdf(DEST, FINAL, newDocument, summaryCountPages);
+		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		InputStream inpStr = new FileInputStream(finalPdfFile);
 		return inpStr;
 	}

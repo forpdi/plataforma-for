@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-	<session-factory>
+	<session-factory> 
   		<property name="org.hibernate">true</property>
   		
 		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo</property>
