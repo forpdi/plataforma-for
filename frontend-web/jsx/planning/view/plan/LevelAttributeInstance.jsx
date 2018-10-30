@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from 'react-router';
- 
+
 import TreeView from "forpdi/jsx/core/widget/treeview/TreeView.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
@@ -42,7 +42,7 @@ export default React.createClass({
 		permissions: React.PropTypes.array.isRequired
 	},
 
-	getInitialState() {				
+	getInitialState() {
 		return {
 			loading: true,
 			fields: [],
@@ -61,30 +61,30 @@ export default React.createClass({
 		};
 	},
 
-	getFields(model, agg) {		
+	getFields(model, agg) {
 		var fields = [];
-		if(model.data.level.indicator){			
+		if(model.data.level.indicator){
 			var options = [{
 				name:  Messages.get("label.aggregateSimples"),
-				value: !model.data.aggregate		
-			},{				
+				value: !model.data.aggregate
+			},{
 				name: Messages.get("label.aggregateAggregated"),
 				value: model.data.aggregate
-			}];		
+			}];
 
 			fields.push({
 				name: "indicator-type",
 				type: AttributeTypes.INDICATOR_TYPE,
 				required: true,
 				placeholder: "",
-				label: "tipo de indicador",				
+				label: "tipo de indicador",
 				displayField: 'name',
 				valueField: 'value',
 				options: options,
 				onClick: this.onIndicatorTypeClick,
 				extraRender: this.renderAggregate,
-				disabled: this.context.roles.MANAGER || _.contains(this.context.permissions, 
-         							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true 
+				disabled: this.context.roles.MANAGER || _.contains(this.context.permissions,
+         							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true
 			});
 		}
 
@@ -95,27 +95,27 @@ export default React.createClass({
 			placeholder: "",
 			label: Messages.getEditable("label.name","fpdi-nav-label"),
 			value: model.data.name,
-			disabled: this.context.roles.MANAGER || _.contains(this.context.permissions, 
-         							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true 
+			disabled: this.context.roles.MANAGER || _.contains(this.context.permissions,
+         							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true
 		});
 
 		if (model.data.level.attributes) {
-			model.data.level.attributes.map((model,idx) =>{				
+			model.data.level.attributes.map((model,idx) =>{
 				var formattedValue = (model.attributeInstance ? model.attributeInstance.formattedValue : "");
 				var value = (model.attributeInstance ? model.attributeInstance.value : "");
 				var editModeValue = null;
 				if(model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
-					if (model.attributeInstance && model.attributeInstance.valueAsNumber) {
+					if (model.attributeInstance){  //&& model.attributeInstance.valueAsNumber) {
 						value = model.attributeInstance.valueAsNumber;
 						editModeValue = value.toString().replace(".", ",");
 					} else {
 						value = "";
 						editModeValue = value;
 					}
-					
+
 				}
-				
-				
+
+
 				if (model.beginField) {
 					dateBegin = value;
 					if (this.isMounted()) {
@@ -160,7 +160,7 @@ export default React.createClass({
 						extraActionPlans: (model.actionPlans ? this.newLevelInstanceActionPlan : undefined),
 						tableFields: model.tableFields,
 						extraTableFields: (model.tableFields ? this.saveInstanceTable : undefined),
-					});	
+					});
 				} else if (model.reachedField || model.justificationField) {
 					fields.push({
 						name: "attribute"+idx,
@@ -183,7 +183,7 @@ export default React.createClass({
 						extraActionPlans: (model.actionPlans ? this.newLevelInstanceActionPlan : undefined),
 						tableFields: model.tableFields,
 						extraTableFields: (model.tableFields ? this.saveInstanceTable : undefined),
-					});	
+					});
 				} else {
 					fields.push({
 						name: "attribute"+idx,
@@ -194,7 +194,7 @@ export default React.createClass({
 						value: value,
 						formattedValue: formattedValue,
 						editModeValue: editModeValue,
-						disabled: this.context.roles.MANAGER || _.contains(this.context.permissions, 
+						disabled: this.context.roles.MANAGER || _.contains(this.context.permissions,
          							PermissionsTypes.MANAGE_PLAN_PERMISSION) ? false : true,
 						budgets: model.budgets,
 						extra: (model.budgets ? this.newLevelInstanceBudget : undefined),
@@ -207,7 +207,7 @@ export default React.createClass({
 						extraActionPlans: (model.actionPlans ? this.newLevelInstanceActionPlan : undefined),
 						tableFields: model.tableFields,
 						extraTableFields: (model.tableFields ? this.saveInstanceTable : undefined),
-					});		
+					});
 				}
 
 				if (model.users) {
@@ -216,14 +216,14 @@ export default React.createClass({
 							users: model.users
 						});
 					}
-				}	
+				}
 			})
 		}
 
 		return fields;
 	},
 
-	onIndicatorTypeClick(evt){		
+	onIndicatorTypeClick(evt){
 		var idx = evt.target.id.split('-')[1];
 		let normalRadio = this.refs['levelForm'].refs['indicator-type'].refs['indicator-type-option-0'];
 		let aggregateRadio = this.refs['levelForm'].refs['indicator-type'].refs['indicator-type-option-1'];
@@ -236,7 +236,7 @@ export default React.createClass({
 			normalRadio.value = true;
 			agg = false;
 		}else{
-			if(this.state.haveChildren){				
+			if(this.state.haveChildren){
 				this.context.toastr.addAlertError(Messages.get("label.error.noGoalsAggregateAggregated"));
         		aggregateRadio.checked = false;
 				aggregateRadio.value = false;
@@ -247,8 +247,8 @@ export default React.createClass({
 			normalRadio.checked = false;
 			normalRadio.value = false;
 			agg = true;
-		}	
-		
+		}
+
 		if (this.isMounted()) {
 			this.setState({
 				aggregate: agg,
@@ -259,7 +259,7 @@ export default React.createClass({
 
 	componentDidMount() {
 		var me = this;
-		this.getLevelInstanceAttributes(this.props.params.levelInstanceId);	
+		this.getLevelInstanceAttributes(this.props.params.levelInstanceId);
 
 		StructureStore.on("levelGoalClosed", (model) => {
 			if(this.isMounted()){
@@ -267,7 +267,7 @@ export default React.createClass({
 					vizualization:true
 				})
 			}
-		});	
+		});
 
 		StructureStore.on("goalsGenerated", (model) => {
 			if (model.data.auxValue && this.isMounted()) {
@@ -279,15 +279,15 @@ export default React.createClass({
 			}
 		});
 
-		StructureStore.on('levelAttributeSaved', (model) => {			
-			if(model.success == true){				
+		StructureStore.on('levelAttributeSaved', (model) => {
+			if(model.success == true){
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
-				this.refs.levelInstanceTitle.title = model.data.name;				
-				if(this.isMounted()){		
+				this.refs.levelInstanceTitle.title = model.data.name;
+				if(this.isMounted()){
 					var showPolarityAlert = false;
-					if (!this.state.undeletable && this.state.model.data.polarity != model.data.polarity)	
+					if (!this.state.undeletable && this.state.model.data.polarity != model.data.polarity)
 						showPolarityAlert = true;
-					
+
 					if (this.isMounted()) {
 						this.setState({
 							vizualization: true,
@@ -302,7 +302,7 @@ export default React.createClass({
 					}
 				}
 			}
-			else{				
+			else{
 				this.context.toastr.addAlertError(Messages.get("label.impossibleSaveAttributes"));
 			}
 		}, me);
@@ -312,7 +312,7 @@ export default React.createClass({
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_FIND,
 				data: null
-			});			
+			});
 			this.context.toastr.addAlertSuccess(store.data.name + " " + Messages.get("label.successDeleted"));
 		}, me);
 
@@ -337,7 +337,7 @@ export default React.createClass({
 		}, me);
 
 		StructureStore.on("levelAttributeRetrieved", (model) => {
-			if(me.isMounted()){				
+			if(me.isMounted()){
 				me.setState({
 					loading: false,
 					model: model,
@@ -345,23 +345,23 @@ export default React.createClass({
 					subTitle: model.data.name,
 					fields: this.getFields(model, model.data.aggregate),
 					aggregate: model.data.aggregate,
-					levelValue: model.data.levelValue,									
+					levelValue: model.data.levelValue,
 					level: model.data.level.name,
 					showPolarityAlert: false,
 					favoriteExistent: model.data.favoriteExistent,
 					favoriteTotal: model.data.favoriteTotal
-				});				
+				});
 				me.context.tabPanel.addTab(me.state.tabPath, model.data.name);
 			}
-		}, me);	
-			
+		}, me);
+
 		StructureStore.on("levelAttributeNoRetrieved", (model) => {
 			var url = window.location.href;
 			window.location.assign(url.split("#")[0]+"#/home");
-		}, me);	
+		}, me);
 
 		StructureStore.on("levelSonsRetrieved", (model) => {
-			if(me.isMounted()){		
+			if(me.isMounted()){
 				me.setState({
 					undeletable: model.data.sons.list.length>0 ? false : true
 				});
@@ -373,7 +373,7 @@ export default React.createClass({
 				this.setState({
 					levelValue: model.data.levelValue
 				});
-				this.getLevelInstanceAttributes(this.props.params.levelInstanceId);	
+				this.getLevelInstanceAttributes(this.props.params.levelInstanceId);
 			}
 		}, me);*/
 	},
@@ -386,9 +386,9 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if(this.isMounted()){			
-			this.setState({				
-				vizualization: true			
+		if(this.isMounted()){
+			this.setState({
+				vizualization: true
 			});
 			var el = document.getElementsByClassName("fpdi-app-content")[0];		//pegando o elemento que contém os atributos
 			el.scrollTop = 0;														//voltando seu scroll para o topo
@@ -397,10 +397,10 @@ export default React.createClass({
 					this.setState({
 						tabPath: newProps.location.pathname,
 						loading: true
-					});		
-				}	
+					});
+				}
 				this.getLevelInstanceAttributes(newProps.params.levelInstanceId);
-			}			
+			}
 		}
 	},
 
@@ -422,12 +422,12 @@ export default React.createClass({
 				committed:committed,
 				realized:realized,
 				instanceId: this.props.params.levelInstanceId,
-				
+
 			}
-		});	
+		});
 	},
 
-	saveInstanceSchedule(scheduleInstance){	
+	saveInstanceSchedule(scheduleInstance){
 		ScheduleStore.dispatch({
 			action: ScheduleStore.ACTION_CUSTOM_SAVE,
 			data: {
@@ -448,7 +448,7 @@ export default React.createClass({
 		});
 	},
 
-	saveInstanceTable(tableInstance){	
+	saveInstanceTable(tableInstance){
 		TableStore.dispatch({
 			action: TableStore.ACTION_CUSTOM_SAVE,
 			data: {
@@ -488,12 +488,12 @@ export default React.createClass({
 	confirmCompleteGoal(id,closeOpenGoal) {
 		var msg = "";
 
-		{closeOpenGoal ? 
+		{closeOpenGoal ?
 			msg = Messages.get("label.msg.completeGoal")
 
-			: msg = Messages.get("label.msg.openGoal") 
+			: msg = Messages.get("label.msg.openGoal")
 		}
-		
+
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			{StructureStore.dispatch({
@@ -516,7 +516,7 @@ export default React.createClass({
 	},
 
 	deleteLevelAttribute() {
-		var data = this.state.model;		
+		var data = this.state.model;
 		if(this.state.undeletable) {
 			var msg =  Messages.get("label.deleteConfirmation") + " "  + this.state.model.data.name + "?";
 			Modal.confirmCancelCustom(() => {
@@ -570,24 +570,24 @@ export default React.createClass({
 	},
 
 	isNumber(n) {
-		
+
     	return !isNaN(parseFloat(n)) && isFinite(n);
 	},
-	
+
 	onSubmit(data) {
 		var validation = Validate.validateAttributePlan(this.state.model, this.refs['levelForm'], data, this.state.aggregate)
 
 		//finaliza aqui!
 
-		if (validation.boolMsg) {			
+		if (validation.boolMsg) {
 			this.context.toastr.addAlertError(validation.msg);
  			return;
 		}
-				
+
 		var aggregateArray = [];
 		if(this.state.model.data.level.indicator && this.state.aggregate){
 			var indicators = this.refs['levelForm'].refs['indicator-type'].refs['agg-ind-config'].selectedIndicators;
-			indicators.map((indicator, idx) => {		
+			indicators.map((indicator, idx) => {
 				aggregateArray.push({
 					aggregate: {
 						id: indicator.id
@@ -597,10 +597,10 @@ export default React.createClass({
 					},
 					percentage: indicator.percentage,
 					deleted: indicator.deleted
-				});				
-			});			
+				});
+			});
 		}
-	
+
 		var levelInstance = {
 			id: this.state.model.data.id,
 			name: validation.nome,
@@ -612,26 +612,26 @@ export default React.createClass({
 				attributes: validation.attributes
 			},
 			aggregate: this.state.aggregate,
-			calculation: (this.refs['levelForm'].refs['indicator-type'] && 
-				this.refs['levelForm'].refs['indicator-type'].refs['agg-ind-config'] ? 
+			calculation: (this.refs['levelForm'].refs['indicator-type'] &&
+				this.refs['levelForm'].refs['indicator-type'].refs['agg-ind-config'] ?
 				this.refs['levelForm'].refs['indicator-type'].refs['agg-ind-config'].calculationValue : 0),
 			indicatorList: aggregateArray
 		};
 
-		var url = window.location.hash;		
+		var url = window.location.hash;
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_SAVE_LEVELATTRIBUTES,
 			data: {
 				levelInstance: levelInstance,
 				url: url
-			}				
+			}
 		});
 	},
 	onCancel() {
 		if(this.state.aggregate == true) {
 			if (this.isMounted()) {
 				this.setState({
-					vizualization: !this.state.vizualization,				
+					vizualization: !this.state.vizualization,
 					aggregate: this.state.model.data.aggregate
 				});
 			}
@@ -642,7 +642,7 @@ export default React.createClass({
 
 	editingAttributes() {
 		var list = this.state.selectedIndicators;
-		if (this.isMounted()) {		
+		if (this.isMounted()) {
 			this.setState({
 				vizualization: !this.state.vizualization,
 				selectedIndicators: list,
@@ -693,7 +693,7 @@ export default React.createClass({
 
 	onlyNumber(evt){
  		var key = evt.which;
- 		if((key < 48 || key > 57)) {			
+ 		if((key < 48 || key > 57)) {
  			evt.preventDefault();
  			return;
  		}
@@ -718,7 +718,7 @@ export default React.createClass({
 	renderAggregate(){
 		if(this.state.aggregate){
 			return(<AggregateIndicator
-				ref="agg-ind-config" 
+				ref="agg-ind-config"
 				indicatorsList={this.state.model.data.indicatorList}
 				calculationType={this.state.model.data.calculation}
 				visualization={this.state.vizualization}
@@ -742,7 +742,7 @@ export default React.createClass({
 						title={this.state.model.data.plan.name}>{this.state.model.data.plan.name.length > 15 ? this.state.model.data.plan.name.substring(0, 15)+"..." : this.state.model.data.plan.name.substring(0, 15)}</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
-				{this.state.model.data.parents.map((parent, idx) => {							
+				{this.state.model.data.parents.map((parent, idx) => {
 					return (
 						<span key={idx}>
 							<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
@@ -750,7 +750,7 @@ export default React.createClass({
 								title={parent.name}>{parent.name.length > 15 ? parent.name.substring(0, 15)+"..." : parent.name.substring(0, 15)}</Link>
 							<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 						</span>
-					);			
+					);
 				})}
 				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
 					{this.state.model.data.name.length > 15 ? this.state.model.data.name.substring(0, 15)+"..." : this.state.model.data.name.substring(0, 15)}
@@ -786,60 +786,58 @@ export default React.createClass({
 		);
 	},
 
-	renderEditGoal(userResponsible) {		
+	renderEditGoal(userResponsible) {
 		return (
 			<ul id="level-menu" className="dropdown-menu" >
-				{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				{((this.context.roles.MANAGER || _.contains(this.context.permissions,
  							PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization) ||
  							(userResponsible && userResponsible.id == UserSession.get("user").id &&
  							this.state.model.data.level.goal) ? (
 					<li>
 						<a onClick={this.editingAttributes}>
-							<span className="mdi mdi-pencil cursorPointer cursorPointer" title={Messages.get("label.title.editInformation")}> 
+							<span className="mdi mdi-pencil cursorPointer cursorPointer" title={Messages.get("label.title.editInformation")}>
 								<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 							</span>
 						</a>
-						
+
 			        </li>) : ""}
-				
-				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+
+				{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.model.data.level.name == "Meta" ? (
 					<li>
-						<a onClick={this.state.model.data.closed == false ? 
-								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+						<a onClick={this.state.model.data.closed == false ?
+								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions,
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? this.confirmCompleteGoal.bind(this, this.state.model.data.id, false) : "") }>
-							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open deleteIcon":"mdi  mdi-lock lockGoal-closedeleteIcon"} 
-								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}> 
+							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open deleteIcon":"mdi  mdi-lock lockGoal-closedeleteIcon"}
+								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions,
+	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}>
 								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.get("label.msg.finishGoal"):Messages.get("label.msg.reopenGoal")} </span>
 							</span>
 						</a>
-
-
 					</li>) : ""}
-         		{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+         		{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          							PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization ? (
 			        <li>
 						<a onClick={this.exportLevelAttributes}>
-							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
+							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}>
 								<span id="menu-levels"> {Messages.getEditable("label.generateReport","fpdi-nav-label")} </span>
 							</span>
 						</a>
 					</li>) : ""}
 
-		        {this.context.roles.SYSADMIN ? "" : 
+		        {this.context.roles.SYSADMIN ? "" :
 			        (this.state.favoriteExistent ? (
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
-								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
+								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}>
 									<span id="menu-levels"> {Messages.getEditable("label.removeFromFavorites","fpdi-nav-label")} </span>
 								</span>
 							</a>
-			         	</li>) 
+			         	</li>)
 			        	: (!this.state.favoriteTotal || this.state.favoriteTotal < 10 ?
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
-									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
+									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}>
 										<span id="menu-levels"> {Messages.getEditable("label.addFavorites","fpdi-nav-label")}  </span>
 									</span>
 								</a>
@@ -847,7 +845,7 @@ export default React.createClass({
 		         			:
 			         			<li>
 					         		<a type="submit">
-										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
+										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}>
 											<span id="menu-levels"> {Messages.getEditable("label.notAddFavorites","fpdi-nav-label")} </span>
 										</span>
 									</a>
@@ -856,21 +854,20 @@ export default React.createClass({
 		         	)
 			    }
 
-			    {(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+			    {(this.context.roles.MANAGER || _.contains(this.context.permissions,
          							PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization ? (
 			        (this.state.undeletable?
-
 			         	<li>
 							<a onClick={this.deleteLevelAttribute} type="submit">
-								<span id="cacando-a-pala" className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}> 
+								<span id="cacando-a-pala" className="mdi mdi-delete cursorPointer" title={Messages.get("label.delete") + " " + this.state.subTitle}>
 									<span id="menu-levels"> {Messages.get("label.delete")}{/*Messages.getEditable("label.delete","fpdi-nav-label")*/} </span>
 								</span>
 							</a>
 			         	</li>
-			        : 
+			        :
 			        	<li>
 			        		<a type="submit">
-								<span className="mdi mdi-delete disabledIcon marginLeft5 cursorPointer" title={Messages.get("label.notDeleted") +(!this.state.model.data.leaf ? ", possui níveis filhos" : "")}> 
+								<span className="mdi mdi-delete disabledIcon marginLeft5 cursorPointer" title={Messages.get("label.notDeleted") +(!this.state.model.data.leaf ? ", possui níveis filhos" : "")}>
 									<span id="menu-levels"> {Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 								</span>
 							</a>
@@ -885,51 +882,49 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a data-placement="top">
-						<span className="mdi mdi-pencil disabledIcon marginLeft5" title={Messages.get("label.title.notEditGoalComplete")}> 
+						<span className="mdi mdi-pencil disabledIcon marginLeft5" title={Messages.get("label.title.notEditGoalComplete")}>
 							<span id="menu-levels"> {Messages.getEditable("label.notEdit","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>
 
-				 {(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				 {(this.context.roles.MANAGER || _.contains(this.context.permissions,
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.model.data.level.name == "Meta" ? (
 					<li>
-						<a onClick={this.state.model.data.closed == false ? 
-								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+						<a onClick={this.state.model.data.closed == false ?
+								this.confirmCompleteGoal.bind(this,this.state.model.data.id, true) : ((this.context.roles.MANAGER || _.contains(this.context.permissions,
 	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? this.confirmCompleteGoal.bind(this, this.state.model.data.id, false) : "")}>
 							<span className={this.state.model.data.closed == false ? "mdi mdi-lock-open-outline lockGoal-open":"mdi  mdi-lock lockGoal-close"}
-								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions, 
-	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}> 
+								title= {this.state.model.data.closed == false ? Messages.get("label.title.finishGoal") : ((this.context.roles.MANAGER || _.contains(this.context.permissions,
+	         					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ? "Abrir Meta" : Messages.get("label.title.reopenGoal"))}>
 								<span id="menu-levels"> {this.state.model.data.closed == false ? Messages.getEditable("label.msg.finishGoal","fpdi-nav-label"):Messages.getEditable("label.msg.reopenGoal","fpdi-nav-label")} </span>
 							</span>
 						</a>
-
 					</li>) : ""}
 
-				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          							PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization ? (
 			        <li>
-
 			        	<a onClick={this.exportLevelAttributes}>
-							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}> 
+							<span className="mdi mdi-file-export cursorPointer" title={Messages.get("label.generateReport")}>
 								<span id="menu-levels"> {Messages.getEditable("label.generateReport","fpdi-nav-label")}</span>
 							</span>
 						</a>
 			        </li>) : ""}
 
-				{this.context.roles.SYSADMIN ? "" : 
+				{this.context.roles.SYSADMIN ? "" :
 			        (this.state.favoriteExistent ? (
 		         		<li>
 		         			<a onClick={this.removeFavoriteLevel}>
-								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}> 
+								<span className="mdi mdi-star-outline cursorPointer" title={Messages.get("label.removeFromFavorites")}>
 									<span id="menu-levels"> {Messages.getEditable("label.removeFromFavorites","fpdi-nav-label")} </span>
 								</span>
 							</a>
-			         	</li>) 
+			         	</li>)
 			        	: (!this.state.favoriteTotal || this.state.favoriteTotal < 10 ?
 	         		 		<li>
 	         		 			<a onClick={this.saveFavoriteLevel}>
-									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}> 
+									<span className="mdi mdi-star cursorPointer" title={Messages.get("label.addFavorites")}>
 										<span id="menu-levels">	{Messages.getEditable("label.addFavorites","fpdi-nav-label")} </span>
 									</span>
 								</a>
@@ -937,7 +932,7 @@ export default React.createClass({
 		         			:
 			         			<li>
 			         				<a type="submit">
-										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}> 
+										<span className="mdi mdi-star disabledIcon" title={Messages.get("label.maxFavorites")}>
 											<span id="menu-levels">	{Messages.getEditable("label.notAddFavorites","fpdi-nav-label")} </span>
 										</span>
 									</a>
@@ -949,11 +944,10 @@ export default React.createClass({
 		         {this.state.undeletable ?
 		         	<li>
 		         		<a type="submit">
-							<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") + " " +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
+							<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") + " " +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}>
 								<span id="menu-levels">	{Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 							</span>
 						</a>
-
 		         	</li>
 		         : ""}
 
@@ -967,7 +961,7 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a>
-						<span className="mdi mdi-delete disabledIcon" title={Messages.get("label.unableDeleteArchivedPlan")}> 
+						<span className="mdi mdi-delete disabledIcon" title={Messages.get("label.unableDeleteArchivedPlan")}>
 							<span id="menu-levels">	{Messages.getEditable("label.unableDeleteArchivedPlan","fpdi-nav-label")} </span>
 						</span>
 					</a>
@@ -981,7 +975,7 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}> 
+						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}>
 							<span id="menu-levels">	{Messages.getEditable("label.delete"),"fpdi-nav-label"} </span>
 						</span>
 					</a>
@@ -996,7 +990,7 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}> 
+						<span className="mdi mdi-delete disabledIcon marginLeft5" title={Messages.get("label.notDeleted") +(!!this.state.model.data.closed ? ", meta concluída\n" : "")}>
 							<span id="menu-levels">	{Messages.getEditable("label.notDeleted","fpdi-nav-label")} </span>
 						</span>
 					</a>
@@ -1022,15 +1016,15 @@ export default React.createClass({
 			}
 		}
 		return(
-		<div> 
+		<div>
 			<div className="row paddingLeft15">
 				{this.state.model ? this.renderBreadcrumb() : ""}
-					
+
 				<div className={this.state.level == "Indicador" ? "col-lg-10 fpdi-indicatorTitle" : "col-lg-10 fpdi-attributesTitle"}>
 					<h1>
 						<div  className="fpdi-containerTitle" ref='levelInstanceTitle'>
 							{this.state.subTitle}
-						</div>	
+						</div>
 						{this.state.vizualization ?
 						<div className="fpdi-containerIcons">
 							<span className="dropdown">
@@ -1043,11 +1037,11 @@ export default React.createClass({
 								>
 									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 									<span className="mdi mdi-chevron-down" />
-								</a>	
-									{this.context.planMacro.attributes.archived ?  this.renderDisableEdit() : 
-										(this.state.model.data.level.goal == false ? this.renderEditGoal(userResponsible) : 
-				            				this.state.model.data.closed == false ? this.renderEditGoal(userResponsible) : this.renderClosedGoal()) 
-				            		}  		
+								</a>
+									{this.context.planMacro.attributes.archived ?  this.renderDisableEdit() :
+										(this.state.model.data.level.goal == false ? this.renderEditGoal(userResponsible) :
+				            				this.state.model.data.closed == false ? this.renderEditGoal(userResponsible) : this.renderClosedGoal())
+				            		}
 				            </span>
 						</div>:""}
 					</h1>
@@ -1057,8 +1051,8 @@ export default React.createClass({
 								{this.state.level}
 							</span>
 						</div>
-					: 
-						this.state.aggregate ? 
+					:
+						this.state.aggregate ?
 							<div>
 								<span className="fpdi-level-type-value">
 									{Messages.getEditable("label.indicatorAggregate","fpdi-nav-label")}
@@ -1070,16 +1064,16 @@ export default React.createClass({
 									{Messages.getEditable("label.indicatorSimple","fpdi-nav-label")}
 								</span>
 							</div>
-					}	
+					}
 				</div>
 				<div className = "fpdi-levelValueBox">
 					<div className = {this.state.levelValue == null || this.state.levelValue < 1000 ? "col-lg-1 box-proceeds" : "col-lg-1"} >
 						<span id = "title-proceeds"> {Messages.getEditable("label.profit","fpdi-nav-label")} </span>
 						<span id = "value-proceeds"> {this.state.levelValue == null ? 0 + "%" : this.state.levelValue.toFixed(2)+"%"} </span>
-					</div>	
+					</div>
 				</div>
 			</div>
-			
+
 			<VerticalForm
 			    ref="levelForm"
 			    vizualization={this.state.vizualization}
@@ -1100,13 +1094,13 @@ export default React.createClass({
 			{this.state.showPolarityAlert ? <i><h5 className="fpdi-indicator-weigth-total">{Messages.getEditable("label.msg.polarityChanged")}</h5></i> : ""}
 			{this.state.model.data.level.indicator ? <GoalPerformance  indicator = {this.state.model.data}/> : ""}
 
-			<LevelSons 
-				dateBegin={dateBegin} 
-				dateEnd={dateEnd} 
-				parentId={this.state.model.data.id} 
-				isParent={this.isParent} 
-				users={this.state.users} 
+			<LevelSons
+				dateBegin={dateBegin}
+				dateEnd={dateEnd}
+				parentId={this.state.model.data.id}
+				isParent={this.isParent}
+				users={this.state.users}
 				enabled={!this.state.aggregate && this.state.vizualization}/>
 	    </div>);
-	}		
+	}
 });
