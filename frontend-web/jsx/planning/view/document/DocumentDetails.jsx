@@ -24,33 +24,28 @@ export default React.createClass({
 	 		});
 
 	 		DocumentStore.on("retrieve", (model) => {
-	 			if(this.isMounted()){
-					this.setState({
-						loaded:true,
-						document:model.get('document')
-					});
-					this.context.tabPanel.addTab(this.state.tabPath, model.get("document").title);
-				}
+				this.setState({
+					loaded:true,
+					document:model.get('document')
+				});
+				this.context.tabPanel.addTab(this.state.tabPath, model.get("document").title);
 	     	});
  		} else {
- 			this.context.router.push("/plan/"+this.context.planMacro.get('id')+"/details"); 			
- 		}		
+ 			this.context.router.push("/plan/"+this.context.planMacro.get('id')+"/details");
+ 		}
 	},
 	componentWillReceiveProps(newProps) {
 		if (newProps.location.pathname != this.state.tabPath) {
-
- 			if(this.isMounted()){
-				this.setState({
-					tabPath: newProps.location.pathname
-				});
-			}
+			this.setState({
+				tabPath: newProps.location.pathname
+			});
 			this.context.tabPanel.addTab(newProps.location.pathname, this.context.planMacro.get("name"));
-		
-			
+
+
 		}
 	},
 
-	render() {		
+	render() {
 		if (!this.state.loaded) {
 			return <LoadingGauge />;
 		}

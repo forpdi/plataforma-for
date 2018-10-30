@@ -13,7 +13,7 @@ export default React.createClass({
 
     getInitialState() {
         return {
-            loaded:true,            
+            loaded:true,
             elements:[],
             indicator:this.props.indicator,
             typeGraph: "",
@@ -22,13 +22,11 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        if(this.isMounted()){
             this.getInfos(1, this.state.pageSize, newProps);
-        }
     },
 
     componentDidMount(){
-    	var me = this;      
+    	var me = this;
 
         if(me.state.indicator.aggregate == true) {
             me.setState({
@@ -52,134 +50,130 @@ export default React.createClass({
             });
         }
 
-        if(me.isMounted()) {
-            me.setState({
-                optionsIndicators:{
-                    title: '',
-                    hAxis: {minValue: 0, maxValue: 100,slantedText:true,
-                            slantedTextAngle:45},
-                    vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100},
-                    legend: 'none',
-                    bar: {groupWidth: '50%'}
-                },
-                options:{
-                    title: '',
-                    colors: ['#CCCCCC','#333333'],
-                    vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
-                    hAxis: {slantedText:true,slantedTextAngle:45},
-                    legend: {position: 'none'},
-                    bar: {groupWidth: '30%'},
-                    seriesType: 'bars',
-                    series: {1: {type: 'line', pointsVisible: true, pointSize:4}}
-                },
-                data: [ 
-                    ['titulo', 'Alcançado', { role: 'style' }, 'Esperado'],
-                    ["",0,'',0]
-                ]
-            });        	
-        }
+		me.setState({
+			optionsIndicators:{
+				title: '',
+				hAxis: {minValue: 0, maxValue: 100,slantedText:true,
+						slantedTextAngle:45},
+				vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100},
+				legend: 'none',
+				bar: {groupWidth: '50%'}
+			},
+			options:{
+				title: '',
+				colors: ['#CCCCCC','#333333'],
+				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+				hAxis: {slantedText:true,slantedTextAngle:45},
+				legend: {position: 'none'},
+				bar: {groupWidth: '30%'},
+				seriesType: 'bars',
+				series: {1: {type: 'line', pointsVisible: true, pointSize:4}}
+			},
+			data: [
+				['titulo', 'Alcançado', { role: 'style' }, 'Esperado'],
+				["",0,'',0]
+			]
+		});
 
         DashboardStore.on("graphForIndicatorRetrived",(model)=>{
             var data = [];
             var elements = [];
-            if(me.isMounted()) {
-                if (me.state.indicator.aggregate == true) {                
-                    data = [['Element', 'Rendimento', { role: 'style' }]];                    
-                    elements=[];
-                    var vet = [];
+			if (me.state.indicator.aggregate == true) {
+				data = [['Element', 'Rendimento', { role: 'style' }]];
+				elements=[];
+				var vet = [];
 
-                    
-                    if (me.state.indicator.indicatorList != undefined) {
 
-                        me.state.indicator.indicatorList.map((ind) => {
-                            vet = [];
-                            vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
-                            if(ind.aggregate.levelValue == undefined){
-                                vet[1] = 0;
-                            }else{
-                                vet[1] = {
-                                    v: parseFloat(ind.aggregate.levelValue),
-                                 f: parseFloat(ind.aggregate.levelValue.toFixed(2))+"%"
-                                };
-                            }
-                            /*
-                            if(ind.aggregate.levelValue < 40){
-                                vet[2] = "#E74C3C";
-                            }else if(ind.aggregate.levelValue < 70){
-                                vet[2] = "#FFCC33";
-                             }else if(ind.aggregate.levelValue < 100){
-                                vet[2] = "#51D466";
-                            }else{
-                                vet[2] = "#4EB4FE";
-                            }*/
+				if (me.state.indicator.indicatorList != undefined) {
 
-                            if (!ind.aggregate.levelValue)
-                                vet[2] = "#A9A9A9";
-                            else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
-                                vet[2] = "#E74C3C";
-                            else if (ind.aggregate.levelValue < 100.0)
-                                vet[2] = "#FFCC33";
-                            else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
-                                vet[2] = "#51D466";
-                            else
-                                vet[2] = "#4EB4FE"; 
+					me.state.indicator.indicatorList.map((ind) => {
+						vet = [];
+						vet[0] = (ind.aggregate.name.length  > 60 ? ind.aggregate.name.substr(0,60).concat("...") : ind.aggregate.name);
+						if(ind.aggregate.levelValue == undefined){
+							vet[1] = 0;
+						}else{
+							vet[1] = {
+								v: parseFloat(ind.aggregate.levelValue),
+								f: parseFloat(ind.aggregate.levelValue.toFixed(2))+"%"
+							};
+						}
+						/*
+						if(ind.aggregate.levelValue < 40){
+							vet[2] = "#E74C3C";
+						}else if(ind.aggregate.levelValue < 70){
+							vet[2] = "#FFCC33";
+							}else if(ind.aggregate.levelValue < 100){
+							vet[2] = "#51D466";
+						}else{
+							vet[2] = "#4EB4FE";
+						}*/
 
-                            elements.push(vet);
-                        }); 
+						if (!ind.aggregate.levelValue)
+							vet[2] = "#A9A9A9";
+						else if (ind.aggregate.levelValue < ind.aggregate.levelMinimum)
+							vet[2] = "#E74C3C";
+						else if (ind.aggregate.levelValue < 100.0)
+							vet[2] = "#FFCC33";
+						else if (ind.aggregate.levelValue < ind.aggregate.levelMaximum)
+							vet[2] = "#51D466";
+						else
+							vet[2] = "#4EB4FE";
 
-                        if(me.state.indicator.indicatorList.length == 0){
-                            data = [['Element', 'Rendimento']];  
-                            elements.push([Messages.get("label.haveNoIndicators"),0]);
-                            data.push([Messages.get("label.haveNoIndicators"),0]);
-                        }else{
-                            me.state.indicator.indicatorList.map((ind, cont) =>{
-                             data.push(elements[cont]);
-                            });
-                        }
-                    } else {
-                        elements.push(["",0,'']);
-                        data.push(["",0,'']);
-                    }
+						elements.push(vet);
+					});
 
-                 
+					if(me.state.indicator.indicatorList.length == 0){
+						data = [['Element', 'Rendimento']];
+						elements.push([Messages.get("label.haveNoIndicators"),0]);
+						data.push([Messages.get("label.haveNoIndicators"),0]);
+					}else{
+						me.state.indicator.indicatorList.map((ind, cont) =>{
+							data.push(elements[cont]);
+						});
+					}
+				} else {
+					elements.push(["",0,'']);
+					data.push(["",0,'']);
+				}
 
-                  
-                } else {
-                    elements =[];
-                    data = [['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
-                    var goalValue;   
 
-                    model.data.map((item) => {
-                        goalValue = me.getGoalsValues(item);
-                        elements.push(goalValue);
-                    });
-                    if(model.data.length == 0){
-                        data = [['Element', 'Alcançado']];
-                        elements.push([Messages.get("label.haveNoGoals"),0]);
-                        data.push([Messages.get("label.haveNoGoals"),0]);
-                    }else{
-                        model.data.map((item, cont) => {
-                            data.push(elements[cont]);                        
-                        });
-                    }       
-                }   
-                me.setState({
-                    elements:elements,
-                    data:data,
-                    total: model.total,
-                    goals: model.data,
-                }); 
-                me.updateChartOptions(model);
-            }        	
-        },me);    
+
+
+			} else {
+				elements =[];
+				data = [['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
+				var goalValue;
+
+				model.data.map((item) => {
+					goalValue = me.getGoalsValues(item);
+					elements.push(goalValue);
+				});
+				if(model.data.length == 0){
+					data = [['Element', 'Alcançado']];
+					elements.push([Messages.get("label.haveNoGoals"),0]);
+					data.push([Messages.get("label.haveNoGoals"),0]);
+				}else{
+					model.data.map((item, cont) => {
+						data.push(elements[cont]);
+					});
+				}
+			}
+			me.setState({
+				elements:elements,
+				data:data,
+				total: model.total,
+				goals: model.data,
+			});
+			me.updateChartOptions(model);
+        },me);
     },
 
     updateChartOptions(model){
         var bool1 = (this.state.indicator.indicatorList && this.state.indicator.indicatorList.length == 0 ? false : true);
         var bool2 = (model ? model.data.length > 0 : true);
-        var hTitle1 = (this.state.indicator.indicatorList && this.state.indicator.indicatorList.length == 0 ? "" : "Indicadores"); 
-        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : ""); 
-        this.setState({            
+        var hTitle1 = (this.state.indicator.indicatorList && this.state.indicator.indicatorList.length == 0 ? "" : "Indicadores");
+        var hTitle2 = (model && model.data.length > 0 ? Messages.get("label.goals") : "");
+        this.setState({
             optionsIndicators:{
                 title: '',
                 hAxis: {title:hTitle1, minValue: 0, maxValue: 100,slantedText:bool1, slantedTextAngle:30},
@@ -203,7 +197,7 @@ export default React.createClass({
     onChartClick(Chart){
         var me = this;
         if(Chart.chart.getSelection().length > 0){
-            var level, url;                            
+            var level, url;
             if(me.state.indicator && me.state.indicator.aggregate){
                 level = me.state.indicator.indicatorList[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
@@ -212,31 +206,31 @@ export default React.createClass({
                 level = me.state.indicators[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
-            } else {                                
+            } else {
                 level = me.state.goals[Chart.chart.getSelection()[0].row];
                 url = window.location.origin+window.location.pathname+"#/plan/"+
                 level.plan.parent.id+"/details/subplan/level/"+level.id;
             }
-            
-            var msg = "Você deseja ir para o nível selecionado?";                            
+
+            var msg = "Você deseja ir para o nível selecionado?";
             Modal.confirmCustom(() => {
-                Modal.hide();           
+                Modal.hide();
                 location.assign(url);
             },msg,
             ()=>{
                 Chart.chart.setSelection([]);
                 Modal.hide();
             });
-        }                    
+        }
     },
 
-    getGoalsValues(goal){ 
+    getGoalsValues(goal){
     	var expectedField, maximumField,minimumField,reachedField;
         var index;
-        var fExp, fMax, fMin, fRec;        
+        var fExp, fMax, fMin, fRec;
     	for(var cont=1;cont<goal.attributeList.length;cont++){
             index = cont;
-            if (goal.attributeInstanceList[index]) {  
+            if (goal.attributeInstanceList[index]) {
         		if(goal.attributeList[cont].expectedField){
                     expectedField = goal.attributeInstanceList[index].valueAsNumber || 0;
                     fExp = goal.attributeInstanceList[index].formattedValue || "0";
@@ -256,13 +250,13 @@ export default React.createClass({
         if(goal.name.length > 50){
             graphItem[0] = goal.name.slice(0,50)+"...";
         } else {
-            graphItem[0] = goal.name;            
+            graphItem[0] = goal.name;
         }
 
         if(reachedField == undefined){
             reachedField = 0;
         }
-        
+
         var format = fExp.replace(/[0-9.,]/gi,"");
         var prefix = "", sufix = "";
         if(fExp.indexOf(format) == 0){
@@ -354,7 +348,7 @@ export default React.createClass({
                 };
                 graphItem[2] = "#4EB4FE";
             }
-        }        
+        }
     	return graphItem;
     },
 
@@ -365,7 +359,7 @@ export default React.createClass({
     },
 
 	componentWillUnmount() {
-        DashboardStore.off(null, null, this);        
+        DashboardStore.off(null, null, this);
 	},
 
     getInfos(page, pageSize, opt){
@@ -376,8 +370,8 @@ export default React.createClass({
                 indicator: opt.indicator.id,
                 page: page,
                 pageSize: pageSize
-            }   
-        });                 
+            }
+        });
     },
 
 	render() {
@@ -391,30 +385,30 @@ export default React.createClass({
                             <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15 floatRight"):("mdi mdi-chevron-down marginLeft15 floatRight")}  onClick={this.hideFields}/>
 						</div>
                         {!this.state.hide ?
-                            <div>                                
-                                <ForPDIChart 
+                            <div>
+                                <ForPDIChart
                                     chartType= {this.state.typeGraph}
-                                    data={this.state.data} 
+                                    data={this.state.data}
                                     options= {this.state.typeGraph == "ColumnChart" ? this.state.optionsIndicators :  this.state.options}
-                                    graph_id="ColumnChart-Budget"  
-                                    width={"100%"} 
-                                    height={"300px"} 
+                                    graph_id="ColumnChart-Budget"
+                                    width={"100%"}
+                                    height={"300px"}
                                     legend_toggle={true}
                                     pageSize={this.state.pageSize}
                                     total={this.state.total}
-                                    onChangePage={this.getInfos} 
+                                    onChangePage={this.getInfos}
                                     chartEvents={this.state.chartEvents}/>
 
-                                <div className="colaborator-goal-performance-legend"> 
+                                <div className="colaborator-goal-performance-legend">
                                     {this.state.indicator.aggregate ?
-                                        (   <div className="aggregate-indicator-without-goals-legend"> 
-                                                <span className="legend-item"> 
-                                                    <p id = "aggregate-indicator-goals"> Este é um indicador agregado, composto por outros indicadores.</p>    
+                                        (   <div className="aggregate-indicator-without-goals-legend">
+                                                <span className="legend-item">
+                                                    <p id = "aggregate-indicator-goals"> Este é um indicador agregado, composto por outros indicadores.</p>
                                                 </span>
                                             </div>
                                         ) : ""
                                     }
-                                    
+
                                     <span className="legend-item"><input type="text"  className="legend-goals-minimumbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowMinimum","fpdi-nav-label")}</span>
                                     <span className="legend-item"><input type="text"  className="legend-goals-expectedbelow marginLeft10" disabled/> {Messages.getEditable("label.goals.belowExpected","fpdi-nav-label")}</span>
                                     <span className="legend-item"><input type="text"  className="legend-goals-enough marginLeft10" disabled/> {Messages.getEditable("label.goals.reached","fpdi-nav-label")}</span>
@@ -425,7 +419,7 @@ export default React.createClass({
                                 </div>
                             </div>
                         :""}
-					</div>				
+					</div>
 				</div>
 			)}
             </div>

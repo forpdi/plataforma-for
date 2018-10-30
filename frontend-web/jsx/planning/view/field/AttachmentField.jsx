@@ -18,7 +18,7 @@ export default React.createClass({
 		permissions: React.PropTypes.array.isRequired,
 		roles: React.PropTypes.object.isRequired
 	},
-	
+
 	getDefaultProps() {
 		return {}
 	},
@@ -38,32 +38,30 @@ export default React.createClass({
 		var me = this;
 		me.getAttachments(1, 5);
 
-		AttachmentStore.on("sync", (model) => {			
+		AttachmentStore.on("sync", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.savedAttachment"));
-			me.getAttachments(1,5);			
+			me.getAttachments(1,5);
 		});
 		AttachmentStore.on("attachmentList", (model) => {
-			if(me.isMounted()){				
-				me.setState({
-					list: model.data,
-					total: model.total,
-					loading: false
-				});
-			}			
+			me.setState({
+				list: model.data,
+				total: model.total,
+				loading: false
+			});
 		});
 		AttachmentStore.on("attachmentDeleted", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentDelete"));
-			me.getAttachments(1,5);			
+			me.getAttachments(1,5);
 		});
 		AttachmentStore.on("attachmentUpdated", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentRefresh"));
-			me.state.list.map((attachment) => {				
-				if(attachment.id == model.data.id){					
+			me.state.list.map((attachment) => {
+				if(attachment.id == model.data.id){
 					attachment.description = model.data.description;
 				}
 			});
-			me.cancelEdit();			
-		});		
+			me.cancelEdit();
+		});
 	},
 
 	componentWillUnmount() {
@@ -72,15 +70,13 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-		
+
 	},
 
 	hideFields(){
-		if(this.isMounted()){
-			this.setState({
-				hide: !this.state.hide
-			});
-		}
+		this.setState({
+			hide: !this.state.hide
+		});
 	},
 
 	attachFile(){
@@ -100,32 +96,28 @@ export default React.createClass({
 		"avi|mov|wmv|mp4|flv|mkv|"+
 		"zip|rar|7z|tar|targz|tar.bz2";
 		var formatsBlocked = "(exe*)";
-		var onSuccess = function (resp) {				
-			if(me.isMounted()){
-				Modal.hide();
-				var file = {
-					name: Modal.fileName,
-					description: "",
-					fileLink: resp.message,
-					levelInstance: {
-						id: me.props.levelInstanceId
-					}		
+		var onSuccess = function (resp) {
+			Modal.hide();
+			var file = {
+				name: Modal.fileName,
+				description: "",
+				fileLink: resp.message,
+				levelInstance: {
+					id: me.props.levelInstanceId
 				}
-				me.setState({
-					loading: true
-				});
-				AttachmentStore.dispatch({
-					action: AttachmentStore.ACTION_CREATE,
-					data: file
-				});
-				//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
 			}
+			me.setState({
+				loading: true
+			});
+			AttachmentStore.dispatch({
+				action: AttachmentStore.ACTION_CREATE,
+				data: file
+			});
+			//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
 		};
 		var onFailure = function (resp) {
 			Modal.hide();
-			if(me.isMounted()){
-				me.setState({error: resp.message});
-			}
+			me.setState({error: resp.message});
 		};
 		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz\n"+
 			"Documentos: pdf, doc, docx, odt, rtf, txt, xml, xlsx, xls, ods, csv, ppt, pptx, ppsx, odp\n"+
@@ -139,29 +131,27 @@ export default React.createClass({
 
 	getAttachments(page, pageSize){
 		var me = this;
-		if(me.isMounted()){			
-			if (me.refs["attach-checkbox-all"])
-				me.refs["attach-checkbox-all"].checked = false;
-			me.checkAll();
-			me.setState({
-				loading: true
-			});
-			AttachmentStore.dispatch({
-				action: AttachmentStore.ACTION_FIND,
-				data: {
-					id: me.props.levelInstanceId,
-					page: page,
-					pageSize: pageSize
-				}
-			});
-		}
+		if (me.refs["attach-checkbox-all"])
+			me.refs["attach-checkbox-all"].checked = false;
+		me.checkAll();
+		me.setState({
+			loading: true
+		});
+		AttachmentStore.dispatch({
+			action: AttachmentStore.ACTION_FIND,
+			data: {
+				id: me.props.levelInstanceId,
+				page: page,
+				pageSize: pageSize
+			}
+		});
 	},
 
 	deleteAttachment(attachment){
 		var me = this;
 
 		Modal.confirmCancelCustom(
-			() => {				
+			() => {
 				me.setState({
 					loading: true
 				});
@@ -176,7 +166,7 @@ export default React.createClass({
 			},
 			 Messages.get("label.msg.deletedAttachment") + " " +attachment.name+"?",
 			() => {Modal.hide()}
-		);		
+		);
 	},
 
 	deleteSelected(){
@@ -207,59 +197,51 @@ export default React.createClass({
 	},
 
 	editAttachment(attachment){
-		if(this.isMounted()){
-			this.setState({
-				editId: attachment.id
-			});
-		}
+		this.setState({
+			editId: attachment.id
+		});
 	},
 
 	confirmEdit(attachment){
-		var me = this;		
+		var me = this;
 		AttachmentStore.dispatch({
 			action: AttachmentStore.ACTION_UPDATE_DESCRIPTION,
-			data: {				
+			data: {
 				id: attachment.id,
-				description: me.refs["edit-description"].value					
+				description: me.refs["edit-description"].value
 			}
-		});		
+		});
 	},
 
 	cancelEdit(){
-		if(this.isMounted()){
-			this.setState({
-				editId: null
-			});
-		}
+		this.setState({
+			editId: null
+		});
 	},
 
 	checkAll(){
-		if(this.isMounted()){
-			this.state.list.map((attachment, idx) => {
-				if(this.refs["attach-checkbox-"+idx])
-					this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false;
-			});
-			this.setState({
-				anyCheck: this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false
-			});
-		}
+		this.state.list.map((attachment, idx) => {
+			if(this.refs["attach-checkbox-"+idx])
+				this.refs["attach-checkbox-"+idx].checked = this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false;
+		});
+		this.setState({
+			anyCheck: this.refs["attach-checkbox-all"] ? this.refs["attach-checkbox-all"].checked : false
+		});
 	},
 
 	checkAttachment(){
-		if(this.isMounted()){
-			var bool = false;
-			this.state.list.map((attachment, idx) => {
-				if(this.refs["attach-checkbox-"+idx].checked){
-				 	bool = true;
-				} else {
-					this.refs["attach-checkbox-all"].checked = false;
-				}
-			});
+		var bool = false;
+		this.state.list.map((attachment, idx) => {
+			if(this.refs["attach-checkbox-"+idx].checked){
+				bool = true;
+			} else {
+				this.refs["attach-checkbox-all"].checked = false;
+			}
+		});
 
-			this.setState({
-				anyCheck: bool
-			});
-		}
+		this.setState({
+			anyCheck: bool
+		});
 	},
 
 	render(){
@@ -271,16 +253,16 @@ export default React.createClass({
 				<div className="panel-heading dashboard-panel-title">
 					<b className="budget-graphic-title">{Messages.getEditable("label.attachFiles","fpdi-nav-label")}</b>
 
-					{this.state.list[0] ? (this.context.roles.MANAGER || 
+					{this.state.list[0] ? (this.context.roles.MANAGER ||
 							_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ?
 						<div className = "floatLeft">
-							{this.state.anyCheck ? 
-								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+							{this.state.anyCheck ?
+								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"}
 								onClick={this.deleteSelected}>
 									<i className="mdi mdi-delete positionStatic"/>
-								</button> 
-							: 
-								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"} 
+								</button>
+							:
+								<button type="button" className={"btn btn-danger delete-all-btn floatLeft marginLeft105"}
 								onClick={this.deleteSelected} disabled>
 									<i className="mdi mdi-delete positionStatic"/>
 								</button>
@@ -289,17 +271,17 @@ export default React.createClass({
 				    : ""): ""}
 
 					<div className="budget-btns">
-						{this.context.roles.MANAGER || 
-								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+						{this.context.roles.MANAGER ||
+								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>{Messages.getEditable("label.attachFiles","fpdi-nav-label")}</button>
 						:""}
-						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} 
+						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}
 						onClick={this.hideFields}/>
 					</div>
 				</div>
 				{this.state.hide ? undefined :
-					<div> 				
+					<div>
 						<table className="table budget-field-table">
 							<thead>
 								<tr>
@@ -318,14 +300,14 @@ export default React.createClass({
 									<th>
 										{Messages.getEditable("label.uploadData","fpdi-nav-label")}
 									</th>
-									{this.context.roles.MANAGER || 
+									{this.context.roles.MANAGER ||
 										_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
+										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 									<th>
 										<center>
 											{Messages.getEditable("label.actions","fpdi-nav-label")}
 										</center>
-									</th> : undefined}									
+									</th> : undefined}
 								</tr>
 							</thead>
 							<tbody>
@@ -351,10 +333,10 @@ export default React.createClass({
 											</td>
 											{this.context.roles.MANAGER ||
 												_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-												(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ? 
+												(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 											<td>
-												{attachment.id == this.state.editId ? 
-													<center className='displayFlex'>																						
+												{attachment.id == this.state.editId ?
+													<center className='displayFlex'>
 									                   	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit.bind(this, attachment)}
 									                   	 title={Messages.get("label.submitLabel")}/>
 									                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelEdit}

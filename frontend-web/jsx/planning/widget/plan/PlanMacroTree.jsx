@@ -91,16 +91,13 @@ export default React.createClass({
 				});
 			}
 
-			if(this.isMounted()){
-				me.setState({
-					subplans: raw,
-					tree: tree
-				});
-			}
+			me.setState({
+				subplans: raw,
+				tree: tree
+			});
 		}, me);
 
         PlanStore.on("sync", (model) =>{
-
         	if(model.get('updated')){
         		me.state.tree.map((child,idx) => {
         			if(child.id == model.get("id")){
@@ -177,9 +174,7 @@ export default React.createClass({
         	}
 
             opts.node.children = children;
-            if(me.isMounted()){
-	            me.forceUpdate();
-	        }
+			me.forceUpdate();
         }, me);
 
         StructureStore.on("levelInstanceCreated", (model, opts) => {
@@ -248,7 +243,7 @@ export default React.createClass({
 				subPlansSelectSearch:data.subPlansSelect
 			});
 
-			if (model != null && this.isMounted()) {
+			if (model != null) {
 				this.setState({
            			resultSearch:model.data
         		});
@@ -328,13 +323,10 @@ export default React.createClass({
                 documentId: documentId,
                 newNodePlaceholder: Messages.get("label.inputSectionTitle")
 			});
-			if(this.isMounted()){
-	        	me.setState({
-	        		documentTree: tree,
-	        		unnumberedSections: unnumberedSections
-	        	});
-	        }
-
+			me.setState({
+				documentTree: tree,
+				unnumberedSections: unnumberedSections
+			});
         }, me);
 
 		DocumentStore.on("sectioncreated", (model, opts) => {
@@ -396,12 +388,13 @@ export default React.createClass({
 		}
 		if(newProps.treeType == this.state.actualType){
 			return;
-		} else if(this.isMounted()){
-			this.setState({
-				actualType: newProps.treeType
-			});
-			this.refreshPlans(newProps.plan.id);
 		}
+
+		this.setState({
+			actualType: newProps.treeType
+		});
+		this.refreshPlans(newProps.plan.id);
+
 		if(newProps.treeType == "document"){
 			DocumentStore.dispatch({
 				action: DocumentStore.ACTION_RETRIEVE,
@@ -557,11 +550,9 @@ export default React.createClass({
 		                else
 		                	nodes[i].children = [node];
 					}
-					if(this.isMounted()){
-						me.setState({
-		                	tree: me.state.tree
-		                });
-					}
+					me.setState({
+						tree: me.state.tree
+					});
 					return true;
 				}
 				if (this.insertNodes(data, nodes[i])) {
@@ -687,59 +678,55 @@ export default React.createClass({
 				}
 	       		return section;
 	    	});
-	    	if(this.isMounted()){
-			    me.setState({
-					rootSections: tree
-				});
-			}
-			if(me.isMounted()) {
-			    if (empty) {
-			    	this.context.toastr.addAlertError(Messages.get("label.noDocumentFieldsFilled"));
-			    } else {
-					Modal.exportDocument(
-						Messages.get("label.exportConfirmation"),
-						this.renderRecords(),
-						() => {
-							var i = 0;
-							var sections = "";
-							var author = document.getElementById("documentAuthor").value;
-							var title = document.getElementById("documentTitle").value;
+			me.setState({
+				rootSections: tree
+			});
+			if (empty) {
+				this.context.toastr.addAlertError(Messages.get("label.noDocumentFieldsFilled"));
+			} else {
+				Modal.exportDocument(
+					Messages.get("label.exportConfirmation"),
+					this.renderRecords(),
+					() => {
+						var i = 0;
+						var sections = "";
+						var author = document.getElementById("documentAuthor").value;
+						var title = document.getElementById("documentTitle").value;
 
-							for(i=0; i<this.state.rootSections.length; i++){
-								if(document.getElementById("checkbox-"+i).checked == true){
-									sections = sections.concat(this.state.rootSections[i].id+"%2C");
-								}
+						for(i=0; i<this.state.rootSections.length; i++){
+							if(document.getElementById("checkbox-"+i).checked == true){
+								sections = sections.concat(this.state.rootSections[i].id+"%2C");
 							}
+						}
 
-							var lista = sections.substring(0, sections.length - 3);
-							var elemError = document.getElementById("paramError");
-							if(sections=='' || author.trim()=='' || title.trim()==''){
-								elemError.innerHTML = Messages.get("label.exportError");
-								if(author.trim()=='') {
-									document.getElementById("documentAuthor").className = "borderError";
-								}
-								else {
-									document.getElementById("documentAuthor").className = "";
-								}
-								if(title.trim()=='') {
-									document.getElementById("documentTitle").className = "borderError";
-								}
-								else {
-									document.getElementById("documentTitle").className = "";
-								}
-							}else{
+						var lista = sections.substring(0, sections.length - 3);
+						var elemError = document.getElementById("paramError");
+						if(sections=='' || author.trim()=='' || title.trim()==''){
+							elemError.innerHTML = Messages.get("label.exportError");
+							if(author.trim()=='') {
+								document.getElementById("documentAuthor").className = "borderError";
+							}
+							else {
 								document.getElementById("documentAuthor").className = "";
-								document.getElementById("documentTitle").className = "";
-								var url = DocumentStore.url + "/exportdocument" + "?title=" + title + "&author=" + author + "&lista=" + lista;
-								url = url.replace(" ", "+");
-								Modal.hide();
-								var w = window.open(url,title);
 							}
-						});
-					document.getElementById("paramError").innerHTML = "";
-					document.getElementById("documentAuthor").className = "";
-					document.getElementById("documentTitle").className = "";
-			    }
+							if(title.trim()=='') {
+								document.getElementById("documentTitle").className = "borderError";
+							}
+							else {
+								document.getElementById("documentTitle").className = "";
+							}
+						}else{
+							document.getElementById("documentAuthor").className = "";
+							document.getElementById("documentTitle").className = "";
+							var url = DocumentStore.url + "/exportdocument" + "?title=" + title + "&author=" + author + "&lista=" + lista;
+							url = url.replace(" ", "+");
+							Modal.hide();
+							var w = window.open(url,title);
+						}
+					});
+				document.getElementById("paramError").innerHTML = "";
+				document.getElementById("documentAuthor").className = "";
+				document.getElementById("documentTitle").className = "";
 			}
 		});
 

@@ -22,12 +22,10 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		StructureStore.on("retrieve", (model) => {
-			if (me.isMounted()) {
-				me.setState({
-					loading: false,
-					model: model
-				});
-			}
+			me.setState({
+				loading: false,
+				model: model
+			});
 		}, me);
 
 		if (this.state.loading) {
@@ -40,7 +38,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		StructureStore.off(null, null, this);
 	},
-	
+
 	renderLevels() {
 		return <div>
 			{this.state.model.get("levels").map((level, idx) => {
@@ -83,7 +81,7 @@ export default React.createClass({
 								</Link>
 								<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 							</span>
-							
+
 							<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
 								{this.state.model.get("name")}
 							</span>

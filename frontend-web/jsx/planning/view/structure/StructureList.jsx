@@ -28,31 +28,25 @@ export default React.createClass({
 
 		if (EnvInfo.company) {
 			StructureStore.on('find', store => {
-				if (me.isMounted()) {
-					me.setState({
-						loading: false,
-						models: store.models
-					});
-				}
+				me.setState({
+					loading: false,
+					models: store.models
+				});
 			}, me);
 			StructureStore.on("fail", (msg) => {
-				if (me.isMounted()) {
-					me.setState({
-						error: msg
-					});
-				}
-			}, this);		
+				me.setState({
+					error: msg
+				});
+			}, this);
 			StructureStore.on('destroy', store => {
 				me.refs['paginator'].load(0);
 				this.context.toastr.addAlertSuccess(Messages.get("notification.structure.delete"));
 			}, me);
 
 			CompanyStore.on("find", (store) => {
-				if (me.isMounted()) {
-					me.setState({
-						companies: store.models
-					});
-				}
+				me.setState({
+					companies: store.models
+				});
 			}, me);
 
 			CompanyStore.dispatch({
@@ -66,21 +60,19 @@ export default React.createClass({
 	},
 
 	closeAlert() {
-		if (this.isMounted()) {
-			this.setState({
-				error: null
-			});
-		}
+		this.setState({
+			error: null
+		});
 	},
 
 	cancelBlockUnblock () {
 		Modal.hide();
 	},
-	
+
 	deleteRecord(model, event) {
 		var msg = Messages.get("label.deleteConfirmation") + " " + model.get("name") + "?";
 		event.preventDefault();
-		
+
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			StructureStore.dispatch({
@@ -102,14 +94,14 @@ export default React.createClass({
 			StructureStore.url+"/import",
 			"xml/*",
 			formatsBlocked,
-			(response) => {				
+			(response) => {
 				me.refs['paginator'].load(0);
 				Modal.hide();
 				//Toastr.remove();
 				//Toastr.success("Estrutura " +response.data.name + " importada com sucesso.");
 				this.context.toastr.addAlertSuccess( Messages.get("label.structure") + " " +response.data.name + " " + Messages.get("label.success.importing"));
 			},
-			(response) => {			
+			(response) => {
 				Modal.hide();
 				this.context.toastr.addAlertError(response.message);
 			},
@@ -119,7 +111,7 @@ export default React.createClass({
 	},
 
 	renderRecords() {
-		
+
 		if (!this.state.models || (this.state.models.length <= 0)) {
 			return <p><i>{Messages.getEditable("label.noStructureRegistred","fpdi-nav-label")}</i></p>;
 		}
@@ -160,7 +152,7 @@ export default React.createClass({
 		return (<div className="container-fluid animated fadeIn">
 			<h1>{Messages.get("label.structures")}</h1>
 			<ul className="fpdi-action-list text-right">
-				<a className="btn btn-sm btn-primary" onClick= {this.state.companies.length == 0 ? "" : this.importStructure} disabled = {this.state.companies.length == 0 ? true : false}  
+				<a className="btn btn-sm btn-primary" onClick= {this.state.companies.length == 0 ? "" : this.importStructure} disabled = {this.state.companies.length == 0 ? true : false}
 				title= {(this.state.companies.length) == 0 ? Messages.get("label.createStructure") : ""} >
 					{/*<span className="mdi mdi-import"
 					/>*/}{Messages.getEditable("label.importEstructurePdi","fpdi-nav-label")}

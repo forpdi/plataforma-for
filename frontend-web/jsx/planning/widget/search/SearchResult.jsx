@@ -8,7 +8,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 export default React.createClass({
 	propTypes: {
 		resultSearch: React.PropTypes.array,
-		
+
 	},
 
 	getInitialState() {
@@ -27,31 +27,31 @@ export default React.createClass({
 		};
 	},
 
-	
+
 
 	componentDidMount() {
 		var me = this;
-		
+
 		PlanStore.on("planFind", (model, data) => {
-			if (model != null && this.isMounted()) {
+			if (model != null) {
 				if (data.page == 1) {
 					this.setState({
            				resultSearchMore:model.data,
            				resultSearchTotal:model.total,
            				page: 1
-        			});	
-				} else {	
+        			});
+				} else {
 					var i;
 					for (i = 0; i < model.data.length; i++) {
 						this.state.resultSearchMore.push(model.data[i]);
 					}
-					
+
 					this.setState({
 						resultSearchMore:this.state.resultSearchMore
 					});
 				}
 			}
-		},this);				
+		},this);
 
 	},
 	componentWillUnmount() {
@@ -86,11 +86,11 @@ export default React.createClass({
 	render() {
 		var total = this.state.resultSearchTotal;
 		return (
-			<div className="fpdi-search">		
+			<div className="fpdi-search">
 				<div className = "fpdi-search-view">
 					<p>{Messages.getEditable("label.searchReturned","fpdi-nav-label")} {total} {total == 1 ? Messages.getEditable("label.result","fpdi-nav-label") : Messages.getEditable("label.results","fpdi-nav-label")}</p>
 				</div>
-				{this.state.resultSearchMore.length > 0 ? 
+				{this.state.resultSearchMore.length > 0 ?
 					<div>
 						{this.state.resultSearchMore.map((model, idx) => {
 							return(
@@ -110,13 +110,13 @@ export default React.createClass({
 								</div>
 							);
 						})}
-						{this.state.resultSearchMore.length < this.state.resultSearchTotal ? 
+						{this.state.resultSearchMore.length < this.state.resultSearchTotal ?
 							<div className="textAlignCenter marginTop20">
 	        					<a onClick={this.showMoreOccurencesSearches}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
 	    					</div>
 	    				: ""}
     				</div>
-				: ""}		
+				: ""}
 			</div>
 		);
 	}

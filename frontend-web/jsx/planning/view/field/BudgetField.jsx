@@ -25,7 +25,7 @@ export default React.createClass({
 	},
 
 	getInitialState() {
-		return {			
+		return {
 			budgets: this.props.data,
 			loading: false,
 			hide: false,
@@ -35,13 +35,10 @@ export default React.createClass({
 	},
 
 	newBudget(evt){
-		if (this.isMounted()) {
-	    	this.setState({
-	    		adding: true,
-	    		hide:false
-	    	}); 
-    	}
-
+		this.setState({
+			adding: true,
+			hide:false
+		});
 	},
 	formatReal( int ){
 		int = int *100;
@@ -52,25 +49,25 @@ export default React.createClass({
             neg = true;
             tmp = tmp.replace("-","");
         }
-        
+
         if(tmp.length == 1) tmp = "0"+tmp
-    
-        tmp = tmp.replace(/([0-9]{2})$/g, ",$1");        
-    
+
+        tmp = tmp.replace(/([0-9]{2})$/g, ",$1");
+
         if( tmp.length > 12)
             tmp = tmp.replace(/([0-9]{3}).([0-9]{3}).([0-9]{3}),([0-9]{2}$)/g,".$1.$2.$3,$4");
         else if( tmp.length > 9)
             tmp = tmp.replace(/([0-9]{3}).([0-9]{3}),([0-9]{2}$)/g,".$1.$2,$3");
         else if( tmp.length > 6)
-            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");     
-        
+            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1,$2");
+
         if(tmp.indexOf(".") == 0) tmp = tmp.replace(".","");
         if(tmp.indexOf(",") == 0) tmp = tmp.replace(",","0,");
-    
+
         return (neg ? '-'+tmp : tmp);
 	},
 
-	onKeyUp(evt){		
+	onKeyUp(evt){
 		var key = evt.which;
 		if(key == 13) {
 			evt.preventDefault();
@@ -80,45 +77,39 @@ export default React.createClass({
 
 	converteMoedaFloat(valor){
 		var valorFormated = valor.toString();
-		valorFormated =  valorFormated.replace(".",",");		
+		valorFormated =  valorFormated.replace(".",",");
 		return valorFormated;
 	 },
 
 	componentDidMount()	{
-		if (this.isMounted()) {
-			this.setState({
-	    		adding: false,
-	    	});
-		}
-    	BudgetStore.on("sync", model => {		
+		this.setState({
+			adding: false,
+		});
+    	BudgetStore.on("sync", model => {
 			this.state.budgets.push(model.attributes);
-			if (this.isMounted()) {
-				this.setState({
-					adding: false
-				});
-			}
+			this.setState({
+				adding: false
+			});
 		},this);
 		BudgetStore.on("fail", msg=>{
 			//Toastr.remove();
 			//Toastr.error(msg);
 			this.context.toastr.addAlertError(msg);
 		},this);
-		BudgetStore.on("budgetDeleted", model => {			
+		BudgetStore.on("budgetDeleted", model => {
 			this.state.budgets.splice(this.state.idx,1);
-			if (this.isMounted()) {
-				this.setState({
-					loading: false
-				});
-			}
+			this.setState({
+				loading: false
+			});
 		},this);
 		BudgetStore.on("budgetUpdated", model => {
-			
-		
+
+
 			if(model.data){
-				this.state.budgets[this.state.idx].budget.name=model.data.budget.name; 
-				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction; 
-				this.state.budgets[this.state.idx].committed = model.data.budget.committed; 
-				this.state.budgets[this.state.idx].realized = model.data.budget.realized; 
+				this.state.budgets[this.state.idx].budget.name=model.data.budget.name;
+				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction;
+				this.state.budgets[this.state.idx].committed = model.data.budget.committed;
+				this.state.budgets[this.state.idx].realized = model.data.budget.realized;
 				this.state.budgets[this.state.idx].budgetLoa = model.data.budgetLoa;
 				this.state.budgets[this.state.idx].balanceAvailable = model.data.balanceAvailable;
 				this.state.budgets[this.state.idx].budget = model.data.budget;
@@ -133,29 +124,25 @@ export default React.createClass({
 				//Toastr.error(errorMsg.message);
 				this.context.toastr.addAlertError(errorMsg.message);
 			}
-			if (this.isMounted()) {
-				this.setState({
-					loading: false,
-					editingIdx: -1
-				});
-			}
+			this.setState({
+				loading: false,
+				editingIdx: -1
+			});
 		},this);
 
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
 			data: {
-				companyId: EnvInfo.company.id 
-			}      
-      	});	
+				companyId: EnvInfo.company.id
+			}
+      	});
 
-		BudgetStore.on("budgetElementRetrivied", (model) => {	
-			if (this.isMounted()) {		
-			    this.setState({
-			    	budgetsLength: model.data.length,
-			    	loading: false,
-			    });	 
-		    } 	
-		  });
+		BudgetStore.on("budgetElementRetrivied", (model) => {
+			this.setState({
+				budgetsLength: model.data.length,
+				loading: false,
+			});
+		});
 	},
 
 	componentWillUnmount() {
@@ -163,11 +150,9 @@ export default React.createClass({
 	},
 
 	cancelNewBudget(){
-		if (this.isMounted()) {
-			this.setState({
-	    		adding: false
-	    	});
-		}
+		this.setState({
+			adding: false
+		});
 	},
 
 	acceptNewBudget(){
@@ -178,11 +163,11 @@ export default React.createClass({
 			this.context.toastr.addAlertError(validation.msg);
 			return;
 		}
-		
-		this.props.newFunc(this.refs.subActions.state.value,validation.name,this.refs.budgetCommitted.value,this.refs.budgetRealized.value); 
+
+		this.props.newFunc(this.refs.subActions.state.value,validation.name,this.refs.budgetCommitted.value,this.refs.budgetRealized.value);
 	},
 
-	onKeyUp(evt){		
+	onKeyUp(evt){
 		var key = evt.which;
 		if(key == 13) {
 			evt.preventDefault();
@@ -210,12 +195,10 @@ export default React.createClass({
 		var msg = "Você tem certeza que deseja excluir " + this.state.budgets[idx].budget.subAction + "?";
 		Modal.confirmCustom(() => {
 			Modal.hide();
-			if (this.isMounted()) {
-				this.setState({
-					loading: true,
-					idx: idx //index a ser deletado
-				});
-			}
+			this.setState({
+				loading: true,
+				idx: idx //index a ser deletado
+			});
 			BudgetStore.dispatch({
 				action: BudgetStore.ACTION_DELETE,
 				data: {
@@ -244,10 +227,10 @@ export default React.createClass({
 	},
 
 	acceptedEditbudget(id, idx){
-		 
-		var validation = Validate.validationEditBudgetField(this.refs, idx);	
+
+		var validation = Validate.validationEditBudgetField(this.refs, idx);
 		//console.log("acceptedEditbudget");
-		
+
 
 		if (validation.boolMsg) {
 			//Toastr.remove();
@@ -255,14 +238,12 @@ export default React.createClass({
 			this.context.toastr.addAlertError(validation.msg);
 			return;
 		}
-		
-		if (this.isMounted()) {
-			this.setState({
-				loading: true,
-				idx: idx //index a ser editado
-			});
-		}
-		
+
+		this.setState({
+			loading: true,
+			idx: idx //index a ser editado
+		});
+
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_CUSTOM_UPDATE,
 			data: {
@@ -274,7 +255,7 @@ export default React.createClass({
 				idBudgetElement: this.refs["subActions-edit-"+idx].state.value
 			}
 		});
-		
+
 
 	},
 
@@ -282,21 +263,17 @@ export default React.createClass({
 		//var array = this.state.editingIdx;
 		//var i = array.indexOf(idx);
 		//array.splice(i);
-		if (this.isMounted()) {
-			this.setState({
-				editingIdx: -1
-			});
-		}
+		this.setState({
+			editingIdx: -1
+		});
 	},
 
 	editBudget(id, idx, evt){
 		//var array = this.state.editingIdx;
 		//array.push(idx);
-		if (this.isMounted()) {
-			this.setState({
-				editingIdx: idx
-			});
-		}
+		this.setState({
+			editingIdx: idx
+		});
 	},
 
 	renderEditLine(model, idx){
@@ -319,7 +296,7 @@ export default React.createClass({
 							defaultValue={this.converteMoedaFloat(model.budget.realized)} onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste} />
 					<div className="formAlertError" ref="formAlertErrorRealized"></div>
 				</td>
-				<td>				
+				<td>
                     <div className='displayFlex'>
                        	<span className='mdi mdi-check accepted-budget' onClick={this.acceptedEditbudget.bind(this, model.budget.id, idx)} title={Messages.get("label.submitLabel")}></span>
                       	<span className='mdi mdi-close reject-budget' onClick={this.rejectEditbudget.bind(this, idx)} title={Messages.get("label.cancel")}></span>
@@ -331,22 +308,22 @@ export default React.createClass({
 
 	renderNewBudget(){
 		if(this.state.budgetsLength > 0){
-			return(			
+			return(
 				<tr key='new-budget'>
 					<td ref="tdSubAction"><SubActionSelectBox className="" ref="subActions"/>
 						<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 					</td>
 					<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetNameText" onKeyPress={this.onKeyUp}/>
-						<div className="formAlertError" ref="formAlertErrorName"></div>	
+						<div className="formAlertError" ref="formAlertErrorName"></div>
 					</td>
 					<td>-</td>
 					<td>-</td>
 					<td ref="tdCommitted"><input type='text' maxLength='255' className='budget-field-table' ref="budgetCommitted" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
 						<div className="formAlertError" ref="formAlertErrorCommited"></div>
-					</td>				
+					</td>
 					<td ref="tdRealized"><input type='text' maxLength='255' className='budget-field-table' ref="budgetRealized" onKeyPress={this.onlyNumber} onPaste={this.onlyNumberPaste}/>
 						<div className="formAlertError" ref="formAlertErrorRealized"></div></td>
-					<td>				
+					<td>
 	                    <div className='displayFlex'>
 	                       	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewBudget} title={Messages.get("label.submitLabel")}></span>
 	                      	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewBudget} title={Messages.get("label.cancel")}></span>
@@ -355,7 +332,7 @@ export default React.createClass({
 				</tr>
 			);
 		} else {
-			return(		
+			return(
 				<tr key='new-budget'>
 					<td colSpan={6} >
 						Não há elementos orçamentários cadastrados ainda
@@ -366,11 +343,9 @@ export default React.createClass({
 	},
 
 	hideFields() {
-		if (this.isMounted()) {
-			this.setState({
-				hide: !this.state.hide
-			})
-		}
+		this.setState({
+			hide: !this.state.hide
+		})
 	},
 
 	formatEUA(num){
@@ -409,7 +384,7 @@ export default React.createClass({
 	render(){
 		if (this.state.loading) {
 			return <LoadingGauge />;
-		}		
+		}
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
@@ -417,7 +392,7 @@ export default React.createClass({
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
-						{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+						{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          					PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newBudget}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
 						:""}
@@ -425,7 +400,7 @@ export default React.createClass({
 					</div>}
 				</div>
 				{!this.state.hide ?(
-				<table className="budget-field-table table">					
+				<table className="budget-field-table table">
 					<thead/>
 						<thead>
 							<tr>
@@ -448,12 +423,12 @@ export default React.createClass({
 							return(
 								<tr key={"budget-"+idx}>
 									<td id={'subAction'+idx}>{model.budget.subAction}</td>
-									<td id={'name'+idx}>{model.budget.name}</td>	
+									<td id={'name'+idx}>{model.budget.name}</td>
 									<td id={'budgetLoa' + idx}>{"R$"  + this.formatBR(this.formatEUA(model.budgetLoa))}</td>
 									<td id = {'balanceAvailable' + idx}> {"R$"  + this.formatBR(this.formatEUA(model.balanceAvailable))}</td>
 									<td id = {'committed' + idx}>{"R$" + this.formatBR(this.formatEUA(model.budget.committed))}</td>
 									<td id = {'realized' + idx}> {"R$" + this.formatBR(this.formatEUA(model.budget.realized))}</td>
-									{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+									{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          								PermissionsTypes.MANAGE_PLAN_PERMISSION)) ?
 										<td id={'options'+idx} className="edit-budget-col cn cursorDefault">
 											<span className="mdi mdi-pencil cursorPointer marginRight10 inner" onClick={this.editBudget.bind(this,model.budget.id,idx)} title={Messages.get("label.title.editInformation")}/>
@@ -464,7 +439,7 @@ export default React.createClass({
 							);
 						})}
 						</tbody>
-					<tbody/>					
+					<tbody/>
 				</table>):("")}
 			</div>
 		);

@@ -20,8 +20,8 @@ export default React.createClass({
 			visualization: false
 		}
 	},
-	
-	getInitialState() {				
+
+	getInitialState() {
 		return {
 			loading: true,
 			total: 0,
@@ -31,7 +31,7 @@ export default React.createClass({
 
 	componentDidMount() {
 		var me = this;
-		var total = 0;		
+		var total = 0;
 		this.props.indicatorsList.map((ind) => {
 			total += ind.percentage;
 			this.state.selectedIndicators.push({
@@ -40,34 +40,32 @@ export default React.createClass({
 				percentage: ind.percentage,
 				deleted: ind.deleted
 			});
-		});		
+		});
 
 		me.setState({
 			calculationType: this.props.calculationType,
 			total: total
 		});
 
-		StructureStore.on("indicatorsretrivied", (model) => {			
+		StructureStore.on("indicatorsretrivied", (model) => {
 			model.data.map((indicator) => {
 				indicator.selected = false;
 			});
 			model.data.map((indicator) => {
 				this.state.selectedIndicators.map((selected) => {
 					if(indicator.id == selected.id){
-						indicator.selected = true;						
-					}					
-				});				
-			});
-			if(this.isMounted()){
-				me.setState({
-					indicators: model.data
+						indicator.selected = true;
+					}
 				});
-			}
+			});
+			me.setState({
+				indicators: model.data
+			});
 		}, me);
 	},
 
 	componentWillReceiveProps(newProps) {
-		if(this.isMounted() && newProps.visualization){
+		if (newProps.visualization) {
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_GET_INDICATORS
 			});
@@ -81,17 +79,17 @@ export default React.createClass({
 					percentage: ind.percentage,
 					deleted: ind.deleted
 				});
-			});		
+			});
 
 			this.setState({
 				calculationType: newProps.calculationType,
 				total: total
-			});			
+			});
 		}
 	},
 
 	onChangeCalculation(evt){
-		var value = this.refs['indicator-calculation-type'].value;		
+		var value = this.refs['indicator-calculation-type'].value;
 		this.setState({
 			calculationType: value
 		});
@@ -112,35 +110,35 @@ export default React.createClass({
 				name: indicator.name,
 				percentage: 0,
 				deleted: false
-			});			
-		}		
+			});
+		}
 		this.setState({
 			total: total,
 			selectedIndicators: list
 		});
 	},
 
-	removeIndicator(idx){		
+	removeIndicator(idx){
 		var list = this.state.selectedIndicators || [];
-		this.state.indicators.map((indicator) => {			
+		this.state.indicators.map((indicator) => {
 			if(indicator.id == list[idx].id){
 				indicator.selected = false;
 				indicator.deleted = true;
-			}			
-		});		
+			}
+		});
 		list[idx].deleted = true;
 		var total = (this.state.total - list[idx].percentage >= 0 ? this.state.total - list[idx].percentage : 0);
 		list[idx].percentage = 0;
-						
+
 		this.setState({
 			selectedIndicators: list,
 			total: total
 		});
 	},
 
-	changeWeigth(idx, id){		
+	changeWeigth(idx, id){
 		var newValue = parseInt(this.refs['ind-'+idx].value);
-		if(isNaN(newValue)){			
+		if(isNaN(newValue)){
 			newValue = 0;
 		}
 		var ind;
@@ -151,34 +149,34 @@ export default React.createClass({
 		});
 		var total = this.state.total || 0;
 		if(ind){
-			total -= parseInt(ind.percentage) || 0;			
-		} 
+			total -= parseInt(ind.percentage) || 0;
+		}
 
 		ind.percentage = newValue;
-		total += newValue;		
+		total += newValue;
 		this.setState({
 			total: total
-		});			
+		});
 	},
 
-	renderIndicatorAggregateConfig(){		
-		if(this.state.indicators){		
+	renderIndicatorAggregateConfig(){
+		if(this.state.indicators){
 			var calculationLabel;
 			switch(this.state.calculationType){
 				case 0:
 					calculationLabel = Messages.get("label.arithmeticMean");
-					break;	
+					break;
 				case 1:
 					calculationLabel = Messages.get("label.weightedAverage");
 					break;
 				case 2:
 					calculationLabel = Messages.get("label.sum");
-					break;	
-			}			
+					break;
+			}
 			return(
 				<div className="fpdi-marginTop20">
 					<label className="fpdi-text-label">{Messages.getEditable("label.accumulationForm","fpdi-nav-label")} {this.props.visualization? "" : <span className="fpdi-required">&nbsp;</span>}</label>
-					{this.props.visualization ? 
+					{this.props.visualization ?
 						<span className="pdi-normal-text">{calculationLabel}</span>
 					:
 						<select
@@ -186,10 +184,10 @@ export default React.createClass({
 							placeholder={Messages.get("label.selectCalculation")}
 							name="indicator-calculation-type"
 							id="indicator-calculation-type"
-							ref="indicator-calculation-type"						
+							ref="indicator-calculation-type"
 							onChange = {this.onChangeCalculation}
 							defaultValue={this.state.calculationType}
-							>						
+							>
 								<option key='calc-opt-avg' value={0}  data-placement="right" title={Messages.get("label.arithmeticMean")}>
 									{Messages.get("label.arithmeticMean")}</option>;
 								<option key='calc-opt-weighted-avg' value={1}  data-placement="right" title={Messages.get("label.weightedAverage")}>
@@ -213,46 +211,46 @@ export default React.createClass({
 											return (
 												<div key={"indicador-"+idx}>
 													{item.selected ?
-														<span className="mdi mdi-minus fpdi-indicator-item-selected" 
+														<span className="mdi mdi-minus fpdi-indicator-item-selected"
 															onClick={this.removeIndicator.
 																bind(this,idx)}>
 															<span className="indicator-list-truncate">
 																{name}
 															</span>
-														</span>												 
+														</span>
 													:
-														<span className="mdi mdi-plus fpdi-indicator-item" 
-															onClick={this.addIndicator.bind(this,item)}> 
+														<span className="mdi mdi-plus fpdi-indicator-item"
+															onClick={this.addIndicator.bind(this,item)}>
 															<span className="indicator-list-truncate">
 																{name}
 															</span>
 														</span>
-													}												
+													}
 													<br/>
 												</div>
 											);
 										}
 									})) : <span className="indicator-list-truncate">
 											{Messages.getEditable("label.haveNoSimpleIndicatorsToSelect","fpdi-nav-label")}
-										</span>								
+										</span>
 								}
 							</div>
-						</div>	
-					}					
-					<div className="panel panel-default">						  
+						</div>
+					}
+					<div className="panel panel-default">
 					  <div className="panel-heading">{Messages.getEditable("label.selectedIndicators","fpdi-nav-label")}</div>
 					  <table className="table">
 					    <thead>
 					    	<tr>
-						    	<th>{Messages.getEditable("label.name","fpdi-nav-label")}</th>	
-						    	<th/>					    	
+						    	<th>{Messages.getEditable("label.name","fpdi-nav-label")}</th>
+						    	<th/>
 						    	{this.state.calculationType == 1 ? <th>{Messages.getEditable("label.weight","fpdi-nav-label")}</th> : <th/>}
 						    </tr>
 					    </thead>
 					    <tbody>
-					    	{this.state.selectedIndicators.map((indicator,idx) => {						    		
+					    	{this.state.selectedIndicators.map((indicator,idx) => {
 					    		return (
-					    			indicator.deleted ? <tr key={"ind-"+idx} /> : 
+					    			indicator.deleted ? <tr key={"ind-"+idx} /> :
 					    			<tr key={"ind-"+idx}>
 					    				<td>{indicator.name}</td>
 					    				<td/>
@@ -260,18 +258,18 @@ export default React.createClass({
 						    				<td>
 				    							{indicator.percentage || 0} %
 						    				</td>
-					    				: this.state.calculationType == 1 ?					    					
+					    				: this.state.calculationType == 1 ?
 						    				<td className="width11percent">
-				    							<input type="number" step="1.0"  className="width50" max="100" min="0" 
-				    							defaultValue={indicator.percentage || 0} ref={"ind-"+idx} 
-				    							onChange={this.changeWeigth.bind(this, idx, indicator.id)}  
+				    							<input type="number" step="1.0"  className="width50" max="100" min="0"
+				    							defaultValue={indicator.percentage || 0} ref={"ind-"+idx}
+				    							onChange={this.changeWeigth.bind(this, idx, indicator.id)}
 				    							onKeyPress={this.onlyNumber} />%
 						    				</td>
 					    				: <td/>}
 					    				{this.props.visualization ? <td/>
 					    				:
 						    				<td >
-						    					<span className="mdi mdi-delete fpdi-indicator-remove" 
+						    					<span className="mdi mdi-delete fpdi-indicator-remove"
 						    						onClick={this.removeIndicator.bind(this, idx)}/>
 						    				</td>
 						    			}
@@ -279,15 +277,15 @@ export default React.createClass({
 					    		);
 					    	})}
 					    	{!this.props.visualization && this.state.calculationType == 1 ?
-						    	<tr>	
+						    	<tr>
 						    		<td><b>Total</b></td>
 						    		<td/>
-						    		<td className={this.state.total != 100 ? "fpdi-indicator-weigth-total" : <td/>}>					    			
-						    			<b>{this.state.total+'%'}</b>						    			
-						    		</td>						    		
+						    		<td className={this.state.total != 100 ? "fpdi-indicator-weigth-total" : <td/>}>
+						    			<b>{this.state.total+'%'}</b>
+						    		</td>
 						    		<td className="fpdi-indicator-weigth-total-text">
 						    			{this.state.total != 100 ? Messages.getEditable("label.totalMustBe100","fpdi-nav-label") : ""}
-						    		</td>						    		
+						    		</td>
 						    	</tr>
 					    	: <tr/>}
 					    </tbody>
@@ -295,7 +293,7 @@ export default React.createClass({
 					</div>
 				</div>
 			);
-		} else {					
+		} else {
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_GET_INDICATORS
 			});

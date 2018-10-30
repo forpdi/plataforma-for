@@ -17,29 +17,25 @@ export default React.createClass({
 			value: this.props.defaultValue || ""
 		});
 
-		BudgetStore.on("budgetElementRetrivied", (model) => {	
-			if (this.isMounted()) {		
-			    this.setState({
-			    	budgets: model.data
-			    });	 
-		    } 	
-		  });
-		  
-		
+		BudgetStore.on("budgetElementRetrivied", (model) => {
+			this.setState({
+				budgets: model.data
+			});
+		});
 	  	BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
 			data: {
-				companyId: EnvInfo.company.id 
-			}      
+				companyId: EnvInfo.company.id
+			}
       	});
 	},
 
-	componentWillReceiveProps(newProps){		
+	componentWillReceiveProps(newProps){
 		BudgetStore.dispatch({
 			action: BudgetStore.ACTION_GET_BUDGET_ELEMENT,
 			data: {
-				companyId: EnvInfo.company.id 
-			}      
+				companyId: EnvInfo.company.id
+			}
 		  });
 	},
 
@@ -50,7 +46,7 @@ export default React.createClass({
 	onChange(){
 		var id = this.refs['subaction-select'].value;
 		if(id >= 0){
-			this.state.value = id;		
+			this.state.value = id;
 		} else {
 			this.state.value = "";
 		}

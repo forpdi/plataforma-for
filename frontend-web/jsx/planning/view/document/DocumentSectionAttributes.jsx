@@ -34,7 +34,7 @@ export default React.createClass({
         permissions: React.PropTypes.array.isRequired
 	},
 
-	getInitialState() {				
+	getInitialState() {
 		return {
 			loading: true,
 			fields: [],
@@ -50,10 +50,10 @@ export default React.createClass({
 		};
 	},
 
-	getFields(model) {	
+	getFields(model) {
 		var fields = [];
-		if (model.documentAttributes) {			
-			fields = model.documentAttributes.map((attr,idx) =>{				
+		if (model.documentAttributes) {
+			fields = model.documentAttributes.map((attr,idx) =>{
 				return {
 					id: attr.id,
 					name: "attribute-"+idx,
@@ -74,7 +74,7 @@ export default React.createClass({
 		return fields;
 	},
 	componentDidMount() {
-		var me = this;		
+		var me = this;
 		me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
 
 		DocumentStore.on('sectionAttributesSaved', (model) => {
@@ -82,12 +82,12 @@ export default React.createClass({
 			me.setState({
 				subTitle: model.data.name,
 				vizualization: true
-			})			
+			})
 			me.getSectionAttributes(model.data.id, me.props.params.planId);
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 		}, me);
 
-		DocumentStore.on("sectionAttributesRetrieved", (model) => {		
+		DocumentStore.on("sectionAttributesRetrieved", (model) => {
 			me.context.tabPanel.addTab(me.state.tabPath, model.name);
 			me.setState({
 				model: model,
@@ -98,56 +98,54 @@ export default React.createClass({
 		}, me);
 
 		DocumentStore.on("attributecreated", (attr) => {
-			if(me.isMounted()){
-				if(attr.type == AttributeTypes.TABLE_FIELD){				
-					TableStore.dispatch({
-						action: TableStore.ACTION_SAVE_STRUCTURES,
-						data: {
-							tableFields: {
-								id: attr.tableFields.id,
-								tableStructures: me.state.tableColumns,
-								attributeId: attr.id
-							}					
+			if(attr.type == AttributeTypes.TABLE_FIELD){
+				TableStore.dispatch({
+					action: TableStore.ACTION_SAVE_STRUCTURES,
+					data: {
+						tableFields: {
+							id: attr.tableFields.id,
+							tableStructures: me.state.tableColumns,
+							attributeId: attr.id
 						}
-					});
-					me.setState({recentAttr: attr});
-				} else if(attr.type == AttributeTypes.SCHEDULE_FIELD){				
-					ScheduleStore.dispatch({
-						action: ScheduleStore.ACTION_SAVE_STRUCTURES,
-						data: {
-							schedule: {
-								id: attr.schedule.id,
-								scheduleStructures: me.state.tableColumns
-							}					
+					}
+				});
+				me.setState({recentAttr: attr});
+			} else if(attr.type == AttributeTypes.SCHEDULE_FIELD){
+				ScheduleStore.dispatch({
+					action: ScheduleStore.ACTION_SAVE_STRUCTURES,
+					data: {
+						schedule: {
+							id: attr.schedule.id,
+							scheduleStructures: me.state.tableColumns
 						}
-					});
-					me.setState({recentAttr: attr});
-				} else {
-					me.state.model.documentAttributes.push(attr);
-					me.state.fields.push({
-						name: "attribute-"+me.state.fields.length,
-						id: attr.id,
-						type: attr.type,
-						required: attr.required,
-						placeholder: "",
-						label: attr.name,
-						value: attr.value,
-						schedule: attr.schedule,
-						extraSchedule: (attr.schedule ? me.saveInstanceSchedule : undefined),
-						tableFields: attr.tableFields,
-						selectPlans: attr.selectPlans,
-						extraTableFields: (attr.tableFields ? me.saveInstanceTable : undefined)
-					});
-					//Toastr.remove();
-					//Toastr.success("Campo \""+attr.name+"\" adicionado com sucesso.");
-					var nameCreated = attr.name.substr(0,50).concat("...");
-					me.context.toastr.addAlertSuccess(Messages.get("label.field") +  " " + nameCreated + " " + Messages.get("label.success.added"));
-					me.tweakNewField();
-				}
+					}
+				});
+				me.setState({recentAttr: attr});
+			} else {
+				me.state.model.documentAttributes.push(attr);
+				me.state.fields.push({
+					name: "attribute-"+me.state.fields.length,
+					id: attr.id,
+					type: attr.type,
+					required: attr.required,
+					placeholder: "",
+					label: attr.name,
+					value: attr.value,
+					schedule: attr.schedule,
+					extraSchedule: (attr.schedule ? me.saveInstanceSchedule : undefined),
+					tableFields: attr.tableFields,
+					selectPlans: attr.selectPlans,
+					extraTableFields: (attr.tableFields ? me.saveInstanceTable : undefined)
+				});
+				//Toastr.remove();
+				//Toastr.success("Campo \""+attr.name+"\" adicionado com sucesso.");
+				var nameCreated = attr.name.substr(0,50).concat("...");
+				me.context.toastr.addAlertSuccess(Messages.get("label.field") +  " " + nameCreated + " " + Messages.get("label.success.added"));
+				me.tweakNewField();
 			}
 		});
 
-		DocumentStore.on("sectiondeleted", (model) => {			
+		DocumentStore.on("sectiondeleted", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.section") + " " + model.name + " " + Messages.get("label.success.deleted"));
 			me.context.tabPanel.removeTabByPath(me.props.location.pathname);
 			DocumentStore.dispatch({
@@ -157,7 +155,7 @@ export default React.createClass({
 		});
 
 		DocumentStore.on("attributedeleted", (model) => {
-			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + model.name + " " + Messages.get("label.success.deleted"));					
+			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + model.name + " " + Messages.get("label.success.deleted"));
 			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
 		});
 
@@ -166,12 +164,12 @@ export default React.createClass({
 			me.getSectionAttributes(me.props.params.sectionId, me.props.params.planId);
         },this);
 
-		
 
-		StructureStore.on("attributetypes", (models) => {			
-			var types = [];		
 
-			models.map((type) => {				
+		StructureStore.on("attributetypes", (models) => {
+			var types = [];
+
+			models.map((type) => {
 				if(type.id == AttributeTypes.TEXT_AREA_FIELD ||
 					type.id == AttributeTypes.SELECT_PLAN_FIELD ||
 					type.id == AttributeTypes.TABLE_FIELD){
@@ -187,8 +185,8 @@ export default React.createClass({
 			action: StructureStore.ACTION_FIND_ATTRIBUTE_TYPES
 		});
 
-		TableStore.on("tablesavestructures", (model) => {			
-			model.tableInstances = [];			
+		TableStore.on("tablesavestructures", (model) => {
+			model.tableInstances = [];
 			me.state.fields.push({
 					name: "attribute-"+me.state.fields.length,
 					type: me.state.recentAttr.type,
@@ -201,16 +199,16 @@ export default React.createClass({
 					tableFields: model,
 					selectPlans: me.state.recentAttr.selectPlans,
 					extraTableFields: (model ? me.saveInstanceTable : undefined),
-			});			
+			});
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
 			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + me.state.recentAttr.name + " " + Messages.get("label.success.added"));
 			me.tweakNewField();
 		});
 
-		ScheduleStore.on("schedulestructurescreated", (model) => {			
+		ScheduleStore.on("schedulestructurescreated", (model) => {
 			model.scheduleInstances = [];
-			model.scheduleStructures = me.state.tableColumns;			
+			model.scheduleStructures = me.state.tableColumns;
 			me.state.fields.push({
 					name: "attribute-"+me.state.fields.length,
 					type: me.state.recentAttr.type,
@@ -223,7 +221,7 @@ export default React.createClass({
 					tableFields: me.state.recentAttr.tableFields,
 					selectPlans: me.state.recentAttr.selectPlans,
 					extraTableFields: undefined
-			});			
+			});
 			//Toastr.remove();
 			//Toastr.success("Campo \""+me.state.recentAttr.name+"\" adicionado com sucesso.");
 			me.context.toastr.addAlertSuccess(Messages.get("label.field") + " " + me.state.recentAttr.name + " " + Messages.get("label.success.added"));
@@ -238,7 +236,7 @@ export default React.createClass({
 		TableStore.off(null, null, this);
 	},
 
-	componentWillReceiveProps(newProps) {	
+	componentWillReceiveProps(newProps) {
 		var el = document.getElementsByClassName("fpdi-app-content")[0];		//pegando o elemento que contém os atributos
 		el.scrollTop = 0;														//voltando seu scroll para o topo
 		if (newProps.location.pathname != this.state.tabPath) {
@@ -247,13 +245,13 @@ export default React.createClass({
 				loading: true,
 				vizualization: true,
 				newField: false
-			});			
+			});
 			this.getSectionAttributes(newProps.params.sectionId, newProps.params.planId, this.props.params.planId);
-			
+
 		}
 	},
 
-	getSectionAttributes(sectionId, planId){		
+	getSectionAttributes(sectionId, planId){
 		DocumentStore.dispatch({
 			action: DocumentStore.ACTION_RETRIEVE_SECTIONATTRIBUTES,
 			data: {
@@ -263,7 +261,7 @@ export default React.createClass({
 		});
 	},
 
-	saveInstanceSchedule(scheduleInstance){	
+	saveInstanceSchedule(scheduleInstance){
 		ScheduleStore.dispatch({
 			action: ScheduleStore.ACTION_CUSTOM_SAVE,
 			data: {
@@ -284,8 +282,8 @@ export default React.createClass({
 		});
 	},
 
-	saveInstanceTable(tableInstance){		
-		
+	saveInstanceTable(tableInstance){
+
 		var numberTypes = [AttributeTypes.CURRENCY_FIELD, AttributeTypes.NUMBER_FIELD, AttributeTypes.PERCENTAGE_FIELD];
 
 		tableInstance.tableValues.map((model, idx) => {
@@ -315,11 +313,11 @@ export default React.createClass({
 		var documentAttributes = [];
 		var msg = Messages.get("label.msg.errorsForm");
 		var boolMsg = false;
-		
+
 		var index = 0;
 
 		var validation = Validate.validateSectionTitle(this.refs["fieldName"],this.refs['formAlertTitleSection']);
-		
+
 
 		for (var i=0; i<Object.keys(data).length; i++) {
 			var tr = data[Object.keys(data)[i]];
@@ -363,10 +361,10 @@ export default React.createClass({
 			id: this.state.model.id,
 			name: this.refs["fieldName"].value,
 			documentAttributes: documentAttributes
-		};		
+		};
 		DocumentStore.dispatch({
 			action: DocumentStore.ACTION_SAVE_SECTIONATTRIBUTES,
-			data: { 
+			data: {
 				documentSection: documentSection,
 				refs: me.refs
 			}
@@ -374,13 +372,13 @@ export default React.createClass({
 	},
 
 	saveNewField(extra, periodicity, evt) {
-		var validation = Validate.validationNewFieldDocument(this.refs);		
+		var validation = Validate.validationNewFieldDocument(this.refs);
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 		}
 		else {
 			this.setState({
-				tableColumns: extra			
+				tableColumns: extra
 			});
 			DocumentStore.dispatch({
 				action: DocumentStore.ACTION_CREATE_SECTION_ATTRIBUTE,
@@ -455,7 +453,7 @@ export default React.createClass({
 	editAttribute(name, idx){
 		var field = this.state.model.documentAttributes[idx] || this.state.fields[idx];
 		field.name = name;
-		
+
 		DocumentStore.dispatch({
 			action: DocumentStore.ACTION_EDIT_ATTRIBUTE,
 			data: {
@@ -470,31 +468,31 @@ export default React.createClass({
 		});
 	},
 
-	render() {	
+	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
 		//_.defer(() => {
 		//	$("[data-toggle=tooltip]").tooltip();
-		//});	
-		return( 
+		//});
+		return(
 		<div>
 			<div>
 				<h1>
 					{this.state.subTitle}
 
-					{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					{((this.context.roles.MANAGER || _.contains(this.context.permissions,
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) ?
 						(this.state.vizualization == true ? <i className="mdi mdi-pencil cursorPointer deleteIcon" onClick={this.editingAttributes} title={Messages.get("label.title.editInformation")}/> : "")
 					: ""}
-					{((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					{((this.context.roles.MANAGER || _.contains(this.context.permissions,
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived')) && this.state.model.leaf ?
-						<i type="submit" className="mdi mdi-delete cursorPointer deleteIcon" onClick={this.deleteSection} 
-						title={Messages.get("label.deleteSection")} ></i> 
+						<i type="submit" className="mdi mdi-delete cursorPointer deleteIcon" onClick={this.deleteSection}
+						title={Messages.get("label.deleteSection")} ></i>
 					: ""}
 				</h1>
 
-				{!this.state.vizualization ? 
+				{!this.state.vizualization ?
 					<div className="panel panel-default panel-margins">
 						<div className="panel-heading attribute-input-opts">
 							<b className="budget-title">{Messages.getEditable("label.title", "fpdi-nav-label")}</b>
@@ -513,11 +511,11 @@ export default React.createClass({
 								onKeyPress={this.onKeyUp}
 							/>
 							<div ref="formAlertTitleSection" className="formAlertError"></div>
-						
+
 						</div>
 					</div>
 				: ""}
-				
+
 				<VerticalForm
 					onSubmit={this.onSubmit}
 					vizualization={this.state.vizualization}
@@ -536,17 +534,17 @@ export default React.createClass({
 							<div className="col-sm-6 col-md-4">
 								<input
 									type="text"
-									spellCheck={false} 
+									spellCheck={false}
 									className="form-control"
 									ref="newfield-name"
-									placeholder={Messages.get("label.field.name")} 
+									placeholder={Messages.get("label.field.name")}
 									maxLength="255"
 									/>
 							</div>
 							<div className="col-sm-6 col-md-4">
 								<select
 									type="text"
-									spellCheck={false} 
+									spellCheck={false}
 									className="form-control"
 									ref="newfield-type"
 									placeholder={Messages.get("label.field.type")}
@@ -579,20 +577,20 @@ export default React.createClass({
 								<TableFieldCreator cancelFunc={this.tweakNewField} confirmFunc={this.saveNewField} deleteFunc={this.deleteAttribute}/>
 							: <div></div>}
 							{this.state.newFieldType == AttributeTypes.SCHEDULE_FIELD ?
-								<ScheduleFieldCreator types={this.state.types} cancelFunc={this.tweakNewField} 
+								<ScheduleFieldCreator types={this.state.types} cancelFunc={this.tweakNewField}
 								confirmFunc={this.saveNewField}/>
 							: <div></div>}
 						</div>
 					</div>
 					:
-					(((this.context.roles.MANAGER || _.contains(this.context.permissions, 
+					(((this.context.roles.MANAGER || _.contains(this.context.permissions,
 					    PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get('archived') && !this.state.model.preTextSection) ?
 						<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
 							<span className="mdi mdi-plus" /> {Messages.get("label.addNewField")}
 						</button>
 					:"")
 				}
-			</div>			
+			</div>
 	    </div>);
-	}		
+	}
 });

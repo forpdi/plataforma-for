@@ -118,24 +118,18 @@ export default React.createClass({
 
 				if (model.beginField) {
 					dateBegin = value;
-					if (this.isMounted()) {
-						this.setState({
-							beginIdx: idx
-						});
-					}
+					this.setState({
+						beginIdx: idx
+					});
 				} else if (model.endField) {
 					dateEnd = value;
-					if (this.isMounted()) {
-						this.setState({
-							endIdx: idx
-						});
-					}
+					this.setState({
+						endIdx: idx
+					});
 				} else if (model.finishDate) {
-					if (this.isMounted()) {
-						this.setState({
-							finishIdx: idx
-						});
-					}
+					this.setState({
+						finishIdx: idx
+					});
 				}
 
 				if (model.formatField && agg) {
@@ -211,11 +205,9 @@ export default React.createClass({
 				}
 
 				if (model.users) {
-					if (this.isMounted()) {
-						this.setState({
-							users: model.users
-						});
-					}
+					this.setState({
+						users: model.users
+					});
 				}
 			})
 		}
@@ -249,12 +241,10 @@ export default React.createClass({
 			agg = true;
 		}
 
-		if (this.isMounted()) {
-			this.setState({
-				aggregate: agg,
-				fields: this.getFields(this.state.model, agg)
-			});
-		}
+		this.setState({
+			aggregate: agg,
+			fields: this.getFields(this.state.model, agg)
+		});
 	},
 
 	componentDidMount() {
@@ -262,20 +252,16 @@ export default React.createClass({
 		this.getLevelInstanceAttributes(this.props.params.levelInstanceId);
 
 		StructureStore.on("levelGoalClosed", (model) => {
-			if(this.isMounted()){
-				this.setState({
-					vizualization:true
-				})
-			}
+			this.setState({
+				vizualization:true
+			})
 		});
 
 		StructureStore.on("goalsGenerated", (model) => {
-			if (model.data.auxValue && this.isMounted()) {
-				if (this.isMounted()) {
-					this.setState({
-						levelValue: model.data.auxValue
-					})
-				}
+			if (model.data.auxValue) {
+				this.setState({
+					levelValue: model.data.auxValue
+				})
 			}
 		});
 
@@ -283,24 +269,19 @@ export default React.createClass({
 			if(model.success == true){
 				this.context.toastr.addAlertSuccess(Messages.get("label.success.informationSaved"));
 				this.refs.levelInstanceTitle.title = model.data.name;
-				if(this.isMounted()){
-					var showPolarityAlert = false;
-					if (!this.state.undeletable && this.state.model.data.polarity != model.data.polarity)
-						showPolarityAlert = true;
-
-					if (this.isMounted()) {
-						this.setState({
-							vizualization: true,
-							model: model,
-							title: model.data.level.name,
-							subTitle: model.data.name,
-							levelValue: model.data.levelValue,
-							fields: this.getFields(model, model.data.aggregate),
-							aggregate: model.data.aggregate,
-							showPolarityAlert: showPolarityAlert
-						});
-					}
-				}
+				var showPolarityAlert = false;
+				if (!this.state.undeletable && this.state.model.data.polarity != model.data.polarity)
+					showPolarityAlert = true;
+				this.setState({
+					vizualization: true,
+					model: model,
+					title: model.data.level.name,
+					subTitle: model.data.name,
+					levelValue: model.data.levelValue,
+					fields: this.getFields(model, model.data.aggregate),
+					aggregate: model.data.aggregate,
+					showPolarityAlert: showPolarityAlert
+				});
 			}
 			else{
 				this.context.toastr.addAlertError(Messages.get("label.impossibleSaveAttributes"));
@@ -317,42 +298,36 @@ export default React.createClass({
 		}, me);
 
 		StructureStore.on('favoriteSaved', model => {
-			if (this.isMounted()) {
-				this.setState({
-					favoriteExistent: true,
-					favoriteTotal: this.state.favoriteTotal+1
-				});
-			}
+			this.setState({
+				favoriteExistent: true,
+				favoriteTotal: this.state.favoriteTotal+1
+			});
 			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " " + Messages.get("label.addedFavorites"));
 		}, me);
 
 		StructureStore.on('favoriteRemoved', model => {
-			if (this.isMounted()) {
-				this.setState({
-					favoriteExistent: false,
-					favoriteTotal: this.state.favoriteTotal-1
-				});
-			}
+			this.setState({
+				favoriteExistent: false,
+				favoriteTotal: this.state.favoriteTotal-1
+			});
 			this.context.toastr.addAlertSuccess(model.data.levelInstance.name + " " + Messages.get("label.removedFavorites"));
 		}, me);
 
 		StructureStore.on("levelAttributeRetrieved", (model) => {
-			if(me.isMounted()){
-				me.setState({
-					loading: false,
-					model: model,
-					title: model.data.level.name,
-					subTitle: model.data.name,
-					fields: this.getFields(model, model.data.aggregate),
-					aggregate: model.data.aggregate,
-					levelValue: model.data.levelValue,
-					level: model.data.level.name,
-					showPolarityAlert: false,
-					favoriteExistent: model.data.favoriteExistent,
-					favoriteTotal: model.data.favoriteTotal
-				});
-				me.context.tabPanel.addTab(me.state.tabPath, model.data.name);
-			}
+			me.setState({
+				loading: false,
+				model: model,
+				title: model.data.level.name,
+				subTitle: model.data.name,
+				fields: this.getFields(model, model.data.aggregate),
+				aggregate: model.data.aggregate,
+				levelValue: model.data.levelValue,
+				level: model.data.level.name,
+				showPolarityAlert: false,
+				favoriteExistent: model.data.favoriteExistent,
+				favoriteTotal: model.data.favoriteTotal
+			});
+			me.context.tabPanel.addTab(me.state.tabPath, model.data.name);
 		}, me);
 
 		StructureStore.on("levelAttributeNoRetrieved", (model) => {
@@ -361,21 +336,10 @@ export default React.createClass({
 		}, me);
 
 		StructureStore.on("levelSonsRetrieved", (model) => {
-			if(me.isMounted()){
-				me.setState({
-					undeletable: model.data.sons.list.length>0 ? false : true
-				});
-			}
+			me.setState({
+				undeletable: model.data.sons.list.length>0 ? false : true
+			});
 		}, me);
-
-		/*StructureStore.on("levelUpdate", (model) => {
-			if(this.isMounted()){
-				this.setState({
-					levelValue: model.data.levelValue
-				});
-				this.getLevelInstanceAttributes(this.props.params.levelInstanceId);
-			}
-		}, me);*/
 	},
 
 	componentWillUnmount() {
@@ -386,21 +350,17 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if(this.isMounted()){
+		this.setState({
+			vizualization: true
+		});
+		var el = document.getElementsByClassName("fpdi-app-content")[0];		//pegando o elemento que contém os atributos
+		el.scrollTop = 0;														//voltando seu scroll para o topo
+		if (newProps.location.pathname != this.state.tabPath) {
 			this.setState({
-				vizualization: true
+				tabPath: newProps.location.pathname,
+				loading: true
 			});
-			var el = document.getElementsByClassName("fpdi-app-content")[0];		//pegando o elemento que contém os atributos
-			el.scrollTop = 0;														//voltando seu scroll para o topo
-			if (newProps.location.pathname != this.state.tabPath) {
-				if (this.isMounted()) {
-					this.setState({
-						tabPath: newProps.location.pathname,
-						loading: true
-					});
-				}
-				this.getLevelInstanceAttributes(newProps.params.levelInstanceId);
-			}
+			this.getLevelInstanceAttributes(newProps.params.levelInstanceId);
 		}
 	},
 
@@ -629,12 +589,10 @@ export default React.createClass({
 	},
 	onCancel() {
 		if(this.state.aggregate == true) {
-			if (this.isMounted()) {
-				this.setState({
-					vizualization: !this.state.vizualization,
-					aggregate: this.state.model.data.aggregate
-				});
-			}
+			this.setState({
+				vizualization: !this.state.vizualization,
+				aggregate: this.state.model.data.aggregate
+			});
 		} else {
 			this.editingAttributes();
 		}
@@ -642,13 +600,11 @@ export default React.createClass({
 
 	editingAttributes() {
 		var list = this.state.selectedIndicators;
-		if (this.isMounted()) {
-			this.setState({
-				vizualization: !this.state.vizualization,
-				selectedIndicators: list,
-				aggregate: this.state.model.data.aggregate
-			});
-		}
+		this.setState({
+			vizualization: !this.state.vizualization,
+			selectedIndicators: list,
+			aggregate: this.state.model.data.aggregate
+		});
 	},
 
 	goalsGenerate() {
@@ -665,29 +621,23 @@ export default React.createClass({
 
 	onChangeBegin(data){
 		var model = this.state.model;
-		if (this.isMounted()) {
-			this.setState({
-				model:model,
-			});
-		}
+		this.setState({
+			model:model,
+		});
 		this.refs['levelForm'].refs["attribute"+this.state.beginIdx].props.fieldDef.value = data.format('DD/MM/YYYY');
 	},
 	onChangeEnd(data){
 		var model = this.state.model;
-		if (this.isMounted()) {
-			this.setState({
-				model:model,
-			});
-		}
+		this.setState({
+			model:model,
+		});
 		this.refs['levelForm'].refs["attribute"+this.state.endIdx].props.fieldDef.value = data.format('DD/MM/YYYY');
 	},
 	onChangeFinish(data){
 		var model = this.state.model;
-		if (this.isMounted()) {
-			this.setState({
-				model:model,
-			});
-		}
+		this.setState({
+			model:model,
+		});
 		this.refs['levelForm'].refs["attribute"+this.state.finishIdx].props.fieldDef.value = data.format('DD/MM/YYYY');
 	},
 
@@ -700,11 +650,9 @@ export default React.createClass({
  	},
 
 	isParent(model){
-		if (this.isMounted()) {
-			this.setState({
-				haveChildren: model.data.sons.list.length > 0
-			});
-		}
+		this.setState({
+			haveChildren: model.data.sons.list.length > 0
+		});
 	},
 
 	exportLevelAttributes() {
