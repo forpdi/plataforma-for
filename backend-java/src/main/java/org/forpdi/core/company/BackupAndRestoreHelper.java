@@ -356,7 +356,12 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		});
 		attachment.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setExportAuthorMail(it.getAuthor().getEmail());
+			if(it.getAuthor() !=null) {
+				it.setExportAuthorMail(it.getAuthor().getEmail());
+			}else {
+				it.setExportAuthorMail("");
+			}
+			
 			it.setLevelInstance(null);
 			it.setLevelInstance(null);
 		});

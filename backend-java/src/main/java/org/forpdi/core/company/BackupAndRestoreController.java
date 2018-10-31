@@ -99,9 +99,16 @@ public class BackupAndRestoreController extends AbstractController  {
 		
 		if (BackupAndRestoreController.file == null) {
 			this.fail("arquivo não especificado");
+			return;
 		}
 		
-		try {
+		if(this.domain.getCompany() == null) {
+			this.fail("Instituição não definida");
+			return;
+		}
+		
+		
+		try {		
 			LOGGER.infof("Starting restoration for company '%s'...", this.domain.getCompany().getName());
 			dbbackup.restore(BackupAndRestoreController.file);
 			LOGGER.infof("Done restoration for company '%s'.", this.domain.getCompany().getName());
