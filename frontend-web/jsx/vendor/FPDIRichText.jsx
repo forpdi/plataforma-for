@@ -3,7 +3,6 @@ import 'react-quill/dist/quill.snow.css';
 
 import React from 'react';
 import ReactQuill from 'react-quill';
-import RichTextToolbar from 'forpdi/jsx/vendor/RichTextToolbar.jsx';
 import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx";
 
@@ -86,24 +85,34 @@ export default React.createClass({
 			});
 		}
     },
-
     render(){
-		const toolbarId = `${this.props.id}-toolbar`;
+
+		//const toolbarId = `${this.props.id}-toolbar`;
+
         return (
             <div>
-				<RichTextToolbar imageHandler={this.onImageClick} linkHandler={this.onLinkClick} id={toolbarId}/>
-                <ReactQuill theme="snow"
-					modules={this.state.toolbarOptions}
+                <ReactQuill
 					onChange={this.onChange}
 					value={this.state.value}
 					ref={(c) => { this.quill = (c && c.editor) || this.quill; }}
-					modules={{
-						toolbar: {
-							container: `#${toolbarId}`,
-						}
-					}}
+					modules = {{
+						toolbar: [
+						[{ 'font': [] }],
+						[{ 'header': [1, 2, 3, 4, 5, 6, false] }],, // custom button values
+						['bold', 'italic', 'underline','strike',],   // toggled buttons
+						[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+						[{ 'align': [] }],
+						[{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], // outdent/indent
+						['link', 'image'],
+
+						['blockquote', 'code-block'],
+						['clean'],										// remove formatting button
+						[{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+						[{ 'direction': 'rtl' }],                         // text direction
+					  ]
+					  }}
 				/>
-            </div>
+		    </div>
         );
     }
 });
