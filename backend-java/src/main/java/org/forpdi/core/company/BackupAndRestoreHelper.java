@@ -34,6 +34,7 @@ import org.forpdi.planning.document.DocumentSection;
 import org.forpdi.planning.fields.FieldsBS;
 import org.forpdi.planning.fields.OptionsField;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
+import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
 import org.forpdi.planning.fields.budget.BudgetBS;
 import org.forpdi.planning.fields.budget.BudgetElement;
@@ -73,7 +74,6 @@ import br.com.caelum.vraptor.serialization.gson.GsonSerializerBuilder;
 public class BackupAndRestoreHelper extends HibernateBusiness {
 
 	private Gson gson;
-	private int porcentagem;
 	private static int quantity;
 	private static int quantityTotal;
 
@@ -137,6 +137,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		List<ScheduleValues> scheduleValues= new ArrayList<>();
 		List<CompanyMessage> companyMessage= new ArrayList<>();
 		List<OptionsField> optionsField= new ArrayList<>();
+		List<Attachment> attachment= new ArrayList<>();
 		
 		HashMap<Long, Structure> structuresMap = new HashMap<>();
 		HashMap<Long, StructureLevel> structuresLevelMap = new HashMap<>();
@@ -318,6 +319,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		//Exportando structure level instance detailed
 		//Exportando aggregate indicator
 		//Exportando budget
+		//Exportando Attachement
 		structurelevelinstance.stream().forEach(sli->{
 			actionplan.addAll((List<ActionPlan>) this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("levelInstance", sli)).list());
 			levelinstancehistory.addAll((List<LevelInstanceHistory>) this.dao.newCriteria(LevelInstanceHistory.class).add(Restrictions.eq("levelInstance", sli)).list());
@@ -325,6 +327,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			budget.addAll((List<Budget>) budgetBS.listAllBudgetByLevelInstance(sli));
 			attributeinstance.addAll((List<AttributeInstance>) this.dao.newCriteria(AttributeInstance.class).add(Restrictions.eq("levelInstance", sli)).list());
 			aggregateindicator.addAll((List<AggregateIndicator>) this.dao.newCriteria(AggregateIndicator.class).add(Restrictions.eq("aggregate", sli)).list());
+			attachment.addAll((List<Attachment>) this.dao.newCriteria(Attachment.class).add(Restrictions.eq("levelInstance", sli)).list());
 		});
 		actionplan.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
@@ -350,6 +353,12 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			it.setExportBudgetElementId(it.getBudgetElement().getId());
 			it.setLevelInstance(null);	
 			it.setBudgetElement(null);
+		});
+		attachment.stream().forEach(it->{
+			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
+			it.setExportAuthorMail(it.getAuthor().getEmail());
+			it.setLevelInstance(null);
+			it.setLevelInstance(null);
 		});
 		
 		
@@ -582,6 +591,9 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			zipAdd(zos, DocumentAttribute.class.getSimpleName(), this.gson.toJson(documentattribute));
 		if(!aggregateindicator.isEmpty())
 			zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateindicator));
+		if(!attachment.isEmpty())
+			zipAdd(zos, Attachment.class.getSimpleName(), this.gson.toJson(attachment));
+		
 		
 		if(!tableFields.isEmpty())
 			zipAdd(zos, TableFields.class.getSimpleName(), this.gson.toJson(tableFields));
@@ -633,7 +645,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		
 		//contar quantidade de registros que serão salvos;
 		quantityTotal=quantityTotal(files);
-
+		quantity=0;
+		
 		Map<Long, Long> map_id_company = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_plan_macro = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_structure = new HashMap<Long, Long>();
@@ -651,8 +664,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		Map<Long, Long> map_id_schedule = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_schedule_instance = new HashMap<Long, Long>();
 		Map<Long, Long> map_id_schedule_structure = new HashMap<Long, Long>();
-		
-		quantity=0;
+
 		
 		for (File f : files) {
 
@@ -757,6 +769,10 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					readJson(register, Budget.class, null, map_id_structure_level_instance, map_budget_element);
 					break;
 					
+				case "Attachment":
+					readJson(register, Attachment.class, null, map_id_structure_level_instance, null);
+					break;	
+					
 				case "Attribute" :
 					readJson(register, Attribute.class, map_id_attribute, map_id_structure_level, null);
 					break;	
@@ -804,7 +820,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				case "OptionsField":
 					readJson(register, OptionsField.class, null, map_id_document_attribute, map_id_attribute);
 					break;
-					
+										
 				default:
 					break;
 			}
@@ -1040,7 +1056,23 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_budget_element)));
 					((Budget) obj).setBudgetElement((BudgetElement) criteria.uniqueResult());
 					break;
+					
+				case "Attachment" :
 
+					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
+					
+					//atualiza id do autor que possui o mesmo email neste banco, se houver
+					User autor=userBS.existsByEmail(jo.get("exportAuthorMail").toString());
+					/*if (autor == null) {
+						quantity+=1;
+						continue;
+					}*/
+					((Attachment) obj).setAuthor(autor);
+					criteria = this.dao.newCriteria(StructureLevelInstance.class);
+					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
+					((Attachment) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
+					break;
+					
 				case "Attribute" :
 					
 					id_old_structure_level = Long.parseLong(jo.get("exportStructureLevelId").toString());
@@ -1061,6 +1093,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						String email=structureLevelInstanceMap.get(map_fkey_1.get(id_old_structure_level_instance)).getExportResponsibleMail();
 						User user=userBS.existsByEmail(email);
 						if (user == null) {
+							quantity+=1;
 							continue;
 						}
 						((AttributeInstance) obj).setValue(String.valueOf(user.getId()));
@@ -1317,10 +1350,6 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		return Math.floorDiv(100*getQuantity(), getQuantityTotal());
 	}
 
-	public void setPorcentagem(int p){
-		porcentagem = p;
-	}
-
 	public int getQuantityTotal(){
 		return quantityTotal;
 	}
@@ -1329,10 +1358,9 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		quantityTotal = q;
 	}
 
-}
+	public void resetQuantity() {
+		quantity=0;
+		quantityTotal=0;
+	}
 
-//reseta porcentagem
-//porcentagem=0;
-/*if (porcent.equals("100")) {
-	porcentagem=0;
-}*/
+}

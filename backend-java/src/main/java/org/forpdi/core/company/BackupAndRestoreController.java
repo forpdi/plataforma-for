@@ -127,6 +127,10 @@ public class BackupAndRestoreController extends AbstractController  {
 	public void  state() {
 		try {
 			String  porcent =String.valueOf(dbbackup.getPorcentagem());
+			
+			if (dbbackup.getPorcentagem()==100) {
+				dbbackup.resetQuantity();
+			}
 			this.success(porcent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

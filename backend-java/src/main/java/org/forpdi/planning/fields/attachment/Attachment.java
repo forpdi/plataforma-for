@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 import org.forpdi.planning.structure.StructureLevelInstance;
@@ -35,12 +36,16 @@ public class Attachment extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private Date creation = new Date();
 
-	@ManyToOne(targetEntity = User.class, optional = false, fetch = FetchType.EAGER)
+	@ManyToOne(targetEntity = User.class, optional = true, fetch = FetchType.EAGER)
 	private User author;
 
 	@SkipSerialization
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
+	
+	@Transient private Long exportStructureLevelInstanceId;
+	
+	@Transient private String exportAuthorMail;
 
 	public String getDescription() {
 		return description;
@@ -90,4 +95,19 @@ public class Attachment extends SimpleLogicalDeletableEntity {
 		this.levelInstance = levelInstance;
 	}
 
+	public Long getExportStructureLevelInstanceId() {
+		return exportStructureLevelInstanceId;
+	}
+
+	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
+		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
+	}
+
+	public String getExportAuthorMail() {
+		return exportAuthorMail;
+	}
+
+	public void setExportAuthorMail(String exportAuthorMail) {
+		this.exportAuthorMail = exportAuthorMail;
+	}
 }

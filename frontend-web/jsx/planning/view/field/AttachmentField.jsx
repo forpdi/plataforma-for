@@ -326,7 +326,7 @@ export default React.createClass({
 												: attachment.description}
 											</td>
 											<td>
-												{attachment.author.name}
+												{attachment.author != null ? attachment.author.name : "" }
 											</td>
 											<td>
 												{attachment.creation.split(" ")[0]}

@@ -196,12 +196,16 @@ export default React.createClass({
         }
 	},
 
-
 	importPlans(event) {
 		event && event.preventDefault();
 
 		var me = this;
 		var formatsBlocked = "(exe*)";
+		var interval;
+
+		serverImportStatus(interval);
+		interval= setInterval(function() {serverImportStatus(interval);},5000);
+
 
 		Modal.uploadFile(
 			Messages.get("label.importPlans"),
@@ -211,63 +215,41 @@ export default React.createClass({
 			formatsBlocked,
 			(response) => {
 
+				clearInterval(interval);
+
 				jQuery.ajax({
 					method: "POST",
 					url: BACKEND_URL + "/company/restore",
 					dataType: 'json',
+					timeout: 0,
 					success(data, status, opts) {
 						if (data.success) {
-							Toastr.success("Planos estão sendo restaurados em background.");
-							console.log("Planos estão sendo restaurados em background.");
+							Modal.hide();
+							Toastr.success("Planos foram importados.");
+							console.log("Planos foram importados.");
+							clearInterval(interval);
 						}else{
-							console.log("import fail");
+							Modal.hide();
+							console.log("Importação falhou");
+							Toastr.error("Importação falhou");
+							clearInterval(interval);
 						}
 					},
 					error(opts, status, errorMsg) {
-						console.log(errorMsg+": import fail");
 						Modal.hide();
+						//console.log("Importação falhou: "+errorMsg);
+						//Toastr.error("Importação falhou");
 					}
 				});
 
-
-				var restored=false;
-
-				var interval= setInterval(function() {
-
-					jQuery.ajax({
-						method: "GET",
-						url: BACKEND_URL + "/company/state",
-						dataType: 'json',
-						success(data, status, opts) {
-							if (data.success) {
-								console.log("restoring... " + data.message+"%");
-
-								$("#fbkupload").text('restaurando planos...'+ data.message+"%");
-
-								if(data.message=="100"){
-									restored=true;
-									if(restored){
-										clearInterval(interval);
-										Modal.hide();
-									}
-									console.log("Planos restaurados");
-									return;
-								}
-							}
-						},
-						error(opts, status, errorMsg) {
-							console.log(errorMsg+": get state fail");
-							clearInterval(interval);
-							Modal.hide();
-						}
-					});
-				},5000);
-
+				serverImportStatus(interval);
+				interval= setInterval(function() {serverImportStatus(interval);},5000);
 			},
 			(response) => {
+				clearInterval(interval);
 				Modal.hide();
-				console.log("import fail");
-				Toastr.addAlertError("import fail");
+				console.log("Importação falhou");
+				Toastr.error("Importação falhou");
 			},
 			"xml."
 		);
@@ -379,3 +361,38 @@ export default React.createClass({
     }
 });
 
+var porcentagem="";
+
+function serverImportStatus(interval){
+	var resposta="";
+	jQuery.ajax({
+		method: "GET",
+		url: BACKEND_URL + "/company/state",
+		dataType: 'json',
+		success(data, status, opts) {
+
+			if(data.message=="100"){
+				clearInterval(interval);
+				Modal.hide();
+				Toastr.success("Planos foram importados.");
+			}
+			if(data.message=="-1"){
+				clearInterval(interval);
+			}
+
+			if (data.success) {
+				if(data.message != porcentagem && data.message!="-1"){
+					porcentagem=data.message;
+					console.log("Importando planos... " + porcentagem +"%");
+					$("#fbkupload").text('Importando planos... '+ porcentagem +"%");
+				}
+			}
+		},
+		error(opts, status, errorMsg) {
+			clearInterval(interval);
+			Modal.hide();
+			console.log("Importação falhou: "+errorMsg);
+			Toastr.error("Importação falhou");
+		}
+	});
+};
