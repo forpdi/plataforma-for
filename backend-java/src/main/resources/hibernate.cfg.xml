@@ -82,6 +82,19 @@
   		<mapping class="org.forpdi.planning.document.DocumentAttribute"/>
   		<mapping class="org.forpdi.planning.document.DocumentSection"/>
   		<mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
+  		<mapping class="org.forrisco.core.policy.Policy"/>
+  		<mapping class="org.forrisco.core.plan.Plan"/>
+  		<mapping class="org.forrisco.core.unit.Unit"/>
+  		<mapping class="org.forrisco.core.item.Item"/>
+  		<mapping class="org.forrisco.core.item.SubItem"/>
+  		<mapping class="org.forrisco.core.item.FieldItem"/>
+  		<mapping class="org.forrisco.core.item.FieldSubItem"/>
+  		<mapping class="org.forrisco.core.process.Process"/>
+  		<mapping class="org.forrisco.risk.Risk"/>
+  		<mapping class="org.forrisco.risk.RiskLevel"/>
+  		<mapping class="org.forrisco.risk.Contigency"/>
+  		<mapping class="org.forrisco.risk.Incident"/>
+  		<mapping class="org.forrisco.risk.Monitor"/>
 
 	</session-factory>
 </hibernate-configuration>
