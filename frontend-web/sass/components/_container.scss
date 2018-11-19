@@ -3,7 +3,7 @@
 	padding: 0;
 }
 
-/* 
+/*
  * DEPRECATED
  * To use this container set the 'main' tag class on 'AppSetup.jsx' to .fpdi-app-container.
  */
@@ -203,9 +203,9 @@
   margin-left: 5px;
 }
 
-.fpdi-indicator-type-ctn {  
+.fpdi-indicator-type-ctn {
   margin-top: 10px;
-  margin-left: -18px;  
+  margin-left: -18px;
 }
 
 .fpdi-indicator-type-label {
@@ -223,9 +223,9 @@
 
 .fpdi-indicators-ctn {
   height: 230px !important;
-  overflow-y: auto; 
+  overflow-y: auto;
   word-break: break-all;
-  word-wrap: break-word; 
+  word-wrap: break-word;
 }
 
 .fpdi-indicators {
@@ -235,7 +235,7 @@
 
 .fpdi-indicator-item {
   padding: 6px 0px 6px 0px;
-  font-size: 15px;  
+  font-size: 15px;
   color: #B4B4B4;
   cursor: pointer;
   & > span {
@@ -249,7 +249,7 @@
 
 .fpdi-indicator-item-selected {
   padding: 6px 0px 6px 0px;
-  font-size: 15px;  
+  font-size: 15px;
   color: mix($brand-primary, #000, 70%);
   cursor: pointer;
   & > span {
@@ -259,7 +259,7 @@
 
 .fpdi-indicator-remove {
   color: #666;
-  font-weight: bold;  
+  font-weight: bold;
   float: right;
   margin-right: 10px;
   cursor: pointer;
@@ -358,3 +358,32 @@
   height: 30px;
   margin-right: 5px;
 }
+
+.forrisco-app-sidebar, .forrisco-app-sidebar-hidden {
+	overflow-y: auto;
+	overflow-x: hidden;
+	/*@include flexbox;*/
+	-moz-flex-direction: column;
+	flex-direction: column;
+	-moz-flex: 2;
+	flex: 2;
+	border: none;
+	font-size: 13px;
+	font-weight: 600;
+	color: #FFFFFF;
+	background-color: #6169d6;
+}
+
+.form-control-h {
+	width: 250px;
+	margin: 0 10px 0 0;
+}
+/*	height: auto;
+	width: 100%;
+	display: inline-block;
+}*/
+
+.form-control-h::-webkit-input-placeholder {
+	color: #ccc;
+	font-size: 10px;}
+

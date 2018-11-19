@@ -72,5 +72,4 @@ public class SubItem extends SimpleLogicalDeletableEntity {
 		this.item = item;
 	}
 	
-	
 }

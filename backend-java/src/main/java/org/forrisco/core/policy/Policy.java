@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
 
@@ -34,12 +35,20 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false)
 	private int ncolumn;
 
-	@Column(nullable=true, length=4000)
+	@Column(nullable=false, length=4000)
 	private String probability;
 
-	@Column(nullable=true, length=4000)
+	@Column(nullable=false, length=4000)
 	private String impact;
+	
+	@Column(nullable=false, length=4000)
+	private String matrix;
 
+	@Transient
+	private String risk_level[][];
+	
+	
+	
 	@SkipSerialization
 	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
 	private Company company;
@@ -98,6 +107,22 @@ public class Policy extends SimpleLogicalDeletableEntity {
 
 	public void setCompany(Company company) {
 		this.company = company;
+	}
+	
+	public String getMatrix() {
+		return matrix;
+	}
+
+	public void setMatrix(String matrix) {
+		this.matrix = matrix;
+	}
+
+	public String[][] getRisk_leve() {
+		return risk_level;
+	}
+
+	public void setRisk_leve(String[][] risk_level) {
+		this.risk_level = risk_level;
 	}
 
 }

@@ -41,6 +41,14 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 		this.name = name;
 	}
 
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
+	}
+
 	public String getDescription() {
 		return description;
 	}

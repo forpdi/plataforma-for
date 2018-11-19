@@ -31,6 +31,9 @@ public class RiskLevel extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	@ManyToOne(targetEntity=Policy.class, optional=false, fetch=FetchType.EAGER)
 	private Policy policy;
+	
+	
+	public RiskLevel() {}
 
 	public String getLevel() {
 		return level;
@@ -44,8 +47,8 @@ public class RiskLevel extends SimpleLogicalDeletableEntity {
 		return color;
 	}
 
-	public void setColor(int color) {
-		this.color = color;
+	public void setColor(int cor) {
+			this.color = cor;
 	}
 
 	public Policy getPolicy() {

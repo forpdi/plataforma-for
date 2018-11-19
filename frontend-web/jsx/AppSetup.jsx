@@ -50,6 +50,12 @@ import Community from "forpdi/jsx/dashboard/view/DashboardCommunityView.jsx";
 
 import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
+
+/* Forrisco */
+import Forrisco_Application from 'forpdi/jsx/Application_Forrisco.jsx';
+import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/Forrisco_DashboardPanel.jsx";
+import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
+
 Moment.locale("pt_BR");
 
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -65,42 +71,84 @@ ReactDOM.render((
 		<Route path="recover-password" component={RecoverPassword} />
 		<Route path="reset-password/:token" component={ResetPassword} />
 		<Route path="register/:token" component={Register} />
-		<Route path="/" component={Application}>
-			<IndexRedirect to="login" />
-			<Route path="home" component={Dashboard} />
-			<Route path="login" component={Login} />
-			<Route path="users" component={Users}>
-				<Route path=":modelId/edit" component={UserEdit} />
-				<Route path="new" component={UserInvite} />
-				<Route path="profilerUser/:modelId" component={ProfileUser} />
-			</Route>
-
-			<Route path="structures" component={StructureList}>
-				<Route path="preview/:modelId" component={StructurePreview} />
-			</Route>
 
 
-			<Route path="budget-element" component={BudgetElement} />
-
-			<Route path="plan/new" component={PlanMacroEdit} />
-			<Route path="plan/:id">
-				<IndexRedirect to="document" />
-				<Route path="edit" component={PlanMacroEdit} />
-				<Route path="details" component={PlanMacroDetails}>
-					<IndexRedirect to="overview" />
-					<Route path="overview" component={PlanMacroTab} />
-					<Route path="subplan/:subplanId" component={PlanRegister} />
-					<Route path="subplans/new" component={PlanRegister} />
-					<Route path="level/:subplanId/:levelId" component={LevelTab} />				
-					<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
-					<Route path="duplicate" component={DuplicatePlan} />
+	<Route path="/forrisco" component={Forrisco_Application}>
+		<Route path="home" component={Forrisco_Dashboard} />
+		<Route path="policy" component={Forrisco_PolicyEdit} />
+		<Route path="plan/new" component={PlanMacroEdit} />
+		<Route path="plan/:id">
+			<IndexRedirect to="document" />
+			<Route path="edit" component={PlanMacroEdit} />
+			<Route path="details" component={PlanMacroDetails}>
+				<IndexRedirect to="overview" />
+				<Route path="overview" component={PlanMacroTab} />
+				<Route path="subplan/:subplanId" component={PlanRegister} />
+				<Route path="subplans/new" component={PlanRegister} />
+				<Route path="level/:subplanId/:levelId" component={LevelTab} />
+				<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
+				<Route path="duplicate" component={DuplicatePlan} />
 				</Route>
 				<Route path="document" component={PlanMacroDetails}>
-					<IndexRedirect to="overview" />
-					<Route path="overview" component={DocumentDetails} />
-					<Route path="section/:sectionId" component={DocumentSectionAttributes} />
-				</Route>
+				<IndexRedirect to="overview" />
+				<Route path="overview" component={DocumentDetails} />
+				<Route path="section/:sectionId" component={DocumentSectionAttributes} />
 			</Route>
+		</Route>
+
+		<Route path="system" component={SystemManagement}>
+			<IndexRedirect to="general" />
+			<Route path="companies" component={Companies}>
+				<Route path="new" component={CompanyEdit} />
+				<Route path="edit/:modelId" component={CompanyEdit} />
+			</Route>
+			<Route path="domains" component={CompanyDomains}>
+				<Route path="new" component={CompanyDomainEdit} />
+				<Route path="edit/:modelId" component={CompanyDomainEdit} />
+			</Route>
+			<Route path="*" component={NotFound} />
+		</Route>
+		<Route path="*" component={NotFound} />
+	</Route>
+
+
+
+	<Route path="/" component={Application}>
+		<IndexRedirect to="login" />
+		<Route path="home" component={Dashboard} />
+		<Route path="login" component={Login} />
+		<Route path="users" component={Users}>
+			<Route path=":modelId/edit" component={UserEdit} />
+			<Route path="new" component={UserInvite} />
+			<Route path="profilerUser/:modelId" component={ProfileUser} />
+		</Route>
+
+		<Route path="structures" component={StructureList}>
+			<Route path="preview/:modelId" component={StructurePreview} />
+		</Route>
+
+
+		<Route path="budget-element" component={BudgetElement} />
+
+		<Route path="plan/new" component={PlanMacroEdit} />
+		<Route path="plan/:id">
+			<IndexRedirect to="document" />
+			<Route path="edit" component={PlanMacroEdit} />
+			<Route path="details" component={PlanMacroDetails}>
+				<IndexRedirect to="overview" />
+				<Route path="overview" component={PlanMacroTab} />
+				<Route path="subplan/:subplanId" component={PlanRegister} />
+				<Route path="subplans/new" component={PlanRegister} />
+				<Route path="level/:subplanId/:levelId" component={LevelTab} />
+				<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
+				<Route path="duplicate" component={DuplicatePlan} />
+			</Route>
+			<Route path="document" component={PlanMacroDetails}>
+				<IndexRedirect to="overview" />
+				<Route path="overview" component={DocumentDetails} />
+				<Route path="section/:sectionId" component={DocumentSectionAttributes} />
+			</Route>
+		</Route>
 
 			<Route path="system" component={SystemManagement}>
 				<IndexRedirect to="general" />
@@ -114,12 +162,13 @@ ReactDOM.render((
 				</Route>
 				<Route path="*" component={NotFound} />
 			</Route>
-			
 			<Route path="*" component={NotFound} />
+
 		</Route>
+
 	</Router>
   	),
   	document.getElementById('main-body')
 );
- 
+
 module.exports = true;

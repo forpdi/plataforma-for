@@ -1,16 +1,14 @@
 package org.forrisco.core.item;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
-
-
-import org.forpdi.core.user.User;
-import org.forrisco.core.plan.Plan;
 import org.forrisco.core.policy.Policy;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
@@ -43,6 +41,18 @@ public class Item extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	@ManyToOne(targetEntity=Policy.class, optional=false, fetch=FetchType.EAGER)
 	private Policy policy;
+	
+	@Transient
+	private List<FieldItem> fieldItem;
+	
+	
+	public List<FieldItem> getFieldItem() {
+		return fieldItem;
+	}
+
+	public void setFieldItem(List<FieldItem> fieldItem) {
+		this.fieldItem = fieldItem;
+	}
 
 	public String getName() {
 		return name;
@@ -75,6 +85,5 @@ public class Item extends SimpleLogicalDeletableEntity {
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
-	
-	
+
 }

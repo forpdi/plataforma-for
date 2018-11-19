@@ -3,12 +3,10 @@ package org.forrisco.risk;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.forpdi.core.user.User;
-import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -28,11 +26,11 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
-	@ManyToOne
+	//@SkipSerialization
+	//@ManyToOne
 	//@Id "unit_id"
 	//@Id="frisco_process_id"
-	private Unit unit;
+	//private Unit unit;
 
 	@SkipSerialization
 	@ManyToOne(targetEntity=RiskLevel.class, fetch=FetchType.EAGER)
@@ -211,14 +209,6 @@ public class Risk extends SimpleLogicalDeletableEntity {
 		this.user = user;
 	}
 
-	public Unit getUnit() {
-		return unit;
-	}
-
-	public void setUnit(Unit unit) {
-		this.unit = unit;
-	}
-
 	public RiskLevel getRiskLevel() {
 		return riskLevel;
 	}
@@ -226,6 +216,5 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public void setRiskLevel(RiskLevel riskLevel) {
 		this.riskLevel = riskLevel;
 	}
-
 
 }

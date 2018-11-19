@@ -58,7 +58,7 @@ export default React.createClass({
 		} else if (this.props.fieldDef.type == 'select') {
 			fieldEl = (
 				<select
-					className="form-control"
+					className="form-control-h"
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
@@ -68,7 +68,7 @@ export default React.createClass({
 					>
 						<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
 						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
-							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt.get(this.props.fieldDef.valueField)} 
+							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt.get(this.props.fieldDef.valueField)}
 								data-placement="right" title={opt.get(this.props.fieldDef.displayField)}>
 									{opt.get(this.props.fieldDef.displayField)}
 							</option>);
@@ -77,7 +77,7 @@ export default React.createClass({
 			);
 		} else {
 			fieldEl = (<input
-				className="form-control"
+				className="form-control-h"
 				type={this.props.fieldDef.type}
 				name={this.props.fieldDef.name}
 				defaultValue={this.props.fieldDef.value}
@@ -88,6 +88,18 @@ export default React.createClass({
 			/>);
 		}
 		return (
+			<div style={{display: "inline-block"}}>
+			<div className="form-group form-group-sm">
+
+				<div className="col-3">
+					{fieldEl}
+					{this.props.fieldDef.helpBox}
+				</div>
+			</div>
+			</div>
+		);
+		/*
+		return (
 			<div className="form-group form-group-sm">
 				<label htmlFor={this.state.fieldId} className="col-sm-2 fpdi-text-label">
 					{this.props.fieldDef.label}
@@ -97,6 +109,6 @@ export default React.createClass({
 					{this.props.fieldDef.helpBox}
 				</div>
 			</div>
-		);
+		);*/
 	}
 });
