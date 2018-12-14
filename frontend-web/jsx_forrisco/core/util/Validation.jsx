@@ -70,7 +70,77 @@ var Validate = {
 
 
 		return aux;
-    }
+	},
+
+	validationNewFieldItem: function(newfield, description) {
+		var name, type;
+		name =  S(newfield['newfield-name'].value);
+		type =  S(newfield['newfield-type'].value);
+
+		var errorField = false;
+
+		if (name.isEmpty() || type.isEmpty()) {
+			if(newfield['newfield-name'].value.trim() == "") {
+				newfield['newfield-name'].className = "form-control borderError";
+				newfield['formAlertErrorName'].innerHTML = Messages.get("label.alert.fieldEmpty");
+				errorField = true;
+			} else {
+				newfield['newfield-name'].className = "form-control";
+				newfield['formAlertErrorName'].innerHTML = "";
+			}
+
+			if(newfield['newfield-type'].value.trim() == "") {
+				newfield['newfield-type'].className = "form-control borderError";
+				newfield['formAlertErrorType'].innerHTML = Messages.get("label.alert.fieldEmpty");
+				errorField = true;
+			} else {
+				newfield['newfield-type'].className = "form-control";
+				newfield['formAlertErrorType'].innerHTML = "";
+			}
+		}
+
+
+		if(description.trim() == "") {
+			//newfield['formAlertErrorDescription'].innerHTML = Messages.get("label.alert.fieldEmpty");
+			errorField = true;
+		} else {
+			//newfield['formAlertErrorDescription'].innerHTML = "";
+		}
+
+
+		var aux = {
+			errorField: errorField,
+			name: name,
+			type: type,
+			description: description
+		}
+		return aux;
+	},
+
+	validationNewItem(newfield){
+
+		var titulo =  S(newfield['field-description'].value);
+
+		var errorField = false;
+
+		if (titulo.isEmpty()) {
+			if(newfield['field-description'].value.trim() == "") {
+				newfield['field-description'].className = "form-control borderError";
+				//newfield['field-description'].innerHTML = Messages.get("label.alert.fieldEmpty");
+				errorField = true;
+			} else {
+				newfield['field-description'].className = "form-control";
+				//newfield['formAlertErrorTitulo'].innerHTML = "";
+			}
+		}
+
+		var aux = {
+			errorField: errorField,
+			titulo: titulo,
+		}
+		return aux;
+
+	}
 }
 
 export default {

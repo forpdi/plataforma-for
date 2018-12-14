@@ -359,6 +359,40 @@
   margin-right: 5px;
 }
 
+
+
+
+
+
+.forrisco-app-sidebar, .forrisco-app-sidebar-hidden {
+	overflow-y: auto;
+	overflow-x: hidden;
+	/*@include flexbox;*/
+	@include flex-dir(column);
+	@include flex(2);
+	border: none;
+	font-size: 13px;
+	font-weight: 600;
+	color: #FFFFFF;
+	background-color: mix($brand-primary, #111, 40%);
+
+	& > * {
+	  background-color: inherit;
+	}
+
+  }
+
+  .forrisco-app-sidebar-hidden {
+	max-width: 70px;
+	& .fpdi-nav-label {
+	  display: none;
+	}
+  }
+
+.forrisco-app-sidebar {
+	max-width: 260px;
+}
+
 .forrisco-app-sidebar, .forrisco-app-sidebar-hidden {
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -371,7 +405,7 @@
 	font-size: 13px;
 	font-weight: 600;
 	color: #FFFFFF;
-	background-color: #6169d6;
+	background-color: $brand-secondary;
 }
 
 .form-control-h {
@@ -387,3 +421,47 @@
 	color: #ccc;
 	font-size: 10px;}
 
+.Cinza {
+    background-color: #ddd;
+    padding: 1px 10px
+}
+
+.Vermelho {
+	background-color: #FF0000;
+	padding: 1px 10px
+}
+
+.Marron {
+	background-color: #774422;
+	padding: 1px 10px
+}
+
+.Amarelo {
+	background-color: #FFFF00;
+	padding: 1px 10px
+}
+
+.Laranja {
+	background-color: #FF6600;
+	padding: 1px 10px
+}
+.Verde {
+	background-color: #00CC00;
+	padding: 1px 10px
+}
+.Azul {
+	background-color: #0000FF;
+	padding: 1px 10px
+}
+
+
+.vertical-text {
+	transform: rotate(270deg);
+
+}
+
+.matrixSelect {
+
+	width:auto;
+	font-size: 12px !important;
+}

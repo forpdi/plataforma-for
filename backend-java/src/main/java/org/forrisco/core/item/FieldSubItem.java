@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forrisco.core.item.SubItem;
 
@@ -35,6 +36,25 @@ public class FieldSubItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private boolean isText;
 	
+	@Transient
+	private String value;
+	
+	public SubItem getSubitem() {
+		return subitem;
+	}
+
+	public void setSubitem(SubItem subitem) {
+		this.subitem = subitem;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -46,13 +46,21 @@ public class Policy extends SimpleLogicalDeletableEntity {
 
 	@Transient
 	private String risk_level[][];
-	
-	
-	
+
 	@SkipSerialization
 	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
 	private Company company;
 
+	private boolean archived = false;
+	
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+	
 	public String getName() {
 		return name;
 	}

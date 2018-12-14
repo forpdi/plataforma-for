@@ -25,7 +25,7 @@ export default React.createClass({
 		toastr: React.PropTypes.object.isRequired,
 		permissions: React.PropTypes.array.isRequired,
 		roles: React.PropTypes.object.isRequired,
-		planMacro: React.PropTypes.object.isRequired
+		policy: React.PropTypes.object.isRequired
 	},
 
 	getDefaultProps() {
@@ -130,7 +130,7 @@ export default React.createClass({
 			});
 		}
 
-		PlanMacroStore.on("getmainmenustate", (data) => {
+		PolicyStore.on("getmainmenustate", (data) => {
             this.setState({
                 menuHidden: data
             });
@@ -230,16 +230,10 @@ export default React.createClass({
 					<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
 				);
 			} else {
-				if(this.props.fieldDef.description != null){
-					fieldEl = (
-						<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef.description}}/></div>
-					);
-				}else{
  				fieldEl = (
  					<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef.value}}/></div>
-				 );
-				}
-			}
+ 				);
+ 			}
 		} else if (this.props.fieldDef.type == AttributeTypes.STRATEGIC_OBJECTIVE_FIELD) {
 			fieldEl = (
 				<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
@@ -638,7 +632,7 @@ export default React.createClass({
 							</div>
 							{strategicObjectivesPlans}
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
+									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.policy.get("id")?
 								(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
 									title={Messages.get("label.deleteField")} onClick={this.delete}/> : "")
 							: ""}

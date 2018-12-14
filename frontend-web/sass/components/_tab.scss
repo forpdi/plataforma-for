@@ -149,6 +149,46 @@
 			}
 		}
 	}
+
+	.frisco-tabs-nav {
+		display: block;
+		margin: 0px;
+		padding: 5px 0px 0px 5px;
+		@include flexbox;
+  		@include flex-dir(column);
+  		&::after {
+  			@include flex(1);
+  		}
+		& > * {
+			list-style: none;
+			background-color: transparent;
+			color: inherit;
+			padding: 8px 15px;
+			margin: 0px;
+			cursor: pointer;
+			line-height: 100%;
+			@include border-radius(5px 0px 0px 5px);
+			&.active {
+				background-color: #FFFFFF;
+				color: mix($brand-secondary,$brand-secondary, 40%);
+			}
+			&:hover {
+				background-color: #FFFFFF;
+				color: mix($brand-secondary, #111, 40%);
+			}
+			&:focus{
+				outline: none;
+			}
+			& .mdi::before {
+				font-size: 24px;
+				line-height: 24px;
+				margin-right: 10px;
+			}
+			& .mdi {
+				vertical-align: middle;
+			}
+		}
+	}
 }
 
 .fpdi-tabsHidden-content{

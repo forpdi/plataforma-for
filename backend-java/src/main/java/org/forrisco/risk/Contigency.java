@@ -7,7 +7,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.forpdi.core.user.User;
-import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;

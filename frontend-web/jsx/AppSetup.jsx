@@ -1,4 +1,3 @@
-
 import Backbone from "backbone";
 import Marked from "marked";
 import Moment from 'moment';
@@ -52,9 +51,13 @@ import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
 
 /* Forrisco */
-import Forrisco_Application from 'forpdi/jsx/Application_Forrisco.jsx';
+import Forrisco_Application from "forpdi/jsx/Application_Forrisco.jsx";
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/Forrisco_DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
+import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
+import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/item/ItemRegister.jsx";
+import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/SubItemRegister.jsx";
+import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 
 Moment.locale("pt_BR");
 
@@ -76,24 +79,25 @@ ReactDOM.render((
 	<Route path="/forrisco" component={Forrisco_Application}>
 		<Route path="home" component={Forrisco_Dashboard} />
 		<Route path="policy" component={Forrisco_PolicyEdit} />
-		<Route path="plan/new" component={PlanMacroEdit} />
-		<Route path="plan/:id">
-			<IndexRedirect to="document" />
-			<Route path="edit" component={PlanMacroEdit} />
-			<Route path="details" component={PlanMacroDetails}>
+		{//<Route path="plan" component={Forrisco_PlanEdit} />
+		}
+		<Route path="policy/:policyId">
+			<IndexRedirect to="item" />
+			<Route path="item" component={Forrisco_PolicyDetails}>
 				<IndexRedirect to="overview" />
-				<Route path="overview" component={PlanMacroTab} />
-				<Route path="subplan/:subplanId" component={PlanRegister} />
-				<Route path="subplans/new" component={PlanRegister} />
-				<Route path="level/:subplanId/:levelId" component={LevelTab} />
-				<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
-				<Route path="duplicate" component={DuplicatePlan} />
-				</Route>
-				<Route path="document" component={PlanMacroDetails}>
-				<IndexRedirect to="overview" />
-				<Route path="overview" component={DocumentDetails} />
-				<Route path="section/:sectionId" component={DocumentSectionAttributes} />
+				<Route path="overview" component={Forrisco_PolicyTab} />
+				{//<Route path="overview" component={Forrisco_ItemDetails}/>
+				}
+				<Route path="new" component={Forrisco_ItemRegister} />
+				<Route path=":itemId/subitem/new" component={Forrisco_SubItemRegister} />
+				<Route path=":itemId/subitem/:subitemId" component={Forrisco_SubItemRegister} />
+					{//Forrisco_SubitemDetails
+					//Forrisco_PolicyRegister
+				}
+
+				<Route path=":itemId" component={Forrisco_ItemRegister}/>
 			</Route>
+
 		</Route>
 
 		<Route path="system" component={SystemManagement}>

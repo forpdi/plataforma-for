@@ -31,9 +31,6 @@ public class Item extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable = false, length=255)
 	private String name;
-
-	@Column(nullable = false, length=255)
-	private String abbreviation;
 	
 	@Column(nullable = true, length=4000)
 	private String description;
@@ -44,8 +41,8 @@ public class Item extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private List<FieldItem> fieldItem;
-	
-	
+
+
 	public List<FieldItem> getFieldItem() {
 		return fieldItem;
 	}
@@ -60,14 +57,6 @@ public class Item extends SimpleLogicalDeletableEntity {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getAbbreviation() {
-		return abbreviation;
-	}
-
-	public void setAbbreviation(String abbreviation) {
-		this.abbreviation = abbreviation;
 	}
 
 	public String getDescription() {

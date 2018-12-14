@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
+import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
@@ -27,22 +27,18 @@ export default React.createClass({
             user: UserSession.get("user"),
             logged: !!UserSession.get("logged"),
             hidden: false,
-            plans: [],
+            policies: [],
             domainError:true,
-            archivedPlans: [],
-            archivedPlansHidden:true,
+            archivedPolicies: [],
+            archivedPoliciesHidden:true,
             showBudgetElement:false
         };
     },
     componentDidMount() {
         var me = this;
 
-        me.setState({
-            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
-        });
-
         if (this.state.logged && EnvInfo.company != null) {
-            me.refreshPlans();
+            me.refreshPolicies();
         }
         UserSession.on("login", session => {
             me.setState({
@@ -51,56 +47,56 @@ export default React.createClass({
             });
 
             if(EnvInfo.company != null){
-                me.refreshPlans();
+                me.refreshPolicies();
             }
         }, me);
         UserSession.on("logout", session => {
             me.setState({
                 user: null,
                 logged: false,
-                plans: null
+                policy: null
             });
         }, me);
 
-        PlanMacroStore.on("unarchivedplanmacrolisted", (store) => {
+        PolicyStore.on("unarchivedpolicylisted", (store) => {
              if(store.status == 400){
                 me.setState({
                     domainError:true
                 });
             }else if(store.status == 200 || store.status == undefined){
                 me.setState({
-                    plans:  store.data,
+                    policies:  store.data,
                     domainError:false
                 });
             }
         }, me);
 
-        PlanMacroStore.on("archivedplanmacrolisted", (store) => {
+        PolicyStore.on("archivedpolicylisted", (store) => {
             if(store.status == 400){
                 me.setState({
                     domainError:true
                 });
             }else if(store.status == 200 || store.status == undefined){
                 me.setState({
-                    archivedPlans: store.data,
+                    archivedPolicies: store.data,
                     domainError:false
                 });
             }
         }, me);
 
-        PlanMacroStore.on("planmacroarchived", (model) => {
+        PolicyStore.on("policyarchived", (model) => {
             me.setState({
-                archivedPlansHidden:false
+                archivedPoliciesHidden:false
             });
         }, me);
 
-        PlanMacroStore.on("sync", (model) => {
-            for(var i = 0; i < this.state.plans.length; i++) {
-                if(this.state.plans[i].id == model.attributes.id) {
-                    var plans = this.state.plans;
-                    plans[i] = model.attributes;
+        PolicyStore.on("sync", (model) => {
+            for(var i = 0; i < this.state.policies.length; i++) {
+                if(this.state.policies[i].id == model.attributes.id) {
+                    var policies = this.state.policies;
+                    policies[i] = model.attributes;
                     this.setState({
-                        plans: plans
+                        policies: policies
                     })
                 }
             }
@@ -114,12 +110,6 @@ export default React.createClass({
             }
         }, me);
 
-        /*PlanMacroStore.trigger("fail", (error) => {
-            console.log(error);
-            me.setState({
-                domainError:true
-            });
-        }, me);    */
 
         me.checkRoute(me.props.location.pathname);
 
@@ -131,15 +121,8 @@ export default React.createClass({
     },
     componentWillUnmount() {
         UserSession.off(null, null, this);
-        PlanMacroStore.off(null, null, this);
+        PolicyStore.off(null, null, this);
         StructureStore.off(null, null, this);
-    },
-
-    componentWillReceiveProps() {
-        this.setState({
-            showBudgetElement : (this.state.logged && EnvInfo.company != null ? EnvInfo.company.showBudgetElement : null)
-        });
-
     },
     checkRoute(pathname) {
         this.setState({
@@ -169,29 +152,29 @@ export default React.createClass({
         });
         Observables.ResizeMenu.notify();
 
-        PlanMacroStore.dispatch({
-            action: PlanMacroStore.ACTION_MAIN_MENU_STATE,
+        PolicyStore.dispatch({
+            action: PolicyStore.ACTION_MAIN_MENU_STATE,
             data: hidden
         });
     },
 
-    refreshPlans() {
-       /* PlanMacroStore.dispatch({
-            action: PlanMacroStore.ACTION_FIND_UNARCHIVED
+    refreshPolicies() {
+        PolicyStore.dispatch({
+            action: PolicyStore.ACTION_FIND_UNARCHIVED
         });
-        PlanMacroStore.dispatch({
-            action: PlanMacroStore.ACTION_FIND_ARCHIVED
-        });*/
+        PolicyStore.dispatch({
+            action: PolicyStore.ACTION_FIND_ARCHIVED
+        });
 },
 
-    listArchivedPlans(){
-        if(this.state.archivedPlansHidden){
+    listArchivedPolicies(){
+        if(this.state.archivedPoliciesHidden){
                 this.setState({
-                    archivedPlansHidden: false
+                    archivedPoliciesHidden: false
                 });
         }else{
             this.setState({
-                    archivedPlansHidden: true
+                    archivedPoliciesHidden: true
             });
         }
 	},
@@ -203,20 +186,20 @@ export default React.createClass({
         }
         return (<div className={(this.state.hidden ? 'forrisco-app-sidebar-hidden':'forrisco-app-sidebar')+' fpdi-tabs-stacked'}>
 
-            <div className="fpdi-tabs-nav">
+            <div className="frisco-tabs-nav">
     			<Link to="/forrisco/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
                     /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
                 </Link>
     		</div>
             <div style={{height: "10px"}} />
-            {this.state.plans && (this.state.plans.length > 0) ?
-                this.state.plans.map((plan, index) => {
-                    return <div className="fpdi-tabs-nav" key={"open-plan-"+index}>
-                        <Link to={"/plan/"+plan.id+"/"} activeClassName="active">
-                            <span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
-                                />  <span className="fpdi-nav-label" title = {plan.name}>
-                                    {(plan.name).length <= 24?plan.name:(plan.name).split("",20).concat(" ...")}
+            {this.state.policies && (this.state.policies.length > 0) ?
+                this.state.policies.map((policy, index) => {
+                    return <div className="frisco-tabs-nav" key={"open-plan-"+index}>
+                        <Link to={"/forrisco/policy/"+policy.id+"/"} activeClassName="active">
+                            <span className="fpdi-nav-icon mdi mdi-gavel icon-link" title = {policy.name}
+                                />  <span className="fpdi-nav-label" title = {policy.name}>
+                                    {(policy.name).length <= 24?policy.name:(policy.name).split("",20).concat(" ...")}
                                 </span>
                         </Link>
                     </div>;
@@ -224,9 +207,9 @@ export default React.createClass({
             :""}
 
   		{((this.context.roles.ADMIN || _.contains(this.context.permissions,
-             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION))) ? // && !this.state.domainError
+             PermissionsTypes.MANAGE_FORRISCO_POLICY_PERMISSION))) ? // && !this.state.domainError
                 <div>
-                    <div className="fpdi-tabs-nav">
+                    <div className="frisco-tabs-nav">
                         <Link to="/forrisco/policy/" activeClassName="active">
                             <span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
                                 <span className="fpdi-nav-label">
@@ -237,8 +220,8 @@ export default React.createClass({
                 </div>
 			: ""}
 
-			{((this.context.roles.ADMIN || _.contains(this.context.permissions,
-             PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION))) ? // && !this.state.domainError
+			{/*((this.context.roles.ADMIN || _.contains(this.context.permissions,
+             PermissionsTypes.MANAGE_FORRISCO_PLAN_PERMISSION))) ? // && !this.state.domainError
                 <div>
                     <div className="fpdi-tabs-nav">
                         <Link to="/forrisco/plan/new" activeClassName="active">
@@ -249,29 +232,30 @@ export default React.createClass({
                         </Link>
                     </div>
                 </div>
-			: ""}
+			: ""
+			*/}
 
 
             <hr className="divider"></hr>
-			{this.state.archivedPlans && (this.state.archivedPlans.length > 0) ?
+			{this.state.archivedPolicies && (this.state.archivedPolicies.length > 0) ?
 				<div>
 					<div className="fpdi-tabs-nav">
-						<a onClick={this.listArchivedPlans}>
+						<a onClick={this.listArchivedPolicies}>
 							<span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
 								/> <span className="fpdi-nav-label">
-									Planos arquivados
+									Políticas arquivadas
 								</span>
-								{this.state.hidden? "" : <span className={this.state.archivedPlansHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
+								{this.state.hidden? "" : <span className={this.state.archivedPoliciesHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
 
 						</a>
 					</div>
-					{!this.state.archivedPlansHidden && !this.state.hidden ?
-						this.state.archivedPlans.map((plan, index) => {
+					{!this.state.archivedPoliciesHidden && !this.state.hidden ?
+						this.state.archivedPolicies.map((policy, index) => {
 							return <div className="fpdi-tabs-nav" key={"archived-plan-"+index}>
-								<Link to={"/plan/"+plan.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
-									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {plan.name}
-										/>  <span className="fpdi-nav-label" title = {plan.name}>
-											{(plan.name.length) <= 24?plan.name:(plan.name.split("",12).concat(" ..."))}
+								<Link to={"/policy/"+policy.id+"/"} activeClassName="active marginLeft35" className="marginLeft35">
+									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title = {policy.name}
+										/>  <span className="fpdi-nav-label" title = {policy.name}>
+											{(policy.name.length) <= 24?policy.name:(policy.name.split("",12).concat(" ..."))}
 										</span>
 								</Link>
 							</div>;
@@ -279,7 +263,7 @@ export default React.createClass({
 					:""}
 				</div>
 			:""}
-            <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+            <div className="frisco-tabs-nav fpdi-nav-hide-btn">
                 <a onClick={this.tweakHidden}>
                     <span className={"fpdi-nav-icon mdi "+(this.state.hidden ? "mdi-arrow-right-bold-circle icon-link":"mdi-arrow-left-bold-circle icon-link")}
                         /> <span className="fpdi-nav-label">

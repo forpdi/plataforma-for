@@ -10,8 +10,7 @@ import javax.persistence.Table;
 
 
 import org.forpdi.core.user.User;
-import org.forrisco.core.plan.Plan;
-
+import org.forrisco.core.plan.PlanRisk;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -45,8 +44,8 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	private User user;
 
 	@SkipSerialization
-	@ManyToOne(targetEntity=Plan.class, optional=false, fetch=FetchType.EAGER)
-	private Plan plan;
+	@ManyToOne(targetEntity=PlanRisk.class, optional=false, fetch=FetchType.EAGER)
+	private PlanRisk planRisk;
 
 	public String getName() {
 		return name;
@@ -88,12 +87,12 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		this.user = user;
 	}
 
-	public Plan getPlan() {
-		return plan;
+	public PlanRisk getPlan() {
+		return planRisk;
 	}
 
-	public void setPlan(Plan plan) {
-		this.plan = plan;
+	public void setPlan(PlanRisk plan) {
+		this.planRisk = plan;
 	}
 
 }

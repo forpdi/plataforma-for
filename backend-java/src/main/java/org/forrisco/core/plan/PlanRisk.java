@@ -17,11 +17,11 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
  * @author Matheus Nascimento
  * 
  */
-@Entity(name = Plan.TABLE)
-@Table(name = Plan.TABLE)
+@Entity(name = PlanRisk.TABLE)
+@Table(name = PlanRisk.TABLE)
 
-public class Plan extends SimpleLogicalDeletableEntity {
-	public static final String TABLE = "frisco_plan";
+public class PlanRisk extends SimpleLogicalDeletableEntity {
+	public static final String TABLE = "frisco_plan_risk";
 	private static final long serialVersionUID = 1L;
 
 	@Column(nullable = false, length=255)
@@ -34,6 +34,16 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Policy.class, optional=false,  fetch=FetchType.EAGER)
 	private Policy policy;
 
+	private boolean archived = false;
+	
+	public boolean isArchived() {
+		return archived;
+	}
+
+	public void setArchived(boolean archived) {
+		this.archived = archived;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -57,8 +67,5 @@ public class Plan extends SimpleLogicalDeletableEntity {
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
-
-
-
 
 }

@@ -68,9 +68,9 @@ export default React.createClass({
 					>
 						<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
 						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
-							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt.get(this.props.fieldDef.valueField)}
-								data-placement="right" title={opt.get(this.props.fieldDef.displayField)}>
-									{opt.get(this.props.fieldDef.displayField)}
+							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt[this.props.fieldDef.valueField]}
+								data-placement="right" title={opt[this.props.fieldDef.displayField]}>
+									{opt[this.props.fieldDef.displayField]}
 							</option>);
 						}):''}
 				</select>

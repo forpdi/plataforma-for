@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -33,6 +34,20 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private boolean isText;
 
+	@Column(nullable = false, length=255)
+	private boolean fileLink;
+	
+	@Transient
+	private String value;
+	
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -72,8 +87,5 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 	public void setFileLink(boolean fileLink) {
 		this.fileLink = fileLink;
 	}
-
-	@Column(nullable = false, length=255)
-	private boolean fileLink;
 
 }

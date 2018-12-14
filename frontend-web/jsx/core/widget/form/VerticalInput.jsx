@@ -161,7 +161,7 @@ export default React.createClass({
 		} else if (this.props.fieldDef.type == 'select') {
 			fieldEl = (
 				<select
-					className="form-control"
+					className= {"form-control "+this.props.fieldDef.className}
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}

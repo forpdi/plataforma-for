@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
+import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import string from "string";
 
 var URL = Fluxbone.BACKEND_URL+"policy";
@@ -22,7 +23,6 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_FIND: 'policy-find',
 	ACTION_RETRIEVE: 'policy-retrieve',
 	ACTION_UPDATE: 'policy-update',
-	ACTION_DUPLICATE: "policy-duplicate",
 	ACTION_ARCHIVE: "policy-archive",
 	ACTION_UNARCHIVE: "policy-unarchive",
 	ACTION_FIND_ARCHIVED: 'policy-findArchived',
@@ -31,28 +31,10 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_DELETE: "policy-delete",
 	ACTION_NEWPOLICY: "policy-newPolicy",
 	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
-
+	ACTION_CUSTOM_UPDATE: "policy-customUpdate",
+	ACTION_RETRIEVE_RISK_LEVEL: "policy-retrieveRiskLevel",
 	url: URL,
 	model: PolicyModel,
-
-	duplicate(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/duplicate",
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				macro: data.macro
-			}),
-			success(model) {
-				me.trigger("planmacroduplicated", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("planmacroduplicated", opts);
-			}
-		});
-	},
 
 	findArchived(data){
 		var me = this;
@@ -87,9 +69,25 @@ var PolicyStore = Fluxbone.Store.extend({
 		});
 	},
 
+
+	retrieveRiskLevel(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/risklevel/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("retrieverisklevel", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("retrieverisklevel", opts);
+			}
+		});
+	},
+
 	newPolicy(data){
 		var me = this;
-
 		$.ajax({
 			url: me.url+'/new',
 			method: 'POST',
@@ -99,10 +97,18 @@ var PolicyStore = Fluxbone.Store.extend({
 				policy: data
 			}),
 			success(model) {
+				ItemStore.dispatch({
+					action: ItemStore.ACTION_CREATE_INFO,
+					data: model.data
+				});
 				me.trigger("policycreated", model);
+				//me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.handleRequestErrors([], response);
+
+				me.handleRequestErrors([], opts);
+
+				me.trigger("policycreated",{msg:opts.responseJSON.message,data:{id:null}})
 			}
 		});
 	},
@@ -148,13 +154,13 @@ var PolicyStore = Fluxbone.Store.extend({
 	delete(data){
 		var me = this;
 		$.ajax({
-			url: me.url+"/"+data.id,
+			url: me.url+"/"+data,
 			method: 'DELETE',
 			success(model) {
-				me.trigger("policy-deleted", model, data);
+				me.trigger("policyDeleted", model, data);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("policy-deleted", opts);
+				me.trigger("policyDeleted", opts);
 			}
 		});
 	},
