@@ -358,8 +358,7 @@ public class ItemController extends AbstractController {
 			existent.setDescription(item.getDescription());
 			existent.setName(item.getName());
 			this.bs.persist(existent);
-			
-			this.success(item);
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
@@ -407,8 +406,7 @@ public class ItemController extends AbstractController {
 			existent.setDescription(subitem.getDescription());
 			existent.setName(subitem.getName());
 			this.bs.persist(existent);
-			
-			this.success(subitem);
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());

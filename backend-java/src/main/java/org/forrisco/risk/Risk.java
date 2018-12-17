@@ -7,6 +7,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.forpdi.core.user.User;
+import org.forrisco.core.process.ProcessUnit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
@@ -26,11 +27,17 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	//@SkipSerialization
-	//@ManyToOne
-	//@Id "unit_id"
-	//@Id="frisco_process_id"
-	//private Unit unit;
+	@SkipSerialization
+	@ManyToOne(targetEntity=ProcessUnit.class, optional=false, fetch=FetchType.EAGER)
+	private ProcessUnit pu;
+
+	public ProcessUnit getPu() {
+		return pu;
+	}
+
+	public void setPu(ProcessUnit pu) {
+		this.pu = pu;
+	}
 
 	@SkipSerialization
 	@ManyToOne(targetEntity=RiskLevel.class, fetch=FetchType.EAGER)

@@ -1,10 +1,7 @@
 import $ from 'jquery';
-import _ from 'underscore';
 import React from "react";
 import {Link} from 'react-router';
-//import Toastr from 'toastr';
 import string from 'string';
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({

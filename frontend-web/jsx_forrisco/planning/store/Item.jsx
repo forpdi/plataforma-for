@@ -1,6 +1,4 @@
-import _ from 'underscore';
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
-import string from "string";
 
 var URL = Fluxbone.BACKEND_URL+"item";
 

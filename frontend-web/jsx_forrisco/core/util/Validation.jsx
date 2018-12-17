@@ -1,5 +1,3 @@
-import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes';
-import moment from 'moment';
 import S from 'string';
 import Messages from "forpdi/jsx/core/util/Messages";
 

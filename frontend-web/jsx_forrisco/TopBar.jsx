@@ -1,7 +1,6 @@
 import React from "react";
 import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import NotificationUser from "forpdi/jsx/core/view/user/NotificationUser.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import NotificationTopBar from "forpdi/jsx/core/view/user/NotificationTopBar.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";

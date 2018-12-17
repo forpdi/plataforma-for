@@ -7,12 +7,6 @@ import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-
-import Logo from 'forpdi/img/logo.png';
-
-import $ from 'jquery';
-import Toastr from 'toastr';
 
 export default React.createClass({
     contextTypes: {

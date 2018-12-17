@@ -6,13 +6,8 @@ import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import LevelSearch from "forpdi/jsx/planning/widget/search/LevelSearch.jsx";
 import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-import DocumentStore from "forpdi/jsx/planning/store/Document.jsx"
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 //import Toastr from 'toastr';
 
@@ -211,7 +206,6 @@ export default React.createClass({
 		ItemStore.off(null, null, this);
 	},
 	componentWillReceiveProps(newProps) {
-
 	    if(document.URL.indexOf('details/overview')>=0){
 	    	this.refreshPlans(newProps.policy.get("id"));
 		}
@@ -223,7 +217,7 @@ export default React.createClass({
 			actualType: newProps.treeType
 		});
 
-		this.refreshPlans(newProps.policy.get("id")	);
+		//this.refreshPlans(newProps.policy.get("id")	);
 
 		ItemStore.dispatch({
 			action: ItemStore.ACTION_FIND,
@@ -400,7 +394,8 @@ export default React.createClass({
 
 
 			</ul>
-			{this.context.router.isActive("forrisco/policy/"+this.props.policy.get("id")+"/item") ?
+			{this.context.router.isActive("forrisco/policy/"+this.props.policy.get("id")+"/item")
+			|| this.context.router.isActive("forrisco/policy/"+this.props.policy.get("id")+"/edit") ?
 			<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
 
 					<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
@@ -449,7 +444,6 @@ export default React.createClass({
  							submit={this.treeSearch}
  							hiddenSearch = {this.searchFilter}
  							displayResult = {this.displayResult}
-
   						/>
   					</div> : ""
 				}

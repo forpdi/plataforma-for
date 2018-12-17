@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import string from "string";
@@ -105,10 +104,8 @@ var PolicyStore = Fluxbone.Store.extend({
 				//me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {
-
-				me.handleRequestErrors([], opts);
-
 				me.trigger("policycreated",{msg:opts.responseJSON.message,data:{id:null}})
+				me.handleRequestErrors([], opts);
 			}
 		});
 	},
@@ -161,6 +158,25 @@ var PolicyStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("policyDeleted", opts);
+			}
+		});
+	},
+
+	customUpdate(data) {
+		var me = this;
+		$.ajax({
+			url: me.url+"/update",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				policy: data
+			}),
+			success(model) {
+				me.trigger("policyUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("policyUpdated", null);
 			}
 		});
 	},

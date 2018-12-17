@@ -10,7 +10,6 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
-
 import AttributeInput from 'forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx';
 import FieldItemInput from  'forpdi/jsx_forrisco/planning/view/item/FieldItemInput.jsx'
 
@@ -561,13 +560,13 @@ export default React.createClass({
 		if(this.state.vizualization){
 
 			return <div>
-				{this.state.model ? this.renderBreadcrumb() : ""}
+				{this.state.subitemModel ? this.renderBreadcrumb() : ""}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
 				<h1>
 					{this.state.subitemModel.data.name}
-					{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
+					{this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
 						(<span className="dropdown">
 							<a
 								className="dropdown-toggle"
@@ -605,13 +604,13 @@ export default React.createClass({
 
 				<form onSubmit={this.onSubmit} ref="newSubitemForm">
 
-				{this.state.model ? this.renderBreadcrumb() : ""}
+				{this.state.subitemModel ? this.renderBreadcrumb() : ""}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
 					<h1>
 						{(this.state.titulo)}
-						{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
+						{this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
 							(<span className="dropdown">
 								<a
 									className="dropdown-toggle"

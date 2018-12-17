@@ -36,16 +36,18 @@ public class PolicyController extends AbstractController {
 	@Inject private PolicyBS bs;
 	@Inject private ItemBS itemBS;
 	
+	protected static final String PATH =  BASEPATH +"/policy";
+	
 	/**
 	 * Salvar Nova Política
 	 * 
 	 * @return void
 	 */
-	@Post("/api/policy/new")
+	@Post( PATH + "/new")
 	@Consumes
 	@NoCache
 	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
-	public void savePolicy2(@NotNull @Valid  Policy policy){
+	public void savePolicy(@NotNull @Valid  Policy policy){
 		
 		try {
 			if(this.domain == null) {
@@ -72,7 +74,7 @@ public class PolicyController extends AbstractController {
 	 * @return PaginatedList<PlanMacro> Lista de planos macro arquivados da
 	 *         companhia.
 	 */
-	@Get("/api/policy/archivedpolicy")
+	@Get( PATH + "/archivedpolicy")
 	@NoCache
 	public void listMacrosArchived(Integer page) {
 		if (page == null)
@@ -90,7 +92,7 @@ public class PolicyController extends AbstractController {
 		}
 	}
 
-	@Get("/api/policy/unarchivedpolicy")
+	@Get( PATH + "/unarchivedpolicy")
 	@NoCache
 	public void listPolicyUnarchived(Integer page) {
 		if (page == null)
@@ -117,7 +119,7 @@ public class PolicyController extends AbstractController {
 	 * @return Policy Retorna a política de acordo com o id passado.
 	 */
 
-	@Get("/api/policy/{id}")
+	@Get( PATH + "/{id}")
 	@NoCache
 	@Permissioned
 	public void retrievePolicy(Long id) {
@@ -142,7 +144,7 @@ public class PolicyController extends AbstractController {
 	 *            Id da política ser excluído.
 	 *
 	 */
-	@Delete("/api/policy/{id}")
+	@Delete( PATH + "/{id}")
 	@NoCache
 	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
 	public void deletePolicy(@NotNull Long id) {
@@ -191,19 +193,70 @@ public class PolicyController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Edita política.
+	 * 
+	 * @param policy
+	 *            política a ser alterado com os novos campos.
+	 */
+	@Post( PATH + "/update")
+	@Consumes
+	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	public void Policy(@NotNull @Valid Policy policy) {
+		try {
+			Policy existent = this.bs.exists(policy.getId(), Policy.class);
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
 
-	@Post("/api/policy/archive")
+			if(existent.getCompany()==null) {
+				this.fail("política sem Istituição associada");
+				return;
+			}
+
+			//(deletar os grau de riscos emodificar a quantidade de linhas e colunas)
+			PaginatedList<PlanRisk> plans = this.bs.listPlanbyPolicy(policy);
+			
+
+			//pegar os risco desses planos
+			//caso não esteja vazio, retornar falha
+			if(plans ==null) {
+				this.fail("Impossível modificar política com Risco vinculados");
+				return;
+			}
+			
+			PaginatedList<RiskLevel>  riskLevels= this.bs.listRiskLevelbyPolicy(policy);
+			
+			if(plans.getTotal() >0) {
+				
+			}else {
+				
+			}
+			
+			//existent.setDescription(item.getDescription());
+			//existent.setName(item.getName());
+			this.bs.persist(existent);
+			this.success(existent);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+
+	@Post( PATH + "/archive")
 	public void function5() {
 		LOGGER.warn("5");
 	}
 
-	@Post("/api/policy/unarchive")
+	@Post( PATH + "/unarchive")
 	public void function6() {
 		LOGGER.warn("6");
 	}
 
 	
-	@Post("/api/policy/duplicate")
+	@Post( PATH + "/duplicate")
 	public void function1() {
 		LOGGER.warn("2");
 	}

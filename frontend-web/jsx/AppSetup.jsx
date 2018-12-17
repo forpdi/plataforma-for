@@ -60,7 +60,6 @@ import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/Sub
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 
 Moment.locale("pt_BR");
-
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
 Numeral.language("pt-br");
 
@@ -79,25 +78,21 @@ ReactDOM.render((
 	<Route path="/forrisco" component={Forrisco_Application}>
 		<Route path="home" component={Forrisco_Dashboard} />
 		<Route path="policy" component={Forrisco_PolicyEdit} />
-		{//<Route path="plan" component={Forrisco_PlanEdit} />
-		}
+
 		<Route path="policy/:policyId">
 			<IndexRedirect to="item" />
 			<Route path="item" component={Forrisco_PolicyDetails}>
 				<IndexRedirect to="overview" />
 				<Route path="overview" component={Forrisco_PolicyTab} />
-				{//<Route path="overview" component={Forrisco_ItemDetails}/>
-				}
 				<Route path="new" component={Forrisco_ItemRegister} />
 				<Route path=":itemId/subitem/new" component={Forrisco_SubItemRegister} />
 				<Route path=":itemId/subitem/:subitemId" component={Forrisco_SubItemRegister} />
-					{//Forrisco_SubitemDetails
-					//Forrisco_PolicyRegister
-				}
-
 				<Route path=":itemId" component={Forrisco_ItemRegister}/>
 			</Route>
-
+			<Route path="edit" component={Forrisco_PolicyDetails}>
+				<IndexRedirect to="overview" />
+				<Route path="overview" component={Forrisco_PolicyTab} />
+			</Route>
 		</Route>
 
 		<Route path="system" component={SystemManagement}>

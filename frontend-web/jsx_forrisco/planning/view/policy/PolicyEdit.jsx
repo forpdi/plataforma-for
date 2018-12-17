@@ -1,15 +1,9 @@
 import React from "react";
 import {Link} from 'react-router';
-
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-
-
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
-
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 
@@ -32,6 +26,7 @@ export default React.createClass({
 			loading: !!this.props.params.modelId,
 			modelId: this.props.params.modelId,
 			model: null,
+			policyModel: null,
 			fields: !this.props.params.modelId ? this.getFields():null,
 			visualization: true,
 			hide: true,
@@ -156,6 +151,7 @@ export default React.createClass({
 			me.setState({
 				loading: false,
 				model: model,
+				policyModel:model,
 				fields: me.getFields(model)
 			});
 		}, me);
@@ -175,10 +171,32 @@ export default React.createClass({
 
 			}, me);
 
-		if (this.state.loading) {
+			PolicyStore.on("policyUpdated", (model) => {
+				//me.context.tabPanel.removeTabByPath(me.state.tabPath);
+				/*if(model.data.id){
+					var msg = Messages.get("notification.policy.save");
+					this.context.toastr.addAlertSuccess(msg);
+					me.context.router.push("/forrisco/policy/"+model.data.id+"/item/overview");
+
+				}else{
+					var msg= model? model.msg : "Erro ao criar Política"
+					this.context.toastr.addAlertError(msg);
+				}*/
+
+				}, me);
+
+
+		/*if (this.state.loading) {
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_RETRIEVE,
 				data: this.state.modelId
+			});
+		}*/
+
+		if(this.props.params.policyId){
+			PolicyStore.dispatch({
+				action: PolicyStore.ACTION_RETRIEVE,
+				data: this.props.params.policyId
 			});
 		}
 	},
@@ -571,8 +589,8 @@ export default React.createClass({
 		document.getElementById("field-nline").value = "";
 		document.getElementById("field-ncolumn").value = "";
 		this.setState({
-			loading: !!this.props.params.modelId,
-			model: null,
+			loading: !!this.props.params.policyId,
+			policyModel: null,
 			fields: null,
 			visualization: true,
 			hide: true,
@@ -599,13 +617,14 @@ export default React.createClass({
 			return;
 		}
 
-		if (me.props.params.modelId) {
+		if (me.props.params.policyId) {
 			me.state.model.set(data);
+
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_UPDATE,
+				action: PolicyStore.ACTION_CUSTOM_UPDATE,
 				data: me.state.model
 			});
-			msg = Messages.get("notification.institution.update");
+			msg = Messages.get("notification.policy.update");
 			//msg = "Instituição atualizada com sucesso."
 			//Toastr.remove();
 			//Toastr.success(Messages.get("notification.institution.update"));
@@ -623,6 +642,7 @@ export default React.createClass({
 	},
 
 	render() {
+		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
 
 		return (
 			<div>

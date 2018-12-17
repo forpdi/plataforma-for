@@ -1,12 +1,8 @@
 import React from "react";
-import {Link} from 'react-router';
-
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PolicyTabPanel from "forpdi/jsx_forrisco/planning/widget/plan/PolicyTabPanel.jsx";
 import PolicyTree from "forpdi/jsx_forrisco/planning/widget/plan/PolicyTree.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import _ from 'underscore';
 
