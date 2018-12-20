@@ -1,18 +1,8 @@
-import S from 'string';
 import React from "react";
 import _ from 'underscore';
-import {Link} from 'react-router';
-//import DocumentStore from "forpdi/jsx/planning/store/Document.jsx";
-//import ScheduleStore from "forpdi/jsx/planning/store/Schedule.jsx";
-//import StructureStore from 'forpdi/jsx/planning/store/Structure.jsx';
-//import TableStore from "forpdi/jsx/planning/store/TableFields.jsx";
-
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
-
-
 import AttributeForm from "forpdi/jsx_forrisco/planning/widget/attributeForm/AttributeForm.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import TableFieldCreator from "forpdi/jsx/planning/view/document/TableFieldCreator.jsx";
 import ScheduleFieldCreator from "forpdi/jsx/planning/view/document/ScheduleFieldCreator.jsx";
@@ -20,7 +10,6 @@ import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
-//import Toastr from 'toastr';
 
 var Validate = Validation.validate;
 

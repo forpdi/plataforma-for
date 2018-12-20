@@ -40,11 +40,6 @@ public class Process extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Company.class,  fetch=FetchType.EAGER)
 	private Company company;
 	
-	@SkipSerialization
-	@ManyToMany(targetEntity=Unit.class,  fetch=FetchType.EAGER)
-	private Set<Unit> unit = new HashSet<>();
-
-
 	public String getName() {
 		return name;
 	}
@@ -75,14 +70,6 @@ public class Process extends SimpleLogicalDeletableEntity {
 
 	public void setCompany(Company company) {
 		this.company = company;
-	}
-
-	public Set<Unit> getUnit() {
-		return unit;
-	}
-
-	public void setUnit(Set<Unit> unit) {
-		this.unit = unit;
 	}
 
 }

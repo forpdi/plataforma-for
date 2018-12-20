@@ -1,15 +1,10 @@
 import React from "react";
 import {Link} from 'react-router';
-
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-
-
+import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
-
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 
@@ -27,12 +22,14 @@ export default React.createClass({
 		tabPanel: React.PropTypes.object,
 		roles: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
-			loading: !!this.props.params.modelId,
-			modelId: this.props.params.modelId,
-			model: null,
-			fields: !this.props.params.modelId ? this.getFields():null,
+			loading: null,
+			itemModel:null,
+			policyModel: null,
+			risklevelModel: null,
+			fields: null,
 			visualization: true,
 			hide: true,
 			hidePI: true,
@@ -54,53 +51,84 @@ export default React.createClass({
 			impact: []
 		};
 	},
-	getFields(model) {
-		return [{
+
+	getFields() {
+		var fields = [];
+		fields.push({
 			name: "name",
 			type: "text",
 			required: true,
 			maxLength: 240,
 			placeholder: "Nome da Política",
 			label: Messages.getEditable("label.name","fpdi-nav-label"),
-			value: model ? model.get("name"):null
+			value: this.state.policyModel ? this.state.policyModel.attributes.name : null,
 		},{
 			name: "description",
 			type: "textarea",
 			placeholder: "Descrição da Política",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy","fpdi-nav-label"),
-			value: model ? model.get("description"):null,
-		}]
+			value: this.state.policyModel ? this.state.policyModel.attributes.description : null,
+		})
+
+		return fields;
+
 	},
-	getFields2(model,n) {
-		return [{
+
+	getRisco(n) {
+		var fields = [];
+		var cor=null
+		var  risk=null
+		if(this.state.risklevelModel){
+			if(this.state.risklevelModel.data[n-1]){
+				switch(this.state.risklevelModel.data[n-1]['color']) {
+					case 0: cor="Vermelho"; break;
+					case 1: cor="Marron"; break;
+					case 2: cor="Amarelo"; break;
+					case 3: cor="Laranja"; break;
+					case 4: cor="Verde"; break;
+					case 5: cor="Azul"; break;
+					default: cor="Vermelho";
+				}
+				risk=this.state.risklevelModel.data[n-1]['level']
+			}
+		}
+
+		fields.push({
 			name: "risk_level_"+n,
 			type: "text",
 			required: true,
 			maxLength: 40,
 			placeholder: " Ex: Crítico",
 			label: Messages.getEditable("label.policyConfig","hide"),
-			value: model ? model.get("name"):null
+			value: risk,
+			onChange: this.onChangeMatrix
 		},{
 			name: "risk_cor_"+n,
 			type: "select",
 			required: true,
 			maxLength: 40,
 			label: Messages.getEditable("label.policySelect","hide"),
-			value: model ? model.get("name"):null,
+			value: null,
+			value: cor,
 			valueField: 'label',
-			displayField: 'label'
-		}]
+			displayField: 'label',
+			onChange: this.onChangeMatrix
+		})
+		return fields
 	},
-	getFields3(model) {
-			return [{
+
+	getNumero() {
+		var fields = [];
+
+		fields.push({
 			name: "nline",
 			type: "number",
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de linhas",
-			label: Messages.getEditable("label.policyPI","fpdi-nav-label"),
-			value: model ? model.get("nline"):null,
+			//label: Messages.getEditable("label.policyPI","fpdi-nav-label"),
+			value: this.state.policyModel ? this.state.policyModel.attributes.nline : null,
 			onChange: this.change
 		},{
 			name: "ncolumn",
@@ -108,11 +136,14 @@ export default React.createClass({
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de colunas",
-			label: "",//Messages.getEditable("label.policySelect","fpdi-nav-label"),
-			value: model ? model.get("ncolumn"):null,
+			//label: "",//Messages.getEditable("label.policySelect","fpdi-nav-label"),
+			value: this.state.policyModel ? this.state.policyModel.attributes.ncolumn : null,
 			onChange: this.change
-		}]
+		})
+
+		return fields
 	},
+
 	getProbabilidade(value,n) {
 		return [{
 		name: "probability_"+n,
@@ -121,10 +152,10 @@ export default React.createClass({
 		maxLength: 1,
 		hidden: true,
 		placeholder: " Tipo de probabilidade (Ex.: Alto, Médio ou Baixo)",
-		label: "",//Messages.getEditable("label.policySelect","fpdi-nav-label"),
+		label: "",
 		value: value
-		//onChange: this.changeProbability
 	}]},
+
 	getImpacto(value,n) {
 		return [{
 		name: "impact_"+n,
@@ -133,10 +164,10 @@ export default React.createClass({
 		maxLength: 1,
 		hidden: true,
 		placeholder: " Tipo de Impacto (Ex.: Alto, Médio ou Baixo)",
-		label: "",//Messages.getEditable("label.policySelect","fpdi-nav-label"),
+		label: "",
 		value: value
-		//onChange: this.changeImpact
 	}]},
+
 	componentDidMount() {
 		var me = this;
 
@@ -155,30 +186,70 @@ export default React.createClass({
 		PolicyStore.on("retrieve", (model) => {
 			me.setState({
 				loading: false,
-				model: model,
-				fields: me.getFields(model)
+				policyModel:model,
+				fields: me.getFields(),
+				ncolumn: model.attributes.ncolumn,
+				nline: model.attributes.nline,
+				validPI: true,// model.attributes.nline>1 &&  model.attributes.ncolumn>1,
+				hide:false,
+				matrix_c: model.attributes.ncolumn,
+				matrix_l: model.attributes.nline
 			});
 		}, me);
 
 		PolicyStore.on("policycreated", (model) => {
-			//me.context.tabPanel.removeTabByPath(me.state.tabPath);
-
 			if(model.data.id){
 				var msg = Messages.get("notification.policy.save");
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/overview");
-
 			}else{
 				var msg= model? model.msg : "Erro ao criar Política"
 				this.context.toastr.addAlertError(msg);
 			}
+		}, me);
 
-			}, me);
+		PolicyStore.on("policyUpdated", (model) => {
+			if(model.data.id != null){
+				this.context.toastr.addAlertSuccess(Messages.get("notification.policy.update"));
+				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/"+this.state.itemModel.data.id);
+			}else{
+				var msg= Messages.get("label.errorUpdatePolicy") + (model ? ": "+model.msg :"")
+				this.context.toastr.addAlertError(msg);
+			}
+		}, me);
 
-		if (this.state.loading) {
+		PolicyStore.on("retrieverisklevel", (model) => {
+			if(model != null){
+				me.setState({
+					risklevelModel:model,
+					color:model.data.length
+				});
+			}
+		}, me);
+
+		ItemStore.on("retrieveInfo", (model) => {
+
+			if(model != null){
+				me.setState({
+					itemModel:model
+				});
+			}
+		}, me);
+
+		if(this.props.params.policyId){
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_RETRIEVE,
-				data: this.state.modelId
+				data: this.props.params.policyId
+			});
+
+			PolicyStore.dispatch({
+				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+				data: this.props.params.policyId
+			});
+
+			ItemStore.dispatch({
+				action: ItemStore.ACTION_RETRIEVE_INFO,
+				data: {policyId: this.props.params.policyId}
 			});
 		}
 	},
@@ -216,7 +287,7 @@ export default React.createClass({
 
 		for(var j=0;j<this.state.color;j++){
 			var current_color;
-			switch(this.refs.policyEditForm["field-"+this.getFields2(null,j+1)[1].name].value) {
+			switch(this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name].value) {
 				case "Vermelho": current_color=0; break;
 				case "Marron": current_color=1; break;
 				case "Amarelo": current_color=2; break;
@@ -226,7 +297,7 @@ export default React.createClass({
 				default: current_color=0;
 			}
 			cor[j]=current_color;
-			level[j]=this.refs.policyEditForm["field-"+this.getFields2(null,j+1)[0].name].value;
+			level[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[0].name].value;
 		}
 		for(var i=0; i<2; i++) {
 			risk_level[i] = new Array(cor.length);
@@ -237,28 +308,27 @@ export default React.createClass({
 		}
 
 
-		for(var i=0;i<this.getFields3().length;i++){
-			data[this.getFields3()[i].name]=this.refs.policyEditForm["field-"+this.getFields3()[i].name].value;
+		for(var i=0;i<this.getNumero().length;i++){
+			data[this.getNumero()[i].name]=this.refs.policyEditForm["field-"+this.getNumero()[i].name].value;
 		}
 
 		var probabilidade=""
 		var impacto=""
-		for(var i=1;i<=this.state.ncolumn;i++){
+		for(var i=1;i<=this.state.nline;i++){
 			probabilidade+="["+this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value;
 			probabilidade+="]"
 		}
 
-		for(var i=1;i<=this.state.nline;i++){
+		for(var i=1;i<=this.state.ncolumn;i++){
 			impacto+="["+this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name].value;
 			impacto+="]"
 		}
 
 		var matrix=""
-		for(var i=0; i<=this.state.matrix_c; i++){
-			for(var j=0; j<=this.state.matrix_l; j++){
-				if(i!=this.state.matrix_c || j!=0){
+		for(var i=0; i<=this.state.matrix_l; i++){
+			for(var j=0; j<=this.state.matrix_c; j++){
+				if(i!=this.state.matrix_l || j!=0){
 					matrix+="["+i+","+j+"]"+this.refs.policyEditForm["field-["+i+","+j+"]"].value+";"
-
 				}
 			}
 		}
@@ -298,6 +368,7 @@ export default React.createClass({
 
 	},
 	createTable(){
+
 		let table = []
 
 		var risk_level=[];
@@ -305,9 +376,9 @@ export default React.createClass({
 		var cor=[];
 
 		for(var j=0;j<this.state.color;j++){
-			if(this.refs.policyEditForm["field-"+this.getFields2(null,j+1)[1].name] != null){
-				cor[j]=this.refs.policyEditForm["field-"+this.getFields2(null,j+1)[1].name].value;
-				level[j]=this.refs.policyEditForm["field-"+this.getFields2(null,j+1)[0].name].value;
+			if(this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name] != null){
+				cor[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name].value;
+				level[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[0].name].value;
 			}
 		}
 		for(var i=0;i<cor.length;i++){
@@ -316,24 +387,28 @@ export default React.createClass({
 
 		var probabilidade=[]
 		var impacto=[]
-		for(var i=1;i<=this.state.ncolumn;i++){
-			probabilidade.push({'label': this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value})
+		for(var i=1;i<=this.state.matrix_l;i++){
+			if(this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name]){
+				probabilidade.push({'label': this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value})
+			}
 		}
 
-		for(var i=1;i<=this.state.nline;i++){
-			impacto.push({'label': this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name].value})
+		for(var i=1;i<=this.state.matrix_c;i++){
+			if(this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name]){
+				impacto.push({'label': this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name].value})
+			}
 		}
 
 
 
-		for (let i = 0; i <= this.state.matrix_c; i++) {
+		for (let i = 0; i <= this.state.matrix_l; i++) {
 			let children = []
-			for (let j = 0; j <= this.state.matrix_l; j++) {
+			for (let j = 0; j <= this.state.matrix_c; j++) {
 
 				var classe="Cinza"
 
 				if(j != 0 ){
-					if(i!=this.state.matrix_c){
+					if(i!=this.state.matrix_l){
 
 						if(this.refs.policyEditForm["field-["+i+","+j+"]"] != null){
 							for(var k=0;k<cor.length;k++){
@@ -361,7 +436,7 @@ export default React.createClass({
 									onChange: this.onChangeMatrix
 							}}/>
 						}</div></td>)
-					}else if(i==this.state.matrix_c){
+					}else if(i==this.state.matrix_l){
 						children.push(<td>{
 							<VerticalInput
 								formId={this.props.id}
@@ -375,13 +450,14 @@ export default React.createClass({
 									options: impacto,
 									valueField: 'label',
 									displayField: 'label',
-									className: "matrixSelect"
+									className: "matrixSelect",
+									onChange: this.onChangeMatrix
 								}}
 							/>
 						}</td>)
 					}
 				}else{
-					if(i!=this.state.matrix_c){
+					if(i!=this.state.matrix_l){
 						children.push(<td>{
 							<VerticalInput
 								formId={this.props.id}
@@ -395,7 +471,8 @@ export default React.createClass({
 									options: probabilidade,
 									valueField: 'label',
 									displayField: 'label',
-									className: "matrixSelect"
+									className: "matrixSelect",
+									onChange: this.onChangeMatrix
 							}}/>
 						}</td>)
 					}else{
@@ -413,7 +490,7 @@ export default React.createClass({
 		return (
 
 			<table style={{width: "min-content"}}>
-				<th style={{top: (this.state.matrix_c*33 +30)+"px" , right: "10px", position: "relative"}} >
+				<th style={{top: (this.state.matrix_l*33 +30)+"px" , right: "10px", position: "relative"}} >
 					<div style={{width: "30px" }} className="vertical-text">PROBABILIDADE</div>
 				</th>
 				<th>
@@ -421,23 +498,39 @@ export default React.createClass({
 						{table}
 					</tr>
 					<tr>
-						<div style={{left: (this.state.matrix_l*61 +160)+"px", position: "relative"}}>IMPACTO</div>
+						<div style={{left: (this.state.matrix_c*61 +160)+"px", position: "relative"}}>IMPACTO</div>
 					</tr>
 				</th>
 			</table>
 		);
 	},
 
+	getProbLabel(i){
+		var probs=	this.state.policyModel.attributes.probability.match(/\[.*?\]/g)
+		if(probs[i] != null){
+			return probs[i].substring(1,probs[i].length-1)
+		}
+		return null
+	},
+
+	getImpacLabel(i){
+		var impac=	this.state.policyModel.attributes.impact.match(/\[.*?\]/g)
+		if(impac[i] != null){
+			return impac[i].substring(1,impac[i].length-1)
+		}
+		return null
+	},
+
 	probabilidadeImpacto(){
 		let campos = []
 		var contem=false
-		var value
+		var field
 		for(var i=0;i<6;i++){
-			if(this.state.ncolumn>i && this.state.ncolumn>1){
+			if(this.state.nline>i && this.state.nline>1){
 
-				value=document.getElementById("field-probability_"+(i+1))
+				field=document.getElementById("field-probability_"+(i+1))
 
-				campos.push(this.getProbabilidade(value ? value.value : null, i+1).map((field, idx) => {
+				campos.push(this.getProbabilidade(this.state.policyModel ? this.getProbLabel(i) : (field ? field.value : null), i+1).map((field, idx) => {
 
 					return (<HorizontalInput
 						name={field.name}
@@ -450,7 +543,7 @@ export default React.createClass({
 				}))
 				contem=true;
 			}else{
-				if(this.state.nline>i){
+				if(this.state.ncolumn>i){
 				campos.push(<div style={{display: "inline-block"}}>
 				&emsp;&emsp;&emsp;&emsp;&emsp;
 				&emsp;&emsp;&emsp;&emsp;&emsp;
@@ -459,10 +552,10 @@ export default React.createClass({
 				}
 			}
 
-			value=document.getElementById("field-impact_"+(i+1))
+			field=document.getElementById("field-impact_"+(i+1))
 
-			if(this.state.nline>i && this.state.nline>1){
-				campos.push(this.getImpacto(value ? value.value : null, i+1).map((field, idx) => {
+			if(this.state.ncolumn>i && this.state.ncolumn>1){
+				campos.push(this.getImpacto(this.state.policyModel ? this.getImpacLabel(i) : (field ? field.value : null), i+1).map((field, idx) => {
 					return (<HorizontalInput
 						name={field.name}
 						formId={this.props.id}
@@ -478,16 +571,14 @@ export default React.createClass({
 				campos.push(<br/>)
 			}
 		}
-
 		return(<div>{campos}</div>)
-
 	},
 
 	grauRisco(n){
 		let grau = []
 
 
-		grau.push(this.getFields2(this.model,n).map((field, idx) => {
+		grau.push(this.getRisco(n).map((field, idx) => {
 
 				field.options=this.state.cores
 
@@ -495,15 +586,15 @@ export default React.createClass({
 					name={field.name}
 					formId={this.props.id}
 					fieldDef={field}
-					key={field.name}
-					confirmKey={idx == (this.getFields2().length - 1) ? this.props.confirmKey : undefined}
+					key={field.value? field.value: field.name}
+					confirmKey={idx == (this.getRisco(1).length - 1) ? this.props.confirmKey : undefined}
 					/>
 				);
 			}))
 
 			if(n>1){
 				grau.push
-				(<Link	to={"/forrisco/policy/"} onClick={this.deleteGrauRisco.bind(this,n)}>
+				(<Link onClick={this.deleteGrauRisco.bind(this,n)}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}>
 					</span>
 				</Link>)
@@ -516,8 +607,8 @@ export default React.createClass({
 		this.state.nline=this.refs.policyEditForm['field-nline'].value
 
 		this.setState({
-			nline: this.state.ncolumn,
-			ncolumn: this.state.nline,
+			nline: this.state.nline,
+			ncolumn: this.state.ncolumn,
 			hidePI:false
 		})
 
@@ -571,8 +662,8 @@ export default React.createClass({
 		document.getElementById("field-nline").value = "";
 		document.getElementById("field-ncolumn").value = "";
 		this.setState({
-			loading: !!this.props.params.modelId,
-			model: null,
+			loading: !!this.props.params.policyId,
+			policyModel: null,
 			fields: null,
 			visualization: true,
 			hide: true,
@@ -590,56 +681,49 @@ export default React.createClass({
 		var me = this;
 		var msg="";
 
-		//var msg = Validate.validationPolicyEdit(data, this.refs.policyEdit);
+		/*var msg = Validate.validationPolicyEdit(data, this.refs.policyEdit);
 
 		if(msg!= ""){
-			//Toastr.remove();
-			//Toastr.error(msg);
 			this.context.toastr.addAlertError(msg);
 			return;
-		}
+		}*/
 
-		if (me.props.params.modelId) {
-			me.state.model.set(data);
+		if (me.props.params.policyId) {
+			data.id=this.state.policyModel.id
+			data.levels=this.state.color
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_UPDATE,
-				data: me.state.model
+				action: PolicyStore.ACTION_CUSTOM_UPDATE,
+				data: data
 			});
-			msg = Messages.get("notification.institution.update");
-			//msg = "Instituição atualizada com sucesso."
-			//Toastr.remove();
-			//Toastr.success(Messages.get("notification.institution.update"));
-			this.context.toastr.addAlertSuccess(msg);
 		} else {
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_NEWPOLICY,
 				data: data
 			});
-			//Toastr.remove();
-			//Toastr.success(Messages.get("notification.institution.save"));
-			//this.context.toastr.addAlertSuccess(Messages.get("notification.institution.save"));
-
 		}
 	},
 
 	render() {
 
+		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
+
+		 if (this.state.loading) {
+			return <LoadingGauge />;
+		}
+
 		return (
 			<div>
-			<h1 className="marginLeft115">{this.props.params.id ? Messages.getEditable("label.editPolicy","fpdi-nav-label"):Messages.getEditable("label.newPolicy","fpdi-nav-label")}</h1>
+			<h1 className="marginLeft115">{this.props.params.policyId ? Messages.getEditable("label.editPolicy","fpdi-nav-label"):Messages.getEditable("label.newPolicy","fpdi-nav-label")}</h1>
 			<div className="fpdi-card padding40">
-			{this.state.loading ? <LoadingGauge />:
 				<form onSubmit={this.submitWrapper} id={this.props.id} ref="policyEditForm">
-
 
 					{this.getFields().map((field, idx) => {
 						return (<VerticalInput
-							formId={this.props.id}
+							formId={this.props.policyId}
 							fieldDef={field}
-							key={field.name}
+							key={field.value? field.value: field.name}
 							confirmKey={idx == (this.getFields().length - 1) ? this.props.confirmKey : undefined}
-							/>
-						);
+						/>);
 					})}
 
 					<label htmlFor={this.state.fieldId} className="fpdi-text-label">
@@ -680,20 +764,19 @@ export default React.createClass({
 						{Messages.getEditable("label.policyPI","fpdi-nav-label")}
 					</label>
 					<br/>
-					{this.getFields3().map((field, idx) => {
+
+					{this.getNumero().map((field, idx) => {
 						return (<HorizontalInput
 							name={field.name}
 							formId={this.props.id}
 							fieldDef={field}
-							key={field.name}
-							confirmKey={idx == (this.getFields3().length - 1) ? this.props.confirmKey : undefined}
+							key={field.value? idx: field.name}
+							//confirmKey={idx == (this.getNumero().length - 1) ? this.props.confirmKey : undefined}
 							onConfirm={this.submitWrapper}
-							/>
-						);
+						/>);
 					})}
-					<br/>
-					<br/>
-					<br/>
+
+					<br/><br/><br/>
 					{!this.state.piHide ? this.probabilidadeImpacto(): ""}
 
 					{
@@ -703,8 +786,8 @@ export default React.createClass({
 							<span/> {Messages.getEditable("label.generateMatrix","fpdi-nav-label")}
 						</a> : ""
 					}
-					<br/>
-					<br/>
+
+					<br/><br/>
 					{!this.state.hide ? this.createTable() : <br/> }
 
 
@@ -728,7 +811,6 @@ export default React.createClass({
 						</div>)
 					}
 				</form>
-			}
 			</div>
 			</div>
 		);

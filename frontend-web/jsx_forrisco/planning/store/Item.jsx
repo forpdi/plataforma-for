@@ -1,6 +1,4 @@
-import _ from 'underscore';
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
-import string from "string";
 
 var URL = Fluxbone.BACKEND_URL+"item";
 
@@ -166,7 +164,7 @@ var ItemStore = Fluxbone.Store.extend({
 				me.trigger("retrieveInfo", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("retrieveInfo", opts);
+				me.trigger("retrieveInfo", null);
 			}
 		});
 	},

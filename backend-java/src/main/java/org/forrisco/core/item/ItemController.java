@@ -29,7 +29,7 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 public class ItemController extends AbstractController {
 	
 	@Inject @Current private CompanyDomain domain;
-	@Inject private ItemBS bs;
+	@Inject private ItemBS itemBS;
 	
 	protected static final String PATH =  BASEPATH +"/item";
 	
@@ -52,7 +52,7 @@ public class ItemController extends AbstractController {
 			item.setDescription(policy.getDescription());
 			item.setName("Informações gerais");
 			item.setFieldItem(null);
-			this.bs.save(item);
+			this.itemBS.save(item);
 			this.success(item);
 			
 		} catch (Throwable e) {
@@ -74,8 +74,8 @@ public class ItemController extends AbstractController {
 		
 		try {
 			
-			Policy policy = this.bs.exists(policyId, Policy.class);
-			Item item= this.bs.listInfoByPolicy(policy);
+			Policy policy = this.itemBS.exists(policyId, Policy.class);
+			Item item= this.itemBS.listInfoByPolicy(policy);
 			this.success(item);
 
 		} catch (Throwable ex) {
@@ -103,7 +103,7 @@ public class ItemController extends AbstractController {
 				this.fail("Política não encontrada");
 			}
 			item.setId(null);
-			this.bs.save(item);
+			this.itemBS.save(item);
 			this.success(item);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -127,7 +127,7 @@ public class ItemController extends AbstractController {
 				this.fail("Item não encontrada");
 			}
 			
-			this.bs.save(subitem);
+			this.itemBS.save(subitem);
 			this.success(subitem);
 			
 		} catch (Throwable ex) {
@@ -150,7 +150,7 @@ public class ItemController extends AbstractController {
 		try {
 
 			fieldItem.setId(null);
-			this.bs.save(fieldItem);
+			this.itemBS.save(fieldItem);
 			this.success(fieldItem);
 
 		} catch (Throwable ex) {
@@ -171,7 +171,7 @@ public class ItemController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void saveFieldSubItem(@NotNull @Valid FieldSubItem fieldSubItem){
 		try {
-			this.bs.save(fieldSubItem);
+			this.itemBS.save(fieldSubItem);
 			this.success(fieldSubItem);
 
 		} catch (Throwable ex) {
@@ -192,8 +192,8 @@ public class ItemController extends AbstractController {
 	@NoCache
 	public void listItens(@NotNull Long policyId) {
 		try {
-			Policy policy = this.bs.exists(policyId, Policy.class);
-			PaginatedList<Item> itens= this.bs.listItensByPolicy(policy);
+			Policy policy = this.itemBS.exists(policyId, Policy.class);
+			PaginatedList<Item> itens= this.itemBS.listItensByPolicy(policy);
 			this.success(itens);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -215,7 +215,7 @@ public class ItemController extends AbstractController {
 	@Permissioned
 	public void retrieveItem(@NotNull Long id) {
 		try {
-			Item item = this.bs.exists(id, Item.class);
+			Item item = this.itemBS.exists(id, Item.class);
 			if (item == null) {
 				this.fail("O Item solicitado não foi encontrado.");
 			} else {
@@ -241,7 +241,7 @@ public class ItemController extends AbstractController {
 	@Permissioned
 	public void retrieveSubItem(@NotNull Long id) {
 		try {
-			SubItem subitem = this.bs.exists(id, SubItem.class);
+			SubItem subitem = this.itemBS.exists(id, SubItem.class);
 			if (subitem == null) {
 				this.fail("O SubItem solicitado não foi encontrado.");
 			} else {
@@ -268,12 +268,12 @@ public class ItemController extends AbstractController {
 		
 		try {
 			
-			Item item = this.bs.exists(id, Item.class);
+			Item item = this.itemBS.exists(id, Item.class);
 			if (item == null) {
 				this.fail("O item solicitado não foi encontrado.");
 			} else {
 				
-				PaginatedList<FieldItem> fields = this.bs.listFieldsByItem(item);
+				PaginatedList<FieldItem> fields = this.itemBS.listFieldsByItem(item);
 				this.success(fields);
 			}
 			
@@ -285,7 +285,7 @@ public class ItemController extends AbstractController {
 	
 	
 	/**
-	 * Retorna campo.
+	 * Retorna subcampo.
 	 * 
 	 * @param id
 	 *            Id do subitem.
@@ -298,12 +298,12 @@ public class ItemController extends AbstractController {
 		
 		try {
 			
-			SubItem subitem = this.bs.exists(id, SubItem.class);
+			SubItem subitem = this.itemBS.exists(id, SubItem.class);
 			if (subitem == null) {
 				this.fail("O subitem solicitado não foi encontrado.");
 			} else {
 				
-				PaginatedList<FieldSubItem> fields = this.bs.listFieldsBySubItem(subitem);
+				PaginatedList<FieldSubItem> fields = this.itemBS.listFieldsBySubItem(subitem);
 				this.success(fields);
 			}
 			
@@ -329,7 +329,7 @@ public class ItemController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void updateItem(@NotNull @Valid Item item) {
 		try {
-			Item existent = this.bs.exists(item.getId(), Item.class);
+			Item existent = this.itemBS.exists(item.getId(), Item.class);
 			if (GeneralUtils.isInvalid(existent)) {
 				this.result.notFound();
 				return;
@@ -340,10 +340,10 @@ public class ItemController extends AbstractController {
 			}
 
 
-			PaginatedList<FieldItem> fields = this.bs.listFieldsByItem(existent);
+			PaginatedList<FieldItem> fields = this.itemBS.listFieldsByItem(existent);
 		
 			for(int i=0; i<fields.getList().size();i++) {
-				this.bs.delete(fields.getList().get(i));
+				this.itemBS.delete(fields.getList().get(i));
 			}
 
 			
@@ -352,14 +352,13 @@ public class ItemController extends AbstractController {
 				
 				field.setName(field.getValue());
 				field.setItem(existent);
-				this.bs.save(field);
+				this.itemBS.save(field);
 			}
 			
 			existent.setDescription(item.getDescription());
 			existent.setName(item.getName());
-			this.bs.persist(existent);
-			
-			this.success(item);
+			this.itemBS.persist(existent);
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
@@ -379,7 +378,7 @@ public class ItemController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void updateSubitem(@NotNull @Valid SubItem subitem) {
 		try {
-			SubItem existent = this.bs.exists(subitem.getId(), SubItem.class);
+			SubItem existent = this.itemBS.exists(subitem.getId(), SubItem.class);
 			if (GeneralUtils.isInvalid(existent)) {
 				this.result.notFound();
 				return;
@@ -390,10 +389,10 @@ public class ItemController extends AbstractController {
 			}
 
 
-			PaginatedList<FieldSubItem> subfields = this.bs.listFieldsBySubItem(existent);
+			PaginatedList<FieldSubItem> subfields = this.itemBS.listFieldsBySubItem(existent);
 		
 			for(int i=0; i<subfields.getList().size();i++) {
-				this.bs.delete(subfields.getList().get(i));
+				this.itemBS.delete(subfields.getList().get(i));
 			}
 
 			for(int i=0; i<subitem.getFieldSubItem().size();i++) {
@@ -401,14 +400,13 @@ public class ItemController extends AbstractController {
 				
 				subfield.setName(subfield.getValue());
 				subfield.setSubitem(existent);
-				this.bs.save(subfield);
+				this.itemBS.save(subfield);
 			}
 			
 			existent.setDescription(subitem.getDescription());
 			existent.setName(subitem.getName());
-			this.bs.persist(existent);
-			
-			this.success(subitem);
+			this.itemBS.persist(existent);
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
@@ -428,19 +426,21 @@ public class ItemController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void deleteItem(@NotNull Long id) {
 		try {
-			Item item = this.bs.exists(id, Item.class);
+			Item item = this.itemBS.exists(id, Item.class);
 			if (GeneralUtils.isInvalid(item)) {
 				this.result.notFound();
 				return;
 			}
 			
-			PaginatedList<FieldItem> fields = this.bs.listFieldsByItem(item);
+			PaginatedList<FieldItem> fields = this.itemBS.listFieldsByItem(item);
 			
 			for(int i=0;i<fields.getList().size();i++) {
-				this.bs.delete(fields.getList().get(i));
+				this.itemBS.delete(fields.getList().get(i));
 			}
 			
-			this.bs.delete(item);
+			this.itemBS.deleteSubitens(item);
+			this.itemBS.delete(item);
+			
 			this.success();
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -460,20 +460,14 @@ public class ItemController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void deleteSubitem(@NotNull Long id) {
 		try {
-			SubItem subitem = this.bs.exists(id, SubItem.class);
+			SubItem subitem = this.itemBS.exists(id, SubItem.class);
 			if (GeneralUtils.isInvalid(subitem)) {
 				this.result.notFound();
 				return;
 			}
 			
-			PaginatedList<FieldSubItem> subfields = this.bs.listFieldsBySubItem(subitem);
+			this.itemBS.deleteSubitem(subitem);
 			
-			for(int i=0;i<subfields.getList().size();i++) {
-				this.bs.delete(subfields.getList().get(i));
-			}
-			
-
-			this.bs.delete(subitem);
 			this.success();
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -496,11 +490,11 @@ public class ItemController extends AbstractController {
 	@Permissioned
 	public void retrieveSubitem(@NotNull Long id) {
 		try {
-			Item item = this.bs.exists(id, Item.class);
+			Item item = this.itemBS.exists(id, Item.class);
 			if (item == null) {
 				this.fail("A política solicitada não foi encontrado.");
 			} else {
-				PaginatedList<SubItem> subitens= this.bs.listSubItensByItem(item);
+				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
 				this.success(subitens);
 			}
 		} catch (Throwable ex) {

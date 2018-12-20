@@ -7,12 +7,6 @@ import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-
-import Logo from 'forpdi/img/logo.png';
-
-import $ from 'jquery';
-import Toastr from 'toastr';
 
 export default React.createClass({
     contextTypes: {
@@ -185,14 +179,15 @@ export default React.createClass({
             return <div style={{display: 'none'}} />;
         }
         return (<div className={(this.state.hidden ? 'forrisco-app-sidebar-hidden':'forrisco-app-sidebar')+' fpdi-tabs-stacked'}>
-
+			{/*
             <div className="frisco-tabs-nav">
     			<Link to="/forrisco/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
                     /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
                 </Link>
     		</div>
-            <div style={{height: "10px"}} />
+			<div style={{height: "10px"}} />
+			*/}
             {this.state.policies && (this.state.policies.length > 0) ?
                 this.state.policies.map((policy, index) => {
                     return <div className="frisco-tabs-nav" key={"open-plan-"+index}>
@@ -220,8 +215,7 @@ export default React.createClass({
                 </div>
 			: ""}
 
-			{/*((this.context.roles.ADMIN || _.contains(this.context.permissions,
-             PermissionsTypes.MANAGE_FORRISCO_PLAN_PERMISSION))) ? // && !this.state.domainError
+			{((this.context.roles.ADMIN)) ? // && !this.state.domainError
                 <div>
                     <div className="fpdi-tabs-nav">
                         <Link to="/forrisco/plan/new" activeClassName="active">
@@ -233,7 +227,7 @@ export default React.createClass({
                     </div>
                 </div>
 			: ""
-			*/}
+			}
 
 
             <hr className="divider"></hr>

@@ -236,4 +236,23 @@ public class ItemBS extends HibernateBusiness {
 		return results;
 	}
 
+	public void deleteSubitens(Item item) {
+		
+		PaginatedList<SubItem> subitens = this.listSubItensByItem(item);
+		
+		for(int i=0;i<subitens.getList().size();i++) {
+			this.deleteSubitem(subitens.getList().get(i));
+		}
+	}
+	
+	public void deleteSubitem(SubItem subitem) {
+		
+		PaginatedList<FieldSubItem> subfields = this.listFieldsBySubItem(subitem);
+		
+		for(int i=0;i<subfields.getList().size();i++) {
+			this.delete(subfields.getList().get(i));
+		}
+		this.delete(subitem);
+	}
+
 }

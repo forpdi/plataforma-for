@@ -1,11 +1,5 @@
-
 import React from "react";
-import {Link} from 'react-router';
-
 import TreeViewNode from "forpdi/jsx_forrisco/core/widget/treeview/TreeViewNode.jsx";
-
-import Messages from "forpdi/jsx/core/util/Messages.jsx";
-
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object

@@ -28,27 +28,25 @@ public class RiskController extends AbstractController {
 	@Inject private RiskBS bs;
 
 	/**
-	 * Salvar Novo Plan
+	 * Salvar Novo Risco
 	 * 
 	 * @return void
-	 */
+	 *
 	@Post("/forrisco/risk/new")
 	@Consumes
 	@NoCache
 	@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Risk risk){
 		
-
-		
 		try {
 			risk.setId(null);
-			this.bs.save(risk);
+			this.bs.saveRiskLevel(risk);
 			this.success(risk);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
-	}
+	}*/
 	
 	
 	/**
@@ -63,7 +61,7 @@ public class RiskController extends AbstractController {
 	@Get("/api/policy/risklevel/{id}")
 	@NoCache
 	@Permissioned
-	public void retrievePolicy(Long id) {
+	public void retrieveRiskLevel(Long id) {
 		try {
 			Policy policy = this.bs.exists(id, Policy.class);
 			if (policy == null) {
@@ -77,8 +75,5 @@ public class RiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	
-	
-	
+
 }

@@ -10,7 +10,6 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
-
 import AttributeInput from 'forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx';
 import FieldItemInput from  'forpdi/jsx_forrisco/planning/view/item/FieldItemInput.jsx'
 
@@ -45,10 +44,11 @@ export default React.createClass({
 			newField: false,
 			newFieldType: null,
 			length: 0,
-			titulo: null
+			titulo: null,
+			info: false
 		};
 	},
-	getInfo() {
+	getFields() {
 		var fields = [];
 
 		if(typeof this.state.fields === "undefined" || this.state.fields == null){
@@ -90,9 +90,9 @@ export default React.createClass({
 			if(matrix[i][1]==line){
 				if(matrix[i][2]==column){
 					if(matrix[i][2]==0 ){
-						return <div className="">{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+					return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
 					}else if(matrix[i][1]==this.state.policyModel.attributes.nline){
-						return <div className="">&emsp;&emsp;&emsp;&nbsp;{matrix[i][0]}</div>
+						return <div style={{"text-align":"-webkit-center",margin: "5px"}} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
 					}else{
 
 						var current_color=0;
@@ -115,7 +115,8 @@ export default React.createClass({
 							default: cor="Vermelho";
 						}
 
-						return <div style={{padding:"10px 50px"}} className={"form-control " + cor} >{matrix[i][0]}</div>
+						return <div  className={"Cor "+cor} >{matrix[i][0]}</div>
+
 					}
 				}
 			}
@@ -124,6 +125,12 @@ export default React.createClass({
 	},
 
 	getMatrix() {
+
+		if(this.state.policyModel ==null){
+			return
+		}
+
+
 		var fields = [];
 		if(typeof this.state.fields === "undefined" || this.state.fields == null){
 			fields.push({
@@ -173,13 +180,13 @@ export default React.createClass({
 					</td>
 				</tr>
 				<tr>
-					<th style={{bottom: (this.state.policyModel.attributes.ncolumn*33 -30)+"px" , right: "50px", position: "relative"}} >
+					<th style={{bottom: (this.state.policyModel.attributes.nline*10+95)+"px" , right: "50px", position: "relative"}} >
 						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
 					</th>
 				</tr>
 				<tr>
 					<th>
-						<div style={{left: (this.state.policyModel.attributes.nline*15)+"px", position: "relative"}}>IMPACTO</div>
+						<div style={{"text-align":"-webkit-center", position: "relative"}}>IMPACTO</div>
 					</th>
 				</tr>
 				</th>
@@ -188,6 +195,7 @@ export default React.createClass({
 		</div>
 		);
 	},
+
 
 	/*
 	policy-Model
@@ -207,7 +215,8 @@ export default React.createClass({
 		PolicyStore.on("retrieve", (model) => {
 			if(!model.attributes.deleted){
 				me.setState({
-					policyModel: model
+					policyModel: model,
+
 				});
 				me.forceUpdate();
 				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
@@ -233,8 +242,15 @@ export default React.createClass({
 					titulo: model.get("name"),
 					vizualization: true,
 					loading:false,
-					fields: this.getInfo()
+					fields: this.getFields()
 				});
+
+				if(model.get("name")=="Informações gerais"){
+					me.setState({
+						info:true
+					})
+				}
+
 				me.forceUpdate();
 				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}else{
@@ -301,7 +317,7 @@ export default React.createClass({
 					itemModel: mod,
 					titulo: model.data.name,
 					vizualization: true,
-					fields: me.getInfo()
+					fields: me.getFields()
 				});
 				me.forceUpdate();
 
@@ -354,6 +370,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
+
 		if (newProps.params.itemId != this.props.params.itemId) {
 			this.setState({
 				loading: true,
@@ -367,18 +384,28 @@ export default React.createClass({
 				policyModel: null,
 				description: null,
 				fileData: null,
-				titulo: null
-			});
-			this.refreshData(newProps, newContext);
-		}
-	},
-	refreshData(props, context) {
-		if (props.params.policyId && props.params.itemId) {
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
-				data: props.params.policyId
+				titulo: null,
+				info: false
 			});
 
+			this.refreshData(newProps, newContext);
+
+		}
+	},
+	UpdateLoading(bool){
+		this.setState({
+			loading: bool,
+		});
+	},
+
+	refreshData(props, context) {
+
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_RETRIEVE,
+			data: props.params.policyId
+		});
+
+		if (props.params.policyId && props.params.itemId) {
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
 				data: props.params.policyId
@@ -413,7 +440,7 @@ export default React.createClass({
 		if (this.state.itemModel) {
 			this.setState({
 				vizualization: true,
-				//fields: this.getInfo()
+				//fields: this.getFields()
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -422,14 +449,14 @@ export default React.createClass({
 	changeVizualization() {
 		this.setState({
 			vizualization: false,
-			//fields: this.getInfo()
+			//fields: this.getFields()
 		});
 	},
 	deleteItem() {
 		var me = this;
 		if (me.state.itemModel != null) {
 
-			if(this.state.itemModel.get("name") =="Informações gerais"){
+			if(this.state.info){
 				var msg = "Você tem certeza que deseja excluir essa política?"
 				Modal.confirmCustom(() => {
 					Modal.hide();
@@ -549,15 +576,13 @@ export default React.createClass({
 
 	},
 	renderUnarchivePolicy() {
-
-		if( this.state.itemModel.get("name") =="Informações gerais"){
+		if(this.state.info){
 			return (<ul id="level-menu" className="dropdown-menu">
 			<li>
 				<Link
-					to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}
-					onClick={this.changeVizualization}>
+					to={"/forrisco/policy/"+this.props.params.policyId+"/edit"}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-						<span id="menu-levels"> {Messages.getEditable("label.title.editPolicy","fpdi-nav-label")} </span>
+						<span id="menu-levels"> {"Editar Política"/*Messages.getEditable("label.title.editPolicy","fpdi-nav-label")*/} </span>
 						</span>
 				</Link>
 			</li>
@@ -566,7 +591,7 @@ export default React.createClass({
 					to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
 					onClick={this.deleteItem}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-						<span id="menu-levels"> {Messages.getEditable("label.deletePolicy","fpdi-nav-label")} </span>
+						<span id="menu-levels"> {"Deletar Política" /*Messages.getEditable("label.deletePolicy","fpdi-nav-label")*/} </span>
 					</span>
 				</Link>
 			</li>
@@ -671,12 +696,12 @@ export default React.createClass({
 		if(this.state.vizualization){
 
 			return <div>
-				{this.state.model ? this.renderBreadcrumb() : ""}
+				{this.state.itemModel ? this.renderBreadcrumb() : ""}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
 				<h1>
-					{this.state.itemModel.attributes.name=="Informações gerais" ? this.state.policyModel.attributes.name : this.state.itemModel.attributes.name}
+					{(this.state.info && this.state.policyModel) ? this.state.policyModel.attributes.name : this.state.itemModel.attributes.name}
 					{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
 						(<span className="dropdown">
 							<a
@@ -696,19 +721,33 @@ export default React.createClass({
 
 				<VerticalForm
 					vizualization={this.state.vizualization}
-					//ref='planRegisterForm'
 					onCancel={this.onCancel}
 					onSubmit={this.onSubmit}
-					fields={this.getInfo()}
-					//store={ItemStore}
+					fields={this.getFields()}
 					submitLabel={Messages.get("label.submitLabel")}
+					//store={ItemStore}
+					//ref='planRegisterForm'
 				/>
 
-			{this.state.itemModel.attributes.name =="Informações gerais" ? this.getMatrix(): ""}
+			<br/>
+			{this.state.info ?
+			<div>
+				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
+					{"DESCRIÇÃO"}
+				</label>
+				<br/>
+				{this.state.itemModel.attributes.description}
+				<br/><br/>
+			</div>: ""}
+
+			{this.state.info ? this.getMatrix(): ""}
 			</div>
 			</div>;
 		}else{
 
+			/*if(this.state.info){
+				return
+			}else{*/
 
 			//editar
 			return (
@@ -716,13 +755,14 @@ export default React.createClass({
 
 				<form onSubmit={this.onSubmit} ref="newItemForm">
 
-				{this.state.model ? this.renderBreadcrumb() : ""}
+				{this.state.itemModel ? this.renderBreadcrumb() : ""}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
 					<h1>
+
 						{(this.state.titulo)}
-						{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
+						{/*this.state.itemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
 							(<span className="dropdown">
 								<a
 									className="dropdown-toggle"
@@ -736,7 +776,7 @@ export default React.createClass({
 								</a>
 								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
 							</span>
-						):""}
+						):""*/}
 					</h1>
 
 					{
@@ -840,6 +880,7 @@ export default React.createClass({
 				</div>
 			</form>
 		</div>);
+
 		}
 	}
 

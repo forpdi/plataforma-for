@@ -8,8 +8,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
+import org.forrisco.risk.RiskLevel;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
+import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
@@ -43,16 +45,37 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	
 	@Column(nullable=false, length=4000)
 	private String matrix;
-
-	@Transient
-	private String risk_level[][];
-
+	
 	@SkipSerialization
 	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
 	private Company company;
 
 	private boolean archived = false;
 	
+	@Transient
+	private String risk_level[][];
+	
+	@Transient
+	private int levels;
+
+
+	public String[][] getRisk_level() {
+		return risk_level;
+	}
+	
+	public void setRisk_level(String[][] risk_level) {
+		this.risk_level = risk_level;
+	}
+	
+
+	public int getLevel() {
+		return levels;
+	}
+
+	public void setLevel(int color) {
+		this.levels = color;
+	}
+
 	public boolean isArchived() {
 		return archived;
 	}
@@ -123,14 +146,6 @@ public class Policy extends SimpleLogicalDeletableEntity {
 
 	public void setMatrix(String matrix) {
 		this.matrix = matrix;
-	}
-
-	public String[][] getRisk_leve() {
-		return risk_level;
-	}
-
-	public void setRisk_leve(String[][] risk_level) {
-		this.risk_level = risk_level;
 	}
 
 }

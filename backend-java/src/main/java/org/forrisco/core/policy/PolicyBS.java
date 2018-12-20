@@ -39,27 +39,7 @@ public class PolicyBS extends HibernateBusiness {
 		this.persist(policy);
 	}
 	
-	/**
-	 * Salva no banco de dados uma novo grau de risco
-	 * 
-	 * @param policy,
-	 *            instância da política a ser salva
-	 */
-	public void saveRiskLevel(Policy policy) {
-		
-		String[][] str =  policy.getRisk_leve();
-		
-		for(int i = 0; i<str[0].length;i++) {
-			if(str[1][i] !=null) {
-				RiskLevel rk= new RiskLevel();		
-				rk.setId(null);
-				rk.setColor(Integer.parseInt(str[1][i]));
-				rk.setLevel(str[0][i]);
-				rk.setPolicy(policy);
-				this.persist(rk);	
-			}
-		}
-	}
+
 
 	/**
 	 * Salva no banco de dados um item
@@ -82,6 +62,16 @@ public class PolicyBS extends HibernateBusiness {
 		this.persist(it);
 	}
 	
+	/**
+	 * Deleta do banco de dados uma política
+	 * 
+	 * @param Policy,
+	 *            política a ser deletada
+	 */
+	public void delete(Policy policy) {
+		policy.setDeleted(true);
+		this.persist(policy);
+	}
 	
 	/**
 	 * Lista as políticas de uma companhia.
@@ -156,7 +146,7 @@ public class PolicyBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(RiskLevel.class)
 				.add(Restrictions.eq("deleted", false))								
 				.add(Restrictions.eq("policy", policy))
-				.addOrder(Order.asc("name"));
+				.addOrder(Order.asc("id"));
 		
 		Criteria count = this.dao.newCriteria(RiskLevel.class)
 				.add(Restrictions.eq("deleted", false))

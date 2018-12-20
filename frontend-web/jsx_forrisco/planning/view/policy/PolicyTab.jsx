@@ -11,6 +11,8 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
+import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
+
 export default React.createClass({
 	contextTypes: {
 		permissions: React.PropTypes.array.isRequired,
@@ -327,11 +329,14 @@ export default React.createClass({
 	},
 
 	render() {
+
 		return <div>
 			<div className="media-list">
 				<div className="media-header">
-					<h1>{this.context.policy.get("name").length <= 24?this.context.policy.get("name"):this.context.policy.get("name").split("",20).concat(" ...")}&nbsp;{
-						(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_POLICY_PERMISSION)) ?
+					<h1>{this.context.policy.get("name").length <= 24?this.context.policy.get("name"):this.context.policy.get("name").split("",20).concat(" ...")}&nbsp;
+
+					{/*(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_POLICY_PERMISSION))
+					&& !this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit") ?
 						(<span className="dropdown">
 							<a className="dropdown-toggle"
 								data-toggle="dropdown"
@@ -346,18 +351,23 @@ export default React.createClass({
 							{this.state.archived ? this.renderUnarchivePolicy() : this.renderArchivePolicy()}
 						</span>
 
-						):""}
+						):""*/}
 					</h1>
 				</div>
 
-				<div className="media-body">
-					{this.state.archived ? <span className="fpdi-archived-label">{Messages.getEditable("label.planField","fpdi-nav-label")}</span> : ""}
-					<div className="markdown-container" dangerouslySetInnerHTML={{__html: Marked(this.context.policy.get("description"))}} />
-				</div>
-			</div>
+				{!this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit") ?
+					<div className="media-body">
+						{this.state.archived ? <span className="fpdi-archived-label">{Messages.getEditable("label.planField","fpdi-nav-label")}</span> : ""}
+						<div className="markdown-container" dangerouslySetInnerHTML={{__html: Marked(this.context.policy.get("description"))}} />
+					</div>
+				: <Forrisco_PolicyEdit
+						params={{policyId:this.props.params.policyId}}
+				/>
+				}
 
 			{//<SummaryTable policy={this.context.policy} />
 			}
-		</div>;
+		</div>
+		</div>
 	}
 });
