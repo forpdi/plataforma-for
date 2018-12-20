@@ -336,6 +336,7 @@ export default React.createClass({
 					<h1>{this.context.policy.get("name").length <= 24?this.context.policy.get("name"):this.context.policy.get("name").split("",20).concat(" ...")}&nbsp;
 
 					{/*(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_POLICY_PERMISSION))
+
 					&& !this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit") ?
 						(<span className="dropdown">
 							<a className="dropdown-toggle"

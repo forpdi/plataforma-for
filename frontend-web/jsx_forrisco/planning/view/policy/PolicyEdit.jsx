@@ -252,6 +252,13 @@ export default React.createClass({
 				data: {policyId: this.props.params.policyId}
 			});
 		}
+
+		if(this.props.params.policyId){
+			PolicyStore.dispatch({
+				action: PolicyStore.ACTION_RETRIEVE,
+				data: this.props.params.policyId
+			});
+		}
 	},
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
@@ -704,6 +711,7 @@ export default React.createClass({
 	},
 
 	render() {
+		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
 
 		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
 
