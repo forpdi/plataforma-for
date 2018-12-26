@@ -51,7 +51,7 @@ public class RiskBS extends HibernateBusiness {
 	
 	/**
 	 * Retorna uma lista de grau de risco a partir da política
-	 * 
+	 * política não salva no banco (acho que da para usar a outra função)
 	 * @param policy
 	 * 
 	 */
@@ -101,7 +101,13 @@ public class RiskBS extends HibernateBusiness {
 	}
 
 
-
+/**
+ * Retorna os graus de risco a partir da política
+ * 
+ * @param policy
+ * 			instância da política
+ * @return
+ */
 	public PaginatedList<RiskLevel> listRiskLevelbyPolicy(Policy policy) {
 		PaginatedList<RiskLevel> results = new PaginatedList<RiskLevel>();
 		
@@ -129,26 +135,31 @@ public class RiskBS extends HibernateBusiness {
 	 *            
 	 */
 	public PaginatedList<Risk> listRiskbyUnit(Unit unit) {
-		PaginatedList<ProcessUnit> results = new PaginatedList<ProcessUnit>();
+		PaginatedList<Risk> results = new PaginatedList<Risk>();
+		List<Risk> risks= new ArrayList<Risk>();
 		
 		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
+		
+		for( ProcessUnit pu : this.dao.findByCriteria(criteria, ProcessUnit.class)){
+			risks.addAll(this.listRiskbyProcessUnit(pu));
+		}
+		
+		results.setList(risks);
+		results.setTotal((long) risks.size());
+		
+		return results;
+	}
 
-		Criteria count = this.dao.newCriteria(ProcessUnit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("unit", unit))
-				.setProjection(Projections.countDistinct("id"));
-		
-		
 
-		results.setList(this.dao.findByCriteria(criteria, ProcessUnit.class));
-		results.setTotal((Long) count.uniqueResult());
+
+	private List<Risk> listRiskbyProcessUnit(ProcessUnit pu) {
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.eq("pu", pu));
 		
-		LOGGER.error("Risk >> "+results);
-		
-		//return results;
-		return null;
+		return this.dao.findByCriteria(criteria, Risk.class);
 	}
 
 }

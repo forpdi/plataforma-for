@@ -9,6 +9,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
 import org.forrisco.core.unit.Unit;
@@ -39,6 +40,17 @@ public class Process extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	@ManyToOne(targetEntity=Company.class,  fetch=FetchType.EAGER)
 	private Company company;
+
+	@Transient
+	private Unit unit;
+	
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
 	
 	public String getName() {
 		return name;
