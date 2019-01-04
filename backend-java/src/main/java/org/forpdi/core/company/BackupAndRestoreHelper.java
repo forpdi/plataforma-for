@@ -55,7 +55,11 @@ import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevel;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
+import org.forpdi.system.Archive;
+import org.forrisco.core.item.Item;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -1368,4 +1372,14 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		quantityTotal=0;
 	}
 
+	public Archive listFilebyName(String fileName) {
+
+		Criteria criteria = this.dao.newCriteria(Archive.class).add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("name", fileName));
+		criteria.setMaxResults(1);
+		
+		Archive file=(Archive)criteria.uniqueResult();// this.dao.findByCriteria(criteria, Archive.class);
+		
+		return file;
+	}
 }

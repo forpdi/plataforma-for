@@ -1,24 +1,3 @@
-/*
- * 
- * 
- * salvar unidade
- * post http://localhost:8080/forpdi/api/unit/new
- * 
- * retornar unidade pelo plano de risco
- * get http://localhost:8080/forpdi/api/unit?planId=1
- * 
- * retornar unidade[id]
- * get http://localhost:8080/forpdi/api/unit/4
- * 
- * salvar subunidade
- * post http://localhost:8080/forpdi/api/unit/subnew
- * 
- * deletar unidade/subunidade
- * delete http://localhost:8080/forpdi/api/unit/1
- */
-
-
-
 package org.forrisco.core.unit;
 
 import javax.inject.Inject;
@@ -50,11 +29,10 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 public class UnitController extends AbstractController{
 
 	@Inject private UnitBS unitBS;
-	@Inject private RiskBS riskBS;
-	
-	
+	@Inject private RiskBS riskBS;	
+
 	protected static final String PATH =  BASEPATH +"/unit";
-	
+
 	
 	/**
 	 * Salvar unidade
@@ -202,7 +180,5 @@ public class UnitController extends AbstractController{
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	
-	
+
 }

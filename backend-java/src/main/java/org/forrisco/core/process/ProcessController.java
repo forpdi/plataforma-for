@@ -1,15 +1,3 @@
-/*
- * salva processo
- * post http://localhost:8080/forpdi/api/process/new
- * 
- * retorna processo de uma unidade[id]
- * get http://localhost:8080/forpdi/api/process/1
- * 
- * retornar processo da instiruição atual
- * get http://localhost:8080/forpdi/api/process?unitId=4
- */
-
-
 package org.forrisco.core.process;
 
 import javax.inject.Inject;
@@ -87,7 +75,6 @@ public class ProcessController extends AbstractController{
 	@NoCache
 	public void listProcesses(Long id) {
 		try {
-
 			Unit unit = this.processBS.exists(id, Unit.class);
 			PaginatedList<Process> process= this.processBS.listProcessbyUnit(unit);
 			this.success(process);
@@ -96,7 +83,7 @@ public class ProcessController extends AbstractController{
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
+
 	
 	/**
 	 * Retorna Processos da instituição atual

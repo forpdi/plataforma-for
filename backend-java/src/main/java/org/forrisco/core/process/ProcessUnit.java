@@ -28,18 +28,14 @@ public class ProcessUnit extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_process_unit";
 	private static final long serialVersionUID = 1L;
 
-	//@Id
 	@SkipSerialization
 	@JoinColumn(name="process_id")
 	@ManyToOne(targetEntity=Process.class,  fetch=FetchType.EAGER)
-	///private Set<Process> process = new HashSet<>();
 	private Process process;
 	
-	//@Id
 	@SkipSerialization
 	@JoinColumn(name="unit_id") 
 	@ManyToOne(targetEntity=Unit.class,  fetch=FetchType.EAGER)
-	///private Set<Unit> unit = new HashSet<>();
 	private Unit unit;
 	
 	public void setProcess(Process process) {

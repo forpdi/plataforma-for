@@ -82,6 +82,7 @@
   		<mapping class="org.forpdi.planning.document.DocumentAttribute"/>
   		<mapping class="org.forpdi.planning.document.DocumentSection"/>
   		<mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
+  		<mapping class="org.forpdi.system.Archive"/>
   		<mapping class="org.forrisco.core.policy.Policy"/>
   		<mapping class="org.forrisco.core.plan.PlanRisk"/>
   		<mapping class="org.forrisco.core.unit.Unit"/>
@@ -96,6 +97,7 @@
   		<mapping class="org.forrisco.risk.Contigency"/>
   		<mapping class="org.forrisco.risk.Incident"/>
   		<mapping class="org.forrisco.risk.Monitor"/>
+  		<mapping class="org.forrisco.risk.PreventiveAction"/>
 
 	</session-factory>
 </hibernate-configuration>

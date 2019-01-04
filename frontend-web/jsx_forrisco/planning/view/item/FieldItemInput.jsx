@@ -3,6 +3,8 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import FPDIRichText from 'forpdi/jsx/vendor/FPDIRichText';
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
+import FileStore from "forpdi/jsx/core/store/File.jsx"
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 var Validate = Validation.validate;
 
@@ -14,8 +16,9 @@ export default React.createClass({
 	},
 	getInitialState() {
 		return {
-		description: null,
-		types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
+			fileData: null,
+			description: null,
+			types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
 		}
 	},
 	changeRichText(value){
@@ -29,9 +32,70 @@ export default React.createClass({
 				newFieldType: document.getElementById("selectFieldType-"+(this.props.index)) ?  document.getElementById("selectFieldType-"+(this.props.index)).value :null//"*"
 			});
 	},
+
+	
+	attachFile(){
+		var me = this;
+		var title = Messages.get("label.insertAttachment");
+		var msg = (
+			<div>
+				<p>
+					{Messages.get("label.selectFile")}
+				</p>
+			</div>
+		);
+		var url = FileStore.url+"/uploadlocal";
+		
+		var onSuccess = function (resp) {
+			Modal.hide();
+			var file = {
+				name: Modal.fileName,
+				id: resp.data.id,
+				description: Modal.fileName,
+				fileLink: BACKEND_URL+"file/"+(resp.data.id),
+				levelInstance: {
+					id: me.props.levelInstanceId
+				}
+			}
+			
+			me.setState({
+				//loading: true
+				//description: Modal.fileName,
+				fileData:{
+					file: file
+				},
+				description:Modal.fileName
+			});
+			/*AttachmentStore.dispatch({
+				action: AttachmentStore.ACTION_CREATE,
+				data: file
+			});*/
+			//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
+		};
+		var onFailure = function (resp) {
+			Modal.hide();
+			me.setState({error: resp.message});
+		};
+
+		var formatsBlocked = "(exe*)";
+		var maxSize = 2;
+		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz, Documentos: pdf\n"
+			//+", doc, docx, odt, rtf, txt, xml, xlsx, xls, ods, csv, ppt, pptx, ppsx, odp\n"
+			//+"Áudio: MP3, WAV, WMA, OGG, AAC\n"
+			//+"Vídeos: avi, mov, wmv, mp4, flv, mkv\n"
+			//+"Arquivos: zip, rar, 7z, tar, tar.gz, tar.bz2\n";
+		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf"
+		//+"|doc|docx|odt|rtf|txt|xml|xlsx|xls|ods|csv|ppt|pptx|ppsx|odp|"+
+		//"mp3|wav|wma|ogg|aac|"+
+		//"avi|mov|wmv|mp4|flv|mkv|"+
+		//"zip|rar|7z|tar|targz|tar.bz2";
+
+		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+	},
+
+
 	addNewField(extra, periodicity, evt) {
 		var me = this;
-
 		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
 
 		if (validation.errorField) {
@@ -57,20 +121,28 @@ export default React.createClass({
 					type: validation.type.s,
 					value: validation.name.s,
 					description: validation.description,
-					edit:false
+					edit:false,
+					fileLink:""
 				});
 			}else if(validation.type.s == AttributeTypes.ATTACHMENT_FIELD){
+				if(this.state.fileData == null){
+					this.context.toastr.addAlertError(Messages.get("label.error.file"));
+					return
+				}
 				me.props.fields.push({
 					name: "attribute-"+me.props.getLength(),
 					type: validation.type.s,
 					value: validation.name.s,
 					description: validation.description,
-					edit:false
+					edit:false,
+					fileLink: this.state.fileData.file.fileLink
 				});
 			}
+
 			this.props.reset()
 		}
 	},
+
 	tweakNewField() {
 		this.props.editFunc(this.props.index,false)
 		this.props.reset()
@@ -179,7 +251,7 @@ export default React.createClass({
 				</div>
 				<div>
 
-					{(	this.state.newFieldType == "*"|| this.state.newFieldType==null)  ? this.onSelectFieldType():""}
+					{(this.state.newFieldType==null) ? this.onSelectFieldType():""}
 
 					{this.state.newFieldType || this.props.field ?
 					<div>
@@ -191,7 +263,7 @@ export default React.createClass({
 								placeholder="Insira seu texto..."
 								changeValue={this.changeRichText}
 								defaultValue ={this.props.field? this.props.field.description:null}
-								/>
+							/>
 							:
 							<div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 							<a onClick={this.attachFile}>

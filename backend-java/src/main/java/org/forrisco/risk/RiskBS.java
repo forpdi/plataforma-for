@@ -2,10 +2,13 @@ package org.forrisco.risk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
 
 import org.forrisco.core.item.Item;
+import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.policy.Policy;
 import org.forrisco.core.process.ProcessUnit;
 import org.forrisco.core.unit.Unit;
@@ -24,6 +27,17 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 public class RiskBS extends HibernateBusiness {
 	
 
+
+	/**
+	 * Salva no banco de dados um novo risco
+	 * 
+	 * @param Risk,
+	 *            instância de um risco a ser salvo
+	 */
+	public void saveRisk(Risk risk) {
+		risk.setDeleted(false);
+		this.persist(risk);	
+	}
 	
 	/**
 	 * Salva no banco de dados graus de risco
@@ -48,6 +62,18 @@ public class RiskBS extends HibernateBusiness {
 	}
 	
 	
+
+
+	/**
+	 * Salva no banco de dados um nova ação preventiva
+	 * 
+	 * @param PreventiveAction,
+	 *            instância de uma ação preventiva a ser salva
+	 */
+	public void saveAction(PreventiveAction action) {
+		action.setDeleted(false);
+		this.persist(action);
+	}
 	
 	/**
 	 * Retorna uma lista de grau de risco a partir da política
@@ -153,13 +179,128 @@ public class RiskBS extends HibernateBusiness {
 	}
 
 
-
+	/**
+	 * Recuperar lista de riscos a partir de processunit
+	 * 
+	 * @param ProcessUnit,
+	 *            instância processunit
+	 * 
+	 * @return List<Risk>
+	 */
 	private List<Risk> listRiskbyProcessUnit(ProcessUnit pu) {
 		Criteria criteria = this.dao.newCriteria(Risk.class)
 		.add(Restrictions.eq("deleted", false))
 		.add(Restrictions.eq("pu", pu));
 		
 		return this.dao.findByCriteria(criteria, Risk.class);
+	}
+
+	//recuperar o risklevel do risco
+	//risco->unidade -> plano->politica -> risco level
+	/**
+	 * Recuperar o grau de risco a partir da probabilidade e impacto
+	 * 
+	 * @param ProcessUnit,
+	 *            instância processunit
+	 * 
+	 * @return List<Risk>
+	 */
+	public RiskLevel getRiskLevelbyRisk(Risk risk) {
+		
+		Unit unit = this.exists(risk.getUnit().getId(), Unit.class);
+		PlanRisk planRisk = this.exists(unit.getPlan().getId(), PlanRisk.class);
+		Policy policy = this.exists(planRisk.getPolicy().getId(), Policy.class);
+
+		
+		int total=policy.getNline()*policy.getNcolumn()+policy.getNline()+policy.getNcolumn();
+		String[] aux=policy.getMatrix().split(";");
+		String[][] matrix = new String[total][3];
+		
+		for(int i=0; i< aux.length;i++){
+			matrix[i][0]=aux[i].split("\\[.*\\]")[1];
+			Pattern pattern = Pattern.compile("\\[.*\\]");
+			Matcher matcher = pattern.matcher(aux[i]);
+			if(matcher.find()){
+				matrix[i][1]=matcher.group(0).split(",")[0].split("\\[")[1];
+				matrix[i][2]=matcher.group(0).split(",")[1].split("\\]")[0];
+			}
+		}
+		
+		int linha=0;
+		int coluna=0;
+		for(int i=0;i<policy.getNline();i++){
+			if(i%policy.getNline() ==0){
+				if(risk.getProbability().equals(matrix[i][0])){
+					linha=i;
+					i=policy.getNline();
+				}
+			}
+		}
+		
+		for(int i=total-policy.getNcolumn();i<total;i++){
+			coluna+=1;
+			if(risk.getImpact().equals(matrix[i][0])){
+				//coluna=i-total+policy.getNcolumn()+1;
+				i=total;
+			}
+		}
+		
+		String result=matrix[linha*policy.getNcolumn()+coluna][0];
+		
+		Criteria criteria = this.dao.newCriteria(RiskLevel.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("policy", policy))
+				.add(Restrictions.eq("level", result));
+		
+		return (RiskLevel)criteria.uniqueResult();
+		
+	}
+
+	
+	/**
+	 * Recuperar as ações preventivas a partir de um risco
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 * 
+	 * @return PaginatedList<PreventiveAction>
+	 */
+	public PaginatedList<PreventiveAction> listActionbyRisk(Risk risk) {
+		
+		PaginatedList<PreventiveAction> results = new PaginatedList<PreventiveAction>();
+		
+		Criteria criteria = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk));
+
+		Criteria count = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
+
+		results.setList(this.dao.findByCriteria(criteria, PreventiveAction.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+	}
+
+	public void delete(PreventiveAction action) {
+		action.setDeleted(true);
+		this.persist(action);
+	}
+
+	public void save(PreventiveAction oldaction) {
+		// TODO Auto-generated method stub
+		
+	}
+	/**
+	 * Salva no banco de dados uma nova ação preventiva
+	 * 
+	 * @param PreventiveAction,
+	 *            instância de uma ação preventiva
+	 */
+	public void saveAction(Risk risk) {
+		risk.setDeleted(false);
+		this.persist(risk);	
 	}
 
 }

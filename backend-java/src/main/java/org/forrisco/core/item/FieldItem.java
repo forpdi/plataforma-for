@@ -18,7 +18,7 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
 @Table(name = FieldItem.TABLE)
 
 public class FieldItem extends SimpleLogicalDeletableEntity {
-	public static final String TABLE = "frisco_field_item";
+	public static final String TABLE = "frisco_item_field";
 	private static final long serialVersionUID = 1L;
 
 	@SkipSerialization
@@ -34,8 +34,8 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private boolean isText;
 
-	@Column(nullable = false, length=255)
-	private boolean fileLink;
+	@Column(length=255)
+	private String fileLink;
 	
 	@Transient
 	private String value;
@@ -80,11 +80,11 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 		this.isText = isText;
 	}
 
-	public boolean isFileLink() {
+	public String getFileLink() {
 		return fileLink;
 	}
 
-	public void setFileLink(boolean fileLink) {
+	public void setFileLink(String fileLink) {
 		this.fileLink = fileLink;
 	}
 

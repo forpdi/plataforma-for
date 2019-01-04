@@ -32,8 +32,8 @@ export default React.createClass({
 			itemModel: null,
 			policyModel: null,
 			risklevelModel: null,
-			fields: [],
-
+			fields:[],
+			
 			vizualization: false,
 			tabPath: this.props.location.pathname,
 			undeletable: false,
@@ -280,7 +280,8 @@ export default React.createClass({
 							description: model.attributes[i].description,
 							isText:  model.attributes[i].isText,
 							type: model.attributes[i].isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							edit: false
+							edit: false,
+							fileLink: model.attributes[i].fileLink
 						});
 					}
 				}
@@ -310,7 +311,8 @@ export default React.createClass({
 							type: model.attributes[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
 							value: model.attributes[i].description,
 							label: model.attributes[i].name,
-							edit: false
+							edit: false,
+							fileLink: model.attributes[i].fileLink
 						});
 					}
 				}
@@ -325,8 +327,6 @@ export default React.createClass({
 				me.forceUpdate();
 
 				me.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedItem"));
-				//this.context.router.push("/forrisco/policy/"+this.state.policyModel.attributes.id+"/item/"+model.data.id);
-
 			}else{
 				me.context.toastr.addAlertError(Messages.get("label.errorUpdatedItem"));
 			}
@@ -343,7 +343,7 @@ export default React.createClass({
 							name: fielditem.value,
 							isText: fielditem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
 							description: fielditem.description,
-							fileLink: "" //arrumar quando tiver salvando arquivos também
+							fileLink:  fielditem.fileLink
 						}
 					})
 				})
@@ -722,16 +722,38 @@ export default React.createClass({
 						):""}
 				</h1>
 
-				<VerticalForm
-					vizualization={this.state.vizualization}
-					onCancel={this.onCancel}
-					onSubmit={this.onSubmit}
-					fields={this.getFields()}
-					submitLabel={Messages.get("label.submitLabel")}
-					//store={ItemStore}
-					//ref='planRegisterForm'
-				/>
-
+				{this.getFields().map((fielditem, index) => {
+					if(fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD){
+						return (<div><VerticalForm
+							vizualization={this.state.vizualization}
+							onCancel={this.onCancel}
+							onSubmit={this.onSubmit}
+							fields={[fielditem]}
+							submitLabel={Messages.get("label.submitLabel")}
+							//store={ItemStore}
+							//ref='planRegisterForm'
+						/></div>)
+					}else{
+						return (
+							<div>
+							<label className="fpdi-text-label">{fielditem.value}</label>
+							<div className="panel panel-default">
+								<table className="budget-field-table table">
+									<tbody>
+										<tr>
+											<td className="fdpi-table-cell">
+												<a target="_blank" rel="noopener noreferrer" href={fielditem.fileLink}>
+													{fielditem.description}</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								</div>
+							</div>
+						)
+					}
+					})
+				}
 			<br/>
 			{this.state.info ?
 			<div>
@@ -747,10 +769,6 @@ export default React.createClass({
 			</div>
 			</div>;
 		}else{
-
-			/*if(this.state.info){
-				return
-			}else{*/
 
 			//editar
 			return (
@@ -803,7 +821,7 @@ export default React.createClass({
 
 
 					{
-					//campos
+						//campos
 					}
 
 					{this.state.fields && (this.state.fields.length > 0) ?
@@ -812,24 +830,36 @@ export default React.createClass({
 							//fielditem.name=fielditem.name
 							//fielditem.value=fielditem.label
 							fielditem.isText=true;
-								return (
-									<div>
-									<FieldItemInput
-										vizualization={!this.props.vizualization}
-										deleteFunc={this.deleteFunc}
-										editFunc={this.editFunc}
-										setItem={this.setItem}
-										fields={this.state.fields}
-										reset={this.reset}
-										field={fielditem}
-										index={index}
-										getLength={this.getLength}
-										/>
-									</div>
-								)
+							return (
+								<div>
+								<FieldItemInput
+									vizualization={!this.props.vizualization}
+									deleteFunc={this.deleteFunc}
+									editFunc={this.editFunc}
+									setItem={this.setItem}
+									fields={this.state.fields}
+									reset={this.reset}
+									field={fielditem}
+									index={index}
+									getLength={this.getLength}
+									/>
+								</div>
+							)
 						}else if (fielditem.type ==  AttributeTypes.ATTACHMENT_FIELD){
 							fielditem.isText=false;
-							//TODO
+							return (<div>
+								<FieldItemInput
+									vizualization={!this.props.vizualization}
+									deleteFunc={this.deleteFunc}
+									editFunc={this.editFunc}
+									setItem={this.setItem}
+									fields={this.state.fields}
+									reset={this.reset}
+									field={fielditem}
+									index={index}
+									getLength={this.getLength}
+									/>
+								</div>)
 						}
 					}):""}
 

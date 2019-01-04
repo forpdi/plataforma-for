@@ -1,5 +1,7 @@
 package org.forrisco.risk;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,6 +40,17 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable=false, length=40)
 	private String impact;
+
+	@Column(nullable=false)
+	private Date begin;
+	
+	public Date getBegin() {
+		return begin;
+	}
+
+	public void setBegin(Date begin) {
+		this.begin = begin;
+	}
 
 	public User getUser() {
 		return user;
