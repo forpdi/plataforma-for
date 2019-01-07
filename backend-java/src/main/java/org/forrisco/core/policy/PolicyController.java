@@ -12,7 +12,7 @@ import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import  org.forrisco.core.policy.permissions.ManagePolicyPermission;
 import org.forrisco.core.unit.Unit;
-import org.forrisco.core.unit.UnitBS;
+//import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 import org.forrisco.risk.RiskLevel;
@@ -40,7 +40,7 @@ public class PolicyController extends AbstractController {
 	@Inject private PolicyBS policyBS;
 	@Inject private ItemBS itemBS;
 	@Inject private RiskBS riskBS;
-	@Inject private UnitBS unitBS;
+	//@Inject private UnitBS unitBS;
 	
 	protected static final String PATH =  BASEPATH +"/policy";
 	
@@ -227,7 +227,7 @@ public class PolicyController extends AbstractController {
 			// ou alterar quantidade de graus de risco
 			// e tiver unidade vinculada
 			/** depois verificar se está recuperando certo plano de risco/unidade/risco**/
-			if(policy.getNcolumn() != existent.getNcolumn() 
+			/*if(policy.getNcolumn() != existent.getNcolumn() 
 					|| policy.getNline() != existent.getNline()
 					|| policy.getLevel() != existentLevels.getTotal()) {
 			
@@ -242,7 +242,7 @@ public class PolicyController extends AbstractController {
 						}
 					}	
 				}
-			}
+			} */
 		
 			//rótulos podem sempre ser mudados
 
