@@ -51,7 +51,6 @@ var PolicyStore = Fluxbone.Store.extend({
 		});
 	},
 
-
 	findUnarchived(data){
 		var me = this;
 		$.ajax({
@@ -67,7 +66,6 @@ var PolicyStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
 
 	retrieveRiskLevel(data){
 		var me = this;
