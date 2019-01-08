@@ -556,9 +556,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		ZipOutputStream zos = new ZipOutputStream(bos);	
 		
 		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
-		if(!companyMessage.isEmpty())
-			zipAdd(zos, CompanyMessage.class.getSimpleName(), this.gson.toJson(companyMessage));
-		
+				
 		if(!plansMacro.isEmpty())
 		 zipAdd(zos, PlanMacro.class.getSimpleName(), this.gson.toJson(plansMacro));
 		if(!budgetelement.isEmpty())
@@ -621,6 +619,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!optionsField.isEmpty())
 			zipAdd(zos, OptionsField.class.getSimpleName(), this.gson.toJson(optionsField));
 		
+		if(!companyMessage.isEmpty())
+			zipAdd(zos, CompanyMessage.class.getSimpleName(), this.gson.toJson(companyMessage));
 		
 		zos.close();
 			
@@ -694,8 +694,13 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 						CompanyMessage cm = gson.fromJson(array.get(i).toString(), CompanyMessage.class);
 						//long id_old_company =cm.getExportCompanyId();
 						cm.setCompany(company);
-						this.dao.persist(cm);
 						quantity+=1;
+						
+						try {
+							this.dao.persist(cm);
+						}catch(Exception e) {
+							continue;
+						}
 					}
 					break;
 	

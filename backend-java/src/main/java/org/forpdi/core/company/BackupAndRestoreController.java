@@ -130,7 +130,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * 
 	 */
 	@Get("api/company/state")
-	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
+	//@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	public void  state() {
 		try {
 			String  porcent =String.valueOf(dbbackup.getPorcentagem());
@@ -141,7 +141,8 @@ public class BackupAndRestoreController extends AbstractController  {
 			this.success(porcent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
+			//this.fail("Erro inesperado: " + ex.getMessage());
+			this.success("-1");
 		}
 	}
 }
