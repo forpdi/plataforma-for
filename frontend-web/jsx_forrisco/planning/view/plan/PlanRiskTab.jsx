@@ -4,34 +4,54 @@ import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 
 export default React.createClass({
+
+	contextTypes: {
+		accessLevel: React.PropTypes.number.isRequired,
+		roles: React.PropTypes.object.isRequired,
+		router: React.PropTypes.object,
+		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired
+	},
+
 	getInitialState() {
 		return {
 			planRiskModel: null,
 			submitLabel: "Salvar",
-			cancelLabel: "Cancelar"
+			cancelLabel: "Cancelar",
+			policies: [{
+				label: ''
+			}]
 		};
 	},
 
-	setOptions() {
+	componentDidMount() {
 		var policiDescription = [];
-		PolicyStore.on('unarchivedpolicylisted', (store) => {
+		var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
 
-			if (store.status === 400) {
+			if (response.status !== true) {
 				this.setState({domainError: true});
 			}
 
-			if (store.status === 200 || store.status === undefined) {
-				store.data.map((attr) => {
-					policiDescription.push(attr.description);
+			if (response.success === true) {
+				response.data.map((attr) => {
+					policiDescription.push({
+						label: attr.description
+					});
 				});
 
 				this.setState({
-					options: policiDescription, domainError: false
+					policies: policiDescription, domainError: false
 				});
 			}
-		});
 
-		return policiDescription
+			resultSelect.off("unarchivedpolicylisted");
+		});
+	} ,
+
+	componentWillMount() {
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_UNARCHIVED,
+		});
 	},
 
 	getFields() {
@@ -54,29 +74,30 @@ export default React.createClass({
 		}, {
 			name: "linkedPolicy",
 			type: "select",
-			options: this.setOptions(),
+			options: this.state.policies,
 			required: true,
+			displayField: 'label',
 			placeholder: "Selecone a Política",
 			label: Messages.getEditable("label.descriptionPolicy", "dashboard-select-box"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
 		});
 
 		return fields;
-	},
+	}
+	,
 
 	render() {
 		return (
 			<div>
-				<h1 className="marginLeft115">{Messages.getEditable("label.newPlan", "fpdi-nav-label")}</h1>
+				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
 					<form>
 						{
-							console.log(this.getFields())
-							// this.getFields().map((field, index) => {
-							// 	return (
-							// 		<VerticalInput key={index} fieldDef={field}/>
-							// 	);
-							// })
+							this.getFields().map((field, index) => {
+								return (
+									<VerticalInput key={index} fieldDef={field}/>
+								);
+							})
 						}
 
 						<div className="fpdi-editable-data-input-group">
@@ -88,4 +109,5 @@ export default React.createClass({
 			</div>
 		)
 	}
-});
+})
+;
