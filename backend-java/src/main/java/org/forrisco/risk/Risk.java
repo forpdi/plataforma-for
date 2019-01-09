@@ -1,15 +1,20 @@
 package org.forrisco.risk;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 import org.forrisco.core.process.ProcessUnit;
+import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
+import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
@@ -28,19 +33,11 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	private User user;
 
 	@SkipSerialization
-	@ManyToOne(targetEntity=ProcessUnit.class, optional=false, fetch=FetchType.EAGER)
-	private ProcessUnit pu;
-
-	public ProcessUnit getPu() {
-		return pu;
-	}
-
-	public void setPu(ProcessUnit pu) {
-		this.pu = pu;
-	}
-
+	@ManyToOne(targetEntity=Unit.class, optional=false, fetch=FetchType.EAGER)
+	private Unit unit;
+	
 	@SkipSerialization
-	@ManyToOne(targetEntity=RiskLevel.class, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity=RiskLevel.class, optional=false, fetch=FetchType.EAGER)
 	private RiskLevel riskLevel;
 	
 	@Column(nullable=false, length=255)
@@ -55,6 +52,21 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000)
 	private String result;
 
+	@Column(nullable=false , length=400)
+	private String probability;
+
+	@Column(nullable=false , length=400)
+	private String impact;
+
+	@Column(nullable=false , length=400)
+	private String  periodicity;
+
+	@Column(nullable=false , length=400)
+	private String tipology;
+
+	@Column(nullable=false , length=4010)
+	private String type;
+	
 	@Column(nullable=false)
 	private boolean risk_pdi;
 
@@ -72,156 +84,132 @@ public class Risk extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable=false)
 	private int act_process;
-
-	@Column(nullable=false)
-	private int probability;
-
-	@Column(nullable=false)
-	private int impact;
-
-	@Column(nullable=false)
-	private int periodicity;
-
-	@Column(nullable=false)
-	private int tipology;
-
-	@Column(nullable=false)
-	private int type;
 	
+	@Column(nullable=false)
+	private Date begin;
+	
+	@Column(nullable=true)
+	private String linkFPDI;
+
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
+	}
+	public Unit getUnit() {
+		return unit;
+	}
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	public String getCode() {
 		return code;
 	}
-
 	public void setCode(String code) {
 		this.code = code;
 	}
-
 	public String getReason() {
 		return reason;
 	}
-
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-
 	public String getResult() {
 		return result;
 	}
-
 	public void setResult(String result) {
 		this.result = result;
 	}
-
+	public String getProbability() {
+		return probability;
+	}
+	public void setProbability(String probability) {
+		this.probability = probability;
+	}
+	public String getImpact() {
+		return impact;
+	}
+	public void setImpact(String impact) {
+		this.impact = impact;
+	}
+	public String getPeriodicity() {
+		return periodicity;
+	}
+	public void setPeriodicity(String periodicity) {
+		this.periodicity = periodicity;
+	}
+	public String getTipology() {
+		return tipology;
+	}
+	public void setTipology(String tipology) {
+		this.tipology = tipology;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
 	public boolean isRisk_pdi() {
 		return risk_pdi;
 	}
-
 	public void setRisk_pdi(boolean risk_pdi) {
 		this.risk_pdi = risk_pdi;
 	}
-
 	public boolean isRisk_obj_process() {
 		return risk_obj_process;
 	}
-
 	public void setRisk_obj_process(boolean risk_obj_process) {
 		this.risk_obj_process = risk_obj_process;
 	}
-
 	public boolean isRisk_act_process() {
 		return risk_act_process;
 	}
-
 	public void setRisk_act_process(boolean risk_act_process) {
 		this.risk_act_process = risk_act_process;
 	}
-
 	public int getPdi() {
 		return pdi;
 	}
-
 	public void setPdi(int pdi) {
 		this.pdi = pdi;
 	}
-
 	public int getObj_process() {
 		return obj_process;
 	}
-
 	public void setObj_process(int obj_process) {
 		this.obj_process = obj_process;
 	}
-
 	public int getAct_process() {
 		return act_process;
 	}
-
 	public void setAct_process(int act_process) {
 		this.act_process = act_process;
 	}
-
-	public int getProbability() {
-		return probability;
+	public Date getBegin() {
+		return begin;
 	}
-
-	public void setProbability(int probability) {
-		this.probability = probability;
+	public void setBegin(Date begin) {
+		this.begin = begin;
 	}
-
-	public int getImpact() {
-		return impact;
-	}
-
-	public void setImpact(int impact) {
-		this.impact = impact;
-	}
-
-	public int getPeriodicity() {
-		return periodicity;
-	}
-
-	public void setPeriodicity(int periodicity) {
-		this.periodicity = periodicity;
-	}
-
-	public int getTipology() {
-		return tipology;
-	}
-
-	public void setTipology(int tipology) {
-		this.tipology = tipology;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public org.forpdi.core.user.User getUser() {
-		return user;
-	}
-
-	public void setUser(org.forpdi.core.user.User user) {
-		this.user = user;
-	}
-
 	public RiskLevel getRiskLevel() {
 		return riskLevel;
 	}
-
 	public void setRiskLevel(RiskLevel riskLevel) {
 		this.riskLevel = riskLevel;
+	}
+	public String getLinkFPDI() {
+		return linkFPDI;
+	}
+	public void setLinkFPDI(String linkFPDI) {
+		this.linkFPDI = linkFPDI;
 	}
 
 }

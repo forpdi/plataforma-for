@@ -13,6 +13,7 @@ import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 import AttributeInput from 'forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx';
 import FieldItemInput from  'forpdi/jsx_forrisco/planning/view/item/FieldItemInput.jsx'
 
+
 var VerticalForm = Form.VerticalForm;
 var Validate = Validation.validate;
 
@@ -195,7 +196,7 @@ export default React.createClass({
 						name: fieldsubitem.value,
 						isText: fieldsubitem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
 						description: fieldsubitem.description,
-						fileLink: "" //arrumar quando tiver salvando arquivos também
+						fileLink: fieldsubitem.fileLink
 					}
 				})
 			})
@@ -397,57 +398,6 @@ export default React.createClass({
 	backWrapper() {
 		hashHistory.goBack();
 	},
-	attachFile(){
-		var me = this;
-		var title = Messages.get("label.insertAttachment");
-		var msg = (
-			<div>
-				<p>
-					{Messages.get("label.selectFile")}
-				</p>
-			</div>
-		);
-		var url = FileStore.url+"/upload";
-		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|"+
-		"pdf"//|doc|docx|odt|rtf|txt|xml|xlsx|xls|ods|csv|ppt|pptx|ppsx|odp|"+
-		//"mp3|wav|wma|ogg|aac|"+
-		//"avi|mov|wmv|mp4|flv|mkv|"+
-		//"zip|rar|7z|tar|targz|tar.bz2";
-		var formatsBlocked = "(exe*)";
-		var onSuccess = function (resp) {
-			Modal.hide();
-			var file = {
-				name: Modal.fileName,
-				description: "",
-				fileLink: resp.message,
-				levelInstance: {
-					id: me.props.levelInstanceId
-				}
-			}
-			me.setState({
-				//loading: true
-				//description: Modal.fileName,
-				fileData:file
-			});
-			/*AttachmentStore.dispatch({
-				action: AttachmentStore.ACTION_CREATE,
-				data: file
-			});*/
-			//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
-		};
-		var onFailure = function (resp) {
-			Modal.hide();
-			me.setState({error: resp.message});
-		};
-		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz\n"+
-			"Documentos: pdf" //, doc, docx, odt, rtf, txt, xml, xlsx, xls, ods, csv, ppt, pptx, ppsx, odp\n"
-			//+"Áudio: MP3, WAV, WMA, OGG, AAC\n"
-			//+"Vídeos: avi, mov, wmv, mp4, flv, mkv\n"
-			//+"Arquivos: zip, rar, 7z, tar, tar.gz, tar.bz2\n";
-		var maxSize = 2;
-
-		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
-	},
 
 	renderArchivePolicy() {
 		return (
@@ -583,15 +533,40 @@ export default React.createClass({
 						):""}
 				</h1>
 
-				<VerticalForm
-					vizualization={this.state.vizualization}
-					//ref='planRegisterForm'
-					onCancel={this.onCancel}
-					onSubmit={this.onSubmit}
-					fields={this.getInfo()}
-					//store={subitemStore}
-					submitLabel={Messages.get("label.submitLabel")}
-				/>
+				{this.state.fields && (this.state.fields.length > 0) ?
+					this.state.fields.map((fieldsubitem, index) => {
+					if(fieldsubitem.item ==  AttributeTypes.TEXT_AREA_FIELD){
+						return (
+							<div><VerticalForm
+							vizualization={this.state.vizualization}
+							onCancel={this.onCancel}
+							onSubmit={this.onSubmit}
+							fields={[fieldsubitem]}
+							submitLabel={Messages.get("label.submitLabel")}
+							//store={ItemStore}
+							//ref='planRegisterForm'
+						/></div>)
+					}else{
+						return (
+							<div>
+							<label className="fpdi-text-label">{fieldsubitem.value}</label>
+							<div className="panel panel-default">
+								<table className="budget-field-table table">
+									<tbody>
+										<tr>
+											<td className="fdpi-table-cell">
+												<a target="_blank" rel="noopener noreferrer" href={fieldsubitem.fileLink}>
+													{fieldsubitem.description}</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								</div>
+							</div>
+						)
+					}
+	
+				}) :""}
 
 			</div>
 			</div>;
@@ -648,7 +623,7 @@ export default React.createClass({
 
 
 					{
-					//campos
+						//campos
 					}
 
 					{this.state.fields && (this.state.fields.length > 0) ?
@@ -674,7 +649,20 @@ export default React.createClass({
 								)
 						}else if (fieldsubitem.type ==  AttributeTypes.ATTACHMENT_FIELD){
 							fieldsubitem.isText=false;
-							//TODO
+							return (
+								<div>
+								<FieldItemInput
+									vizualization={!this.props.vizualization}
+									deleteFunc={this.deleteFunc}
+									editFunc={this.editFunc}
+									setItem={this.setItem}
+									fields={this.state.fields}
+									reset={this.reset}
+									field={fieldsubitem}
+									index={index}
+									getLength={this.getLength}
+									/>
+								</div>)
 						}
 					}):""}
 

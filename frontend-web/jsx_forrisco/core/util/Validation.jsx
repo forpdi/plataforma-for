@@ -77,33 +77,39 @@ var Validate = {
 
 		var errorField = false;
 
+		newfield['newfield-name'].className = "form-control";
+		newfield['formAlertErrorName'].innerHTML = "";
+
+		newfield['newfield-type'].className = "form-control";
+		newfield['formAlertErrorType'].innerHTML = "";
+
 		if (name.isEmpty() || type.isEmpty()) {
 			if(newfield['newfield-name'].value.trim() == "") {
-				newfield['newfield-name'].className = "form-control borderError";
+				newfield['newfield-name'].className += " borderError";
 				newfield['formAlertErrorName'].innerHTML = Messages.get("label.alert.fieldEmpty");
 				errorField = true;
 			} else {
-				newfield['newfield-name'].className = "form-control";
-				newfield['formAlertErrorName'].innerHTML = "";
+				//newfield['newfield-name'].className = "form-control";
+				//newfield['formAlertErrorName'].innerHTML = "";
 			}
 
 			if(newfield['newfield-type'].value.trim() == "") {
-				newfield['newfield-type'].className = "form-control borderError";
+				newfield['newfield-type'].className += " borderError";
 				newfield['formAlertErrorType'].innerHTML = Messages.get("label.alert.fieldEmpty");
 				errorField = true;
 			} else {
-				newfield['newfield-type'].className = "form-control";
-				newfield['formAlertErrorType'].innerHTML = "";
+				//newfield['newfield-type'].className = "form-control";
+				//newfield['formAlertErrorType'].innerHTML = "";
 			}
 		}
 
 
-		if(description.trim() == "") {
+		/*if(description.trim() == "") {
 			//newfield['formAlertErrorDescription'].innerHTML = Messages.get("label.alert.fieldEmpty");
 			errorField = true;
 		} else {
 			//newfield['formAlertErrorDescription'].innerHTML = "";
-		}
+		}*/
 
 
 		var aux = {

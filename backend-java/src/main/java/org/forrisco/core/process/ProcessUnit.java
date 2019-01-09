@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -27,31 +28,30 @@ public class ProcessUnit extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_process_unit";
 	private static final long serialVersionUID = 1L;
 
-	@Id
 	@SkipSerialization
+	@JoinColumn(name="process_id")
 	@ManyToOne(targetEntity=Process.class,  fetch=FetchType.EAGER)
-	private Set<Process> process = new HashSet<>();
-
-	@Id
+	private Process process;
+	
 	@SkipSerialization
+	@JoinColumn(name="unit_id") 
 	@ManyToOne(targetEntity=Unit.class,  fetch=FetchType.EAGER)
-	private Set<Unit> unit = new HashSet<>();
-
-	public Set<Process> getProcess() {
-		return process;
-	}
-
-	public void setProcess(Set<Process> process) {
+	private Unit unit;
+	
+	public void setProcess(Process process) {
 		this.process = process;
 	}
 
-	public Set<Unit> getUnit() {
-		return unit;
-	}
-
-	public void setUnit(Set<Unit> unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
-	
+
+	public Process getProcess() {
+		return process;
+	}
+
+	public Unit getUnit() {
+		return unit;
+	}
 	
 }

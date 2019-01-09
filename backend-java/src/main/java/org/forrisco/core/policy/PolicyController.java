@@ -59,6 +59,7 @@ public class PolicyController extends AbstractController {
 		try {
 			if(this.domain == null) {
 				this.fail("Instituição não definida");
+				return;
 			}
 			policy.setCompany(this.domain.getCompany());
 			policy.setId(null);
@@ -125,7 +126,6 @@ public class PolicyController extends AbstractController {
 	 *            Id da política a ser retornado.
 	 * @return Policy Retorna a política de acordo com o id passado.
 	 */
-
 	@Get( PATH + "/{id}")
 	@NoCache
 	@Permissioned
@@ -168,36 +168,36 @@ public class PolicyController extends AbstractController {
 			if(plans.getTotal() >0) {
 				this.fail("Impossível excluir política com Planos de Risco vinculados");
 			}else {
-				
+
 				PaginatedList<Item> itens = this.itemBS.listItensByPolicy(policy);
-				
+
 				for(Item item : itens.getList()){
-					
+
 					PaginatedList<FieldItem> fields = this.itemBS.listFieldsByItem(item);
 					for(FieldItem field : fields.getList()){
 						this.itemBS.delete(field);
 					}
 					
 					this.itemBS.deleteSubitens(item);
-					
+
 					this.itemBS.delete(item);
 				}
-				
+
 				for(RiskLevel riskLevel : riskLevels.getList()){
 					this.riskBS.delete(riskLevel);
 				}
-				
+
 				//policy.setDeleted(true);
 				this.policyBS.delete(policy);
 				this.success();
-			}	
-			
+			}
+
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Edita política.
 	 * 

@@ -17,10 +17,6 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
 /**
  * @author Matheus Nascimento
  * 
- * 
- * 
- * Sessão de documento
- * 
  */
 @Entity(name = Item.TABLE)
 @Table(name = Item.TABLE)
@@ -41,7 +37,6 @@ public class Item extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private List<FieldItem> fieldItem;
-
 
 	public List<FieldItem> getFieldItem() {
 		return fieldItem;
