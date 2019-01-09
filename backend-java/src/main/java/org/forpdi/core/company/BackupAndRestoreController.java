@@ -102,7 +102,8 @@ public class BackupAndRestoreController extends AbstractController  {
 			return;
 		}
 		
-		if(this.domain.getCompany() == null) {
+		if(this.domain == null || this.domain.getCompany() == null) {
+			BackupAndRestoreController.file = null;
 			this.fail("Instituição não definida");
 			return;
 		}

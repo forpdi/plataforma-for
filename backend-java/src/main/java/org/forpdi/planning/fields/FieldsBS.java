@@ -383,13 +383,21 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Verificar se o campo pertence ao documento ou plano.
 	 * @return TableFields Campo da tabela.
 	 */
-	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument) {
+	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(TableFields.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
 				.addOrder(Order.asc("id"));
 		TableFields tableFields = (TableFields) criteria.uniqueResult();
 		return tableFields;
 	}
+	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument) {
+		Criteria criteria = this.dao.newCriteria(TableFields.class)//.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
+				.addOrder(Order.asc("id"));
+		TableFields tableFields = (TableFields) criteria.uniqueResult();
+		return tableFields;
+	}
+
 
 	/**
 	 * Buscar instância na tabela à partir de um atributo.
@@ -629,9 +637,17 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Id para buscar os campos.
 	 * @return PaginatedList<OptionsField> Lista com os campos.
 	 */
+	public PaginatedList<OptionsField> getOptionsField(Long attributeId, boolean deleted) {
+		PaginatedList<OptionsField> list = new PaginatedList<>();
+		Criteria criteria = this.dao.newCriteria(OptionsField.class).add(Restrictions.eq("deleted", deleted))
+				.add(Restrictions.eq("attributeId", attributeId)).addOrder(Order.asc("id"));
+		;
+		list.setList(this.dao.findByCriteria(criteria, OptionsField.class));
+		return list;
+	}
 	public PaginatedList<OptionsField> getOptionsField(Long attributeId) {
 		PaginatedList<OptionsField> list = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(OptionsField.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(OptionsField.class)//.add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("attributeId", attributeId)).addOrder(Order.asc("id"));
 		;
 		list.setList(this.dao.findByCriteria(criteria, OptionsField.class));
@@ -676,8 +692,13 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Campos para listar à estrutura.
 	 * @return List<TableInstance> Lista com a estururas dos campos.
 	 */
+	public List<TableInstance> listTableInstanceByFields(TableFields fields, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableInstance.class).add(Restrictions.eq("deleted", deleted))
+				.add(Restrictions.eq("tableFields", fields));
+		return this.dao.findByCriteria(criteria, TableInstance.class);
+	}
 	public List<TableInstance> listTableInstanceByFields(TableFields fields) {
-		Criteria criteria = this.dao.newCriteria(TableInstance.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(TableInstance.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("tableFields", fields));
 		return this.dao.findByCriteria(criteria, TableInstance.class);
 	}
@@ -688,8 +709,13 @@ public class FieldsBS extends HibernateBusiness {
 	 * @param instance
 	 * @return List<TableValues> Lista com os valores da tabela.
 	 */
+	public List<TableValues> listTableValuesByInstance(TableInstance instance, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", deleted))
+				.add(Restrictions.eq("tableInstance", instance));
+		return this.dao.findByCriteria(criteria, TableValues.class);
+	}
 	public List<TableValues> listTableValuesByInstance(TableInstance instance) {
-		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(TableValues.class)//.add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("tableInstance", instance));
 		return this.dao.findByCriteria(criteria, TableValues.class);
 	}
@@ -701,11 +727,17 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Estrutura para listar os campos.
 	 * @return List<TableValues> Lista dos valores com os campos de tabela.
 	 */
-	public List<TableValues> listTableValuesByStructure(TableStructure structure) {
-		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", false))
+	public List<TableValues> listTableValuesByStructure(TableStructure structure, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("tableStructure", structure));
 		return this.dao.findByCriteria(criteria, TableValues.class);
 	}
+	public List<TableValues> listTableValuesByStructure(TableStructure structure) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class)//.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("tableStructure", structure));
+		return this.dao.findByCriteria(criteria, TableValues.class);
+	}
+
 
 	/**
 	 * Lista com as estruturas do campos do cronograma.

@@ -332,7 +332,7 @@ public class DocumentBS extends HibernateBusiness {
 				Schedule schedule = this.fieldsBS.scheduleByAttribute(documentAttribute.getId(), true);
 				documentAttribute.setSchedule(schedule);
 			} else if (documentAttribute.getType().equals(TableField.class.getCanonicalName())) {
-				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(documentAttribute.getId(), true);
+				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(documentAttribute.getId(), true, false);
 				if (tableFields == null)
 					continue;
 				for (TableStructure tableStructure : tableFields.getTableStructures()) {
@@ -594,7 +594,7 @@ public class DocumentBS extends HibernateBusiness {
 	 */
 	public Document retrieveDocumentByPlan(PlanMacro planMacro) {
 		Criteria criteria = this.dao.newCriteria(Document.class);
-		criteria.add(Restrictions.eq("plan", planMacro)).add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("plan", planMacro));
 		Document document = (Document) criteria.uniqueResult();
 
 		return document;
@@ -723,7 +723,7 @@ public class DocumentBS extends HibernateBusiness {
 	 *            false.
 	 */
 	public void duplicateTableField(DocumentAttribute attr, DocumentAttribute attrCopy, Boolean keepContent) {
-		TableFields fields = this.fieldsBS.tableFieldsByAttribute(attr.getId(), true);
+		TableFields fields = this.fieldsBS.tableFieldsByAttribute(attr.getId(), true, false);
 		TableFields fieldsCopy = new TableFields();
 		fieldsCopy.setAttributeId(attrCopy.getId());
 		fieldsCopy.setDeleted(false);
@@ -755,14 +755,14 @@ public class DocumentBS extends HibernateBusiness {
 			structureMap.put(structure.getId(), structureCopy);
 		}
 		if (keepContent) {
-			List<TableInstance> instances = this.fieldsBS.listTableInstanceByFields(fields);
+			List<TableInstance> instances = this.fieldsBS.listTableInstanceByFields(fields,false);
 			for (TableInstance instance : instances) {
 				TableInstance instanceCopy = new TableInstance();
 				instanceCopy.setCreation(new Date());
 				instanceCopy.setDeleted(false);
 				instanceCopy.setTableFields(fieldsCopy);
 				this.persist(instanceCopy);
-				List<TableValues> values = this.fieldsBS.listTableValuesByInstance(instance);
+				List<TableValues> values = this.fieldsBS.listTableValuesByInstance(instance,false);
 				for (TableValues value : values) {
 					TableValues valueCopy = new TableValues();
 					valueCopy.setDeleted(false);
@@ -1026,9 +1026,9 @@ public class DocumentBS extends HibernateBusiness {
 				for (DocumentAttribute a : ds.getDocumentAttributes()) {
 					if (a.getType().equals(TableField.class.getCanonicalName())) {
 						havePreText = true;
-						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
+						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true, false);
 						List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
-						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
+						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf,false);
 						if (!tabInstList.isEmpty()) {
 							// String attName = a.getName();
 							// if (!attName.equals(secName)) {
@@ -1217,9 +1217,9 @@ public class DocumentBS extends HibernateBusiness {
 						}
 					} else if (a.getType().equals(TableField.class.getCanonicalName())) {
 
-						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
+						TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true, false);
 						List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
-						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
+						List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf,false);
 						if (!tabInstList.isEmpty()) {
 							if (lastAttWasPlan) {
 								document.setPageSize(PageSize.A4);
@@ -1456,9 +1456,9 @@ public class DocumentBS extends HibernateBusiness {
 								}
 							} else if (a.getType().equals(TableField.class.getCanonicalName())) {
 
-								TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true);
+								TableFields tf = fieldsBS.tableFieldsByAttribute(a.getId(), true, false);
 								List<TableStructure> tabStructList = fieldsBS.listTableStructureByFields(tf);
-								List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf);
+								List<TableInstance> tabInstList = fieldsBS.listTableInstanceByFields(tf,false);
 								if (!tabInstList.isEmpty()) {
 									if (lastAttWasPlan) {
 										document.setPageSize(PageSize.A4);
@@ -2086,7 +2086,7 @@ public class DocumentBS extends HibernateBusiness {
 											// LOGGER.info(levelInstanceAux.getSons().get(goalIndex).toString());
 
 											List<AttributeInstance> attInst = structureBS.listAttributeInstanceByLevel(
-													levelInstanceAux.getSons().getList().get(goalIndex));
+													levelInstanceAux.getSons().getList().get(goalIndex),false);
 											List<Attribute> attList = structureBS.listAttributesPDF(
 													levelInstanceAux.getSons().getList().get(goalIndex).getLevel());
 
@@ -2260,7 +2260,7 @@ public class DocumentBS extends HibernateBusiness {
 				table.addCell(c);
 			}
 			for (TableInstance ti : tabInstList) {
-				List<TableValues> tabValuesList = fieldsBS.listTableValuesByInstance(ti);
+				List<TableValues> tabValuesList = fieldsBS.listTableValuesByInstance(ti,false);
 				for (TableValues tv : tabValuesList) {
 					if (tv.getTableStructure().getType().equals(Currency.class.getCanonicalName())) {
 						table.addCell(new Paragraph(FormatValue.MONETARY.format(tv.getValue()), textoTabela));
@@ -2286,7 +2286,7 @@ public class DocumentBS extends HibernateBusiness {
 				table.setWidths(new float[] { 1, 1 });
 			}
 			for (TableInstance ti : tabInstList) {
-				List<TableValues> tabValuesList = fieldsBS.listTableValuesByInstance(ti);
+				List<TableValues> tabValuesList = fieldsBS.listTableValuesByInstance(ti,false);
 				for (TableValues tv : tabValuesList) {
 					PdfPCell c = new PdfPCell();
 					c.setBorder(Rectangle.NO_BORDER);
@@ -2943,7 +2943,7 @@ public class DocumentBS extends HibernateBusiness {
 	 * @return List<ScheduleValues> Lista com os valores da tabela.
 	 */
 	public List<ScheduleValues> listScheduleValuesByInstance(ScheduleInstance instance) {
-		Criteria criteria = this.dao.newCriteria(ScheduleValues.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(ScheduleValues.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("scheduleInstance", instance));
 		return this.dao.findByCriteria(criteria, ScheduleValues.class);
 	}
@@ -2956,7 +2956,7 @@ public class DocumentBS extends HibernateBusiness {
 	 * @return List<TableValues> Lista dos valores com os campos de tabela.
 	 */
 	public List<ScheduleValues> listScheduleValuesByStructure(ScheduleStructure structure) {
-		Criteria criteria = this.dao.newCriteria(ScheduleValues.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(ScheduleValues.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("scheduleStructure", structure));
 		return this.dao.findByCriteria(criteria, ScheduleValues.class);
 	}
@@ -2971,7 +2971,7 @@ public class DocumentBS extends HibernateBusiness {
 	 * @return Schedule Campo da tabela.
 	 */
 	public Schedule scheduleByAttribute(Long attributeId, boolean isDocument) {
-		Criteria criteria = this.dao.newCriteria(Schedule.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(Schedule.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
 				.addOrder(Order.asc("id"));
 		Schedule schedule = (Schedule) criteria.uniqueResult();

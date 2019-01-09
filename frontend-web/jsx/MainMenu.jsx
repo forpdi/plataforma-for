@@ -238,11 +238,22 @@ export default React.createClass({
 						}
 					},
 					error(opts, status, errorMsg) {
-						Modal.hide();
-						clearInterval(interval);
 						/*
 						timeout
 						*/
+
+						if(opts.responseJSON != null){
+							Modal.hide();
+							clearInterval(interval);
+							Toastr.error(opts.responseJSON.message);
+						}
+
+						if(opts.responseJSON != null){
+							console.log(opts.responseJSON.message)
+							console.log(status)
+							console.log(errorMsg)
+						}
+
 					}
 				});
 
@@ -250,10 +261,12 @@ export default React.createClass({
 				interval= setInterval(function() {serverImportStatus(interval);},5000);
 			},
 			(response) => {
-				clearInterval(interval);
-				Modal.hide();
-				console.log("Importação falhou");
-				Toastr.error("Importação falhou");
+				if(response.message != null){
+					clearInterval(interval);
+					Modal.hide();
+					console.log("Importação falhou: "+response.message);
+					Toastr.error("Importação falhou: "+response.message);
+				}
 			},
 			"xml."
 		);

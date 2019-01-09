@@ -395,9 +395,13 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		//Exportando option field
 		//Exportando schedule
 		documentattribute.stream().forEach(it->{
-			
+
 			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(), true);
-			if (tablefields!=null) {
+			
+			if (tablefields!=null) {				
+				List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
+				tablefields.setTableInstances(tableInstances);
+				
 				if(tablefields.isDocument()) {
 					tableFieldsMap.put(tablefields.getId(),tablefields);
 				}
@@ -423,12 +427,19 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			}
 		});
 		attribute.stream().forEach(it->{
-			
+
 			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(),false);
+			
+			//List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
+			//tablefields.setTableInstances(tableInstances);
+
 			if (tablefields!=null) {
+				List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
+				tablefields.setTableInstances(tableInstances);
+				
 				tableFieldsMap.put(tablefields.getId(),tablefields);
 			}
-			
+					
 			PaginatedList<OptionsField> optionsfield = fieldsBS.getOptionsField(it.getId());
 			
 			if (optionsfield!=null) {
@@ -1174,6 +1185,14 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_instance)));
 					((TableValues) obj).setTableInstance((TableInstance) criteria.uniqueResult());
 					id_old=((TableValues) obj).getId();
+					
+					if(((TableValues) obj).getTableInstance() ==null) {
+						LOGGER.warn("erro");
+					}
+					
+					if(((TableValues) obj).getTableStructure() ==null) {
+						LOGGER.warn("erro");
+					}
 					break;	
 
 				case "Schedule" :

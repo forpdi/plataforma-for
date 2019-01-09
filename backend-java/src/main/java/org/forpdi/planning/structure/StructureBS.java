@@ -197,9 +197,17 @@ public class StructureBS extends HibernateBusiness {
 	 *            Level de uma estrutura.
 	 * @return results Lista de atributos.
 	 */
-	public PaginatedList<Attribute> listAttributes(StructureLevel level) {
+	public PaginatedList<Attribute> listAttributes(StructureLevel level, boolean deleted) {
 		PaginatedList<Attribute> results = new PaginatedList<Attribute>();
 		Criteria criteria = this.dao.newCriteria(Attribute.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("level", level)).addOrder(Order.asc("label"));
+		results.setList(this.dao.findByCriteria(criteria, Attribute.class));
+		results.setTotal((long) results.getList().size());
+		return results;
+	}
+	public PaginatedList<Attribute> listAttributes(StructureLevel level) {
+		PaginatedList<Attribute> results = new PaginatedList<Attribute>();
+		Criteria criteria = this.dao.newCriteria(Attribute.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("level", level)).addOrder(Order.asc("label"));
 		results.setList(this.dao.findByCriteria(criteria, Attribute.class));
 		results.setTotal((long) results.getList().size());
@@ -506,7 +514,7 @@ public class StructureBS extends HibernateBusiness {
 			Number reachedValue = null;
 			if (polarity == null)
 				polarity = "";
-			List<AttributeInstance> attrs = this.listAttributeInstanceByLevel(instance);
+			List<AttributeInstance> attrs = this.listAttributeInstanceByLevel(instance,false);
 			for (AttributeInstance attribute : attrs) {
 				if (attribute.getAttribute().isFinishDate()) {
 					if (instance.isClosed()) {
@@ -644,7 +652,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<Attribute> setAttributesInstances(StructureLevelInstance levelInstance, List<Attribute> attributes) {
 		for (Attribute attribute : attributes) {
 			if (attribute.getType().equals(SelectField.class.getCanonicalName())) {
-				PaginatedList<OptionsField> options = this.fieldsBS.getOptionsField(attribute.getId());
+				PaginatedList<OptionsField> options = this.fieldsBS.getOptionsField(attribute.getId(),false);
 				attribute.setOptionLabels(options.getList());
 			} else if (attribute.getType().equals(ResponsibleField.class.getCanonicalName())) {
 				PaginatedList<User> users = this.userBS.listUsersByCompany();
@@ -660,7 +668,7 @@ public class StructureBS extends HibernateBusiness {
 				Schedule schedule = this.fieldsBS.scheduleByAttribute(attribute.getId(), false);
 				attribute.setSchedule(schedule);
 			} else if (attribute.getType().equals(TableField.class.getCanonicalName())) {
-				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(attribute.getId(), false);
+				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(attribute.getId(), false, false);
 				attribute.setTableFields(tableFields);
 			} else {
 				AttributeInstance attributeInstance = attrHelper.retrieveAttributeInstance(levelInstance, attribute);
@@ -829,10 +837,17 @@ public class StructureBS extends HibernateBusiness {
 	 *            Instância de um level.
 	 * @return list Lista de instâncias dos atributos.
 	 */
-	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance) {
+	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
 		criteria.add(Restrictions.eq("deleted", false));
+		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
+		return list;
+	}
+	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		//criteria.add(Restrictions.eq("deleted", false));
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
 		return list;
 	}
@@ -1132,7 +1147,7 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public boolean duplicateAttributeInstance(StructureLevelInstance instance, StructureLevelInstance instanceClone) {
 		try {
-			List<AttributeInstance> attrList = this.listAttributeInstanceByLevel(instance);
+			List<AttributeInstance> attrList = this.listAttributeInstanceByLevel(instance,false);
 			for (AttributeInstance attr : attrList) {
 				AttributeInstance attrCopy = new AttributeInstance();
 				attrCopy.setAttribute(attr.getAttribute());
