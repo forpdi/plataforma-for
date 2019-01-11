@@ -10,7 +10,7 @@ import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
-import  org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 import org.forrisco.core.unit.Unit;
 //import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.Risk;
