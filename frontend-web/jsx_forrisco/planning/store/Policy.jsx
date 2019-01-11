@@ -99,7 +99,6 @@ var PolicyStore = Fluxbone.Store.extend({
 					data: model.data
 				});
 				me.trigger("policycreated", model);
-				//me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("policycreated",{msg:opts.responseJSON.message,data:{id:null}})

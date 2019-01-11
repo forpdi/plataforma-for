@@ -109,7 +109,7 @@ export default React.createClass({
 			required: true,
 			maxLength: 40,
 			label: Messages.getEditable("label.policySelect","hide"),
-			value: null,
+			//value: null,
 			value: cor,
 			valueField: 'label',
 			displayField: 'label',

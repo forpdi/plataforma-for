@@ -1,7 +1,9 @@
-import React from 'react';
+import React from "react";
 import Messages from "@/core/util/Messages";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
+import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
+import Router from "react-router";
 
 export default React.createClass({
 
@@ -18,14 +20,16 @@ export default React.createClass({
 			planRiskModel: null,
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
+			policyId: null,
 			policies: [{
+				id: null,
 				label: ''
-			}]
+			}],
 		};
 	},
 
 	componentDidMount() {
-		var policiDescription = [];
+		var policiData = [];
 		var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
 
 			if (response.status !== true) {
@@ -34,19 +38,20 @@ export default React.createClass({
 
 			if (response.success === true) {
 				response.data.map((attr) => {
-					policiDescription.push({
+					policiData.push({
+						id: attr.id,
 						label: attr.description
 					});
 				});
 
 				this.setState({
-					policies: policiDescription, domainError: false
+					policies: policiData, domainError: false,
 				});
 			}
 
 			resultSelect.off("unarchivedpolicylisted");
 		});
-	} ,
+	},
 
 	componentWillMount() {
 		PolicyStore.dispatch({
@@ -77,21 +82,50 @@ export default React.createClass({
 			options: this.state.policies,
 			required: true,
 			displayField: 'label',
+			valueField: 'id',
 			placeholder: "Selecone a Política",
-			label: Messages.getEditable("label.descriptionPolicy", "dashboard-select-box"),
+			label: Messages.getEditable("label.linkPlanPolicy", "dashboard-select-box"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
 		});
 
 		return fields;
-	}
-	,
+	},
+
+	handleChange(event) {
+
+		this.setState({
+			value: event.target.value
+		})
+	},
+
+	handleSubmit(event) {
+		event.preventDefault();
+		const formData = new FormData(event.target);
+
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_NEWPLANRISK,
+			data: {
+				name: formData.get('name'),
+				description: formData.get('description'),
+				policy: {
+					id: formData.get('linkedPolicy')
+				}
+			}
+		});
+	},
+
+	onCancel() {
+		if (this.state.policies.length && this.state.policies.length === 1) {
+			this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
+		}
+	},
 
 	render() {
 		return (
 			<div>
 				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
-					<form>
+					<form onSubmit={this.handleSubmit}>
 						{
 							this.getFields().map((field, index) => {
 								return (
@@ -102,7 +136,8 @@ export default React.createClass({
 
 						<div className="fpdi-editable-data-input-group">
 							<button type="submit" className="btn btn-success">{this.state.submitLabel}</button>
-							<button type="submit" className="btn btn-default">{this.state.cancelLabel}</button>
+							<button type="button" className="btn btn-default"
+									onClick={this.onCancel}>{this.state.cancelLabel}</button>
 						</div>
 					</form>
 				</div>

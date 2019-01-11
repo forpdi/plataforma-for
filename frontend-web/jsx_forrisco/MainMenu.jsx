@@ -4,6 +4,8 @@ import {Link} from "react-router";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
+import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
+
 import _ from "underscore";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
@@ -24,6 +26,7 @@ export default React.createClass({
 			logged: !!UserSession.get("logged"),
 			hidden: false,
 			policies: [],
+			plans: [],
 			domainError: true,
 			archivedPolicies: [],
 			archivedPoliciesHidden: true,
@@ -97,6 +100,23 @@ export default React.createClass({
 				}
 			}
 		}, me);
+
+		PlanRiskStore.on("unarchivedplanrisklisted", (response) => {
+
+			if (response.status !== true) {
+				this.setState({domainError: true});
+			}
+
+			if (response.success === true) {
+				response.map(planRisk => {
+					this.setState({
+						plans: planRisk.name
+					})
+				})
+			}
+
+			console.log(this.state.plan);
+		});
 
 		StructureStore.on("retrieve-level-instance-performance", (models) => {
 			if (models && (models.length > 0)) {
