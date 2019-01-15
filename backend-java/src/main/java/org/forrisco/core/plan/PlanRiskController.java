@@ -34,6 +34,7 @@ public class PlanRiskController extends AbstractController {
 	@Inject @Current private CompanyDomain domain;
 	@Inject private Policy policy;
 	@Inject private PlanRiskBS planRiskBS;
+	@Inject private PlanRisk planRisk;
 	 
 	protected static final String PATH = BASEPATH +"/planrisk";
 	
@@ -64,17 +65,46 @@ public class PlanRiskController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Retorna o lista de todos os planos não arquivados.
+	 * 
+	 * @param page
+	 */
 	@Get( PATH + "/unarchivedplanrisk")
 	@NoCache
 	public void listPlanRiskUnarchived(Integer page) {
-		if (page == null)
-			page = 0;
+		if (page == null) page = 0;
 		try {
 			if (this.domain != null) {
 			PaginatedList<PlanRisk> planRisks = this.planRiskBS.listPlanRisk(page);
 				this.success(planRisks);
 			} else {
 				this.fail("Não possui domínio!");
+			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna o plano de risco.
+	 * 
+	 * @param id
+	 * Id do plano de risco.
+	 * 
+	 * @return PlanRisk Retorna o plano de risco de acordo com o id passado.
+	 */
+	@Get( PATH + "/{id}")
+	@NoCache
+	@Permissioned
+	public void retrievePlan(Long id) {
+		try {
+			PlanRisk planRisk = this.planRiskBS.exists(id, PlanRisk.class);
+			if (planRisk == null) {
+				this.fail("O plano de risco solicitada não foi encontrado.");
+			} else {
+				this.success(planRisk);
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

@@ -11,6 +11,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Observables from "forpdi/jsx/core/util/Observables.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
+
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
@@ -26,7 +27,10 @@ export default React.createClass({
 			logged: !!UserSession.get("logged"),
 			hidden: false,
 			policies: [],
-			plans: [],
+			plans: [{
+				id: null,
+				label: '',
+			}],
 			domainError: true,
 			archivedPolicies: [],
 			archivedPoliciesHidden: true,
@@ -58,11 +62,11 @@ export default React.createClass({
 		}, me);
 
 		PolicyStore.on("unarchivedpolicylisted", (store) => {
-			if (store.status == 400) {
+			if (store.status === 400) {
 				me.setState({
 					domainError: true
 				});
-			} else if (store.status == 200 || store.status == undefined) {
+			} else if (store.status === 200 || store.status === undefined) {
 				me.setState({
 					policies: store.data,
 					domainError: false
@@ -101,23 +105,6 @@ export default React.createClass({
 			}
 		}, me);
 
-		PlanRiskStore.on("unarchivedplanrisklisted", (response) => {
-
-			if (response.status !== true) {
-				this.setState({domainError: true});
-			}
-
-			if (response.success === true) {
-				response.map(planRisk => {
-					this.setState({
-						plans: planRisk.name
-					})
-				})
-			}
-
-			console.log(this.state.plan);
-		});
-
 		StructureStore.on("retrieve-level-instance-performance", (models) => {
 			if (models && (models.length > 0)) {
 				this.setState({
@@ -126,6 +113,25 @@ export default React.createClass({
 			}
 		}, me);
 
+		 PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
+			var listedPlans = [];
+			if (response.status !== true) {
+				this.setState({domainError: true});
+			}
+
+			if (response.success === true) {
+				response.data.map(planRisk => {
+					listedPlans.push({
+						id: planRisk.id,
+						label: planRisk.name
+					});
+
+					this.setState({
+						plans: listedPlans
+					})
+				});
+			}
+		});
 
 		me.checkRoute(me.props.location.pathname);
 
@@ -138,6 +144,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 		PolicyStore.off(null, null, this);
+		PlanRiskStore.off(null, null, this);
 		StructureStore.off(null, null, this);
 	},
 	checkRoute(pathname) {
@@ -181,6 +188,9 @@ export default React.createClass({
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_ARCHIVED
 		});
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_FIND_UNARCHIVED
+		});
 	},
 
 	listArchivedPolicies() {
@@ -195,7 +205,7 @@ export default React.createClass({
 		}
 	},
 
-	enableRegisterNewPlan(event) {
+	disableRegisterNewPlan(event) {
 		if (this.state.policies && (this.state.policies.length === 0)) {
 			event.preventDefault();
 			this.context.toastr.addAlertError(Messages.get("label.UnableRegisterPlanRisk"))
@@ -225,10 +235,27 @@ export default React.createClass({
 						<Link to={"/forrisco/policy/" + policy.id + "/"} activeClassName="active">
 							<span className="fpdi-nav-icon mdi mdi-gavel icon-link" title={policy.name}/>
 							<span className="fpdi-nav-label" title={policy.name}>
-                                    {(policy.name).length <= 24 ? policy.name : (policy.name).split("", 20).concat(" ...")}
-                                </span>
+								{(policy.name).length <= 24 ? policy.name : (policy.name).split("", 20).concat(" ...")}
+							</span>
 						</Link>
 					</div>;
+				})
+				: ""}
+
+			{(this.state.plans && this.state.plans.length > 0) ?
+				this.state.plans.map((plan, index) => {
+					return (
+						<div className="frisco-tabs-nav" key={index}>
+							<Link to={"/forrisco/plan-risk/" + plan.id + "/"} activeClassName="active">
+								<span className="fpdi-nav-icon mdi mdi-shield icon-link" title={plan.label}/>
+								<span className="fpdi-nav-label" title={plan.label}>
+									{
+										(plan.label.length) <= 24 ? plan.label : (plan.label.split("", 12).concat(" ..."))
+									}
+								</span>
+							</Link>
+						</div>
+					)
 				})
 				: ""}
 
@@ -244,13 +271,15 @@ export default React.createClass({
 						</Link>
 					</div>
 				</div>
-				: ""}
+				: ""
+			}
 
 			{(this.context.roles.ADMIN) ? // && !this.state.domainError this.state.policies && (this.state.policies.length === 0)
 
 				<div>
 					<div className="fpdi-tabs-nav">
-						<Link to="/forrisco/plan/new" activeClassName="active" onClick={this.enableRegisterNewPlan}>
+						<Link to="/forrisco/plan-risk/new" activeClassName="active"
+							  onClick={this.disableRegisterNewPlan}>
 							<span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
 							<span className="fpdi-nav-label">
 								{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}
@@ -261,16 +290,13 @@ export default React.createClass({
 				: ""
 			}
 
-
-			<hr className="divider"></hr>
+			<hr className="divider"/>
 			{this.state.archivedPolicies && (this.state.archivedPolicies.length > 0) ?
 				<div>
 					<div className="fpdi-tabs-nav">
 						<a onClick={this.listArchivedPolicies}>
-							<span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"
-							/> <span className="fpdi-nav-label">
-									Políticas arquivadas
-								</span>
+							<span className="fpdi-nav-icon mdi mdi-folder-lock icon-link"/>
+							<span className="fpdi-nav-label"> Políticas arquivadas </span>
 							{this.state.hidden ? "" : <span
 								className={this.state.archivedPoliciesHidden ? "mdi mdi-chevron-down floatRight icon-link" : "mdi mdi-chevron-up floatRight icon-link"}/>}
 
@@ -281,8 +307,8 @@ export default React.createClass({
 							return <div className="fpdi-tabs-nav" key={"archived-plan-" + index}>
 								<Link to={"/policy/" + policy.id + "/"} activeClassName="active marginLeft35"
 									  className="marginLeft35">
-									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title={policy.name}
-									/> <span className="fpdi-nav-label" title={policy.name}>
+									<span className="fpdi-nav-icon mdi mdi-chart-bar icon-link" title={policy.name}/>
+									<span className="fpdi-nav-label" title={policy.name}>
 											{(policy.name.length) <= 24 ? policy.name : (policy.name.split("", 12).concat(" ..."))}
 										</span>
 								</Link>
@@ -291,6 +317,7 @@ export default React.createClass({
 						: ""}
 				</div>
 				: ""}
+
 			<div className="frisco-tabs-nav fpdi-nav-hide-btn">
 				<a onClick={this.tweakHidden}>
                     <span

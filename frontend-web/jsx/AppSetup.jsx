@@ -97,7 +97,8 @@ ReactDOM.render((
 			</Route>
 		</Route>
 
-		<Route path="plan/new" component={Forrisco_PlanRiskTab}/>
+		<Route path="plan-risk/new" component={Forrisco_PlanRiskTab}/>
+		<Route path="plan-risk/:planRiskId"/>
 
 		<Route path="system" component={SystemManagement}>
 			<IndexRedirect to="general" />

@@ -21,6 +21,7 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
 			policyId: null,
+			plansLength: null,
 			policies: [{
 				id: null,
 				label: ''
@@ -51,11 +52,21 @@ export default React.createClass({
 
 			resultSelect.off("unarchivedpolicylisted");
 		});
+
+		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
+			this.setState({
+				plansLength: response.total
+			});
+		});
 	},
 
 	componentWillMount() {
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_UNARCHIVED,
+		});
+
+		PolicyStore.dispatch({
+			action: PlanRiskStore.ACTION_FIND_UNARCHIVED,
 		});
 	},
 
@@ -80,27 +91,31 @@ export default React.createClass({
 			name: "linkedPolicy",
 			type: "select",
 			options: this.state.policies,
+			className: "form-control-h",
 			required: true,
 			displayField: 'label',
 			valueField: 'id',
 			placeholder: "Selecone a Política",
-			label: Messages.getEditable("label.linkPlanPolicy", "dashboard-select-box"),
+			label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
 		});
 
 		return fields;
 	},
 
-	handleChange(event) {
-
-		this.setState({
-			value: event.target.value
-		})
-	},
-
 	handleSubmit(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
+
+		if(formData.get('name') === '') {
+			this.context.toastr.addAlertError(Messages.get("label.error.form"));
+			return false;
+		}
+
+		if(formData.get('linkedPolicy') === '') {
+			this.context.toastr.addAlertError(Messages.get("label.error.form"));
+			return false;
+		}
 
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_NEWPLANRISK,
@@ -115,6 +130,10 @@ export default React.createClass({
 	},
 
 	onCancel() {
+		if(this.state.plansLength > 0 || this.state.policies.length === 0) {
+			this.context.router.push("/forrisco/home/");
+		}
+
 		if (this.state.policies.length && this.state.policies.length === 1) {
 			this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
 		}
@@ -125,7 +144,7 @@ export default React.createClass({
 			<div>
 				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
-					<form onSubmit={this.handleSubmit}>
+					<form onSubmit={this.handleSubmit} name="teste">
 						{
 							this.getFields().map((field, index) => {
 								return (
@@ -144,5 +163,4 @@ export default React.createClass({
 			</div>
 		)
 	}
-})
-;
+});
