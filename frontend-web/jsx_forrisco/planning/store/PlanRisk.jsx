@@ -9,6 +9,7 @@ var PlanRiskModel = Fluxbone.Model.extend({
 
 var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_NEWPLANRISK: 'planRisk-newPlanRisk',
+	ACTION_RETRIEVE_PLANRISK: 'planRisk-retrievePlanRisk',
 	ACTION_FIND_UNARCHIVED: 'planRisk-getAllUnarchived',
 	url: URL,
 	model: PlanRiskModel,
@@ -43,6 +44,20 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("listedunarchivedplanrisk", opts);
+			}
+		});
+	},
+
+	retrievePlanRisk(id) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: this.url + '/' + id,
+			success(model) {
+				me.trigger("retrivedPlanRisk");
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
 			}
 		});
 	}

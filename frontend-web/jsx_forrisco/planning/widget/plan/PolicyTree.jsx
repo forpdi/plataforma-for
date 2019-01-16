@@ -33,26 +33,26 @@ export default React.createClass({
 			hiddenSearch: false,
 			hiddenResultSearch: false,
 			resultSearch: [],
-			dataInitSearch:null,
-			dataEndSearch:null,
-			levelsSelectSearch:[],
-			ordResultSearch:null,
-			parentIdSearch:null,
-			termsSearch:'',
-			subPlansSelectSearch:[],
+			dataInitSearch: null,
+			dataEndSearch: null,
+			levelsSelectSearch: [],
+			ordResultSearch: null,
+			parentIdSearch: null,
+			termsSearch: '',
+			subPlansSelectSearch: [],
 			unnumberedSections: 0
 		};
 	},
-	componentDidMount(){
+	componentDidMount() {
 		var me = this;
 
 		ItemStore.on("find", (store, raw, opts) => {
 			var tree = raw.map((policy, index) => {
-				var to = '/forrisco/policy/'+this.props.policy.get("id")+'/item/'+policy.id;
+				var to = '/forrisco/policy/' + this.props.policy.get("id") + '/item/' + policy.id;
 				return {
 					label: policy.name,
 					expanded: false,
-					expandable: policy.name=="Informações gerais"? false:true ,
+					expandable: policy.name == "Informações gerais" ? false : true,
 					to: to,
 					key: to,
 					model: policy,
@@ -62,15 +62,15 @@ export default React.createClass({
 				};
 			});
 
-			var toNew = '/forrisco/policy/'+this.props.policy.get("id")+'/item/new';
-			if(!this.props.policy.attributes.archived){
+			var toNew = '/forrisco/policy/' + this.props.policy.get("id") + '/item/new';
+			if (!this.props.policy.attributes.archived) {
 				tree.push({
 					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
-							PermissionsTypes.MANAGE_PLAN_PERMISSION)),
+						PermissionsTypes.MANAGE_PLAN_PERMISSION)),
 					label: Messages.get("label.newItem"),
-					labelCls:'fpdi-new-node-label',
-				  	iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				  	expandable: false,
+					labelCls: 'fpdi-new-node-label',
+					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+					expandable: false,
 					to: toNew,
 					key: "newPolicy"
 				});
@@ -83,49 +83,49 @@ export default React.createClass({
 		}, me);
 
 
-        ItemStore.on("retrieveSubitens", (models, opts) =>{
+		ItemStore.on("retrieveSubitens", (models, opts) => {
 			var children = [];
-            if(models && models.total > 0){
-	            children = models.data.map((model, index) => {
-                    var to = "/forrisco/policy/"+this.props.policy.attributes.id+"/item/"+opts.node.id+"/subitem/"+model.id
-                    var node = {
-	                    label: model.name,
-	                    expanded: false,
-	                    expandable: false,//!model.level.leaf && !model.aggregate,
-                		labelCls:'fpdi-node-label',
-	                    to: to,
-	                    key: to,
-	                    model: model,
-	                    id: model.id,
-	                    onExpand: me.expandRoot,
-	                    onShrink: me.shrinkRoot
-	                };
-	                /*if (model.level.leaf) {
-	                	node.iconCls = "mdi mdi-menu-right";
-	                }*/
-	                return node;
-	            });
+			if (models && models.total > 0) {
+				children = models.data.map((model, index) => {
+					var to = "/forrisco/policy/" + this.props.policy.attributes.id + "/item/" + opts.node.id + "/subitem/" + model.id
+					var node = {
+						label: model.name,
+						expanded: false,
+						expandable: false,//!model.level.leaf && !model.aggregate,
+						labelCls: 'fpdi-node-label',
+						to: to,
+						key: to,
+						model: model,
+						id: model.id,
+						onExpand: me.expandRoot,
+						onShrink: me.shrinkRoot
+					};
+					/*if (model.level.leaf) {
+                        node.iconCls = "mdi mdi-menu-right";
+                    }*/
+					return node;
+				});
 			}
 
-			if(!this.props.policy.attributes.archived){
-	            children.push({
+			if (!this.props.policy.attributes.archived) {
+				children.push({
 					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
-	         			PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-	                label: "Novo Subitem",
-	                iconCls: 'mdi mdi-plus fpdi-new-node-icon',
-	                labelCls:'fpdi-new-node-label',
-	                expandable: false,
-	                to: "/forrisco/policy/"+this.props.policy.attributes.id+"/item/"+opts.node.id+"/subitem/new",
-	                onNewNode: me.newLevelInstance,
-	                newNodePlaceholder: 'Digite o nome do Novo Subitem',
-	                key: 'newNode-'+opts.node.key,
-	                parent: opts.node
-	            });
-        	}
+						PermissionsTypes.MANAGE_PLAN_PERMISSION)),
+					label: "Novo Subitem",
+					iconCls: 'mdi mdi-plus fpdi-new-node-icon',
+					labelCls: 'fpdi-new-node-label',
+					expandable: false,
+					to: "/forrisco/policy/" + this.props.policy.attributes.id + "/item/" + opts.node.id + "/subitem/new",
+					onNewNode: me.newLevelInstance,
+					newNodePlaceholder: 'Digite o nome do Novo Subitem',
+					key: 'newNode-' + opts.node.key,
+					parent: opts.node
+				});
+			}
 
-            opts.node.children = children;
+			opts.node.children = children;
 			me.forceUpdate();
-        }, me);
+		}, me);
 
 		/*ItemStore.on("retrieveItens", (model) => {
         	var documentId;
@@ -206,10 +206,10 @@ export default React.createClass({
 		ItemStore.off(null, null, this);
 	},
 	componentWillReceiveProps(newProps) {
-	    if(document.URL.indexOf('details/overview')>=0){
-	    	this.refreshPlans(newProps.policy.get("id"));
+		if (document.URL.indexOf('details/overview') >= 0) {
+			this.refreshPlans(newProps.policy.get("id"));
 		}
-		if(newProps.treeType == this.state.actualType){
+		if (newProps.treeType == this.state.actualType) {
 			return;
 		}
 
@@ -311,35 +311,35 @@ export default React.createClass({
 
 	expandRoot(nodeProps, nodeLevel) {
 
-		if(nodeLevel == 0) {
-        	// Nível raiz, subplano.
-            ItemStore.dispatch({
+		if (nodeLevel == 0) {
+			// Nível raiz, subplano.
+			ItemStore.dispatch({
 				action: ItemStore.ACTION_RETRIEVE_SUBITENS,
-				data:nodeProps.id,
-                opts: {
-                	node: nodeProps,
+				data: nodeProps.id,
+				opts: {
+					node: nodeProps,
 					level: nodeLevel
 				}
-				 /* data: {
-                    sequence: nodeProps.model.structure.levels[0].sequence,
-                    planId: nodeProps.id,
-                    parentId: 0
-                },*/
-            });
-       /* } else {
-        	// Níveis da estrutura, Level.
-        	StructureStore.dispatch({
-                action: StructureStore.ACTION_RETRIEVE_LEVEL_INSTANCE,
-                data: {
-                    sequence: nodeProps.model.level.sequence+1,
-                    planId: nodeProps.model.plan.id,
-                    parentId: nodeProps.id
-                },
-                opts: {
-                	node: nodeProps,
-                	level: nodeLevel
-                }
-            });*/
+				/* data: {
+                   sequence: nodeProps.model.structure.levels[0].sequence,
+                   planId: nodeProps.id,
+                   parentId: 0
+               },*/
+			});
+			/* } else {
+                 // Níveis da estrutura, Level.
+                 StructureStore.dispatch({
+                     action: StructureStore.ACTION_RETRIEVE_LEVEL_INSTANCE,
+                     data: {
+                         sequence: nodeProps.model.level.sequence+1,
+                         planId: nodeProps.model.plan.id,
+                         parentId: nodeProps.id
+                     },
+                     opts: {
+                         node: nodeProps,
+                         level: nodeLevel
+                     }
+                 });*/
 		}
 
 		nodeProps.expanded = true;
@@ -351,16 +351,16 @@ export default React.createClass({
 	exportDocument(evt) {
 		evt.preventDefault();
 		PolicyStore.dispatch({
-            action: PolicyStore.ACTION_RETRIEVE_FILLED_SECTIONS, // criar uma chamada para essa parte
-         	data: {
-              id: this.props.policy.attributes.id
-            }
-	    });
+			action: PolicyStore.ACTION_RETRIEVE_FILLED_SECTIONS, // criar uma chamada para essa parte
+			data: {
+				id: this.props.policy.attributes.id
+			}
+		});
 	},
 
-	onKeyDown(evt){
+	onKeyDown(evt) {
 		var key = evt.which;
-		if(key == 13) {
+		if (key == 13) {
 			evt.preventDefault();
 			this.treeSearch();
 		}
@@ -368,90 +368,97 @@ export default React.createClass({
 
 	searchFilter() {
 		this.setState({
-            hiddenSearch:!this.state.hiddenSearch
-        });
+			hiddenSearch: !this.state.hiddenSearch
+		});
 	},
-	displayResult () {
+	displayResult() {
 		this.setState({
-            hiddenResultSearch:true
-        });
+			hiddenResultSearch: true
+		});
 	},
 
 	render() {
 		return (
-		<div className="fpdi-tabs">
-			<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
+			<div className="fpdi-tabs">
+				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
 
-				{this.props.policy.get('id') ?
-				 <Link
-					role="tab"
-					to={"forrisco/policy/"+this.props.policy.get("id")+"/"}
-					title="Política"
-					activeClassName="active"
-					className="tabTreePanel">
-						{Messages.getEditable("label.forriscoPolicy","fpdi-nav-label")}
-				</Link> : undefined}
-
-
-			</ul>
-			{this.context.router.isActive("forrisco/policy/"+this.props.policy.get("id")+"/item")
-			|| this.context.router.isActive("forrisco/policy/"+this.props.policy.get("id")+"/edit") ?
-			<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-
-					<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")}> </i>
-	    				<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown}/>
-	    				<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}> </i>
-	    				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
-					</div>
+					{this.props.policy.get('id') ?
+						<Link
+							role="tab"
+							to={"forrisco/policy/" + this.props.policy.get("id") + "/"}
+							title="Política"
+							activeClassName="active"
+							className="tabTreePanel">
+							{Messages.getEditable("label.forriscoPolicy", "fpdi-nav-label")}
+						</Link> : undefined}
 
 
-				{this.state.hiddenResultSearch ?
-					<SearchResult
-						resultSearch = {this.state.resultSearch}
-						planId = {this.props.policy.get("id")}
-						terms = {this.state.termsSearch}
-						parentId = {this.state.parentIdSearch}
-						subPlansSelect = {this.state.subPlansSelectSearch}
-						levelsSelect = {this.state.levelsSelectSearch}
-						dataInit = {this.state.dataInitSearch}
-						dataEnd = {this.state.dataEndSearch}
-						ordResult = {this.state.ordResultSearch}
-					/>
-				:
-					<div>
-						{this.context.roles.SYSADMIN ? "" : <FavoriteTree />}
-						<TreeView tree={this.state.tree} />
+				</ul>
+				{
+					this.context.router.isActive("forrisco/policy/" + this.props.policy.get("id") + "/item") ||
+					this.context.router.isActive("forrisco/policy/" + this.props.policy.get("id") + "/edit") ?
+						<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
+
+							<div
+								className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+								<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
+								   title={Messages.get("label.clean")}> </i>
+								<input type="text" className="form-control-busca" ref="term"
+									   onKeyDown={this.onKeyDown}/>
+								<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
+								   title={Messages.get("label.advancedSearch")}> </i>
+								<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
+								   onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+							</div>
 
 
-						<hr className="divider"></hr>
-						{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-							PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-							<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
+							{
+								this.state.hiddenResultSearch ?
+									<SearchResult
+										resultSearch={this.state.resultSearch}
+										planId={this.props.policy.get("id")}
+										terms={this.state.termsSearch}
+										parentId={this.state.parentIdSearch}
+										subPlansSelect={this.state.subPlansSelectSearch}
+										levelsSelect={this.state.levelsSelectSearch}
+										dataInit={this.state.dataInitSearch}
+										dataEnd={this.state.dataEndSearch}
+										ordResult={this.state.ordResultSearch}
+									/>
+									:
+									<div>
+										{this.context.roles.SYSADMIN ? "" : <FavoriteTree/>}
+										<TreeView tree={this.state.tree}/>
+
+
+										<hr className="divider"></hr>
+										{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+											PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+											<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
 								<span /*className="mdi mdi-export"*/
-								/> {Messages.getEditable("label.exportDocument","fpdi-nav-label")}
-							</a> : ""
-						}
-					</div>
+								/> {Messages.getEditable("label.exportDocument", "fpdi-nav-label")}
+											</a> : ""
+										}
+									</div>
+							}
+
+							{this.state.hiddenSearch ?
+								<div className="container Pesquisa-Avancada">
+									<LevelSearch
+										searchText={this.refs.term.value}
+										subplans={this.state.subplans}
+										policy={this.props.policy.get("id")}
+										submit={this.treeSearch}
+										hiddenSearch={this.searchFilter}
+										displayResult={this.displayResult}
+									/>
+								</div> : ""
+							}
+						</div> : ""
 				}
 
-				{this.state.hiddenSearch ?
-					<div className = "container Pesquisa-Avancada">
-						<LevelSearch
- 							searchText= {this.refs.term.value}
-  							subplans= {this.state.subplans}
-  							policy= {this.props.policy.get("id")}
- 							submit={this.treeSearch}
- 							hiddenSearch = {this.searchFilter}
- 							displayResult = {this.displayResult}
-  						/>
-  					</div> : ""
-				}
-			</div> : ""
-			}
-
-			<div className="fpdi-tabs-fill">
-			</div>
-		</div>);
+				<div className="fpdi-tabs-fill">
+				</div>
+			</div>);
 	}
 });

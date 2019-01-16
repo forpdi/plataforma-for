@@ -4,6 +4,8 @@ import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Router from "react-router";
+import UserSession from "@/core/store/UserSession";
+import StructureStore from "@/planning/store/Structure";
 
 export default React.createClass({
 
@@ -58,16 +60,31 @@ export default React.createClass({
 				plansLength: response.total
 			});
 		});
+
+		PlanRiskStore.on("plariskcreated", (response) => {
+			if(response.data) {
+				this.context.toastr.addAlertSuccess(Messages.get("notification.plan.sav"));
+				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
+			} else {
+				this.context.toastr.addAlertError("Erro ao criar Plano");
+			}
+		});
 	},
 
 	componentWillMount() {
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_UNARCHIVED,
-		});
+		// PolicyStore.dispatch({
+		// 	action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+		// 	id:
+		// });
 
 		PolicyStore.dispatch({
 			action: PlanRiskStore.ACTION_FIND_UNARCHIVED,
 		});
+	},
+
+	componentWillUnmount() {
+		PolicyStore.off(null, null, this);
+		PlanRiskStore.off(null, null, this);
 	},
 
 	getFields() {
@@ -145,6 +162,7 @@ export default React.createClass({
 				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
 					<form onSubmit={this.handleSubmit} name="teste">
+
 						{
 							this.getFields().map((field, index) => {
 								return (

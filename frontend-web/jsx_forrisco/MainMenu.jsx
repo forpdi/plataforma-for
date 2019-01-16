@@ -27,10 +27,7 @@ export default React.createClass({
 			logged: !!UserSession.get("logged"),
 			hidden: false,
 			policies: [],
-			plans: [{
-				id: null,
-				label: '',
-			}],
+			plans: [],
 			domainError: true,
 			archivedPolicies: [],
 			archivedPoliciesHidden: true,
@@ -242,7 +239,8 @@ export default React.createClass({
 				})
 				: ""}
 
-			{(this.state.plans && this.state.plans.length > 0) ?
+			{(this.state.plans && this.state.plans.length > 0)  ?
+
 				this.state.plans.map((plan, index) => {
 					return (
 						<div className="frisco-tabs-nav" key={index}>
