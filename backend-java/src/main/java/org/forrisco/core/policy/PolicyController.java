@@ -15,7 +15,7 @@ import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
-import  org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.Risk;
@@ -239,6 +239,7 @@ public class PolicyController extends AbstractController {
 				}
 			}
 			
+
 			//para alterar quantidade de graus de risco/linhas/colunas
 			//não podem existir riscos vinculados
 			if(policy.getNcolumn() != existent.getNcolumn() 

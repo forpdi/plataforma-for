@@ -156,7 +156,7 @@ export default React.createClass({
 				}
 
 				me.setState({
-					fields: fields,
+					//fields: fields,
 					subitemModel: mod,
 					titulo: model.data.name,
 					vizualization: true,

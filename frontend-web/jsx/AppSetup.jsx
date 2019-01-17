@@ -59,6 +59,8 @@ import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/item/ItemRe
 import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/SubItemRegister.jsx";
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
+import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
+import Forrisco_ShowPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/ShowPlanRisk.jsx";
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -96,6 +98,9 @@ ReactDOM.render((
 				<Route path="overview" component={Forrisco_PolicyTab} />
 			</Route>
 		</Route>
+
+		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/>
+		<Route path="plan-risk/:planRiskId" component={Forrisco_ShowPlanRisk }/>
 
 		<Route path="system" component={SystemManagement}>
 			<IndexRedirect to="general" />
