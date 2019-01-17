@@ -43,7 +43,7 @@ export default React.createClass({
 				response.data.map((attr) => {
 					policiData.push({
 						id: attr.id,
-						label: attr.description
+						label: attr.name
 					});
 				});
 
@@ -51,7 +51,6 @@ export default React.createClass({
 					policies: policiData, domainError: false,
 				});
 			}
-
 			resultSelect.off("unarchivedpolicylisted");
 		});
 
@@ -62,7 +61,7 @@ export default React.createClass({
 		});
 
 		PlanRiskStore.on("plariskcreated", (response) => {
-			if(response.data) {
+			if (response.data) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.plan.sav"));
 				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
 			} else {
@@ -72,10 +71,9 @@ export default React.createClass({
 	},
 
 	componentWillMount() {
-		// PolicyStore.dispatch({
-		// 	action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-		// 	id:
-		// });
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_UNARCHIVED,
+		});
 
 		PolicyStore.dispatch({
 			action: PlanRiskStore.ACTION_FIND_UNARCHIVED,
@@ -124,12 +122,12 @@ export default React.createClass({
 		event.preventDefault();
 		const formData = new FormData(event.target);
 
-		if(formData.get('name') === '') {
+		if (formData.get('name') === '') {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 			return false;
 		}
 
-		if(formData.get('linkedPolicy') === '') {
+		if (formData.get('linkedPolicy') === '') {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 			return false;
 		}
@@ -147,7 +145,7 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		if(this.state.plansLength > 0 || this.state.policies.length === 0) {
+		if (this.state.plansLength > 0 || this.state.policies.length === 0) {
 			this.context.router.push("/forrisco/home/");
 		}
 
@@ -161,7 +159,7 @@ export default React.createClass({
 			<div>
 				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 				<div className="fpdi-card padding40">
-					<form onSubmit={this.handleSubmit} name="teste">
+					<form onSubmit={this.handleSubmit}>
 
 						{
 							this.getFields().map((field, index) => {

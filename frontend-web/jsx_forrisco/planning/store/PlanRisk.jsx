@@ -48,13 +48,13 @@ var PlanRiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	retrievePlanRisk(id) {
+	retrievePlanRisk(data) {
 		var me = this;
 		var model = new me.model();
 		model.fetch({
-			url: this.url + '/' + id,
+			url: this.url + '/' + data,
 			success(model) {
-				me.trigger("retrivedPlanRisk");
+				me.trigger("retrivedplanrisk", model);
 			},
 			error(model, response, options) {
 				me.handleRequestErrors([], options.xhr);
