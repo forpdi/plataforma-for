@@ -8,10 +8,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
-import org.forrisco.risk.RiskLevel;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**

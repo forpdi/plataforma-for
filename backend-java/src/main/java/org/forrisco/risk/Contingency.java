@@ -15,11 +15,11 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
  * @author Matheus Nascimento
  * 
  */
-@Entity(name = Contigency.TABLE)
-@Table(name = Contigency.TABLE)
+@Entity(name = Contingency.TABLE)
+@Table(name = Contingency.TABLE)
 
-public class Contigency extends SimpleLogicalDeletableEntity {
-	public static final String TABLE = "frisco_contigency";
+public class Contingency extends SimpleLogicalDeletableEntity {
+	public static final String TABLE = "frisco_contingency";
 	private static final long serialVersionUID = 1L;
 
 	@SkipSerialization

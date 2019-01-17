@@ -5,11 +5,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
-import org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.risk.Incident;
+import org.forrisco.risk.Monitor;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 
@@ -133,6 +132,65 @@ public class UnitController extends AbstractController{
 			} else {
 				this.success(unit);
 			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna monitoramentos.
+	 * 
+	 * @param id
+	 *			Id da unidade.
+	 * @return <PaginedList> Monitor
+	 * 			 Retorna lista de monitoramentos.
+	 */
+	@Get( PATH + "/monitor")
+	@NoCache
+	//@Permissioned
+	public void listMonitors(@NotNull Long unitId) {
+		try {
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrada.");
+				return;
+			}
+			
+			PaginatedList<Monitor> monitors = this.unitBS.listMonitorbyUnit(unit);
+			
+			this.success(monitors);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Retorna monitoramentos.
+	 * 
+	 * @param id
+	 *			Id da unidade.
+	 * @return <PaginedList> Monitor
+	 * 			 Retorna lista de monitoramentos.
+	 */
+	@Get( PATH + "/incident")
+	@NoCache
+	//@Permissioned
+	public void listIncidents(@NotNull Long unitId) {
+		try {
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrada.");
+				return;
+			}
+			
+			PaginatedList<Incident> incidents = this.unitBS.listIncidentsbyUnit(unit);
+			
+			this.success(incidents);
+			
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

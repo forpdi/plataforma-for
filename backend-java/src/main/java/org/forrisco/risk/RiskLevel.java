@@ -34,6 +34,12 @@ public class RiskLevel extends SimpleLogicalDeletableEntity {
 	
 	
 	public RiskLevel() {}
+	
+	public RiskLevel(Policy policy, int color, String level) {
+		this.policy=policy;
+		this.color=color;
+		this.level=level;
+	}
 
 	public String getLevel() {
 		return level;

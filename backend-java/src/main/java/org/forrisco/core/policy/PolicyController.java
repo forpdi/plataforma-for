@@ -1,6 +1,11 @@
 package org.forrisco.core.policy;
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -222,43 +227,64 @@ public class PolicyController extends AbstractController {
 			}
 
 			PaginatedList<RiskLevel> existentLevels = this.policyBS.listRiskLevelbyPolicy(existent);
+			List<Risk> risks = new ArrayList<Risk>();
 			
-			// se mudar linhas/colunas
-			// ou alterar quantidade de graus de risco
-			// e tiver unidade vinculada
-			/** depois verificar se está recuperando certo plano de risco/unidade/risco**/
-			if(policy.getNcolumn() != existent.getNcolumn() 
-					|| policy.getNline() != existent.getNline()
-					|| policy.getLevel() != existentLevels.getTotal()) {
-			
-				PaginatedList<PlanRisk> plans = this.policyBS.listPlanbyPolicy(policy);
-				for(int i=0; i<plans.getTotal(); i++){
-					PaginatedList<Unit> units = this.unitBS.listUnitbyPlan(plans.getList().get(i));
-					for(int j=0;j<units.getTotal();j++) {
-						PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(units.getList().get(i));
-						if (risks.getTotal()>0) {
-							this.fail("Impossível modificar política com Risco(s) vinculado(s)");
-							return;
-						}
-					}	
+			//pegar os riscos associados
+			PaginatedList<PlanRisk> plans = this.policyBS.listPlanbyPolicy(existent);
+			for(PlanRisk plan : plans.getList()) {
+				PaginatedList<Unit> units = this.unitBS.listUnitbyPlan(plan);
+				for(Unit unit : units.getList()) {
+					PaginatedList<Risk> localrisks = this.riskBS.listRiskbyUnit(unit);
+					risks.addAll(localrisks.getList());
 				}
 			}
-		
-			//rótulos podem sempre ser mudados
-
-			//atualizar graus de risco
-			for(int i=0; i<existentLevels.getTotal(); i++){
-				this.riskBS.delete(existentLevels.getList().get(i));
+			
+			//para alterar quantidade de graus de risco/linhas/colunas
+			//não podem existir riscos vinculados
+			if(policy.getNcolumn() != existent.getNcolumn() 
+				|| policy.getNline() != existent.getNline()
+				|| policy.getLevel() != existentLevels.getTotal()) {
+			
+				if (!risks.isEmpty()) {
+					this.fail("Impossível modificar política com Risco(s) vinculado(s)");
+					return;
+				}
 			}
 			
-			PaginatedList<RiskLevel> policyLevels = this.riskBS.listRiskLevel(policy);
-			
-			for(int i=0;i<policyLevels.getTotal() ;i++) {
-				policyLevels.getList().get(i).setPolicy(existent);
-				this.riskBS.saveRiskLevel(policyLevels.getList().get(i));
-			}
-			//this.riskBS.saveRiskLevel(existent);
+			//atualiza graus de risco
+			//se a quantidade de os novos graus >= graus antigos 
+			for(int i=0; i < (policy.getLevel() > existentLevels.getTotal() ? (policy.getLevel()): existentLevels.getTotal()) ;i++) {
+				
+				if(i < existentLevels.getTotal() && i < policy.getLevel() ) {
+					if(existentLevels.getList().get(i).getLevel() != policy.getRisk_level()[0][i] 
+						&& existentLevels.getList().get(i).getColor() != Integer.parseInt(policy.getRisk_level()[1][i])) {
+					
+						this.riskBS.delete(existentLevels.getList().get(i));
+						
+						RiskLevel level= new RiskLevel(existent,
+										Integer.parseInt(policy.getRisk_level()[1][i]),
+										policy.getRisk_level()[0][i]);
 
+						this.riskBS.saveRiskLevel(level);
+					}
+				}else if(i >= existentLevels.getTotal()){
+					RiskLevel level= new RiskLevel(existent,
+							Integer.parseInt(policy.getRisk_level()[1][i]),
+							policy.getRisk_level()[0][i]);
+
+					this.riskBS.saveRiskLevel(level);
+					
+				}else{
+					this.riskBS.delete(existentLevels.getList().get(i));
+				}
+			}
+			
+			
+			String[][] matrix = this.riskBS.getMatrixVector(policy);
+			String[][] matrix_old = this.riskBS.getMatrixVector(existent);
+			Map <String,String> impact_probability = new HashMap<String,String>();
+			
+			//atualizar política
 			existent.setDescription(policy.getDescription());
 			existent.setName(policy.getName());
 			existent.setImpact(policy.getImpact());
@@ -266,8 +292,29 @@ public class PolicyController extends AbstractController {
 			existent.setMatrix(policy.getMatrix());
 			existent.setNline(policy.getNline());
 			existent.setNcolumn(policy.getNcolumn());
-			
 			this.policyBS.persist(existent);
+			
+			
+			//rótulos podem sempre ser alterados
+			//guardar probabilidades e impactos em um map
+			///alterar rótulos dos riscos e monitoramentos
+			if(!risks.isEmpty()){
+				for(int i=0; i<policy.getNline()*policy.getNcolumn()+policy.getNline()+policy.getNcolumn();i++){
+					impact_probability.put(matrix_old[i][0], matrix[i][0]);
+				}
+				
+				for(int i=0; i<risks.size(); i++){
+					this.riskBS.updateRiskPI(risks.get(i),impact_probability);
+				}
+				
+				//aplicar novamento a função de risklevel para achar o grau de risco correspondente
+				for(int i=0; i<risks.size(); i++){
+					RiskLevel x = this.riskBS.getRiskLevelbyRisk(risks.get(i),existent);
+					risks.get(i).setRiskLevel(x);
+					this.riskBS.saveRisk(risks.get(i));
+				}
+			}
+
 			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

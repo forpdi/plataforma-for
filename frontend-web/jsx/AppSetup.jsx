@@ -52,12 +52,13 @@ import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
 /* Forrisco */
 import Forrisco_Application from "forpdi/jsx/Application_Forrisco.jsx";
-import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/Forrisco_DashboardPanel.jsx";
+import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
 import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
 import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/item/ItemRegister.jsx";
 import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/SubItemRegister.jsx";
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
+import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -77,6 +78,7 @@ ReactDOM.render((
 
 	<Route path="/forrisco" component={Forrisco_Application}>
 		<Route path="home" component={Forrisco_Dashboard} />
+		<Route path="risk" component={Forrisco_RiskList} />
 		<Route path="policy" component={Forrisco_PolicyEdit} />
 
 		<Route path="policy/:policyId">

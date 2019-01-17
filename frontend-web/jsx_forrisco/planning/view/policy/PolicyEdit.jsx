@@ -88,7 +88,7 @@ export default React.createClass({
 					case 3: cor="Laranja"; break;
 					case 4: cor="Verde"; break;
 					case 5: cor="Azul"; break;
-					default: cor="Vermelho";
+					default: cor="Cinza";
 				}
 				risk=this.state.risklevelModel.data[n-1]['level']
 			}
@@ -109,7 +109,6 @@ export default React.createClass({
 			required: true,
 			maxLength: 40,
 			label: Messages.getEditable("label.policySelect","hide"),
-			value: null,
 			value: cor,
 			valueField: 'label',
 			displayField: 'label',
@@ -377,23 +376,40 @@ export default React.createClass({
 	createTable(){
 
 		let table = []
-
-		var risk_level=[];
 		var level=[];
 		var cor=[];
 
+
+		var aux=this.state.policyModel ?  this.state.policyModel.attributes.matrix.split(/;/) : null
+		var matrix=[]
+
+
+		if(aux!=null){
+			for(var i=0; i< aux.length;i++){
+				matrix[i]= new Array(3)
+				matrix[i][0]=aux[i].split(/\[.*\]/)[1]
+				matrix[i][1]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[0]
+				matrix[i][2]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[1]
+			}
+		}
+
+		var ops=[]
 		for(var j=0;j<this.state.color;j++){
 			if(this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name] != null){
 				cor[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name].value;
 				level[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[0].name].value;
+				ops.push({'label':level[j]})
 			}
 		}
+
+		var risk_level=[];
+		var probabilidade=[]
+		var impacto=[]
+
 		for(var i=0;i<cor.length;i++){
 			risk_level.push({'label':level[i],'cor':cor[i]})
 		}
 
-		var probabilidade=[]
-		var impacto=[]
 		for(var i=1;i<=this.state.matrix_l;i++){
 			if(this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name]){
 				probabilidade.push({'label': this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value})
@@ -412,37 +428,48 @@ export default React.createClass({
 			let children = []
 			for (let j = 0; j <= this.state.matrix_c; j++) {
 
-				var classe="Cinza"
+				var impact = this.state.policyModel != null ? (matrix[this.state.policyModel.attributes.nline*(this.state.policyModel.attributes.ncolumn+1)+j-1] != null ?
+															matrix[this.state.policyModel.attributes.nline*(this.state.policyModel.attributes.ncolumn+1)+j-1][0] : null)
+															: null
+				var valor  = this.state.policyModel !=null ? (matrix[(this.state.policyModel.attributes.ncolumn+1)*(i)+j] !=null ?
+															matrix[(this.state.policyModel.attributes.ncolumn+1)*(i)+j][0]: null)
+															: null
+				var probability= this.state.policyModel !=null ?( matrix[(i)*(this.state.policyModel.attributes.ncolumn+1)] !=null ?
+																matrix[(i)*(this.state.policyModel.attributes.ncolumn+1)][0]: null)
+																: null
 
 				if(j != 0 ){
+					var classe="Cinza"
 					if(i!=this.state.matrix_l){
 
-						if(this.refs.policyEditForm["field-["+i+","+j+"]"] != null){
+						/*if(this.refs.policyEditForm["field-["+i+","+j+"]"] != null){
 							for(var k=0;k<cor.length;k++){
 								if(risk_level[k]['label']==this.refs.policyEditForm["field-["+i+","+j+"]"].value){
 									classe = risk_level[k]['cor'];
 									k=cor.length;
 								}
 							}
-						}
+						}*/
+						console.log("risklevle",risk_level,valor)
 
-						children.push(<td><div className={classe}>{
+					children.push(<td><div className={classe}>{
 							<VerticalInput
 								formId={this.props.id}
 								fieldDef={{
-									name: "["+i+","+j+"]",
+									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione o Grau",
-									value: this.model ? this.model.get("name"):null,
-									options: risk_level,
+									options: ops,
+									value: valor,
 									valueField: 'label',
 									displayField: 'label',
 									className: "matrixSelect",
 									onChange: this.onChangeMatrix
 							}}/>
 						}</div></td>)
+
 					}else if(i==this.state.matrix_l){
 						children.push(<td>{
 							<VerticalInput
@@ -451,9 +478,9 @@ export default React.createClass({
 									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione o Impacto".substring(0, 18)+"...",
-									value: this.model ? this.model.get("name"):null,
+									value: impact,
 									options: impacto,
 									valueField: 'label',
 									displayField: 'label',
@@ -472,9 +499,9 @@ export default React.createClass({
 									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione a Probabilidade".substring(0, 18)+"...",
-									value: this.model ? this.model.get("name"):null,
+									value: probability,
 									options: probabilidade,
 									valueField: 'label',
 									displayField: 'label',

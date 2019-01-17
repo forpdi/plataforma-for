@@ -10,7 +10,6 @@ import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
-import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.policy.Policy;
 import org.forrisco.core.unit.Unit;
@@ -59,7 +58,7 @@ public class RiskController extends AbstractController {
 				return;
 			}
 			
-			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk));
+			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
 			
 			if (risk.getRiskLevel() == null) {
 				this.fail("Grau de Risco solicitado não foi encontrado.");
@@ -67,8 +66,13 @@ public class RiskController extends AbstractController {
 			}
 			
 			risk.setId(null);
-			risk.setBegin(new java.util.Date());
+			risk.setBegin(new Date());
 			this.riskBS.saveRisk(risk);
+			
+			this.riskBS.saveActivities(risk);
+			this.riskBS.saveProcesses(risk);
+			this.riskBS.saveStrategies(risk);
+			
 			this.success(risk);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -109,7 +113,120 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
-
+	/**
+	 * Salvar Novo monitoramento
+	 * 
+	 * @Param Monitor
+	 * 			instancia de uma novo monitoramento
+	 */
+	@Post(PATH + "/monitornew")
+	@Consumes
+	@NoCache
+	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	public void save(@NotNull @Valid Monitor monitor){
+		try {
+			Risk risk = this.riskBS.exists(monitor.getRisk().getId(), Risk.class);
+			if (risk == null) {
+				this.fail("Risco solicitado não foi encontrado.");
+				return;
+			}
+			
+			User user = this.riskBS.exists(monitor.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("Usuário solicitada não foi encontrado.");
+				return;
+			}
+			
+			monitor.setId(null);
+			monitor.setBegin(new Date());
+			this.riskBS.saveMonitor(monitor);
+			
+			risk.setImpact(monitor.getImpact());
+			risk.setProbability(monitor.getProbability());
+			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			this.riskBS.persist(risk);
+		
+			this.success(monitor);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Salvar Novo incidente
+	 * 
+	 * @Param Incident
+	 * 			instancia de uma novo incidente
+	 */
+	@Post(PATH + "/incidentnew")
+	@Consumes
+	@NoCache
+	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	public void save(@NotNull @Valid Incident incident){
+		try {
+			Risk risk = this.riskBS.exists(incident.getRisk().getId(), Risk.class);
+			if (risk == null) {
+				this.fail("Risco solicitado não foi encontrado.");
+				return;
+			}
+			
+			User user = this.riskBS.exists(incident.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("Usuário solicitada não foi encontrado.");
+				return;
+			}
+			
+			incident.setId(null);
+			incident.setBegin(new Date());
+			this.riskBS.saveIncident(incident);
+			
+			this.success(incident);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Salvar Novo Contingenciamento
+	 * 
+	 * @Param Contingency
+	 * 			instancia de uma novo contingenciamento
+	 */
+	@Post(PATH + "/contingencynew")
+	@Consumes
+	@NoCache
+	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	public void save(@NotNull @Valid Contingency contingency){
+		try {
+			Risk risk = this.riskBS.exists(contingency.getRisk().getId(), Risk.class);
+			if (risk == null) {
+				this.fail("Risco solicitado não foi encontrado.");
+				return;
+			}
+			
+			User user = this.riskBS.exists(contingency.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("Usuário solicitada não foi encontrado.");
+				return;
+			}
+			
+			contingency.setId(null);
+			this.riskBS.saveContingency(contingency);
+			
+			this.success(contingency);
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	
+	
+	
+	
+	
 	/**
 	 * Retorna risco.
 	 * 
@@ -133,6 +250,33 @@ public class RiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Retorna riscos.
+	 * 
+	 * @param Unit
+	 *            Id da unidade.
+	 * @return <PaginatedList> Risk
+	 */
+	@Get( PATH + "")
+	@NoCache
+	public void listUnits(@NotNull Long unitId) {
+		try {
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrada.");
+				return;
+			} 
+			
+			PaginatedList<Risk> units= this.riskBS.listRiskbyUnit(unit);
+			this.success(units.getList(),unitId);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * Retorna graus de risco.
@@ -160,7 +304,6 @@ public class RiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
 	
 	/**
 	 * Retorna ações de prevenção.
@@ -192,6 +335,100 @@ public class RiskController extends AbstractController {
 	}
 	
 	/**
+	 * Retorna monitoramentos.
+	 * 
+	 * @param id
+	 *			Id do risco.
+	 * @return <PaginedList> Monitor
+	 * 			 Retorna lista de monitoramentos do risco.
+	 */
+	@Get( PATH + "/monitor")
+	@NoCache
+	//@Permissioned
+	public void listMonitors(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+
+			PaginatedList<Monitor> monitors = this.riskBS.listMonitorbyRisk(risk);
+			
+			this.success(monitors);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Retorna incidentes.
+	 * 
+	 * @param id
+	 *			Id do risco.
+	 * @return <PaginedList> Incident
+	 * 			 Retorna lista de incidentes do risco.
+	 */
+	@Get( PATH + "/incident")
+	@NoCache
+	//@Permissioned
+	public void listIncidents(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			PaginatedList<Incident> incidents = this.riskBS.listIncidentsbyRisk(risk);
+			
+			this.success(incidents);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Retorna contingeciamentos.
+	 * 
+	 * @param id
+	 *			Id do risco.
+	 * @return <PaginedList> Contingency
+	 * 			 Retorna lista de contingenciamentos do risco.
+	 */
+	@Get( PATH + "/contingency")
+	@NoCache
+	//@Permissioned
+	public void listContingencies(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesbyRisk(risk);
+			
+			this.success(contingencies);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	/**
 	 * Atualiza ação preventiva.
 	 * 
 	 * @param id
@@ -211,20 +448,150 @@ public class RiskController extends AbstractController {
 			
 			User user = this.riskBS.exists(action.getUser().getId(), User.class);
 			if (user == null) {
-				this.fail("A usuário solicitado não foi encontrado.");
+				this.fail("O usuário solicitado não foi encontrado.");
 				return;
 			} 
 			
 			oldaction.setAccomplished(action.isAccomplished());
 			oldaction.setAction(action.getAction());
-			oldaction.setUser(action.getUser());
+			oldaction.setUser(user);
 			this.riskBS.saveAction(oldaction);
-			this.success();
+			
+			this.success(oldaction);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Atualiza monitoramento.
+	 * 
+	 * @param id
+	 *            Id do monitoramento a ser atualizado.
+	 */
+	@Post( PATH + "/monitor/update")
+	@NoCache
+	@Consumes
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void updateAction(@NotNull Monitor monitor) {
+		try {
+			Monitor oldmonitor = this.riskBS.exists(monitor.getId(), Monitor.class);
+			if (oldmonitor == null) {
+				this.fail("O monitoramento solicitado não foi encontrado.");
+				return;
+			} 
+			
+			User user = this.riskBS.exists(monitor.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário solicitado não foi encontrado.");
+				return;
+			} 
+			
+			Risk risk = this.riskBS.exists(oldmonitor.getRisk().getId(), Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			oldmonitor.setImpact(monitor.getImpact());
+			oldmonitor.setProbability(monitor.getProbability());
+			oldmonitor.setReport(monitor.getReport());
+			oldmonitor.setUser(user);
+			this.riskBS.saveMonitor(oldmonitor);
+			
+			
+			risk.setImpact(monitor.getImpact());
+			risk.setProbability(monitor.getProbability());
+			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			this.riskBS.persist(risk);
+			
+			this.success(oldmonitor);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Atualiza incidente.
+	 * 
+	 * @param id
+	 *            Id do incidente a ser atualizado.
+	 */
+	@Post( PATH + "/incident/update")
+	@NoCache
+	@Consumes
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void updateIncident(@NotNull Incident incident) {
+		try {
+			Incident oldincident = this.riskBS.exists(incident.getId(), Incident.class);
+			if (oldincident == null) {
+				this.fail("A ação solicitado não foi encontrada.");
+				return;
+			} 
+			
+			User user = this.riskBS.exists(incident.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário solicitado não foi encontrado.");
+				return;
+			} 
+			
+			oldincident.setAction(incident.getAction());
+			oldincident.setDescription(incident.getDescription());
+			oldincident.setUser(user);
+			oldincident.setType(incident.getType());
+			
+			this.riskBS.saveIncident(oldincident);
+			
+			this.success(oldincident);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Atualiza contingenciamento.
+	 * 
+	 * @param id
+	 *            Id do contingenciamento a ser atualizado.
+	 */
+	@Post( PATH + "/contingency/update")
+	@NoCache
+	@Consumes
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void updateContingency(@NotNull Contingency contingency) {
+		try {
+			Contingency oldcontingency = this.riskBS.exists(contingency.getId(), Contingency.class);
+			if (oldcontingency == null) {
+				this.fail("A ação solicitado não foi encontrada.");
+				return;
+			} 
+			
+			User user = this.riskBS.exists(contingency.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário solicitado não foi encontrado.");
+				return;
+			} 
+			
+			oldcontingency.setAction(contingency.getAction());
+			oldcontingency.setUser(user);
+			
+			this.riskBS.saveContingency(oldcontingency);
+			
+			this.success(oldcontingency);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Exclui ação preventiva.
@@ -251,4 +618,84 @@ public class RiskController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Exclui monitoramento.
+	 * 
+	 * @param id
+	 *            Id do monitoramento a ser excluido.
+	 */
+	@Delete( PATH + "/monitor/{monitorId}")
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void deleteMonitor(@NotNull Long monitorId) {
+		try {
+			Monitor monitor = this.riskBS.exists(monitorId, Monitor.class);
+			if (monitor == null) {
+				this.fail("A ação solicitado não foi encontrado.");
+				return;
+			} 
+			
+			riskBS.delete(monitor);
+			this.success();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Exclui incidente.
+	 * 
+	 * @param id
+	 *            Id do incidente a ser excluido.
+	 */
+	@Delete( PATH + "/incident/{incidentId}")
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void deleteIncident(@NotNull Long incidentId) {
+		try {
+			Incident incident = this.riskBS.exists(incidentId, Incident.class);
+			if (incident == null) {
+				this.fail("A ação solicitado não foi encontrado.");
+				return;
+			} 
+			
+			riskBS.delete(incident);
+			this.success();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Exclui contingenciamento.
+	 * 
+	 * @param id
+	 *            Id do contingenciamento a ser excluido.
+	 */
+	@Delete( PATH + "/contingency/{contingencyId}")
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void deleteContigency(@NotNull Long contingencyId) {
+		try {
+			Contingency contingency = this.riskBS.exists(contingencyId, Contingency.class);
+			if (contingency == null) {
+				this.fail("O contingenciamento solicitado não foi encontrado.");
+				return;
+			} 
+			
+			riskBS.delete(contingency);
+			this.success();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
 }

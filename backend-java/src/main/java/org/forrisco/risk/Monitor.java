@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 
@@ -43,6 +44,9 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable=false)
 	private Date begin;
+	
+	@Transient
+	private Long riskId;
 	
 	public Date getBegin() {
 		return begin;
@@ -90,6 +94,14 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 
 	public void setImpact(String impact) {
 		this.impact = impact;
+	}
+
+	public Long getRiskId() {
+		return riskId;
+	}
+
+	public void setRiskId(Long riskId) {
+		this.riskId = riskId;
 	}
 
 }

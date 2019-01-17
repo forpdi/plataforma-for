@@ -7,11 +7,8 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.user.authz.AccessLevels;
-import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.policy.Policy;
-import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;

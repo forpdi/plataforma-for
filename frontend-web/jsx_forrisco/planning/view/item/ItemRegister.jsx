@@ -33,7 +33,7 @@ export default React.createClass({
 			policyModel: null,
 			risklevelModel: null,
 			fields:[],
-			
+
 			vizualization: false,
 			tabPath: this.props.location.pathname,
 			undeletable: false,
@@ -185,12 +185,7 @@ export default React.createClass({
 					</th>
 				</tr>
 				<tr>
-					<th>
-						<td></td>
-						<td>
-							<div style={{"text-align":"-webkit-center", position: "relative"}}>IMPACTO</div>
-						</td>
-						</th>
+					<div style={{"text-align":"-webkit-center", position: "relative", left: "75px"}}>IMPACTO</div>
 				</tr>
 				</th>
 			</table>
