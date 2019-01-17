@@ -90,6 +90,8 @@
   		<mapping class="org.forrisco.core.item.SubItem"/>
   		<mapping class="org.forrisco.core.item.FieldItem"/>
   		<mapping class="org.forrisco.core.item.FieldSubItem"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskItem"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskSubItem"/>
   		<mapping class="org.forrisco.core.process.Process"/>
   		<mapping class="org.forrisco.core.process.ProcessUnit"/>
   		<mapping class="org.forrisco.risk.Risk"/>
