@@ -427,17 +427,18 @@ export default React.createClass({
 									/>
 									:
 									<div>
-										{this.context.roles.SYSADMIN ? "" : <FavoriteTree/>}
+										{
+											this.context.roles.SYSADMIN ? "" : <FavoriteTree/>
+										}
 										<TreeView tree={this.state.tree}/>
-
-
-										<hr className="divider"></hr>
-										{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-											PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-											<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
-								<span /*className="mdi mdi-export"*/
-								/> {Messages.getEditable("label.exportDocument", "fpdi-nav-label")}
-											</a> : ""
+										<hr className="divider"/>
+										{
+											(this.context.roles.MANAGER || _.contains(this.context.permissions,
+												PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+												<a className="btn btn-sm btn-primary center" onClick={this.exportDocument}>
+													<span /*className="mdi mdi-export"*//>
+													{Messages.getEditable("label.exportDocument", "fpdi-nav-label")}
+												</a> : ""
 										}
 									</div>
 							}

@@ -10,9 +10,9 @@ export default React.createClass({
 		permissions: React.PropTypes.array.isRequired
 	},
 
-	// propTypes: {
-	// 	planRisk: React.PropTypes.object.isRequired
-	// },
+	propTypes: {
+		planRisk: React.PropTypes.object.isRequired
+	},
 
 	getInitialState() {
 		return {
@@ -24,13 +24,14 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps() {
-
 	},
 
 	render() {
 		return(
 			<div>
-				ae
+				<span>
+					.
+				</span>
 			</div>
 		)
 	}

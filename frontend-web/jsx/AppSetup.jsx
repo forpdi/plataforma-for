@@ -58,8 +58,10 @@ import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/Pol
 import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/item/ItemRegister.jsx";
 import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/SubItemRegister.jsx";
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
+
 import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
 import Forrisco_ShowPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/ShowPlanRisk.jsx";
+import Forrisco_PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -97,8 +99,17 @@ ReactDOM.render((
 			</Route>
 		</Route>
 
-		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/>
-		<Route path="plan-risk/:planRiskId" component={Forrisco_ShowPlanRisk }/>
+
+		/*Plano de Risco*/
+		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/> /* Cadastrar novo plano de risco*/
+		<Route path="plan-risk/:planRiskId">								/* Detalhar plano de risco*/
+			<IndexRedirect to="item"/>
+			<Route path="item" component={Forrisco_ShowPlanRisk}>
+				<IndexRedirect to="overview"/>
+				<Route path="overview" component={Forrisco_PlanRiskTabPanel}/>
+			</Route>
+		</Route>
+
 
 		<Route path="system" component={SystemManagement}>
 			<IndexRedirect to="general" />

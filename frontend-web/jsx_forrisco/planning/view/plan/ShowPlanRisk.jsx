@@ -17,7 +17,6 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
-			planRiskModel: null,
 			resultSearch: [],
 			isLoading: true,
 			planRiskData: [],
@@ -26,7 +25,6 @@ export default React.createClass({
 
 	componentDidMount() {
 		PlanRiskStore.on('retrivedplanrisk', (response) => {
-
 			if (response !== null) {
 				this.setState({
 					planRiskData: response,
@@ -51,9 +49,14 @@ export default React.createClass({
 		if (this.state.planRiskData) {
 			return (
 				<div className="fpdi-plan-details">
-					<PlanRiskTree/>
+					<PlanRiskTree planRisk={this.state.planRiskData} ref="tree"/>
 					<div className="fpdi-plan-tabs">
-						<PlanRiskTabPanel/>
+						<PlanRiskTabPanel
+							{...this.state.planRiskData}
+							planRisk={this.state.planRiskData}
+							ref={"tabpanel-" + this.state.planRiskData.planRiskId}
+							key={"tabpanel-" + this.state.planRiskData.planRiskId}
+						/>
 					</div>
 				</div>
 			)

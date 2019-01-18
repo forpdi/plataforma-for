@@ -23,6 +23,7 @@ export default React.createClass({
 		};
 	},
 	componentDidMount() {
+		console.log(this.props);
 		var me = this;
 		PolicyStore.on("retrieve", (model) => {
 			me.setState({
