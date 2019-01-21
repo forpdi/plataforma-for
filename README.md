@@ -162,7 +162,41 @@ A maneira mais simples de executar o sistema é rodas o Wildfly em modo standalo
 ```shell
 # Copie o arquivo war após o build
 cp {caminho_da_pasta_backend-java}/target/forpdi.war /opt/wildfly/standalone/deployments/
-# Execute o Wildfly em modo standalone como root
+```
+
+Antes de inicializar o Wildfly, é necessário que habilitemos o conector AJP para que o Apache HTTPD possa posteriormente
+atuar como proxy reverso utilizando este protocolo. Edite o arquivo `standalone.xml` para incluir este conector e depois
+inicie o Wildfly:
+
+```xml
+<!-- Arquivo /opt/wildfly/standalone/configuration/standalone.xml -->
+...
+        <subsystem xmlns="urn:jboss:domain:undertow:2.0">
+            <buffer-cache name="default"/>
+            <server name="default-server">
+                <ajp-listener name="default-ajp" socket-binding="ajp" redirect-socket="http"/><!-- Inclua essa linha -->
+                <http-listener name="default" socket-binding="http" redirect-socket="https"/>
+                <host name="default-host" alias="localhost">
+                    <filter-ref name="server-header"/>
+                    <filter-ref name="x-powered-by-header"/>
+                </host>
+            </server>
+            <servlet-container name="default">
+                <jsp-config/>
+                <websockets/>
+            </servlet-container>
+            <handlers>
+                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+            </handlers>
+            <filters>
+                <response-header name="server-header" header-name="Server" header-value="WildFly/9"/>
+                <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
+            </filters>
+        </subsystem>
+...
+```
+```shell
+vim /opt/wildfly/standalone/configuration/standalone.xml
 cd /opt/wildfly
 /opt/wildfly/bin/standalone.sh &
 # Você precisa sair do terminal com o comando exit para não encerrar o processo:
