@@ -19,7 +19,6 @@ export default React.createClass({
 
 	},
 	componentWillReceiveProps() {
-
 	},
 
 	onExpand(nodeProps) {

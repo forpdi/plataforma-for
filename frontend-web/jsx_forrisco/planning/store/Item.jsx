@@ -239,8 +239,6 @@ var ItemStore = Fluxbone.Store.extend({
 		});
 	},
 
-
-
 	customUpdate(data) {
 		var me = this;
 		$.ajax({
@@ -259,7 +257,6 @@ var ItemStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
 
 	customUpdateSub(data) {
 		var me = this;

@@ -40,7 +40,7 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;		
-		StructureStore.on('levelAttributeSaved', (model) => {			
+		StructureStore.on('levelAttributeSaved', (model) => {
 			var tabActive = document.getElementsByClassName("fpdi-mainTabs active");			
 			//Consulta para encontrar qual aba está ativo
 			if(tabActive.length>0){// Caso encontre um valor, o texto dele será alterado pelo nome atual do nó				

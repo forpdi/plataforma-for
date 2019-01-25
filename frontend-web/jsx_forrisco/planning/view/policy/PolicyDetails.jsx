@@ -23,7 +23,6 @@ export default React.createClass({
 		};
 	},
 	componentDidMount() {
-		console.log(this.props);
 		var me = this;
 		PolicyStore.on("retrieve", (model) => {
 			me.setState({
@@ -43,7 +42,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.policyId != this.state.policyId) {
+		if (newProps.params.policyId !== this.state.policyId) {
 			this.setState({
 				model: null,
 				policyId: null
