@@ -93,31 +93,52 @@ export default React.createClass({
 		return (
 			<div className="fpdi-tabs">
 				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" to="" title="Plano" activeClassName="active" className="tabTreePanel">
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
+					to={"/forrisco/plan-risk/" + this.props.planRisk.attributes.id + "/"}>
 						{Messages.getEditable("label.plan", "fpdi-nav-label")}
 					</Link>
 
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel">
-						<span className="fpdi-nav-label">Unidade</span>
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
+					to={"/forrisco/plan-risk/" + this.props.planRisk.attributes.id + "/unit"}>
+						{Messages.getEditable("label.unity", "fpdi-nav-label")}
 					</Link>
 				</ul>
-
-
-				{/* Barra de Pesquisa*/}
+				
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-
-					<div
-						className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-						<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-						   title={Messages.get("label.clean")}> </i>
-						<input type="text" className="form-control-busca" ref="term"
-							   onKeyDown={this.onKeyDown}/>
-						<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-						   title={Messages.get("label.advancedSearch")}> </i>
-						<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-						   onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+					
+					<div className={"fpdi-tabs show"}  role="tablist">
+						Teste1
+						<div
+							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
+							title={Messages.get("label.clean")}> </i>
+							<input type="text" className="form-control-busca" ref="term"
+								onKeyDown={this.onKeyDown}/>
+							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
+							title={Messages.get("label.advancedSearch")}> </i>
+							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
+							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+						</div>
+						<TreeView tree={this.state.treeItens}/>
 					</div>
-					<TreeView tree={this.state.treeItens}/>
+
+					
+					<div className={"fpdi-tabs show"}  role="tablist">
+						Teste2
+						<div
+							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
+							title={Messages.get("label.clean")}> </i>
+							<input type="text" className="form-control-busca" ref="term"
+								onKeyDown={this.onKeyDown}/>
+							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
+							title={Messages.get("label.advancedSearch")}> </i>
+							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
+							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+						</div>
+
+						<TreeView tree={this.state.treeItens}/>
+					</div>
 				</div>
 
 			</div>
