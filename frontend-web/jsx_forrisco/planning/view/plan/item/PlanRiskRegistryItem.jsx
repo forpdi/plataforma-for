@@ -1,5 +1,6 @@
 import React from "react";
 
+
 export default React.createClass({
 	contextTypes: {
 		roles: React.PropTypes.object.isRequired,
