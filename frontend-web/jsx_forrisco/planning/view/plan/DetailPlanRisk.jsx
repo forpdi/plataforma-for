@@ -15,7 +15,7 @@ export default React.createClass({
 		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired
+		permissions: React.PropTypes.array.isRequired,
 	},
 
 	propTypes: {
