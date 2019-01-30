@@ -23,7 +23,7 @@ export default React.createClass({
 	},
 render(){
   let params = queryString.parse(this.props.location.search);
-  console.log(params);
+  console.log("//TODO "+params);
 
 	return <div>
 

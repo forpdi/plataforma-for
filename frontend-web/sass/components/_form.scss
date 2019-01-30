@@ -1,8 +1,8 @@
 
 .fpdi-required {
-	color: $brand-danger;
 
 	&:after {
+		color: $brand-danger;
 		content: "*";
 	}
 }

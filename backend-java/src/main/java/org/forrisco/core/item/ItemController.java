@@ -1,5 +1,8 @@
 package org.forrisco.core.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -489,11 +492,51 @@ public class ItemController extends AbstractController {
 		try {
 			Item item = this.itemBS.exists(id, Item.class);
 			if (item == null) {
-				this.fail("A política solicitada não foi encontrado.");
+				this.fail("O item solicitado não foi encontrado.");
 			} else {
 				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
 				this.success(subitens);
 			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Retorna todos subitens da política.
+	 * 
+	 * @param id
+	 *            Id da política.
+	 * @return Subitem Retorna os subitens de acordo com o id passado.
+	 * 
+	 */
+
+	@Get( PATH + "/allsubitens/{id}")
+	@NoCache
+	//@Permissioned
+	public void retrieveAllSubitem(@NotNull Long id) {
+		try {
+			Policy policy = this.itemBS.exists(id, Policy.class);
+			if (policy == null) {
+				this.fail("A política solicitada não foi encontrado.");
+				return;
+			}
+
+			PaginatedList<Item> itens = this.itemBS.listItensByPolicy(policy);
+			PaginatedList<SubItem> subitens = new PaginatedList<>();
+			List<SubItem> list= new ArrayList<>();
+			
+			for(Item item :itens.getList()) {
+				PaginatedList<SubItem> subitem = this.itemBS.listSubItensByItem(item);
+				list.addAll(subitem.getList());
+			}
+		
+			subitens.setList(list);
+			subitens.setTotal((long) list.size());
+			this.success(subitens);
+
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

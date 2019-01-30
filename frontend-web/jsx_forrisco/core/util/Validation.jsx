@@ -33,41 +33,167 @@ var Validate = {
 
 	},
 
-	validationPolicyEdit: function(data, policyEditForm) {
-        var msg = Messages.get("label.form.error");
-		var dataError = false;
-		var boolMsg = false;
+	validationPolicyEdit: function(data, refs) {
+        var msg =""
 
-		// Parte do codigo para contonar erro de datas
-		var valDateBegin,valDateFinal;
-		var difference = 0; // representa milesegundos
-
-		//if(data.name.length > 255) {
-			//var msgLmtCaractres = "Limite de caracteres atingido nos campo(s) abaixo: + "Nome";
-			//Toastr.remove();
-			//Toastr.error(msgLmtCaractres);
-			//this.context.toastr.addAlertError(msgLmtCaractres);
-			//return;
-		//}
-
-
+		//nome em branco
 		if(data.name == "" ||  !!data.name.match(/^(\s)+$/) ){
-			boolMsg = true;
-			policyEditForm.refs.name.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
-			policyEditForm.refs.name.refs["field-name"].className += " borderError";
+			refs['ref-0'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['ref-0'].refs['field-name'].className += " borderError";
+			msg = Messages.get("label.form.error");
 		}else{
-			if(policyEditForm.refs.name.refs["field-name"].className && policyEditForm.refs.name.refs["field-name"].className.indexOf('borderError')){
-				policyEditForm.refs.name.refs["field-name"].className = "form-control";
-				policyEditForm.refs.name.refs.formAlertError.innerHTML = "";
+			if(refs['ref-0'].refs['field-name'].className){
+				refs['ref-0'].refs['field-name'].className = "form-control";
+				refs['ref-0'].refs['formAlertError'].innerHTML = "";
 			}
 		}
-        var aux = {
-            boolMsg: boolMsg,
-            msg: msg
-        }
+
+		//graus de risco e cores em branco
+		for(var i=0 ; i<6 ; i++){
+			var grau='grau-'+(i+1)
+			var risklevel=refs[grau+'-0'];
+			var color=refs[grau+'-1'];
+
+			if(data.risk_level[1][i] == -1){
+				color.refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+				color.refs['field-risk_cor_'+(i+1)].className += " borderError";
+				msg = Messages.get("label.form.error");
+			}else{
+				if(color){
+					color.refs['field-risk_cor_'+(i+1)].className = "form-control-h"
+					color.refs['formAlertError'].innerHTML =""
+					if(data.risk_level[0][i] == "" ||  (data.risk_level[0][i] && !!data.risk_level[0][i].match(/^(\s)+$/))){
+						color.refs['formAlertError'].innerHTML ="<br/>"
+					}
+				}
+			}
+
+			if(data.risk_level[0][i] == "" ||  (data.risk_level[0][i] && !!data.risk_level[0][i].match(/^(\s)+$/))){
+				risklevel.refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+				risklevel.refs['field-risk_level_'+(i+1)].className += " borderError";
+				msg = Messages.get("label.form.error");
+			}else{
+				if(risklevel){
+					risklevel.refs['field-risk_level_'+(i+1)].className = "form-control-h"
+					risklevel.refs['formAlertError'].innerHTML = ""
+					if(data.risk_level[1][i] == -1){
+						risklevel.refs['formAlertError'].innerHTML = "<br/>"
+					}
+				}
+			}
+		}
+
+		//graus de risco e cores repetidas
+		for(var i=0 ; i<6 ; i++){
+			for(var j=1 ; j<6 ; j++){
+				if(data.risk_level[0][i] != null
+				&& data.risk_level[0][i] != ""
+				&& data.risk_level[0][i] == data.risk_level[0][j]
+				&& i<j){
+					if(msg==""){msg="Graus des risco não podem repetir."}
+					refs['grau-'+(j+1)+'-0'].refs['field-risk_level_'+(j+1)].className += " borderError";
+					refs['grau-'+(i+1)+'-0'].refs['field-risk_level_'+(i+1)].className += " borderError";
+				}
+				if(data.risk_level[1][i] != null
+				&& data.risk_level[1][i] != -1
+				&& data.risk_level[1][i] == data.risk_level[1][j]
+				&& i<j){
+					if(msg==""){msg="Graus des risco não podem repetir as cores."}
+					refs['grau-'+(j+1)+'-1'].refs['field-risk_cor_'+(j+1)].className += " borderError";
+					refs['grau-'+(i+1)+'-1'].refs['field-risk_cor_'+(i+1)].className += " borderError";
+				}
+			}
+		}
 
 
-		return aux;
+		//linha e coluna em branco
+		if(data.ncolumn == ""){
+			refs['numero-1'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-1'].refs['field-ncolumn'].className += " borderError";
+			msg = Messages.get("label.form.error");
+		}else{
+			refs['numero-1'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-1'].refs['field-ncolumn'].className = "form-control-h"
+		}
+
+		if(data.nline == ""){
+			refs['numero-0'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-0'].refs['field-nline'].className += " borderError";
+			msg = Messages.get("label.form.error");
+		}else{
+			refs['numero-0'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-0'].refs['field-nline'].className = "form-control-h"
+		}
+
+
+		//impacto e probabilidade em branco
+		for(var i=0 ; i<6 ; i++){
+			if(refs.policyEditForm['field-probability_'+(i+1)] !=null){
+				if(refs.policyEditForm['field-probability_'+(i+1)].value==""){
+					refs.policyEditForm['field-probability_'+(i+1)].className +=" borderError"
+					if(msg==""){msg="Todas as probabilidades e impactos precisam estar preenchidos."}
+				}else{
+					refs.policyEditForm['field-probability_'+(i+1)].className="form-control-h"
+				}
+			}
+
+			if(refs.policyEditForm['field-impact_'+(i+1)] != null){
+				if(refs.policyEditForm['field-impact_'+(i+1)].value==""){
+					refs.policyEditForm['field-impact_'+(i+1)].className +=" borderError"
+					if(msg==""){msg="Todas as probabilidades e impactos precisam estar preenchidos."}
+				}else{
+					refs.policyEditForm['field-impact_'+(i+1)].className="form-control-h"
+				}
+			}
+		}
+
+
+		if(data.nline <2 || data.ncolumn <2){
+			if(msg==""){msg="Política deve ter pelo menos 2 linhas e 2 colunas."}
+		}
+
+		if(data.matrix==""){
+			if(msg==""){msg="Matriz de risco deve ser gerada."}
+		}else{//matriz em branco
+			for(var i=0; i<=data.nline; i++){
+				for(var j=0; j<=data.ncolumn; j++){
+					if(i!=data.nline || j!=0){
+						if(refs.policyEditForm['field-['+(i)+','+(j)+']'].value==""){
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className +=" borderError"
+							if(msg==""){msg="Matriz de risco deve ser completamente preenchida."}
+						}else{
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className ="form-control matrixSelect"
+						}
+					}
+				}
+			}
+		}
+
+		//probabilidade/impacto repetidos
+		if(msg==""){
+			for(var i=0; i<data.nline; i++){
+				for(var j=1; j<data.nline; j++){
+					if(refs.policyEditForm['field-['+(i)+',0]'].value == refs.policyEditForm['field-['+(j)+',0]'].value && i<j){
+						refs.policyEditForm['field-['+(i)+',0]'].className +=" borderError"
+						refs.policyEditForm['field-['+(j)+',0]'].className +=" borderError"
+						msg="As probabilidades/impactos não podem repetir."
+					}
+				}
+			}
+
+
+			for(var i=1; i<=data.ncolumn; i++){
+				for(var j=2; j<=data.ncolumn; j++){
+					if(refs.policyEditForm['field-['+data.nline +','+(i)+']'].value == refs.policyEditForm['field-['+data.nline +','+(j)+']'].value && i<j){
+						refs.policyEditForm['field-['+data.nline +','+(i)+']'].className +=" borderError"
+						refs.policyEditForm['field-['+data.nline +','+(j)+']'].className +=" borderError"
+						msg="As probabilidades/impactos não podem repetir."
+					}
+				}
+			}
+		}
+
+		return msg;
 	},
 
 	validationNewFieldItem: function(newfield, description) {

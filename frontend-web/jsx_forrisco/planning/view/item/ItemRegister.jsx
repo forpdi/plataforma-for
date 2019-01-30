@@ -263,7 +263,7 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveField", (model) => {
-			if(model != null){
+			if(model.attributes != null){
 				var fields = [];
 				for (var i in model.attributes) {
 
@@ -655,12 +655,13 @@ export default React.createClass({
 			/*var msg = "";
 			Modal.confirmCustom(() => {
 				Modal.hide();*/
+
+
 				ItemStore.dispatch({
 					action: ItemStore.ACTION_CUSTOM_UPDATE,
 					data: {
 						id: this.state.itemModel.attributes.id,
-						name: this.state.itemModel.attributes.name,
-						deleted: this.state.itemModel.attributes.deleted,
+						name: this.refs.newItemForm['field-description'].value,//this.state.itemModel.attributes.name,
 						policy: this.state.policyModel,
 						fieldItem: this.state.fields
 					}

@@ -42,6 +42,12 @@ export default React.createClass({
 			monitors: []
 		});
 
+		if(newProps.units.length ==0){
+			this.setState({
+				loading: false,
+			});
+		}
+
 
 		for(var i=0; i<newProps.units.length; i++){
 			UnitStore.dispatch({
@@ -107,7 +113,7 @@ export default React.createClass({
 	},
 
 	onclick(){
-		console.log("historico de monitoramento")
+		console.log("//TODO historico de monitoramento")
 	},
 
 	onUnitChange(evnt){

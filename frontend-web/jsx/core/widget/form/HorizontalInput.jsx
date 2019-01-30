@@ -88,7 +88,7 @@ export default React.createClass({
 			/>);
 		}
 		return (
-			<div style={{display: "inline-block"}}>
+			<div style={{display: "inline-block", margin: "0 20px 0 0"}}>
 			<div className="form-group form-group-sm">
 
 				<div className="col-3">
@@ -96,6 +96,7 @@ export default React.createClass({
 					{this.props.fieldDef.helpBox}
 				</div>
 			</div>
+			<div className="formAlertError" ref="formAlertError"></div>
 			</div>
 		);
 		/*

@@ -42,6 +42,7 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_DELETE: "item-delete",
 	ACTION_RETRIEVE_SUBITEM: "item-retrieveSubitem",
 	ACTION_RETRIEVE_SUBITENS: "item-retrieveSubitens",
+	ACTION_RETRIEVE_ALLSUBITENS: "item-retrieveAllSubitens",
 	ACTION_NEW_SUBITEM: 'item-newSubItem',
 	ACTION_CREATE_SUBFIELD: 'item-createSubfield',
 	ACTION_RETRIEVE_SUBFIELD: 'item-retrieveSubField',
@@ -126,6 +127,21 @@ var ItemStore = Fluxbone.Store.extend({
 			url: me.url + "/subitens/" + id,
 			success(model, response, options) {
 				me.trigger("retrieveSubitens", response,pigback);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
+
+	retrieveAllSubitens(id,pigback) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: me.url + "/allsubitens/" + id,
+			success(model, response, options) {
+				me.trigger("retrieveAllSubitens", response,pigback);
 			},
 			error(model, response, options) {
 				me.handleRequestErrors([], options.xhr);

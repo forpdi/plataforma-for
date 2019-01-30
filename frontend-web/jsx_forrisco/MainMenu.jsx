@@ -138,6 +138,10 @@ export default React.createClass({
 		//        next();
 		//});
 	},
+
+	componentWillReceiveProps() {
+			this.refreshPolicies();
+	},
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 		PolicyStore.off(null, null, this);
@@ -156,7 +160,7 @@ export default React.createClass({
             this.setState({
                 hidden: false
             });
-        }*/
+		}*/
 	},
 
 
@@ -213,7 +217,6 @@ export default React.createClass({
 		if (!this.state.logged) {
 			return <div style={{display: 'none'}}/>;
 		}
-
 
 		return (<div
 			className={(this.state.hidden ? 'forrisco-app-sidebar-hidden' : 'forrisco-app-sidebar') + ' fpdi-tabs-stacked'}>

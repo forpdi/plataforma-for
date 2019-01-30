@@ -11,14 +11,17 @@ import RiskQuantity from "forpdi/jsx_forrisco/dashboard/view/admin/RiskQuantity.
 
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
+import Toastr from 'toastr';
 
 var numeral = require('numeral');
+
 
 export default React.createClass({
 
 	getInitialState() {
         return {
 			loading: true,
+			msg:false,
 			opportunities: false,
 			threats: true,
 			policyModel: null,
@@ -92,11 +95,6 @@ export default React.createClass({
     componentWillReceiveProps(newProps){
 		var me = this;
 
-		//console.log("newProps",newProps)
-		/*console.log(this.props)
-		console.log("plans",this.state.plans)
-		console.log("units",this.state.units)
-		console.log("risks",this.state.risks)*/
 		this.state.plan=newProps.plan
 		this.setState({
 			plan: newProps.plan,
@@ -104,6 +102,12 @@ export default React.createClass({
 			units: newProps.units,
 			loading: false,
 		});
+
+		if(newProps.units.length ==0 && !this.state.msg){
+			 Toastr.error(Messages.get("label.noUnit"))
+			 this.state.msg=true
+		}
+
 
 	this.refresh()
 	},
@@ -180,7 +184,7 @@ export default React.createClass({
 	},
 
 	showRisk(){
-		console.log("mostrar lista de riscos")
+		console.log("//TODO mostrar lista de riscos")
 	},
 
 	countRisks(risks,impact, probability, color){
@@ -313,10 +317,10 @@ export default React.createClass({
 			<div className={this.props.className}>
 				<div className="panel panel-default dashboard-goals-info-ctn">
 
-
 					{//select com todas as unidades deste plano de risco
 					 //o plano de risco é uma propriedade da dashboardPanel
 					}
+
 					<div className="panel-heading dashboard-panel-title">
 						<b className="budget-graphic-title" title={Messages.get("label.risksMatrix")}>{Messages.get("label.risksMatrix").toUpperCase()}</b>
 						<span className="frisco-containerSelect"> {Messages.get("label.units")}

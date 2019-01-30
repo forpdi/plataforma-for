@@ -32,6 +32,10 @@ var PolicyStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "policy-customUpdate",
 	ACTION_RETRIEVE_RISK_LEVEL: "policy-retrieveRiskLevel",
+	ACTION_FIND_TERMS:'policy-findTerms',
+	ACTION_FINDALL_TERMS:'policy-findAllTerms',
+	ACTION_RETRIEVE_FILLED_SECTIONS: 'policy-retrieveFilledSections',
+
 	url: URL,
 	model: PolicyModel,
 
@@ -101,7 +105,7 @@ var PolicyStore = Fluxbone.Store.extend({
 				me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("policycreated",{msg:opts.responseJSON.message,data:{id:null}})
+				me.trigger("policycreated",{msg:opts.responseJSON,data:{id:null}})
 				me.handleRequestErrors([], opts);
 			}
 		});
@@ -174,6 +178,54 @@ var PolicyStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("policyUpdated",{msg:opts.responseJSON.message,data:{id:null}})
+			}
+		});
+	},
+
+	findTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url+"/findTerms",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
+
+
+	findAllTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url+"/findAllTerms",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
+
+	retrieveFilledSections(data) {
+		var me = this;
+		$.ajax({
+			url: me.url+"/" + data.id + "/filledsections",
+			method: 'GET',
+			dataType: 'json',
+			success(response) {
+				me.trigger("retrieveFilledSections", response.data);
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
 			}
 		});
 	},

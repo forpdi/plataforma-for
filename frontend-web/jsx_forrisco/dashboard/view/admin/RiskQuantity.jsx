@@ -127,35 +127,6 @@ export default React.createClass({
 
   render() {
     return (<div>
-      	{/*} <div id = {!this.state.hide ? "budgetSection" : ""} className="panel panel-default">
-        <div className="panel-heading dashboard-panel-title">
-            <div className="performance-strategic-btns floatRight">
-                <span  className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}  onClick={this.hideFields}/>
-              </div>
-            <div>
-              <b className="budget-graphic-title"> {Messages.getEditable("label.budget","fpdi-nav-label")} </b>
-              <select onChange={this.objectiveChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectObjectives">
-              <option value={-1} data-placement="right" title={Messages.get("label.allObjectives")}>{Messages.get("label.allObjectives")} </option>
-              {this.state.objectives ?
-                this.state.objectives.map((attr, idy) =>{
-                  return(<option key={attr.id} value={idy} data-placement="right" title={attr.name}>
-                    {(attr.name.length>20)?(string(attr.name).trim().substr(0, 15).concat("...").toString()):(attr.name)}
-                    </option>);
-                }) : ""
-              }
-              </select>
-              <select  onChange={this.subActionChange} ref="selectSubAction" className="form-control dashboard-select-box-graphs marginLeft10"
-               disabled={(this.state.selectedObjectives<0)?("disabled"):("")}>
-                <option value={-1} data-placement="right" title="Todas as sub-ações">{Messages.get("label.allSubActions")}</option>
-                {(this.state.actionBudgets)?(this.state.actionBudgets.map((attr, idy) =>{
-                  return(<option key={attr.id} value={idy} data-placement="right" title={attr.subAction}>{attr.subAction}</option>);
-                  }) ):("")
-                }
-              </select>
-            </div>
-
-        </div>
-		*/}
 		<div>
 			{this.getTables()}
 		</div>

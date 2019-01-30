@@ -108,10 +108,9 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveSubField", (model) => {
-			if(model != null){
+			if(model.data != null){
 				var fields = [];
 				for (var i in model.data) {
-
 					if(!model.data[i].deleted){
 						fields.push({
 							name: model.data[i].name+"-"+(i),
@@ -470,13 +469,13 @@ export default React.createClass({
 
 	onSubmit(event) {
 		event && event.preventDefault();
+
 		if(this.state.subitemModel){
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_CUSTOM_UPDATE_SUB,
 				data: {
 					id: this.state.subitemModel.data.id,
-					name: this.state.subitemModel.data.name,
-					deleted: this.state.subitemModel.data.deleted,
+					name: this.refs.newSubitemForm['field-description'].value,//this.state.subitemModel.data.name,
 					item: this.state.itemModel,
 					fieldSubItem: this.state.fields
 				}
@@ -535,7 +534,7 @@ export default React.createClass({
 
 				{this.state.fields && (this.state.fields.length > 0) ?
 					this.state.fields.map((fieldsubitem, index) => {
-					if(fieldsubitem.item ==  AttributeTypes.TEXT_AREA_FIELD){
+					if(fieldsubitem.type ==  AttributeTypes.TEXT_AREA_FIELD){
 						return (
 							<div><VerticalForm
 							vizualization={this.state.vizualization}
@@ -565,7 +564,7 @@ export default React.createClass({
 							</div>
 						)
 					}
-	
+
 				}) :""}
 
 			</div>
@@ -585,7 +584,7 @@ export default React.createClass({
 
 					<h1>
 						{(this.state.titulo)}
-						{this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
+						{/*this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
 							(<span className="dropdown">
 								<a
 									className="dropdown-toggle"
@@ -599,7 +598,7 @@ export default React.createClass({
 								</a>
 								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
 							</span>
-						):""}
+						):""*/}
 					</h1>
 
 					{
