@@ -42,7 +42,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.policyId != this.state.policyId) {
+		if (newProps.params.policyId !== this.state.policyId) {
 			this.setState({
 				model: null,
 				policyId: null
@@ -85,7 +85,7 @@ export default React.createClass({
 		}else{
 			return (<div className="fpdi-plan-details">
 				<PolicyTree policy={this.state.model} ref="tree" treeType={this.props.route.path}/>
-					<div className="fpdi-plan-tabs">
+					<div className="fpdi-plan-tabs">'
 						<PolicyTabPanel
 							{...this.props}
 							policy={this.state.model}

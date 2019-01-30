@@ -30,7 +30,7 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, length=10000)
 	private String description;
 	
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=Policy.class, optional=false,  fetch=FetchType.EAGER)
 	private Policy policy;
 

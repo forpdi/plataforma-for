@@ -128,7 +128,7 @@ export default React.createClass({
 					})
 				});
 			}
-		});
+		}, me);
 
 		me.checkRoute(me.props.location.pathname);
 

@@ -67,7 +67,7 @@ var BudgetStore = Fluxbone.Store.extend({
 	},
 	saveAttachment(data){
 		var me = this;
-		console.log(me.url, data);
+		//console.log(me.url, data);
 		$.ajax({
 			method: "POST",
 			url: me.url + "/attachment",			

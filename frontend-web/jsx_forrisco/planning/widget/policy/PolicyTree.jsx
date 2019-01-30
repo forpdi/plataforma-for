@@ -504,7 +504,9 @@ export default React.createClass({
 									/>
 									:
 									<div>
-										{this.context.roles.SYSADMIN ? "" : <FavoriteTree/>}
+										{
+											this.context.roles.SYSADMIN ? "" : <FavoriteTree/>
+										}
 										<TreeView tree={this.state.tree}/>
 
 										<hr className="divider"></hr>
