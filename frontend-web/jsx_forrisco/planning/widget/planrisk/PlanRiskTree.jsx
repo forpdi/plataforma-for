@@ -61,8 +61,8 @@ export default React.createClass({
 
 		PlanRiskItemStore.on('allitens', (response) => {
 			response.data.map(itens => {
+				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
 				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-
 				treeItens.push({
 					label: itens.name,
 					expanded: false,
@@ -123,22 +123,7 @@ export default React.createClass({
 					</div>
 
 					
-					<div className={"fpdi-tabs show"}  role="tablist">
-						Teste2
-						<div
-							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-							title={Messages.get("label.clean")}> </i>
-							<input type="text" className="form-control-busca" ref="term"
-								onKeyDown={this.onKeyDown}/>
-							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-							title={Messages.get("label.advancedSearch")}> </i>
-							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
-						</div>
-
-						<TreeView tree={this.state.treeItens}/>
-					</div>
+					
 				</div>
 
 			</div>
