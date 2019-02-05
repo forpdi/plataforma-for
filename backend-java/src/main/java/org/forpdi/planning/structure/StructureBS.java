@@ -71,6 +71,7 @@ import com.google.common.collect.Lists;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * 
@@ -188,6 +189,19 @@ public class StructureBS extends HibernateBusiness {
 				.add(Restrictions.eq("structure", structure)).addOrder(Order.asc("sequence"));
 
 		return this.dao.findByCriteria(criteria, StructureLevel.class);
+	}
+
+	public List<StructureLevel> listAllStructuresLevels(List<Structure> structures) {
+		Criteria criteria = this.dao.newCriteria(StructureLevel.class)
+			.add(Restrictions.in("structure", structures))
+		;
+		return this.dao.findByCriteria(criteria, StructureLevel.class);
+	}
+	public List<Attribute> listAllAttributes(List<StructureLevel> structureLevels) {
+		Criteria criteria = this.dao.newCriteria(Attribute.class)
+			.add(Restrictions.in("level", structureLevels))
+		;
+		return this.dao.findByCriteria(criteria, Attribute.class);
 	}
 
 	/**
@@ -800,6 +814,18 @@ public class StructureBS extends HibernateBusiness {
 		return list;
 	}
 	
+	public List<AttributeInstance> listAllAttributeInstanceByPlans(List<StructureLevelInstance> slis) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.add(Restrictions.in("levelInstance", slis));
+		return this.dao.findByCriteria(criteria, AttributeInstance.class);
+	}
+	
+	public List<StructureLevelInstance> listAllLevelInstanceByPlans(List<Plan> plans) {
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
+		criteria.add(Restrictions.in("plan", plans));
+		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
+	}
+	
 	/**
 	 * Listar instâncias dos leveis pelo plano. Inclusive deletados.
 	 * 
@@ -810,8 +836,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<StructureLevelInstance> listAllLevelInstanceByPlan(Plan plan) {
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
 		criteria.add(Restrictions.eq("plan", plan));
-		List<StructureLevelInstance> list = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
-		return list;
+		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 	}
 
 	/**
@@ -844,12 +869,13 @@ public class StructureBS extends HibernateBusiness {
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
 		return list;
 	}
-	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance) {
+	public AttributeInstance listResponsibleAttributeByLevel(StructureLevelInstance levelInstance) {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		//criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("attribute.label", "Responsável"));
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
-		return list;
+		return GeneralUtils.isEmpty(list) ? null : list.get(0);
 	}
 
 	/**

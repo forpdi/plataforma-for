@@ -26,7 +26,6 @@ import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.structure.Structure;
 import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -417,7 +416,7 @@ public class PlanController extends AbstractController {
 				s.setLevels(this.sbs.listStructureLevels(s));
 				p.setStructure(s);
 				
-				planDetailedList = this.bs.listPlanDetailed(p);
+				planDetailedList = this.bs.listPlansDetailed(p);
 				p.setPlanDetailedList(new ArrayList<PlanDetailed>());
 				for (int i=0; i<12; i++) {
 					PlanDetailed planDetailed = null;

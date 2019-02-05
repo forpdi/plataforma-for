@@ -1,25 +1,20 @@
 package org.forpdi.core.company;
 
 
-import java.io.File;
-import java.util.List;
 import java.time.LocalDateTime;
 
-
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
-import org.forpdi.core.user.authz.permission.ExportDataPermission;
 import org.forpdi.core.user.authz.permission.RestoreDataPermission;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
-import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.upload.UploadSizeLimit;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 
@@ -41,17 +36,19 @@ public class BackupAndRestoreController extends AbstractController  {
 	 *
 	 */
 	@Get("/company/export")
-	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
-	public Download export() {
+	//@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
+	public void export() {
 		try {
 			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
-			byte[] exportData = dbbackup.export(this.domain.getCompany());
-			return new ByteArrayDownload(exportData, "application/octet-stream",
-				String.format("plans-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
+			this.httpResponse.setHeader("Content-Disposition", String.format("attachment; filename=plans-%d-%s.fbk",
+					domain.getCompany().getId(), LocalDateTime.now().toString()));
+			this.httpResponse.setContentType("application/octet-stream");
+		
+			this.dbbackup.export(this.domain.getCompany(), this.httpResponse.getOutputStream());
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-			return null;
+			this.httpResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			this.result.nothing();
 		}
 	}
 

@@ -1,11 +1,11 @@
  	package org.forpdi.core.company;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -67,6 +67,7 @@ import com.google.gson.Gson;
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.serialization.gson.GsonSerializerBuilder;
 
@@ -102,12 +103,14 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws IOException
 	 *
 	 */
-	public byte[] export(Company company) throws IOException {
-		if (company == null) {
+	public void export(Company company, OutputStream output) throws IOException {
+		if (company == null || output == null) {
 			throw new IllegalArgumentException("Company not found.");
 		}
 		
-		PaginatedList<PlanMacro> plansMacroList = this.planBS.listAllMacros(company);
+		final ZipOutputStream zos = new ZipOutputStream(output);
+		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
+		zos.flush();
 		
 		List<ActionPlan>  actionplan = new ArrayList<>();
 		List<LevelInstanceHistory>  levelinstancehistory = new ArrayList<>();
@@ -117,16 +120,9 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		List<DocumentAttribute> documentattribute = new ArrayList<>();	
 		List<AggregateIndicator> aggregateindicator = new ArrayList<>();
 		
-		List<PlanMacro> plansMacro =new ArrayList<>();
 		List<Document> documents = new ArrayList<>();
-		List<Plan> plans= new ArrayList<>();
-		List<PlanDetailed> plandetailed= new ArrayList<>();
-		List<Structure> structures = new ArrayList<>();
-		List<StructureLevel> structurelevel = new ArrayList<>();
-		List<StructureLevelInstance> structurelevelinstance = new ArrayList<>();
 		List<DocumentSection> documentsection = new ArrayList<>();
 		List<BudgetElement> budgetelement = new ArrayList<>();
-		List<Attribute> attribute = new ArrayList<>();
 		List<TableFields> tableFields= new ArrayList<>();
 		List<TableInstance> tableInstance= new ArrayList<>();
 		List<TableStructure> tableStructure= new ArrayList<>();
@@ -135,14 +131,11 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		List<ScheduleInstance> scheduleInstance= new ArrayList<>();
 		List<ScheduleStructure> scheduleStructure= new ArrayList<>();
 		List<ScheduleValues> scheduleValues= new ArrayList<>();
-		List<CompanyMessage> companyMessage= new ArrayList<>();
 		List<OptionsField> optionsField= new ArrayList<>();
 		List<Attachment> attachment= new ArrayList<>();
 		
-		HashMap<Long, Structure> structuresMap = new HashMap<>();
-		HashMap<Long, StructureLevel> structuresLevelMap = new HashMap<>();
+		final HashMap<Long, Structure> structuresMap = new HashMap<>();
 		HashMap<Long, BudgetElement> budgetElementMap = new HashMap<>();
-		HashMap<Long, Attribute> attributeMap = new HashMap<>();
 		HashMap<Long, TableFields> tableFieldsMap = new HashMap<>();
 		HashMap<Long, TableInstance> tableInstanceMap = new HashMap<>();
 		HashMap<Long, TableStructure> tableStructureMap = new HashMap<>();
@@ -154,105 +147,119 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		HashMap<Long, ScheduleValues> scheduleValuesMap = new HashMap<>();
 		HashMap<Long, OptionsField> optionsFieldMap = new HashMap<>();
 		
-		companyMessage = companyBS.retrieveMessages(company);
-		
-		/*companyMessage.stream().forEach(it->{
-			it.setExportCompanyId(it.getCompany().getId());
-			it.setCompany(null);
-		});*/
-		
-		for(PlanMacro planMacro : plansMacroList.getList()) {
-				
-			
-			//Exportando o Plano Macro
-			planMacro.setExportCompanyId(planMacro.getCompany().getId());
-			planMacro.setCompany(null);
-			
-			plansMacro.add(planMacro);
+		final List<CompanyMessage> companyMessage = companyBS.retrieveMessages(company);
+		if(!GeneralUtils.isEmpty(companyMessage)) {
+			companyMessage.forEach(it -> {
+				it.setCompany(null);
+			});
+			zipAdd(zos, CompanyMessage.class.getSimpleName(), this.gson.toJson(companyMessage));
+			zos.flush();
+		}
 
-			List<Plan> plan = this.planBS.listAllPlansForPlanMacro(planMacro);
-			
-			
-			//Exportando os planos de metas
-			for (Plan plan_pm : plan) {
-				Structure structure = plan_pm.getStructure();
-				plan_pm.setExportPlanMacroId(planMacro.getId());
-				plan_pm.setExportStructureId(structure.getId());
-				plan_pm.setParent(null);
-				plan_pm.setStructure(null);
-				plans.add(plan_pm);
+		//Exportando os Planos Macro
+		final List<PlanMacro> plansMacro = this.planBS.listAllMacros(company);
+		if(!GeneralUtils.isEmpty(plansMacro)) {
+			for(final PlanMacro planMacro : plansMacro) {
+				planMacro.setCompany(null);
+			}
+			zipAdd(zos, PlanMacro.class.getSimpleName(), this.gson.toJson(plansMacro));
+			zos.flush();
+		}
+		
+		//Exportando os planos de metas
+		final List<Plan> plans = this.planBS.listAllPlansForPlansMacro(plansMacro);
+		if(!GeneralUtils.isEmpty(plans)) {
+			for (final Plan plan : plans) {
+				final Structure structure = plan.getStructure();
+				plan.setExportPlanMacroId(plan.getParent().getId());
+				plan.setExportStructureId(structure.getId());
+				plan.setParent(null);
+				plan.setStructure(null);
 				if (!structuresMap.containsKey(structure.getId())) {
 					structuresMap.put(structure.getId(), structure);
 				}
-		
-				
-				//Exporta plano detalhado
-				List<PlanDetailed> plansdetailed = this.planBS.listAllPlanDetailed(plan_pm);
-				for (PlanDetailed pd : plansdetailed) {
-					pd.setPlan(null);
-					pd.setExportPlanId(plan_pm.getId());
-					plandetailed.add(pd);
-				}
-				
-				
-				//Exportando as estruturas level instance necessárias.
-				List<StructureLevelInstance> structurelevelsinstance = this.structureBS.listAllLevelInstanceByPlan(plan_pm);
-				for (StructureLevelInstance sli: structurelevelsinstance) {
-					
-					sli.setExportLevelId(sli.getLevel().getId());
-					sli.setExportPlanId(plan_pm.getId());
-					
-					if (!structuresLevelMap.containsKey(sli.getLevel().getId())) {
-						structuresLevelMap.put(sli.getLevel().getId(), sli.getLevel());
-					}
-					
-					sli.setPlan(null);
-					sli.setLevel(null);
-					
-					List<AttributeInstance> x = this.structureBS.listAttributeInstanceByLevel(sli);
-					
-					x.stream().forEach(it ->{
-						if( it.getAttribute().getLabel().equals("Responsável")) {
-							User user = this.userBS.existsByUser( Long.parseLong(it.getValue()));
-							it.getAttribute();
-							sli.setExportResponsibleMail(user.getEmail());
-						}
-					});					
-					
-					structurelevelinstance.add(sli);
-				}
-			}	
+			}
+			zipAdd(zos, Plan.class.getSimpleName(), this.gson.toJson(plans));
+			zos.flush();
 		}
-			
 		
-		//Exportando as estruturas level necessárias.
-		structuresLevelMap.values().stream().forEach(structureLevel -> {
-			structureLevel.setExportStructureId(structureLevel.getStructure().getId());
-			if (!structuresMap.containsKey(structureLevel.getStructure().getId())) {
-				structuresMap.put(structureLevel.getStructure().getId(), structureLevel.getStructure());
+		//Exporta plano detalhado
+		final List<PlanDetailed> plansDetailed = this.planBS.listAllPlansDetailed(plans);
+		if(!GeneralUtils.isEmpty(plansDetailed)) {
+			for (final PlanDetailed pd : plansDetailed) {
+				pd.setExportPlanId(pd.getPlan().getId());
+				pd.setPlan(null);
 			}
-			structureLevel.setStructure(null);
-			structurelevel.add(structureLevel);		
-			
-			
-			//Exportando atributos
-			for(Attribute sl : structureBS.listAttributes(structureLevel).getList()) {
-				attributeMap.put(sl.getId(),sl);
+			zipAdd(zos, PlanDetailed.class.getSimpleName(), this.gson.toJson(plansDetailed));
+			zos.flush();
+		}
+		
+		// Exportando estruturas
+		final List<Structure> structures = new ArrayList<>(structuresMap.values());
+		if (!GeneralUtils.isEmpty(structures)) {
+			for (final Structure structure : structures) {
+				structure.setCompany(null);
 			}
-		});
+			zipAdd(zos, Structure.class.getSimpleName(), this.gson.toJson(structures));
+			zos.flush();
+		}
+		
+		// Exportando níveis de estruturas
+		final List<StructureLevel> structureLevels = this.structureBS.listAllStructuresLevels(structures);
+		if (!GeneralUtils.isEmpty(structureLevels)) {
+			for (final StructureLevel structureLevel : structureLevels) {
+				structureLevel.setExportStructureId(structureLevel.getStructure().getId());
+				structureLevel.setStructure(null);
+			}
+			zipAdd(zos, StructureLevel.class.getSimpleName(), this.gson.toJson(structureLevels));
+			zos.flush();
+		}
 
+		// Exportando atributos
+		final List<Attribute> attributes = this.structureBS.listAllAttributes(structureLevels);
+		if (!GeneralUtils.isEmpty(attributes)) {
+			for (final Attribute attribute : attributes) {
+				attribute.setExportStructureLevelId(attribute.getLevel().getId());
+				attribute.setLevel(null);
+			}
+			zipAdd(zos, Attribute.class.getSimpleName(), this.gson.toJson(attributes));
+			zos.flush();
+		}
 		
-		//Exportando as estruturas necessárias.
-		structuresMap.values().stream().forEach(structure -> {
-			structure.setExportCompanyId(structure.getCompany().getId());
-			structure.setCompany(null);
-			structures.add(structure);		
-		});
-			
+		//Exportando as estruturas level instance necessárias.
+		final List<StructureLevelInstance> structureLevelInstances = this.structureBS.listAllLevelInstanceByPlans(plans);
+		if(!GeneralUtils.isEmpty(structureLevelInstances)) {
+			for (final StructureLevelInstance sli : structureLevelInstances) {
+				sli.setExportLevelId(sli.getLevel().getId());
+				sli.setExportPlanId(sli.getPlan().getId());
+				sli.setLevel(null);
+				sli.setPlan(null);
+				
+				final AttributeInstance responsible = this.structureBS.listResponsibleAttributeByLevel(sli);
+				if (responsible != null) {
+					User user = this.userBS.existsByUser(Long.parseLong(responsible.getValue()));
+					sli.setExportResponsibleMail(user.getEmail());
+				}
+			}
+			zipAdd(zos, StructureLevelInstance.class.getSimpleName(), this.gson.toJson(structureLevelInstances));
+			zos.flush();
+		}
+
+		//Exportando as instância de atributos
+		final List<AttributeInstance> attributeInstances = this.structureBS.listAllAttributeInstanceByPlans(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(attributeInstances)) {
+			for (final AttributeInstance attrInstance : attributeInstances) {
+				attrInstance.setExportAttributeId(attrInstance.getAttribute().getId());
+				attrInstance.setExportStructureLevelInstanceId(attrInstance.getLevelInstance().getId());
+				attrInstance.setAttribute(null);
+				attrInstance.setLevelInstance(null);
+			}
+			zipAdd(zos, AttributeInstance.class.getSimpleName(), this.gson.toJson(attributeInstances));
+			zos.flush();
+		}
 		
-		for(PlanMacro pm: plansMacro ) {
-			
-			
+		
+		for(PlanMacro pm: plansMacro) {
 			//Exportando os documentos
 			Document doc =  this.docBS.retrieveDocumentByPlan(pm);	
 			if(doc !=null){
@@ -320,6 +327,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		//Exportando aggregate indicator
 		//Exportando budget
 		//Exportando Attachement
+		/*
 		structurelevelinstance.stream().forEach(sli->{
 			actionplan.addAll((List<ActionPlan>) this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("levelInstance", sli)).list());
 			levelinstancehistory.addAll((List<LevelInstanceHistory>) this.dao.newCriteria(LevelInstanceHistory.class).add(Restrictions.eq("levelInstance", sli)).list());
@@ -328,7 +336,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			attributeinstance.addAll((List<AttributeInstance>) this.dao.newCriteria(AttributeInstance.class).add(Restrictions.eq("levelInstance", sli)).list());
 			aggregateindicator.addAll((List<AggregateIndicator>) this.dao.newCriteria(AggregateIndicator.class).add(Restrictions.eq("aggregate", sli)).list());
 			attachment.addAll((List<Attachment>) this.dao.newCriteria(Attachment.class).add(Restrictions.eq("levelInstance", sli)).list());
-		});
+		});*/
 		actionplan.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
 			it.setLevelInstance(null);	
@@ -374,23 +382,6 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			budgetelement.add(be);
 		});
 
-		
-		//Exportando atributos
-		attributeinstance.stream().forEach(it->{
-			attributeMap.put(it.getAttribute().getId(),it.getAttribute());
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setExportAttributeId(it.getAttribute().getId());
-			it.setLevelInstance(null);	
-			it.setAttribute(null);
-		});
-		attributeMap.values().stream().forEach(a -> {
-			a.setExportStructureLevelId(a.getLevel().getId());
-			a.setLevel(null);
-			attribute.add(a);
-		});
-			
-		
-		
 		//Exportando table field
 		//Exportando option field
 		//Exportando schedule
@@ -426,6 +417,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				}
 			}
 		});
+		/*
 		attribute.stream().forEach(it->{
 
 			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(),false);
@@ -450,7 +442,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				});
 			}
 			
-		});
+		});*/
+		
 		tableFieldsMap.values().stream().forEach(tf -> {
 			
 			tf.getTableInstances().stream().forEach(ti -> {
@@ -563,31 +556,11 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		});
 		
 		
-		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		ZipOutputStream zos = new ZipOutputStream(bos);	
-		
-		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
-				
-		if(!plansMacro.isEmpty())
-		 zipAdd(zos, PlanMacro.class.getSimpleName(), this.gson.toJson(plansMacro));
 		if(!budgetelement.isEmpty())
 			zipAdd(zos, BudgetElement.class.getSimpleName(), this.gson.toJson(budgetelement));
-		if(!structures.isEmpty())
-			zipAdd(zos, Structure.class.getSimpleName(), this.gson.toJson(structures));
-		
+
 		if(!documents.isEmpty())
 			zipAdd(zos, Document.class.getSimpleName(), this.gson.toJson(documents));
-		if(!structurelevel.isEmpty())
-			zipAdd(zos, StructureLevel.class.getSimpleName(), this.gson.toJson(structurelevel));
-		if(!plans.isEmpty())
-			zipAdd(zos, Plan.class.getSimpleName(), this.gson.toJson(plans));
-		
-		if(!plandetailed.isEmpty())
-			zipAdd(zos, PlanDetailed.class.getSimpleName(), this.gson.toJson(plandetailed));
-		if(!attribute.isEmpty())
-			zipAdd(zos, Attribute.class.getSimpleName(), this.gson.toJson(attribute));
-		if(!structurelevelinstance.isEmpty())
-			zipAdd(zos, StructureLevelInstance.class.getSimpleName(), this.gson.toJson(structurelevelinstance));
 		if(!documentsection.isEmpty())
 			zipAdd(zos, DocumentSection.class.getSimpleName(), this.gson.toJson(documentsection));
 		
@@ -630,12 +603,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!optionsField.isEmpty())
 			zipAdd(zos, OptionsField.class.getSimpleName(), this.gson.toJson(optionsField));
 		
-		if(!companyMessage.isEmpty())
-			zipAdd(zos, CompanyMessage.class.getSimpleName(), this.gson.toJson(companyMessage));
-		
 		zos.close();
-			
-		return bos.toByteArray();
 	}
 
 
