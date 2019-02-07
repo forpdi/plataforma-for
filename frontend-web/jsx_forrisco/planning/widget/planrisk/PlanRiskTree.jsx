@@ -1,6 +1,6 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlaRiskItem.jsx"
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
@@ -38,6 +38,10 @@ export default React.createClass({
 		if (newProps.planRisk.id !== this.props.planRisk.id) {
 			this.setTreeItens(newProps.planRisk);
 		}
+	},
+
+	componentWillMount() {
+		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
 	},
 
 	setTreeItens(planRisk, treeItens = []) {
@@ -85,8 +89,7 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off(null, null, this);
-		PlanRiskStore.off(null, null, this);
+		PlanRiskItemStore.off('allitens');
 	},
 
 	render() {

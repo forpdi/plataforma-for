@@ -2,6 +2,7 @@ import React from "react";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import _ from "underscore";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
 
 export default React.createClass({
 	contextTypes: {
@@ -36,8 +37,12 @@ export default React.createClass({
 		});
 	},
 
-	componentWillMount() {
-		PlanRiskStore.off('retrivedplanrisk');
+	componentWillUnmount() {
+		// console.log('desmonto');
+		// PlanRiskStore.off('retrivedplanrisk');
+	},
+
+	componentWillReceiveProps(newProps) {
 	},
 
 	render() {
