@@ -16,8 +16,8 @@ export default React.createClass({
     getInitialState() {
         return {
         	plan:this.props.plan,
-        	subPlan:this.props.subPlan,
-			profile: this.context.roles,
+        	units:this.props.units,
+			risks:this.props.risks
         };
     },
 
@@ -28,7 +28,6 @@ export default React.createClass({
     },
 
     componentDidMount(){
-
     },
 
 	render() {

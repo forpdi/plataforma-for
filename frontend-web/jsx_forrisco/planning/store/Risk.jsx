@@ -30,7 +30,9 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_NEWUNIT: "risk-newRisk",
 	dispatchAcceptRegex: /^risk-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "risk-customUpdate",
-	ACTION_FIND_BY_UNIT: "risk-findByUnit",
+	ACTION_FIND_BY_PLAN: 'risk-findByPlan',
+	ACTION_FIND_INCIDENTS_BY_PLAN: "risk-findIncdentsByPlan",
+	ACTION_FIND_MONITORS_BY_PLAN: "risk-findMonitorsByPlan",
 	url: URL,
 	model: RiskModel,
 
@@ -172,6 +174,57 @@ var RiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskUpdated",{msg:opts.responseJSON.message,data:{id:null}})
+			}
+		});
+	},
+
+	findByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("riskbyplan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("riskbyplan", opts);
+			}
+		});
+	},
+
+	findIncdentsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/incident",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("incidentbByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentbByPlan", opts);
+			}
+		});
+	},
+
+	findMonitorsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/monitor",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("monitorByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorByPlan", opts);
 			}
 		});
 	},

@@ -31,8 +31,7 @@ var UnitStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
-	ACTION_FIND_MONITOR: "unit-findMonitor",
-	ACTION_FIND_INCIDENTS: "unit-findIncdents",
+	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
 	model: unitModel,
 
@@ -65,41 +64,6 @@ var UnitStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("unitbyplan", opts);
-			}
-		});
-	},
-
-
-	findMonitor(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/monitor",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {unitId: data},
-			success(model) {
-				me.trigger("findMonitor", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("findMonitor", opts);
-			}
-		});
-	},
-
-	findIncdents(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/incident",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {unitId: data},
-			success(model) {
-				me.trigger("findIncident", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("findIncident", opts);
 			}
 		});
 	},

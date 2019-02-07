@@ -20,7 +20,8 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_CREATE: 'policy-create',
 	ACTION_DESTROY: 'policy-destroy',
 	ACTION_FIND: 'policy-find',
-	ACTION_RETRIEVE: 'policy-retrieve',
+	ACTION_FIND_POLICY: 'policy-findPolicy',
+	//ACTION_RETRIEVE: 'policy-retrieve',
 	ACTION_UPDATE: 'policy-update',
 	ACTION_ARCHIVE: "policy-archive",
 	ACTION_UNARCHIVE: "policy-unarchive",
@@ -38,6 +39,24 @@ var PolicyStore = Fluxbone.Store.extend({
 
 	url: URL,
 	model: PolicyModel,
+
+
+	findPolicy(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("findpolicy", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findpolicy", opts);
+			}
+		});
+	},
+
 
 	findArchived(data){
 		var me = this;
@@ -158,7 +177,8 @@ var PolicyStore = Fluxbone.Store.extend({
 				me.trigger("policyDeleted", model, data);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("policyDeleted", opts);
+				var resp = JSON.parse(opts.responseText);
+				me.trigger("policyDeleted", resp);
 			}
 		});
 	},

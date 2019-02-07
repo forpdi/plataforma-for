@@ -1,17 +1,12 @@
 import React from "react";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
-//import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
-import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
-
 import RiskQuantity from "forpdi/jsx_forrisco/dashboard/view/admin/RiskQuantity.jsx";
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
-import Toastr from 'toastr';
+
 
 var numeral = require('numeral');
 
@@ -21,7 +16,6 @@ export default React.createClass({
 	getInitialState() {
         return {
 			loading: true,
-			msg:false,
 			opportunities: false,
 			threats: true,
 			policyModel: null,
@@ -43,47 +37,22 @@ export default React.createClass({
 			});
 		}
 
-		/*RiskStore.on("riskbyunit",(model) =>{
-			//console.log("riskbyunit",model)
-			this.state.risks.push({unitid:  model.total ,array:model.data})
-			this.setState({
-				risks:this.state.risks,
-				loading:false
-			})
-		},me);
-
-		UnitStore.on("unitbyplan",(model) =>{
-			this.state.risks=[]
-			for(var i=0; i<model.data.length;i++){
-					RiskStore.dispatch({
-						action: RiskStore.ACTION_FIND_BY_UNIT,
-						data: model.data[i].id
-					});
-			}
-			me.setState({
-				units: model.data,
-				loading:true
-			});
-		},me);*/
-
 		PolicyStore.on("retrieverisklevel", (model) => {
-
 			me.setState({
-				risklevelModel: model
+				risklevelModel: model,
+				loading:false
 			});
 			me.forceUpdate();
 		}, me);
 
-		PolicyStore.on("retrieve", (model) => {
-
+		PolicyStore.on("findpolicy", (model) => {
 			me.setState({
-				policyModel: model
+				policyModel: model.data
 			});
-
 			if(model != null){
 				PolicyStore.dispatch({
 					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-					data: model.id
+					data: model.data.id
 				});
 			}
 		}, me);
@@ -96,48 +65,31 @@ export default React.createClass({
 		var me = this;
 
 		this.state.plan=newProps.plan
+		this.state.risks=newProps.risks
+		this.state.units=newProps.units
 		this.setState({
 			plan: newProps.plan,
 			risks: newProps.risks,
 			units: newProps.units,
-			loading: false,
+			loading: true,
+			policyModel:null,
+			risklevelModel:null
 		});
 
-		if(newProps.units.length ==0 && !this.state.msg){
-			 Toastr.error(Messages.get("label.noUnit"))
-			 this.state.msg=true
-		}
-
-
-	this.refresh()
+		this.refresh()
 	},
 
 	refresh(){
-		this.state.plan=1
-
-	/*	UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: this.state.plan
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_POLICY,
+			data: this.state.plan.policyId
 		});
-*/
-		//PlanRiskStore.on("retrieve", (model) =>{
-			this.state.policyId=2
-
-				PolicyStore.dispatch({
-					action: PolicyStore.ACTION_RETRIEVE,
-					data: this.state.policyId
-				});
-		//	}, me);
-
-		/*PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE,
-			data: newProps.plan
-		});*/
 	},
+
     componentWillUnmount() {
 		DashboardStore.off(null, null, this);
-	 UnitStore.off(null, null, this);
-	 PolicyStore.off(null, null, this);
+		UnitStore.off(null, null, this);
+		PolicyStore.off(null, null, this);
  	},
 
 	selectThreats(){
@@ -145,46 +97,42 @@ export default React.createClass({
 			threats:true,
 			opportunities:false,
 		})
-
 	},
+
 	selectOpportunities(){
 		this.setState({
 			threats:false,
 			opportunities:true,
 		})
 	},
+
 	getRisks(){
 		var risks=[]
 
 		if(this.state.unit==-1){
 			for(var i=0; i<this.state.risks.length; i++){
-				for(var j=0; j<this.state.risks[i].array.length; j++){
-
-					if((this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "ameaça")
-					|| !this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "oportunidade"){
-						risks.push(this.state.risks[i].array[j]);
-					}
+				if((this.state.threats && this.state.risks[i].type.toLowerCase() == "ameaça")
+				|| !this.state.threats && this.state.risks[i].type.toLowerCase() == "oportunidade"){
+					risks.push(this.state.risks[i]);
 				}
 			}
 		}else{
 			for(var i=0; i<this.state.risks.length; i++){
-				if(this.state.risks[i].unitid==this.state.unit){
-					var array=this.state.risks[i].array
-					for(var j=0; j<array.length; j++){
-						if((this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "ameaça")
-						|| !this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "oportunidade"){
-							risks.push(array[j]);
-						}
+				if(this.state.risks[i].unit.id==this.state.unit){
+					if((this.state.threats && this.state.risks[i].type.toLowerCase() == "ameaça")
+					|| !this.state.threats && this.state.risks[i].type.toLowerCase() == "oportunidade"){
+							risks.push(this.state.risks[i]);
 					}
 				}
 			}
 			return risks;
 		}
+
 		return risks;
 	},
 
-	showRisk(){
-		console.log("//TODO mostrar lista de riscos")
+	showRisk(probability,impact){
+		console.log("//TODO mostrar lista de riscos",probability,impact,this.state.threats,this.state.plan, this.state.unit)
 	},
 
 	countRisks(risks,impact, probability, color){
@@ -204,7 +152,7 @@ export default React.createClass({
 				if(matrix[i][2]==column){
 					if(matrix[i][2]==0 ){
 						return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
-					}else if(matrix[i][1]==this.state.policyModel.attributes.nline){
+					}else if(matrix[i][1]==this.state.policyModel.nline){
 						return <div style={{"text-align":"-webkit-center",margin: "5px"}} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
 					}else{
 
@@ -228,10 +176,10 @@ export default React.createClass({
 							default: color="Cinza";
 						}
 
-						var impact=matrix[this.state.policyModel.attributes.nline*(this.state.policyModel.attributes.ncolumn+1)+column-1][0]
-						var probability=matrix[(line)*(this.state.policyModel.attributes.ncolumn+1)][0]
+						var impact=matrix[this.state.policyModel.nline*(this.state.policyModel.ncolumn+1)+column-1][0]
+						var probability=matrix[(line)*(this.state.policyModel.ncolumn+1)][0]
 
-						return (<div  className={"icon-link Cor "+color} onClick={this.showRisk}>
+						return (<div  className={"icon-link Cor "+color} onClick={() => this.showRisk(probability,impact)}>
 									{this.countRisks(risks, impact, probability, color)}
 								</div>)
 					}
@@ -240,8 +188,8 @@ export default React.createClass({
 		}
 		return ""
 	},
-	getMatrix() {
 
+	getMatrix() {
 		if(this.state.policyModel ==null){
 			return
 		}
@@ -263,7 +211,7 @@ export default React.createClass({
 			fields=this.state.fields
 		}
 
-		var aux=this.state.policyModel.attributes.matrix.split(/;/)
+		var aux=this.state.policyModel.matrix.split(/;/)
 		var matrix=[]
 
 		for(var i=0; i< aux.length;i++){
@@ -274,32 +222,32 @@ export default React.createClass({
 		}
 
 		var table=[]
-		for (var i=0; i<=this.state.policyModel.attributes.nline;i++){
+		for (var i=0; i<=this.state.policyModel.nline;i++){
 			var children=[]
-			for (var j=0; j<=this.state.policyModel.attributes.ncolumn;j++){
+			for (var j=0; j<=this.state.policyModel.ncolumn;j++){
 				children.push(<td key={j}>{this.getMatrixValue(this.state.currentRisks,matrix,i,j)} </td>)
 			}
 			table.push(<tr key={i} >{children}</tr>)
 		}
-
 		return (
 			<div>
 				<br/>
 				<br/>
-				<table style={{width: "-webkit-fill-available"}}>
-				<th>
-
-							{
-								table
-							}
-					<tr>
-						<th style={{bottom: ((this.state.policyModel.attributes.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
-							<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
-						</th>
-					</tr>
-					<tr>
-						<div style={{"text-align":"-webkit-center", position: "relative", left: "75px"}}>IMPACTO</div>
-					</tr>
+				<table style={{width: "min-content"}}>
+					<th>
+						<tr>
+							<td style={{position: "relative", left: "30px"}}>
+								{table}
+							</td>
+						</tr>
+						<tr>
+							<th style={{bottom: ((this.state.policyModel.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
+								<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
+							</th>
+						</tr>
+						<tr>
+							<div style={{"text-align":"-webkit-center", position: "relative", left: "75px"}}>IMPACTO</div>
+						</tr>
 					</th>
 				</table>
 			</div>
@@ -311,6 +259,7 @@ export default React.createClass({
 			unit:this.refs['selectUnits'].value
 		})
 	},
+
 	render() {
 		return (<div>
 		<div className={"col-md-7"}>
@@ -327,18 +276,16 @@ export default React.createClass({
                         <select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectUnits">
                             <option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
                             {this.state.units.map((attr, idy) =>{
-                                    return(
-                                        <option  key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
-                                            {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
-                                        </option>
-                                    );
-                                })
+                                return(
+                                     <option  key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
+                                        {(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
+                                     </option>
+                                 );
+                             })
                             }
                         </select>
 						</span>
 					</div>
-
-
 
 
 					<div className= "frisco-containerOptions">
@@ -357,9 +304,9 @@ export default React.createClass({
 					<RiskQuantity
 					plan={this.state.plan}
 					risks={this.state.currentRisks}
-					policyModel={this.state.policyModel}
 					threats={this.state.threats}
 					riskLevel={this.state.risklevelModel}
+					unit={this.state.unit}
 					/>
 				</div>
 				}

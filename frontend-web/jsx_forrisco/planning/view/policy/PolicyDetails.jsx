@@ -4,7 +4,7 @@ import PolicyTabPanel from "forpdi/jsx_forrisco/planning/widget/policy/PolicyTab
 import PolicyTree from "forpdi/jsx_forrisco/planning/widget/policy/PolicyTree.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import _ from 'underscore';
+
 
 export default React.createClass({
 	contextTypes: {
@@ -19,20 +19,22 @@ export default React.createClass({
 
 		return {
 			policyId: null,
+			itemId: null,
+			subitemId: null,
 			model: null
 		};
 	},
 	componentDidMount() {
 		var me = this;
-		PolicyStore.on("retrieve", (model) => {
+		PolicyStore.on("findpolicy", (model) => {
 			me.setState({
-				model: model,
-				policyId: model.get("id")
+				model: model.data,
+				policyId: model.data.id
 			});
 		}, me);
 
 		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_RETRIEVE,
+			action: PolicyStore.ACTION_FIND_POLICY,
 			data: this.props.params.policyId
 		});
 	},
@@ -42,58 +44,42 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.policyId !== this.state.policyId) {
+		this.state.itemId=newProps.params.itemId
+		this.state.subitemId=newProps.params.subitemId
+		if (newProps.params.policyId != this.state.policyId) {
 			this.setState({
 				model: null,
 				policyId: null
 			});
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
+				action: PolicyStore.ACTION_FIND_POLICY,
 				data: newProps.params.policyId
 			});
 		}
 	},
-
 	render() {
+
 		if (!this.state.model) {
 			return <LoadingGauge />;
 		}
-		if(this.state.model.attributes.deleted){
+		if(this.state.model.deleted){
 			return(<div className="fpdi-plan-details">
 					<h1 className="marginLeft30">{Messages.getEditable("label.policyUnavailable","fpdi-nav-label")}</h1>
 				</div>);
 		}
-		if(this.state.model.attributes.archived){
-			if(this.context.roles.ADMIN || _.contains(this.context.permissions, PermissionsTypes.MANAGE_FORRISCO_POLICY_PERMISSION)){
-				return (<div className="fpdi-plan-details">
-					<PolicyTree policy={this.state.model} ref="tree">
-						<div className="fpdi-plan-tabs">
-							<PolicyTabPanel
-								{...this.props}
-								policy={this.state.model}
-								ref={"tabpanel-"+this.state.policyId}
-								key={"tabpanel-"+this.state.policyId} />
-						</div>
-					</PolicyTree>
-					</div>
-				);
-			}else{
-				return(<div className="fpdi-plan-details">
-					<h1 className="marginLeft30">{Messages.getEditable("label.planFiledNoPermission","fpdi-nav-label")}</h1>
-				</div>);
-			}
-		}else{
-			return (<div className="fpdi-plan-details">
-				<PolicyTree policy={this.state.model} ref="tree" treeType={this.props.route.path}/>
-					<div className="fpdi-plan-tabs">'
-						<PolicyTabPanel
-							{...this.props}
-							policy={this.state.model}
-							ref={"tabpanel-"+this.state.policyId}
-							key={"tabpanel-"+this.state.policyId} />
-					</div>
-				</div>
-			)
-		}
+
+		return (
+		<div className="fpdi-plan-details">
+			<PolicyTree policy={this.state.model} ref="tree" treeType={this.props.route.path} itemId={this.state.itemId} subitemId={this.state.subitemId}/>
+			<div className="fpdi-plan-tabs">
+				{<PolicyTabPanel
+					{...this.props}
+					policy={this.state.model}
+					ref={"tabpanel-"+this.state.policyId}
+					key={"tabpanel-"+this.state.policyId} />
+				}
+			</div>
+		</div>
+		)
 	}
 });

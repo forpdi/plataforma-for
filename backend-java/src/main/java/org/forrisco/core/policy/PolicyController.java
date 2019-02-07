@@ -129,6 +129,7 @@ public class PolicyController extends AbstractController {
 		}
 	}
 
+	
 	@Get( PATH + "/unarchivedpolicy")
 	@NoCache
 	public void listPolicyUnarchived(Integer page) {
@@ -173,6 +174,33 @@ public class PolicyController extends AbstractController {
 	}
 	
 	/**
+	 * Retorna graus de risco.
+	 * 
+	 * @param id
+	 *            Id da política.
+	 * @return RiskLevel Retorna os graus da política (id) passada.
+	 * 
+	 */
+	@Get(PATH + "/risklevel/{id}")
+	@NoCache
+	@Permissioned
+	public void retrieveRiskLevel(Long id) {
+		try {
+			Policy policy = this.riskBS.exists(id, Policy.class);
+			if (policy == null) {
+				this.fail("A política solicitada não foi encontrado.");
+			} else {
+				PaginatedList<RiskLevel> risklevels = this.riskBS.listRiskLevelbyPolicy(policy);
+				this.success(risklevels);
+			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+
+	/**
 	 * Exclui política.
 	 * 
 	 * @param id
@@ -184,7 +212,6 @@ public class PolicyController extends AbstractController {
 	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
 	public void deletePolicy(@NotNull Long id) {
 		try {
-			
 			Policy policy = this.policyBS.exists(id, Policy.class);
 			if (GeneralUtils.isInvalid(policy)) {
 				this.result.notFound();
@@ -256,7 +283,7 @@ public class PolicyController extends AbstractController {
 			//pegar os riscos associados
 			PaginatedList<PlanRisk> plans = this.policyBS.listPlanbyPolicy(existent);
 			for(PlanRisk plan : plans.getList()) {
-				PaginatedList<Unit> units = this.unitBS.listUnitbyPlan(plan);
+				PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
 				for(Unit unit : units.getList()) {
 					PaginatedList<Risk> localrisks = this.riskBS.listRiskbyUnit(unit);
 					risks.addAll(localrisks.getList());
@@ -281,8 +308,8 @@ public class PolicyController extends AbstractController {
 			for(int i=0; i < (policy.getLevel() > existentLevels.getTotal() ? (policy.getLevel()): existentLevels.getTotal()) ;i++) {
 				
 				if(i < existentLevels.getTotal() && i < policy.getLevel() ) {
-					if(existentLevels.getList().get(i).getLevel() != policy.getRisk_level()[0][i] 
-						&& existentLevels.getList().get(i).getColor() != Integer.parseInt(policy.getRisk_level()[1][i])) {
+					if(!existentLevels.getList().get(i).getLevel().equals(policy.getRisk_level()[0][i]) 
+						|| existentLevels.getList().get(i).getColor() != Integer.parseInt(policy.getRisk_level()[1][i])) {
 					
 						this.riskBS.delete(existentLevels.getList().get(i));
 						
@@ -334,8 +361,8 @@ public class PolicyController extends AbstractController {
 				
 				//aplicar novamento a função de risklevel para achar o grau de risco correspondente
 				for(int i=0; i<risks.size(); i++){
-					RiskLevel x = this.riskBS.getRiskLevelbyRisk(risks.get(i),existent);
-					risks.get(i).setRiskLevel(x);
+					RiskLevel rl = this.riskBS.getRiskLevelbyRisk(risks.get(i),existent);
+					risks.get(i).setRiskLevel(rl);
 					this.riskBS.saveRisk(risks.get(i));
 				}
 			}
@@ -422,35 +449,6 @@ public class PolicyController extends AbstractController {
 			maxResult = limit.intValue();
 		}
 		
-		/*for(SubItem subitem : subitens) {
-			Item item = new Item();
-			item.setDescription(subitem.getDescription());
-			item.setId(subitem.getId());
-			item.setName(subitem.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			itens.add(item);
-		}
-		
-
-		
-		List<Item> list = new ArrayList<>();
-		for(Item item : itens) {
-			if (limit != null) {
-				if (count >= firstResult && add < maxResult) {
-					list.add(item);
-					count++;
-					add++;
-				} else {
-					count++;
-				}
-			} else {
-				list.add(item);
-			}
-		}
-
-		PaginatedList<Item> result = new PaginatedList<Item>();
-		*/
-		
 		for(Item item : itens) {
 			SubItem subitem = new SubItem();
 			subitem.setDescription(item.getDescription());
@@ -496,7 +494,7 @@ public class PolicyController extends AbstractController {
 	 * @throws IOException 
 	 * 
 	 */
-	@Get(PATH + "/exportreport")
+	@Get(PATH + "/exportReport")
 	@NoCache
 	//@Permissioned
 	public void exportreport(String title, String author, boolean pre, String itens,String subitens){

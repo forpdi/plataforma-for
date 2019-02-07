@@ -129,7 +129,7 @@ public class ItemBS extends HibernateBusiness {
 		PaginatedList<Item> results = new PaginatedList<Item>();
 		
 		Criteria criteria = this.dao.newCriteria(Item.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("policy", policy)).addOrder(Order.asc("name"));
+				.add(Restrictions.eq("policy", policy)).addOrder(Order.asc("id"));
 		
 		Criteria count = this.dao.newCriteria(Item.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("policy", policy)).setProjection(Projections.countDistinct("id"));

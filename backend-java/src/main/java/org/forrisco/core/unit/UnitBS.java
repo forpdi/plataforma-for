@@ -33,7 +33,7 @@ public class UnitBS extends HibernateBusiness {
 	 *            instância da plano de risco
 	 *            
 	 */
-	public PaginatedList<Unit> listUnitbyPlan(PlanRisk planrisk) {
+	public PaginatedList<Unit> listUnitsbyPlanRisk(PlanRisk planrisk) {
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 		
 		Criteria criteria = this.dao.newCriteria(Unit.class)

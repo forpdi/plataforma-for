@@ -71,7 +71,28 @@ export default React.createClass({
 			}
 		}, me);
 
-		PolicyStore.on("archivedpolicylisted", (store) => {
+		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
+			var listedPlans = [];
+			if (response.status !== true) {
+				this.setState({domainError: true});
+			}
+
+			if (response.success === true) {
+				response.data.map(planRisk => {
+					listedPlans.push({
+						id: planRisk.id,
+						label: planRisk.name
+					});
+				});
+				this.setState({
+					plans: listedPlans
+				})
+			}
+		}, me);
+
+		me.checkRoute(me.props.location.pathname);
+
+	/*	PolicyStore.on("archivedpolicylisted", (store) => {
 			if (store.status == 400) {
 				me.setState({
 					domainError: true
@@ -89,48 +110,8 @@ export default React.createClass({
 				archivedPoliciesHidden: false
 			});
 		}, me);
+*/
 
-		PolicyStore.on("sync", (model) => {
-			for (var i = 0; i < this.state.policies.length; i++) {
-				if (this.state.policies[i].id == model.attributes.id) {
-					var policies = this.state.policies;
-					policies[i] = model.attributes;
-					this.setState({
-						policies: policies
-					})
-				}
-			}
-		}, me);
-
-		StructureStore.on("retrieve-level-instance-performance", (models) => {
-			if (models && (models.length > 0)) {
-				this.setState({
-					hidden: true
-				});
-			}
-		}, me);
-
-		 PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
-			var listedPlans = [];
-			if (response.status !== true) {
-				this.setState({domainError: true});
-			}
-
-			if (response.success === true) {
-				response.data.map(planRisk => {
-					listedPlans.push({
-						id: planRisk.id,
-						label: planRisk.name
-					});
-
-					this.setState({
-						plans: listedPlans
-					})
-				});
-			}
-		}, me);
-
-		me.checkRoute(me.props.location.pathname);
 
 		//me.context.router.listenBefore((opts, next) => {
 		//     /*me.checkRoute(opts.pathname);*/
@@ -142,12 +123,14 @@ export default React.createClass({
 	componentWillReceiveProps() {
 			this.refreshPolicies();
 	},
+
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 		PolicyStore.off(null, null, this);
 		PlanRiskStore.off(null, null, this);
 		StructureStore.off(null, null, this);
 	},
+
 	checkRoute(pathname) {
 		this.setState({
 			hidden: false
@@ -186,15 +169,16 @@ export default React.createClass({
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_UNARCHIVED
 		});
-		PolicyStore.dispatch({
+		/*PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_ARCHIVED
-		});
+		});*/
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_FIND_UNARCHIVED
 		});
+		//PlanRiskStore.off(null, null, this);
 	},
 
-	listArchivedPolicies() {
+	/*listArchivedPolicies() {
 		if (this.state.archivedPoliciesHidden) {
 			this.setState({
 				archivedPoliciesHidden: false
@@ -204,7 +188,7 @@ export default React.createClass({
 				archivedPoliciesHidden: true
 			});
 		}
-	},
+	},*/
 
 	disableRegisterNewPlan(event) {
 		if (this.state.policies && (this.state.policies.length === 0)) {
@@ -214,21 +198,20 @@ export default React.createClass({
 	},
 
 	render() {
+
 		if (!this.state.logged) {
 			return <div style={{display: 'none'}}/>;
 		}
 
-		return (<div
-			className={(this.state.hidden ? 'forrisco-app-sidebar-hidden' : 'forrisco-app-sidebar') + ' fpdi-tabs-stacked'}>
-			{/*
+		return (<div className={(this.state.hidden ? 'forrisco-app-sidebar-hidden' : 'forrisco-app-sidebar') + ' fpdi-tabs-stacked'}>
+			{this.state.plans.length > 0 ?
             <div className="frisco-tabs-nav">
     			<Link to="/forrisco/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
                     /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
                 </Link>
-    		</div>
+    		</div> : ""}
 			<div style={{height: "10px"}} />
-			*/}
 			{this.state.policies && (this.state.policies.length > 0) ?
 				this.state.policies.map((policy, index) => {
 					return <div className="frisco-tabs-nav" key={"open-plan-" + index}>

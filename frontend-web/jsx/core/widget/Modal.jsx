@@ -365,7 +365,7 @@ var ExportDocumentModal = React.createClass({
 			        			<label htmlFor="documentTitle">{Messages.get("label.documentTitle")} <span className="fpdi-required">&nbsp;</span>
 			        				<input type='text' name="documentTitle" ref="documentTitle" id="documentTitle" />
 			        			</label>
-			        			
+
 			        		</div>
 			        		<div className="col-md-6">
 			        			<label htmlFor="documentAuthor">{Messages.get("label.author")} <span className="fpdi-required">&nbsp;</span>
@@ -375,9 +375,9 @@ var ExportDocumentModal = React.createClass({
 	      					<div className="col-md-12" >
 		      					<label htmlFor="container"> {Messages.get("label.includeSectionsDocument")} <span className="fpdi-required">&nbsp;</span></label>
 		      					<div className="container" id="container">
-		      						{this.props.text}	
+		      						{this.props.text}
 								</div>
-							</div>								
+							</div>
 							<br/>
 							<div className="col-md-12" >
 								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
@@ -387,6 +387,11 @@ var ExportDocumentModal = React.createClass({
 								<p className="help-block">
 									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 								</p>
+
+								<div className={"icon-link "} onClick={this.props.preview.onClick}>
+									<a>{this.props.preview.label}</a>
+								</div>
+								<br/>
 	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.export")}</button>
 	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
@@ -415,6 +420,59 @@ var ImportUsersModal = React.createClass({
 	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.import")}</button>
 	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
+	      			</div>
+				</div>
+			</div>
+		);
+	}
+});
+
+
+//mdi-level-search mdi mdi-close-circle cursorPointer
+var GraphHistory= React.createClass({
+	render() {
+		return (
+			<div className="modal-dialog modal-graph modal-md">
+				<div className="modal-content graph">
+					<div className="frisco-modal-history">
+	        			<span><h4 className="modal-title" id="myModalLabel">{this.props.title}</h4></span>
+						<button type="button" className="mdi mdi-close-circle close-modal cursorPointer" data-dismiss="modal"></button>
+	      			</div>
+
+	      			<hr className="divider"></hr>
+	      			<div className="modal-body fpdi-modal-body">
+					  {this.props.text}
+	      				{/*<form>
+		      				<div className="col-md-6">
+			        			<label htmlFor="documentTitle">{Messages.get("label.documentTitle")} <span className="fpdi-required">&nbsp;</span>
+			        				<input type='text' name="documentTitle" ref="documentTitle" id="documentTitle" />
+			        			</label>
+			        		</div>
+			        		<div className="col-md-6">
+			        			<label htmlFor="documentAuthor">{Messages.get("label.author")} <span className="fpdi-required">&nbsp;</span>
+			        				<input type='text' name="documentAuthor"  ref="documentAuthor" id="documentAuthor" />
+			        			</label>
+	      					</div>
+	      					<div className="col-md-12" >
+		      					<label htmlFor="container"> {Messages.get("label.includeSectionsDocument")} <span className="fpdi-required">&nbsp;</span></label>
+		      					<div className="container" id="container">
+		      						{this.props.text}
+								</div>
+							</div>
+							<br/>
+							<div className="col-md-12" >
+								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
+							</div>
+							<div id="exportDocumentModalFooter" name="exportDocumentModalFooter">
+								<p id="paramError" className="exportDocumentError"></p>
+								<p className="help-block">
+									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
+								</p>
+								<br/>
+	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.export")}</button>
+	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
+	        				</div>
+	      				</form>*/}
 	      			</div>
 				</div>
 			</div>
@@ -464,21 +522,21 @@ var Modal = {
 		ReactDOM.render((
 			<ConfirmModalCustom onConfirm={cb} text={text} onCancel = {cd}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	confirmConviteUserCustom(text) {
 		ReactDOM.render((
 			<ConfirmConviteUser text={text} />
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	confirmCancelCustom(cb, text, cd) {
 		ReactDOM.render((
 			<CancelModalCustom onConfirm={cb} text={text} onCancel = {cd}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	deleteConfirm(cb) {
@@ -497,7 +555,7 @@ var Modal = {
 		ReactDOM.render((
 			<ConcludeGoalModalCustom onConfirm={cb} text={text}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 	readText(title, msg, cb) {
 		ReactDOM.render((
@@ -546,9 +604,9 @@ var Modal = {
 		var uploadOptions = {
 	        url: url,
 	        dataType: 'json',
-	        beforeSend : function(xhr, opts) {	        	
-				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length); 
-	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType))) 
+	        beforeSend : function(xhr, opts) {
+				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length);
+	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType)))
 	        			|| format.toLowerCase().match(typesBlocked)) { //|| this.files[0].type.toLowerCase().match(typesBlocked)
 	        		if (!this.files[0].type.toLowerCase().match(fileType) || this.files[0].type.toLowerCase().match(typesBlocked))
 	        			format = this.files[0].type.split("/")[1] || "";
@@ -562,9 +620,9 @@ var Modal = {
 					xhr.abort();
 				}
 				me.fileName = this.files[0].name;
-	        }, 
+	        },
 	        done: function (evt, opts) {
-	            if (evt.type == 'fileuploaddone') {			            	
+	            if (evt.type == 'fileuploaddone') {
 	            	if (typeof onSuccess == 'function') {
 	            		onSuccess.call(me,opts.jqXHR.responseJSON);
 					}
@@ -577,11 +635,11 @@ var Modal = {
 				}
 	        },
 			fail: function (evt,opts) {
-				if(typeViolation){					
-					document.getElementById('upload-error-span').innerHTML = 
+				if(typeViolation){
+					document.getElementById('upload-error-span').innerHTML =
 					"O formato "+format+" não é válido.<br>"+(validSamples ? Messages.get("label.examplesValidFormats") + ": "+validSamples : "");
 				} else if (sizeExceeded){
-					document.getElementById('upload-error-span').innerHTML = 
+					document.getElementById('upload-error-span').innerHTML =
 					"Tamanho máximo excedido, o tamanho máximo é "+maxSize/10e5 +"MB";
 				} else if (typeof onFailure == 'function') {
 	            	onFailure.call(me,opts.jqXHR.responseJSON);
@@ -607,13 +665,13 @@ var Modal = {
 			<FileReaderModal title={title} message={msg} type={fileType} onSuccess={onSuccess}/>
 		),this.$el);
 		this.show();
-		
+
 	},
 
-	exportDocument(title, text, cb) {
+	exportDocument(title, text, cb, pre) {
 		var me = this;
 		ReactDOM.render((
-			<ExportDocumentModal title={title} text={text} onConfirm={cb}/>
+			<ExportDocumentModal title={title} text={text} onConfirm={cb} preview={pre}/>
 		),this.$el);
 		this.show();
 	},
@@ -622,6 +680,14 @@ var Modal = {
 		var me = this;
 		ReactDOM.render((
 			<ImportUsersModal title={title} text={text} onConfirm={cb}/>
+		),this.$el);
+		this.show();
+	},
+
+	GraphHistory(title,text){
+		var me = this;
+		ReactDOM.render((
+			<GraphHistory title={title} text={text} /> //onConfirm={cb}/>
 		),this.$el);
 		this.show();
 	}

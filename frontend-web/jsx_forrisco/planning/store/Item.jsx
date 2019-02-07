@@ -29,8 +29,9 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_DESTROY: 'item-destroy',
 	ACTION_FIND: 'item-find',
 	ACTION_FIND_TERMS:'item-findTerms',
-	ACTION_RETRIEVE: 'item-retrieve',
+	//ACTION_RETRIEVE: 'item-retrieve',
 	ACTION_RETRIEVE_ITEM: 'item-retrieveItem',
+	ACTION_RETRIEVE_ITENS: 'item-retrieveItens',
 	ACTION_RETRIEVE_FIELD: 'item-retrieveField',
 	ACTION_RETRIEVE_PERFORMANCE: 'item-retrievePerformance',
 	ACTION_UPDATE: 'item-update',
@@ -99,6 +100,21 @@ var ItemStore = Fluxbone.Store.extend({
 			url: me.url + "/" + id,
 			success(model, response, options) {
 				me.trigger("retrieveItem", model);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
+	retrieveItens(id) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: me.url,
+			data: {policyId: id},
+			success(model, response, options) {
+				me.trigger("retrieveItens", response);
 			},
 			error(model, response, options) {
 				me.handleRequestErrors([], options.xhr);

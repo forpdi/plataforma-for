@@ -91,7 +91,7 @@ export default React.createClass({
 				if(matrix[i][2]==column){
 					if(matrix[i][2]==0 ){
 					return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
-					}else if(matrix[i][1]==this.state.policyModel.attributes.nline){
+					}else if(matrix[i][1]==this.state.policyModel.data.nline){
 						return <div style={{"text-align":"-webkit-center",margin: "5px"}} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
 					}else{
 
@@ -146,7 +146,7 @@ export default React.createClass({
 			fields=this.state.fields
 		}
 
-		var aux=this.state.policyModel.attributes.matrix.split(/;/)
+		var aux=this.state.policyModel.data.matrix.split(/;/)
 		var matrix=[]
 
 		for(var i=0; i< aux.length;i++){
@@ -157,9 +157,9 @@ export default React.createClass({
 		}
 
 		var table=[]
-		for (var i=0; i<=this.state.policyModel.attributes.nline;i++){
+		for (var i=0; i<=this.state.policyModel.data.nline;i++){
 			var children=[]
-			for (var j=0; j<=this.state.policyModel.attributes.ncolumn;j++){
+			for (var j=0; j<=this.state.policyModel.data.ncolumn;j++){
 				children.push(<td key={j}>{this.getMatrixValue(matrix,i,j)} </td>)
 			}
 			table.push(<tr key={i} >{children}</tr>)
@@ -180,7 +180,7 @@ export default React.createClass({
 					</td>
 				</tr>
 				<tr>
-					<th style={{bottom: ((this.state.policyModel.attributes.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
+					<th style={{bottom: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
 						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
 					</th>
 				</tr>
@@ -210,14 +210,15 @@ export default React.createClass({
 	*/
 	componentDidMount() {
 		var me = this;
-		PolicyStore.on("retrieve", (model) => {
-			if(!model.attributes.deleted){
+		PolicyStore.on("findpolicy", (model) => {
+
+			if(!model.deleted){
 				me.setState({
 					policyModel: model,
 
 				});
 				me.forceUpdate();
-				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
 			}else{
 				me.setState({
 					policyModel: null,
@@ -342,20 +343,26 @@ export default React.createClass({
 						}
 					})
 				})
-
 				me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-				this.context.router.push("/forrisco/policy/"+this.state.policyModel.attributes.id+"/item/"+model.data.id);
+				this.context.router.push("/forrisco/policy/"+this.state.policyModel.data.id+"/item/"+model.data.id);
 			}else{
 				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
 			}
 		}, me);
 
 		PolicyStore.on("policyDeleted", (model) => {
-			this.context.router.push("/forrisco/home");
+			if(model.success){
+				this.context.router.push("/forrisco/home");
+			}else{
+				if(model.message != null){
+					this.context.toastr.addAlertError(model.message);
+				}
+			}
+
 		})
 
 		ItemStore.on("itemDeleted", (model) => {
-			this.context.router.push("forrisco/policy/"+this.context.policy.get('id')+"/item/overview");
+			this.context.router.push("forrisco/policy/"+this.context.policy.id+"/item/overview");
 		})
 
 		me.refreshData(me.props, me.context);
@@ -399,7 +406,7 @@ export default React.createClass({
 	refreshData(props, context) {
 
 		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_RETRIEVE,
+			action: PolicyStore.ACTION_FIND_POLICY,
 			data: props.params.policyId
 		});
 
@@ -460,7 +467,7 @@ export default React.createClass({
 					Modal.hide();
 					PolicyStore.dispatch({
 						action: PolicyStore.ACTION_DELETE,
-						data: me.state.policyModel.attributes.id
+						data: me.state.policyModel.data.id
 					});
 				},msg,me.refreshCancel);
 
@@ -470,7 +477,7 @@ export default React.createClass({
 					Modal.hide();
 					ItemStore.dispatch({
 						action: ItemStore.ACTION_DELETE,
-						data: me.state.itemModel.attributes.id
+						data: me.state.itemModel.id
 					});
 				},msg,me.refreshCancel);
 			}
@@ -636,8 +643,8 @@ export default React.createClass({
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						to={'/forrisco/policy/'+this.context.policy.attributes.id}
-						title={this.context.policy.attributes.name}>{this.context.policy.attributes.name.length > 15 ? this.context.policy.attributes.name.substring(0, 15)+"..." : this.context.policy.attributes.name.substring(0, 15)
+						to={'/forrisco/policy/'+this.context.policy.id}
+						title={this.context.policy.name}>{this.context.policy.name.length > 15 ? this.context.policy.name.substring(0, 15)+"..." : this.context.policy.name.substring(0, 15)
 					}</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
@@ -668,6 +675,7 @@ export default React.createClass({
 				});
 			//},msg,this.refreshCancel);
 		} else {
+
 			var name = this.refs.newItemForm['field-description'].value
 
 			var validation = Validate.validationNewItem(this.refs.newItemForm);
@@ -678,10 +686,12 @@ export default React.createClass({
 					action: ItemStore.ACTION_NEW_ITEM,
 					data: { name: validation.titulo.s,
 							description: "",
-							policy: this.state.policyModel
+							policy: this.state.policyModel.data
 					}
 				});
 			}
+
+
 		}
 	},
 
@@ -700,7 +710,7 @@ export default React.createClass({
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
 				<h1>
-					{(this.state.info && this.state.policyModel) ? this.state.policyModel.attributes.name : this.state.itemModel.attributes.name}
+					{(this.state.info && this.state.policyModel) ? this.state.policyModel.data.name : this.state.itemModel.attributes.name}
 					{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
 						(<span className="dropdown">
 							<a
@@ -713,7 +723,7 @@ export default React.createClass({
 								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 								<span className="mdi mdi-chevron-down" />
 							</a>
-							{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
+							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
 						</span>
 						):""}
 				</h1>
@@ -866,7 +876,7 @@ export default React.createClass({
 
 					{this.state.newField ?
 						<FieldItemInput
-							key={this.getLength()}
+							//key={this.getLength()}
 							vizualization={this.props.vizualization}
 							deleteFunc={this.deleteFunc}
 							editFunc={this.editFunc}

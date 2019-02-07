@@ -185,7 +185,7 @@ public class ItemController extends AbstractController {
 	 * Retorna itens.
 	 * 
 	 * @param Policy
-	 *            Id do plano macro a ser retornado.
+	 *            Id da política.
 	 * @return <List> item
 	 */
 	@Get( PATH + "")
@@ -246,6 +246,33 @@ public class ItemController extends AbstractController {
 				this.fail("O SubItem solicitado não foi encontrado.");
 			} else {
 				this.success(subitem);
+			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna subitens.
+	 * 
+	 * @param id
+	 *            Id do item.
+	 * @return Subitem Retorna os subitens de acordo com o id passado.
+	 * 
+	 */
+
+	@Get( PATH + "/subitens/{id}")
+	@NoCache
+	//@Permissioned
+	public void retrieveSubitem(@NotNull Long id) {
+		try {
+			Item item = this.itemBS.exists(id, Item.class);
+			if (item == null) {
+				this.fail("O item solicitado não foi encontrado.");
+			} else {
+				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
+				this.success(subitens);
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -476,32 +503,7 @@ public class ItemController extends AbstractController {
 	}
 	
 	
-	/**
-	 * Retorna subitens.
-	 * 
-	 * @param id
-	 *            Id do item.
-	 * @return Subitem Retorna os subitens de acordo com o id passado.
-	 * 
-	 */
 
-	@Get( PATH + "/subitens/{id}")
-	@NoCache
-	//@Permissioned
-	public void retrieveSubitem(@NotNull Long id) {
-		try {
-			Item item = this.itemBS.exists(id, Item.class);
-			if (item == null) {
-				this.fail("O item solicitado não foi encontrado.");
-			} else {
-				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
-				this.success(subitens);
-			}
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}
 	
 	
 	/**

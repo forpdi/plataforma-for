@@ -29,7 +29,7 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 
@@ -47,6 +47,9 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private Long riskId;
+	
+	@Transient
+	private Long unitId;
 	
 	public Date getBegin() {
 		return begin;
@@ -96,6 +99,14 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 		this.impact = impact;
 	}
 
+	public Long getUnitId() {
+		return unitId;
+	}
+
+	public void setUnitId(Long unitId) {
+		this.unitId = unitId;
+	}
+
 	public Long getRiskId() {
 		return riskId;
 	}
@@ -104,4 +115,5 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 		this.riskId = riskId;
 	}
 
+	
 }

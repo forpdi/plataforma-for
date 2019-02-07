@@ -58,6 +58,9 @@
   background-clip: padding-box;
   // Remove focus outline from opened modal
   outline: 0;
+  &.graph{
+	border-radius: 10px;
+  }
 }
 
 // Modal background
@@ -136,6 +139,12 @@
   .modal-dialog {
     width: $modal-md;
     margin: 30px auto;
+  }
+  .modal-graph {
+    //width:
+	//margin: 30px auto;
+	width: $modal-md+100px;
+	top: 150px;
   }
   .modal-content {
     @include box-shadow(0 5px 15px rgba(0,0,0,.5));

@@ -34,7 +34,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=Unit.class, optional=false, fetch=FetchType.EAGER)
 	private Unit unit;
 	

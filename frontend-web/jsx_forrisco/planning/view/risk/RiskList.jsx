@@ -23,7 +23,7 @@ export default React.createClass({
 	},
 render(){
   let params = queryString.parse(this.props.location.search);
-  console.log("//TODO "+params);
+  console.log("//TODO listar indicentes",params);
 
 	return <div>
 

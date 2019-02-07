@@ -171,7 +171,7 @@ export default React.createClass({
 			}
 		}, me);
 
-		ItemStore.on("retrieve", (model) => {
+		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
 				me.setState({
 					itemModel: model
@@ -217,6 +217,9 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
+
+		//console.log("SIR newprop",newProps, newContext, this.state.subitemModel)
+		//console.log(newProps.params.subitemId , this.props.params.subitemId)
 		if (newProps.params.subitemId != this.props.params.subitemId) {
 			this.setState({
 				loading: true,
@@ -241,6 +244,7 @@ export default React.createClass({
 				loading: false
 			})
 		}*/
+		//this.forceUpdate()
 
 	},
 	refreshData(props, context) {
@@ -266,13 +270,13 @@ export default React.createClass({
 
 			if(props.params.itemId){
 				ItemStore.dispatch({
-					action: ItemStore.ACTION_RETRIEVE,
+					action: ItemStore.ACTION_RETRIEVE_ITEM,
 					data: props.params.itemId
 				})
 			}
 
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
+				action: PolicyStore.ACTION_FIND_POLICY,
 				data: props.params.policyId
 			});
 
@@ -455,8 +459,8 @@ export default React.createClass({
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						to={'/forrisco/policy/'+this.context.policy.attributes.id+"/item/"+this.props.params.itemId}
-						title={this.context.policy.attributes.name}>{this.context.policy.attributes.name.length > 15 ? this.context.policy.attributes.name.substring(0, 15)+"..." : this.context.policy.attributes.name.substring(0, 15)
+						to={'/forrisco/policy/'+this.context.policy.id+"/item/"+this.props.params.itemId}
+						title={this.context.policy.name}>{this.context.policy.name.length > 15 ? this.context.policy.name.substring(0, 15)+"..." : this.context.policy.name.substring(0, 15)
 					}</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
@@ -527,7 +531,7 @@ export default React.createClass({
 								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 								<span className="mdi mdi-chevron-down" />
 							</a>
-							{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
+							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
 						</span>
 						):""}
 				</h1>
@@ -542,8 +546,6 @@ export default React.createClass({
 							onSubmit={this.onSubmit}
 							fields={[fieldsubitem]}
 							submitLabel={Messages.get("label.submitLabel")}
-							//store={ItemStore}
-							//ref='planRegisterForm'
 						/></div>)
 					}else{
 						return (

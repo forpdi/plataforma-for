@@ -65,14 +65,14 @@ export default React.createClass({
 			maxLength: 240,
 			placeholder: "Nome da Política",
 			label: Messages.getEditable("label.name","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.name : null,
+			value: this.state.policyModel ? this.state.policyModel.data.name : null,
 		},{
 			name: "description",
 			type: "textarea",
 			placeholder: "Descrição da Política",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.description : null,
+			value: this.state.policyModel ? this.state.policyModel.data.description : null,
 		})
 
 		return fields;
@@ -130,7 +130,7 @@ export default React.createClass({
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de linhas",
-			value: this.state.policyModel ? this.state.policyModel.attributes.nline : null,
+			value: this.state.policyModel ? this.state.policyModel.data.nline : null,
 			onChange: this.change
 		},{
 			name: "ncolumn",
@@ -138,7 +138,7 @@ export default React.createClass({
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de colunas",
-			value: this.state.policyModel ? this.state.policyModel.attributes.ncolumn : null,
+			value: this.state.policyModel ? this.state.policyModel.data.ncolumn : null,
 			onChange: this.change
 		})
 
@@ -185,15 +185,15 @@ export default React.createClass({
 
 		if(this.props.params.policyId){
 
-			PolicyStore.on("retrieve", (model) => {
+			PolicyStore.on("findpolicy", (model) => {
 				this.setState({
 					policyModel:model,
 					fields: me.getFields(),
-					ncolumn: model.attributes.ncolumn,
-					nline: model.attributes.nline,
+					ncolumn: model.data.ncolumn,
+					nline: model.data.nline,
 					validPI: true,
-					matrix_c: model.attributes.ncolumn,
-					matrix_l: model.attributes.nline
+					matrix_c: model.data.ncolumn,
+					matrix_l: model.data.nline
 				});
 
 				PolicyStore.dispatch({
@@ -241,7 +241,7 @@ export default React.createClass({
 				data: {policyId: this.props.params.policyId}
 			});
 				PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
+				action: PolicyStore.ACTION_FIND_POLICY,
 				data: this.props.params.policyId
 			});
 		}else{
@@ -356,7 +356,7 @@ export default React.createClass({
 		var level=[];
 		var cor=[];
 
-		var aux=this.state.policyModel ?  this.state.policyModel.attributes.matrix.split(/;/) : null
+		var aux=this.state.policyModel ?  this.state.policyModel.data.matrix.split(/;/) : null
 		var matrix=[]
 
 		if(aux!=null){
@@ -401,28 +401,26 @@ export default React.createClass({
 			var children = []
 			for (var j = 0; j <= this.state.matrix_c; j++) {
 
-				var impact = this.state.policyModel != null ? (matrix[this.state.policyModel.attributes.nline*(this.state.policyModel.attributes.ncolumn+1)+j-1] != null ?
-															matrix[this.state.policyModel.attributes.nline*(this.state.policyModel.attributes.ncolumn+1)+j-1][0] : null)
+				var impact = this.state.policyModel != null ? (matrix[this.state.policyModel.data.nline*(this.state.policyModel.data.ncolumn+1)+j-1] != null ?
+															matrix[this.state.policyModel.data.nline*(this.state.policyModel.data.ncolumn+1)+j-1][0] : null)
 															: null
-				var valor  = this.state.policyModel !=null ? (matrix[(this.state.policyModel.attributes.ncolumn+1)*(i)+j] !=null ?
-															matrix[(this.state.policyModel.attributes.ncolumn+1)*(i)+j][0]: null)
+				var valor  = this.state.policyModel !=null ? (matrix[(this.state.policyModel.data.ncolumn+1)*(i)+j] !=null ?
+															matrix[(this.state.policyModel.data.ncolumn+1)*(i)+j][0]: null)
 															: null
-				var probability= this.state.policyModel !=null ?( matrix[(i)*(this.state.policyModel.attributes.ncolumn+1)] !=null ?
-																matrix[(i)*(this.state.policyModel.attributes.ncolumn+1)][0]: null)
+				var probability= this.state.policyModel !=null ?( matrix[(i)*(this.state.policyModel.data.ncolumn+1)] !=null ?
+																matrix[(i)*(this.state.policyModel.data.ncolumn+1)][0]: null)
 																: null
 
 				if(j != 0 ){
 
-					var classe
+					var classe="Cinza"
 					if(i!=this.state.matrix_l){
 						for(var k=0;k<cor.length;k++){
 							if(this.refs.policyEditForm["field-["+i+","+j+"]"]){
-
 								if(risk_level[k]['label']==this.refs.policyEditForm["field-["+i+","+j+"]"].value){
 									classe =risk_level[k]['cor'];
 									break;
 								}
-
 							}else{
 								if(this.state.risklevelModel){
 									if(valor == this.state.risklevelModel.data[k]['level']){
@@ -435,14 +433,11 @@ export default React.createClass({
 											case 5: classe="Azul"; break;
 											default: classe="Cinza";
 										}
-									break;
+										break;
 									}
 								}
 							}
 						}
-					if (classe == null|| classe == ""){
-						classe="Cinza"
-					}
 
 					children.push(<td><div className={classe}>{
 							<VerticalInput
@@ -531,7 +526,7 @@ export default React.createClass({
 	},
 
 	getProbLabel(i){
-		var probs=	this.state.policyModel.attributes.probability.match(/\[.*?\]/g)
+		var probs=	this.state.policyModel.data.probability.match(/\[.*?\]/g)
 		if(probs[i] != null){
 			return probs[i].substring(1,probs[i].length-1)
 		}
@@ -539,7 +534,7 @@ export default React.createClass({
 	},
 
 	getImpacLabel(i){
-		var impac=	this.state.policyModel.attributes.impact.match(/\[.*?\]/g)
+		var impac=	this.state.policyModel.data.impact.match(/\[.*?\]/g)
 		if(impac[i] != null){
 			return impac[i].substring(1,impac[i].length-1)
 		}
@@ -680,7 +675,7 @@ export default React.createClass({
 		event.preventDefault();
 
 		if(this.state.policyModel){
-			this.context.router.push("/forrisco/policy/"+this.state.policyModel.attributes.id+"/item/overview");
+			this.context.router.push("/forrisco/policy/"+this.state.policyModel.data.id+"/item/overview");
 			return
 		}
 

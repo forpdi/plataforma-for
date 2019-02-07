@@ -74,7 +74,6 @@ export default React.createClass({
 
 	showMoreOccurencesSearches() {
 
-		console.log("showMoreOccurencesSearches",this.props.itensSelect,this.props.subitensSelect)
 		var newPage = this.state.page+1;
 
 		if(this.props.itensSelect !=null && this.props.subitensSelect != null){

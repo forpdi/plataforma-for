@@ -105,7 +105,7 @@ public class UnitController extends AbstractController{
 	public void listUnits(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
-			PaginatedList<Unit> units= this.unitBS.listUnitbyPlan(plan);
+			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -138,64 +138,7 @@ public class UnitController extends AbstractController{
 		}
 	}
 	
-	/**
-	 * Retorna monitoramentos.
-	 * 
-	 * @param id
-	 *			Id da unidade.
-	 * @return <PaginedList> Monitor
-	 * 			 Retorna lista de monitoramentos.
-	 */
-	@Get( PATH + "/monitor")
-	@NoCache
-	//@Permissioned
-	public void listMonitors(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			}
-			
-			PaginatedList<Monitor> monitors = this.unitBS.listMonitorbyUnit(unit);
-			
-			this.success(monitors);
-			
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}
-	
-	
-	/**
-	 * Retorna monitoramentos.
-	 * 
-	 * @param id
-	 *			Id da unidade.
-	 * @return <PaginedList> Monitor
-	 * 			 Retorna lista de monitoramentos.
-	 */
-	@Get( PATH + "/incident")
-	@NoCache
-	//@Permissioned
-	public void listIncidents(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			}
-			
-			PaginatedList<Incident> incidents = this.unitBS.listIncidentsbyUnit(unit);
-			
-			this.success(incidents);
-			
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}
+
 	
 	
 	/**

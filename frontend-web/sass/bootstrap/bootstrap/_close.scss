@@ -34,3 +34,15 @@ button.close {
   border: 0;
   -webkit-appearance: none;
 }
+
+
+.close-modal{
+    float: right;
+    color: red;
+    top: 11px;
+    right: 10px;
+	position: relative;
+
+	background: transparent;
+    border: 0;
+}

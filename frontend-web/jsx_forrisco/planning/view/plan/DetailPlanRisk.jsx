@@ -58,8 +58,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.planRiskId !== this.state.planRiskId) {
-
+		if (newProps.params.planRiskId != this.state.planRiskId) {
 			PlanRiskStore.dispatch({
 				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
 				data: newProps.params.planRiskId

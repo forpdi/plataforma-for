@@ -1,5 +1,5 @@
 .fpdi-modal-header {
-	& .modal-title {	
+	& .modal-title {
 		font-weight: $font-weight-semibold !important;
 		font-size: 18px;
 		color: #666666;
@@ -23,12 +23,12 @@
 }
 
 #cancelModalCustom {
-	background-color: #FF0000; 
+	background-color: #FF0000;
 	border-color: #FF0000;
 }
 #cancelModalCustom:hover {
-	background-color: darken(#FF0000, 5%); 
-	border-color: darken(#FF0000, 5%); 
+	background-color: darken(#FF0000, 5%);
+	border-color: darken(#FF0000, 5%);
 }
 
 #modalIcon{
@@ -41,7 +41,7 @@
 
 .modal-button {
 	padding-left: 18px;
-	padding-right: 18px;  
+	padding-right: 18px;
 }
 
 .mdi-cancelModalCustom{
@@ -66,4 +66,17 @@
 
 .modal-content-confirmUser {
 	padding: 0px 20px 10px 20px;
+}
+
+
+.frisco-modal-history {
+
+	& .modal-title {
+		font-weight: $font-weight-semibold !important;
+		font-size: 14px;
+		color: #666666;
+		padding: 10px 0px 0 20px;
+	}
+
+	border-radius: 10px;
 }

@@ -2,7 +2,7 @@
 import React from "react";
 import Progress from 'react-progressbar';
 
-import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import moment from 'moment'
@@ -29,46 +29,19 @@ export default React.createClass({
 			},
 			loading: true,
         };
-    },
-
-	componentWillReceiveProps(newProps){
-		var me = this;
-
-		this.setState({
-			plan: newProps.plan,
-			risks: newProps.risks,
-			units: newProps.units,
-			loading: true,
-			monitors: []
-		});
-
-		if(newProps.units.length ==0){
-			this.setState({
-				loading: false,
-			});
-		}
-
-
-		for(var i=0; i<newProps.units.length; i++){
-			UnitStore.dispatch({
-				action: UnitStore.ACTION_FIND_MONITOR,
-				data:newProps.units[i].id
-			});
-		}
-
 	},
 
-    componentDidMount(){
+	componentDidMount(){
 		var me = this;
 
-		UnitStore.on("findMonitor",(model) =>{
+		RiskStore.on("monitorByPlan",(model) =>{
 			this.state.monitors=[]
 
 			for(var i=0;i< model.data.length;i++){
 				this.state.monitors.push(model.data[i])
 			}
 			this.setState({
-				monitors:this.state.monitors
+				monitors:this.state.monitors,
 			})
 
 			this.state.unit=-1
@@ -78,8 +51,40 @@ export default React.createClass({
 
 	},
 
+	componentWillReceiveProps(newProps){
+		var me = this;
+		this.state.plan=newProps.plan
+		this.state.units=newProps.units
+		this.state.risks=newProps.risks
+		this.setState({
+			plan: newProps.plan,
+			risks: newProps.risks,
+			units: newProps.units,
+			loading: true,
+			monitors: []
+		});
+
+		if(newProps.units.length ==0){
+			this.state.monitors=[]
+			this.state.risks=[]
+			this.state.unit=-1
+			this.Quantify();
+			this.setState({
+				loading: false,
+			});
+		}else{
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_FIND_MONITORS_BY_PLAN,
+				data: newProps.plan.id
+			});
+		}
+
+	},
+
+
+
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
+		RiskStore.off(null, null, this);
 	},
 
 	getRisks(){
@@ -87,24 +92,26 @@ export default React.createClass({
 
 		if(this.state.unit==-1){
 			for(var i=0; i<this.state.risks.length; i++){
-				for(var j=0; j<this.state.risks[i].array.length; j++){
+				///for(var j=0; j<this.state.risks[i].length; j++){
 
 					//if((this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "ameaça")
 					//|| !this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "oportunidade"){
-						risks.push(this.state.risks[i].array[j]);
+						//risks.push(this.state.risks[i].array[j]);
+						risks.push(this.state.risks[i])
 					//}
-				}
+				//}
 			}
 		}else{
 			for(var i=0; i<this.state.risks.length; i++){
-				if(this.state.risks[i].unitid==this.state.unit){
-					var array=this.state.risks[i].array
-					for(var j=0; j<array.length; j++){
+				if(this.state.risks[i].unit.id==this.state.unit){
+				//	var array=this.state.risks[i].array
+					//for(var j=0; j<array.length; j++){
 						//if((this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "ameaça")
 						//|| !this.state.threats && this.state.risks[i].array[j].type.toLowerCase() == "oportunidade"){
-							risks.push(array[j]);
+							//risks.push(array[j]);
+							risks.push(this.state.risks[i])
 						//}
-					}
+					//}
 				}
 			}
 			return risks;
@@ -112,8 +119,8 @@ export default React.createClass({
 		return risks;
 	},
 
-	onclick(){
-		console.log("//TODO historico de monitoramento")
+	listMonitors(){
+		console.log("//TODO historico de monitoramento", this.state.plan, this.state.unit)
 	},
 
 	onUnitChange(evnt){
@@ -121,10 +128,6 @@ export default React.createClass({
 		this.state.unit=this.refs['selectUnits'].value
 
 		this.Quantify();
-
-		/*this.setState({
-			unit:this.refs['selectUnits'].value
-		})*/
 	},
 
 	Quantify(){
@@ -149,9 +152,8 @@ export default React.createClass({
 			var date=null
 
 			for(var j=0;j<this.state.monitors.length;j++){
-				if(risks[i].id == this.state.monitors[j].riskId){
+				if(risks[i].id == this.state.monitors[j].risk.id){
 					started=true
-
 					if(latestMonitor==null){
 						latestMonitor=this.state.monitors[j]
 					}else{
@@ -192,7 +194,6 @@ export default React.createClass({
 						else{monitor.late+=1}
 						break;
 
-
 					case "bimestral":
 						if(diffDays<48){monitor.inDay+=1}
 						else if(diffDays<60){monitor.closeToMaturity+=1}
@@ -221,6 +222,13 @@ export default React.createClass({
 				monitor.notStarted+=1
 			}
 		}
+
+		var percent =100/risks.length
+
+		monitor.Percentage.inDay=monitor.inDay*percent
+		monitor.Percentage.closeToMaturity=monitor.closeToMaturity*percent
+		monitor.Percentage.late=monitor.late*percent
+		monitor.Percentage.notStarted=monitor.notStarted*percent
 
 		this.setState({
 			monitor:monitor,
@@ -251,7 +259,7 @@ export default React.createClass({
 						</span>
 					</div>
 					<div className="dashboard-risk-details-body" >
-					<div className="mdi mdi-chart-line icon-link" style={{float: "right" ,padding: "10px"}} onClick={this.onclick}/>
+					<div className="mdi mdi-chart-line icon-link" style={{float: "right" ,padding: "10px"}} onClick={this.listMonitors}/>
 						{this.state.loading ? <LoadingGauge/> :
 
 						<div  style={{padding: "20px 50px"}}>
