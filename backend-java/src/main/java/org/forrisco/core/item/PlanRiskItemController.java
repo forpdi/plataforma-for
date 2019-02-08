@@ -73,7 +73,6 @@ public class PlanRiskItemController extends AbstractController {
 				PlanRiskItemField planRiskItemField = planRiskItem.getPlanRiskItemField().get(i);
 				planRiskItemField.setPlanRiskItem(planRiskItem);
 				this.planRiskItemBS.save(planRiskItemField);
-				this.success(planRiskItemField);
 			}
 			
 		} catch (Throwable ex) {
@@ -82,4 +81,28 @@ public class PlanRiskItemController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Retorna as informações e os Campos de um Item
+	 * @param id do item a ser detalhado
+	 *  
+	 * @return void
+	 */
+	@Get(PATH + "/fields/{id}")
+	@NoCache
+	public void detailItem(Long id) {
+		try {
+			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
+			
+			if (planRiskItem == null) {
+				this.fail("O Item solicitado não foi encontrado.");
+			} else {
+				PaginatedList<PlanRiskItemField> itens = this.planRiskItemBS.listItensByPlanRiskField(planRiskItem);
+				this.success(itens);
+			}
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 }

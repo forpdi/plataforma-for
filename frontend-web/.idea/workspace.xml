@@ -1,23 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="43408115-e461-45cc-91a5-f0e83ca83c84" name="Default Changelist" comment="3.2 Amostragem das informações gerais de um plano de risco">
-      <change afterPath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItemField.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItemBS.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItemBS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItemController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../backend-java/src/main/java/org/forrisco/core/item/PlanRiskItemController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend-java/src/main/resources/hibernate.cfg.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../backend-java/src/main/resources/hibernate.cfg.xml" afterDir="false" />
+    <list default="true" id="43408115-e461-45cc-91a5-f0e83ca83c84" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/store/PlaRiskItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRiskItem.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/item/FieldItemInput.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/item/FieldItemInput.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/item/ItemRegister.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/item/ItemRegister.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/view/policy/PolicyDetails.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/view/policy/PolicyDetails.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTabPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTabPanel.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
@@ -31,17 +16,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.47198537">
+    <splitter split-orientation="horizontal" split-proportion="0.6078192">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="17">
-                  <caret line="75" column="33" selection-start-line="75" selection-start-column="33" selection-end-line="75" selection-end-column="33" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="-231">
+                  <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
                 </state>
               </provider>
             </entry>
@@ -49,8 +31,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRiskItem.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="357">
-                  <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
+                <state relative-caret-position="391">
+                  <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
                 </state>
               </provider>
             </entry>
@@ -58,11 +40,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="204">
-                  <caret line="17" column="23" lean-forward="true" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="459">
+                  <caret line="53" column="21" lean-forward="true" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
                 </state>
               </provider>
             </entry>
@@ -70,11 +49,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1037">
-                  <caret line="69" column="28" lean-forward="true" selection-start-line="69" selection-start-column="28" selection-end-line="69" selection-end-column="28" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="137">
+                  <caret line="54" column="16" lean-forward="true" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
                 </state>
               </provider>
             </entry>
@@ -95,20 +71,22 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/item/ItemRegister.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="11050">
-                  <caret line="663" column="42" lean-forward="true" selection-start-line="663" selection-start-column="42" selection-end-line="663" selection-end-column="42" />
-                  <folding>
-                    <element signature="e#0#27#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="199">
+                  <caret line="744" column="74" selection-start-line="744" selection-start-column="74" selection-end-line="744" selection-end-column="74" />
                 </state>
               </provider>
             </entry>
           </file>
-          <file pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/Item.jsx">
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/jsx/AppSetup.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="318">
-                  <caret line="248" column="34" lean-forward="true" selection-start-line="248" selection-start-column="34" selection-end-line="248" selection-end-column="34" />
+                <state relative-caret-position="432">
+                  <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
+                  <folding>
+                    <element signature="e#0#32#0" expanded="true" />
+                    <element signature="e#2574#2645#0" expanded="true" />
+                    <element signature="e#3230#3330#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -116,23 +94,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/item/FieldItemInput.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1462">
+                <state relative-caret-position="565">
                   <caret line="92" column="18" selection-start-line="92" selection-start-column="18" selection-end-line="92" selection-end-column="18" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/jsx/vendor/FPDIRichText.jsx">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="51">
-                  <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
-                  <folding>
-                    <element signature="e#1#42#0" expanded="true" />
-                  </folding>
                 </state>
               </provider>
             </entry>
@@ -140,11 +103,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/policy/PolicyDetails.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1377">
-                  <caret line="87" column="52" lean-forward="true" selection-start-line="87" selection-start-column="52" selection-end-line="87" selection-end-column="52" />
-                  <folding>
-                    <element signature="e#0#26#0" expanded="true" />
-                  </folding>
+                <state relative-caret-position="596">
+                  <caret line="87" column="52" selection-start-line="87" selection-start-column="52" selection-end-line="87" selection-end-column="52" />
                 </state>
               </provider>
             </entry>
@@ -152,20 +112,29 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTabPanel.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="3417">
+                <state relative-caret-position="596">
                   <caret line="213" column="25" selection-start-line="213" selection-start-column="25" selection-end-line="213" selection-end-column="25" />
-                  <folding>
-                    <element signature="e#0#27#0" expanded="true" />
-                  </folding>
                 </state>
               </provider>
             </entry>
           </file>
           <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/Item.jsx">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="199">
+                  <caret line="121" column="27" lean-forward="true" selection-start-line="121" selection-start-column="27" selection-end-line="121" selection-end-column="27" />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTree.jsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="85">
-                  <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
+                <state relative-caret-position="539">
+                  <caret line="348" column="8" selection-start-line="348" selection-start-column="8" selection-end-line="348" selection-end-column="27" />
+                  <folding>
+                    <element signature="e#0#27#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -176,14 +145,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.map(</find>
-      <find>addNewField</find>
-      <find>&lt;Fi</find>
-      <find>console.log</find>
-      <find>refs</find>
-      <find>description</find>
-      <find>import PlanRiskStore from &quot;forpdi/jsx_forrisco/planning/store/PlanRisk.jsx&quot;;</find>
-      <find>compo</find>
       <find>changeRichText</find>
       <find>&lt;FIeld</find>
       <find>conso</find>
@@ -206,6 +167,14 @@
       <find>customUpdate</find>
       <find>console</find>
       <find>item</find>
+      <find>retrieveField</find>
+      <find>.children</find>
+      <find>nodeProps.expanded</find>
+      <find>node</find>
+      <find>children</find>
+      <find>opts</find>
+      <find>retrieveSubitens</find>
+      <find>expandRoot</find>
     </findStrings>
     <replaceStrings>
       <replace>planRiskModel</replace>
@@ -236,7 +205,6 @@
         <option value="$PROJECT_DIR$/jsx/planning/widget/plan/PlanMacroTabPanel.jsx" />
         <option value="$PROJECT_DIR$/jsx/AppSetup.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/view/policy/PolicyTab.jsx" />
-        <option value="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx" />
@@ -248,6 +216,8 @@
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/store/PlaRiskItem.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRisk.jsx" />
         <option value="$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx" />
+        <option value="$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRiskItem.jsx" />
+        <option value="$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx" />
       </list>
     </option>
   </component>
@@ -285,47 +255,12 @@
               <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
               <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="frontend-web" type="b2602c69:ProjectViewProjectNode" />
-              <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
-              <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
-              <item name="planning" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="frontend-web" type="b2602c69:ProjectViewProjectNode" />
-              <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
-              <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
-              <item name="planning" type="462c0819:PsiDirectoryNode" />
-              <item name="view" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="frontend-web" type="b2602c69:ProjectViewProjectNode" />
-              <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
-              <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
-              <item name="planning" type="462c0819:PsiDirectoryNode" />
-              <item name="view" type="462c0819:PsiDirectoryNode" />
-              <item name="plan" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="frontend-web" type="b2602c69:ProjectViewProjectNode" />
-              <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
-              <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
-              <item name="planning" type="462c0819:PsiDirectoryNode" />
-              <item name="widget" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="frontend-web" type="b2602c69:ProjectViewProjectNode" />
-              <item name="frontend-web" type="462c0819:PsiDirectoryNode" />
-              <item name="jsx_forrisco" type="462c0819:PsiDirectoryNode" />
-              <item name="planning" type="462c0819:PsiDirectoryNode" />
-              <item name="widget" type="462c0819:PsiDirectoryNode" />
-              <item name="planrisk" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -334,7 +269,7 @@
     <property name="editor.config.ad.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="ts.external.directory.path" value="C:\Program Files\JetBrains\WebStorm 2018.3.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RunDashboard">
@@ -366,7 +301,14 @@
       <workItem from="1548067731841" duration="109027000" />
       <workItem from="1548669999586" duration="115310000" />
       <workItem from="1549289171901" duration="33226000" />
-      <workItem from="1549466405420" duration="599000" />
+      <workItem from="1549466405420" duration="1361000" />
+      <workItem from="1549468902041" duration="42000" />
+      <workItem from="1549469905906" duration="27000" />
+      <workItem from="1549469944346" duration="67000" />
+      <workItem from="1549470760219" duration="103000" />
+      <workItem from="1549470906445" duration="23000" />
+      <workItem from="1549470941500" duration="596000" />
+      <workItem from="1549471947230" duration="23348000" />
     </task>
     <task id="LOCAL-00001" summary="Início da criação da tela de cadastramento de Plano de Risco">
       <created>1546829204248</created>
@@ -438,11 +380,18 @@
       <option name="project" value="LOCAL" />
       <updated>1548766421485</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="3.3 Cadastramento de um novo ITEM do plano de risco.">
+      <created>1549468122693</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1549468122693</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="499088000" />
+    <option name="totallyTimeSpent" value="524056000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -455,12 +404,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.072708115" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13751318" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Favorites" order="3" side_tool="true" />
+      <window_info id="Image Layers" order="4" />
+      <window_info id="Designer" order="5" />
+      <window_info id="UI Designer" order="6" />
+      <window_info id="Capture Tool" order="7" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.5438787" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -470,12 +422,17 @@
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32936078" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" weight="0.3289689" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5015806" side_tool="true" weight="0.15384616" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49841937" visible="true" weight="0.2654388" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5021075" side_tool="true" visible="true" weight="0.2654388" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" sideWeight="0.49789253" visible="true" weight="0.2654388" />
       <window_info anchor="bottom" id="TypeScript" order="11" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Theme Preview" order="3" />
+      <window_info anchor="right" id="Maven" order="4" />
+      <window_info anchor="right" id="Capture Analysis" order="5" />
+      <window_info anchor="right" id="Palette&#9;" order="6" />
+      <window_info anchor="right" id="Palette" order="7" />
     </layout>
     <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13435195" />
@@ -511,27 +468,11 @@
     <MESSAGE value="3.2 WORK IN PROGRESS - Cadastro de novos itens do plano de risco" />
     <MESSAGE value="3.2 Listagem dos intens de um plano de risco." />
     <MESSAGE value="3.2 Amostragem das informações gerais de um plano de risco" />
-    <option name="LAST_COMMIT_MESSAGE" value="3.2 Amostragem das informações gerais de um plano de risco" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/jsx_forrisco/planning/store/Policy.jsx</url>
-          <line>19</line>
-          <option name="timeStamp" value="7" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="3.3 Cadastramento de um novo ITEM do plano de risco." />
+    <option name="LAST_COMMIT_MESSAGE" value="3.3 Cadastramento de um novo ITEM do plano de risco." />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="282">
-          <caret line="5079" column="12" lean-forward="true" selection-start-line="5079" selection-start-column="12" selection-end-line="5079" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts" />
     <entry file="file://$PROJECT_DIR$/node_modules/react-router/es6/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -766,18 +707,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jsx/AppSetup.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="673">
-          <caret line="114" column="68" selection-start-line="114" selection-start-column="68" selection-end-line="114" selection-end-column="68" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-            <element signature="e#2574#2645#0" expanded="true" />
-            <element signature="e#3230#3330#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/core/util/Validation.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1870">
@@ -805,13 +734,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="863">
-          <caret line="1279" column="62" lean-forward="true" selection-start-line="1279" selection-start-column="62" selection-end-line="1279" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.es5.d.ts" />
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="194">
@@ -832,43 +755,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="75" column="33" selection-start-line="75" selection-start-column="33" selection-end-line="75" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRiskItem.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="17" column="23" lean-forward="true" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1037">
-          <caret line="69" column="28" lean-forward="true" selection-start-line="69" selection-start-column="28" selection-end-line="69" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -876,23 +762,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/item/ItemRegister.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11050">
-          <caret line="663" column="42" lean-forward="true" selection-start-line="663" selection-start-column="42" selection-end-line="663" selection-end-column="42" />
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/item/FieldItemInput.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
+        <state relative-caret-position="565">
           <caret line="92" column="18" selection-start-line="92" selection-start-column="18" selection-end-line="92" selection-end-column="18" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -900,43 +773,84 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="8" column="15" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
-          <folding>
-            <element signature="e#1#42#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/policy/PolicyDetails.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1377">
-          <caret line="87" column="52" lean-forward="true" selection-start-line="87" selection-start-column="52" selection-end-line="87" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="596">
+          <caret line="87" column="52" selection-start-line="87" selection-start-column="52" selection-end-line="87" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTabPanel.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3417">
+        <state relative-caret-position="596">
           <caret line="213" column="25" selection-start-line="213" selection-start-column="25" selection-end-line="213" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx/AppSetup.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="118" lean-forward="true" selection-start-line="118" selection-end-line="118" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#2574#2645#0" expanded="true" />
+            <element signature="e#3230#3330#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="137">
+          <caret line="54" column="16" lean-forward="true" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/item/ItemRegister.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="744" column="74" selection-start-line="744" selection-start-column="74" selection-end-line="744" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/Item.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="121" column="27" lean-forward="true" selection-start-line="121" selection-start-column="27" selection-end-line="121" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="53" column="21" lean-forward="true" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/PlanRiskItem.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="35" column="26" lean-forward="true" selection-start-line="35" selection-start-column="26" selection-end-line="35" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTree.jsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="539">
+          <caret line="348" column="8" selection-start-line="348" selection-start-column="8" selection-end-line="348" selection-end-column="27" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/plan/PolicyTree.jsx">
+    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jsx_forrisco/planning/store/Item.jsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="248" column="34" lean-forward="true" selection-start-line="248" selection-start-column="34" selection-end-line="248" selection-end-column="34" />
+        <state relative-caret-position="-231">
+          <caret line="123" lean-forward="true" selection-start-line="123" selection-end-line="123" />
         </state>
       </provider>
     </entry>

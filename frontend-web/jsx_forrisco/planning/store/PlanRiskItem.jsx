@@ -8,6 +8,7 @@ var ItemModel = Fluxbone.Model.extend({
 
 var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_GET_ALL_ITENS: 'planRiskItem-getAllItens',
+	ACTION_GET_ALL_FIELDS_ITENS: 'planRiskItem-getFieldItens',
 	ACTION_SAVE_ITENS: 'planRiskItem-saveNewItens',
 
 	url: URL,
@@ -22,6 +23,21 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			data: params,
 			success(data, status, opts) {
 				me.trigger("allitens", data)
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		})
+	},
+
+	getFieldItens(data, node) {
+		var me = this;
+		$.ajax({
+			method: "GET",
+			url: me.url + "/fields/" + data.id,
+			dataType: 'json',
+			success(data, status, opts) {
+				me.trigger("allFields", data, node)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);

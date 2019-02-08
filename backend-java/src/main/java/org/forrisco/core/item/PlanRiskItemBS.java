@@ -56,13 +56,14 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		
 		PaginatedList<PlanRiskItemField> results = new PaginatedList<PlanRiskItemField>();
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false));
+		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRiskItem", planRiskItem));
 		
-		Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("item", planRiskItem)).setProjection(Projections.countDistinct("id"));
+		//Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
+				//.add(Restrictions.eq("planRiskItem", planRiskItem)).setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskItemField.class));
-		results.setTotal((Long) count.uniqueResult());
+		//results.setTotal((Long) count.uniqueResult());
 		return results;
 		
 	}

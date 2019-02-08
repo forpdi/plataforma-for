@@ -36,13 +36,9 @@ public class PlanRiskItem extends SimpleLogicalDeletableEntity {
 	
 	@Transient
 	private List<PlanRiskItemField> planRiskItemField;
-
+	
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getDescription() {
@@ -67,5 +63,9 @@ public class PlanRiskItem extends SimpleLogicalDeletableEntity {
 
 	public void setPlanRiskItemField(List<PlanRiskItemField> planRiskItemField) {
 		this.planRiskItemField = planRiskItemField;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
