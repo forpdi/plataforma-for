@@ -1,6 +1,6 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlaRiskItem.jsx"
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
@@ -22,6 +22,7 @@ export default React.createClass({
 		return {
 			cleanTree: [],
 			treeItens: [],
+			treeItemFields: [],
 			newProps: null,
 			actualType: this.props.treeType,
 			prevProps: {},
@@ -40,6 +41,10 @@ export default React.createClass({
 		}
 	},
 
+	componentWillMount() {
+		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
+	},
+
 	setTreeItens(planRisk, treeItens = []) {
 		var me = this;
 		var  info = {
@@ -51,6 +56,7 @@ export default React.createClass({
 			id: planRisk.id,
 		};
 
+		//Botão Novo Item Geral
 		var newItem = {
 			label: Messages.get("label.newItem"),
 			labelCls: 'fpdi-new-node-label',
@@ -59,6 +65,7 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
+		/*Item de um Plano*/
 		PlanRiskItemStore.on('allitens', (response) => {
 			response.data.map(itens => {
 				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
@@ -66,11 +73,14 @@ export default React.createClass({
 				treeItens.push({
 					label: itens.name,
 					expanded: false,
-					expandable: itens.name !== "Informações gerais", //Mudar essa condição para: Se houver subitens
+					expandable: true, //Mudar essa condição para: Se houver subitens
 					to: linkToItem,
 					key: linkToItem,
 					model: itens,
 					id: itens.id,
+					children: [],
+					onExpand: this.expandRoot,
+					onShrink: this.shrinkRoot
 				});
 			});
 
@@ -82,11 +92,58 @@ export default React.createClass({
 
 			PlanRiskItemStore.off('allitens');
 		}, me);
+
+		/*Campos de um Item*/
+		PlanRiskItemStore.on('allFields', (response, node) => {
+			var fieldTree = [];
+
+			//Botão Novo SubItem
+			var newItemSubItem = {
+				label: Messages.get("label.newItem"),
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: '#',
+				key: "newPlanRiskSubItem"
+			};
+
+			 response.data.map(field => {
+				 fieldTree.push({
+					 label: field.name,
+					 to: '',
+					 key: '',
+					 id: field.id,
+				 })
+			});
+
+			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+
+			node.node.children = fieldTree;
+			me.forceUpdate();
+		})
+	},
+
+	expandRoot(nodeProps, nodeLevel) {
+		if (nodeLevel === 0) {
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_ALL_FIELDS_ITENS,
+				data: {
+					id: nodeProps.id
+				},
+				opts: {
+					node: nodeProps
+				}
+			})
+		}
+		nodeProps.expanded = true;
+	},
+
+	shrinkRoot(nodeProps) {
+		nodeProps.expanded = false;
+		this.forceUpdate();
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off(null, null, this);
-		PlanRiskStore.off(null, null, this);
+		PlanRiskItemStore.off('allitens');
 	},
 
 	render() {

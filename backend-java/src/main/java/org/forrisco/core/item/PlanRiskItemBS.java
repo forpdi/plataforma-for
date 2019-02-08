@@ -43,5 +43,52 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
+	
+	/**
+	 * Lista os campos de um item.
+	 * @param PlanRiskItemField
+	 * 			item no qual se deseja obter os campos.
+	 * 
+	 * @return PaginatedList<PlanRiskItemField>
+	 * 			Lista de campos.
+	 */
+	public PaginatedList<PlanRiskItemField> listItensByPlanRiskField(PlanRiskItem planRiskItem) {
+		
+		PaginatedList<PlanRiskItemField> results = new PaginatedList<PlanRiskItemField>();
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRiskItem", planRiskItem));
+		
+		//Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
+				//.add(Restrictions.eq("planRiskItem", planRiskItem)).setProjection(Projections.countDistinct("id"));
+		
+		results.setList(this.dao.findByCriteria(criteria, PlanRiskItemField.class));
+		//results.setTotal((Long) count.uniqueResult());
+		return results;
+		
+	}
+	
+	/**
+	 * Salva no banco de dados um novo item
+	 * 
+	 * @param plaRiskItem instância do item a ser salvo
+	 */
+	public void save(PlanRiskItem plaRiskItem) {
+		plaRiskItem.setId(null);
+		plaRiskItem.setDeleted(false);
+		
+		this.persist(plaRiskItem);
+	}
+	
+	/**
+	 * Salva no banco de dados um novo campo
+	 * 
+	 * @param planRiskItemField, instância do PlanRiskItemField a ser salvo
+	 */
+	public void save(PlanRiskItemField planRiskItemField) {
+		planRiskItemField.setId(null);
+		planRiskItemField.setDeleted(false);
+		this.persist(planRiskItemField);
+	}
 
 }

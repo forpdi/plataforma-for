@@ -4,7 +4,7 @@ import PlanRiskTree from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskT
 import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlaRiskItem.jsx"
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import {Link} from "react-router";
 import {number} from "prop-types";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy";
@@ -72,11 +72,6 @@ export default React.createClass({
 				}
 			});
 		}
-	},
-
-	componentWillUnmount() {
-		PlanRiskStore.off(null, null, this);
-		PlanRiskItemStore.off(null, null, this);
 	},
 
 	render() {

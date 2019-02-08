@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from 'react-router';
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlaRiskItem.jsx";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import string from "string";
 import HideTabsBox from "@/planning/widget/plan/PlanMacroTabPanel";
