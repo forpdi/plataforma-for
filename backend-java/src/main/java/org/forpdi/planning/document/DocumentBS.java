@@ -143,6 +143,12 @@ public class DocumentBS extends HibernateBusiness {
 		return document;
 	}
 
+	public List<Document> listAllByPlansMacro(List<PlanMacro> plansMacro) {
+		Criteria criteria = this.dao.newCriteria(Document.class);
+		criteria.add(Restrictions.in("plan", plansMacro));
+		return this.dao.findByCriteria(criteria, Document.class);
+	}
+
 	/**
 	 * Cria uma seção no documento
 	 * 
@@ -413,11 +419,10 @@ public class DocumentBS extends HibernateBusiness {
 	 *            Seção do documento
 	 * @return List<DocumentAttribute> list Lista de atributos
 	 */
-	public List<DocumentAttribute> listAllAttributesBySection(DocumentSection documentSection) {
+	public List<DocumentAttribute> listAllAttributesBySections(List<DocumentSection> documentSections) {
 		Criteria criteria = this.dao.newCriteria(DocumentAttribute.class);
-		criteria.add(Restrictions.eq("section", documentSection)).addOrder(Order.asc("sequence"));
-
-		return criteria.list();
+		criteria.add(Restrictions.in("section", documentSections));
+		return this.dao.findByCriteria(criteria, DocumentAttribute.class);
 	}
 	
 	
@@ -489,12 +494,10 @@ public class DocumentBS extends HibernateBusiness {
 	 *            Documento a partir do qual se deseja listar as seções.
 	 * @return List<DocumentSection> Lista de seções do documento.
 	 */
-	public List<DocumentSection> listAllSectionsByDocument(Document doc) {
+	public List<DocumentSection> listAllSectionsByDocuments(List<Document> documents) {
 		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
-		criteria.add(Restrictions.eq("document", doc));
-		List<DocumentSection> list = this.dao.findByCriteria(criteria, DocumentSection.class);
-
-		return list;
+		criteria.add(Restrictions.in("document", documents));
+		return this.dao.findByCriteria(criteria, DocumentSection.class);
 	}
 
 	/**

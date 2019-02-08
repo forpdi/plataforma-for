@@ -32,6 +32,7 @@ import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
 import org.forpdi.dashboard.DashboardBS;
+import org.forpdi.dashboard.manager.LevelInstanceHistory;
 import org.forpdi.planning.attribute.AggregateIndicator;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.attribute.AttributeHelper;
@@ -2400,11 +2401,16 @@ public class StructureBS extends HibernateBusiness {
 	 *            Instância de um level.
 	 * @return query Lista das intâncias dos leveis.
 	 */
-	public List<StructureLevelInstanceDetailed> listAllLevelInstanceDetailed(StructureLevelInstance levelInstance) {
+	public List<StructureLevelInstanceDetailed> listAllLevelInstancesDetailedByLevelInstances(List<StructureLevelInstance> levelInstances) {
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
-		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
+	}
+
+	public List<LevelInstanceHistory> listAllLevelInstancesHistoryByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		Criteria criteria = this.dao.newCriteria(LevelInstanceHistory.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, LevelInstanceHistory.class);
 	}
 	
 	public boolean checkHaveBudgetByLevel(StructureLevel level){

@@ -114,14 +114,9 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		
 		List<ActionPlan>  actionplan = new ArrayList<>();
 		List<LevelInstanceHistory>  levelinstancehistory = new ArrayList<>();
-		List<StructureLevelInstanceDetailed>  slid = new ArrayList<>();	
-		List<AttributeInstance> attributeinstance = new ArrayList<>();	
 		List<Budget> budget =   new ArrayList<>();
-		List<DocumentAttribute> documentattribute = new ArrayList<>();	
 		List<AggregateIndicator> aggregateindicator = new ArrayList<>();
 		
-		List<Document> documents = new ArrayList<>();
-		List<DocumentSection> documentsection = new ArrayList<>();
 		List<BudgetElement> budgetelement = new ArrayList<>();
 		List<TableFields> tableFields= new ArrayList<>();
 		List<TableInstance> tableInstance= new ArrayList<>();
@@ -163,6 +158,40 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				planMacro.setCompany(null);
 			}
 			zipAdd(zos, PlanMacro.class.getSimpleName(), this.gson.toJson(plansMacro));
+			zos.flush();
+		}
+		
+		//Exportando os documentos do PDI
+		final List<Document> documents = this.docBS.listAllByPlansMacro(plansMacro);
+		if(!GeneralUtils.isEmpty(documents)) {
+			for (final Document document : documents) {
+				document.setExportPlanMacroId(document.getPlan().getId());
+				document.setPlan(null);
+			}
+			zipAdd(zos, Document.class.getSimpleName(), this.gson.toJson(documents));
+			zos.flush();
+		}
+
+		//Exportando as seções dos documentos
+		final List<DocumentSection> documentSections = this.docBS.listAllSectionsByDocuments(documents);
+		if(!GeneralUtils.isEmpty(documentSections)) {
+			for (final DocumentSection documentSection : documentSections) {
+				documentSection.setExportDocumentId(documentSection.getDocument().getId());
+				documentSection.setExportDocumentSectionId(documentSection.getParent().getId());
+				documentSection.setDocument(null);
+				documentSection.setParent(null);
+			}
+			zipAdd(zos, DocumentSection.class.getSimpleName(), this.gson.toJson(documentSections));
+			zos.flush();
+		}
+
+		//Exportando os atributos das seções dos documentos
+		final List<DocumentAttribute> documentAttributes = this.docBS.listAllAttributesBySections(documentSections);
+		if(!GeneralUtils.isEmpty(documentAttributes)) {
+			for (final DocumentAttribute attr : documentAttributes) {
+				attr.setExportDocumentSectionId(attr.getExportDocumentSectionId());
+			}
+			zipAdd(zos, DocumentAttribute.class.getSimpleName(), this.gson.toJson(documentAttributes));
 			zos.flush();
 		}
 		
@@ -245,6 +274,30 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			zos.flush();
 		}
 
+		//Exportando os detalhes das estruturas level instance.
+		final List<StructureLevelInstanceDetailed> structureLevelInstancesDetailed =
+			this.structureBS.listAllLevelInstancesDetailedByLevelInstances(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(structureLevelInstancesDetailed)) {
+			for (final StructureLevelInstanceDetailed slid : structureLevelInstancesDetailed) {
+				slid.setExportStructureLevelInstanceId(slid.getLevelInstance().getId());
+				slid.setLevelInstance(null);
+			}
+			zipAdd(zos, StructureLevelInstanceDetailed.class.getSimpleName(), this.gson.toJson(structureLevelInstancesDetailed));
+			zos.flush();
+		}
+
+		//Exportando o histórico das estruturas level instance.
+		final List<LevelInstanceHistory> levelInstancesHistory =
+			this.structureBS.listAllLevelInstancesHistoryByLevelInstances(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(levelInstancesHistory)) {
+			for (final LevelInstanceHistory lih : levelInstancesHistory) {
+				lih.setExportStructureLevelInstanceId(lih.getLevelInstance().getId());
+				lih.setLevelInstance(null);
+			}
+			zipAdd(zos, LevelInstanceHistory.class.getSimpleName(), this.gson.toJson(levelInstancesHistory));
+			zos.flush();
+		}
+
 		//Exportando as instância de atributos
 		final List<AttributeInstance> attributeInstances = this.structureBS.listAllAttributeInstanceByPlans(structureLevelInstances);
 		if(!GeneralUtils.isEmpty(attributeInstances)) {
@@ -259,93 +312,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		}
 		
 		
-		for(PlanMacro pm: plansMacro) {
-			//Exportando os documentos
-			Document doc =  this.docBS.retrieveDocumentByPlan(pm);	
-			if(doc !=null){
-				
-				doc.setExportPlanMacroId(pm.getId());
-				doc.setPlan(null);
-				documents.add(doc);
-		
-				
-				//Exportando as seções documentos
-				List<DocumentSection> documentsection_temp = this.docBS.listAllSectionsByDocument(doc);
-				HashMap<Long, DocumentSection> documentsectionMap =   new HashMap<>();
-				boolean possui_parent;
-				
-				do{
-					List<DocumentSection>documentsection_temp_2 = new ArrayList<>();
-					
-					documentsection_temp.stream().forEach( it->{
-						documentsectionMap.put(it.getId(), it);
-						if(it.getParent() !=null) {
-							documentsection_temp_2.add(it.getParent());
-						}
-					});
-		
-					documentsection_temp = new ArrayList<>();
-					documentsection_temp.addAll(documentsection_temp_2);
-					
-					possui_parent=false;
-					if(!documentsection_temp.isEmpty()) {
-						possui_parent=true;
-					}
-					
-				}while(possui_parent);
-				
-				documentsectionMap.values().stream().forEach(ds -> {
-					if(ds.getParent()!=null){
-						ds.setExportDocumentSectionId(ds.getParent().getId());
-					}
-					ds.setExportDocumentId(ds.getDocument().getId());
-					ds.setDocument(null);
-					ds.setParent(null);
-					ds.setDocumentAttributes(null);
-					documentsection.add(ds);
-									
-				});				
-			}
-		}
-		
-		
-		//Exportando document attribute
-		documentsection.stream().forEach(ds->{
-			List<DocumentAttribute> list = this.docBS.listAllAttributesBySection(ds);
-			list.stream().forEach(it->{
-				it.setExportDocumentSectionId(it.getSection().getId());
-				it.setSection(null);
-				documentattribute.add(it);
-			});
 
-		});
-			
-		
-		//Exportando planos de ação
-		//Exportando level instance history
-		//Exportando structure level instance detailed
-		//Exportando aggregate indicator
-		//Exportando budget
-		//Exportando Attachement
-		/*
-		structurelevelinstance.stream().forEach(sli->{
-			actionplan.addAll((List<ActionPlan>) this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("levelInstance", sli)).list());
-			levelinstancehistory.addAll((List<LevelInstanceHistory>) this.dao.newCriteria(LevelInstanceHistory.class).add(Restrictions.eq("levelInstance", sli)).list());
-			slid.addAll((List<StructureLevelInstanceDetailed>) structureBS.listAllLevelInstanceDetailed(sli));	
-			budget.addAll((List<Budget>) budgetBS.listAllBudgetByLevelInstance(sli));
-			attributeinstance.addAll((List<AttributeInstance>) this.dao.newCriteria(AttributeInstance.class).add(Restrictions.eq("levelInstance", sli)).list());
-			aggregateindicator.addAll((List<AggregateIndicator>) this.dao.newCriteria(AggregateIndicator.class).add(Restrictions.eq("aggregate", sli)).list());
-			attachment.addAll((List<Attachment>) this.dao.newCriteria(Attachment.class).add(Restrictions.eq("levelInstance", sli)).list());
-		});*/
 		actionplan.stream().forEach(it->{
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setLevelInstance(null);	
-		});
-		levelinstancehistory.stream().forEach(it->{
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setLevelInstance(null);	
-		});
-		slid.stream().forEach(it->{
 			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
 			it.setLevelInstance(null);	
 		});
@@ -385,8 +353,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		//Exportando table field
 		//Exportando option field
 		//Exportando schedule
-		documentattribute.stream().forEach(it->{
-
+		documentAttributes.stream().forEach(it->{
 			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(), true);
 			
 			if (tablefields!=null) {				
@@ -417,35 +384,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				}
 			}
 		});
-		/*
-		attribute.stream().forEach(it->{
-
-			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(),false);
-			
-			//List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
-			//tablefields.setTableInstances(tableInstances);
-
-			if (tablefields!=null) {
-				List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
-				tablefields.setTableInstances(tableInstances);
-				
-				tableFieldsMap.put(tablefields.getId(),tablefields);
-			}
-					
-			PaginatedList<OptionsField> optionsfield = fieldsBS.getOptionsField(it.getId());
-			
-			if (optionsfield!=null) {
-				optionsfield.getList().forEach(of->{
-					if(!of.isDocument()) {
-						optionsFieldMap.put(of.getId(), of);
-					}
-				});
-			}
-			
-		});*/
 		
 		tableFieldsMap.values().stream().forEach(tf -> {
-			
 			tf.getTableInstances().stream().forEach(ti -> {
 				tableInstanceMap.put(ti.getId(),ti);
 				
@@ -559,23 +499,10 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!budgetelement.isEmpty())
 			zipAdd(zos, BudgetElement.class.getSimpleName(), this.gson.toJson(budgetelement));
 
-		if(!documents.isEmpty())
-			zipAdd(zos, Document.class.getSimpleName(), this.gson.toJson(documents));
-		if(!documentsection.isEmpty())
-			zipAdd(zos, DocumentSection.class.getSimpleName(), this.gson.toJson(documentsection));
-		
 		if(!actionplan.isEmpty())
 			zipAdd(zos, ActionPlan.class.getSimpleName(), this.gson.toJson(actionplan));
-		if(!levelinstancehistory.isEmpty())
-			zipAdd(zos, LevelInstanceHistory.class.getSimpleName(), this.gson.toJson(levelinstancehistory));
-		if(!slid.isEmpty())
-			zipAdd(zos, StructureLevelInstanceDetailed.class.getSimpleName(), this.gson.toJson(slid));
 		if(!budget.isEmpty())
 			zipAdd(zos, Budget.class.getSimpleName(), this.gson.toJson(budget));
-		if(!attributeinstance.isEmpty())
-			zipAdd(zos, AttributeInstance.class.getSimpleName(), this.gson.toJson(attributeinstance));
-		if(!documentattribute.isEmpty())
-			zipAdd(zos, DocumentAttribute.class.getSimpleName(), this.gson.toJson(documentattribute));
 		if(!aggregateindicator.isEmpty())
 			zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateindicator));
 		if(!attachment.isEmpty())
