@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import org.forpdi.planning.attribute.types.enums.Periodicity;
 import org.forpdi.planning.fields.FieldsBS;
 import org.forpdi.planning.fields.OptionsField;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
+import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
 import org.forpdi.planning.fields.budget.BudgetDTO;
 import org.forpdi.planning.fields.schedule.Schedule;
@@ -193,12 +195,18 @@ public class StructureBS extends HibernateBusiness {
 	}
 
 	public List<StructureLevel> listAllStructuresLevels(List<Structure> structures) {
+		if (GeneralUtils.isEmpty(structures)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(StructureLevel.class)
 			.add(Restrictions.in("structure", structures))
 		;
 		return this.dao.findByCriteria(criteria, StructureLevel.class);
 	}
 	public List<Attribute> listAllAttributes(List<StructureLevel> structureLevels) {
+		if (GeneralUtils.isEmpty(structureLevels)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(Attribute.class)
 			.add(Restrictions.in("level", structureLevels))
 		;
@@ -816,12 +824,18 @@ public class StructureBS extends HibernateBusiness {
 	}
 	
 	public List<AttributeInstance> listAllAttributeInstanceByPlans(List<StructureLevelInstance> slis) {
+		if (GeneralUtils.isEmpty(slis)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
 		criteria.add(Restrictions.in("levelInstance", slis));
 		return this.dao.findByCriteria(criteria, AttributeInstance.class);
 	}
 	
 	public List<StructureLevelInstance> listAllLevelInstanceByPlans(List<Plan> plans) {
+		if (GeneralUtils.isEmpty(plans)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
 		criteria.add(Restrictions.in("plan", plans));
 		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
@@ -2402,12 +2416,46 @@ public class StructureBS extends HibernateBusiness {
 	 * @return query Lista das intâncias dos leveis.
 	 */
 	public List<StructureLevelInstanceDetailed> listAllLevelInstancesDetailedByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
 		criteria.add(Restrictions.in("levelInstance", levelInstances));
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
 	}
 
+	public List<ActionPlan> listAllActionPlansByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(ActionPlan.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, ActionPlan.class);
+	}
+
+	public List<AggregateIndicator> listAllAggregateIndicatorsByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(AggregateIndicator.class);
+		criteria.add(Restrictions.in("aggregate", levelInstances));
+		criteria.add(Restrictions.in("indicator", levelInstances));
+		return this.dao.findByCriteria(criteria, AggregateIndicator.class);
+	}
+
+	public List<Attachment> listAllAttachmentsByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(Attachment.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, Attachment.class);
+	}
+
 	public List<LevelInstanceHistory> listAllLevelInstancesHistoryByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(LevelInstanceHistory.class);
 		criteria.add(Restrictions.in("levelInstance", levelInstances));
 		return this.dao.findByCriteria(criteria, LevelInstanceHistory.class);

@@ -66,7 +66,6 @@ import com.google.gson.Gson;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.serialization.gson.GsonSerializerBuilder;
@@ -112,36 +111,19 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
 		zos.flush();
 		
-		List<ActionPlan>  actionplan = new ArrayList<>();
-		List<LevelInstanceHistory>  levelinstancehistory = new ArrayList<>();
-		List<Budget> budget =   new ArrayList<>();
-		List<AggregateIndicator> aggregateindicator = new ArrayList<>();
-		
-		List<BudgetElement> budgetelement = new ArrayList<>();
-		List<TableFields> tableFields= new ArrayList<>();
-		List<TableInstance> tableInstance= new ArrayList<>();
-		List<TableStructure> tableStructure= new ArrayList<>();
-		List<TableValues> tableValues= new ArrayList<>();
-		List<Schedule> schedule= new ArrayList<>();
-		List<ScheduleInstance> scheduleInstance= new ArrayList<>();
-		List<ScheduleStructure> scheduleStructure= new ArrayList<>();
-		List<ScheduleValues> scheduleValues= new ArrayList<>();
-		List<OptionsField> optionsField= new ArrayList<>();
-		List<Attachment> attachment= new ArrayList<>();
-		
 		final HashMap<Long, Structure> structuresMap = new HashMap<>();
-		HashMap<Long, BudgetElement> budgetElementMap = new HashMap<>();
-		HashMap<Long, TableFields> tableFieldsMap = new HashMap<>();
-		HashMap<Long, TableInstance> tableInstanceMap = new HashMap<>();
-		HashMap<Long, TableStructure> tableStructureMap = new HashMap<>();
-		HashMap<Long, TableValues> tableValuesMap = new HashMap<>();
 		
-		HashMap<Long, Schedule> scheduleMap = new HashMap<>();
-		HashMap<Long, ScheduleInstance> scheduleInstanceMap = new HashMap<>();
-		HashMap<Long, ScheduleStructure> scheduleStructureMap = new HashMap<>();
-		HashMap<Long, ScheduleValues> scheduleValuesMap = new HashMap<>();
-		HashMap<Long, OptionsField> optionsFieldMap = new HashMap<>();
+		//Exportando os elementos orçamentários
+		final List<BudgetElement> budgetElements = this.budgetBS.listAllBudgetElementsByCompany(company);
+		if(!GeneralUtils.isEmpty(budgetElements)) {
+			for(final BudgetElement budgetElement : budgetElements) {
+				budgetElement.setCompany(null);
+			}
+			zipAdd(zos, BudgetElement.class.getSimpleName(), this.gson.toJson(budgetElements));
+			zos.flush();
+		}
 		
+		// Exportando labels customizadas da company
 		final List<CompanyMessage> companyMessage = companyBS.retrieveMessages(company);
 		if(!GeneralUtils.isEmpty(companyMessage)) {
 			companyMessage.forEach(it -> {
@@ -177,9 +159,11 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		if(!GeneralUtils.isEmpty(documentSections)) {
 			for (final DocumentSection documentSection : documentSections) {
 				documentSection.setExportDocumentId(documentSection.getDocument().getId());
-				documentSection.setExportDocumentSectionId(documentSection.getParent().getId());
 				documentSection.setDocument(null);
-				documentSection.setParent(null);
+				if (documentSection.getParent() != null) {
+					documentSection.setExportDocumentSectionId(documentSection.getParent().getId());
+					documentSection.setParent(null);
+				}
 			}
 			zipAdd(zos, DocumentSection.class.getSimpleName(), this.gson.toJson(documentSections));
 			zos.flush();
@@ -298,6 +282,60 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			zos.flush();
 		}
 
+		//Exportando os planos de ação
+		final List<ActionPlan> actionPlans = this.structureBS.listAllActionPlansByLevelInstances(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(actionPlans)) {
+			for (final ActionPlan actionPlan : actionPlans) {
+				actionPlan.setExportStructureLevelInstanceId(actionPlan.getLevelInstance().getId());
+				actionPlan.setLevelInstance(null);
+			}
+			zipAdd(zos, ActionPlan.class.getSimpleName(), this.gson.toJson(actionPlans));
+			zos.flush();
+		}
+
+		//Exportando os indicadores agregados
+		final List<AggregateIndicator> aggregateIndicators = this.structureBS.listAllAggregateIndicatorsByLevelInstances(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(aggregateIndicators)) {
+			for (final AggregateIndicator aggregateIndicator : aggregateIndicators) {
+				aggregateIndicator.setExportAggregateId(aggregateIndicator.getAggregate().getId());
+				aggregateIndicator.setExportIndicatorId(aggregateIndicator.getIndicator().getId());
+				aggregateIndicator.setAggregate(null);
+				aggregateIndicator.setIndicator(null);
+			}
+			zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateIndicators));
+			zos.flush();
+		}
+
+		//Exportando os anexos
+		final List<Attachment> attachments = this.structureBS.listAllAttachmentsByLevelInstances(structureLevelInstances);
+		if(!GeneralUtils.isEmpty(attachments)) {
+			for (final Attachment attachment : attachments) {
+				attachment.setExportStructureLevelInstanceId(attachment.getLevelInstance().getId());
+				attachment.setLevelInstance(null);
+				if (attachment.getAuthor() != null) {
+					attachment.setExportAuthorMail(attachment.getAuthor().getEmail());
+				} else {
+					attachment.setExportAuthorMail("");
+				}
+				attachment.setAuthor(null);
+			}
+			zipAdd(zos, Attachment.class.getSimpleName(), this.gson.toJson(attachments));
+			zos.flush();
+		}
+
+		//Exportando os orçamentos
+		final List<Budget> budgets = this.budgetBS.listAllBudgetsByElementsAndLevelInstances(budgetElements, structureLevelInstances);
+		if(!GeneralUtils.isEmpty(budgets)) {
+			for(final Budget budget : budgets) {
+				budget.setExportBudgetElementId(budget.getBudgetElement().getId());
+				budget.setExportStructureLevelInstanceId(budget.getLevelInstance().getId());
+				budget.setBudgetElement(null);
+				budget.setLevelInstance(null);
+			}
+			zipAdd(zos, Budget.class.getSimpleName(), this.gson.toJson(budgets));
+			zos.flush();
+		}
+		
 		//Exportando as instância de atributos
 		final List<AttributeInstance> attributeInstances = this.structureBS.listAllAttributeInstanceByPlans(structureLevelInstances);
 		if(!GeneralUtils.isEmpty(attributeInstances)) {
@@ -310,225 +348,110 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			zipAdd(zos, AttributeInstance.class.getSimpleName(), this.gson.toJson(attributeInstances));
 			zos.flush();
 		}
-		
-		
 
-		actionplan.stream().forEach(it->{
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setLevelInstance(null);	
-		});
-		aggregateindicator.stream().forEach(it->{
-			it.setExportAggregateId(it.getAggregate().getId());
-			it.setExportIndicatorId(it.getIndicator().getId());
-			it.setAggregate(null);
-			it.setIndicator(null);
-		});
-		budget.stream().forEach(it->{
-			budgetElementMap.put(it.getBudgetElement().getId(),it.getBudgetElement());
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			it.setExportBudgetElementId(it.getBudgetElement().getId());
-			it.setLevelInstance(null);	
-			it.setBudgetElement(null);
-		});
-		attachment.stream().forEach(it->{
-			it.setExportStructureLevelInstanceId(it.getLevelInstance().getId());
-			if(it.getAuthor() !=null) {
-				it.setExportAuthorMail(it.getAuthor().getEmail());
-			}else {
-				it.setExportAuthorMail("");
+		//Exportando as opções do select field
+		final List<OptionsField> optionsFields = this.fieldsBS.listOptionsFieldsByAttrsAndDocAttrs(attributes, documentAttributes);
+		if(!GeneralUtils.isEmpty(optionsFields)) {
+			zipAdd(zos, OptionsField.class.getSimpleName(), this.gson.toJson(optionsFields));
+			zos.flush();
+		}
+
+		//Exportando os cronogramas
+		final List<Schedule> schedules = this.fieldsBS.listSchedulesByAttrsAndDocAttrs(attributes, documentAttributes);
+		if(!GeneralUtils.isEmpty(schedules)) {
+			for (Schedule schedule : schedules) {
+				schedule.setScheduleInstances(null);
+				schedule.setScheduleStructures(null);
 			}
-			
-			it.setLevelInstance(null);
-			it.setLevelInstance(null);
-		});
+			zipAdd(zos, Schedule.class.getSimpleName(), this.gson.toJson(schedules));
+			zos.flush();
+		}
 		
+		//Exportando os instâncias de cronogramas
+		final List<ScheduleInstance> scheduleInstances = this.fieldsBS.listAllScheduleInstancesBySchedules(schedules);
+		if(!GeneralUtils.isEmpty(scheduleInstances)) {
+			for (final ScheduleInstance scheduleInstance : scheduleInstances) {
+				scheduleInstance.setExportScheduleId(scheduleInstance.getSchedule().getId());
+				scheduleInstance.setSchedule(null);
+			}
+			zipAdd(zos, ScheduleInstance.class.getSimpleName(), this.gson.toJson(scheduleInstances));
+			zos.flush();
+		}
 		
-		//Exportando budget element
-		budgetElementMap.values().stream().forEach(be -> {
-			be.setExportCompanyId(be.getCompany().getId());
-			be.setCompany(null);
-			budgetelement.add(be);
-		});
+		//Exportando os estruturas de cronogramas
+		final List<ScheduleStructure> scheduleStructures = this.fieldsBS.listAllScheduleStructuresBySchedules(schedules);
+		if(!GeneralUtils.isEmpty(scheduleStructures)) {
+			for (final ScheduleStructure scheduleStructure : scheduleStructures) {
+				scheduleStructure.setExportScheduleId(scheduleStructure.getSchedule().getId());
+				scheduleStructure.setSchedule(null);
+			}
+			zipAdd(zos, ScheduleStructure.class.getSimpleName(), this.gson.toJson(scheduleStructures));
+			zos.flush();
+		}
 
-		//Exportando table field
-		//Exportando option field
-		//Exportando schedule
-		documentAttributes.stream().forEach(it->{
-			TableFields tablefields = fieldsBS.tableFieldsByAttribute(it.getId(), true);
-			
-			if (tablefields!=null) {				
-				List<TableInstance> tableInstances = fieldsBS.listTableInstanceByFields(tablefields);
-				tablefields.setTableInstances(tableInstances);
-				
-				if(tablefields.isDocument()) {
-					tableFieldsMap.put(tablefields.getId(),tablefields);
+		//Exportando os valores de cronogramas
+		if (!GeneralUtils.isEmpty(scheduleInstances) || !GeneralUtils.isEmpty(scheduleStructures)) {
+			final List<ScheduleValues> scheduleValues = this.fieldsBS.listAllScheduleValuesByInstancesAndStructures(scheduleInstances, scheduleStructures);
+			if(!GeneralUtils.isEmpty(scheduleValues)) {
+				for (final ScheduleValues scheduleValue : scheduleValues) {
+					scheduleValue.setExportScheduleInstanceId(scheduleValue.getScheduleInstance().getId());
+					scheduleValue.setExportScheduleStructureId(scheduleValue.getScheduleStructure().getId());
+					scheduleValue.setScheduleInstance(null);
+					scheduleValue.setScheduleStructure(null);
 				}
+				zipAdd(zos, ScheduleValues.class.getSimpleName(), this.gson.toJson(scheduleValues));
+				zos.flush();
 			}
-			
-			PaginatedList<OptionsField> optionsfield = fieldsBS.getOptionsField(it.getId());
-			
-			if (optionsfield!=null) {
-				optionsfield.getList().forEach(of->{
-					if(of.isDocument()) {
-						optionsFieldMap.put(of.getId(), of);
-					}
-				});
+		}
+
+		//Exportando as tabelas
+		final List<TableFields> tableFields = this.fieldsBS.listTableFieldsByAttrsAndDocAttrs(attributes, documentAttributes);
+		if(!GeneralUtils.isEmpty(tableFields)) {
+			for (TableFields tableField : tableFields) {
+				tableField.setTableInstances(null);
+				tableField.setTableStructures(null);
 			}
-			
-			Schedule s = docBS.scheduleByAttribute(it.getId(), true);
-
-			if(s != null) {
-				if(s.isDocument()) {
-					s.setExportAttributeId(s.getAttributeId());
-					scheduleMap.put(s.getId(), s);
-				}
-			}
-		});
-		
-		tableFieldsMap.values().stream().forEach(tf -> {
-			tf.getTableInstances().stream().forEach(ti -> {
-				tableInstanceMap.put(ti.getId(),ti);
-				
-				List<TableValues> tablevalues = fieldsBS.listTableValuesByInstance(ti);
-				
-				//Exportando table values
-				tablevalues.stream().forEach(tv -> {
-					tableValuesMap.put(tv.getId(), tv);
-				});
-				
-			});
-			tf.getTableStructures().stream().forEach(ts -> {
-				tableStructureMap.put(ts.getId(), ts);
-				
-				List<TableValues> tablevalues = fieldsBS.listTableValuesByStructure(ts);
-				
-				//Exportando table values
-				tablevalues.stream().forEach(tv -> {
-					tableValuesMap.put(tv.getId(), tv);
-				});
-			});
-			
-			tf.setExportAttributeId(tf.getAttributeId());
-			tf.setTableStructures(null);
-			tf.setTableInstances(null);
-			tf.setAttributeId(null);
-			tableFields.add(tf);
-		});
-		scheduleMap.values().stream().forEach(s -> {
-			
-			s.getScheduleStructures().stream().forEach(ss -> {
-				scheduleStructureMap.put(ss.getId(), ss);
-				
-				 List<ScheduleValues> schedulevalues = docBS.listScheduleValuesByStructure(ss);
-				
-				//Exportando schedule values
-				 schedulevalues.stream().forEach(tv -> {
-					 scheduleValuesMap.put(tv.getId(), tv);
-				});
-			});
-			
-			s.getScheduleInstances().stream().forEach(si -> {
-				scheduleInstanceMap.put(si.getId(),si);
-				
-				List<ScheduleValues> schedulevalues = docBS.listScheduleValuesByInstance(si);
-				
-				//Exportando schedule values
-				 schedulevalues.stream().forEach(tv -> {
-					 scheduleValuesMap.put(tv.getId(), tv);
-				});
-			});	
-
-			s.setExportAttributeId(s.getAttributeId());
-			s.setAttributeId(null);
-			s.setScheduleInstances(null);
-			s.setScheduleStructures(null);
-			schedule.add(s);
-		});
-		
-		
-		//Exportando table instance
-		//Exportando table structure
-		//Exportando table values
-		tableInstanceMap.values().stream().forEach(ti -> {
-			ti.setExportTableFieldsId(ti.getTableFields().getId());
-			ti.setTableFields(null);
-			tableInstance.add(ti);
-		});
-		tableStructureMap.values().stream().forEach(ts -> {
-			ts.setExportTableFieldsId(ts.getTableFields().getId());
-			ts.setTableFields(null);
-			tableStructure.add(ts);
-		});
-		tableValuesMap.values().stream().forEach(tv -> {
-			tv.setExportTableStructureId(tv.getTableStructure().getId());
-			tv.setExportTableInstanceId(tv.getTableInstance().getId());
-			tv.setTableInstance(null);
-			tv.setTableStructure(null);
-			tableValues.add(tv);
-		});
-	
-		
-		//Exportando schedule instance
-		//Exportando schedule structure
-		//Exportando schedule values
-		scheduleInstanceMap.values().stream().forEach(si -> {
-			si.setExportScheduleId(si.getSchedule().getId());
-			si.setSchedule(null);
-			scheduleInstance.add(si);
-		});
-		scheduleStructureMap.values().stream().forEach(si -> {
-			si.setExportScheduleId(si.getSchedule().getId());
-			si.setSchedule(null);
-			scheduleStructure.add(si);
-		});
-		scheduleValuesMap.values().stream().forEach(sv -> {
-			sv.setExportScheduleStructureId(sv.getScheduleStructure().getId());
-			sv.setExportScheduleInstanceId(sv.getScheduleInstance().getId());
-			sv.setScheduleInstance(null);
-			sv.setScheduleStructure(null);
-			scheduleValues.add(sv);
-		});
-		
-		optionsFieldMap.values().stream().forEach(of -> {
-			of.setExportAttributeId(of.getAttributeId());
-			of.setAttributeId(null);
-			optionsField.add(of);
-		});
-		
-		
-		if(!budgetelement.isEmpty())
-			zipAdd(zos, BudgetElement.class.getSimpleName(), this.gson.toJson(budgetelement));
-
-		if(!actionplan.isEmpty())
-			zipAdd(zos, ActionPlan.class.getSimpleName(), this.gson.toJson(actionplan));
-		if(!budget.isEmpty())
-			zipAdd(zos, Budget.class.getSimpleName(), this.gson.toJson(budget));
-		if(!aggregateindicator.isEmpty())
-			zipAdd(zos, AggregateIndicator.class.getSimpleName(), this.gson.toJson(aggregateindicator));
-		if(!attachment.isEmpty())
-			zipAdd(zos, Attachment.class.getSimpleName(), this.gson.toJson(attachment));
-		
-		
-		if(!tableFields.isEmpty())
 			zipAdd(zos, TableFields.class.getSimpleName(), this.gson.toJson(tableFields));
-		if(!tableStructure.isEmpty())
-			zipAdd(zos, TableStructure.class.getSimpleName(), this.gson.toJson(tableStructure));
-		if(!tableInstance.isEmpty())
-			zipAdd(zos, TableInstance.class.getSimpleName(), this.gson.toJson(tableInstance));
-		if(!tableValues.isEmpty())
-			zipAdd(zos, TableValues.class.getSimpleName(), this.gson.toJson(tableValues));
+			zos.flush();
+		}
 		
-		if(!schedule.isEmpty())
-			zipAdd(zos, Schedule.class.getSimpleName(), this.gson.toJson(schedule));
-		if(!scheduleStructure.isEmpty())
-			zipAdd(zos, ScheduleStructure.class.getSimpleName(), this.gson.toJson(scheduleStructure));
-		if(!scheduleInstance.isEmpty())
-			zipAdd(zos, ScheduleInstance.class.getSimpleName(), this.gson.toJson(scheduleInstance));
-		if(!scheduleValues.isEmpty())
-			zipAdd(zos, ScheduleValues.class.getSimpleName(), this.gson.toJson(scheduleValues));
+		//Exportando os instâncias de tabelas
+		final List<TableInstance> tableInstances = this.fieldsBS.listAllTableInstancesByTableFields(tableFields);
+		if(!GeneralUtils.isEmpty(tableInstances)) {
+			for (final TableInstance tableInstance : tableInstances) {
+				tableInstance.setExportTableFieldsId(tableInstance.getTableFields().getId());
+				tableInstance.setTableFields(null);
+				tableInstance.setTableValues(null);
+			}
+			zipAdd(zos, TableInstance.class.getSimpleName(), this.gson.toJson(tableInstances));
+			zos.flush();
+		}
+
+		//Exportando os estruturas de tabelas
+		final List<TableStructure> tableStructures = this.fieldsBS.listAllTableStructuresByTableFields(tableFields);
+		if(!GeneralUtils.isEmpty(tableStructures)) {
+			for (final TableStructure tableStructure : tableStructures) {
+				tableStructure.setExportTableFieldsId(tableStructure.getTableFields().getId());
+				tableStructure.setTableFields(null);
+			}
+			zipAdd(zos, TableStructure.class.getSimpleName(), this.gson.toJson(tableStructures));
+			zos.flush();
+		}
 		
-		if(!optionsField.isEmpty())
-			zipAdd(zos, OptionsField.class.getSimpleName(), this.gson.toJson(optionsField));
+		//Exportando os valores de tabelas
+		if (!GeneralUtils.isEmpty(tableInstances) || !GeneralUtils.isEmpty(tableStructures)) {
+			final List<TableValues> tableValues = this.fieldsBS.listAllTableValuesByInstancesAndStructures(tableInstances, tableStructures);
+			if(!GeneralUtils.isEmpty(tableValues)) {
+				for (final TableValues tableValue : tableValues) {
+					tableValue.setExportTableInstanceId(tableValue.getTableInstance().getId());
+					tableValue.setExportTableStructureId(tableValue.getTableStructure().getId());
+					tableValue.setTableInstance(null);
+					tableValue.setTableStructure(null);
+				}
+				zipAdd(zos, TableValues.class.getSimpleName(), this.gson.toJson(tableValues));
+				zos.flush();
+			}
+		}
 		
 		zos.close();
 	}
@@ -1243,6 +1166,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 *
 	 */
 	private void zipAdd(ZipOutputStream zos, String className, String content) throws IOException {
+		LOGGER.infof("Writing JSON for %s...", className);
 		ZipEntry entry = new ZipEntry(String.format("%s.json", className));
 		zos.putNextEntry(entry);
 		zos.write(content.getBytes("UTF-8"));
@@ -1258,9 +1182,9 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * 
 	 * @return String resultado da busca
 	 */
-	private <clazz> List<clazz> retrieve(Class clazz) {
-		List<clazz> modelo = this.dao.newCriteria(clazz).list();
-		return modelo;
+	private <E extends Serializable> List<E> retrieve(Class<E> clazz) {
+		Criteria criteria = this.dao.newCriteria(clazz);
+		return this.dao.findByCriteria(criteria, clazz);
 	}
 
 	public int getQuantity() {

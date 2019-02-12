@@ -107,6 +107,7 @@ import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 @RequestScoped
 public class DocumentBS extends HibernateBusiness {
@@ -144,6 +145,9 @@ public class DocumentBS extends HibernateBusiness {
 	}
 
 	public List<Document> listAllByPlansMacro(List<PlanMacro> plansMacro) {
+		if (GeneralUtils.isEmpty(plansMacro)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(Document.class);
 		criteria.add(Restrictions.in("plan", plansMacro));
 		return this.dao.findByCriteria(criteria, Document.class);
@@ -420,6 +424,9 @@ public class DocumentBS extends HibernateBusiness {
 	 * @return List<DocumentAttribute> list Lista de atributos
 	 */
 	public List<DocumentAttribute> listAllAttributesBySections(List<DocumentSection> documentSections) {
+		if (GeneralUtils.isEmpty(documentSections)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(DocumentAttribute.class);
 		criteria.add(Restrictions.in("section", documentSections));
 		return this.dao.findByCriteria(criteria, DocumentAttribute.class);
@@ -495,6 +502,9 @@ public class DocumentBS extends HibernateBusiness {
 	 * @return List<DocumentSection> Lista de seções do documento.
 	 */
 	public List<DocumentSection> listAllSectionsByDocuments(List<Document> documents) {
+		if (GeneralUtils.isEmpty(documents)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(DocumentSection.class);
 		criteria.add(Restrictions.in("document", documents));
 		return this.dao.findByCriteria(criteria, DocumentSection.class);

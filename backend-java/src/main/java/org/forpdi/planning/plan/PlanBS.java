@@ -154,6 +154,9 @@ public class PlanBS extends HibernateBusiness {
 	}
 	
 	public List<Plan> listAllPlansForPlansMacro(List<PlanMacro> plansMacro) {
+		if (GeneralUtils.isEmpty(plansMacro)) {
+			return Collections.emptyList();
+		}
 		if (GeneralUtils.isEmpty(plansMacro))
 			return Collections.emptyList();
 		Criteria criteria = this.dao.newCriteria(Plan.class)
@@ -312,6 +315,9 @@ public class PlanBS extends HibernateBusiness {
 	 * @return query Lista dos planos.
 	 */
 	public List<PlanDetailed> listAllPlansDetailed(List<Plan> plans) {
+		if (GeneralUtils.isEmpty(plans)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
 		criteria.add(Restrictions.in("plan", plans));
 		return this.dao.findByCriteria(criteria, PlanDetailed.class);
