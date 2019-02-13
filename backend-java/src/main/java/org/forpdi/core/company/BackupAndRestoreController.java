@@ -10,6 +10,7 @@ import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.user.authz.permission.ExportDataPermission;
 import org.forpdi.core.user.authz.permission.RestoreDataPermission;
 
 import br.com.caelum.vraptor.Controller;
@@ -36,7 +37,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 *
 	 */
 	@Get("/company/export")
-	//@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
 	public void export() {
 		try {
 			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
@@ -64,7 +65,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 */
 	@Post("/company/fbkupload")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
-	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
+	@UploadSizeLimit(fileSizeLimit=20 * 1024 * 1024)
 	public void  fbkupload(UploadedFile file) {
 		
 		if (file == null) {
