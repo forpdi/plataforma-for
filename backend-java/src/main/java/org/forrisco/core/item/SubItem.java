@@ -29,14 +29,24 @@ public class SubItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, length=4000)
 	private String description;
 
-	@SkipSerialization
 	@ManyToOne(targetEntity=Item.class, optional=false, fetch=FetchType.EAGER)
 	private Item item;
 	
 	@Transient
 	private List<FieldSubItem> fieldSubItem;
 	
+	@Transient
+	private Long itemId;
 	
+	
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+
 	public List<FieldSubItem> getFieldSubItem() {
 		return fieldSubItem;
 	}

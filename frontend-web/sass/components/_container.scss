@@ -328,6 +328,7 @@
   float: left;
 }
 
+
 .fpdi-notifications-number {
   position: relative;
   background: #FF5B5B;
@@ -410,7 +411,7 @@
 
 .form-control-h {
 	width: 250px;
-	margin: 0 10px 0 0;
+	height: 25px;
 }
 /*	height: auto;
 	width: 100%;
@@ -424,7 +425,8 @@
 
 
 .Cor{
-	padding: 12px 40px;
+	//padding: 12px 40px;
+	padding: 20px 50px;
 	white-space: nowrap;
 	border: .5px solid #ddd;
 	text-align: -webkit-center;
@@ -435,10 +437,12 @@
 
 .Vermelho {
 	background-color: #FF0000;
+	color: white;
 }
 
 .Marron {
 	background-color: #774422;
+	color: white;
 }
 
 .Amarelo {
@@ -447,22 +451,43 @@
 
 .Laranja {
 	background-color: #FF6600;
+	color: white;
 }
 .Verde {
 	background-color: #00CC00;
+	color: white;
 }
 .Azul {
 	background-color: #0000FF;
+	color: white;
 }
 
 
 .vertical-text {
 	transform: rotate(270deg);
-
 }
 
 .matrixSelect {
-
 	width:auto;
 	font-size: 12px !important;
+}
+
+
+.frisco-containerSelect {
+	float: right;
+}
+
+.frisco-containerOptions {
+	font-size: 13px;
+	padding: 15px 10px;
+}
+
+.frisco-containerOptions span {
+	color: darken($brand-secondary, 20%);
+	margin: 0 10px;
+	cursor: pointer;
+}
+
+.frisco-containerOptions span.active {
+	text-decoration: underline;
 }

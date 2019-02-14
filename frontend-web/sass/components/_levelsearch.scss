@@ -87,7 +87,7 @@
     font-size: 120%;
 }
 .level-search-keyword h3 {
-    font-size: 100%;    
+    font-size: 100%;
 }
 
 .level-search-checkbox h3 {
@@ -113,6 +113,12 @@
 .displayFlex-level-search {
     float:right;
 }
+
 .mdi-level-search {
-    color:#D3D3D3
+	color:#D3D3D3;
+
 }
+.displayFlex-level-search .mdi-close-circle {
+	color: red;
+}
+

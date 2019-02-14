@@ -217,17 +217,24 @@ public class BackupAndRestoreController extends AbstractController  {
 			this.fail("Arquivo não encontrado");
 			return;
 		}
+		
 		try{
 			File initialFile = new File(SystemConfigs.getConfig("store.files")+file.getName());
+			
+			byte[] bytes = new byte[(int)initialFile.length()];
+			
 			if(initialFile.exists()){
 				FileInputStream fis = new FileInputStream(initialFile);
-				IOUtils.copy(fis, response.getOutputStream());
+				fis.read(bytes);
 				fis.close();
+				response.getOutputStream().write(bytes);
+				response.getOutputStream().close();
+				this.result.nothing();
 			}
-			this.success(file);
 		} catch (Throwable ex) {
 			LOGGER.error("Error while proxying the file upload.", ex);
 			this.fail(ex.getMessage());
 		}
 	}
+
 }

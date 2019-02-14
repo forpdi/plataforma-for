@@ -5,11 +5,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
-import org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.risk.Incident;
+import org.forrisco.risk.Monitor;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 
@@ -106,7 +105,7 @@ public class UnitController extends AbstractController{
 	public void listUnits(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
-			PaginatedList<Unit> units= this.unitBS.listUnitbyPlan(plan);
+			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -138,6 +137,8 @@ public class UnitController extends AbstractController{
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+
 	
 	
 	/**

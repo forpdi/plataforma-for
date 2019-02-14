@@ -29,8 +29,9 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_DESTROY: 'item-destroy',
 	ACTION_FIND: 'item-find',
 	ACTION_FIND_TERMS:'item-findTerms',
-	ACTION_RETRIEVE: 'item-retrieve',
+	//ACTION_RETRIEVE: 'item-retrieve',
 	ACTION_RETRIEVE_ITEM: 'item-retrieveItem',
+	ACTION_RETRIEVE_ITENS: 'item-retrieveItens',
 	ACTION_RETRIEVE_FIELD: 'item-retrieveField',
 	ACTION_RETRIEVE_PERFORMANCE: 'item-retrievePerformance',
 	ACTION_UPDATE: 'item-update',
@@ -42,6 +43,7 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_DELETE: "item-delete",
 	ACTION_RETRIEVE_SUBITEM: "item-retrieveSubitem",
 	ACTION_RETRIEVE_SUBITENS: "item-retrieveSubitens",
+	ACTION_RETRIEVE_ALLSUBITENS: "item-retrieveAllSubitens",
 	ACTION_NEW_SUBITEM: 'item-newSubItem',
 	ACTION_CREATE_SUBFIELD: 'item-createSubfield',
 	ACTION_RETRIEVE_SUBFIELD: 'item-retrieveSubField',
@@ -105,6 +107,21 @@ var ItemStore = Fluxbone.Store.extend({
 		});
 	},
 
+	retrieveItens(id) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: me.url,
+			data: {policyId: id},
+			success(model, response, options) {
+				me.trigger("retrieveItens", response);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
 	retrieveSubitem(id) {
 		var me = this;
 		var model = new me.model();
@@ -126,6 +143,21 @@ var ItemStore = Fluxbone.Store.extend({
 			url: me.url + "/subitens/" + id,
 			success(model, response, options) {
 				me.trigger("retrieveSubitens", response,pigback);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
+
+	retrieveAllSubitens(id,pigback) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: me.url + "/allsubitens/" + id,
+			success(model, response, options) {
+				me.trigger("retrieveAllSubitens", response,pigback);
 			},
 			error(model, response, options) {
 				me.handleRequestErrors([], options.xhr);

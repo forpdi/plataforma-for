@@ -1,12 +1,16 @@
 package org.forrisco.core.unit;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
-import org.forrisco.core.process.ProcessUnit;
 import org.forrisco.core.unit.Unit;
+import org.forrisco.risk.Incident;
+import org.forrisco.risk.Monitor;
+import org.forrisco.risk.Risk;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -29,7 +33,7 @@ public class UnitBS extends HibernateBusiness {
 	 *            instância da plano de risco
 	 *            
 	 */
-	public PaginatedList<Unit> listUnitbyPlan(PlanRisk planrisk) {
+	public PaginatedList<Unit> listUnitsbyPlanRisk(PlanRisk planrisk) {
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 		
 		Criteria criteria = this.dao.newCriteria(Unit.class)
@@ -93,7 +97,84 @@ public class UnitBS extends HibernateBusiness {
 		unit.setDeleted(true);
 		this.persist(unit);	
 	}
+
+
+	public PaginatedList<Monitor> listMonitorbyUnit(Unit unit) {
+		PaginatedList<Monitor>  monitors = new PaginatedList<Monitor>();
+		List<Monitor>  list = new ArrayList<Monitor>();
+		Long total=(long) 0;
+		
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("unit", unit));
+		
+		
+		for(Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
+			
+			Criteria crit = this.dao.newCriteria(Monitor.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("risk", risk));
+			
+			Criteria count = this.dao.newCriteria(Monitor.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("risk", risk))
+					.setProjection(Projections.countDistinct("id"));
+			
+			list.addAll(this.dao.findByCriteria(crit, Monitor.class));
+				
+			total += (Long) count.uniqueResult();
+
+		}
+		
+		for(Monitor monitor: list) {
+			monitor.setRiskId(monitor.getRisk().getId());
+		}
+		
+		
+		
+		
+		monitors.setList(list);
+		monitors.setTotal(total);
+		
+		return monitors;
+	}
 	
+	
+	public PaginatedList<Incident> listIncidentsbyUnit(Unit unit) {
+		PaginatedList<Incident>  incidents = new PaginatedList<Incident>();
+		List<Incident>  list = new ArrayList<Incident>();
+		Long total=(long) 0;
+		
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("unit", unit));
+		
+		for(Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
+			
+			Criteria crit = this.dao.newCriteria(Incident.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("risk", risk));
+			
+			Criteria count = this.dao.newCriteria(Incident.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("risk", risk))
+					.setProjection(Projections.countDistinct("id"));
+			
+			list.addAll(this.dao.findByCriteria(crit, Incident.class));
+				
+			total += (Long) count.uniqueResult();
+
+		}
+		
+		for(Incident incident: list) {
+			incident.setUnitId(unit.getId());
+		}
+	
+		incidents.setList(list);
+		incidents.setTotal(total);
+		
+		return incidents;
+	}
 	
 	
 

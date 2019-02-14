@@ -108,10 +108,9 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveSubField", (model) => {
-			if(model != null){
+			if(model.data != null){
 				var fields = [];
 				for (var i in model.data) {
-
 					if(!model.data[i].deleted){
 						fields.push({
 							name: model.data[i].name+"-"+(i),
@@ -172,7 +171,7 @@ export default React.createClass({
 			}
 		}, me);
 
-		ItemStore.on("retrieve", (model) => {
+		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
 				me.setState({
 					itemModel: model
@@ -218,6 +217,9 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
+
+		//console.log("SIR newprop",newProps, newContext, this.state.subitemModel)
+		//console.log(newProps.params.subitemId , this.props.params.subitemId)
 		if (newProps.params.subitemId != this.props.params.subitemId) {
 			this.setState({
 				loading: true,
@@ -242,6 +244,7 @@ export default React.createClass({
 				loading: false
 			})
 		}*/
+		//this.forceUpdate()
 
 	},
 	refreshData(props, context) {
@@ -267,13 +270,13 @@ export default React.createClass({
 
 			if(props.params.itemId){
 				ItemStore.dispatch({
-					action: ItemStore.ACTION_RETRIEVE,
+					action: ItemStore.ACTION_RETRIEVE_ITEM,
 					data: props.params.itemId
 				})
 			}
 
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
+				action: PolicyStore.ACTION_FIND_POLICY,
 				data: props.params.policyId
 			});
 
@@ -456,8 +459,8 @@ export default React.createClass({
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						to={'/forrisco/policy/'+this.context.policy.attributes.id+"/item/"+this.props.params.itemId}
-						title={this.context.policy.attributes.name}>{this.context.policy.attributes.name.length > 15 ? this.context.policy.attributes.name.substring(0, 15)+"..." : this.context.policy.attributes.name.substring(0, 15)
+						to={'/forrisco/policy/'+this.context.policy.id+"/item/"+this.props.params.itemId}
+						title={this.context.policy.name}>{this.context.policy.name.length > 15 ? this.context.policy.name.substring(0, 15)+"..." : this.context.policy.name.substring(0, 15)
 					}</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
@@ -470,13 +473,13 @@ export default React.createClass({
 
 	onSubmit(event) {
 		event && event.preventDefault();
+
 		if(this.state.subitemModel){
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_CUSTOM_UPDATE_SUB,
 				data: {
 					id: this.state.subitemModel.data.id,
-					name: this.state.subitemModel.data.name,
-					deleted: this.state.subitemModel.data.deleted,
+					name: this.refs.newSubitemForm['field-description'].value,//this.state.subitemModel.data.name,
 					item: this.state.itemModel,
 					fieldSubItem: this.state.fields
 				}
@@ -528,14 +531,14 @@ export default React.createClass({
 								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 								<span className="mdi mdi-chevron-down" />
 							</a>
-							{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
+							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
 						</span>
 						):""}
 				</h1>
 
 				{this.state.fields && (this.state.fields.length > 0) ?
 					this.state.fields.map((fieldsubitem, index) => {
-					if(fieldsubitem.item ==  AttributeTypes.TEXT_AREA_FIELD){
+					if(fieldsubitem.type ==  AttributeTypes.TEXT_AREA_FIELD){
 						return (
 							<div><VerticalForm
 							vizualization={this.state.vizualization}
@@ -543,8 +546,6 @@ export default React.createClass({
 							onSubmit={this.onSubmit}
 							fields={[fieldsubitem]}
 							submitLabel={Messages.get("label.submitLabel")}
-							//store={ItemStore}
-							//ref='planRegisterForm'
 						/></div>)
 					}else{
 						return (
@@ -565,7 +566,7 @@ export default React.createClass({
 							</div>
 						)
 					}
-	
+
 				}) :""}
 
 			</div>
@@ -585,7 +586,7 @@ export default React.createClass({
 
 					<h1>
 						{(this.state.titulo)}
-						{this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
+						{/*this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
 							(<span className="dropdown">
 								<a
 									className="dropdown-toggle"
@@ -599,7 +600,7 @@ export default React.createClass({
 								</a>
 								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
 							</span>
-						):""}
+						):""*/}
 					</h1>
 
 					{

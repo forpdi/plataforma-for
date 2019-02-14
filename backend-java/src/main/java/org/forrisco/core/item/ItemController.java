@@ -1,5 +1,8 @@
 package org.forrisco.core.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -7,11 +10,8 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.user.authz.AccessLevels;
-import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.policy.Policy;
-import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -185,7 +185,7 @@ public class ItemController extends AbstractController {
 	 * Retorna itens.
 	 * 
 	 * @param Policy
-	 *            Id do plano macro a ser retornado.
+	 *            Id da política.
 	 * @return <List> item
 	 */
 	@Get( PATH + "")
@@ -246,6 +246,33 @@ public class ItemController extends AbstractController {
 				this.fail("O SubItem solicitado não foi encontrado.");
 			} else {
 				this.success(subitem);
+			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna subitens.
+	 * 
+	 * @param id
+	 *            Id do item.
+	 * @return Subitem Retorna os subitens de acordo com o id passado.
+	 * 
+	 */
+
+	@Get( PATH + "/subitens/{id}")
+	@NoCache
+	//@Permissioned
+	public void retrieveSubitem(@NotNull Long id) {
+		try {
+			Item item = this.itemBS.exists(id, Item.class);
+			if (item == null) {
+				this.fail("O item solicitado não foi encontrado.");
+			} else {
+				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
+				this.success(subitens);
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -476,27 +503,42 @@ public class ItemController extends AbstractController {
 	}
 	
 	
+
+	
+	
 	/**
-	 * Retorna subitens.
+	 * Retorna todos subitens da política.
 	 * 
 	 * @param id
-	 *            Id do item.
+	 *            Id da política.
 	 * @return Subitem Retorna os subitens de acordo com o id passado.
 	 * 
 	 */
 
-	@Get( PATH + "/subitens/{id}")
+	@Get( PATH + "/allsubitens/{id}")
 	@NoCache
 	//@Permissioned
-	public void retrieveSubitem(@NotNull Long id) {
+	public void retrieveAllSubitem(@NotNull Long id) {
 		try {
-			Item item = this.itemBS.exists(id, Item.class);
-			if (item == null) {
+			Policy policy = this.itemBS.exists(id, Policy.class);
+			if (policy == null) {
 				this.fail("A política solicitada não foi encontrado.");
-			} else {
-				PaginatedList<SubItem> subitens= this.itemBS.listSubItensByItem(item);
-				this.success(subitens);
+				return;
 			}
+
+			PaginatedList<Item> itens = this.itemBS.listItensByPolicy(policy);
+			PaginatedList<SubItem> subitens = new PaginatedList<>();
+			List<SubItem> list= new ArrayList<>();
+			
+			for(Item item :itens.getList()) {
+				PaginatedList<SubItem> subitem = this.itemBS.listSubItensByItem(item);
+				list.addAll(subitem.getList());
+			}
+		
+			subitens.setList(list);
+			subitens.setTotal((long) list.size());
+			this.success(subitens);
+
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

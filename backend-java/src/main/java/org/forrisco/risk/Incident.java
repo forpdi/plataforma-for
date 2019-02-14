@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 
@@ -34,24 +35,19 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	private Risk risk;
 
 	@Column(nullable=false, length=4000)
-	private String report;
+	private String description;
 
-	@Column(nullable=false, length=40)
-	private String probability;
+	@Column(nullable=false, length=4000)
+	private String action;
 
-	@Column(nullable=false, length=40)
-	private String impact;
-
+	@Column(nullable=false)
+	private int type;
+	
 	@Column(nullable=false)
 	private Date begin;
 	
-	public Date getBegin() {
-		return begin;
-	}
-
-	public void setBegin(Date begin) {
-		this.begin = begin;
-	}
+	@Transient
+	private Long unitId;
 	
 	public User getUser() {
 		return user;
@@ -69,28 +65,44 @@ public class Incident extends SimpleLogicalDeletableEntity {
 		this.risk = risk;
 	}
 
-	public String getReport() {
-		return report;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setReport(String report) {
-		this.report = report;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getProbability() {
-		return probability;
+	public String getAction() {
+		return action;
 	}
 
-	public void setProbability(String probability) {
-		this.probability = probability;
+	public void setAction(String action) {
+		this.action = action;
 	}
 
-	public String getImpact() {
-		return impact;
+	public int getType() {
+		return type;
 	}
 
-	public void setImpact(String impact) {
-		this.impact = impact;
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public Date getBegin() {
+		return begin;
+	}
+
+	public void setBegin(Date begin) {
+		this.begin = begin;
+	}
+
+	public Long getUnitId() {
+		return unitId;
+	}
+
+	public void setUnitId(Long unitId) {
+		this.unitId = unitId;
 	}
 	
 }
