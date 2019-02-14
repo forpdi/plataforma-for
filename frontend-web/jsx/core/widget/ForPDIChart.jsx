@@ -1,6 +1,7 @@
 import React from "react";
 import {Chart} from 'react-google-charts';
 import Observables from "forpdi/jsx/core/util/Observables.jsx"
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 export default React.createClass({
 
@@ -65,8 +66,9 @@ export default React.createClass({
                  graph_id={this.props.graph_id}
                  width={this.props.width}
                  height={this.props.height}
-                 legend_toggle={this.props.legend_toggle}
+				 legend_toggle={this.props.legend_toggle}
                  chartEvents={this.props.chartEvents || []}/>
+				loader={<div><LoadingGauge/></div>}
             </div>
     	);
     }

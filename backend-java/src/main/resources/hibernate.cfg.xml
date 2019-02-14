@@ -97,13 +97,20 @@
   		<mapping class="org.forrisco.core.process.ProcessUnit"/>
   		<mapping class="org.forrisco.risk.Risk"/>
   		<mapping class="org.forrisco.risk.RiskLevel"/>
+  		<mapping class="org.forrisco.risk.RiskHistory"/>
   		<mapping class="org.forrisco.risk.Contingency"/>
   		<mapping class="org.forrisco.risk.Incident"/>
   		<mapping class="org.forrisco.risk.Monitor"/>
+  		<mapping class="org.forrisco.risk.MonitorHistory"/>
   		<mapping class="org.forrisco.risk.PreventiveAction"/>
   		<mapping class="org.forrisco.risk.objective.RiskActivity"/>
   		<mapping class="org.forrisco.risk.objective.RiskProcess"/>
   		<mapping class="org.forrisco.risk.objective.RiskStrategy"/>
+
+		<!-- <event type="post-insert">
+            <listener class="org.forrisco.risk.RiskInterceptor"/>
+             listener class="org.hibernate.event.def.DefaultLoadEventListener"/>
+        </event> -->
 
 	</session-factory>
 </hibernate-configuration>

@@ -1,5 +1,6 @@
 package org.forrisco.risk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
@@ -21,10 +24,13 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.logging.Logger;
 
 import com.ibm.icu.impl.duration.TimeUnit;
 
+import br.com.caelum.vraptor.boilerplate.Business;
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
+import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 
 
@@ -32,7 +38,35 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
  * @author Matheus Nascimento
  */
 @RequestScoped
-public class RiskBS extends HibernateBusiness {
+public class RiskBS implements Business {
+	
+	//protected final Logger LOGGER;
+	
+	@Inject protected HibernateDAO dao;
+	@Inject protected HttpServletRequest request;
+	
+	/*public HibernateBusiness() {
+		LOGGER = Logger.getLogger(this.getClass());
+	}*/
+	
+	@Override
+	public <E extends Serializable> E exists(Serializable id, Class<E> clazz) {
+		return this.dao.exists(id, clazz);
+	}
+	
+	@Override
+	public <E extends Serializable> void persist(E model) {
+		this.dao.persist(model);
+	}
+	
+	@Override
+	public <E extends Serializable> void remove(E model) {
+		this.dao.delete(model);
+	}
+	
+	public <E extends Serializable> void save(E model) {
+		this.dao.save(model);
+	}
 	
 
 
@@ -580,6 +614,15 @@ public class RiskBS extends HibernateBusiness {
 		return matrix;
 	}
 
+	
+	/**
+	 * Atualiza a probabilidade e impacto do risco
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 * @param Map<String, String>   
+	 * 				map de probabilidade e risco novos e antigos
+	 */
 	public void updateRiskPI(Risk risk, Map<String, String> impact_probability) {
 		
 		PaginatedList<Monitor> monitors = this.listMonitorbyRisk(risk);
@@ -607,6 +650,15 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 
+	/**
+	 * Retorna o ultimo monitoramento de um risco
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 *
+	 * @return Monitor
+	 * 			instância de um monitoramento
+	 */
 	public Monitor lastMonitorbyRisk(Risk risk) {
 			
 		Criteria criteria = this.dao.newCriteria(Monitor.class)
@@ -619,14 +671,26 @@ public class RiskBS extends HibernateBusiness {
 		return monitor;
 	}
 
-	public int riskState(String periodicity, Monitor monitor) {
+	
+	/**
+	 * Retorna o estado de
+	 * 
+	 * @param String
+	 *            periodicidade
+	 *            
+	 * @param Data
+	 * 		Data para comparação da peridicidade
+	 * 
+	 * @return int
+	 * 			estado atual do monitoramento
+	 */
+	public int riskState(String periodicity, Date date) {
 		int state=0; //não iniciado
 		
-		if(monitor == null) {
+		if(date == null) {
 			return state;
 		}
 
-		Date date = monitor.getBegin();
 		Date now= new Date();
 		
 		double diffInSec = (now.getTime() - date.getTime())/1000;
@@ -684,6 +748,41 @@ public class RiskBS extends HibernateBusiness {
 		}
 		
 		return state;
+	}
+
+	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<RiskHistory> results = new PaginatedList<RiskHistory>();
+		List<RiskHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false));
+			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+		
+	}
+
+	public PaginatedList<MonitorHistory> listMonitorHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<MonitorHistory> results = new PaginatedList<MonitorHistory>();
+		List<MonitorHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(MonitorHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false));
+			list.addAll(this.dao.findByCriteria(criteria, MonitorHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
 	}
 
 

@@ -422,7 +422,7 @@ export default React.createClass({
 									break;
 								}
 							}else{
-								if(this.state.risklevelModel){
+								if(this.state.risklevelModel[k]){
 									if(valor == this.state.risklevelModel.data[k]['level']){
 										switch(this.state.risklevelModel.data[k]['color']) {
 											case 0: classe="Vermelho"; break;
@@ -712,7 +712,7 @@ export default React.createClass({
 		}
 
 		if (me.props.params.policyId) {
-			data.id=this.state.policyModel.id
+			data.id=this.state.policyModel.data.id
 			data.levels=this.state.color
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_CUSTOM_UPDATE,

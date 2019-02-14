@@ -96,18 +96,43 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		ItemStore.on("retrieveSubitem", (model) => {
+
+			var fields = [];
+
 			if(!model.data.deleted){
+				if(model.data.fieldSubItem != null){
+
+
+					for (var i in model.data.fieldSubItem) {
+						var subitem=model.data.fieldSubItem[i]
+
+						if(!subitem.deleted){
+							fields.push({
+								name: subitem.name+"-"+(i),
+								value: subitem.name,
+								label: subitem.name,
+								description:subitem.description,
+								isText:  subitem.isText,
+								type: subitem.isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
+								edit: false
+							});
+						}
+					}
+				}
+
 				me.setState({
 					subitemModel: model,
 					vizualization: true,
 					titulo: model.data.name,
+					fields: fields,
+					loading: false
 				});
 				//me.forceUpdate();
 				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
 			}
 		}, me);
 
-		ItemStore.on("retrieveSubField", (model) => {
+		/*ItemStore.on("retrieveSubField", (model) => {
 			if(model.data != null){
 				var fields = [];
 				for (var i in model.data) {
@@ -129,7 +154,7 @@ export default React.createClass({
 					loading: false
 				})
 			}
-		}, me);
+		}, me);*/
 
 		ItemStore.on("subitemUpdated", (model) => {
 			if(model !=null){
@@ -218,8 +243,6 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps, newContext) {
 
-		//console.log("SIR newprop",newProps, newContext, this.state.subitemModel)
-		//console.log(newProps.params.subitemId , this.props.params.subitemId)
 		if (newProps.params.subitemId != this.props.params.subitemId) {
 			this.setState({
 				loading: true,
@@ -256,10 +279,10 @@ export default React.createClass({
 						data: props.params.subitemId
 					});
 
-					ItemStore.dispatch({
+					/*ItemStore.dispatch({
 						action: ItemStore.ACTION_RETRIEVE_SUBFIELD,
 						data: props.params.subitemId
-					});
+					});*/
 				}
 			}else{
 

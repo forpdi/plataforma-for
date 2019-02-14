@@ -1,41 +1,58 @@
 import React from "react";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
-import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import ForPDIChart from "forpdi/jsx/core/widget/ForPDIChart.jsx"
-import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
-import BudgetStore from "forpdi/jsx/planning/store/Budget.jsx";
-import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
-import string from 'string';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
+import GraphicFilter from "forpdi/jsx_forrisco/dashboard/view/graphic/GraphicFilter.jsx";
+import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/Graphic.jsx";
 
 export default React.createClass({
 
 	getInitialState() {
 		return {
-		plan:null,
-		risks: null,
-		threats: null,
-		riskLevelModel: null,
-		tables: 0,
-		page2: false,
-		loading: true,
+			plan:null,
+			risks: null,
+			threats: null,
+			riskLevelModel: null,
+			risk_level_active:[],
+			page2: false,
+
+			unit: null,
+			units: [],
+			allRisks: null,
+			year: null,
+			years: [],
+			loading: true,
+			loadingGraph: true,
+			data:[],
+			risk_history:[]
 		}
 	},
 
 	componentWillReceiveProps(newProps){
 		var me = this;
-		var tables=1;
 
-		me.setState({
-			plan: newProps.plan,
-			unit: newProps.unit,
-			threats: newProps.threats,
-			riskLevelModel: newProps.riskLevel,
-			risks: newProps.risks,
-			loading: false,
-			tables: tables
-		});
+		this.state.risks=newProps.risks;
+		this.state.unit=newProps.unit;
+		this.state.plan= newProps.plan;
+		this.state.threats= newProps.threats;
+		this.state.riskLevelModel= newProps.riskLevel;
+		this.state.allRisks= newProps.allRisks;
+		this.state.loading=false;
+		this.state.year=(new Date).getFullYear()
+
+		if(newProps.units.length>0 && this.state.units != newProps.units){
+			this.state.units= newProps.units;
+			this.refresh()
+		}
+	},
+
+	refresh(){
+		RiskStore.dispatch({
+			action:RiskStore.ACTION_FIND_HISTORY_BY_UNIT,
+			data:{unit: this.state.unit,
+				plan:this.state.plan.id }
+		})
 	},
 
 	componentDidMount() {
@@ -46,11 +63,19 @@ export default React.createClass({
 				loading: false
 			});
 		}
+
+		RiskStore.on("historyByUnit",(model) =>{
+			if(model.success){
+				this.setState({
+					risk_history:model.data
+				})
+			}
+		})
 	},
 
  	componentWillUnmount() {
-		DashboardStore.off(null, null, this);
-		BudgetStore.off(null, null, this);
+
+		RiskStore.off(null, null, this);
 		StructureStore.off(null, null, this);
 	},
 
@@ -61,103 +86,16 @@ export default React.createClass({
 	},
 
 
-	onUnitChange(){
-		console.log("onUnitChange")
-	},
-
-	onYearChange(){
-		console.log("onYearChange")
-	},
-
-	renderGraph() {
-		var units=[{id:1, name:'nome'}];
-		var year=['2019','2018'];
-		var loading=false;
-		var options = {
-			title: '',
-			hAxis: {title: "Tempo", minValue: 0, maxValue: 15, },
-			vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
-			legend: true,
-			explorer: {axis: 'horizontal'},
-			bar: {groupWidth: '50%'},
-			colors:["red","blue"],
-		}
-		var data=[
-			['x', 'dogs'],
-			[0, 0],
-			[1, 10],
-			[2, 23],
-			[3, 17],
-			[4, 18],
-			[5, 9],
-			[6, 11],
-			[7, 27],
-			[8, 33],
-			[9, 40],
-			[10, 32],
-			[11, 35],
-		  ]
-		var thematicAxes=[]
-		var	selectedThematicAxes= -1
-		var chartEvents= [{
-					eventName : 'select',
-					callback  : this.onChartClick
-						}]
-		var	pageSize= 10
-
-
-		return (<div>
-				<div className="dashboard-panel-title">
-					<span className="frisco-containerSelect"> {Messages.get("label.units")}
-					<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectUnits" >
-						<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
-						{units.map((attr, idy) =>{
-							return(
-							<option  key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
-									{(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
-							</option>);})
-						}
-					</select>
-					</span>
-				</div>
-				<div style={{"text-align": "center"}}>
-					<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectYear">
-						{year.map((attr, idx) =>{
-							return(
-							<option key={idx} value={attr} data-placement="right" title={attr}>{attr}</option>);})
-						}
-					</select>
-					</div>
-				{loading ? <LoadingGauge/> :
-					<div>
-						<ForPDIChart
-							chartType="LineChart"
-							data={data}
-							options={options}
-							graph_id="LineChart"
-							//width="120%"
-							//height="100%"
-							legend_toggle={false}
-							pageSize={this.state.pageSize}
-							total={this.state.total}
-							onChangePage={this.getInfo}
-							//chartEvents={this.state.chartEvents}
-							/>
-						<div className="colaborator-goal-performance-legend">
-							<span className="legend-item"><input type="text"  className="legend-risk-threats marginLeft10" disabled/> {Messages.getEditable("label.risk.threats","fpdi-nav-label")}</span>
-							<span className="legend-item"><input type="text"  className="legend-risk-opportunities marginLeft10" disabled/> {Messages.getEditable("label.risk.opportunities","fpdi-nav-label")}</span>
-						</div>
-					</div>}
-			</div>
-		);
-	},
-
 	listRisk(risk_level){
-		console.log("//TODO mostrar lista de riscos", risk_level,this.state.threats, this.state.plan, this.state.unit)
-		Modal.GraphHistory(Messages.get("label.risk.history").toUpperCase(),this.renderGraph())
+		this.state.risk_level_active=[]
+		this.state.risk_level_active.push(risk_level)
+		this.setState({
+			risk_level_active:this.state.risk_level_active,
+			loadingGraph:false
+		})
 	},
 
-	getTables(){
+	getPanel(){
 		var panel1=[]
 		var panel2=[]
 
@@ -189,29 +127,37 @@ export default React.createClass({
 			}
 
 			if(i<4){
-				if(i%2 ==0 ){
+				if(i%2 ==0 && i !=0 ){
 					panel1.push(<br/>)
 				}
+
 				panel1.push( <span className={"dashboard-risk-board "+color}>
-					<a>
-						<div title="Visualizar histórico" className="mdi mdi-chart-line" style={ color=="Amarelo" ? {"left":"65px","position": "relative", "color":"black"} : {"left":"65px", "position": "relative", "color":"white"}}
-						onClick={() => this.listRisk(level)}/>
-					</a>
+
+						<GraphicFilter
+							level={level}
+							onClick={this.listRisk}
+							color={color}
+							quantity={true}
+						/>
+
 					<div className="dashboard-risk-number">{quantity}</div>
 					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}else{
 				panel2.push( <span className={"dashboard-risk-board  "+color}>
 					<a>
-						<div title="Visualizar histórico" className="mdi mdi-chart-line" style={ color=="Amarelo" ? {"left":"65px","position": "relative", "color":"black"} : {"left":"65px", "position": "relative", "color":"white"}}
-						onClick={() => this.listRisk(level)}/>
+					<GraphicFilter
+							level={level}
+							onClick={this.listRisk}
+							color={color}
+							quantity={true}
+						/>
 					</a>
 					<div className="dashboard-risk-number">{quantity}</div>
 					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}
 		}
-
 
 		if(this.state.riskLevelModel.data.length>4){
 			panel1.push(<div><br/><div className={"mdi mdi-arrow-right-bold-circle icon-link"} onClick={this.changePage}/></div>)
@@ -224,14 +170,29 @@ export default React.createClass({
 		}
 	},
 
+	setLoading(bool){
+		this.state.loadingGraph=bool
+	},
+
 	render() {
 		if(this.state.risks==null){
 			return (<LoadingGauge/>)
 		}
 		return (<div>
-			<div>
-				{this.getTables()}
-			</div>
+			{this.getPanel()}
+
+			{!this.state.loadingGraph ?
+			<Graphic
+			title={Messages.get("label.risk.history").toUpperCase()}
+			unit={this.state.unit}
+			units={this.state.units}
+			level={this.state.riskLevelModel.data}
+			levelActive={this.state.risk_level_active}
+			history={this.state.risk_history}
+			loading={this.setLoading}
+			unmount={this.unmount}
+			 />
+			 :""}
 		</div>);
 	}
 

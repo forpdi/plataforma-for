@@ -2809,7 +2809,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 1) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2824,7 +2824,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 2) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2839,7 +2839,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 3) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2854,7 +2854,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 0) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
