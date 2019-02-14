@@ -21,6 +21,7 @@ public class PlanRiskItemField extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_plan_risk_item_field";
 	private static final long serialVersionUID = 1L;
 
+	@SkipSerialization
 	@ManyToOne(targetEntity=PlanRiskItem.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRiskItem planRiskItem;
 

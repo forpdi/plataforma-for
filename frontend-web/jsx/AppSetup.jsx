@@ -65,6 +65,7 @@ import Forrisco_DetailPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/Deta
 import Forrisco_PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx";
 import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx";
+import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -111,8 +112,9 @@ ReactDOM.render((
 			<Route path="item" component={Forrisco_DetailPlanRisk}>
 				<IndexRedirect to="overview"/>
 				<Route path="overview" component={Forrisco_PlanRiskTabPanel}/>
-				<Route path="new" component={Forrisco_PlanRiskRegistryItem}/>  		/* Novo item do plano de risco*/
-				<Route path=":itemId" component={Forrisco_PlanRiskGeneralInfo}/> 	/* Informações gerais do plano de risco*/
+				<Route path="new" component={Forrisco_PlanRiskRegistryItem}/>  		    /* Novo item do plano de risco*/
+				<Route path=":itemId" component={Forrisco_DetailPlanRiskItem}/>         /* Detalhar Item de um Plano*/
+				<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo}/> 	/* Informações gerais do plano de risco*/
 			</Route>
 		</Route>
 

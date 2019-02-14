@@ -69,6 +69,25 @@ public class PlanRiskItemBS extends HibernateBusiness {
 	}
 	
 	/**
+	 * Lista os subitens de um item.
+	 * @param PlanRiskItem
+	 * 			item no qual se deseja obter os subitens.
+	 * 
+	 * @return PaginatedList<PlanRiskItemField>
+	 * 			Lista de subitens.
+	 */
+	public PaginatedList<PlanRiskSubItem> lisySubItemByItem(PlanRiskItem planRiskItem) {
+		
+		PaginatedList<PlanRiskSubItem> results = new PaginatedList<PlanRiskSubItem>();
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItem.class).add(Restrictions.eqOrIsNull("deleted", false))
+				.add(Restrictions.eq("planRiskItem", planRiskItem));
+		
+		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItem.class));
+		return results;
+	}
+	
+	/**
 	 * Salva no banco de dados um novo item
 	 * 
 	 * @param plaRiskItem instância do item a ser salvo

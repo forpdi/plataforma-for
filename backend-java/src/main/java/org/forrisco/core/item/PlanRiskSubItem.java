@@ -23,7 +23,7 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	
 	@SkipSerialization
 	@ManyToOne(targetEntity=PlanRiskItem.class, optional=false, fetch=FetchType.EAGER)
-	private PlanRiskSubItem planRiskSubItem;
+	private PlanRiskItem planRiskItem;
 	
 	@Column(nullable = false, length=255)
 	private String name;
@@ -37,12 +37,12 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	@Transient
 	private String value;
 
-	public PlanRiskSubItem getPlanRiskSubItem() {
-		return planRiskSubItem;
+	public PlanRiskItem getPlanRiskItem() {
+		return planRiskItem;
 	}
 
-	public void setPlanRiskSubItem(PlanRiskSubItem planRiskSubItem) {
-		this.planRiskSubItem = planRiskSubItem;
+	public void setPlanRiskItem(PlanRiskItem planRiskItem) {
+		this.planRiskItem = planRiskItem;
 	}
 
 	public String getName() {
@@ -76,5 +76,7 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	
 
 }

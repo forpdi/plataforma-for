@@ -50,8 +50,8 @@ export default React.createClass({
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
-			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
-			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
+			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
+			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
 			model: planRisk,
 			id: planRisk.id,
 		};
@@ -65,10 +65,11 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
+
 		/*Item de um Plano*/
-		PlanRiskItemStore.on('allitens', (response) => {
+		PlanRiskItemStore.on('allItens', (response) => {
 			response.data.map(itens => {
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
+				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
 
 				treeItens.push({
 					label: itens.name,
@@ -90,16 +91,16 @@ export default React.createClass({
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allitens');
+			PlanRiskItemStore.off('allItens');
 		}, me);
 
 		/*Campos de um Item*/
-		PlanRiskItemStore.on('allFields', (response, node) => {
+		PlanRiskItemStore.on('allSubItens', (response, node) => {
 			var fieldTree = [];
 
 			//Botão Novo SubItem
 			var newItemSubItem = {
-				label: Messages.get("label.newItem"),
+				label: "Novo Subitem",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 				to: '#',
@@ -119,13 +120,15 @@ export default React.createClass({
 
 			node.node.children = fieldTree;
 			me.forceUpdate();
+
+			//PlanRiskItemStore.off('allFields');
 		})
 	},
 
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_FIELDS_ITENS,
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
 				data: {
 					id: nodeProps.id
 				},
@@ -134,16 +137,17 @@ export default React.createClass({
 				}
 			})
 		}
-		nodeProps.expanded = true;
+		nodeProps.expanded = !nodeProps.expanded;
+		this.forceUpdate();
 	},
 
 	shrinkRoot(nodeProps) {
-		nodeProps.expanded = false;
+		nodeProps.expanded = !nodeProps.expanded;
 		this.forceUpdate();
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allitens');
+		PlanRiskItemStore.off('allItens');
 	},
 
 	render() {
