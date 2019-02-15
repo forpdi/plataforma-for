@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -21,6 +22,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.exception.RestoreException;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.dashboard.manager.LevelInstanceHistory;
@@ -56,16 +58,12 @@ import org.forpdi.planning.structure.StructureLevel;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
-import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
 import br.com.caelum.vraptor.serialization.gson.GsonSerializerBuilder;
@@ -173,7 +171,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		final List<DocumentAttribute> documentAttributes = this.docBS.listAllAttributesBySections(documentSections);
 		if(!GeneralUtils.isEmpty(documentAttributes)) {
 			for (final DocumentAttribute attr : documentAttributes) {
-				attr.setExportDocumentSectionId(attr.getExportDocumentSectionId());
+				attr.setExportDocumentSectionId(attr.getSection().getId());
+				attr.setSection(null);
 			}
 			zipAdd(zos, DocumentAttribute.class.getSimpleName(), this.gson.toJson(documentAttributes));
 			zos.flush();
@@ -468,657 +467,256 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * 
 	 */
 	public void restore(UploadedFile file) throws IOException, ParseException {
-		// company passado na hora da importação
-		Company company = this.domain.getCompany();
-		
+		final Company company = this.domain.getCompany();
 		if (company == null) {
-			throw new IllegalArgumentException("Company not found.");
+			throw new IllegalArgumentException("Você precisa criar uma instituição e um domínio antes de importar dados.");
 		}
 		
-		List<File> files = decompact(file.getFile());
+		final Map<String, File> files = this.uncompress(file.getFile());
+		final Map<Long, BudgetElement> budgetElements = new LinkedHashMap<>();
+		final Map<Long, PlanMacro> plansMacro = new LinkedHashMap<>();
+		final Map<Long, Document> documents = new LinkedHashMap<>();
+		final Map<Long, DocumentSection> documentSections = new LinkedHashMap<>();
+		final Map<Long, Structure> structures = new LinkedHashMap<>();
+		final Map<Long, StructureLevel> structureLevels = new LinkedHashMap<>();
+		final Map<Long, Attribute> attributes = new LinkedHashMap<>();
+		final Map<Long, Plan> plans = new LinkedHashMap<>();
+		final Map<Long, StructureLevelInstance> structureLevelInstances = new LinkedHashMap<>();
 		
-		//contar quantidade de registros que serão salvos;
-		quantityTotal=quantityTotal(files);
-		quantity=0;
-		
-		Map<Long, Long> map_id_company = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_plan_macro = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_structure = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_structure_level = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_structure_level_instance = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_plan = new HashMap<Long, Long>();
-		Map<Long, Long> map_budget_element = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_attribute = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_document = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_document_section = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_document_attribute= new HashMap<Long, Long>();
-		Map<Long, Long> map_id_table_field = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_table_instance = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_table_structure = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_schedule = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_schedule_instance = new HashMap<Long, Long>();
-		Map<Long, Long> map_id_schedule_structure = new HashMap<Long, Long>();
-
-		
-		for (File f : files) {
-
-			String register = IOUtils.toString(new FileInputStream(f), StandardCharsets.UTF_8);
-			Long id_old;
-			String name = f.getName().split(".json")[0];
-			JSONParser parser = new JSONParser();
-			JSONArray array;
-
-			LOGGER.warn("Restoring " +name);
-			switch (name) {
+		this.dao.execute((session) -> {
+			String content;
 			
-				case "Company" :
-					Company c = gson.fromJson(register, Company.class);
-					map_id_company.put(c.getId(), company.getId());
-					break;
-					
-				case "CompanyMessage" :
-					
-					array = (JSONArray) parser.parse(register);
-					for (int i = 0; i < array.size(); i++) {
-						CompanyMessage cm = gson.fromJson(array.get(i).toString(), CompanyMessage.class);
-						//long id_old_company =cm.getExportCompanyId();
-						cm.setCompany(company);
-						quantity+=1;
-						
-						try {
-							this.dao.persist(cm);
-						}catch(Exception e) {
-							continue;
-						}
-					}
-					break;
-	
-					
-				case "PlanMacro":
-					readJson(register, PlanMacro.class, map_id_plan_macro, map_id_company, null);
-					break;
-	
-				case "Structure":
-					array = (JSONArray) parser.parse(register);
-					for (int i = 0; i < array.size(); i++) {
-						Structure st = gson.fromJson(array.get(i).toString(), Structure.class);
-						id_old = st.getId();
-						st.setCompany(company);
-						st.setId(null);
-						this.dao.persist(st);
-						map_id_structure.put(id_old, st.getId());
-						quantity+=1;
-					}
-					break;
-					
-				case "BudgetElement" :
-					array = (JSONArray) parser.parse(register);
-					for (int i = 0; i < array.size(); i++) {
-						BudgetElement be = gson.fromJson(array.get(i).toString(), BudgetElement.class);
-						id_old = be.getId();
-						be.setCompany(company);
-						be.setId(null);
-						this.dao.persist(be);
-						map_budget_element.put(id_old, be.getId());
-						quantity+=1;
-					}
-					break;
-	
-				case "Plan":
-					readJson(register, Plan.class, map_id_plan, map_id_structure, map_id_plan_macro);
-					break;
-					
-				case "PlanDetailed":
-					readJson(register, PlanDetailed.class, null, map_id_plan, null);
-					break;
-	
-				case "StructureLevel":
-					readJson(register, StructureLevel.class, map_id_structure_level, map_id_structure, null);
-					break;
-					
-				case "StructureLevelInstance":
-					readJson(register, StructureLevelInstance.class, map_id_structure_level_instance, map_id_structure_level, map_id_plan);
-					break;
-	
-				case "Document":
-					readJson(register, Document.class, map_id_document, map_id_plan_macro, null);
-					break;
-					
-				case "DocumentSection":
-					readJson(register, DocumentSection.class, map_id_document_section, map_id_document_section, map_id_document);
-					break;
-					
-				case "DocumentAttribute":
-					readJson(register, DocumentAttribute.class, map_id_document_attribute, map_id_document_section, null);
-					break;
-							
-				case "ActionPlan" :
-					readJson(register, ActionPlan.class, null, map_id_structure_level_instance, null);
-					break;
-					
-				case "LevelInstanceHistory" :
-					readJson(register, LevelInstanceHistory.class, null, map_id_structure_level_instance, null);
-					break;	
-					
-				case "StructureLevelInstanceDetailed" :
-					readJson(register, StructureLevelInstanceDetailed.class, null, map_id_structure_level_instance, null);
-					break;
-					
-				case "Budget" :
-					readJson(register, Budget.class, null, map_id_structure_level_instance, map_budget_element);
-					break;
-					
-				case "Attachment":
-					readJson(register, Attachment.class, null, map_id_structure_level_instance, null);
-					break;	
-					
-				case "Attribute" :
-					readJson(register, Attribute.class, map_id_attribute, map_id_structure_level, null);
-					break;	
-					
-				case "AttributeInstance" :
-					readJson(register, AttributeInstance.class, null, map_id_structure_level_instance, map_id_attribute);
-					break;
-					
-				case "AggregateIndicator" :
-					readJson(register, AggregateIndicator.class, null, map_id_structure_level_instance, null);
-					break;
-					
-				case "TableFields":
-					readJson(register, TableFields.class, map_id_table_field, map_id_document_attribute, map_id_attribute);
-					break;
-				
-				case "TableStructure":
-					readJson(register, TableStructure.class, map_id_table_structure, map_id_table_field, null);
-					break;
-					
-				case "TableInstance":
-					readJson(register, TableInstance.class, map_id_table_instance, map_id_table_field, null);
-					break;
-					
-				case "TableValues":
-					readJson(register, TableValues.class, null, map_id_table_structure, map_id_table_instance);
-					break;
-				
-				case "Schedule":
-					readJson(register, Schedule.class, map_id_schedule, map_id_document_attribute, map_id_attribute);
-					break;
-				
-				case "ScheduleStructure":
-					readJson(register, ScheduleStructure.class, map_id_schedule_structure, map_id_schedule, null);
-					break;
-					
-				case "ScheduleInstance":
-					readJson(register, ScheduleInstance.class, map_id_schedule_instance, map_id_schedule, null);
-					break;
-					
-				case "ScheduleValues":
-					readJson(register, ScheduleValues.class, null, map_id_schedule_structure, map_id_schedule_instance);
-					break;	
-					
-				case "OptionsField":
-					readJson(register, OptionsField.class, null, map_id_document_attribute, map_id_attribute);
-					break;
-										
-				default:
-					break;
+			// Importando elementos orçamentários
+			content = this.readFromFile(files, BudgetElement.class);
+			List<BudgetElement> budgetElementsList = this.gson.fromJson(content, new TypeToken<List<BudgetElement>>() {}.getType());
+			if (!GeneralUtils.isEmpty(budgetElementsList)) {
+				budgetElementsList.forEach((budgetElement) -> {
+					final Long oldId = budgetElement.getId();
+					budgetElement.setId(null);
+					budgetElement.setCompany(company);
+					session.persist(budgetElement);
+					budgetElements.put(oldId, budgetElement);
+				});
 			}
-		}
+
+			// Importando mensagens customizadas
+			content = this.readFromFile(files, CompanyMessage.class);
+			List<CompanyMessage> companyMessagesList = this.gson.fromJson(content, new TypeToken<List<CompanyMessage>>() {}.getType());
+			if (!GeneralUtils.isEmpty(companyMessagesList)) {
+				companyMessagesList.forEach((companyMessage) -> {
+					this.companyBS.updateMessageOverlay(session, company, companyMessage.getMessageKey(), companyMessage.getMessageValue());
+				});
+			}
+			
+			// Importando os planos macro
+			content = this.readFromFile(files, PlanMacro.class);
+			List<PlanMacro> plansMacroList = this.gson.fromJson(content, new TypeToken<List<PlanMacro>>() {}.getType());
+			if (!GeneralUtils.isEmpty(plansMacroList)) {
+				plansMacroList.forEach((planMacro) -> {
+					final Long oldId = planMacro.getId();
+					planMacro.setId(null);
+					planMacro.setCompany(company);
+					session.persist(planMacro);
+					plansMacro.put(oldId, planMacro);
+				});
+			}
+
+			// Importando os documentos
+			content = this.readFromFile(files, Document.class);
+			List<Document> documentsList = this.gson.fromJson(content, new TypeToken<List<Document>>() {}.getType());
+			if (!GeneralUtils.isEmpty(documentsList)) {
+				documentsList.forEach((document) -> {
+					final Long oldId = document.getId();
+					document.setId(null);
+					document.setPlan(plansMacro.get(document.getExportPlanMacroId()));
+					session.persist(document);
+					documents.put(oldId, document);
+				});
+			}
+
+			// Importando as seções dos documentos
+			content = this.readFromFile(files, DocumentSection.class);
+			List<DocumentSection> documentSectionsList = this.gson.fromJson(content, new TypeToken<List<DocumentSection>>() {}.getType());
+			if (!GeneralUtils.isEmpty(documentSectionsList)) {
+				documentSectionsList.forEach((documentSection) -> {
+					final Long oldId = documentSection.getId();
+					documentSection.setId(null);
+					documentSection.setDocument(documents.get(documentSection.getExportDocumentId()));
+					session.persist(documentSection);
+					documentSections.put(oldId, documentSection);
+				});
+				documentSectionsList.forEach((documentSection) -> {
+					documentSection.setParent(documentSections.get(documentSection.getExportDocumentSectionId()));
+					session.persist(documentSection);
+				});
+			}
+
+			// Importando os atributos dos documentos
+			content = this.readFromFile(files, DocumentAttribute.class);
+			List<DocumentAttribute> documentAttributesList = this.gson.fromJson(content, new TypeToken<List<DocumentAttribute>>() {}.getType());
+			if (!GeneralUtils.isEmpty(documentAttributesList)) {
+				documentAttributesList.forEach((documentAttribute) -> {
+					documentAttribute.setId(null);
+					documentAttribute.setSection(documentSections.get(documentAttribute.getExportDocumentSectionId()));
+					session.persist(documentAttribute);
+				});
+			}
+
+			// Importando as estruturas
+			content = this.readFromFile(files, Structure.class);
+			List<Structure> structuresList = this.gson.fromJson(content, new TypeToken<List<Structure>>() {}.getType());
+			if (!GeneralUtils.isEmpty(structuresList)) {
+				structuresList.forEach((structure) -> {
+					final Long oldId = structure.getId();
+					structure.setId(null);
+					structure.setCompany(company);
+					session.persist(structure);
+					structures.put(oldId, structure);
+				});
+			}
+
+			// Importando os níveis de estruturas
+			content = this.readFromFile(files, StructureLevel.class);
+			List<StructureLevel> structureLevelsList = this.gson.fromJson(content, new TypeToken<List<StructureLevel>>() {}.getType());
+			if (!GeneralUtils.isEmpty(structureLevelsList)) {
+				structureLevelsList.forEach((structureLevel) -> {
+					final Long oldId = structureLevel.getId();
+					structureLevel.setId(null);
+					structureLevel.setStructure(structures.get(structureLevel.getExportStructureId()));
+					session.persist(structureLevel);
+					structureLevels.put(oldId, structureLevel);
+				});
+			}
+
+			// Importando os atributos
+			content = this.readFromFile(files, Attribute.class);
+			List<Attribute> attributesList = this.gson.fromJson(content, new TypeToken<List<Attribute>>() {}.getType());
+			if (!GeneralUtils.isEmpty(attributesList)) {
+				attributesList.forEach((attribute) -> {
+					final Long oldId = attribute.getId();
+					attribute.setId(null);
+					attribute.setLevel(structureLevels.get(attribute.getExportStructureLevelId()));
+					session.persist(attribute);
+					attributes.put(oldId, attribute);
+				});
+			}
+
+			// Importando os planos
+			content = this.readFromFile(files, Plan.class);
+			List<Plan> plansList = this.gson.fromJson(content, new TypeToken<List<Plan>>() {}.getType());
+			if (!GeneralUtils.isEmpty(plansList)) {
+				plansList.forEach((plan) -> {
+					final Long oldId = plan.getId();
+					plan.setId(null);
+					plan.setParent(plansMacro.get(plan.getExportPlanMacroId()));
+					plan.setStructure(structures.get(plan.getExportStructureId()));
+					session.persist(plan);
+					plans.put(oldId, plan);
+				});
+			}
+
+			// Importando os detalhes dos planos
+			content = this.readFromFile(files, PlanDetailed.class);
+			List<PlanDetailed> plansDetailedList = this.gson.fromJson(content, new TypeToken<List<PlanDetailed>>() {}.getType());
+			if (!GeneralUtils.isEmpty(plansDetailedList)) {
+				plansDetailedList.forEach((planDetailed) -> {
+					planDetailed.setId(null);
+					planDetailed.setPlan(plans.get(planDetailed.getExportPlanId()));
+					session.persist(planDetailed);
+				});
+			}
+
+			// Importando as instâncias de nível de estrutura
+			content = this.readFromFile(files, StructureLevelInstance.class);
+			List<StructureLevelInstance> structureLevelInstancesList = this.gson.fromJson(content, new TypeToken<List<StructureLevelInstance>>() {}.getType());
+			if (!GeneralUtils.isEmpty(structureLevelInstancesList)) {
+				structureLevelInstancesList.forEach((levelInstance) -> {
+					final Long oldId = levelInstance.getId();
+					levelInstance.setId(null);
+					levelInstance.setLevel(structureLevels.get(levelInstance.getExportLevelId()));
+					levelInstance.setPlan(plans.get(levelInstance.getExportPlanId()));
+					session.persist(levelInstance);
+					structureLevelInstances.put(oldId, levelInstance);
+				});
+			}
+
+			// Importando os detalhes das instâncias de nível de estrutura
+			content = this.readFromFile(files, StructureLevelInstanceDetailed.class);
+			List<StructureLevelInstanceDetailed> structureLevelInstancesDetailedList = this.gson.fromJson(content, new TypeToken<List<StructureLevelInstanceDetailed>>() {}.getType());
+			if (!GeneralUtils.isEmpty(structureLevelInstancesDetailedList)) {
+				structureLevelInstancesDetailedList.forEach((levelInstanceDetailed) -> {
+					levelInstanceDetailed.setId(null);
+					levelInstanceDetailed.setLevelInstance(structureLevelInstances.get(levelInstanceDetailed.getExportStructureLevelInstanceId()));
+					session.persist(levelInstanceDetailed);
+				});
+			}
+
+			// Importando o histórico das instâncias de nível de estrutura
+			content = this.readFromFile(files, LevelInstanceHistory.class);
+			List<LevelInstanceHistory> levelInstancesHistoryList = this.gson.fromJson(content, new TypeToken<List<LevelInstanceHistory>>() {}.getType());
+			if (!GeneralUtils.isEmpty(levelInstancesHistoryList)) {
+				levelInstancesHistoryList.forEach((levelInstanceHistory) -> {
+					levelInstanceHistory.setId(null);
+					levelInstanceHistory.setLevelInstance(structureLevelInstances.get(levelInstanceHistory.getExportStructureLevelInstanceId()));
+					session.persist(levelInstanceHistory);
+				});
+			}
+
+			// Importando os planos de ação
+			content = this.readFromFile(files, ActionPlan.class);
+			List<ActionPlan> actionPlansList = this.gson.fromJson(content, new TypeToken<List<ActionPlan>>() {}.getType());
+			if (!GeneralUtils.isEmpty(actionPlansList)) {
+				actionPlansList.forEach((actionPlan) -> {
+					actionPlan.setId(null);
+					actionPlan.setLevelInstance(structureLevelInstances.get(actionPlan.getExportStructureLevelInstanceId()));
+					session.persist(actionPlan);
+				});
+			}
+
+			// Importando os indicadores agregados
+			content = this.readFromFile(files, AggregateIndicator.class);
+			List<AggregateIndicator> aggregateIndicatorsList = this.gson.fromJson(content, new TypeToken<List<AggregateIndicator>>() {}.getType());
+			if (!GeneralUtils.isEmpty(aggregateIndicatorsList)) {
+				aggregateIndicatorsList.forEach((aggregateIndicator) -> {
+					aggregateIndicator.setId(null);
+					aggregateIndicator.setAggregate(structureLevelInstances.get(aggregateIndicator.getExportAggregateId()));
+					aggregateIndicator.setIndicator(structureLevelInstances.get(aggregateIndicator.getExportIndicatorId()));
+					session.persist(aggregateIndicator);
+				});
+			}
+
+			// Importando os anexos
+			content = this.readFromFile(files, Attachment.class);
+			List<Attachment> attachmentsList = this.gson.fromJson(content, new TypeToken<List<Attachment>>() {}.getType());
+			if (!GeneralUtils.isEmpty(attachmentsList)) {
+				attachmentsList.forEach((attachment) -> {
+					attachment.setId(null);
+					attachment.setLevelInstance(structureLevelInstances.get(attachment.getExportStructureLevelInstanceId()));
+					final String authorEmail = attachment.getExportAuthorMail();
+					final User author = this.userBS.existsByEmail(authorEmail);
+					if (author != null) {
+						attachment.setAuthor(author);
+					} else {
+						LOGGER.warnf("Ignoring unexistent attachment author: %s", authorEmail);
+					}
+					session.persist(attachment);
+				});
+			}
+
+			// Importando os orçamentos
+			content = this.readFromFile(files, Budget.class);
+			List<Budget> budgetsList = this.gson.fromJson(content, new TypeToken<List<Budget>>() {}.getType());
+			if (!GeneralUtils.isEmpty(budgetsList)) {
+				budgetsList.forEach((budget) -> {
+					budget.setId(null);
+					budget.setBudgetElement(budgetElements.get(budget.getExportBudgetElementId()));
+					budget.setLevelInstance(structureLevelInstances.get(budget.getExportStructureLevelInstanceId()));
+					session.persist(budget);
+				});
+			}
+		});
 	}
 
-	
-	/**
-	 * adiciona dados ao banco a partir do json
-	 * 
-	 * @param register   json do registro
-	 *
-	 * @param clazz      classe a ser lida
-	 * 
-	 * @param map_atual  mapa do id da classe que está sendo importada
-	 * 
-	 * @param map_fkey_1 mapa do id da primeira foreign key desta classe
-	 * 
-	 * @param map_fkey_2 mapa do id da segunda foreign key desta classe
-	 * 
-	 * @throws org.json.simple.parser.ParseException
-	 * 
-	 */
-	private void readJson(String register, Class<?> clazz, Map<Long, Long>  map_atual , Map<Long, Long> map_fkey_1, Map<Long, Long> map_fkey_2) throws org.json.simple.parser.ParseException {
-		JSONParser parser = new JSONParser();
-		JSONArray array = (JSONArray) parser.parse(register);
-		
-		if(clazz.getSimpleName().equals("StructureLevelInstance")) {
-	
-			List<StructureLevelInstance> sli = new ArrayList<>(); 
-			
-			for (int i = 0; i < array.size(); i++) {
-				JSONObject jo = (JSONObject) array.get(i);
-				StructureLevelInstance obj = (StructureLevelInstance) gson.fromJson(jo.toString(), clazz);
-				sli.add(obj);
-			}
-			
-			Map<Long, StructureLevel> structureLevelMap = new HashMap<>();
-			List<StructureLevel> sl = retrieve(StructureLevel.class);
-			sl.stream().forEach(it->{
-				structureLevelMap.put(it.getId(), it);
-			});
-			
-			Map<Long, Plan> planMap = new HashMap<>();
-			List<Plan> pl = retrieve(Plan.class);
-			pl.stream().forEach(it->{
-				planMap.put(it.getId(), it);
-			});
-			
-			do {
-				for( StructureLevelInstance s : sli) {
-					if(s.getParent()==null || map_atual.containsKey(s.getParent())) {
-						
-						s.setLevel(structureLevelMap.get(map_fkey_1.get(s.getExportLevelId())));
-						s.setPlan( planMap.get(map_fkey_2.get(s.getExportPlanId())));					
-						long id_old=s.getId();
-						
-						((SimpleLogicalDeletableEntity) s).setId(null);
-
-						if(map_atual.containsKey(s.getParent())) {
-							s.setParent(map_atual.get(s.getParent()));
-						}
-						
-						s.setId(null);
-						this.dao.persist((Serializable) s);
-						quantity+=1;
-						
-						if(map_atual !=null) {
-							map_atual.put(id_old, ((SimpleLogicalDeletableEntity) s).getId());
-						}				
-						sli.remove(s);
-						break;
-					}
-				}
-			} while(!sli.isEmpty());
-			return;
-		}
-		
-		
-		
-		Map<Long, StructureLevelInstance> structureLevelInstanceMap = new HashMap<>();
-		Map<Long, Attribute> attributeMap = new HashMap<>();
-				
-		if(clazz.getSimpleName().equals("AttributeInstance")) {
-			
-			List<StructureLevelInstance> sli = retrieve(StructureLevelInstance.class);
-			sli.stream().forEach(it->{
-				structureLevelInstanceMap.put(it.getId(), it);
-			});
-			
-			List<Attribute> attr = retrieve(Attribute.class);
-			attr.stream().forEach(it->{
-				attributeMap.put(it.getId(), it);
-			});
-		}
-		
-
-		for (int i = 0; i < array.size(); i++) {
-
-			JSONObject jo = (JSONObject) array.get(i);
-
-			Object obj = gson.fromJson(jo.toString(), clazz);
-			long id_old_company;
-			long id_old = 0;
-			long id_old_structure;
-			long id_old_planmacro;
-			long id_old_structure_level;
-			long id_old_structure_level_instance;
-			long id_old_plan;
-			long id_old_document_section;
-			long id_old_attribute;
-			long id_old_instance;
-			boolean isDocument;
-			Criteria criteria;
-
-			switch (clazz.getSimpleName()) {
-					
-				case "PlanMacro" :
-
-					id_old_company = Long.parseLong(jo.get("exportCompanyId").toString());
-					
-					criteria = this.dao.newCriteria(Company.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_company)));
-					((PlanMacro) obj).setCompany((Company) criteria.uniqueResult());
-					id_old=((PlanMacro) obj).getId();
-					break;
-					
-				case "Plan":
-					
-					id_old_structure = Long.parseLong(jo.get("exportStructureId").toString());
-					id_old_planmacro = Long.parseLong(jo.get("exportPlanMacroId").toString());
-					
-					criteria = this.dao.newCriteria(Structure.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
-					((Plan) obj).setStructure((Structure) criteria.uniqueResult());
-		
-					criteria = this.dao.newCriteria(PlanMacro.class);
-					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_planmacro)));
-					((Plan) obj).setParent((PlanMacro) criteria.uniqueResult());
-					id_old=((Plan) obj).getId();
-					break;	
-					
-				case "PlanDetailed":
-		
-					id_old_plan = Long.parseLong(jo.get("exportPlanId").toString());
-		
-					criteria = this.dao.newCriteria(Plan.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_plan)));
-					((PlanDetailed) obj).setPlan((Plan) criteria.uniqueResult());
-					break;	
-					
-				case "Document":
-
-					id_old_planmacro = Long.parseLong(jo.get("exportPlanMacroId").toString());
-					
-					criteria = this.dao.newCriteria(PlanMacro.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_planmacro)));
-					((Document) obj).setPlan((PlanMacro) criteria.uniqueResult());
-					id_old=((Document) obj).getId();
-					break;
-					
-				case "DocumentSection":
-					
-					id_old_document_section = Long.parseLong(jo.get("exportDocumentSectionId").toString());
-					long id_old_document = Long.parseLong(jo.get("exportDocumentId").toString());
-					
-					criteria = this.dao.newCriteria(DocumentSection.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_document_section)));
-					((DocumentSection) obj).setParent((DocumentSection) criteria.uniqueResult());
-					
-					criteria = this.dao.newCriteria(Document.class);
-					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_document)));
-					((DocumentSection) obj).setDocument((Document) criteria.uniqueResult());
-					id_old=((DocumentSection) obj).getId();
-					break;
-					
-				case "DocumentAttribute":
-					
-					id_old_document_section = Long.parseLong(jo.get("exportDocumentSectionId").toString());
-					criteria = this.dao.newCriteria(DocumentSection.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_document_section)));
-					((DocumentAttribute) obj).setSection((DocumentSection) criteria.uniqueResult());
-					id_old=((DocumentAttribute) obj).getId();
-					break;
-					
-				case "StructureLevel":
-					
-					id_old_structure = Long.parseLong(jo.get("exportStructureId").toString());
-	
-					criteria = this.dao.newCriteria(Structure.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
-					((StructureLevel) obj).setStructure((Structure) criteria.uniqueResult());
-					id_old=((StructureLevel) obj).getId();
-					break;
-					
-				case "ActionPlan" :
-
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
-					((ActionPlan) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
-					break;
-					
-				case "LevelInstanceHistory" :
-
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
-					((LevelInstanceHistory) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
-					break;
-					
-				case "StructureLevelInstanceDetailed" :
-					
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
-					((StructureLevelInstanceDetailed) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
-					break;
-					
-				case "Budget" :
-					
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					long id_old_budget_element = Long.parseLong(jo.get("exportBudgetElementId").toString());
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
-					((Budget) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
-	
-					criteria = this.dao.newCriteria(BudgetElement.class);
-					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_budget_element)));
-					((Budget) obj).setBudgetElement((BudgetElement) criteria.uniqueResult());
-					break;
-					
-				case "Attachment" :
-
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					
-					//atualiza id do autor que possui o mesmo email neste banco, se houver
-					User autor=userBS.existsByEmail(jo.get("exportAuthorMail").toString());
-					/*if (autor == null) {
-						quantity+=1;
-						continue;
-					}*/
-					((Attachment) obj).setAuthor(autor);
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level_instance)));
-					((Attachment) obj).setLevelInstance((StructureLevelInstance) criteria.uniqueResult());
-					break;
-					
-				case "Attribute" :
-					
-					id_old_structure_level = Long.parseLong(jo.get("exportStructureLevelId").toString());
-										
-					criteria = this.dao.newCriteria(StructureLevel.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure_level)));
-					((Attribute) obj).setLevel((StructureLevel) criteria.uniqueResult());
-					id_old=((Attribute) obj).getId();
-					break;
-					
-				case "AttributeInstance" :
-					
-					id_old_structure_level_instance = Long.parseLong(jo.get("exportStructureLevelInstanceId").toString());
-					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
-					
-					//atualiza id do responsável que possui o mesmo email neste banco 
-					if(attributeMap.get(map_fkey_2.get(id_old_attribute)).getLabel().equals("Responsável")) {
-						String email=structureLevelInstanceMap.get(map_fkey_1.get(id_old_structure_level_instance)).getExportResponsibleMail();
-						User user=userBS.existsByEmail(email);
-						if (user == null) {
-							quantity+=1;
-							continue;
-						}
-						((AttributeInstance) obj).setValue(String.valueOf(user.getId()));
-					}
-					
-					((AttributeInstance) obj).setLevelInstance(structureLevelInstanceMap.get(map_fkey_1.get(id_old_structure_level_instance)));
-					((AttributeInstance) obj).setAttribute(attributeMap.get(map_fkey_2.get(id_old_attribute)));
-					break;
-
-				case "AggregateIndicator" :
-					
-					long id_old_aggregated = Long.parseLong(jo.get("exportAggregateId").toString());
-					long id_old_indicator = Long.parseLong(jo.get("exportIndicatorId").toString());
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					StructureLevelInstance id_new_aggregated = (StructureLevelInstance) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_aggregated))).uniqueResult();
-					((AggregateIndicator) obj).setAggregate(id_new_aggregated);
-					
-					criteria = this.dao.newCriteria(StructureLevelInstance.class);
-					StructureLevelInstance id_new_indicator = (StructureLevelInstance)  criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_indicator))).uniqueResult();
-					((AggregateIndicator) obj).setIndicator(id_new_indicator);			
-					break;
-					
-				case "TableFields" :
-					
-					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
-					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
-					
-					if(isDocument) {
-						((TableFields) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
-					}else {
-						((TableFields) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
-					}
-					
-					id_old=((TableFields) obj).getId();
-					break;
-			
-				case "TableStructure" :
-					
-					id_old_structure = Long.parseLong(jo.get("exportTableFieldsId").toString());
-					
-					criteria = this.dao.newCriteria(TableFields.class);
-					TableFields id_new_tablefield = (TableFields) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure))).uniqueResult();
-					((TableStructure) obj).setTableFields(id_new_tablefield);
-					id_old=((TableStructure) obj).getId();
-					break;
-					
-				case "TableInstance" :
-					
-					id_old_instance = Long.parseLong(jo.get("exportTableFieldsId").toString());
-					
-					criteria = this.dao.newCriteria(TableFields.class);
-					id_new_tablefield = (TableFields) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_instance))).uniqueResult();
-					((TableInstance) obj).setTableFields(id_new_tablefield);
-					id_old=((TableInstance) obj).getId();
-					break;
-					
-				case "TableValues" :
-					
-					id_old_structure = Long.parseLong(jo.get("exportTableStructureId").toString());
-					id_old_instance = Long.parseLong(jo.get("exportTableInstanceId").toString());
-					
-					criteria = this.dao.newCriteria(TableStructure.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
-					((TableValues) obj).setTableStructure((TableStructure) criteria.uniqueResult());
-		
-					criteria = this.dao.newCriteria(TableInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_instance)));
-					((TableValues) obj).setTableInstance((TableInstance) criteria.uniqueResult());
-					id_old=((TableValues) obj).getId();
-					
-					if(((TableValues) obj).getTableInstance() ==null) {
-						LOGGER.warn("erro");
-					}
-					
-					if(((TableValues) obj).getTableStructure() ==null) {
-						LOGGER.warn("erro");
-					}
-					break;	
-
-				case "Schedule" :
-					
-					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
-					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
-					
-					if(isDocument) {
-						((Schedule) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
-					}else {
-						((Schedule) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
-					}
-					
-					id_old=((Schedule) obj).getId();
-					break;
-			
-				case "ScheduleStructure" :
-					
-					id_old_structure = Long.parseLong(jo.get("exportScheduleId").toString());
-					
-					criteria = this.dao.newCriteria(Schedule.class);
-					Schedule id_new_schedule = (Schedule) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure))).uniqueResult();
-					((ScheduleStructure) obj).setSchedule(id_new_schedule);
-					id_old=((ScheduleStructure) obj).getId();
-					break;
-					
-				case "ScheduleInstance" :
-					
-					id_old_instance = Long.parseLong(jo.get("exportScheduleId").toString());
-					
-					criteria = this.dao.newCriteria(Schedule.class);
-					id_new_schedule = (Schedule) criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_instance))).uniqueResult();
-					((ScheduleInstance) obj).setSchedule(id_new_schedule);
-					id_old=((ScheduleInstance) obj).getId();
-					break;
-					
-				case "ScheduleValues" :
-					
-					id_old_structure = Long.parseLong(jo.get("exportScheduleStructureId").toString());
-					id_old_instance = Long.parseLong(jo.get("exportScheduleInstanceId").toString());
-					
-					criteria = this.dao.newCriteria(ScheduleStructure.class);
-					criteria.add(Restrictions.eq("id", map_fkey_1.get(id_old_structure)));
-					((ScheduleValues) obj).setScheduleStructure((ScheduleStructure) criteria.uniqueResult());
-		
-					criteria = this.dao.newCriteria(ScheduleInstance.class);
-					criteria.add(Restrictions.eq("id", map_fkey_2.get(id_old_instance)));
-					((ScheduleValues) obj).setScheduleInstance((ScheduleInstance) criteria.uniqueResult());
-					id_old=((ScheduleValues) obj).getId();
-					break;	
-					
-				case "OptionsField":
-					
-					id_old_attribute = Long.parseLong(jo.get("exportAttributeId").toString());
-					isDocument=	Boolean.parseBoolean(jo.get("isDocument").toString());
-					if(isDocument) {
-						((OptionsField) obj).setAttributeId(map_fkey_1.get(id_old_attribute));
-					}else {
-						((OptionsField) obj).setAttributeId(map_fkey_2.get(id_old_attribute));
-					}
-					break;
-			}
-
-			((SimpleLogicalDeletableEntity) clazz.cast(obj)).setId(null);
-
-			this.dao.persist((Serializable) clazz.cast(obj));
-			
-			if(map_atual !=null) {
-				map_atual.put(id_old, ((SimpleLogicalDeletableEntity) clazz.cast(obj)).getId());
-			}
-			
-			quantity+=1;
-		}
-	}
-	
-
-	/**
-	 * Ler Todos os arquivo do zip
-	 * 
-	 * @param file arquivo do upload
-	 * 
-	 * @return int quantidade de registros
-	 * 
-	 * @throws IOException 
-	 * @throws ParseException 
-	 *
-	 */
-	public int quantityTotal(List<File> files) throws IOException, ParseException {
-		
-		int count=0;
-		for (File f : files) {
-		
-			if(!f.getName().split(".json")[0].equals("Company")) {
-				String register = IOUtils.toString(new FileInputStream(f), StandardCharsets.UTF_8);
-				JSONParser parser = new JSONParser();
-				JSONArray array;
-			
-				array = (JSONArray) parser.parse(register);
-				for (int i = 0; i < array.size(); i++) {
-					count+=1;
-				}
-			}
-		}
-			
-		return count;
-	}
-	
-	
 	/**
 	 * Recuperar Todos os arquivo do zip
 	 * 
@@ -1129,28 +727,42 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws IOException
 	 *
 	 */
-	private List<File> decompact(InputStream inputStream) throws IOException {
-
-		List<File> files = new ArrayList<File>();
-		byte[] buffer = new byte[1024];
+	private Map<String, File> uncompress(InputStream inputStream) throws IOException {
+		Map<String, File> files = new LinkedHashMap<>(30);
 		ZipInputStream zis = new ZipInputStream(inputStream);
 		ZipEntry zipEntry = zis.getNextEntry();
 		while (zipEntry != null) {
-			String fileName = zipEntry.getName().split("_")[0];
-			File newFile = File.createTempFile(fileName + "_", ".temp");
-			FileOutputStream fos = new FileOutputStream(newFile);
-			int len;
-			while ((len = zis.read(buffer)) > 0) {
-				fos.write(buffer, 0, len);
-			}
+			final String filename = zipEntry.getName();
+			LOGGER.infof("Reading zip entry: %s", filename);
+			final String className = filename.split("\\.")[0];
+			final File newFile = File.createTempFile(className, ".json");
+			final FileOutputStream fos = new FileOutputStream(newFile);
+			IOUtils.copy(zis, fos);
 			fos.close();
-			files.add(newFile);
+			files.put(className, newFile);
+			zis.closeEntry();
 			zipEntry = zis.getNextEntry();
 		}
-		zis.closeEntry();
 		zis.close();
 
 		return files;
+	}
+	
+	private String readFromFile(Map<String, File> files, Class<?> clazz) {
+		final File file = files.get(clazz.getSimpleName());
+		if (file == null) {
+			LOGGER.infof("Nenhum arquivo de dados para entidade: %s", clazz.getSimpleName());
+			return "[]";
+		}
+		LOGGER.infof("Importing entity: %s", clazz.getSimpleName());
+		try {
+			final FileInputStream fis = new FileInputStream(file);
+			final String content = IOUtils.toString(fis, StandardCharsets.UTF_8);
+			fis.close();
+			return content;
+		} catch(IOException e) {
+			throw new RestoreException(e);
+		}
 	}
 	
 	/**

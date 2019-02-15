@@ -65,24 +65,24 @@ public class BackupAndRestoreController extends AbstractController  {
 	 */
 	@Post("/company/fbkupload")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
-	@UploadSizeLimit(fileSizeLimit=20 * 1024 * 1024)
+	@UploadSizeLimit(fileSizeLimit=100 * 1024 * 1024, sizeLimit = 100 * 1024 * 1024)
 	public void  fbkupload(UploadedFile file) {
 		
 		if (file == null) {
 			this.fail("upload falhou");
-			return;
 		}else if (BackupAndRestoreController.file != null) {
 			this.fail("processo de importação já em andamento");
-			return;
-		}else{ 
+		} else { 
 			try {
 			
 				BackupAndRestoreController.file=file;
 				this.success("upload completo.");
+			} catch (IllegalArgumentException ex) {
+				this.fail(ex.getMessage());
 			} catch (Throwable ex) {
 				LOGGER.error("IO error", ex);
 				this.fail("Erro inesperado: " + ex.getMessage());
-			}	
+			}
 		}
 	}
 	
