@@ -97,7 +97,7 @@ public class PlanRiskItemController extends AbstractController {
 			if (planRiskItem == null) {
 				this.fail("O Item solicitado não foi encontrado.");
 			} else {
-				PaginatedList<PlanRiskSubItem> itens = this.planRiskItemBS.lisySubItemByItem(planRiskItem);
+				PaginatedList<PlanRiskSubItem> itens = this.planRiskItemBS.listSubItemByItem(planRiskItem);
 				this.success(itens);
 			}
 			

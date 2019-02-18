@@ -40,6 +40,8 @@ export default React.createClass({
 					isLoading: false
 				});
 			}
+
+			//didMount.off('retrivedplanrisk');
 		});
 
 		PlanRiskStore.dispatch({
@@ -58,19 +60,23 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.planRiskId != this.state.planRiskId) {
-			PlanRiskStore.dispatch({
-				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-				data: newProps.params.planRiskId
-			});
-
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
-				data: {
-					planRiskId: newProps.params.planRiskId
-				}
-			});
+		if (newProps.params.planRiskId !== this.state.planRiskId) {
+			this.refreshComponent(newProps);
 		}
+	},
+
+	refreshComponent(newProps) {
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+			data: newProps.params.planRiskId
+		});
+
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+			data: {
+				planRiskId: newProps.params.planRiskId
+			}
+		});
 	},
 
 	render() {

@@ -51,6 +51,7 @@ export default React.createClass({
 					policies: policiData, domainError: false,
 				});
 			}
+
 			resultSelect.off("unarchivedpolicylisted");
 		});
 

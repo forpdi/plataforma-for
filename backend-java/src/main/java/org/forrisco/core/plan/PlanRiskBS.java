@@ -56,5 +56,9 @@ public class PlanRiskBS extends HibernateBusiness {
 		return result;
 	}
 
+	public void delete(PlanRisk planRisk) {
+		planRisk.setDeleted(true);
+		this.persist(planRisk);
+	}
 
 }

@@ -3,6 +3,7 @@ import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.j
 import {Link} from "react-router";
 import Form from "@/planning/widget/attributeForm/AttributeForm";
 import Validation from "forpdi/jsx_forrisco/core/util/Validation";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 var VerticalForm = Form.VerticalForm;
 var Validate = Validation.validate;
@@ -28,11 +29,18 @@ export default React.createClass({
 				fieldName: [],
 				fieldContent: [],
 				isText: ""
-			}]
+			}],
+			isLoading: true
 		};
 	},
 
 	componentDidMount() {
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+			data: {
+				id: this.props.params.itemId
+			},
+		});
 		this.refreshComponent();
 	},
 
@@ -65,14 +73,16 @@ export default React.createClass({
 
 				this.setState({
 					itemTitle: response.data.name,
-					field: content
+					field: content,
+					isLoading: false
 				});
 
 			} else {
 
 				this.setState({
 					itemTitle: response.data.name,
-					field: []
+					field: [],
+					isLoading: false
 				});
 			}
 
@@ -108,7 +118,11 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.state.itemTitle);
+
+		if(this.state.isLoading === true) {
+			return <LoadingGauge/>;
+		}
+
 		return (
 			<div>
 				{this.renderBreadcrumb()}
