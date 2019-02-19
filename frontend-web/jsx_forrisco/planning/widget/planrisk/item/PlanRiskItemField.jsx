@@ -29,7 +29,8 @@ export default React.createClass({
 
 			fieldType: null,							//Tipo do campo (TextArea, ExportDocument)
 			vizualization: this.props.vizualization,    //Habilita a visualização do field
-			description: null							 //Valor do TextArea
+			description: null,							//Valor do TextArea
+			fileData: null								//Informações do DOC/IMG anexados
 		}
 	},
 
@@ -60,15 +61,28 @@ export default React.createClass({
 		}
 
 		if (!validation.errorField) {
+			if(validation.type.s === this.state.types[0].id) {
+				this.props.fields.push({
+					name: validation.name.s,
+					type: validation.type.s,
+					value: validation.name.s,
+					description: validation.description,
+					edit: false,
+					fileLink: "",
+					isText: true
+				});
+			}
 
-			this.props.fields.push({
-				name: "attribute-" + validation.name,
-				type: validation.type.s,
-				value: validation.name.s,
-				description: validation.description,
-				edit: false,
-				fileLink: ""
-			});
+			if(validation.type.s === this.state.types[1].id) {
+				this.props.fields.push({
+					name: validation.name.s,
+					type: validation.type.s,
+					value: validation.name.s,
+					description: validation.description,
+					edit: false,
+					fileLink: this.state.fileData.fileLink
+				});
+			}
 		}
 
 		this.resetTypes();
@@ -116,7 +130,7 @@ export default React.createClass({
 			};
 
 			me.setState({
-				fileData:{file: file},
+				fileData: file,
 				description:Modal.fileName
 			});
 		};

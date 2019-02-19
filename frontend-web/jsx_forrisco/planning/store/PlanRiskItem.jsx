@@ -8,6 +8,8 @@ var ItemModel = Fluxbone.Model.extend({
 
 var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_GET_ALL_ITENS: 'planRiskItem-getAllItens',
+	ACTION_DETAIL_ITEM: 'planRiskItem-detailItem',
+	ACTION_GET_SUB_ITENS: 'planRiskItem-getSubItens',
 	ACTION_SAVE_ITENS: 'planRiskItem-saveNewItens',
 
 	url: URL,
@@ -21,7 +23,22 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			data: params,
 			success(data, status, opts) {
-				me.trigger("allitens", data)
+				me.trigger("allItens", data)
+			},
+			error(opts, status, errorMsg) {
+				me.handleRequestErrors([], opts);
+			}
+		})
+	},
+
+	getSubItens(data, node) {
+		var me = this;
+		$.ajax({
+			method: "GET",
+			url: me.url + "/sub-itens/" + data.id,
+			dataType: 'json',
+			success(data, status, opts) {
+				me.trigger("allSubItens", data, node)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
@@ -42,6 +59,22 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("itemSaved", opts);
+			}
+		})
+	},
+
+	detailItem(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/" + data.id,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("detailItem", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("detailItem", opts);
 			}
 		})
 	}

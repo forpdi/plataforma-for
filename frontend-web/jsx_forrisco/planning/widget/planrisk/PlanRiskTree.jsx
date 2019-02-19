@@ -22,6 +22,7 @@ export default React.createClass({
 		return {
 			cleanTree: [],
 			treeItens: [],
+			treeItemFields: [],
 			newProps: null,
 			actualType: this.props.treeType,
 			prevProps: {},
@@ -49,12 +50,13 @@ export default React.createClass({
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
-			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
-			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
+			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
+			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
 			model: planRisk,
 			id: planRisk.id,
 		};
 
+		//Botão Novo Item Geral
 		var newItem = {
 			label: Messages.get("label.newItem"),
 			labelCls: 'fpdi-new-node-label',
@@ -63,18 +65,23 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
-		PlanRiskItemStore.on('allitens', (response) => {
+
+		/*Item de um Plano*/
+		PlanRiskItemStore.on('allItens', (response) => {
 			response.data.map(itens => {
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
+				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
 
 				treeItens.push({
 					label: itens.name,
 					expanded: false,
-					expandable: itens.name !== "Informações gerais", //Mudar essa condição para: Se houver subitens
+					expandable: true, //Mudar essa condição para: Se houver subitens
 					to: linkToItem,
 					key: linkToItem,
 					model: itens,
 					id: itens.id,
+					children: [],
+					onExpand: this.expandRoot,
+					onShrink: this.shrinkRoot
 				});
 			});
 
@@ -84,12 +91,63 @@ export default React.createClass({
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allitens');
+			PlanRiskItemStore.off('allItens');
 		}, me);
+
+		/*Campos de um Item*/
+		PlanRiskItemStore.on('allSubItens', (response, node) => {
+			var fieldTree = [];
+
+			//Botão Novo SubItem
+			var newItemSubItem = {
+				label: "Novo Subitem",
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: '#',
+				key: "newPlanRiskSubItem"
+			};
+
+			 response.data.map(field => {
+				 fieldTree.push({
+					 label: field.name,
+					 to: '',
+					 key: '',
+					 id: field.id,
+				 })
+			});
+
+			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+
+			node.node.children = fieldTree;
+			me.forceUpdate();
+
+			//PlanRiskItemStore.off('allFields');
+		})
+	},
+
+	expandRoot(nodeProps, nodeLevel) {
+		if (nodeLevel === 0) {
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
+				data: {
+					id: nodeProps.id
+				},
+				opts: {
+					node: nodeProps
+				}
+			})
+		}
+		nodeProps.expanded = !nodeProps.expanded;
+		this.forceUpdate();
+	},
+
+	shrinkRoot(nodeProps) {
+		nodeProps.expanded = !nodeProps.expanded;
+		this.forceUpdate();
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allitens');
+		PlanRiskItemStore.off('allItens');
 	},
 
 	render() {

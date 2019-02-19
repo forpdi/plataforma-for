@@ -60,7 +60,7 @@ export default React.createClass({
 			return false;
 		}
 
-		this.state.formFields.shift(); //Remove o Título da lista de Campos
+		this.state.formFields.shift(); 		 //Remove o Título da lista de Campos
 
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_SAVE_ITENS,
@@ -72,6 +72,12 @@ export default React.createClass({
 				},
 				planRiskItemField: this.state.formFields
 			}
+		});
+
+		PlanRiskItemStore.on('itemSaved', response => {
+			this.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
+			this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + response.data.id);
+			PlanRiskItemStore.off('itemSaved');
 		});
 	},
 

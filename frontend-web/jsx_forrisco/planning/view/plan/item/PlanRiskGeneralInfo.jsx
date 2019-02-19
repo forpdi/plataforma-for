@@ -2,7 +2,9 @@ import React from "react";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import _ from "underscore";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
+import {Link} from "react-router";
+import Messages from "@/core/util/Messages";
+import Modal from "@/core/widget/Modal";
 
 export default React.createClass({
 	contextTypes: {
@@ -37,12 +39,48 @@ export default React.createClass({
 		});
 	},
 
-	componentWillUnmount() {
-		// console.log('desmonto');
-		// PlanRiskStore.off('retrivedplanrisk');
+	deletePlanRisk() {
+		var me = this;
+		var msg = "Você tem certeza que deseja excluir esse plano de risco?";
+
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			PlanRiskStore.dispatch({
+				action: PlanRiskStore.ACTION_DELETE_PLANRISK,
+				data:this.props.params.planRiskId
+			});
+		}, msg, me.refreshCancel);
+
+		PlanRiskStore.on('deletePlanRisk', response => {
+			if(response.success === true) {
+				this.context.router.push("forrisco/home/");
+			}
+		})
 	},
 
-	componentWillReceiveProps(newProps) {
+	refreshCancel () {
+		Modal.hide();
+	},
+
+	renderDropdown() {
+		return(
+			<ul id="level-menu" className="dropdown-menu">
+				<li>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
+							<span id="menu-levels"> Editar Política </span>
+						</span>
+					</Link>
+				</li>
+				<li>
+					<Link onClick={this.deletePlanRisk}>
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
+						<span id="menu-levels"> Deletar Política </span>
+					</span>
+					</Link>
+				</li>
+			</ul>
+		)
 	},
 
 	render() {
@@ -51,6 +89,18 @@ export default React.createClass({
 				<div className="fpdi-card fpdi-card-full floatLeft">
 					<h1>
 						{this.state.title}
+						<span className="dropdown">
+							<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+							   aria-expanded="true"
+							   title={Messages.get("label.actions")}>
+
+								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+								<span className="mdi mdi-chevron-down" />
+
+							</a>
+
+							{this.renderDropdown()}
+						</span>
 					</h1>
 					{
 						this.state.description ?
