@@ -42,7 +42,7 @@ export default React.createClass({
 	},
 
 	componentWillMount() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
+		//this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
 	},
 
 	setTreeItens(planRisk, treeItens = []) {

@@ -1,16 +1,15 @@
 import _ from 'underscore';
 import React from "react";
-import ReactDOM from "react-dom";
 import { Link } from 'react-router';
-import string from 'string';
-
-import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import RiskRegister from 'forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx';
+import Monitor from 'forpdi/jsx_forrisco/planning/view/risk/Monitor.jsx';
+import Incident from 'forpdi/jsx_forrisco/planning/view/risk/Incident.jsx';
+import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx';
 
-import HideTabsBox from "forpdi/jsx/planning/widget/plan/TabsHidden.jsx";
+import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
+
+
 
 export default React.createClass({
 	contextTypes: {
@@ -23,134 +22,19 @@ export default React.createClass({
 	propTypes: {
 		policy: React.PropTypes.object.isRequired
 	},
-	getChildContext() {
-		return {
-			policy: this.props.policy,
-			tabPanel: this
-		};
-	},
+
 	getInitialState() {
 		return {
 			tabs: [],
 			tabsHash: '',
 			tabsHidden: [],
-			showTabsHidden: false
+			showTabsHidden: false,
+			selected:0,
+			riskModel:null,
+			visualization:true,
 		};
 	},
-	addTab(path, title) {
-		var tab, tabIndex = -1, hash = "", findPlan = -1;
 
-		for (var t = 0; t < this.state.tabs.length; t++) {
-
-			if (this.state.tabs[t].props.to == path) {
-				tabIndex = t;
-				hash += path + "|||" + title + "|||";
-			} else {
-				hash += this.state.tabs[t].props.to + "|||" + this.state.tabs[t].props.title + "|||";
-
-				if(this.state.tabs[t].props.to == "/plan/1/details") {
-					findPlan = t;
-				}
-			}
-		}
-
-		tab = (
-			<Link
-				className="fpdi-mainTabs"
-				role="tab"
-				to={path}
-				title={title}
-				activeClassName="active"
-				key={path}>
-				{title.length > 14 ?
-					string(title).trim().substr(0, 14).concat("...").toString() : title
-				}
-				<span className="mdi mdi-close-circle" onClick={this.removeTabByPath.bind(this, path)} />
-			</Link>
-		);
-
-		if (tabIndex >= 0) {
-			this.state.tabs[tabIndex] = tab;
-		} else {
-			var tabIndex = -1;
-			for (var t = 0; t < this.state.tabsHidden.length; t++) {
-				if (this.state.tabsHidden[t].props.to == tab.props.to) {
-					tabIndex = t;
-				}
-			}
-			if (tabIndex >= 0)
-				this.removeTabHidden(tabIndex);
-
-			if (this.state.tabs.length >= 3) {
-				this.state.tabsHidden.push(this.state.tabs[0]);
-				this.removeTab(0, 'newTab');
-			}
-			this.state.tabs.push(tab);
-			hash += path + "|||" + title + "|||";
-			var tabs = this.state.tabs;
-			for(var t = 0; t < this.state.tabsHidden.length; t++) {
-				for(var i = 0; i < this.state.tabs.length; i++) {
-					if (this.state.tabsHidden[t].key == this.state.tabs[i].key) {
-						tabs = this.state.tabs.splice(i, 1);
-					}
-				}
-			}
-		}
-
-		this.setState({
-			tabsHash: hash,
-			showTabsHidden: false,
-			tabs: this.state.tabs
-		});
-	},
-	removeTab(index, event) {
-		var newPath = null,
-			hash = "",
-			tabs = [];
-		for (var t = 0; t < this.state.tabs.length; t++) {
-			if (t != index) {
-				tabs.push(this.state.tabs[t]);
-				hash += this.state.tabs[t].props.to + "|||" + this.state.tabs[t].props.title + "|||";
-			}
-		}
-		if (this.context.router.isActive(this.state.tabs[index].props.to, false)) {
-			if(tabs.length == 0){
-				newPath = "/plan/"+ this.props.params.id+"/details";
-			}
-			else{
-				newPath = tabs[(index >= tabs.length) ? (tabs.length-1) : index].props.to;
-			}
-			this.context.router.replace(newPath);
-		}
-		if(this.state.tabsHidden.length>0 && event != 'newTab'){
-			tabs.push(this.state.tabsHidden[0]);
-			this.removeTabHidden(0);
-		}
-		this.setState({
-			tabs: tabs,
-			tabsHash: hash
-		});
-	},
-	removeTabByPath(path, event) {
-		event && event.preventDefault();
-		var tabIndex = -1;
-		for (var t = 0; t < this.state.tabs.length; t++) {
-			if (this.state.tabs[t].props.to == path) {
-				tabIndex = t;
-			}
-		}
-		if (tabIndex >= 0) {
-			this.removeTab(tabIndex);
-		} else {
-			for (var t = 0; t < this.state.tabsHidden.length; t++) {
-				if (this.state.tabsHidden[t].props.to == path) {
-					tabIndex = t;
-				}
-			}
-			if (tabIndex >= 0)
-				this.removeTabHidden(tabIndex);
-		}
-	},
 	componentDidMount() {
 		/*var me = this;
 		StructureStore.on('levelAttributeSaved', (model) => {
@@ -168,63 +52,184 @@ export default React.createClass({
 				this.removeTabByPath.bind(this, tabActive[0].hash.replace("#",""));
 			}
 		});*/
+
+		RiskStore.on("findRisk", (model) => {
+			if(model.success){
+				this.setState({
+					riskModel:model.data
+				})
+			}
+		})
+
+		this.refresh()
 	},
+
 	componentWillUnmount() {
 
 	},
 
-	componentWillReceiveProps() {
+	componentWillReceiveProps(newProps) {
+		this.refresh()
 	},
-	removeTabHidden(index, event) {
-		var newPath = null,
-			hash = "",
-			tabsHidden = [];
-		for (var t = 0; t < this.state.tabsHidden.length; t++) {
-			if (t != index) {
-				tabsHidden.push(this.state.tabsHidden[t]);
-				hash += this.state.tabsHidden[t].props.to + "|||" + this.state.tabsHidden[t].props.title + "|||";
-			}
-		}
+
+	refresh(){
+		RiskStore.dispatch({
+			action:RiskStore.ACTION_FIND_RISK,
+			data: this.props.params.riskId
+		})
+	},
+
+	renderUnarchiveRisk(){
+
+					//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId >
+
+		return (
+			<ul id="level-menu" className="dropdown-menu">
+				<li>
+					<Link
+						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
+						onClick={this.changeVizualization}>
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}>
+						<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
+						</span>
+					</Link>
+				</li>
+				{this.state.undeletable ?
+				<li>
+					<Link
+						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
+						>
+						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}>
+							<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")}</span>
+						</span>
+					</Link>
+				</li>
+				:
+				<li>
+					<Link
+						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
+						onClick={this.deleteItem}>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteItem")}>
+							<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")} </span>
+						</span>
+					</Link>
+				</li>
+				}
+			</ul>
+		);
+
+	},
+
+	changeVizualization() {
 		this.setState({
-			tabsHidden: tabsHidden,
-			tabsHash: hash
+			visualization: false,
 		});
 	},
-	showAllTabs() {
-		if (this.state.showTabsHidden) {
-			this.setState({
-				showTabsHidden: false
-			})
-		} else {
-			this.setState({
-				showTabsHidden: true
-			})
+	deleteRisco() {
+		var me = this;
+		if (me.state.riskModel != null) {
+			var msg = "Você tem certeza que deseja excluir esse Risco?"
+			Modal.confirmCustom(() => {
+				Modal.hide();
+				ItemStore.dispatch({
+					action: ItemStore.ACTION_DELETE,
+					data: me.state.itemModel.id
+				});
+			},msg,me.refreshCancel);
 		}
 	},
 
+	selectInfo(){
+		console.log(this.state.selected)
+		//return
+		switch(this.state.selected){
+			case 0:
+				console.log("RiskRegister")
+				return(<div>
+				{/*<RiskRegister
+					visualization={this.state.visualization}
+					risk={this.state.riskModel}
+				/>)*/} </div>)
+
+			case 1:
+				console.log("Monitor")
+				return(
+				<Monitor
+					risk={this.state.riskModel}
+				/>)
+
+			case 2:
+				console.log("Incident")
+				return(
+				<Incident
+					risk={this.state.riskModel}
+				/>)
+
+			case 3:
+				console.log("Contingency")
+				return(
+				<Contingency
+					risk={this.state.riskModel}
+				/>)
+
+		}
+	},
+
+	setInfo(select){
+		this.setState({
+			selected:select
+		})
+
+	},
+
+	header(){
+
+		return(<div style={{"display":"flex"}}>
+			<div className={"frisco-link icon-link " + (this.state.selected ==0 ? "selecionado" :"")} onClick={() => this.setInfo(0)}>
+			Informações
+			</div>
+
+			<div className={"frisco-link icon-link " + (this.state.selected ==1 ? "selecionado" :"")} onClick={() => this.setInfo(1)}>
+			Monitoramento
+			</div>
+
+			<div className={"frisco-link icon-link " + (this.state.selected ==2 ? "selecionado" :"")} onClick={() => this.setInfo(2)}>
+			Incidente
+			</div>
+
+			<div className={"frisco-link icon-link " + (this.state.selected ==3 ? "selecionado" :"")} onClick={() => this.setInfo(3)}>
+			Contigenciamento
+			</div>
+		</div>
+		)
+	},
 
 	render() {
-		return (
-			<div className="fpdi-tabs">
+		console.log("props",this.props)
+		console.log("state",this.state)
+		return (<div className="fpdi-card fpdi-card-full floatLeft">
+				<h1>
+					{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}
+					<span className="dropdown">
+							<a
+								className="dropdown-toggle"
+								data-toggle="dropdown"
+								aria-haspopup="true"
+								aria-expanded="true"
+								title={Messages.get("label.actions")}
+								>
+								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+								<span className="mdi mdi-chevron-down" />
+							</a>
+							{ this.renderUnarchiveRisk()}
+						</span>
+				</h1>
 
-				<ul  className={"fpdi-tabs-nav"+(this.state.tabs.length < 2 ? " hide-close":" show-close")}  role="tablist">
-				{this.state.tabs}
-					{this.state.tabsHidden.length>0 ?
-				    	(
-				    		<div className={"fpdi-tabs-hidden"+(this.state.showTabsHidden ? " show-border":"")}
-				    			onClick={this.showAllTabs}>
-				    			<span className="mdi mdi-chevron-double-right"/>
-								<span className="tabsNumber">{this.state.tabsHidden.length}</span>
-								{this.state.showTabsHidden ?
-								<HideTabsBox hideTabs={this.showAllTabs} tabs={this.state.tabsHidden} /> :""}
-							</div>
-						)
-					: ""}
-				</ul>
-				<div className="fpdi-tabs-content container-fluid">
-				{this.props.children}
+				<div>
+					{this.header()}
 				</div>
-			</div>
-		);
+				{this.selectInfo()}
+
+				</div>);
 	  }
 });

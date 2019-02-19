@@ -35,8 +35,28 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_MONITORS_BY_PLAN: "risk-findMonitorsByPlan",
 	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
 	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
+	ACTION_FIND_RISK: "risk-findRisk",
 	url: URL,
 	model: RiskModel,
+
+
+
+	findRisk(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("findRisk", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findRisk", opts);
+			}
+		});
+	},
+
 
 	findArchived(data){
 		var me = this;

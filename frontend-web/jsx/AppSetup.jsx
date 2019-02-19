@@ -55,8 +55,8 @@ import Forrisco_Application from "forpdi/jsx/Application_Forrisco.jsx";
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
 import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
-import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/item/ItemRegister.jsx";
-import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/item/SubItemRegister.jsx";
+import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/ItemRegister.jsx";
+import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/SubItemRegister.jsx";
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
 import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
@@ -95,6 +95,7 @@ ReactDOM.render((
 		<Route path="risk" component={Forrisco_RiskList} />
 		<Route path="policy" component={Forrisco_PolicyEdit} />
 
+
 		/*Política*/
 		<Route path="policy/:policyId">
 			<IndexRedirect to="item"/>
@@ -115,7 +116,6 @@ ReactDOM.render((
 
 		/*Plano de Risco*/
 		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/> 			/* Cadastrar novo plano de risco*/
-
 		<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>		/* Detalhar plano de risco*/
 			<IndexRedirect to="item"/>
 			<Route path="item" >
@@ -130,18 +130,20 @@ ReactDOM.render((
 
 			/*Unidade*/
 			<Route path="unit/new" component={Forrisco_UnitDetails}/>					/* Nova Unidade*/
-
 			<Route path="unit">
 				<Router path=":unitId">
 					<Route path="subunit/new" component={Forrisco_UnitDetails}/>		/* Nova subunidade*/
 					<Route path="subunit/:subunitId" component={Forrisco_UnitDetails}/>	/* Detalhar subunidade*/
-						/*Risco*/
+
+
+					/*Risco*/
 					<Route path="risk/new" component={Forrisco_RiskRegister}/>			/* Novo risco*/
-						<Route path="risk/:riskId" component={Forrisco_RiskDetail}>
-						<Route path="monitor" component={Forrisco_RiskMonitor}/>		/* Monitoramento do Risco*/
-						<Route path="incident" component={Forrisco_RiskIncident}/>		/* Incidentes do Risco*/
-						<Route path="contigency" component={Forrisco_RiskContingency}/>	/* Contigenciamento do Risco*/
-						<Route path="details" component={Forrisco_RiskRegister}/>		/* Detalhar o Risco*/
+					<Route path="risk/:riskId" component={Forrisco_RiskDetail}>
+						<Route path="details" component={Forrisco_RiskRegister}/>	/* Detalhar o Risco*/
+						{/*<Route path="monitor" component={Forrisco_RiskMonitor}/>		// Monitoramento do Risco
+						<Route path="incident" component={Forrisco_RiskIncident}/>		// Incidentes do Risco
+						<Route path="contigency" component={Forrisco_RiskContingency}/>	// Contigenciamento do Risco
+							*/}
 					</Route>
 				</Router>
 			</Route>

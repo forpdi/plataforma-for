@@ -496,3 +496,19 @@
 .frisco-containerOptions span.active {
 	text-decoration: underline;
 }
+
+
+.frisco-link {
+	margin: 50px;
+	font-size: 18px;
+	color: #9E9E9F;
+	font-weight: 600;
+	text-decoration: none;
+	font-weight: bold;
+
+	}
+.frisco-link.selecionado {
+	border-bottom: solid 2px #7d45d8;
+	  color: #7d45d8;
+	}
+
