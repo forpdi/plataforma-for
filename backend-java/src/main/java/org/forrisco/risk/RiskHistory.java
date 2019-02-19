@@ -68,5 +68,13 @@ public class RiskHistory extends SimpleLogicalDeletableEntity {
 		this.riskLevel = riskLevel;
 	}
 
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+
 	
 }

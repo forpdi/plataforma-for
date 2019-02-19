@@ -7,9 +7,6 @@ export default React.createClass({
 
         };
 	},
-	/*componentWillReceiveProps(newProps){
-
-	},*/
 
 	render() {
 		if(this.props.quantity){
@@ -28,7 +25,6 @@ export default React.createClass({
 			<span className="legend-item icon-link  " onClick={() => this.props.onClick(this.props.level)}>
 			<span type="text"  className={"legend-risk marginLeft10 "+this.props.color} />{this.props.level.level}</span>
 			)
-
 		}
 	}
 });

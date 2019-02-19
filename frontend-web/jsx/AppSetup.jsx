@@ -67,6 +67,13 @@ import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan
 import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
 import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
 
+import Forrisco_UnitDetails from "forpdi/jsx_forrisco/planning/view/unit/UnitDetails.jsx";
+import Forrisco_RiskRegister  from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
+import Forrisco_RiskDetail  from "forpdi/jsx_forrisco/planning/view/risk/RiskDetail.jsx";
+import Forrisco_RiskMonitor  from "forpdi/jsx_forrisco/planning/view/risk/Monitor.jsx";
+import Forrisco_RiskIncident  from "forpdi/jsx_forrisco/planning/view/risk/Incident.jsx";
+import Forrisco_RiskContingency  from "forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx";
+
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
 Numeral.language("pt-br");
@@ -88,6 +95,7 @@ ReactDOM.render((
 		<Route path="risk" component={Forrisco_RiskList} />
 		<Route path="policy" component={Forrisco_PolicyEdit} />
 
+		/*Política*/
 		<Route path="policy/:policyId">
 			<IndexRedirect to="item"/>
 			<Route path="item" component={Forrisco_PolicyDetails}>
@@ -106,11 +114,11 @@ ReactDOM.render((
 
 
 		/*Plano de Risco*/
-		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/> /* Cadastrar novo plano de risco*/
+		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/> 			/* Cadastrar novo plano de risco*/
 
-		<Route path="plan-risk/:planRiskId">								/* Detalhar plano de risco*/
+		<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>		/* Detalhar plano de risco*/
 			<IndexRedirect to="item"/>
-			<Route path="item" component={Forrisco_DetailPlanRisk}>
+			<Route path="item" >
 				<IndexRedirect to="overview"/>
 				<Route path="overview" component={Forrisco_PlanRiskTabPanel}/>
 				<Route path="new" component={Forrisco_PlanRiskRegistryItem}/>  		    /* Novo item do plano de risco*/
@@ -118,6 +126,26 @@ ReactDOM.render((
 				<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo}/> 	/* Informações gerais do plano de risco*/
 				<Route path=":itemId/edit" component={Forrisco_EditPlanRisk}/>
 			</Route>
+
+
+			/*Unidade*/
+			<Route path="unit/new" component={Forrisco_UnitDetails}/>					/* Nova Unidade*/
+
+			<Route path="unit">
+				<Router path=":unitId">
+					<Route path="subunit/new" component={Forrisco_UnitDetails}/>		/* Nova subunidade*/
+					<Route path="subunit/:subunitId" component={Forrisco_UnitDetails}/>	/* Detalhar subunidade*/
+						/*Risco*/
+					<Route path="risk/new" component={Forrisco_RiskRegister}/>			/* Novo risco*/
+						<Route path="risk/:riskId" component={Forrisco_RiskDetail}>
+						<Route path="monitor" component={Forrisco_RiskMonitor}/>		/* Monitoramento do Risco*/
+						<Route path="incident" component={Forrisco_RiskIncident}/>		/* Incidentes do Risco*/
+						<Route path="contigency" component={Forrisco_RiskContingency}/>	/* Contigenciamento do Risco*/
+						<Route path="details" component={Forrisco_RiskRegister}/>		/* Detalhar o Risco*/
+					</Route>
+				</Router>
+			</Route>
+
 		</Route>
 
 

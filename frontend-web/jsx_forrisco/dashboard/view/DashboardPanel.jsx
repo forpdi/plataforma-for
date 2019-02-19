@@ -100,6 +100,18 @@ export default React.createClass({
 					});
 
 				}
+			}else{
+
+				console.log("listedunarchivedplanrisk",response.responseJSON)
+
+				if(response.responseJSON){
+					if(response.responseJSON.message =="Não possui domínio!"){
+						this.context.router.push("/forrisco/policy");
+					}
+				}
+
+
+				this.context.router.push("/forrisco/policy");
 			}
 		}, me);
 

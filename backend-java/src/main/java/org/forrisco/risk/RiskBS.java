@@ -589,7 +589,49 @@ public class RiskBS implements Business {
 		return results;
 	}
 
+
 	
+	
+
+	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<RiskHistory> results = new PaginatedList<RiskHistory>();
+		List<RiskHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false))
+				.addOrder(Order.asc("id"));
+			
+			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+		
+	}
+
+	public PaginatedList<MonitorHistory> listMonitorHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<MonitorHistory> results = new PaginatedList<MonitorHistory>();
+		List<MonitorHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(MonitorHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false))
+				.addOrder(Order.asc("id"));
+			
+			list.addAll(this.dao.findByCriteria(criteria, MonitorHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+	}
+
 	/**
 	 * Transforma a string matrix em vetor
 	 * 
@@ -649,141 +691,5 @@ public class RiskBS implements Business {
 		this.persist(risk);
 		
 	}
-
-	/**
-	 * Retorna o ultimo monitoramento de um risco
-	 * 
-	 * @param Risk
-	 *            instância de um risco
-	 *
-	 * @return Monitor
-	 * 			instância de um monitoramento
-	 */
-	public Monitor lastMonitorbyRisk(Risk risk) {
-			
-		Criteria criteria = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).addOrder(Order.desc("begin"));
-
-		criteria.setMaxResults(1);
-		Monitor monitor = (Monitor) criteria.uniqueResult();
-		
-		return monitor;
-	}
-
 	
-	/**
-	 * Retorna o estado de
-	 * 
-	 * @param String
-	 *            periodicidade
-	 *            
-	 * @param Data
-	 * 		Data para comparação da peridicidade
-	 * 
-	 * @return int
-	 * 			estado atual do monitoramento
-	 */
-	public int riskState(String periodicity, Date date) {
-		int state=0; //não iniciado
-		
-		if(date == null) {
-			return state;
-		}
-
-		Date now= new Date();
-		
-		double diffInSec = (now.getTime() - date.getTime())/1000;
-		double diffDays=diffInSec/(60*60*24);
-	
-
-		switch(periodicity) {
-			case "diária":
-				if(diffDays<0.85){state=1;}//em dia
-				else if(diffDays<1){state=2;}	//próximos a vencer 
-				else{state=3;}	//atrasado
-				break;
-	
-			case "semanal":
-				if(diffDays<6){state=1;}
-				else if(diffDays<7){state=2;}
-				else{state=3;}
-				break;
-	
-			case "quinzenal":
-				if(diffDays<12){state=1;}
-				else if(diffDays<15){state=2;}
-				else{state=3;}
-				break;
-	
-			case "mensal":
-				if(diffDays<24){state=1;}
-				else if(diffDays<30){state=2;}
-				else{state=3;}
-				break;
-	
-			case "bimestral":
-				if(diffDays<48){state=1;}
-				else if(diffDays<60){state=2;}
-				else{state=3;}
-				break;
-	
-			case "trimestral":
-				if(diffDays<72){state=1;}
-				else if(diffDays<90){state=2;}
-				else{state=3;}
-				break;
-	
-			case "semestral":
-				if(diffDays<144){state=1;}
-				else if(diffDays<180){state=2;}
-				else{state=3;}
-				break;
-	
-			case "anual":
-				if(diffDays<288){state=1;}
-				else if(diffDays<360){state=2;}
-				else{state=3;}
-				break;
-		}
-		
-		return state;
-	}
-
-	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units) {
-		
-		PaginatedList<RiskHistory> results = new PaginatedList<RiskHistory>();
-		List<RiskHistory> list = new ArrayList<>();
-		
-		for(Unit unit : units.getList()) {
-			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
-				.add(Restrictions.eq("unit", unit))
-				.add(Restrictions.eq("deleted", false));
-			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
-		}
-		
-		results.setList(list);
-		results.setTotal((long) list.size());
-		return results;
-		
-	}
-
-	public PaginatedList<MonitorHistory> listMonitorHistoryByUnits(PaginatedList<Unit> units) {
-		
-		PaginatedList<MonitorHistory> results = new PaginatedList<MonitorHistory>();
-		List<MonitorHistory> list = new ArrayList<>();
-		
-		for(Unit unit : units.getList()) {
-			Criteria criteria = this.dao.newCriteria(MonitorHistory.class)
-				.add(Restrictions.eq("unit", unit))
-				.add(Restrictions.eq("deleted", false));
-			list.addAll(this.dao.findByCriteria(criteria, MonitorHistory.class));
-		}
-		
-		results.setList(list);
-		results.setTotal((long) list.size());
-		return results;
-	}
-
-
 }

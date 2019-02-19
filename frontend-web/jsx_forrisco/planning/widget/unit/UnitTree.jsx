@@ -22,7 +22,6 @@ export default React.createClass({
 		return {
 			cleanTree: [],
 			treeItens: [],
-			treeItemFields: [],
 			newProps: null,
 			actualType: this.props.treeType,
 			prevProps: {},
@@ -42,7 +41,7 @@ export default React.createClass({
 	},
 
 	componentWillMount() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
+	//	this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
 	},
 
 	setTreeItens(planRisk, treeItens = []) {
@@ -50,13 +49,12 @@ export default React.createClass({
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
-			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
-			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
+			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
+			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
 			model: planRisk,
 			id: planRisk.id,
 		};
 
-		//Botão Novo Item Geral
 		var newItem = {
 			label: Messages.get("label.newItem"),
 			labelCls: 'fpdi-new-node-label',
@@ -65,23 +63,18 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
-
-		/*Item de um Plano*/
-		PlanRiskItemStore.on('allItens', (response) => {
+		PlanRiskItemStore.on('allitens', (response) => {
 			response.data.map(itens => {
-				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
+				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
 
 				treeItens.push({
 					label: itens.name,
 					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitens
+					expandable: itens.name !== "Informações gerais", //Mudar essa condição para: Se houver subitens
 					to: linkToItem,
 					key: linkToItem,
 					model: itens,
 					id: itens.id,
-					children: [],
-					onExpand: this.expandRoot,
-					onShrink: this.shrinkRoot
 				});
 			});
 
@@ -91,74 +84,23 @@ export default React.createClass({
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allItens');
+			PlanRiskItemStore.off('allitens');
 		}, me);
-
-		/*Campos de um Item*/
-		PlanRiskItemStore.on('allSubItens', (response, node) => {
-			var fieldTree = [];
-
-			//Botão Novo SubItem
-			var newItemSubItem = {
-				label: "Novo Subitem",
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
-				key: "newPlanRiskSubItem"
-			};
-
-			 response.data.map(field => {
-				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
-				 })
-			});
-
-			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
-
-			node.node.children = fieldTree;
-			me.forceUpdate();
-
-			//PlanRiskItemStore.off('allFields');
-		})
-	},
-
-	expandRoot(nodeProps, nodeLevel) {
-		if (nodeLevel === 0) {
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
-				data: {
-					id: nodeProps.id
-				},
-				opts: {
-					node: nodeProps
-				}
-			})
-		}
-		nodeProps.expanded = !nodeProps.expanded;
-		this.forceUpdate();
-	},
-
-	shrinkRoot(nodeProps) {
-		nodeProps.expanded = !nodeProps.expanded;
-		this.forceUpdate();
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allItens');
+		PlanRiskItemStore.off('allitens');
 	},
 
 	render() {
 		return (
 			<div className="fpdi-tabs">
 				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" to={'/forrisco/plan-risk/' + this.props.planRisk.id}>
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" to={"/forrisco/plan-risk/" + this.props.planRisk.id}>
 						{Messages.getEditable("label.plan", "fpdi-nav-label")}
 					</Link>
 
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" to={'/forrisco/plan-risk/' + this.props.planRisk.id+'/unit'}>
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel"  to={"/forrisco/plan-risk/" + this.props.planRisk.id+ "/unit"}>
 						<span className="fpdi-nav-label">Unidade</span>
 					</Link>
 				</ul>

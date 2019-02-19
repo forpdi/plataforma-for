@@ -71,5 +71,13 @@ public class MonitorHistory extends SimpleLogicalDeletableEntity {
 		this.estado = estado;
 	}
 
+	public Unit getUnit() {
+		return unit;
+	}
+
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+
 	
 }

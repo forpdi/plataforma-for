@@ -43,6 +43,10 @@ export default React.createClass({
 		this.LoadIncidents();
 	 },
 
+	 componentWillUnmount(){
+
+	 },
+
 	componentWillReceiveProps(newProps){
 
 		this.state.levelActive=newProps.levelActive
@@ -53,7 +57,7 @@ export default React.createClass({
 
 		if(newProps.history.length>0 && this.state.History != newProps.history){
 			this.state.units= newProps.units;
-			this.refresh()
+			//this.refresh()
 		}
 		this.state.updated=false
 	},
@@ -78,6 +82,9 @@ export default React.createClass({
 	LoadIncidents(){
 
 		var data=[]
+		var levels=[]
+		var head=['mes']
+		var mes={1:'jan',2:'fev',3:'mar',4:'abr',5:'mai',6:'jun',7:'jul',8:'ago',9:'set',10:'out',11:'nov',12:'dez'}
 		var month
 		if(this.state.year==(new Date).getFullYear()){
 			month=(new Date).getMonth()+1
@@ -87,39 +94,72 @@ export default React.createClass({
 
 		//this.state.year//this.state.unit
 		//-----------
-		var levels=['mes']
-
 		for(var j=0; j < this.state.levelActive.length; j++){
-			levels.push(this.state.levelActive[j].level)
+			levels.push(this.state.levelActive[j])
 		}
 
-		data.push(levels)
-
-		var mes={1:'jan',2:'fev',3:'mar',4:'abr',5:'mai',6:'jun',7:'jul',8:'ago',9:'set',10:'out',11:'nov',12:'dez'}
-		var grafico=[]
+		for(var j=0; j < levels.length ; j++){
+			head.push(levels[j].level)
+		}
+		data.push(head)
 
 		for(var i=1;i<=month;i++){
 			var p=[]
 			p.push(mes[i])
 
-			for(var j=0; j < this.state.levelActive.length; j++){
-				var bool=false
+			for(var j=0; j < levels.length ; j++){
+				var contain=false
 				for(var k=0; k < this.state.History.length; k++){
-
 					if(this.state.History[k].year==this.state.year 									//ano
 					&& this.state.History[k].month==i												//mes
 					&& (this.state.unit ==-1 || this.state.unit==this.state.History[k].unit.id) 	//unidade
 					){
-
-						if(( this.state.History[k].riskLevel && this.state.History[k].riskLevel.level== this.state.levelActive[j].level	)	//level || estado)
-							||(this.state.History[k].estado && this.state.History[k].estado ==this.state.levelActive[j].level )){
-							p.push(this.state.History[k].quantity)
-							bool=true
+						if(( this.state.History[k].riskLevel && this.state.History[k].riskLevel.level== levels[j].level	)	//level || estado
+							||(this.state.History[k].estado && this.state.History[k].estado ==levels[j].level )){
+								p.push(this.state.History[k].quantity)
+								contain=true
 							break;
 						}
 					}
 				}
-				if (!bool){
+				if (!contain){
+					var lastHistory=null
+					var month_aux=0
+					//sem registro deste mês, pega o ultimo mês com registro se houver
+					for(var k=0; k < this.state.History.length; k++){
+						if((this.state.unit ==-1 || this.state.unit==this.state.History[k].unit.id)											//unidade
+						&& (( this.state.History[k].riskLevel && this.state.History[k].riskLevel.level== this.state.levelActive[j].level)	//level || estado
+						||(this.state.History[k].estado && this.state.History[k].estado ==this.state.levelActive[j].level ))){
+
+							//mesmo ano
+							if(this.state.History[k].year==this.state.year && this.state.History[k].month < i){
+									if(month_aux<this.state.History[k].month){
+										month_aux=this.state.History[k].month
+										lastHistory=this.state.History[k]
+									}
+							//ano diferente
+							}else if(this.state.History[k].year<this.state.year){
+								if(month_aux<this.state.History[k].month){
+									month_aux=this.state.History[k].month
+									lastHistory=this.state.History[k]
+								}
+							}
+
+							if(lastHistory!=null){
+								if(this.state.History[k].id<lastHistory.id){
+									lastHistory=this.state.History[k]
+								}
+							}
+						}
+					}
+
+					if(lastHistory!=null){
+						p.push(lastHistory.quantity)
+						contain=true
+					}
+				}
+
+				if (!contain){
 					p.push(0)
 				}
 			}
@@ -127,7 +167,6 @@ export default React.createClass({
 			data.push(p)
 		}
 		//-----------
-
 
 		this.state.data=data
 		this.state.loadingGraph=false
@@ -147,6 +186,7 @@ export default React.createClass({
 	},
 
 	Enable(risklevel){
+
 		for(var i=0; i<this.state.levelActive.length; i++){
 			if(this.state.levelActive[i].level==risklevel.level){
 				if(this.state.levelActive.length>1){
@@ -158,7 +198,6 @@ export default React.createClass({
 			}
 		}
 
-
 		this.state.levelActive.push(risklevel)
 		this.state.loadingGraph=false
 		this.LoadIncidents();
@@ -166,7 +205,7 @@ export default React.createClass({
 	},
 
 	Graph(){
-		var years=[]
+		var years=[(new Date).getFullYear()]
 
 		for(var i=0; i < this.state.History.length; i++){
 			years.push(this.state.History[i].year)
@@ -177,10 +216,10 @@ export default React.createClass({
 		var levels=[]
 		var color
 
-		for(var j=0; j<this.props.level.length; j++){
+		for(var j=0; j<this.props.level.length;j++){
 			color="Cinza"
-			for(var i=1;i<this.state.data[0].length;i++){
-				if(this.state.data[0][i]==this.props.level[j].level){
+			for(var i=0;i<this.state.levelActive.length;i++){
+				if(this.state.levelActive[i].level==this.props.level[j].level){
 					switch(this.props.level[j].color) {
 						case 0: color="Vermelho";  break;
 						case 1: color="Marron"; break;
@@ -213,12 +252,22 @@ export default React.createClass({
 			}
 		}
 
+		var max=0
+		for(var i=0; i < this.state.data.length; i++){
+			for(var j=1; j < this.state.data[i].length; j++){
+				if(this.state.data[i][j]>max){
+					max=this.state.data[i][j]
+				}
+			}
+		}
+
 		var options = {
-			hAxis: {title: "Tempo", minValue: 0, maxValue: 100, },
-			vAxis: {title: 'Quantidade', minValue: 0, maxValue: 100},
+			hAxis: {title: "Tempo", minValue: 1, maxValue: 12},
+			vAxis: {title: 'Quantidade', minValue: 1, maxValue: max},
 			legend: 'none',
-			explorer: {axis: 'horizontal'},
-			bar: {groupWidth: '100%'},
+			//interpolateNulls : true,
+			//explorer: {axis: 'horizontal'},
+			//bar: {groupWidth: '100%'},
 			colors: lines,
 		}
 		/*var thematicAxes=[]
@@ -233,7 +282,6 @@ export default React.createClass({
 				<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectUnits" >
 					<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
 					{this.props.units.map((attr, idy) =>{
-
 						return(
 						<option  key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
 							{(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
@@ -243,8 +291,7 @@ export default React.createClass({
 				</span>
 			</div>
 			<div style={{"text-align": "center"}}>
-				<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectYear" defaultValue={2019}
-				 defaultValue={"2019"}>
+				<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectYear" >
 					{years.map((attr, idx) =>{
 						return(
 						<option key={idx} value={attr} data-placement="right" title={attr} >{attr}</option>);})
@@ -270,7 +317,6 @@ export default React.createClass({
 					{levels}
 				</div>
 			</div>
-
 		</div>);
 	},
 

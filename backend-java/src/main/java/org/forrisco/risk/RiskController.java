@@ -556,16 +556,17 @@ public class RiskController extends AbstractController {
 	public void listHistory(@NotNull Long planId, Long unitId) {
 		try {
 			PaginatedList<Unit> units= new PaginatedList<Unit>();
+			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
+			if (plan == null) {
+				this.fail("O plano de risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			this.unitBS.updateHistory(plan);
+			
 			
 			if(unitId== -1) {
-				PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
-				if (plan == null) {
-					this.fail("O plano de risco solicitado não foi encontrado.");
-					return;
-				} 
-				
 				units = this.unitBS.listUnitsbyPlanRisk(plan);
-				
 			}else {
 				Unit unit = this.riskBS.exists(unitId, Unit.class);
 				
@@ -608,15 +609,17 @@ public class RiskController extends AbstractController {
 		try {
 			PaginatedList<Unit> units= new PaginatedList<Unit>();
 			
+			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
+			if (plan == null) {
+				this.fail("O plano de risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			this.unitBS.updateMonitorHistory(plan);
+			
+			
 			if(unitId== -1) {
-				PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
-				if (plan == null) {
-					this.fail("O plano de risco solicitado não foi encontrado.");
-					return;
-				} 
-				
 				units = this.unitBS.listUnitsbyPlanRisk(plan);
-				
 			}else {
 				Unit unit = this.riskBS.exists(unitId, Unit.class);
 				

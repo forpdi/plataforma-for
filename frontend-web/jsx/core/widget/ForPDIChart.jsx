@@ -67,8 +67,9 @@ export default React.createClass({
                  width={this.props.width}
                  height={this.props.height}
 				 legend_toggle={this.props.legend_toggle}
-                 chartEvents={this.props.chartEvents || []}/>
+                 chartEvents={this.props.chartEvents || []}
 				loader={<div><LoadingGauge/></div>}
+				/>
             </div>
     	);
     }

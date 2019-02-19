@@ -23,7 +23,7 @@ export default React.createClass({
 			year: [],
 			data: [],
 			options:{
-				title: 'incidentAxis',
+				//title: 'incidentAxis',
 				hAxis: {title: "Tempo", minValue: 0, maxValue: 15, },
 				vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
 				legend: true,
