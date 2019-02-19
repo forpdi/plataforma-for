@@ -1,9 +1,11 @@
 package org.forpdi.planning.fields;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -19,6 +21,8 @@ import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
+import org.forpdi.planning.attribute.Attribute;
+import org.forpdi.planning.document.DocumentAttribute;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
@@ -34,6 +38,7 @@ import org.forpdi.planning.fields.table.TableStructure;
 import org.forpdi.planning.fields.table.TableValues;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -41,6 +46,7 @@ import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 @RequestScoped
 public class FieldsBS extends HibernateBusiness {
@@ -383,13 +389,21 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Verificar se o campo pertence ao documento ou plano.
 	 * @return TableFields Campo da tabela.
 	 */
-	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument) {
+	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(TableFields.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
 				.addOrder(Order.asc("id"));
 		TableFields tableFields = (TableFields) criteria.uniqueResult();
 		return tableFields;
 	}
+	public TableFields tableFieldsByAttribute(Long attributeId, boolean isDocument) {
+		Criteria criteria = this.dao.newCriteria(TableFields.class)//.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("attributeId", attributeId)).add(Restrictions.eq("isDocument", isDocument))
+				.addOrder(Order.asc("id"));
+		TableFields tableFields = (TableFields) criteria.uniqueResult();
+		return tableFields;
+	}
+
 
 	/**
 	 * Buscar instância na tabela à partir de um atributo.
@@ -629,13 +643,89 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Id para buscar os campos.
 	 * @return PaginatedList<OptionsField> Lista com os campos.
 	 */
-	public PaginatedList<OptionsField> getOptionsField(Long attributeId) {
+	public PaginatedList<OptionsField> getOptionsField(Long attributeId, boolean deleted) {
 		PaginatedList<OptionsField> list = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(OptionsField.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(OptionsField.class).add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("attributeId", attributeId)).addOrder(Order.asc("id"));
 		;
 		list.setList(this.dao.findByCriteria(criteria, OptionsField.class));
 		return list;
+	}
+	public List<OptionsField> listOptionsFieldsByAttrsAndDocAttrs(List<Attribute> attributes, List<DocumentAttribute> documentAttributes) {
+		if (GeneralUtils.isEmpty(attributes) && GeneralUtils.isEmpty(documentAttributes)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(OptionsField.class);
+		Disjunction orClause = Restrictions.disjunction();
+		if (!GeneralUtils.isEmpty(attributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", false))
+				.add(Restrictions.in("attributeId",
+					attributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		if (!GeneralUtils.isEmpty(documentAttributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", true))
+				.add(Restrictions.in("attributeId",
+					documentAttributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		criteria.add(orClause);
+		return this.dao.findByCriteria(criteria, OptionsField.class);
+	}
+	
+	public List<Schedule> listSchedulesByAttrsAndDocAttrs(List<Attribute> attributes, List<DocumentAttribute> documentAttributes) {
+		if (GeneralUtils.isEmpty(attributes) && GeneralUtils.isEmpty(documentAttributes)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(Schedule.class);
+		Disjunction orClause = Restrictions.disjunction();
+		if (!GeneralUtils.isEmpty(attributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", false))
+				.add(Restrictions.in("attributeId",
+					attributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		if (!GeneralUtils.isEmpty(documentAttributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", true))
+				.add(Restrictions.in("attributeId",
+					documentAttributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		criteria.add(orClause);
+		return this.dao.findByCriteria(criteria, Schedule.class);
+	}
+	public List<TableFields> listTableFieldsByAttrsAndDocAttrs(List<Attribute> attributes, List<DocumentAttribute> documentAttributes) {
+		if (GeneralUtils.isEmpty(attributes) && GeneralUtils.isEmpty(documentAttributes)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(TableFields.class);
+		Disjunction orClause = Restrictions.disjunction();
+		if (!GeneralUtils.isEmpty(attributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", false))
+				.add(Restrictions.in("attributeId",
+					attributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		if (!GeneralUtils.isEmpty(documentAttributes)) {
+			orClause.add(Restrictions.conjunction()
+				.add(Restrictions.eq("isDocument", true))
+				.add(Restrictions.in("attributeId",
+					documentAttributes.stream().map((attr) -> attr.getId()).collect(Collectors.toList())
+				))
+			);
+		}
+		criteria.add(orClause);
+		return this.dao.findByCriteria(criteria, TableFields.class);
 	}
 
 	/**
@@ -676,8 +766,13 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Campos para listar à estrutura.
 	 * @return List<TableInstance> Lista com a estururas dos campos.
 	 */
+	public List<TableInstance> listTableInstanceByFields(TableFields fields, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableInstance.class).add(Restrictions.eq("deleted", deleted))
+				.add(Restrictions.eq("tableFields", fields));
+		return this.dao.findByCriteria(criteria, TableInstance.class);
+	}
 	public List<TableInstance> listTableInstanceByFields(TableFields fields) {
-		Criteria criteria = this.dao.newCriteria(TableInstance.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(TableInstance.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("tableFields", fields));
 		return this.dao.findByCriteria(criteria, TableInstance.class);
 	}
@@ -688,8 +783,13 @@ public class FieldsBS extends HibernateBusiness {
 	 * @param instance
 	 * @return List<TableValues> Lista com os valores da tabela.
 	 */
+	public List<TableValues> listTableValuesByInstance(TableInstance instance, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", deleted))
+				.add(Restrictions.eq("tableInstance", instance));
+		return this.dao.findByCriteria(criteria, TableValues.class);
+	}
 	public List<TableValues> listTableValuesByInstance(TableInstance instance) {
-		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(TableValues.class)//.add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("tableInstance", instance));
 		return this.dao.findByCriteria(criteria, TableValues.class);
 	}
@@ -701,11 +801,17 @@ public class FieldsBS extends HibernateBusiness {
 	 *            Estrutura para listar os campos.
 	 * @return List<TableValues> Lista dos valores com os campos de tabela.
 	 */
-	public List<TableValues> listTableValuesByStructure(TableStructure structure) {
-		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", false))
+	public List<TableValues> listTableValuesByStructure(TableStructure structure, boolean deleted) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class).add(Restrictions.eq("deleted", deleted))
 				.add(Restrictions.eq("tableStructure", structure));
 		return this.dao.findByCriteria(criteria, TableValues.class);
 	}
+	public List<TableValues> listTableValuesByStructure(TableStructure structure) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class)//.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("tableStructure", structure));
+		return this.dao.findByCriteria(criteria, TableValues.class);
+	}
+
 
 	/**
 	 * Lista com as estruturas do campos do cronograma.
@@ -863,6 +969,60 @@ public class FieldsBS extends HibernateBusiness {
 		for (Attachment attachment : list) {
 			this.deleteAttachment(attachment);
 		}
+	}
+	
+	public List<ScheduleInstance> listAllScheduleInstancesBySchedules(List<Schedule> schedules) {
+		if (GeneralUtils.isEmpty(schedules)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(ScheduleInstance.class);
+		criteria.add(Restrictions.in("schedule", schedules));
+		return this.dao.findByCriteria(criteria, ScheduleInstance.class);
+	}
+
+	public List<ScheduleStructure> listAllScheduleStructuresBySchedules(List<Schedule> schedules) {
+		if (GeneralUtils.isEmpty(schedules)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(ScheduleStructure.class);
+		criteria.add(Restrictions.in("schedule", schedules));
+		return this.dao.findByCriteria(criteria, ScheduleStructure.class);
+	}
+
+	public List<TableInstance> listAllTableInstancesByTableFields(List<TableFields> tableFields) {
+		if (GeneralUtils.isEmpty(tableFields)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(TableInstance.class);
+		criteria.add(Restrictions.in("tableFields", tableFields));
+		return this.dao.findByCriteria(criteria, TableInstance.class);
+	}
+
+	public List<TableStructure> listAllTableStructuresByTableFields(List<TableFields> tableFields) {
+		if (GeneralUtils.isEmpty(tableFields)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(TableStructure.class);
+		criteria.add(Restrictions.in("tableFields", tableFields));
+		return this.dao.findByCriteria(criteria, TableStructure.class);
+	}
+
+	public List<ScheduleValues> listAllScheduleValuesByInstancesAndStructures(List<ScheduleInstance> instances, List<ScheduleStructure> structures) {
+		Criteria criteria = this.dao.newCriteria(ScheduleValues.class);
+		if (!GeneralUtils.isEmpty(instances))
+			criteria.add(Restrictions.in("scheduleInstance", instances));
+		if (!GeneralUtils.isEmpty(structures))
+			criteria.add(Restrictions.in("scheduleStructure", structures));
+		return this.dao.findByCriteria(criteria, ScheduleValues.class);
+	}
+
+	public List<TableValues> listAllTableValuesByInstancesAndStructures(List<TableInstance> instances, List<TableStructure> structures) {
+		Criteria criteria = this.dao.newCriteria(TableValues.class);
+		if (!GeneralUtils.isEmpty(instances))
+			criteria.add(Restrictions.in("tableInstance", instances));
+		if (!GeneralUtils.isEmpty(structures))
+			criteria.add(Restrictions.in("tableStructure", structures));
+		return this.dao.findByCriteria(criteria, TableValues.class);
 	}
 	
 

@@ -213,7 +213,7 @@ public class StructureController extends AbstractController {
 			} else {
 				structure.setLevels(this.bs.listLevels(structure).getList());
 				for (StructureLevel level : structure.getLevels()) {
-					level.setAttributes(this.bs.listAttributes(level).getList());
+					level.setAttributes(this.bs.listAttributes(level,false).getList());
 				}
 				this.success(structure);
 			}
@@ -239,7 +239,7 @@ public class StructureController extends AbstractController {
 			for (Structure structure : structures.getList()) {
 				structure.setLevels(this.bs.listLevels(structure).getList());
 				for (StructureLevel level : structure.getLevels()) {
-					level.setAttributes(this.bs.listAttributes(level).getList());
+					level.setAttributes(this.bs.listAttributes(level,false).getList());
 				}
 			}
 			this.success(structures);
@@ -295,7 +295,7 @@ public class StructureController extends AbstractController {
 		try {
 			Plan plan = this.planBS.retrieveById(planId);
 			StructureLevel level = this.bs.retrieveNextLevel(plan.getStructure(), sequence.intValue());
-			PaginatedList<Attribute> attributeList = this.bs.listAttributes(level);
+			PaginatedList<Attribute> attributeList = this.bs.listAttributes(level,false);
 
 			if (parentId == 0)
 				parentId = null;
@@ -766,7 +766,7 @@ public class StructureController extends AbstractController {
 
 			if (openCloseGoal) {
 				StructureLevelInstance levelInstanceParent = this.bs.retrieveLevelInstance(levelInstance.getParent());
-				PaginatedList<Attribute> attributes = this.bs.listAttributes(levelInstanceParent.getLevel());
+				PaginatedList<Attribute> attributes = this.bs.listAttributes(levelInstanceParent.getLevel(),false);
 				for (Attribute attr : attributes.getList()) {
 					if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
 						AttributeInstance attrInstance = this.attrHelper.retrieveAttributeInstance(levelInstanceParent,
@@ -794,7 +794,7 @@ public class StructureController extends AbstractController {
 				}
 			} else {
 				StructureLevelInstance levelInstanceParent = this.bs.retrieveLevelInstance(levelInstance.getParent());
-				PaginatedList<Attribute> attributes = this.bs.listAttributes(levelInstanceParent.getLevel());
+				PaginatedList<Attribute> attributes = this.bs.listAttributes(levelInstanceParent.getLevel(),false);
 				for (Attribute attr : attributes.getList()) {
 					if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
 						AttributeInstance attrInstance = this.attrHelper.retrieveAttributeInstance(levelInstanceParent,

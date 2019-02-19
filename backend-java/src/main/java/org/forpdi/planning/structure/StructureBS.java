@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
 import org.forpdi.dashboard.DashboardBS;
+import org.forpdi.dashboard.manager.LevelInstanceHistory;
 import org.forpdi.planning.attribute.AggregateIndicator;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.attribute.AttributeHelper;
@@ -47,6 +49,7 @@ import org.forpdi.planning.attribute.types.enums.Periodicity;
 import org.forpdi.planning.fields.FieldsBS;
 import org.forpdi.planning.fields.OptionsField;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
+import org.forpdi.planning.fields.attachment.Attachment;
 import org.forpdi.planning.fields.budget.Budget;
 import org.forpdi.planning.fields.budget.BudgetDTO;
 import org.forpdi.planning.fields.schedule.Schedule;
@@ -71,6 +74,7 @@ import com.google.common.collect.Lists;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * 
@@ -190,6 +194,25 @@ public class StructureBS extends HibernateBusiness {
 		return this.dao.findByCriteria(criteria, StructureLevel.class);
 	}
 
+	public List<StructureLevel> listAllStructuresLevels(List<Structure> structures) {
+		if (GeneralUtils.isEmpty(structures)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(StructureLevel.class)
+			.add(Restrictions.in("structure", structures))
+		;
+		return this.dao.findByCriteria(criteria, StructureLevel.class);
+	}
+	public List<Attribute> listAllAttributes(List<StructureLevel> structureLevels) {
+		if (GeneralUtils.isEmpty(structureLevels)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(Attribute.class)
+			.add(Restrictions.in("level", structureLevels))
+		;
+		return this.dao.findByCriteria(criteria, Attribute.class);
+	}
+
 	/**
 	 * Listar atributos de um level.
 	 * 
@@ -197,9 +220,17 @@ public class StructureBS extends HibernateBusiness {
 	 *            Level de uma estrutura.
 	 * @return results Lista de atributos.
 	 */
-	public PaginatedList<Attribute> listAttributes(StructureLevel level) {
+	public PaginatedList<Attribute> listAttributes(StructureLevel level, boolean deleted) {
 		PaginatedList<Attribute> results = new PaginatedList<Attribute>();
 		Criteria criteria = this.dao.newCriteria(Attribute.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("level", level)).addOrder(Order.asc("label"));
+		results.setList(this.dao.findByCriteria(criteria, Attribute.class));
+		results.setTotal((long) results.getList().size());
+		return results;
+	}
+	public PaginatedList<Attribute> listAttributes(StructureLevel level) {
+		PaginatedList<Attribute> results = new PaginatedList<Attribute>();
+		Criteria criteria = this.dao.newCriteria(Attribute.class)//.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("level", level)).addOrder(Order.asc("label"));
 		results.setList(this.dao.findByCriteria(criteria, Attribute.class));
 		results.setTotal((long) results.getList().size());
@@ -506,7 +537,7 @@ public class StructureBS extends HibernateBusiness {
 			Number reachedValue = null;
 			if (polarity == null)
 				polarity = "";
-			List<AttributeInstance> attrs = this.listAttributeInstanceByLevel(instance);
+			List<AttributeInstance> attrs = this.listAttributeInstanceByLevel(instance,false);
 			for (AttributeInstance attribute : attrs) {
 				if (attribute.getAttribute().isFinishDate()) {
 					if (instance.isClosed()) {
@@ -644,7 +675,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<Attribute> setAttributesInstances(StructureLevelInstance levelInstance, List<Attribute> attributes) {
 		for (Attribute attribute : attributes) {
 			if (attribute.getType().equals(SelectField.class.getCanonicalName())) {
-				PaginatedList<OptionsField> options = this.fieldsBS.getOptionsField(attribute.getId());
+				PaginatedList<OptionsField> options = this.fieldsBS.getOptionsField(attribute.getId(),false);
 				attribute.setOptionLabels(options.getList());
 			} else if (attribute.getType().equals(ResponsibleField.class.getCanonicalName())) {
 				PaginatedList<User> users = this.userBS.listUsersByCompany();
@@ -660,7 +691,7 @@ public class StructureBS extends HibernateBusiness {
 				Schedule schedule = this.fieldsBS.scheduleByAttribute(attribute.getId(), false);
 				attribute.setSchedule(schedule);
 			} else if (attribute.getType().equals(TableField.class.getCanonicalName())) {
-				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(attribute.getId(), false);
+				TableFields tableFields = this.fieldsBS.tableFieldsByAttribute(attribute.getId(), false, false);
 				attribute.setTableFields(tableFields);
 			} else {
 				AttributeInstance attributeInstance = attrHelper.retrieveAttributeInstance(levelInstance, attribute);
@@ -792,6 +823,24 @@ public class StructureBS extends HibernateBusiness {
 		return list;
 	}
 	
+	public List<AttributeInstance> listAllAttributeInstanceByPlans(List<StructureLevelInstance> slis) {
+		if (GeneralUtils.isEmpty(slis)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.add(Restrictions.in("levelInstance", slis));
+		return this.dao.findByCriteria(criteria, AttributeInstance.class);
+	}
+	
+	public List<StructureLevelInstance> listAllLevelInstanceByPlans(List<Plan> plans) {
+		if (GeneralUtils.isEmpty(plans)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
+		criteria.add(Restrictions.in("plan", plans));
+		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
+	}
+	
 	/**
 	 * Listar instâncias dos leveis pelo plano. Inclusive deletados.
 	 * 
@@ -802,8 +851,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<StructureLevelInstance> listAllLevelInstanceByPlan(Plan plan) {
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
 		criteria.add(Restrictions.eq("plan", plan));
-		List<StructureLevelInstance> list = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
-		return list;
+		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 	}
 
 	/**
@@ -829,12 +877,20 @@ public class StructureBS extends HibernateBusiness {
 	 *            Instância de um level.
 	 * @return list Lista de instâncias dos atributos.
 	 */
-	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance) {
+	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("deleted", deleted));
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
 		return list;
+	}
+	public AttributeInstance listResponsibleAttributeByLevel(StructureLevelInstance levelInstance) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("levelInstance", levelInstance));
+		criteria.add(Restrictions.eq("attribute.label", "Responsável"));
+		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
+		return GeneralUtils.isEmpty(list) ? null : list.get(0);
 	}
 
 	/**
@@ -1132,7 +1188,7 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public boolean duplicateAttributeInstance(StructureLevelInstance instance, StructureLevelInstance instanceClone) {
 		try {
-			List<AttributeInstance> attrList = this.listAttributeInstanceByLevel(instance);
+			List<AttributeInstance> attrList = this.listAttributeInstanceByLevel(instance,false);
 			for (AttributeInstance attr : attrList) {
 				AttributeInstance attrCopy = new AttributeInstance();
 				attrCopy.setAttribute(attr.getAttribute());
@@ -2359,11 +2415,50 @@ public class StructureBS extends HibernateBusiness {
 	 *            Instância de um level.
 	 * @return query Lista das intâncias dos leveis.
 	 */
-	public List<StructureLevelInstanceDetailed> listAllLevelInstanceDetailed(StructureLevelInstance levelInstance) {
+	public List<StructureLevelInstanceDetailed> listAllLevelInstancesDetailedByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstanceDetailed.class);
-		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
 		return this.dao.findByCriteria(criteria, StructureLevelInstanceDetailed.class);
+	}
+
+	public List<ActionPlan> listAllActionPlansByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(ActionPlan.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, ActionPlan.class);
+	}
+
+	public List<AggregateIndicator> listAllAggregateIndicatorsByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(AggregateIndicator.class);
+		criteria.add(Restrictions.in("aggregate", levelInstances));
+		criteria.add(Restrictions.in("indicator", levelInstances));
+		return this.dao.findByCriteria(criteria, AggregateIndicator.class);
+	}
+
+	public List<Attachment> listAllAttachmentsByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(Attachment.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, Attachment.class);
+	}
+
+	public List<LevelInstanceHistory> listAllLevelInstancesHistoryByLevelInstances(List<StructureLevelInstance> levelInstances) {
+		if (GeneralUtils.isEmpty(levelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(LevelInstanceHistory.class);
+		criteria.add(Restrictions.in("levelInstance", levelInstances));
+		return this.dao.findByCriteria(criteria, LevelInstanceHistory.class);
 	}
 	
 	public boolean checkHaveBudgetByLevel(StructureLevel level){
