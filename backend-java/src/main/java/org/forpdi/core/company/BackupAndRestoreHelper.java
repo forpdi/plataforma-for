@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +56,6 @@ import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevel;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.planning.structure.StructureLevelInstanceDetailed;
-import org.hibernate.Criteria;
 import org.json.simple.parser.ParseException;
 
 import com.google.gson.Gson;
@@ -477,12 +475,19 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		final Map<Long, PlanMacro> plansMacro = new LinkedHashMap<>();
 		final Map<Long, Document> documents = new LinkedHashMap<>();
 		final Map<Long, DocumentSection> documentSections = new LinkedHashMap<>();
+		final Map<Long, DocumentAttribute> documentAttributes = new LinkedHashMap<>();
 		final Map<Long, Structure> structures = new LinkedHashMap<>();
 		final Map<Long, StructureLevel> structureLevels = new LinkedHashMap<>();
 		final Map<Long, Attribute> attributes = new LinkedHashMap<>();
 		final Map<Long, Plan> plans = new LinkedHashMap<>();
 		final Map<Long, StructureLevelInstance> structureLevelInstances = new LinkedHashMap<>();
-		
+		final Map<Long, Schedule> schedules = new LinkedHashMap<>();
+		final Map<Long, ScheduleInstance> scheduleInstances = new LinkedHashMap<>();
+		final Map<Long, ScheduleStructure> scheduleStructures = new LinkedHashMap<>();
+		final Map<Long, TableFields> tableFields = new LinkedHashMap<>();
+		final Map<Long, TableInstance> tableInstances = new LinkedHashMap<>();
+		final Map<Long, TableStructure> tableStructures = new LinkedHashMap<>();
+
 		this.dao.execute((session) -> {
 			String content;
 			
@@ -556,9 +561,11 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			List<DocumentAttribute> documentAttributesList = this.gson.fromJson(content, new TypeToken<List<DocumentAttribute>>() {}.getType());
 			if (!GeneralUtils.isEmpty(documentAttributesList)) {
 				documentAttributesList.forEach((documentAttribute) -> {
+					final Long oldId = documentAttribute.getId();
 					documentAttribute.setId(null);
 					documentAttribute.setSection(documentSections.get(documentAttribute.getExportDocumentSectionId()));
 					session.persist(documentAttribute);
+					documentAttributes.put(oldId, documentAttribute);
 				});
 			}
 
@@ -702,7 +709,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					session.persist(attachment);
 				});
 			}
-
+	
 			// Importando os orçamentos
 			content = this.readFromFile(files, Budget.class);
 			List<Budget> budgetsList = this.gson.fromJson(content, new TypeToken<List<Budget>>() {}.getType());
@@ -714,6 +721,153 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					session.persist(budget);
 				});
 			}
+
+			// Importando as instâncias de atributos
+			content = this.readFromFile(files, AttributeInstance.class);
+			List<AttributeInstance> attributeInstancesList = this.gson.fromJson(content, new TypeToken<List<AttributeInstance>>() {}.getType());
+			if (!GeneralUtils.isEmpty(attributeInstancesList)) {
+				attributeInstancesList.forEach((attributeInstance) -> {
+					attributeInstance.setId(null);
+					attributeInstance.setAttribute(attributes.get(attributeInstance.getExportAttributeId()));
+					attributeInstance.setLevelInstance(structureLevelInstances.get(attributeInstance.getExportStructureLevelInstanceId()));
+					if ("Responsável".equals(attributeInstance.getAttribute().getLabel())) {
+						User user = this.userBS.existsByEmail(attributeInstance.getLevelInstance().getExportResponsibleMail());
+						if (user != null) {
+							attributeInstance.setValue(user.getId().toString());
+							attributeInstance.setValueAsNumber(user.getId().doubleValue());
+						} else {
+							LOGGER.warnf("Usuário responsável não encontrado: %s", attributeInstance.getLevelInstance().getExportResponsibleMail());
+						}
+					}
+					session.persist(attributeInstance);
+				});
+			}
+
+			// Importando os campos de opções
+			content = this.readFromFile(files, OptionsField.class);
+			List<OptionsField> optionsFieldsList = this.gson.fromJson(content, new TypeToken<List<OptionsField>>() {}.getType());
+			if (!GeneralUtils.isEmpty(optionsFieldsList)) {
+				optionsFieldsList.forEach((optionsField) -> {
+					optionsField.setId(null);
+					if (optionsField.isDocument()) {
+						optionsField.setAttributeId(documentAttributes.get(optionsField.getAttributeId()).getId());
+					} else {
+						optionsField.setAttributeId(attributes.get(optionsField.getAttributeId()).getId());
+					}
+					session.persist(optionsField);
+				});
+			}
+
+			// Importando os cronogramas
+			content = this.readFromFile(files, Schedule.class);
+			List<Schedule> schedulesList = this.gson.fromJson(content, new TypeToken<List<Schedule>>() {}.getType());
+			if (!GeneralUtils.isEmpty(schedulesList)) {
+				schedulesList.forEach((schedule) -> {
+					final Long oldId = schedule.getId();
+					schedule.setId(null);
+					if (schedule.isDocument()) {
+						schedule.setAttributeId(documentAttributes.get(schedule.getAttributeId()).getId());
+					} else {
+						schedule.setAttributeId(attributes.get(schedule.getAttributeId()).getId());
+					}
+					session.persist(schedule);
+					schedules.put(oldId, schedule);
+				});
+			}
+
+			// Importando as instâncias de cronogramas
+			content = this.readFromFile(files, ScheduleInstance.class);
+			List<ScheduleInstance> scheduleInstancesList = this.gson.fromJson(content, new TypeToken<List<ScheduleInstance>>() {}.getType());
+			if (!GeneralUtils.isEmpty(scheduleInstancesList)) {
+				scheduleInstancesList.forEach((scheduleInstance) -> {
+					final Long oldId = scheduleInstance.getId();
+					scheduleInstance.setId(null);
+					scheduleInstance.setSchedule(schedules.get(scheduleInstance.getExportScheduleId()));
+					session.persist(scheduleInstance);
+					scheduleInstances.put(oldId, scheduleInstance);
+				});
+			}
+
+			// Importando as estruturas de cronogramas
+			content = this.readFromFile(files, ScheduleStructure.class);
+			List<ScheduleStructure> scheduleStructuresList = this.gson.fromJson(content, new TypeToken<List<ScheduleStructure>>() {}.getType());
+			if (!GeneralUtils.isEmpty(scheduleStructuresList)) {
+				scheduleStructuresList.forEach((scheduleStructure) -> {
+					final Long oldId = scheduleStructure.getId();
+					scheduleStructure.setId(null);
+					scheduleStructure.setSchedule(schedules.get(scheduleStructure.getExportScheduleId()));
+					session.persist(scheduleStructure);
+					scheduleStructures.put(oldId, scheduleStructure);
+				});
+			}
+
+			// Importando os valores de cronogramas
+			content = this.readFromFile(files, ScheduleValues.class);
+			List<ScheduleValues> scheduleValuesList = this.gson.fromJson(content, new TypeToken<List<ScheduleValues>>() {}.getType());
+			if (!GeneralUtils.isEmpty(scheduleValuesList)) {
+				scheduleValuesList.forEach((scheduleValue) -> {
+					scheduleValue.setId(null);
+					scheduleValue.setScheduleInstance(scheduleInstances.get(scheduleValue.getExportScheduleInstanceId()));
+					scheduleValue.setScheduleStructure(scheduleStructures.get(scheduleValue.getExportScheduleStructureId()));
+					session.persist(scheduleValue);
+				});
+			}
+
+			// Importando as tabelas
+			content = this.readFromFile(files, TableFields.class);
+			List<TableFields> tableFieldsList = this.gson.fromJson(content, new TypeToken<List<TableFields>>() {}.getType());
+			if (!GeneralUtils.isEmpty(tableFieldsList)) {
+				tableFieldsList.forEach((tableField) -> {
+					final Long oldId = tableField.getId();
+					tableField.setId(null);
+					if (tableField.isDocument()) {
+						tableField.setAttributeId(documentAttributes.get(tableField.getAttributeId()).getId());
+					} else {
+						tableField.setAttributeId(attributes.get(tableField.getAttributeId()).getId());
+					}
+					session.persist(tableField);
+					tableFields.put(oldId, tableField);
+				});
+			}
+
+			// Importando as instâncias de tabelas
+			content = this.readFromFile(files, TableInstance.class);
+			List<TableInstance> tableInstancesList = this.gson.fromJson(content, new TypeToken<List<TableInstance>>() {}.getType());
+			if (!GeneralUtils.isEmpty(tableInstancesList)) {
+				tableInstancesList.forEach((tableInstance) -> {
+					final Long oldId = tableInstance.getId();
+					tableInstance.setId(null);
+					tableInstance.setTableFields(tableFields.get(tableInstance.getExportTableFieldsId()));
+					session.persist(tableInstance);
+					tableInstances.put(oldId, tableInstance);
+				});
+			}
+
+			// Importando as estruturas de tabelas
+			content = this.readFromFile(files, TableStructure.class);
+			List<TableStructure> tableStructuresList = this.gson.fromJson(content, new TypeToken<List<TableStructure>>() {}.getType());
+			if (!GeneralUtils.isEmpty(tableStructuresList)) {
+				tableStructuresList.forEach((tableStructure) -> {
+					final Long oldId = tableStructure.getId();
+					tableStructure.setId(null);
+					tableStructure.setTableFields(tableFields.get(tableStructure.getExportTableFieldsId()));
+					session.persist(tableStructure);
+					tableStructures.put(oldId, tableStructure);
+				});
+			}
+
+			// Importando os valores de tabelas
+			content = this.readFromFile(files, TableValues.class);
+			List<TableValues> tableValuesList = this.gson.fromJson(content, new TypeToken<List<TableValues>>() {}.getType());
+			if (!GeneralUtils.isEmpty(tableValuesList)) {
+				tableValuesList.forEach((tableValue) -> {
+					tableValue.setId(null);
+					tableValue.setTableInstance(tableInstances.get(tableValue.getExportTableInstanceId()));
+					tableValue.setTableStructure(tableStructures.get(tableValue.getExportTableStructureId()));
+					session.persist(tableValue);
+				});
+			}
+
 		});
 	}
 
@@ -786,19 +940,6 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	}
 
 	
-	
-	/**
-	 * Lista Modelo
-	 * 
-	 * @param List<clazz> Classe do modelo no banco
-	 * 
-	 * @return String resultado da busca
-	 */
-	private <E extends Serializable> List<E> retrieve(Class<E> clazz) {
-		Criteria criteria = this.dao.newCriteria(clazz);
-		return this.dao.findByCriteria(criteria, clazz);
-	}
-
 	public int getQuantity() {
 		return quantity;
 	}
