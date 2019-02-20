@@ -1,5 +1,6 @@
 import React from "react";
 import ForPDIChart from "forpdi/jsx/core/widget/ForPDIChart.jsx"
+//import ForPDIChart from "forpdi/jsx_forrisco/core/widget/ForRiscoChart.jsx"
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import string from 'string';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -22,7 +23,7 @@ export default React.createClass({
 			year: [],
 			data: [],
 			options:{
-				title: '',
+				//title: 'incidentAxis',
 				hAxis: {title: "Tempo", minValue: 0, maxValue: 15, },
 				vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
 				legend: true,
@@ -47,6 +48,7 @@ export default React.createClass({
 		});
 	},
 	componentDidMount() {
+
 		var me = this;
 
 		RiskStore.on("incidentbByPlan",(model) =>{
@@ -78,6 +80,9 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
+
+	//	console.log("newProps",newProps)
+
 		var me = this;
 		this.state.plan=newProps.plan
 		this.state.units=newProps.units
@@ -163,9 +168,7 @@ export default React.createClass({
 			}
 		}
 
-
 		for(i=0;i<incidents.length;i++){
-
 			var this_month=moment(incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth()
 
 			if(incidents[i].type==0){
@@ -211,7 +214,7 @@ export default React.createClass({
 					</span>
 				</div>
 				<br/>
-				<div style={{"text-align": "center"}}>
+				<div style={{"textAlign": "center"}}>
 					<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectYear">
 						{this.state.year.map((attr, idx) =>{
 							return(
@@ -225,7 +228,7 @@ export default React.createClass({
 							chartType="LineChart"
 							data={this.state.data}
 							options={this.state.options}
-							graph_id="LineChart"
+							graph_id="LineChart-Incident"
 							width="100%"
 							height="300px"
 							legend_toggle={false}
@@ -238,10 +241,9 @@ export default React.createClass({
 							<span className="legend-item"><input type="text"  className="legend-risk-opportunities marginLeft10" disabled/> {Messages.getEditable("label.risk.opportunities","fpdi-nav-label")}</span>
 						</div>
 					</div>
-					}
+				}
 			</div>
-			</div>
-		);
+		</div>);
 	}
 
 });

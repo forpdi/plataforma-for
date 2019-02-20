@@ -18,6 +18,7 @@ export default React.createClass({
 		return {
 			fileData: null,
 			description: null,
+			newFieldType: null,
 			types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
 		}
 	},
@@ -29,11 +30,11 @@ export default React.createClass({
 	onSelectFieldType(){
 		var me = this;
 			me.setState({
-				newFieldType: document.getElementById("selectFieldType-"+(this.props.index)) ?  document.getElementById("selectFieldType-"+(this.props.index)).value :null//"*"
+				newFieldType: document.getElementById("selectFieldType-"+(this.props.index)) ?  document.getElementById("selectFieldType-"+(this.props.index)).value : null
 			});
 	},
 
-	
+
 	attachFile(){
 		var me = this;
 		var title = Messages.get("label.insertAttachment");
@@ -45,7 +46,7 @@ export default React.createClass({
 			</div>
 		);
 		var url = FileStore.url+"/uploadlocal";
-		
+
 		var onSuccess = function (resp) {
 			Modal.hide();
 			var file = {
@@ -57,7 +58,7 @@ export default React.createClass({
 					id: me.props.levelInstanceId
 				}
 			}
-			
+
 			me.setState({
 				//loading: true
 				//description: Modal.fileName,
@@ -103,15 +104,21 @@ export default React.createClass({
 		}else{
 			if(this.props.field){
 				if(this.props.field.edit){
+
+					this.state.newFieldType = this.state.newFieldType ==null ? this.props.field.type : this.state.newFieldType
+					var istext = this.state.newFieldType==AttributeTypes.TEXT_AREA_FIELD ? true : false
+
 					this.props.setItem(this.props.index,{
-						name: "attribute-"+me.props.getLength(),
-						type: this.props.field.type,
 						label: this.props.field.label,
+						name: "attribute-"+me.props.getLength(),
+						type: this.state.newFieldType,
 						value: validation.name.s,
 						description: validation.description,
-						isText: this.props.field.isText,
+						isText: istext ,
+						fileLink:  istext ? null : (this.state.fileData ? this.state.fileData.file.fileLink: null),
 						edit:false
 					})
+
 					return
 				}
 			}

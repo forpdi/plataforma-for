@@ -49,7 +49,7 @@ public class PeformanceFilter extends HibernateBusiness implements Filter<Long> 
 			if (!instance.getLevel().isGoal()) {
 				continue;
 			}
-			List<AttributeInstance> attrs = this.sbs.listAttributeInstanceByLevel(instance);
+			List<AttributeInstance> attrs = this.sbs.listAttributeInstanceByLevel(instance,false);
 			Double max = null, min = null, exp = null, reach = null;
 			Date finish = null;
 			for (AttributeInstance attr : attrs) {

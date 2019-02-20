@@ -178,7 +178,7 @@ export default React.createClass({
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/overview");
 			}else{
-				var msg= model.msg ? model.msg : "Erro ao criar PoFlítica"
+				var msg= model.msg ? model.msg.message : "Erro ao criar Política"
 				this.context.toastr.addAlertError(msg);
 			}
 		}, me);
@@ -423,17 +423,19 @@ export default React.createClass({
 								}
 							}else{
 								if(this.state.risklevelModel){
-									if(valor == this.state.risklevelModel.data[k]['level']){
-										switch(this.state.risklevelModel.data[k]['color']) {
-											case 0: classe="Vermelho"; break;
-											case 1: classe="Marron"; break;
-											case 2: classe="Amarelo"; break;
-											case 3: classe="Laranja"; break;
-											case 4: classe="Verde"; break;
-											case 5: classe="Azul"; break;
-											default: classe="Cinza";
+									if(this.state.risklevelModel[k]){
+										if(valor == this.state.risklevelModel.data[k]['level']){
+											switch(this.state.risklevelModel.data[k]['color']) {
+												case 0: classe="Vermelho"; break;
+												case 1: classe="Marron"; break;
+												case 2: classe="Amarelo"; break;
+												case 3: classe="Laranja"; break;
+												case 4: classe="Verde"; break;
+												case 5: classe="Azul"; break;
+												default: classe="Cinza";
+											}
+											break;
 										}
-										break;
 									}
 								}
 							}
@@ -712,7 +714,7 @@ export default React.createClass({
 		}
 
 		if (me.props.params.policyId) {
-			data.id=this.state.policyModel.id
+			data.id=this.state.policyModel.data.id
 			data.levels=this.state.color
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_CUSTOM_UPDATE,

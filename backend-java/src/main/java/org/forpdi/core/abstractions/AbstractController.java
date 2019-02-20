@@ -1,6 +1,7 @@
 package org.forpdi.core.abstractions;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 
 import org.forpdi.core.user.auth.UserSession;
 
@@ -19,4 +20,6 @@ public abstract class AbstractController extends br.com.caelum.vraptor.boilerpla
 	
 	/** Objecto da sessão do usuário. Injetado automaticamente. */
 	@Inject protected UserSession userSession;
+	
+	@Inject protected HttpServletResponse httpResponse;
 }

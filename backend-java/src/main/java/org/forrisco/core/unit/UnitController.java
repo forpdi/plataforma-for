@@ -25,31 +25,33 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
  * @author Matheus Nascimento
  */
 @Controller
-public class UnitController extends AbstractController{
+public class UnitController extends AbstractController {
 
-	@Inject private UnitBS unitBS;
-	@Inject private RiskBS riskBS;	
+	@Inject
+	private UnitBS unitBS;
+	@Inject
+	private RiskBS riskBS;
 
-	protected static final String PATH =  BASEPATH +"/unit";
+	protected static final String PATH = BASEPATH + "/unit";
 
-	
 	/**
 	 * Salvar unidade
 	 * 
 	 * @param Unit
-	 * 			unidade a ser salva
+	 *            unidade a ser salva
 	 */
-	@Post( PATH + "/new")
+	@Post(PATH + "/new")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
-	public void save(@NotNull @Valid  Unit unit){
-		try {	
-			
-			if(unit.getPlan()== null) {
+	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
+	// ManagePolicyPermission.class })
+	public void save(@NotNull @Valid Unit unit) {
+		try {
+
+			if (unit.getPlan() == null) {
 				this.fail("Unidade não possui Plano de Risco");
 			}
-			
+
 			unit.setId(null);
 			this.unitBS.save(unit);
 			this.success(unit);
@@ -58,27 +60,27 @@ public class UnitController extends AbstractController{
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
 
 	/**
 	 * Salvar subunidade
 	 * 
 	 * @param Unit
-	 * 			subunidade a ser salva
+	 *            subunidade a ser salva
 	 */
-	@Post( PATH + "/subnew")
+	@Post(PATH + "/subnew")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
-	public void saveSub(@NotNull @Valid  Unit unit){
+	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
+	// ManagePolicyPermission.class })
+	public void saveSub(@NotNull @Valid Unit unit) {
 		try {
 
-			if(unit.getPlan()== null) {
+			if (unit.getPlan() == null) {
 				this.fail("Unidade não possui Plano de Risco");
 				return;
 			}
 
-			if(unit.getParent()== null) {
+			if (unit.getParent() == null) {
 				this.fail("Unidade não possui unidade pai");
 				return;
 			}
@@ -92,7 +94,6 @@ public class UnitController extends AbstractController{
 		}
 	}
 
-	
 	/**
 	 * Retorna unidades.
 	 * 
@@ -100,20 +101,19 @@ public class UnitController extends AbstractController{
 	 *            Id do plano de risco.
 	 * @return <PaginatedList> Unit
 	 */
-	@Get( PATH + "")
+	@Get(PATH + "")
 	@NoCache
 	public void listUnits(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
-			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(plan);
+			PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	
+
 	/**
 	 * Retorna unidade.
 	 * 
@@ -121,7 +121,7 @@ public class UnitController extends AbstractController{
 	 *            Id da unidade a ser retornado.
 	 * @return Unit Retorna a unidade de acordo com o id passado.
 	 */
-	@Get( PATH + "/{id}")
+	@Get(PATH + "/{id}")
 	@NoCache
 	@Permissioned
 	public void listUnit(Long id) {
@@ -137,10 +137,7 @@ public class UnitController extends AbstractController{
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
 
-	
-	
 	/**
 	 * Exclui unidade.
 	 * 
@@ -148,32 +145,33 @@ public class UnitController extends AbstractController{
 	 *            Id da unidade a ser excluído.
 	 *
 	 */
-	@Delete( PATH + "/{id}")
+	@Delete(PATH + "/{id}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
+	// ManagePolicyPermission.class })
 	public void deleteUnit(@NotNull Long id) {
 		try {
-			
+
 			Unit unit = this.unitBS.exists(id, Unit.class);
 			if (GeneralUtils.isInvalid(unit)) {
 				this.result.notFound();
 				return;
 			}
-			
-			//verifica se possui subunidades vinculadas
+
+			// verifica se possui subunidades vinculadas
 			PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
-			if(subunits.getTotal()>0){
+			if (subunits.getTotal() > 0) {
 				this.fail("Unidade possui subunidade(s) vinculada(s).");
 				return;
 			}
-			
-			//verifica se possui riscos vinculados
+
+			// verifica se possui riscos vinculados
 			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(unit);
-			if(risks.getTotal()>0){
+			if (risks.getTotal() > 0) {
 				this.fail("Unidade possui risco(s) vinculado(s).");
 				return;
 			}
-			
+
 			this.unitBS.delete(unit);
 			this.success();
 		} catch (Throwable ex) {

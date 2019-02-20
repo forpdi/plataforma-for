@@ -538,7 +538,110 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Retorna historico.
+	 * 
+	 * @param planId
+	 *			Id do plano de risco.
+	 *
+	 * @param unitId
+	 *			Id da unidade.
+	 *
+	 * @return <PaginedList> RiskHistory
+	 * 			 Retorna lista de historicos de riscos
+	 */
+	@Get( PATH + "/history")
+	@NoCache
+	//@Permissioned
+	public void listHistory(@NotNull Long planId, Long unitId) {
+		try {
+			PaginatedList<Unit> units= new PaginatedList<Unit>();
+			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
+			if (plan == null) {
+				this.fail("O plano de risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			this.unitBS.updateHistory(plan);
+			
+			
+			if(unitId== -1) {
+				units = this.unitBS.listUnitsbyPlanRisk(plan);
+			}else {
+				Unit unit = this.riskBS.exists(unitId, Unit.class);
+				
+				if (unit == null) {
+					this.fail("O risco solicitado não foi encontrado.");
+					return;
+				}
+				
+				List<Unit> list = new ArrayList<Unit>();
+				list.add(unit);
+				units.setList(list);
+			}
+			
+			PaginatedList<RiskHistory> history = this.riskBS.listHistoryByUnits(units);
+						
+			this.success(history);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 	
+	/**
+	 * Retorna historico.
+	 * 
+	 * @param planId
+	 *			Id do plano de risco.
+	 *
+	 * @param unitId
+	 *			Id da unidade.
+	 *
+	 * @return <PaginedList> RiskHistory
+	 * 			 Retorna lista de historicos de riscos
+	 */
+	@Get( PATH + "/monitorHistory")
+	@NoCache
+	//@Permissioned
+	public void listMonitorHistory(@NotNull Long planId, Long unitId) {
+		try {
+			PaginatedList<Unit> units= new PaginatedList<Unit>();
+			
+			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
+			if (plan == null) {
+				this.fail("O plano de risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			this.unitBS.updateMonitorHistory(plan);
+			
+			
+			if(unitId== -1) {
+				units = this.unitBS.listUnitsbyPlanRisk(plan);
+			}else {
+				Unit unit = this.riskBS.exists(unitId, Unit.class);
+				
+				if (unit == null) {
+					this.fail("O risco solicitado não foi encontrado.");
+					return;
+				}
+				
+				List<Unit> list = new ArrayList<Unit>();
+				list.add(unit);
+				units.setList(list);
+			}
+			
+			PaginatedList<MonitorHistory> history = this.riskBS.listMonitorHistoryByUnits(units);
+						
+			this.success(history);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 	
 	
 	

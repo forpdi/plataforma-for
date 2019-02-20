@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -96,7 +97,13 @@ public class CompanyBS extends HibernateBusiness {
 	}
 
 	public void updateMessageOverlay(Company company, String key, String value) {
-		Criteria criteria = this.dao.newCriteria(CompanyMessage.class);
+		this.dao.execute((session) -> {
+			updateMessageOverlay(session, company, key, value);
+		});
+	}
+
+	public void updateMessageOverlay(Session session, Company company, String key, String value) {
+		Criteria criteria = session.createCriteria(CompanyMessage.class);
 		criteria.add(Restrictions.eq("company", company));
 		criteria.add(Restrictions.eq("messageKey", key));
 		CompanyMessage message = (CompanyMessage) criteria.uniqueResult();
@@ -107,7 +114,7 @@ public class CompanyBS extends HibernateBusiness {
 		}
 		message.setLastUpdated(new Date());
 		message.setMessageValue(value);
-		this.dao.persist(message);
+		session.persist(message);
 	}
 
 	/**

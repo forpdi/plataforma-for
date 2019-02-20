@@ -219,7 +219,11 @@ public class ItemController extends AbstractController {
 			if (item == null) {
 				this.fail("O Item solicitado não foi encontrado.");
 			} else {
-				this.success(item);
+				
+			item.setFieldItem(this.itemBS.listFieldsByItem(item).getList());
+						
+			this.success(item);
+			
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -245,6 +249,9 @@ public class ItemController extends AbstractController {
 			if (subitem == null) {
 				this.fail("O SubItem solicitado não foi encontrado.");
 			} else {
+				
+				subitem.setFieldSubItem(this.itemBS.listFieldsBySubItem(subitem).getList());
+				
 				this.success(subitem);
 			}
 		} catch (Throwable ex) {

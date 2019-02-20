@@ -30,6 +30,7 @@ export default React.createClass({
     },
 
 	componentDidMount(){
+	//	console.log("componentDidMount",this.props)
 		var me = this;
 		if(EnvInfo && EnvInfo.company == null){
 			me.setState({
@@ -56,13 +57,14 @@ export default React.createClass({
 				});
 			}
 		}, me);
-
     },
 
 
 
     componentWillReceiveProps(newProps){
 		var me = this;
+
+		//console.log("newProps",newProps)
 
 		this.state.plan=newProps.plan
 		this.state.risks=newProps.risks
@@ -73,7 +75,8 @@ export default React.createClass({
 			units: newProps.units,
 			loading: true,
 			policyModel:null,
-			risklevelModel:null
+			risklevelModel:null,
+			unit:-1
 		});
 
 		this.refresh()
@@ -165,7 +168,6 @@ export default React.createClass({
 								}
 							}
 						}
-
 						switch(current_color) {
 							case 0: color="Vermelho"; break;
 							case 1: color="Marron"; break;
@@ -175,7 +177,6 @@ export default React.createClass({
 							case 5: color="Azul"; break;
 							default: color="Cinza";
 						}
-
 						var impact=matrix[this.state.policyModel.nline*(this.state.policyModel.ncolumn+1)+column-1][0]
 						var probability=matrix[(line)*(this.state.policyModel.ncolumn+1)][0]
 
@@ -263,7 +264,8 @@ export default React.createClass({
 	render() {
 		return (<div>
 		<div className={"col-md-7"}>
-			<div className={this.props.className}>
+			<div> {// className={this.props.className}>
+			}
 				<div className="panel panel-default dashboard-goals-info-ctn">
 
 					{//select com todas as unidades deste plano de risco
@@ -287,13 +289,13 @@ export default React.createClass({
 						</span>
 					</div>
 
-
 					<div className= "frisco-containerOptions">
 						<span className={this.state.threats? "active": ""} onClick={this.selectThreats}>{Messages.get("label.risk.threats")}</span>
 						<span className={this.state.opportunities? "active": ""} onClick={this.selectOpportunities}>{Messages.get("label.risk.opportunities")}</span>
 					</div>
 					<div style={{padding: "0px 20px"}}>
-					{this.state.loading ?  <LoadingGauge /> : this.getMatrix()}
+					{this.state.loading ?  <LoadingGauge /> :
+					 this.getMatrix()}
 					</div>
 				</div>
 			</div>
@@ -304,9 +306,11 @@ export default React.createClass({
 					<RiskQuantity
 					plan={this.state.plan}
 					risks={this.state.currentRisks}
+					allRisks={this.state.risks}
 					threats={this.state.threats}
 					riskLevel={this.state.risklevelModel}
 					unit={this.state.unit}
+					units={this.state.units}
 					/>
 				</div>
 				}

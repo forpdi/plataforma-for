@@ -236,12 +236,37 @@ export default React.createClass({
 
 		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
+
+
+				var fields = [];
+				for (var i in model.attributes.fieldItem) {
+					var item=model.attributes.fieldItem[i]
+					if(!item.deleted){
+
+						fields.push({
+							name:item.name+"-"+(i),
+							value: item.name,
+							label:item.name,
+							description: item.description,
+							isText:  item.isText,
+							type: item.isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
+							edit: false,
+							fileLink: item.fileLink
+						});
+					}
+				}
+
+				//me.setState({
+
+			//	})
+
 				me.setState({
 					itemModel: model,
 					titulo: model.get("name"),
 					vizualization: true,
 					loading:false,
-					fields: this.getFields()
+					//fields: this.getFields(),
+					fields: fields
 				});
 
 				if(model.get("name")=="Informações gerais"){
@@ -250,7 +275,6 @@ export default React.createClass({
 					})
 				}
 
-				me.forceUpdate();
 				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}else{
 				me.setState({
@@ -263,7 +287,7 @@ export default React.createClass({
 			}
 		}, me);
 
-		ItemStore.on("retrieveField", (model) => {
+	/*	ItemStore.on("retrieveField", (model) => {
 			if(model.attributes != null){
 				var fields = [];
 				for (var i in model.attributes) {
@@ -286,7 +310,7 @@ export default React.createClass({
 					fields: fields
 				})
 			}
-		}, me);
+		}, me);*/
 
 		ItemStore.on("itemUpdated", (model) => {
 			if(model !=null){
@@ -355,7 +379,7 @@ export default React.createClass({
 				this.context.router.push("/forrisco/home");
 			}else{
 				if(model.message != null){
-					this.context.toastr.addAlertError(model.message);
+					me.context.toastr.addAlertError(model.message);
 				}
 			}
 
@@ -421,10 +445,10 @@ export default React.createClass({
 					action: ItemStore.ACTION_RETRIEVE_ITEM,
 					data: props.params.itemId
 				});
-				ItemStore.dispatch({
+				/*ItemStore.dispatch({
 					action: ItemStore.ACTION_RETRIEVE_FIELD,
 					data: props.params.itemId
-				});
+				});*/
 			}else{
 				this.setState({
 					titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
@@ -539,6 +563,7 @@ export default React.createClass({
 				fielditem.value= item.value,
 				fielditem.description= item.description,
 				fielditem.isText= item.isText,
+				fielditem.fileLink = item.fileLink
 				fielditem.edit=false
 			}
 		})
@@ -663,7 +688,6 @@ export default React.createClass({
 			Modal.confirmCustom(() => {
 				Modal.hide();*/
 
-
 				ItemStore.dispatch({
 					action: ItemStore.ACTION_CUSTOM_UPDATE,
 					data: {
@@ -694,6 +718,9 @@ export default React.createClass({
 
 		}
 	},
+
+
+
 
 	render() {
 		if (this.state.loading) {
@@ -758,7 +785,7 @@ export default React.createClass({
 							</div>
 						)
 					}
-					})
+				})
 				}
 			<br/>
 			{this.state.info ?

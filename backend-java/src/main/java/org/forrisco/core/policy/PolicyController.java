@@ -222,7 +222,7 @@ public class PolicyController extends AbstractController {
 			PaginatedList<RiskLevel>  riskLevels= this.policyBS.listRiskLevelbyPolicy(policy);
 			
 			if(plans.getTotal() >0) {
-				this.fail("Impossível excluir política com Planos de Risco vinculados");
+				this.fail("Impossível excluir política com Plano(s) de Risco vinculado(s)");
 			}else {
 
 				PaginatedList<Item> itens = this.itemBS.listItensByPolicy(policy);

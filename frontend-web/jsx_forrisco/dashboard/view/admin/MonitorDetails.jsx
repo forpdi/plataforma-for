@@ -1,10 +1,9 @@
 
 import React from "react";
-import Progress from 'react-progressbar';
-
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
+import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/Graphic.jsx";
 import moment from 'moment'
 var numeral = require('numeral');
 
@@ -17,6 +16,7 @@ export default React.createClass({
 			units: [],
 			risks: [],
 			monitors: [],
+			monitor_history:[],
 			monitor:{
 				inDay:0,
 				closeToMaturity:0,
@@ -28,6 +28,16 @@ export default React.createClass({
 					notStarted:0,}
 			},
 			loading: true,
+			loadingGraph:true,
+			level:[{level:"em dia", color:4},
+				{level:"próximo a vencer", color:3},
+				{level:"atrasado", color:0},
+				{level:"não iniciado", color:5}],
+
+			levelactive:[{level:"em dia", color:4},
+				{level:"próximo a vencer", color:3},
+				{level:"atrasado", color:0},
+				{level:"não iniciado", color:5}]
         };
 	},
 
@@ -48,6 +58,14 @@ export default React.createClass({
 			this.Quantify()
 
 		},me);
+
+		RiskStore.on("monitorHistoryByUnit",(model) =>{
+			if(model.success){
+				this.setState({
+					monitor_history:model.data
+				})
+			}
+		})
 
 	},
 
@@ -77,10 +95,14 @@ export default React.createClass({
 				action: RiskStore.ACTION_FIND_MONITORS_BY_PLAN,
 				data: newProps.plan.id
 			});
+
+			RiskStore.dispatch({
+				action:RiskStore.ACTION_FIND_MONITOR_HISTORY_BY_UNIT,
+				data:{unit: this.state.unit,
+					plan:this.state.plan.id }
+			})
 		}
-
 	},
-
 
 
 	componentWillUnmount() {
@@ -120,7 +142,10 @@ export default React.createClass({
 	},
 
 	listMonitors(){
-		console.log("//TODO historico de monitoramento", this.state.plan, this.state.unit)
+		this.setState({
+			risk_level_active:this.state.risk_level_active,
+			loadingGraph:false
+		})
 	},
 
 	onUnitChange(evnt){
@@ -223,7 +248,7 @@ export default React.createClass({
 			}
 		}
 
-		var percent =100/risks.length
+		var percent =100/(risks.length!=0 ? risks.length : 1)
 
 		monitor.Percentage.inDay=monitor.inDay*percent
 		monitor.Percentage.closeToMaturity=monitor.closeToMaturity*percent
@@ -236,9 +261,13 @@ export default React.createClass({
 		})
 	},
 
+	setLoading(bool){
+		this.state.loadingGraph=bool
+	},
+
 	render() {
 		var title = Messages.get("label.risk.monitor");
-		return (
+		return (<div>
 			<div className={this.props.className}>
 				<div className="panel">
 					<div className="dashboard-plan-details-header">
@@ -291,6 +320,19 @@ export default React.createClass({
 					</div>
 				</div>
 			</div>
+
+			{!this.state.loadingGraph ?
+				<Graphic
+				title={Messages.get("label.monitor.history").toUpperCase()}
+				unit={this.state.unit}
+				units={this.state.units}
+				level={this.state.level}
+				levelActive={this.state.levelactive}
+				history={this.state.monitor_history}
+				loading={this.setLoading}
+				/>
+				:""}
+		</div>
 		);
 	}
 });

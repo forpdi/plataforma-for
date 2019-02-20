@@ -1,6 +1,6 @@
 package org.forpdi.planning.fields.budget;
 
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -8,12 +8,11 @@ import javax.enterprise.context.RequestScoped;
 import org.forpdi.core.company.Company;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 @RequestScoped
 public class BudgetBS extends HibernateBusiness {
@@ -43,8 +42,27 @@ public class BudgetBS extends HibernateBusiness {
 		list.setList(this.dao.findByCriteria(criteria, BudgetElement.class));
 
 		return list;
-
 	}
+
+	public List<BudgetElement> listAllBudgetElementsByCompany(Company company) {
+		Criteria criteria = this.dao.newCriteria(BudgetElement.class)
+			.add(Restrictions.eq("company", company));
+		return this.dao.findByCriteria(criteria, BudgetElement.class);
+	}
+
+	public List<Budget> listAllBudgetsByElementsAndLevelInstances(
+			List<BudgetElement> budgetElements, List<StructureLevelInstance> structureLevelInstances) {
+		if (GeneralUtils.isEmpty(budgetElements) && GeneralUtils.isEmpty(structureLevelInstances)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(Budget.class);
+		if (!GeneralUtils.isEmpty(budgetElements))
+			criteria.add(Restrictions.in("budgetElement", budgetElements));
+		if (!GeneralUtils.isEmpty(structureLevelInstances))
+			criteria.add(Restrictions.in("levelInstance", structureLevelInstances));
+		return this.dao.findByCriteria(criteria, Budget.class);
+	}
+
 
 	/**
 	 * Buscar Elemento Orçamentário.

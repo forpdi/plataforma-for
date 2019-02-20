@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1402,7 +1402,7 @@ public List<PdfPTable> generatePDFplanTable(Plan plan) {
 										// LOGGER.info(levelInstanceAux.getSons().get(goalIndex).toString());
 
 										List<AttributeInstance> attInst = structureBS.listAttributeInstanceByLevel(
-												levelInstanceAux.getSons().getList().get(goalIndex));
+												levelInstanceAux.getSons().getList().get(goalIndex), false);
 										List<Attribute> attList = structureBS.listAttributesPDF(
 												levelInstanceAux.getSons().getList().get(goalIndex).getLevel());
 
@@ -2807,9 +2807,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos próximos a vencer": 
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 1) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2822,9 +2822,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						break;
 					case "Riscos em dia" : 
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 2) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2837,9 +2837,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos atrasados" : 
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 3) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -2852,9 +2852,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos não iniciados"	:
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							
-							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor);
+							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 0) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);

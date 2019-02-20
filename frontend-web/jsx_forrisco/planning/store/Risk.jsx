@@ -33,8 +33,30 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_BY_PLAN: 'risk-findByPlan',
 	ACTION_FIND_INCIDENTS_BY_PLAN: "risk-findIncdentsByPlan",
 	ACTION_FIND_MONITORS_BY_PLAN: "risk-findMonitorsByPlan",
+	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
+	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
+	ACTION_FIND_RISK: "risk-findRisk",
 	url: URL,
 	model: RiskModel,
+
+
+
+	findRisk(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("findRisk", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findRisk", opts);
+			}
+		});
+	},
+
 
 	findArchived(data){
 		var me = this;
@@ -228,6 +250,43 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	findHistoryByUnit(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/history",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {unitId: data.unit, planId: data.plan},
+			success(model) {
+				me.trigger("historyByUnit", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("historyByUnit", opts);
+			}
+		});
+	},
+
+	findMonitorHistoryByUnit(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/monitorHistory",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {unitId: data.unit, planId: data.plan},
+			success(model) {
+				me.trigger("monitorHistoryByUnit", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorHistoryByUnit", opts);
+			}
+		});
+	},
+
+
+
 
 	mainMenuState(data){
 		var me = this;

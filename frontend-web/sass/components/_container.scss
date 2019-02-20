@@ -432,8 +432,9 @@
 	text-align: -webkit-center;
 }
 .Cinza {
-    background-color: #ddd;
+	background-color: #ddd;
 }
+
 
 .Vermelho {
 	background-color: #FF0000;
@@ -468,8 +469,12 @@
 }
 
 .matrixSelect {
-	width:auto;
-	font-size: 12px !important;
+	width: auto;
+    font-size: 12px !important;
+    left: 10px;
+    bottom: 10px;
+    position: relative;
+    margin: 10px;
 }
 
 
@@ -491,3 +496,19 @@
 .frisco-containerOptions span.active {
 	text-decoration: underline;
 }
+
+
+.frisco-link {
+	margin: 50px;
+	font-size: 18px;
+	color: #9E9E9F;
+	font-weight: 600;
+	text-decoration: none;
+	font-weight: bold;
+
+	}
+.frisco-link.selecionado {
+	border-bottom: solid 2px #7d45d8;
+	  color: #7d45d8;
+	}
+

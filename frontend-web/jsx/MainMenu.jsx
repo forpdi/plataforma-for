@@ -31,7 +31,8 @@ export default React.createClass({
             domainError:true,
             archivedPlans: [],
             archivedPlansHidden:true,
-            showBudgetElement:false
+			showBudgetElement:false,
+			porcentagem:"0"
         };
     },
     componentDidMount() {
@@ -196,6 +197,7 @@ export default React.createClass({
         }
 	},
 
+
 	importPlans(event) {
 		event && event.preventDefault();
 
@@ -219,9 +221,9 @@ export default React.createClass({
 
 				jQuery.ajax({
 					method: "POST",
-					url: BACKEND_URL + "/company/restore",
+					url: BACKEND_URL + "company/restore",
 					dataType: 'json',
-					timeout: 0,
+					timeout: 60000*5,
 					success(data, status, opts) {
 						if (data.success) {
 							Modal.hide();
@@ -236,9 +238,22 @@ export default React.createClass({
 						}
 					},
 					error(opts, status, errorMsg) {
-						Modal.hide();
-						//console.log("Importação falhou: "+errorMsg);
-						//Toastr.error("Importação falhou");
+						/*
+						timeout
+						*/
+
+						if(opts.responseJSON != null){
+							Modal.hide();
+							clearInterval(interval);
+							Toastr.error(opts.responseJSON.message);
+						}
+
+						if(opts.responseJSON != null){
+							console.log(opts.responseJSON.message)
+							console.log(status)
+							console.log(errorMsg)
+						}
+
 					}
 				});
 
@@ -246,13 +261,18 @@ export default React.createClass({
 				interval= setInterval(function() {serverImportStatus(interval);},5000);
 			},
 			(response) => {
-				clearInterval(interval);
-				Modal.hide();
-				console.log("Importação falhou");
-				Toastr.error("Importação falhou");
+				if(response.message != null){
+					clearInterval(interval);
+					Modal.hide();
+					console.log("Importação falhou: "+response.message);
+					Toastr.error("Importação falhou: "+response.message);
+				}
 			},
 			"xml."
 		);
+
+		//serverImportStatus(interval);
+		//interval= setInterval(function() {serverImportStatus(interval);},5000);
 	},
 
     render() {
@@ -361,38 +381,39 @@ export default React.createClass({
     }
 });
 
-var porcentagem="";
 
+var porcentagem="0";
 function serverImportStatus(interval){
-	var resposta="";
-	jQuery.ajax({
-		method: "GET",
-		url: BACKEND_URL + "/company/state",
-		dataType: 'json',
-		success(data, status, opts) {
+		var resposta="";
 
-			if(data.message=="100"){
+		jQuery.ajax({
+			method: "GET",
+			url: BACKEND_URL + "company/state",
+			dataType: 'json',
+			success(data, status, opts) {
+
+				if(data.message=="100"){
+					clearInterval(interval);
+					Modal.hide();
+					Toastr.success("Planos foram importados.");
+				}
+				if(data.message=="-1"){
+					clearInterval(interval);
+				}
+
+				if (data.success) {
+					if(data.message != porcentagem && data.message!="-1"){
+						porcentagem=data.message;
+						console.log("Importando planos... " + porcentagem +"%");
+						$("#fbkupload").text('Importando planos... '+porcentagem +"%");
+					}
+				}
+			},
+			error(opts, status, errorMsg) {
 				clearInterval(interval);
 				Modal.hide();
-				Toastr.success("Planos foram importados.");
+				console.log("Importação falhou: "+errorMsg);
+				Toastr.error("Importação falhou");
 			}
-			if(data.message=="-1"){
-				clearInterval(interval);
-			}
-
-			if (data.success) {
-				if(data.message != porcentagem && data.message!="-1"){
-					porcentagem=data.message;
-					console.log("Importando planos... " + porcentagem +"%");
-					$("#fbkupload").text('Importando planos... '+ porcentagem +"%");
-				}
-			}
-		},
-		error(opts, status, errorMsg) {
-			clearInterval(interval);
-			Modal.hide();
-			console.log("Importação falhou: "+errorMsg);
-			Toastr.error("Importação falhou");
-		}
-	});
-};
+		});
+	}

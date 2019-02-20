@@ -1,5 +1,6 @@
 package org.forrisco.risk;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
@@ -21,10 +24,13 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.logging.Logger;
 
 import com.ibm.icu.impl.duration.TimeUnit;
 
+import br.com.caelum.vraptor.boilerplate.Business;
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
+import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 
 
@@ -32,7 +38,35 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
  * @author Matheus Nascimento
  */
 @RequestScoped
-public class RiskBS extends HibernateBusiness {
+public class RiskBS implements Business {
+	
+	//protected final Logger LOGGER;
+	
+	@Inject protected HibernateDAO dao;
+	@Inject protected HttpServletRequest request;
+	
+	/*public HibernateBusiness() {
+		LOGGER = Logger.getLogger(this.getClass());
+	}*/
+	
+	@Override
+	public <E extends Serializable> E exists(Serializable id, Class<E> clazz) {
+		return this.dao.exists(id, clazz);
+	}
+	
+	@Override
+	public <E extends Serializable> void persist(E model) {
+		this.dao.persist(model);
+	}
+	
+	@Override
+	public <E extends Serializable> void remove(E model) {
+		this.dao.delete(model);
+	}
+	
+	public <E extends Serializable> void save(E model) {
+		this.dao.save(model);
+	}
 	
 
 
@@ -555,7 +589,49 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 	}
 
+
 	
+	
+
+	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<RiskHistory> results = new PaginatedList<RiskHistory>();
+		List<RiskHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false))
+				.addOrder(Order.asc("id"));
+			
+			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+		
+	}
+
+	public PaginatedList<MonitorHistory> listMonitorHistoryByUnits(PaginatedList<Unit> units) {
+		
+		PaginatedList<MonitorHistory> results = new PaginatedList<MonitorHistory>();
+		List<MonitorHistory> list = new ArrayList<>();
+		
+		for(Unit unit : units.getList()) {
+			Criteria criteria = this.dao.newCriteria(MonitorHistory.class)
+				.add(Restrictions.eq("unit", unit))
+				.add(Restrictions.eq("deleted", false))
+				.addOrder(Order.asc("id"));
+			
+			list.addAll(this.dao.findByCriteria(criteria, MonitorHistory.class));
+		}
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+	}
+
 	/**
 	 * Transforma a string matrix em vetor
 	 * 
@@ -580,6 +656,15 @@ public class RiskBS extends HibernateBusiness {
 		return matrix;
 	}
 
+	
+	/**
+	 * Atualiza a probabilidade e impacto do risco
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 * @param Map<String, String>   
+	 * 				map de probabilidade e risco novos e antigos
+	 */
 	public void updateRiskPI(Risk risk, Map<String, String> impact_probability) {
 		
 		PaginatedList<Monitor> monitors = this.listMonitorbyRisk(risk);
@@ -606,85 +691,5 @@ public class RiskBS extends HibernateBusiness {
 		this.persist(risk);
 		
 	}
-
-	public Monitor lastMonitorbyRisk(Risk risk) {
-			
-		Criteria criteria = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).addOrder(Order.desc("begin"));
-
-		criteria.setMaxResults(1);
-		Monitor monitor = (Monitor) criteria.uniqueResult();
-		
-		return monitor;
-	}
-
-	public int riskState(String periodicity, Monitor monitor) {
-		int state=0; //não iniciado
-		
-		if(monitor == null) {
-			return state;
-		}
-
-		Date date = monitor.getBegin();
-		Date now= new Date();
-		
-		double diffInSec = (now.getTime() - date.getTime())/1000;
-		double diffDays=diffInSec/(60*60*24);
 	
-
-		switch(periodicity) {
-			case "diária":
-				if(diffDays<0.85){state=1;}//em dia
-				else if(diffDays<1){state=2;}	//próximos a vencer 
-				else{state=3;}	//atrasado
-				break;
-	
-			case "semanal":
-				if(diffDays<6){state=1;}
-				else if(diffDays<7){state=2;}
-				else{state=3;}
-				break;
-	
-			case "quinzenal":
-				if(diffDays<12){state=1;}
-				else if(diffDays<15){state=2;}
-				else{state=3;}
-				break;
-	
-			case "mensal":
-				if(diffDays<24){state=1;}
-				else if(diffDays<30){state=2;}
-				else{state=3;}
-				break;
-	
-			case "bimestral":
-				if(diffDays<48){state=1;}
-				else if(diffDays<60){state=2;}
-				else{state=3;}
-				break;
-	
-			case "trimestral":
-				if(diffDays<72){state=1;}
-				else if(diffDays<90){state=2;}
-				else{state=3;}
-				break;
-	
-			case "semestral":
-				if(diffDays<144){state=1;}
-				else if(diffDays<180){state=2;}
-				else{state=3;}
-				break;
-	
-			case "anual":
-				if(diffDays<288){state=1;}
-				else if(diffDays<360){state=2;}
-				else{state=3;}
-				break;
-		}
-		
-		return state;
-	}
-
-
 }

@@ -1,0 +1,94 @@
+import React from "react";
+import UnitTree from "forpdi/jsx_forrisco/planning/widget/unit/UnitTree.jsx";
+import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
+import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
+
+
+export default React.createClass({
+	contextTypes: {
+		accessLevel: React.PropTypes.number.isRequired,
+		roles: React.PropTypes.object.isRequired,
+		router: React.PropTypes.object,
+		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
+	},
+
+	propTypes: {
+		location: React.PropTypes.object.isRequired
+	},
+
+	getInitialState() {
+		return {
+			resultSearch: [],
+			isLoading: true,
+			planRiskData: [],
+			planRiskId: null
+		};
+	},
+
+	componentDidMount() {
+		PlanRiskStore.on('retrivedplanrisk', (response) => {
+			if (response !== null) {
+				this.setState({
+					planRiskData: response,
+					planRiskId: response.get("id"),
+					isLoading: false
+				});
+			}
+		});
+
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+			data: this.props.params.planRiskId
+		});
+
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+			data: {
+				planRiskId: this.props.params.planRiskId
+			}
+		});
+
+		this.forceUpdate();
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.params.planRiskId != this.state.planRiskId) {
+			PlanRiskStore.dispatch({
+				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+				data: newProps.params.planRiskId
+			});
+
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+				data: {
+					planRiskId: newProps.params.planRiskId
+				}
+			});
+		}
+	},
+
+	render() {
+		if (this.state.isLoading === true) {
+			return <LoadingGauge/>;
+		}
+
+		if (this.state.planRiskData) {
+			return (
+				<div className="fpdi-plan-details">
+					<UnitTree planRisk={this.state.planRiskData} ref="tree" treeType={this.props.route.path}/>
+					<div className="fpdi-plan-tabs">
+						{<PlanRiskTabPanel
+							{...this.props}
+							planRisk={this.state.planRiskData}
+							ref={"tabpanel-" + this.props.params.planRiskId}
+							key={"tabpanel-" + this.props.params.planRiskId}
+						/>}
+					</div>
+				</div>
+			)
+		}
+	}
+});
