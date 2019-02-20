@@ -88,6 +88,10 @@ export default React.createClass({
 		this.resetTypes();
 	},
 
+	removeField() {
+		this.props.deleteFields(this.props.index)
+	},
+
 	setRichTextValue(value) {
 		this.setState({
 			description: value
@@ -158,6 +162,7 @@ export default React.createClass({
 								<b className="budget-title">{this.props.field.value}</b>
 								{
 									<span type="submit" className="mdi mdi-delete attribute-input-edit inner"
+										  onClick={this.removeField}
 										  title={Messages.get("label.title.deleteField")}/>
 								}
 

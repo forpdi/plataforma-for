@@ -66,6 +66,10 @@ import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/pla
 import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx";
 import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
 import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
+import Forrisco_PlanRiskRegistrySubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
+import Forrisco_DetailPlanRiskSubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
+import Forrisco_EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
+
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -117,6 +121,8 @@ ReactDOM.render((
 				<Route path=":itemId" component={Forrisco_DetailPlanRiskItem}/>         /* Detalhar Item de um Plano*/
 				<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo}/> 	/* Informações gerais do plano de risco*/
 				<Route path=":itemId/edit" component={Forrisco_EditPlanRisk}/>
+				<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
+				<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 			</Route>
 		</Route>
 

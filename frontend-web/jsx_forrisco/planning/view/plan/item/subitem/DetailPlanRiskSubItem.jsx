@@ -4,9 +4,6 @@ import {Link} from "react-router";
 import Form from "@/planning/widget/attributeForm/AttributeForm";
 import Validation from "forpdi/jsx_forrisco/core/util/Validation";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
-import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
-import Messages from "@/core/util/Messages";
 import _ from "underscore";
 
 var VerticalForm = Form.VerticalForm;
@@ -36,30 +33,28 @@ export default React.createClass({
 				isText: ""
 			}],
 			tabPath: "",
-			isLoading: true,
-			onEdit: false
+			isLoading: true
 		};
 	},
 
 	componentDidMount() {
 		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+			action: PlanRiskItemStore.ACTION_DETAIL_SUBITEM,
 			data: {
-				id: this.props.params.itemId
+				id: this.props.params.subItemId
 			},
 		});
 		this.refreshComponent();
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (this.props.params.itemId !== newProps.itemId) {
+		if (this.props.params.subItemId !== newProps.subItemId) {
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+				action: PlanRiskItemStore.ACTION_DETAIL_SUBITEM,
 				data: {
-					id: newProps.params.itemId
+					id: newProps.params.subItemId
 				},
 			});
-
 			this.refreshComponent();
 
 			if(this.state.tabPath !== this.props.location.pathname) {
@@ -76,11 +71,10 @@ export default React.createClass({
 
 	refreshComponent() {
 		var content = [];
-		PlanRiskItemStore.on('detailItem', response => {
+		PlanRiskItemStore.on('detailSubItem', response => {
+			if (response.data.length !== 0) {
 
-			if (response.data.planRiskItemField.length !== 0) {
-
-				response.data.planRiskItemField.map(field => {
+				response.data.planRiskSubItemField.map(field => {
 					content.push({
 						fieldName: field.name,
 						fieldContent: field.description,
@@ -107,7 +101,7 @@ export default React.createClass({
 			}
 
 			this.forceUpdate();
-			PlanRiskItemStore.off('detailItem');
+			PlanRiskItemStore.off('detailSubItem');
 		});
 	},
 
@@ -137,27 +131,6 @@ export default React.createClass({
 		)
 	},
 
-	renderDropdown() {
-		return(
-			<ul id="level-menu" className="dropdown-menu">
-				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels" onClick={this.onEdit}> Editar Item </span>
-						</span>
-					</Link>
-				</li>
-				<li>
-					<Link onClick={this.deletePlanRisk}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-						<span id="menu-levels"> Deletar Item </span>
-					</span>
-					</Link>
-				</li>
-			</ul>
-		)
-	},
-
 	render() {
 
 		if (this.state.isLoading === true) {
@@ -169,62 +142,43 @@ export default React.createClass({
 				{this.renderBreadcrumb()}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
-					<h1>
-						{this.state.itemTitle}
-
-						<span className="dropdown">
-							<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-							   aria-expanded="true"
-							   title={Messages.get("label.actions")}>
-
-								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down" />
-
-							</a>
-
-							{this.renderDropdown()}
-						</span>
-					</h1>
+					<h1> {this.state.itemTitle} </h1>
 					{
-						this.state.onEdit === false ?
+						this.state.field.map((field, key) => {
 
-							this.state.field.map((field, key) => {
+							if (field.isText === true) {
+								return (
+									<div className="form-group form-group-sm" key={key}>
+										<label className="fpdi-text-label"> {field.fieldName} </label>
 
-								if (field.isText === true) {
-									return (
-										<div className="form-group form-group-sm" key={key}>
-											<label className="fpdi-text-label"> {field.fieldName} </label>
-
-											<div>
-												<span className="pdi-normal-text"> {field.fieldContent} </span>
-											</div>
+										<div>
+											<span className="pdi-normal-text"> {field.fieldContent} </span>
 										</div>
-									)
-								} else {
-									return (
-										<div className="form-group form-group-sm" key={key}>
-											<label className="fpdi-text-label"> {field.fieldName} </label>
+									</div>
+								)
+							} else {
+								return (
+									<div className="form-group form-group-sm" key={key}>
+										<label className="fpdi-text-label"> {field.fieldName} </label>
 
-											<div className="panel panel-default">
-												<table className="budget-field-table table">
-													<tbody>
-													<tr>
-														<td className="fdpi-table-cell">
-															<a target="_blank" rel="noopener noreferrer"
-															   href={field.fileLink}>
-																{field.fieldContent}
-															</a>
-														</td>
-													</tr>
-													</tbody>
-												</table>
-											</div>
+										<div className="panel panel-default">
+											<table className="budget-field-table table">
+												<tbody>
+												<tr>
+													<td className="fdpi-table-cell">
+														<a target="_blank" rel="noopener noreferrer"
+														   href={field.fileLink}>
+															{field.fieldContent}
+														</a>
+													</td>
+												</tr>
+												</tbody>
+											</table>
 										</div>
-									)
-								}
-							}) :
-							 <SPAN> AE </SPAN>
-							/* <PlanRiskItemField/> */
+									</div>
+								)
+							}
+						})
 					}
 				</div>
 			</div>

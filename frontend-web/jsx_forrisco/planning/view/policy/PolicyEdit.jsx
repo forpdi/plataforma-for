@@ -178,7 +178,7 @@ export default React.createClass({
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/overview");
 			}else{
-				var msg= model.msg ? model.msg : "Erro ao criar Política"
+				var msg= model.msg ? model.msg : "Erro ao criar PoFlítica"
 				this.context.toastr.addAlertError(msg);
 			}
 		}, me);

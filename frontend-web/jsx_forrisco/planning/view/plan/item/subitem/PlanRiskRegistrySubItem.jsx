@@ -4,9 +4,8 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import _ from "underscore";
-
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -30,17 +29,17 @@ export default React.createClass({
 		this.getFields();
 
 		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Item');
+			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Subitem');
 		});
 	},
 
 	getFields() {
 
-		/*Título do Item*/
+		/*Título do SubItem*/
 		var formFields = [{
 			name: 'description',
 			type: AttributeTypes.TEXT_FIELD,
-			placeholder: "Título do Item",
+			placeholder: "Título do Subitem",
 			maxLength: 100,
 			label: "Título",
 			required: true,
@@ -58,9 +57,9 @@ export default React.createClass({
 	},
 
 	deleteFields(id) {
-		Modal.confirmCustom( () => {
+		Modal.confirmCustom(() => {
 			Modal.hide();
-			this.state.formFields.map( (fieldItem, index) => {
+			this.state.formFields.map((fieldItem, index) => {
 				if (id === index) {
 					this.state.formFields.splice(index, 1)
 				}
@@ -69,7 +68,9 @@ export default React.createClass({
 			this.setState({
 				formFields: this.state.formFields
 			})
-		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
+		}, Messages.get("label.msg.deleteField"), () => {
+			Modal.hide()
+		});
 	},
 
 	onSubmit(event) {
@@ -84,14 +85,14 @@ export default React.createClass({
 		this.state.formFields.shift(); 		 //Remove o Título da lista de Campos
 
 		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_SAVE_ITENS,
+			action: PlanRiskItemStore.ACTION_SAVE_SUBITENS,
 			data: {
-				name:  formData.get('description'),
+				name: formData.get('description'),
 				description: formData.get('description'),
-				planRisk: {
-					id: this.props.params.planRiskId
+				planRiskItem: {
+					id: this.props.params.itemId
 				},
-				planRiskItemField: this.state.formFields
+				planRiskSubItemField: this.state.formFields
 			}
 		});
 
@@ -103,7 +104,7 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" +  this.props.params.planRiskId + '/info');
+		this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + '/info');
 	},
 
 	render() {
@@ -113,7 +114,7 @@ export default React.createClass({
 					<div className="fpdi-card fpdi-card-full floatLeft">
 						{
 							this.state.formFields.map((field, index) => {
-								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type ===  AttributeTypes.ATTACHMENT_FIELD) {
+								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type === AttributeTypes.ATTACHMENT_FIELD) {
 									return (
 										<div>
 											<PlanRiskItemField
@@ -136,6 +137,7 @@ export default React.createClass({
 						}
 
 						{
+							/*<FieldItemInput/>*/
 							this.state.vizualization ?
 
 								<PlanRiskItemField
@@ -154,7 +156,8 @@ export default React.createClass({
 						<br/><br/><br/>
 						<div className="form-group">
 							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-							<button className="btn btn-sm btn-default" onClick={this.onCancel}>{this.state.cancelLabel}</button>
+							<button className="btn btn-sm btn-default"
+									onClick={this.onCancel}>{this.state.cancelLabel}</button>
 						</div>
 					</div>
 				</form>
