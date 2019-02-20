@@ -1,6 +1,6 @@
 {
   "name": "forpdi-web",
-  "version": "1.0.0-beta4",
+  "version": "2.0.0-beta1",
   "description": "ForPDI web client.",
   "scripts": {
     "dev": "webpack-dev-server --colors --compress --progress --port 8081 --inline -w",
