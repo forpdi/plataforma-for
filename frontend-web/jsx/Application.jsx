@@ -1,18 +1,13 @@
 
 import React from "react";
+import { ToastContainer } from 'react-toastr';
 
-import MainMenu from "forpdi/jsx/MainMenu.jsx";
 import TopBar from "forpdi/jsx/TopBar.jsx";
 
 import AccessLevels from "forpdi/jsx/core/store/AccessLevels.json";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import Login from "forpdi/jsx/core/view/user/Login.jsx";
 
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-
-var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; 
-var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage);
 
 export default React.createClass({
 	childContextTypes: {
@@ -38,7 +33,7 @@ export default React.createClass({
 		};
 	},
 	addAlertError(msg) {
-		this.refs.container.clear(); 
+		this.refs.container.clear();
 		this.refs.container.error(
 			msg,null, {
 				timeOut: 5000,
@@ -69,27 +64,22 @@ export default React.createClass({
 		};
 	},
 	componentDidMount() {
-		var me = this;
-		//$("[data-toggle=tooltip]").tooltip();
 		UserSession.on("login", () => {
-			me.setState({
+			this.setState({
 				accessLevel: UserSession.get("accessLevel") || 0,
 				permissions: UserSession.get("permissions") || []
 			});
-		}, me);
+		}, this);
 		UserSession.on("logout", () => {
-			me.setState({
+			this.setState({
 				accessLevel: 0,
 				permissions: []
 			});
-		}, me);
-		UserSession.on("loaded", () => {me.setState({loading: false})}, me);
+		}, this);
+		UserSession.on("loaded", () => {this.setState({loading: false})}, this);
 	},
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
-	},
-	componentDidUpdate() {
-		//$("[data-toggle=tooltip]").tooltip();
 	},
 	render() {
 		if (this.state.loading) {
@@ -98,14 +88,9 @@ export default React.createClass({
 		return (
 			<main className='fpdi-app-container'>
 				<TopBar />
-				<div className="fpdi-app-body">
-					<MainMenu {...this.props} />
-					<ToastContainer ref="container"					
-						className="toast-top-center" />
-					<div className="fpdi-app-content">
-						  {this.state.accessLevel == 0 ? <Login /> : this.props.children}
-					</div>
-				</div>
+				<ToastContainer ref="container"
+					className="toast-top-center" />
+				{this.props.children}
 			</main>
 		);
 	}
