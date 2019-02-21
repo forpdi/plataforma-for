@@ -10,6 +10,9 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 export default React.createClass({
+	contextTypes: {
+		router: React.PropTypes.object.isRequired,
+	},
 	childContextTypes: {
 		accessLevel: React.PropTypes.number,
 		accessLevels: React.PropTypes.object,
@@ -64,6 +67,8 @@ export default React.createClass({
 		};
 	},
 	componentDidMount() {
+		if (!this.state.loading && this.state.accessLevel === 0)
+			this.context.router.push("/login");
 		UserSession.on("login", () => {
 			this.setState({
 				accessLevel: UserSession.get("accessLevel") || 0,
@@ -76,7 +81,9 @@ export default React.createClass({
 				permissions: []
 			});
 		}, this);
-		UserSession.on("loaded", () => {this.setState({loading: false})}, this);
+		UserSession.on("loaded", () => {
+			this.setState({ loading: false });
+		}, this);
 	},
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
