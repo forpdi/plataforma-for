@@ -1,10 +1,9 @@
 import React from "react";
-import PlanRiskTree from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx";
-import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
-import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
-import UnitStore  from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import Messages from "@/core/util/Messages";
+import UnitTree from "forpdi/jsx_forrisco/planning/widget/unit/UnitTree.jsx";
+import UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
+import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
 import {Link} from "react-router";
 import {number} from "prop-types";
@@ -12,7 +11,15 @@ import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy";
 
 export default React.createClass({
 	contextTypes: {
+		accessLevel: React.PropTypes.number.isRequired,
+		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
+		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
+	},
+
+	propTypes: {
+		location: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {
@@ -27,14 +34,16 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		PlanRiskStore.on('retrivedplanrisk', (response) => {
+		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
 					planRiskData: response,
+					planRiskId: response.get("id"),
 					isLoading: false
 				});
 			}
-		}, this);
+		});
+
 		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -44,46 +53,39 @@ export default React.createClass({
 				});
 			}
 		});
-		this.refreshData(this.props.params.planRiskId);
-	},
-
-		
-
-	componentWillUnmount() {
-		PlanRiskStore.off(null, null, this);
-		PlanRiskItemStore.off(null, null, this);
-	},
-
-	componentWillReceiveProps(newProps) {
-		if (newProps.params.planRiskId !== this.props.params.planRiskId) {
-			this.refreshData(newProps.params.planRiskId);
-		}
-	},
-
-	refreshData(planRiskId) {
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: planRiskId
-		});
 
 		UnitStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: this.props.params.unitId
+			action: UnitStore.ACTION_RETRIEVE_PLANRISK,
+			data: this.props.params.planRiskId
 		});
 
-		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
-			data: { planRiskId }
-		});
 
 		UnitItemStore.dispatch({
 			action: UnitItemStore.ACTION_GET_ALL_ITENS,
 			data: {
-				unitId: this.props.params.unitId
+				planRiskId: this.props.params.planRiskId
 			}
 		});
 
+
 		this.forceUpdate();
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.params.planRiskId !== this.state.planRiskId) {
+
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_PLANRISK,
+				data: newProps.params.planRiskId
+			});
+
+			UnitItemStore.dispatch({
+				action: UnitItemStore.ACTION_GET_ALL_ITENS,
+				data: {
+					planRiskId: newProps.params.planRiskId
+				}
+			});
+		}
 	},
 
 	render() {
@@ -94,9 +96,9 @@ export default React.createClass({
 		if (this.state.planRiskData) {
 			return (
 				<div className="fpdi-plan-details">
-					<PlanRiskTree planRisk={this.state.planRiskData} unit={this.state.planRiskData} ref="tree" treeType={this.props.route.path}/>
+					<UnitTree planRisk={this.state.planRiskData} unit={this.state.planRiskData} ref="tree" treeType={this.props.route.path}/>
 					<div className="fpdi-plan-tabs">
-						<PlanRiskTabPanel
+						<UnitTabPanel
 							{...this.props}
 							planRisk={this.state.planRiskData}
 							ref={"tabpanel-" + this.props.params.planRiskId}
@@ -104,8 +106,7 @@ export default React.createClass({
 						/>
 					</div>
 				</div>
-			);
+			)
 		}
-		return <p>Nenhum dado de plano de risco encontrado.</p>;
 	}
 });
