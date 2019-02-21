@@ -44,9 +44,11 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.unit.id !== this.props.unit.id) {
-			this.setTreeItens(newProps.unit);
-			this.setTreeItensUnit(newProps.unit);
+		console.log(newProps);
+		console.log(this.props);
+		if (newProps.planRisk.id !== this.props.planRisk.id) {
+			this.setTreeItens(newProps.planRisk);
+			this.setTreeItensUnit(newProps.planRisk);
 		}
 	},
 

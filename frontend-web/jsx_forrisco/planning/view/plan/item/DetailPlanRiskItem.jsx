@@ -77,7 +77,7 @@ export default React.createClass({
 	refreshComponent() {
 		var content = [];
 		PlanRiskItemStore.on('detailItem', response => {
-
+			console.log(response.data);
 			if (response.data.planRiskItemField.length !== 0) {
 
 				response.data.planRiskItemField.map(field => {

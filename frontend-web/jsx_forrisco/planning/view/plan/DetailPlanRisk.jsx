@@ -35,9 +35,6 @@ export default React.createClass({
 				});
 			}
 		}, this);
-		this.refreshData(this.props.params.planRiskId);
-	},
-
 		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -47,6 +44,10 @@ export default React.createClass({
 				});
 			}
 		});
+		this.refreshData(this.props.params.planRiskId);
+	},
+
+		
 
 	componentWillUnmount() {
 		PlanRiskStore.off(null, null, this);
