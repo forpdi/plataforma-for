@@ -12,6 +12,16 @@
   display: inline-block; //adicionado para remover o alcance do datepicker
 }
 
+.fpdi-text-label-none {
+	@include text-label-variant( $color-grayscale-darkest, $font-weight-semibold,none);
+	//letter-spacing: .5em;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+	font-size: 0.750em;
+	display: inline-block; //adicionado para remover o alcance do datepicker
+  }
+
+
 .pdi-normal-text{
   color: $color-grayscale-base;
   font-weight:  $font-weight-normal;

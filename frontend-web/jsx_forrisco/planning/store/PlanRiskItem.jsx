@@ -8,8 +8,12 @@ var ItemModel = Fluxbone.Model.extend({
 
 var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_GET_ALL_ITENS: 'planRiskItem-getAllItens',
-	ACTION_GET_ALL_FIELDS_ITENS: 'planRiskItem-getFieldItens',
+	ACTION_DETAIL_ITEM: 'planRiskItem-detailItem',
+	ACTION_DETAIL_SUBITEM: 'planRiskItem-detailSubItem',
+	ACTION_GET_SUB_ITENS: 'planRiskItem-getSubItens',
 	ACTION_SAVE_ITENS: 'planRiskItem-saveNewItens',
+	ACTION_SAVE_SUBITENS: 'planRiskItem-saveNewSubItens',
+
 
 	url: URL,
 	model: ItemModel,
@@ -22,7 +26,7 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			data: params,
 			success(data, status, opts) {
-				me.trigger("allitens", data)
+				me.trigger("allItens", data)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
@@ -30,14 +34,14 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 		})
 	},
 
-	getFieldItens(data, node) {
+	getSubItens(data, node) {
 		var me = this;
 		$.ajax({
 			method: "GET",
-			url: me.url + "/fields/" + data.id,
+			url: me.url + "/sub-itens/" + data.id,
 			dataType: 'json',
 			success(data, status, opts) {
-				me.trigger("allFields", data, node)
+				me.trigger("allSubItens", data, node)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
@@ -58,6 +62,55 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("itemSaved", opts);
+			}
+		})
+	},
+
+	saveNewSubItens(planRiskSubItem) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/new/subitem",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(planRiskSubItem),
+			success(model) {
+				me.trigger("itemSaved", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("itemSaved", opts);
+			}
+		})
+	},
+
+	detailItem(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/" + data.id,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("detailItem", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("detailItem", opts);
+			}
+		})
+	},
+
+	detailSubItem(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/subitem/" + data.id,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("detailSubItem", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("detailSubItem", opts);
 			}
 		})
 	}

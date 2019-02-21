@@ -6,10 +6,12 @@ import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
 
+
 export default React.createClass({
 	contextTypes: {
 		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
+		tabPanel: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
 		permissions: React.PropTypes.array.isRequired
 	},
@@ -42,7 +44,7 @@ export default React.createClass({
 	},
 
 	componentWillMount() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
+		//this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
 	},
 
 	setTreeItens(planRisk, treeItens = []) {
@@ -50,8 +52,8 @@ export default React.createClass({
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
-			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
-			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id,
+			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
+			key: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
 			model: planRisk,
 			id: planRisk.id,
 		};
@@ -65,11 +67,12 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
+
 		/*Item de um Plano*/
-		PlanRiskItemStore.on('allitens', (response) => {
-			response.data.map(itens => {
-				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
+		PlanRiskItemStore.on('allItens', (response) => {
+			response.data.map( itens => {
+				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
+
 				treeItens.push({
 					label: itens.name,
 					expanded: false,
@@ -90,28 +93,31 @@ export default React.createClass({
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allitens');
+			PlanRiskItemStore.off('allItens');
 		}, me);
 
 		/*Campos de um Item*/
-		PlanRiskItemStore.on('allFields', (response, node) => {
+		PlanRiskItemStore.on('allSubItens', (response, node) => {
 			var fieldTree = [];
+			var toNewSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/new";
 
 			//Botão Novo SubItem
 			var newItemSubItem = {
-				label: Messages.get("label.newItem"),
+				label: "Novo Subitem",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
+				to: toNewSubItem,
 				key: "newPlanRiskSubItem"
 			};
 
-			 response.data.map(field => {
+			 response.data.map(subField => {
+				 var toSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/" + subField.id;
+
 				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
+					 label: subField.name,
+					 to: toSubItem,
+					 key: toSubItem,
+					 id: subField.id,
 				 })
 			});
 
@@ -119,13 +125,15 @@ export default React.createClass({
 
 			node.node.children = fieldTree;
 			me.forceUpdate();
+
+			//PlanRiskItemStore.off('allFields');
 		})
 	},
 
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_FIELDS_ITENS,
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
 				data: {
 					id: nodeProps.id
 				},
@@ -134,30 +142,29 @@ export default React.createClass({
 				}
 			})
 		}
-		nodeProps.expanded = true;
+		nodeProps.expanded = !nodeProps.expanded;
+		this.forceUpdate();
 	},
 
 	shrinkRoot(nodeProps) {
-		nodeProps.expanded = false;
+		nodeProps.expanded = !nodeProps.expanded;
 		this.forceUpdate();
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allitens');
+		PlanRiskItemStore.off('allItens');
 	},
 
 	render() {
 		return (
 			<div className="fpdi-tabs">
 				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
-					to={"/forrisco/plan-risk/" + this.props.planRisk.attributes.id + "/"}>
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" to={'/forrisco/plan-risk/' + this.props.planRisk.id}>
 						{Messages.getEditable("label.plan", "fpdi-nav-label")}
 					</Link>
 
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
-					to={"/forrisco/plan-risk/" + this.props.planRisk.attributes.id + "/unit"}>
-						{Messages.getEditable("label.unity", "fpdi-nav-label")}
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" to={'/forrisco/plan-risk/' + this.props.planRisk.id+'/unit'}>
+						<span className="fpdi-nav-label">Unidade</span>
 					</Link>
 				</ul>
 				

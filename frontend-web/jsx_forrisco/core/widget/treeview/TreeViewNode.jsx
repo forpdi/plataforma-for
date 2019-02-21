@@ -62,18 +62,19 @@ export default React.createClass({
 			}
 		}
 	},
+
 	onLabelClick(event){
-			if (this.props.expandable && !this.props.expanded) {
+
+		if (this.props.expandable && !this.props.expanded) {
 			if (typeof this.props.onExpand == 'function') {
 				this.props.onExpand(this.props);
 			}
-		} else if(this.props.node.key == "newPlan"){
-			location.assign("#"+this.props.to);
-		} else if(this.props.labelCls == "fpdi-new-node-label" || this.props.className == "fpdi-new-node-label") {
+
+		} /*else if(this.props.labelCls == "fpdi-new-node-label" || this.props.className == "fpdi-new-node-label") {
 			this.setState({
 				newNode: true
 			});
-		}
+		}*/
 
 	},
 
@@ -137,11 +138,13 @@ export default React.createClass({
 	},
 
 	render() {
+
 		var iconCls = this.props.iconCls;
 		var me = this;
 		/*if(this.props.model && this.props.model.level && this.props.model.level.name == "Objetivo") {
 			this.props.model.haveBudget = true;
 		}*/
+
 		return (
 			(this.state.newNode ?
 				<div className={"fpdi-treeview-node"+(this.props.hidden ? " hidden":"")}>
@@ -164,11 +167,11 @@ export default React.createClass({
 						<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")}></i>
 					:""
 					}
-					{/*
-					(this.props.model && this.props.model.aggregate)?
-					<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
-					:""
-					*/}
+					{
+					//(this.props.model && this.props.model.aggregate)?
+					//<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
+					//:""
+					}
 					</Link>
 				</div>
 				//this.renderNewNode()
@@ -184,7 +187,7 @@ export default React.createClass({
 								<a className={this.props.iconCls}  onClick={me.onLabelClick} title={Messages.get("label.indicatorAggregate")}/>
 							:
 								<a className={this.props.iconCls}  onClick={me.onLabelClick} />)
-				}
+							}
 				{
 						this.props.to ?
 						(
@@ -209,11 +212,11 @@ export default React.createClass({
 								<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")}></i>
 								:""
 							}
-							{/*
-								(this.props.model && this.props.model.aggregate)?
-								<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
-								:""
-							*/}
+							{
+							//	(this.props.model && this.props.model.aggregate)?
+							//	<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
+							//	:""
+							}
 							</Link>
 							)
 						:

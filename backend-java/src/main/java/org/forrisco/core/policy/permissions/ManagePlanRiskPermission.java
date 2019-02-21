@@ -7,7 +7,7 @@ public class ManagePlanRiskPermission extends Permission {
 
 	@Override
 	public String getDisplayName() {
-		return "Gerenciar Política";
+		return "Gerenciar Plano de Risco";
 	}
 
 	@Override
@@ -17,6 +17,6 @@ public class ManagePlanRiskPermission extends Permission {
 
 	@Override
 	public String getDescription() {		
-		return "Criar política, Editar informações da política, Duplicar política, Arquivar política";
+		return "Criar plano de risco, Editar informações do plano de risco, Duplicar plano de risco, Arquivar plano de risco";
 	}
 }

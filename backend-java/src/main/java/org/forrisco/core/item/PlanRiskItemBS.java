@@ -19,7 +19,7 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 @RequestScoped
 public class PlanRiskItemBS extends HibernateBusiness {
 		
-		//listItensByPlanRisk
+	// ------------LISTAGENS------------//
 	
 	/**
 	 * Lista os itens de um plano de risco.
@@ -59,14 +59,48 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("planRiskItem", planRiskItem));
 		
-		//Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
-				//.add(Restrictions.eq("planRiskItem", planRiskItem)).setProjection(Projections.countDistinct("id"));
-		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskItemField.class));
-		//results.setTotal((Long) count.uniqueResult());
 		return results;
 		
 	}
+	
+	/**
+	 * Lista os subitens de um item.
+	 * @param PlanRiskItem
+	 * 			item no qual se deseja obter os subitens.
+	 * 
+	 * @return PaginatedList<PlanRiskItemField>
+	 * 			Lista de subitens.
+	 */
+	public PaginatedList<PlanRiskSubItem> listSubItemByItem(PlanRiskItem planRiskItem) {
+		
+		PaginatedList<PlanRiskSubItem> results = new PaginatedList<PlanRiskSubItem>();
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItem.class).add(Restrictions.eqOrIsNull("deleted", false))
+				.add(Restrictions.eq("planRiskItem", planRiskItem));
+		
+		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItem.class));
+		return results;
+	}
+	/**
+	 * Lista de campos de um subitem
+	 * 
+	 * @param planRiskSubItem
+	 * @return
+	 */
+	
+	public PaginatedList<PlanRiskSubItemField> listSubFieldsBySubItem(PlanRiskSubItem planRiskSubItem) {
+		
+		PaginatedList<PlanRiskSubItemField> results = new PaginatedList<PlanRiskSubItemField>();
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItemField.class).add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem)).addOrder(Order.asc("name"));
+		
+		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItemField.class));
+		return results;
+	}
+	
+	// ------------SAVES------------//
 	
 	/**
 	 * Salva no banco de dados um novo item
@@ -90,5 +124,72 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		planRiskItemField.setDeleted(false);
 		this.persist(planRiskItemField);
 	}
-
+	
+	/**
+	 * Salva no banco de dados um novo subitem
+	 * 
+	 * @param plaRiskItem instância do subitem a ser salvo
+	 */
+	public void save(PlanRiskSubItem plaRiskSubItem) {
+		plaRiskSubItem.setId(null);
+		plaRiskSubItem.setDeleted(false);
+		
+		this.persist(plaRiskSubItem);
+	}
+	
+	/**
+	 * Salva no banco de dados um campo de um  subitem
+	 * 
+	 * @param plaRiskItem instância do campo a ser salvo
+	 */
+	public void save(PlanRiskSubItemField plaRiskSubItemField) {
+		plaRiskSubItemField.setId(null);
+		plaRiskSubItemField.setDeleted(false);
+		
+		this.persist(plaRiskSubItemField);
+	}
+	
+	// ------------DELETES------------//
+	/**
+	 * Deleta do banco de dados um item
+	 * 
+	 * @param PlanRiskItem,
+	 *            instância do planRiskItem a ser deletado
+	 */
+	public void delete(PlanRiskItem planRiskItem) {
+		planRiskItem.setDeleted(true);
+		this.persist(planRiskItem);
+	}
+	
+	/**
+	 * Deleta do banco de dados um campo
+	 * 
+	 * @param PlanRiskItemField,
+	 *            instância do PlanRiskItemField a ser deletado
+	 */
+	public void delete(PlanRiskItemField planRiskItemField) {
+		planRiskItemField.setDeleted(true);
+		this.persist(planRiskItemField);
+	}
+	
+	/**
+	 * Deleta do banco de dados um subitem
+	 * 
+	 * @param PlanRiskSubItem,
+	 *            instância do PlanRiskSubItem a ser deletado
+	 */
+	
+	public void delete(PlanRiskSubItem planRiskSubItem) {
+		planRiskSubItem.setDeleted(true);
+		this.persist(planRiskSubItem);
+	}
+	
+	/*public void deleteSubitens(PlanRiskItem planRiskItem) {
+		
+		PaginatedList<PlanRiskSubItem> subitens = this.listSubItemByItem(planRiskItem);
+		
+		for(int i = 0; i < subitens.getList().size(); i++) {
+			this.deleteSubitem(subitens.getList().get(i));
+		}
+	}*/
 }

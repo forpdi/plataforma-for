@@ -1,5 +1,7 @@
 package org.forrisco.core.item;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +25,7 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	
 	@SkipSerialization
 	@ManyToOne(targetEntity=PlanRiskItem.class, optional=false, fetch=FetchType.EAGER)
-	private PlanRiskSubItem planRiskSubItem;
+	private PlanRiskItem planRiskItem;
 	
 	@Column(nullable = false, length=255)
 	private String name;
@@ -31,18 +33,18 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, length=4000)
 	private String description;
 	
-	@Column(length=255)
-	private String fileLink;
+	@Transient
+	private List<PlanRiskSubItemField> planRiskSubItemField;
 	
 	@Transient
-	private String value;
+	private Long subItemId;
 
-	public PlanRiskSubItem getPlanRiskSubItem() {
-		return planRiskSubItem;
+	public PlanRiskItem getPlanRiskItem() {
+		return planRiskItem;
 	}
 
-	public void setPlanRiskSubItem(PlanRiskSubItem planRiskSubItem) {
-		this.planRiskSubItem = planRiskSubItem;
+	public void setPlanRiskItem(PlanRiskItem planRiskItem) {
+		this.planRiskItem = planRiskItem;
 	}
 
 	public String getName() {
@@ -61,20 +63,21 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 		this.description = description;
 	}
 
-	public String getFileLink() {
-		return fileLink;
+	public List<PlanRiskSubItemField> getPlanRiskSubItemField() {
+		return planRiskSubItemField;
 	}
 
-	public void setFileLink(String fileLink) {
-		this.fileLink = fileLink;
+	public void setPlanRiskSubItemField(List<PlanRiskSubItemField> planRiskSubItemField) {
+		this.planRiskSubItemField = planRiskSubItemField;
 	}
 
-	public String getValue() {
-		return value;
+	public Long getSubItemId() {
+		return subItemId;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSubItemId(Long subItemId) {
+		this.subItemId = subItemId;
 	}
 
+	
 }

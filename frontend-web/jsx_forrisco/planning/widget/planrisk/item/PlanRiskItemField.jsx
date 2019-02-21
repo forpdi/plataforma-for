@@ -29,7 +29,8 @@ export default React.createClass({
 
 			fieldType: null,							//Tipo do campo (TextArea, ExportDocument)
 			vizualization: this.props.vizualization,    //Habilita a visualização do field
-			description: null							 //Valor do TextArea
+			description: null,							//Valor do TextArea
+			fileData: null								//Informações do DOC/IMG anexados
 		}
 	},
 
@@ -60,18 +61,35 @@ export default React.createClass({
 		}
 
 		if (!validation.errorField) {
+			if(validation.type.s === this.state.types[0].id) {
+				this.props.fields.push({
+					name: validation.name.s,
+					type: validation.type.s,
+					value: validation.name.s,
+					description: validation.description,
+					edit: false,
+					fileLink: "",
+					isText: true
+				});
+			}
 
-			this.props.fields.push({
-				name: "attribute-" + validation.name,
-				type: validation.type.s,
-				value: validation.name.s,
-				description: validation.description,
-				edit: false,
-				fileLink: ""
-			});
+			if(validation.type.s === this.state.types[1].id) {
+				this.props.fields.push({
+					name: validation.name.s,
+					type: validation.type.s,
+					value: validation.name.s,
+					description: validation.description,
+					edit: false,
+					fileLink: this.state.fileData.fileLink
+				});
+			}
 		}
 
 		this.resetTypes();
+	},
+
+	removeField() {
+		this.props.deleteFields(this.props.index)
 	},
 
 	setRichTextValue(value) {
@@ -116,7 +134,7 @@ export default React.createClass({
 			};
 
 			me.setState({
-				fileData:{file: file},
+				fileData: file,
 				description:Modal.fileName
 			});
 		};
@@ -144,6 +162,7 @@ export default React.createClass({
 								<b className="budget-title">{this.props.field.value}</b>
 								{
 									<span type="submit" className="mdi mdi-delete attribute-input-edit inner"
+										  onClick={this.removeField}
 										  title={Messages.get("label.title.deleteField")}/>
 								}
 

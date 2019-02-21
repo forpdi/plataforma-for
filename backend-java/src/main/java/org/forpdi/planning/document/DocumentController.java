@@ -13,6 +13,7 @@ import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.plan.PlanBS;
 import org.forpdi.planning.plan.PlanMacro;
+import org.forpdi.system.PDFgenerate;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -28,7 +29,9 @@ public class DocumentController extends AbstractController {
 	private DocumentBS bs;
 	@Inject
 	private PlanBS planBs;
-
+	@Inject 
+	private PDFgenerate pdf;
+	
 	/**
 	 * Retorna documento com suas seções para exibição no frontend.
 	 * 
@@ -240,7 +243,7 @@ public class DocumentController extends AbstractController {
 	@Permissioned
 	public void exportDocument(String author, String title, String lista) {
 		try {
-			InputStream in = this.bs.exportDocument(author, title, lista);
+			InputStream in = this.pdf.exportDocument(author, title, lista);
 			OutputStream out;
 
 			this.response.reset();
@@ -274,7 +277,7 @@ public class DocumentController extends AbstractController {
 	@Permissioned
 	public void exportLevelAttributes(Long levelId) {
 		try {
-			InputStream in = this.bs.exportLevelAttributes(levelId);
+			InputStream in = this.pdf.exportLevelAttributes(levelId);
 			OutputStream out;
 
 			this.response.reset();

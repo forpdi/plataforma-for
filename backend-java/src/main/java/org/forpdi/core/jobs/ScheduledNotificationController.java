@@ -73,7 +73,7 @@ public class ScheduledNotificationController extends AbstractController {
 				if (goal.isClosed())
 					continue;
 				long idMacro = goal.getPlan().getParent().getId();
-				List<AttributeInstance> attrList = this.sbs.listAttributeInstanceByLevel(goal);
+				List<AttributeInstance> attrList = this.sbs.listAttributeInstanceByLevel(goal,false);
 				for (AttributeInstance attr : attrList) {
 					if (attr.getAttribute().isFinishDate()) {
 						Calendar calendar = Calendar.getInstance();

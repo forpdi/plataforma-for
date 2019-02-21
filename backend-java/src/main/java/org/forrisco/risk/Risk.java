@@ -10,8 +10,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
-import org.forrisco.core.process.ProcessUnit;
 import org.forrisco.core.unit.Unit;
+import org.forrisco.risk.objective.RiskActivity;
+import org.forrisco.risk.objective.RiskProcess;
+import org.forrisco.risk.objective.RiskStrategy;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -32,7 +34,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=Unit.class, optional=false, fetch=FetchType.EAGER)
 	private Unit unit;
 	
@@ -90,6 +92,15 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	
 	@Column(nullable=true)
 	private String linkFPDI;
+	
+	@Transient
+	private PaginatedList<RiskActivity> activities;
+	
+	@Transient
+	private PaginatedList<RiskProcess> processes;
+	
+	@Transient
+	private PaginatedList<RiskStrategy> strategies;
 
 	public User getUser() {
 		return user;
@@ -210,6 +221,24 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	}
 	public void setLinkFPDI(String linkFPDI) {
 		this.linkFPDI = linkFPDI;
+	}
+	public PaginatedList<RiskActivity> getActivities() {
+		return activities;
+	}
+	public void setActivities(PaginatedList<RiskActivity> activities) {
+		this.activities = activities;
+	}
+	public PaginatedList<RiskProcess> getProcess() {
+		return processes;
+	}
+	public void setProcess(PaginatedList<RiskProcess> process) {
+		this.processes = process;
+	}
+	public PaginatedList<RiskStrategy> getStrategies() {
+		return strategies;
+	}
+	public void setStrategies(PaginatedList<RiskStrategy> strategies) {
+		this.strategies = strategies;
 	}
 
 }

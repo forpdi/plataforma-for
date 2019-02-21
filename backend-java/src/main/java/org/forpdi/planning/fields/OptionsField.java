@@ -4,17 +4,11 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.forpdi.planning.attribute.Attribute;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 @Entity(name = OptionsField.TABLE)
 @Table(name = OptionsField.TABLE)
@@ -38,8 +32,6 @@ public class OptionsField extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private Date creation = new Date();
 
-	@Transient private Long exportAttributeId;
-	
 	public String getLabel() {
 		return label;
 	}
@@ -80,11 +72,4 @@ public class OptionsField extends SimpleLogicalDeletableEntity {
 		this.isDocument = isDocument;
 	}	
 
-	public Long getExportAttributeId() {
-		return exportAttributeId;
-	}
-
-	public void setExportAttributeId(Long exportAttributeId) {
-		this.exportAttributeId = exportAttributeId;
-	}
 }

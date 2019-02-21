@@ -1,6 +1,7 @@
 package org.forpdi.planning.plan;
 
-import java.util.Date;
+import java.time.Year;
+import java.util.Collections;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -81,20 +82,14 @@ public class PlanBS extends HibernateBusiness {
 	 * @param company
 	 * 			Companhia da qual se deseja obter os planos macro.
 	 * 
-	 * @return PaginatedList<PlanMacro>
+	 * @return List<PlanMacro>
 	 * 			Lista de planos macro.
 	 */
-	public PaginatedList<PlanMacro> listAllMacros(Company company) {
-		PaginatedList<PlanMacro> results = new PaginatedList<PlanMacro>();
-		Criteria criteria = this.dao.newCriteria(PlanMacro.class).add(Restrictions.eq("company", company))
-				.addOrder(Order.desc("begin")).addOrder(Order.desc("end")).addOrder(Order.asc("name"));
-		
-		Criteria count = this.dao.newCriteria(PlanMacro.class).add(Restrictions.eq("company", company))
-				.setProjection(Projections.countDistinct("id"));
-				
-		results.setList(this.dao.findByCriteria(criteria, PlanMacro.class));
-		results.setTotal((Long) count.uniqueResult());
-		return results;
+	public List<PlanMacro> listAllMacros(Company company) {
+		Criteria criteria = this.dao.newCriteria(PlanMacro.class)
+			.add(Restrictions.eq("company", company))
+		;
+		return this.dao.findByCriteria(criteria, PlanMacro.class);
 	}
 
 	/**
@@ -158,14 +153,15 @@ public class PlanBS extends HibernateBusiness {
 		return results;
 	}
 	
-	public List<Plan> listAllPlansForPlanMacro(PlanMacro macro) {
-		Criteria criteria =
-			this.dao.newCriteria(Plan.class)
-			.add(Restrictions.eq("parent", macro))
-			.addOrder(Order.desc("begin"))
-			.addOrder(Order.desc("end"))
-			.addOrder(Order.asc("name"))
-		;	
+	public List<Plan> listAllPlansForPlansMacro(List<PlanMacro> plansMacro) {
+		if (GeneralUtils.isEmpty(plansMacro)) {
+			return Collections.emptyList();
+		}
+		if (GeneralUtils.isEmpty(plansMacro))
+			return Collections.emptyList();
+		Criteria criteria = this.dao.newCriteria(Plan.class)
+			.add(Restrictions.in("parent", plansMacro))
+		;
 		return this.dao.findByCriteria(criteria, Plan.class);
 	}
 	
@@ -302,27 +298,28 @@ public class PlanBS extends HibernateBusiness {
 	 *            Plano de metas.
 	 * @return query Lista dos planos.
 	 */
-	public List<PlanDetailed> listPlanDetailed(Plan plan) {
-		int year = new Date().getYear()+1900;
-		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
-		criteria.add(Restrictions.eq("deleted", false));
-		criteria.add(Restrictions.eq("plan", plan));
-		criteria.add(Restrictions.eq("year", year));
-
+	public List<PlanDetailed> listPlansDetailed(Plan plan) {
+		Criteria criteria = this.dao.newCriteria(PlanDetailed.class)
+				.add(Restrictions.eq("plan", plan))
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("year", Year.now().getValue()))
+		;
 		return this.dao.findByCriteria(criteria, PlanDetailed.class);
 	}
 	
 	/**
 	 * Listar os planos detalhados
 	 * 
-	 * @param plan
+	 * @param plans
 	 *            Plano de metas.
 	 * @return query Lista dos planos.
 	 */
-	public List<PlanDetailed> listAllPlanDetailed(Plan plan) {
+	public List<PlanDetailed> listAllPlansDetailed(List<Plan> plans) {
+		if (GeneralUtils.isEmpty(plans)) {
+			return Collections.emptyList();
+		}
 		Criteria criteria = this.dao.newCriteria(PlanDetailed.class);
-		criteria.add(Restrictions.eq("plan", plan));
-		
+		criteria.add(Restrictions.in("plan", plans));
 		return this.dao.findByCriteria(criteria, PlanDetailed.class);
 	}
 

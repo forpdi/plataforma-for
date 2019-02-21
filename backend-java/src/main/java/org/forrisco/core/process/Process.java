@@ -1,12 +1,9 @@
 package org.forrisco.core.process;
 
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -28,6 +25,10 @@ public class Process extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_process";
 	private static final long serialVersionUID = 1L;
 
+	@SkipSerialization
+	@ManyToOne(targetEntity=Company.class,  fetch=FetchType.EAGER)
+	private Company company;
+	
 	@Column(nullable=false, length=255)
 	private String name;
 
@@ -37,10 +38,6 @@ public class Process extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000) 
 	private String fileLink;
 	
-	@SkipSerialization
-	@ManyToOne(targetEntity=Company.class,  fetch=FetchType.EAGER)
-	private Company company;
-
 	@Transient
 	private Unit unit;
 	

@@ -1,25 +1,13 @@
 import React from "react";
-import Messages from "@/core/util/Messages";
 import PlanRiskTree from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTree.jsx";
 import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-import {Link} from "react-router";
-import {number} from "prop-types";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy";
 
 export default React.createClass({
 	contextTypes: {
-		accessLevel: React.PropTypes.number.isRequired,
-		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
-		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired,
-	},
-
-	propTypes: {
-		location: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {
@@ -27,7 +15,6 @@ export default React.createClass({
 			resultSearch: [],
 			isLoading: true,
 			planRiskData: [],
-			planRiskId: null
 		};
 	},
 
@@ -36,42 +23,34 @@ export default React.createClass({
 			if (response !== null) {
 				this.setState({
 					planRiskData: response,
-					planRiskId: response.get("id"),
 					isLoading: false
 				});
 			}
-		});
+		}, this);
+		this.refreshData(this.props.params.planRiskId);
+	},
 
+	componentWillUnmount() {
+		PlanRiskStore.off(null, null, this);
+		PlanRiskItemStore.off(null, null, this);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.params.planRiskId !== this.props.params.planRiskId) {
+			this.refreshData(newProps.params.planRiskId);
+		}
+	},
+
+	refreshData(planRiskId) {
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: this.props.params.planRiskId
+			data: planRiskId
 		});
 
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
-			data: {
-				planRiskId: this.props.params.planRiskId
-			}
+			data: { planRiskId }
 		});
-
-		this.forceUpdate();
-	},
-
-	componentWillReceiveProps(newProps) {
-		if (newProps.params.planRiskId !== this.state.planRiskId) {
-
-			PlanRiskStore.dispatch({
-				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-				data: newProps.params.planRiskId
-			});
-
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
-				data: {
-					planRiskId: newProps.params.planRiskId
-				}
-			});
-		}
 	},
 
 	render() {
@@ -92,7 +71,8 @@ export default React.createClass({
 						/>
 					</div>
 				</div>
-			)
+			);
 		}
+		return <p>Nenhum dado de plano de risco encontrado.</p>;
 	}
 });

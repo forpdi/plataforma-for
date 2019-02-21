@@ -11,6 +11,10 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Toastr from 'toastr';
 import $ from 'jquery';
 
+import Form from "forpdi/jsx/core/widget/form/Form.jsx";
+import { relativeTimeRounding } from "../../../../node_modules/moment";
+var VerticalForm = Form.VerticalForm;
+
 var Validate = Validation.validate;
 var errorField = false;
 
@@ -25,7 +29,7 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
-			loading: null,
+			loading: true,
 			itemModel:null,
 			policyModel: null,
 			risklevelModel: null,
@@ -48,7 +52,7 @@ export default React.createClass({
 					{'label':"Verde", id:4},
 					{'label':"Azul", id:5}],
 			probability: [],
-			impact: []
+			impact: [],
 		};
 	},
 
@@ -61,14 +65,14 @@ export default React.createClass({
 			maxLength: 240,
 			placeholder: "Nome da Política",
 			label: Messages.getEditable("label.name","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.name : null,
+			value: this.state.policyModel ? this.state.policyModel.data.name : null,
 		},{
 			name: "description",
 			type: "textarea",
 			placeholder: "Descrição da Política",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.description : null,
+			value: this.state.policyModel ? this.state.policyModel.data.description : null,
 		})
 
 		return fields;
@@ -88,7 +92,7 @@ export default React.createClass({
 					case 3: cor="Laranja"; break;
 					case 4: cor="Verde"; break;
 					case 5: cor="Azul"; break;
-					default: cor="Vermelho";
+					default: cor="Cinza";
 				}
 				risk=this.state.risklevelModel.data[n-1]['level']
 			}
@@ -102,18 +106,17 @@ export default React.createClass({
 			placeholder: " Ex: Crítico",
 			label: Messages.getEditable("label.policyConfig","hide"),
 			value: risk,
-			onChange: this.onChangeMatrix
+			//onChange: this.onChangeMatrix
 		},{
 			name: "risk_cor_"+n,
 			type: "select",
 			required: true,
 			maxLength: 40,
 			label: Messages.getEditable("label.policySelect","hide"),
-			//value: null,
 			value: cor,
 			valueField: 'label',
 			displayField: 'label',
-			onChange: this.onChangeMatrix
+			//onChange: this.onChangeMatrix
 		})
 		return fields
 	},
@@ -127,8 +130,7 @@ export default React.createClass({
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de linhas",
-			//label: Messages.getEditable("label.policyPI","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.nline : null,
+			value: this.state.policyModel ? this.state.policyModel.data.nline : null,
 			onChange: this.change
 		},{
 			name: "ncolumn",
@@ -136,8 +138,7 @@ export default React.createClass({
 			required: true,
 			maxLength: 5,
 			placeholder: " Nº de colunas",
-			//label: "",//Messages.getEditable("label.policySelect","fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.attributes.ncolumn : null,
+			value: this.state.policyModel ? this.state.policyModel.data.ncolumn : null,
 			onChange: this.change
 		})
 
@@ -171,105 +172,89 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 
-		PolicyStore.on("sync", (model) => {
-			if (EnvInfo.company) {
-				EnvInfo.company.name = model.get("name");
-				EnvInfo.company.logo = model.get("logo");
-				EnvInfo.company.description = model.get("description");
-				EnvInfo.company.showDashboard = model.get("showDashboard");
-				EnvInfo.company.showMaturity = model.get("showMaturity");
-				EnvInfo.company.showBudgetElement = model.get("showBudgetElement");
-			}
-			me.context.router.push("/system/companies");
-		}, me);
-
-		PolicyStore.on("retrieve", (model) => {
-			me.setState({
-				loading: false,
-				policyModel:model,
-				fields: me.getFields(),
-				ncolumn: model.attributes.ncolumn,
-				nline: model.attributes.nline,
-				validPI: true,// model.attributes.nline>1 &&  model.attributes.ncolumn>1,
-				hide:false,
-				matrix_c: model.attributes.ncolumn,
-				matrix_l: model.attributes.nline
-			});
-		}, me);
-
 		PolicyStore.on("policycreated", (model) => {
 			if(model.data.id){
 				var msg = Messages.get("notification.policy.save");
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/overview");
 			}else{
-				var msg= model? model.msg : "Erro ao criar Política"
+				var msg= model.msg ? model.msg.message : "Erro ao criar Política"
 				this.context.toastr.addAlertError(msg);
-			}
-		}, me);
-
-		PolicyStore.on("policyUpdated", (model) => {
-			if(model.data.id != null){
-				this.context.toastr.addAlertSuccess(Messages.get("notification.policy.update"));
-				me.context.router.push("/forrisco/policy/"+model.data.id+"/item/"+this.state.itemModel.data.id);
-			}else{
-				var msg= Messages.get("label.errorUpdatePolicy") + (model ? ": "+model.msg :"")
-				this.context.toastr.addAlertError(msg);
-			}
-		}, me);
-
-		PolicyStore.on("retrieverisklevel", (model) => {
-			if(model != null){
-				me.setState({
-					risklevelModel:model,
-					color:model.data.length
-				});
-			}
-		}, me);
-
-		ItemStore.on("retrieveInfo", (model) => {
-
-			if(model != null){
-				me.setState({
-					itemModel:model
-				});
 			}
 		}, me);
 
 		if(this.props.params.policyId){
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
-				data: this.props.params.policyId
-			});
 
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-				data: this.props.params.policyId
-			});
+			PolicyStore.on("findpolicy", (model) => {
+				this.setState({
+					policyModel:model,
+					fields: me.getFields(),
+					ncolumn: model.data.ncolumn,
+					nline: model.data.nline,
+					validPI: true,
+					matrix_c: model.data.ncolumn,
+					matrix_l: model.data.nline
+				});
+
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+					data: this.props.params.policyId
+				});
+
+				//this.generateMatrix()
+			}, me);
+
+			PolicyStore.on("policyUpdated", (model) => {
+				if(model.data.id != null){
+					this.context.toastr.addAlertSuccess(Messages.get("notification.policy.update"));
+					me.context.router.push("/forrisco/policy/"+model.data.id+"/item/"+this.state.itemModel.data.id);
+				}else{
+					var msg= Messages.get("label.errorUpdatePolicy") + (model ? ": "+model.msg :"")
+					this.context.toastr.addAlertError(msg);
+				}
+			}, me);
+
+			PolicyStore.on("retrieverisklevel", (model) => {
+				if(model != null){
+					me.setState({
+						loading: false,
+						risklevelModel:model,
+						color:model.data.length
+					});
+
+				}
+				this.generateMatrix()
+			}, me);
+
+			ItemStore.on("retrieveInfo", (model) => {
+				if(model != null){
+					me.setState({
+						itemModel:model
+					});
+				}
+			}, me);
+
+
 
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_RETRIEVE_INFO,
 				data: {policyId: this.props.params.policyId}
 			});
-		}
-
-		if(this.props.params.policyId){
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE,
+				PolicyStore.dispatch({
+				action: PolicyStore.ACTION_FIND_POLICY,
 				data: this.props.params.policyId
 			});
+		}else{
+
+			this.setState({
+				loading: false
+			})
 		}
+
 	},
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
-	},
-
-	fieldsDashboardBoardCommunity () {
-		if (this.refs.policyEdit.refs.showMaturity.refs["field-showMaturity"].disabled == true) {
-			this.refs.policyEdit.refs.showMaturity.refs["field-showMaturity"].disabled = false;
-		} else {
-			this.refs.policyEdit.refs.showMaturity.refs["field-showMaturity"].disabled = true;
-		}
+		ItemStore.off(null, null, this);
 	},
 	submitWrapper(evt) {
 		if(evt)
@@ -301,7 +286,7 @@ export default React.createClass({
 				case "Laranja": current_color=3; break;
 				case "Verde": current_color=4; break;
 				case "Azul": current_color=5; break;
-				default: current_color=0;
+				default: current_color=-1;
 			}
 			cor[j]=current_color;
 			level[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[0].name].value;
@@ -321,14 +306,17 @@ export default React.createClass({
 
 		var probabilidade=""
 		var impacto=""
-		for(var i=1;i<=this.state.nline;i++){
-			probabilidade+="["+this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value;
-			probabilidade+="]"
-		}
 
-		for(var i=1;i<=this.state.ncolumn;i++){
-			impacto+="["+this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name].value;
-			impacto+="]"
+		if(this.state.nline > 1 && this.state.ncolumn > 1){
+			for(var i=1;i<=this.state.nline;i++){
+				probabilidade+="["+this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value;
+				probabilidade+="]"
+			}
+
+			for(var i=1;i<=this.state.ncolumn;i++){
+				impacto+="["+this.refs.policyEditForm["field-"+this.getImpacto(null,i)[0].name].value;
+				impacto+="]"
+			}
 		}
 
 		var matrix=""
@@ -353,47 +341,49 @@ export default React.createClass({
 			Toastr.error("colunas ou linhas ultrapassou o limite")
 			return
 		}
-
 		this.setState({
+
 			hide: false,
 			matrix_l: this.state.nline,
-			matrix_c: this.state.ncolumn
+			matrix_c: this.state.ncolumn,
 		})
-
-		var string='{'
-		switch(this.state.color){
-			case 6: string+="["+this.refs.policyEditForm['field-risk_level_6'].value+" : "+this.refs.policyEditForm['field-risk_cor_6'].value+"],"
-			case 5: string+="["+this.refs.policyEditForm['field-risk_level_5'].value+" : "+this.refs.policyEditForm['field-risk_cor_5'].value+"],"
-			case 4: string+="["+this.refs.policyEditForm['field-risk_level_4'].value+" : "+this.refs.policyEditForm['field-risk_cor_4'].value+"],"
-			case 3: string+="["+this.refs.policyEditForm['field-risk_level_3'].value+" : "+this.refs.policyEditForm['field-risk_cor_3'].value+"],"
-			case 2: string+="["+this.refs.policyEditForm['field-risk_level_2'].value+" : "+this.refs.policyEditForm['field-risk_cor_2'].value+"],"
-			default:
-		}
-		string+="["+this.refs.policyEditForm['field-risk_level_1'].value+" : "+this.refs.policyEditForm['field-risk_cor_1'].value+"]}"
-
-		this.refs.policyEditForm['field-risk_level'].value=string
-
 	},
+
+
 	createTable(){
 
-		let table = []
-
-		var risk_level=[];
+		var table = []
 		var level=[];
 		var cor=[];
+
+		var aux=this.state.policyModel ?  this.state.policyModel.data.matrix.split(/;/) : null
+		var matrix=[]
+
+		if(aux!=null){
+			for(var i=0; i< aux.length;i++){
+				matrix[i]= new Array(3)
+				matrix[i][0]=aux[i].split(/\[.*\]/)[1]
+				matrix[i][1]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[0]
+				matrix[i][2]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[1]
+			}
+		}
 
 		for(var j=0;j<this.state.color;j++){
 			if(this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name] != null){
 				cor[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[1].name].value;
 				level[j]=this.refs.policyEditForm["field-"+this.getRisco(j+1)[0].name].value;
+
 			}
 		}
+
+		var risk_level=[];
+		var probabilidade=[]
+		var impacto=[]
+
 		for(var i=0;i<cor.length;i++){
 			risk_level.push({'label':level[i],'cor':cor[i]})
 		}
 
-		var probabilidade=[]
-		var impacto=[]
 		for(var i=1;i<=this.state.matrix_l;i++){
 			if(this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name]){
 				probabilidade.push({'label': this.refs.policyEditForm["field-"+this.getProbabilidade(null,i)[0].name].value})
@@ -407,42 +397,68 @@ export default React.createClass({
 		}
 
 
+		for (var i = 0; i <= this.state.matrix_l; i++) {
+			var children = []
+			for (var j = 0; j <= this.state.matrix_c; j++) {
 
-		for (let i = 0; i <= this.state.matrix_l; i++) {
-			let children = []
-			for (let j = 0; j <= this.state.matrix_c; j++) {
-
-				var classe="Cinza"
+				var impact = this.state.policyModel != null ? (matrix[this.state.policyModel.data.nline*(this.state.policyModel.data.ncolumn+1)+j-1] != null ?
+															matrix[this.state.policyModel.data.nline*(this.state.policyModel.data.ncolumn+1)+j-1][0] : null)
+															: null
+				var valor  = this.state.policyModel !=null ? (matrix[(this.state.policyModel.data.ncolumn+1)*(i)+j] !=null ?
+															matrix[(this.state.policyModel.data.ncolumn+1)*(i)+j][0]: null)
+															: null
+				var probability= this.state.policyModel !=null ?( matrix[(i)*(this.state.policyModel.data.ncolumn+1)] !=null ?
+																matrix[(i)*(this.state.policyModel.data.ncolumn+1)][0]: null)
+																: null
 
 				if(j != 0 ){
-					if(i!=this.state.matrix_l){
 
-						if(this.refs.policyEditForm["field-["+i+","+j+"]"] != null){
-							for(var k=0;k<cor.length;k++){
+					var classe="Cinza"
+					if(i!=this.state.matrix_l){
+						for(var k=0;k<cor.length;k++){
+							if(this.refs.policyEditForm["field-["+i+","+j+"]"]){
 								if(risk_level[k]['label']==this.refs.policyEditForm["field-["+i+","+j+"]"].value){
-									classe = risk_level[k]['cor'];
-									k=cor.length;
+									classe =risk_level[k]['cor'];
+									break;
+								}
+							}else{
+								if(this.state.risklevelModel){
+									if(this.state.risklevelModel[k]){
+										if(valor == this.state.risklevelModel.data[k]['level']){
+											switch(this.state.risklevelModel.data[k]['color']) {
+												case 0: classe="Vermelho"; break;
+												case 1: classe="Marron"; break;
+												case 2: classe="Amarelo"; break;
+												case 3: classe="Laranja"; break;
+												case 4: classe="Verde"; break;
+												case 5: classe="Azul"; break;
+												default: classe="Cinza";
+											}
+											break;
+										}
+									}
 								}
 							}
 						}
 
-						children.push(<td><div className={classe}>{
+					children.push(<td><div className={classe}>{
 							<VerticalInput
 								formId={this.props.id}
 								fieldDef={{
-									name: "["+i+","+j+"]",
+									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione o Grau",
-									value: this.model ? this.model.get("name"):null,
 									options: risk_level,
+									value: valor,
 									valueField: 'label',
 									displayField: 'label',
 									className: "matrixSelect",
 									onChange: this.onChangeMatrix
 							}}/>
 						}</div></td>)
+
 					}else if(i==this.state.matrix_l){
 						children.push(<td>{
 							<VerticalInput
@@ -451,9 +467,9 @@ export default React.createClass({
 									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione o Impacto".substring(0, 18)+"...",
-									value: this.model ? this.model.get("name"):null,
+									value: impact,
 									options: impacto,
 									valueField: 'label',
 									displayField: 'label',
@@ -472,9 +488,9 @@ export default React.createClass({
 									name:  "["+i+","+j+"]",
 									type: "select",
 									required: false,
-									maxLength:240,
+									maxLength: 40,
 									placeholder: "Selecione a Probabilidade".substring(0, 18)+"...",
-									value: this.model ? this.model.get("name"):null,
+									value: probability,
 									options: probabilidade,
 									valueField: 'label',
 									displayField: 'label',
@@ -483,7 +499,7 @@ export default React.createClass({
 							}}/>
 						}</td>)
 					}else{
-						children.push(<div style={{display: "inline-block"}}>
+						children.push(<div style={{display: "inline-block", margin:"0px 10px 0px 0px"}}>
 						&emsp;&emsp;&emsp;&emsp;&emsp;
 						&emsp;&emsp;&emsp;&emsp;&emsp;
 						&emsp;&emsp;&emsp;&emsp;&emsp;
@@ -495,7 +511,6 @@ export default React.createClass({
 		}
 
 		return (
-
 			<table style={{width: "min-content"}}>
 				<th style={{top: (this.state.matrix_l*33 +30)+"px" , right: "10px", position: "relative"}} >
 					<div style={{width: "30px" }} className="vertical-text">PROBABILIDADE</div>
@@ -513,7 +528,7 @@ export default React.createClass({
 	},
 
 	getProbLabel(i){
-		var probs=	this.state.policyModel.attributes.probability.match(/\[.*?\]/g)
+		var probs=	this.state.policyModel.data.probability.match(/\[.*?\]/g)
 		if(probs[i] != null){
 			return probs[i].substring(1,probs[i].length-1)
 		}
@@ -521,7 +536,7 @@ export default React.createClass({
 	},
 
 	getImpacLabel(i){
-		var impac=	this.state.policyModel.attributes.impact.match(/\[.*?\]/g)
+		var impac=	this.state.policyModel.data.impact.match(/\[.*?\]/g)
 		if(impac[i] != null){
 			return impac[i].substring(1,impac[i].length-1)
 		}
@@ -529,7 +544,7 @@ export default React.createClass({
 	},
 
 	probabilidadeImpacto(){
-		let campos = []
+		var campos = []
 		var contem=false
 		var field
 		for(var i=0;i<6;i++){
@@ -555,7 +570,8 @@ export default React.createClass({
 				&emsp;&emsp;&emsp;&emsp;&emsp;
 				&emsp;&emsp;&emsp;&emsp;&emsp;
 				&emsp;&emsp;&emsp;&emsp;&emsp;
-				&emsp;&emsp; &nbsp;&nbsp;</div>)
+				&emsp;&emsp; &nbsp;&nbsp;&nbsp;
+				&nbsp;</div>)
 				}
 			}
 
@@ -581,30 +597,28 @@ export default React.createClass({
 		return(<div>{campos}</div>)
 	},
 
-	grauRisco(n){
-		let grau = []
 
+	grauRisco(n){
+		var grau = []
 
 		grau.push(this.getRisco(n).map((field, idx) => {
-
 				field.options=this.state.cores
-
 				return (<HorizontalInput
 					name={field.name}
 					formId={this.props.id}
 					fieldDef={field}
 					key={field.value? field.value: field.name}
 					confirmKey={idx == (this.getRisco(1).length - 1) ? this.props.confirmKey : undefined}
+					ref={'grau-'+(n)+"-"+(idx)}
 					/>
 				);
+
 			}))
 
 			if(n>1){
-				grau.push
-				(<Link onClick={this.deleteGrauRisco.bind(this,n)}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}>
-					</span>
-				</Link>)
+				grau.push(<Link onClick={this.deleteGrauRisco.bind(this,n)}>
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}></span>
+						</Link>)
 			}
 		return(<div>{grau}<br/></div>)
 	},
@@ -630,7 +644,7 @@ export default React.createClass({
 		}
 	},
 	onChangeMatrix(){
-		this.setState({})
+		this.forceUpdate()
 	},
 	deleteGrauRisco(id){
 
@@ -662,6 +676,11 @@ export default React.createClass({
 	cancelWrapper(event){
 		event.preventDefault();
 
+		if(this.state.policyModel){
+			this.context.router.push("/forrisco/policy/"+this.state.policyModel.data.id+"/item/overview");
+			return
+		}
+
 		document.getElementById("field-name").value = "";
 		document.getElementById("field-description").value = "";
 		document.getElementById("field-risk_level_1").value = "";
@@ -669,7 +688,6 @@ export default React.createClass({
 		document.getElementById("field-nline").value = "";
 		document.getElementById("field-ncolumn").value = "";
 		this.setState({
-			loading: !!this.props.params.policyId,
 			policyModel: null,
 			fields: null,
 			visualization: true,
@@ -688,15 +706,15 @@ export default React.createClass({
 		var me = this;
 		var msg="";
 
-		/*var msg = Validate.validationPolicyEdit(data, this.refs.policyEdit);
+		var msg = Validate.validationPolicyEdit(data, this.refs);
 
 		if(msg!= ""){
 			this.context.toastr.addAlertError(msg);
 			return;
-		}*/
+		}
 
 		if (me.props.params.policyId) {
-			data.id=this.state.policyModel.id
+			data.id=this.state.policyModel.data.id
 			data.levels=this.state.color
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_CUSTOM_UPDATE,
@@ -711,7 +729,6 @@ export default React.createClass({
 	},
 
 	render() {
-		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
 
 		 var edit=this.context.router.isActive("forrisco/policy/"+this.props.params.policyId+"/edit")
 
@@ -731,6 +748,7 @@ export default React.createClass({
 							fieldDef={field}
 							key={field.value? field.value: field.name}
 							confirmKey={idx == (this.getFields().length - 1) ? this.props.confirmKey : undefined}
+							ref={'ref-'+idx}
 						/>);
 					})}
 
@@ -738,14 +756,18 @@ export default React.createClass({
 						{Messages.getEditable("label.policyConfig","fpdi-nav-label")}
 					</label>
 					<br/>
-					<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-						{Messages.getEditable("label.policyLevel","fpdi-nav-label")}
+					<br/>
+
+					<div style={{position:"relative",bottom:'5px'}}>
+					<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
+						{Messages.getEditable("label.policyLevel","fpdi-nav-label fpdi-required")}&nbsp;&nbsp;
 					</label>
-					&nbsp;
 					{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-						<a className="mdi mdi-plus " onClick={this.RiskColor}></a> : ""
+						<a className="mdi mdi-plus-circle icon-link" onClick={this.RiskColor}></a> : ""
 					}
+					<br/>
+					</div>
 
 					{this.grauRisco(1)}
 					{this.state.color >1 ? this.grauRisco(2) :""}
@@ -768,8 +790,8 @@ export default React.createClass({
 
 
 					<br/>
-					<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-						{Messages.getEditable("label.policyPI","fpdi-nav-label")}
+					<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
+						{Messages.getEditable("label.policyPI","fpdi-nav-label fpdi-required")}
 					</label>
 					<br/>
 
@@ -781,6 +803,7 @@ export default React.createClass({
 							key={field.value? idx: field.name}
 							//confirmKey={idx == (this.getNumero().length - 1) ? this.props.confirmKey : undefined}
 							onConfirm={this.submitWrapper}
+							ref={'numero-'+(idx)}
 						/>);
 					})}
 

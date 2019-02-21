@@ -90,7 +90,7 @@ public class DashboardBS extends HibernateBusiness {
 			Integer finished = 0;
 			Integer closeToMat = 0;
 			for (StructureLevelInstance goal : goals) {
-				List<AttributeInstance> attrInstances = this.sbs.listAttributeInstanceByLevel(goal);
+				List<AttributeInstance> attrInstances = this.sbs.listAttributeInstanceByLevel(goal,false);
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
@@ -552,7 +552,7 @@ public class DashboardBS extends HibernateBusiness {
 			// LOGGER.info(s.getName()+ " | DeadlineStatus:
 			// "+s.getDeadlineStatus());
 			// LOGGER.info("GoalsInfoTable: " + goalAux.toString());
-			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s)) {
+			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s,false)) {
 				Attribute attr = this.sbs.retrieveAttribute(a.getAttribute().getId());
 				if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
 					User user = usrbs.existsByUser(Long.parseLong(a.getValue()));
@@ -802,7 +802,7 @@ public class DashboardBS extends HibernateBusiness {
 			goalAux.setStrategicAxisName(strategicAxis.getName());
 
 			goalAux.setGoalName(s.getName());
-			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s)) {
+			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s,false)) {
 				Attribute attr = this.sbs.retrieveAttribute(a.getAttribute().getId());
 				if (attr.isFinishDate() && s.getPlan().getParent().getCompany().isShowMaturity())
 					goalAux.setFinishDate(a.getValueAsDate());
