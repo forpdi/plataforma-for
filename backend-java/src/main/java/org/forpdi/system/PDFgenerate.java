@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -25,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1402,7 +1402,7 @@ public List<PdfPTable> generatePDFplanTable(Plan plan) {
 										// LOGGER.info(levelInstanceAux.getSons().get(goalIndex).toString());
 
 										List<AttributeInstance> attInst = structureBS.listAttributeInstanceByLevel(
-												levelInstanceAux.getSons().getList().get(goalIndex));
+												levelInstanceAux.getSons().getList().get(goalIndex), false);
 										List<Attribute> attList = structureBS.listAttributesPDF(
 												levelInstanceAux.getSons().getList().get(goalIndex).getLevel());
 

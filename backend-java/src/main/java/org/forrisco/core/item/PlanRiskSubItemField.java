@@ -24,20 +24,32 @@ public class PlanRiskSubItemField extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_plan_risk_sub_item_field";
 	private static final long serialVersionUID = 1L;
 	
+	@SkipSerialization
+	@ManyToOne(targetEntity=PlanRiskSubItem.class, optional=false, fetch=FetchType.EAGER)
+	private PlanRiskSubItem planRiskSubItem;
+	
 	@Column(nullable = false, length=255)
 	private String name;
 
 	@Column(nullable = true, length=4000)
 	private String description;
 	
-	@ManyToOne(targetEntity=PlanRiskSubItem.class, optional=false, fetch=FetchType.EAGER)
-	private PlanRiskSubItem planRiskSubItem;
+	@Column(nullable = false)
+	private boolean isText;
+	
+	@Column(length=255)
+	private String fileLink;
 	
 	@Transient
-	private List<PlanRiskSubItemField> planRiskSubItemField;
-	
-	@Transient
-	private Long PlanRiskSubItemId;
+	private String value;
+
+	public PlanRiskSubItem getPlanRiskSubItem() {
+		return planRiskSubItem;
+	}
+
+	public void setPlanRiskSubItem(PlanRiskSubItem planRiskSubItem) {
+		this.planRiskSubItem = planRiskSubItem;
+	}
 
 	public String getName() {
 		return name;
@@ -55,28 +67,30 @@ public class PlanRiskSubItemField extends SimpleLogicalDeletableEntity {
 		this.description = description;
 	}
 
-	public PlanRiskSubItem getPlanRiskSubItem() {
-		return planRiskSubItem;
+	public boolean isText() {
+		return isText;
 	}
 
-	public void setPlanRiskSubItem(PlanRiskSubItem planRiskSubItem) {
-		this.planRiskSubItem = planRiskSubItem;
+	public void setText(boolean isText) {
+		this.isText = isText;
 	}
 
-	public List<PlanRiskSubItemField> getPlanRiskSubItemField() {
-		return planRiskSubItemField;
+	public String getFileLink() {
+		return fileLink;
 	}
 
-	public void setPlanRiskSubItemField(List<PlanRiskSubItemField> planRiskSubItemField) {
-		this.planRiskSubItemField = planRiskSubItemField;
+	public void setFileLink(String fileLink) {
+		this.fileLink = fileLink;
 	}
 
-	public Long getPlanRiskSubItemId() {
-		return PlanRiskSubItemId;
+	public String getValue() {
+		return value;
 	}
 
-	public void setPlanRiskSubItemId(Long planRiskSubItemId) {
-		PlanRiskSubItemId = planRiskSubItemId;
+	public void setValue(String value) {
+		this.value = value;
 	}
+
+
 
 }

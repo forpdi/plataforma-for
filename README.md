@@ -8,11 +8,11 @@ Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 
 - [Stack de tecnologias utilizadas](#stack-de-tecnologias-utilizadas)
 - [Pré-requisitos](#pr%C3%A9-requisitos)
-  - [Build](#build)
-    - [Construindo o front-end](#construindo-o-front-end)
-    - [Construindo o .war para publicação](#construindo-o-war-para-publica%C3%A7%C3%A3o)
-  - [Runtime](#runtime)
-  - [Configurando o Eclipse para desenvolvimento](#configurando-o-eclipse-para-desenvolvimento)
+	- [Build](#build)
+		- [Construindo o frontend](#construindo-o-frontend)
+		- [Construindo o .war do backend](#construindo-o-war-do-backend)
+	- [Runtime](#runtime)
+	- [Configurando o Eclipse para desenvolvimento](#configurando-o-eclipse-para-desenvolvimento)
 - [Licença](#licen%C3%A7a)
 
 
@@ -23,7 +23,7 @@ Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 - Java EE 7 com JDK 1.8, CDI 1.2 (Weld 2) e JPA 2
 - Servidor de aplicação: WildFly 9.0.2
 - Serviços baseados em REST
-- Frontend web desacoplado
+- Frontend web desacoplado:
   - React.js
   - Backbone.js
   - Webpack
@@ -37,47 +37,43 @@ Você precisará de no mínimo, as seguintes ferramentas para realizar o build d
 
 - Apache Maven 3.x
 - JDK 1.8
-- Node.js 6.x (apenas para rebuilds do front-end e desenvolvimento da plataforma)
-- Eclipse (IDE para desenvolvimento)
+- Node.js 6+ (apenas para rebuilds do front-end e desenvolvimento da plataforma)
+- JBoss Developer Studio (IDE para desenvolvimento)
 
 Com as ferramentas acima você consegue realizar o build da plataforma e desenvolver novos códigos ou apenas gerar um .war para publicação e utilização.
 Instale as ferramentas listadas acima e siga os passos adiante.
 
-#### Construindo o front-end
+#### Construindo o frontend
 O front-end do projeto está feito utilizando a ferramenta Webpack para bundling e o framework React.js utilizando a arquitetura Flux.
-Para realizar build do código do front-end, instale o [Node.js versão 6.x](http://nodejs.org/) e adicione os executáveis à sua variável de ambiente `PATH`.
-Em seguida abra uma linha de comando e vá até a pasta `backend-java/src/main/frontend/` do projeto.
-Essa pasta contém todo o código do front-end. Executa o seguintes comandos para instalar as bibliotecas do Node.js necessárias:
+Para realizar build do código do frontend, instale o [Node.js versão 6 ou superior](http://nodejs.org/) e adicione os executáveis à sua variável de ambiente `PATH`.
+Em seguida abra uma linha de comando e vá até a pasta `frontend-web/` do projeto.
+Essa pasta contém todo o código do frontend. Executa o seguintes comandos para instalar as bibliotecas do Node.js necessárias:
 
 ```shell
-npm -g install Webpack
+cd frontend-web
 npm install
 ```
 
-Após a execução destes 2 comandos, você pode realizar um build para produção ou usar a opção de *watch* para desenvolvimento. Basta executar os comandos abaixo:
+Após a execução destes 2 comandos, você pode realizar um build para produção. Basta executar o comando abaixo:
 
 ```shell
 # Para compilar a versão de produção
 npm run build
-
-# Para realizar um watch de desenvolvimento
-npm run devwatch
 ```
 
-Após realizar o build do frontend você já pode construir o arquivo WAR para posterior publicação no servidor de produção.
+Após executar este comando seu frontend pronto para publicação estará disponível na pasta `frontend-web/dist/`.
 
-#### Construindo o .war para publicação
-O ForPDI utiliza o Apache Maven para realizar o processo de packaging da aplicação em um arquivo `.war` que pode ser implantado em um servidor de aplicação que suporta Java.
+#### Construindo o .war do backend
+O ForPDI utiliza o Apache Maven para realizar o processo de packaging do backend da aplicação em um arquivo `.war` que pode ser implantado em um servidor de aplicação que suporta Java.
 Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do [Maven 3.x](http://ftp.unicamp.br/pub/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip).
 Após o download do Maven, descompacte o arquivo em uma pasta. Neste passo a passo será considerado que o Maven foi descompactado na pasta `/opt/maven`.
-Em seguida, confkgure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
+Em seguida, configure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
 
 Com os procedimentos de instalação prontos, você já pode realizar o build e packaging da aplicação. O arquivo `backend-java/pom.xml` descreve todas as configurações do Maven para o projeto.
 O ForPDI está configurado com alguns *profiles* iniciais, o profile de desenvolvimento (perfil padrão) já vem pronto para uso, com as configurações no arquivo `backend-java/dev.properties`:
 
 ```properties
 # dev.properties
-war.frontenddir=development
 backendUrl=http://localhost:8080/forpdi/
 
 db.host=localhost
@@ -109,7 +105,6 @@ vim prd.properties
 ```
 ```properties
 # prd.properties
-war.frontenddir=production
 backendUrl=http://app.forpdi.org/
 
 db.host=localhost
@@ -128,7 +123,7 @@ mail.smtp.ssl=false
 mail.smtp.tls=true
 ```
 
-Acima um exemplo de arquivo para produção. A propriedade `war.frontenddir` define qual build do frontend deve ser copiado para a aplicação final, `development` ou `production`. Essa parte do build foi explicado na seção anterior.
+Acima um exemplo de arquivo para produção.
 Após configurar o arquivo podemos realizar o packaging do maven para o perfil desejado:
 
 ```shell
@@ -137,20 +132,21 @@ cd backend-java
 mvn clean package -P prd
 ```
 
-Após o packaging, o arquivo WAR estará disponível na pasta `backend-java/target/forpdi.war`. Esse arquivo é sua aplicação completa, pronta para publicação no Wildfly.
+Após o packaging, o arquivo WAR estará disponível na pasta `backend-java/target/forpdi.war`. Esse arquivo é o backend da sua aplicação, pronto para publicação no Wildfly.
 
 ### Runtime
-Para o runtime do forpdi você vai precisar:
+Para o runtime do ForPDI você vai precisar:
 
 - Java 1.8 (JDK)
 - Servidor de aplicação Java EE: Wildfly 9.0.2
-- Banco de Dados MySQL 5.7+
+- Banco de Dados MySQL 5.7
+- Servidor web (Apache ou NGINX)
 
 Primeiramente, baixe e instale o JDK 1.8 para seu sistema operacional configurando corretamente a variável JAVA_HOME no seu servidor.
 Em seguida faça o download do [Wildfly 9.0.2](http://download.jboss.org/wildfly/9.0.2.Final/wildfly-9.0.2.Final.zip) e descompacte-o em alguma pasta de seu servidor.
 Neste passo a passo, será assumido que o Wildfly foi descompactado na pasta `/opt/wildfly`.
 
-Antes de publicar a aplicação no Wildfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
+Antes de publicar o backend da aplicação no Wildfly, é necessário instalar o MySQL versão 5.7 ou superior e criar o banco de dados que irá conter as tabelas do ForPDI.
 Esse banco de dados deve possuir o nome definido no arquivo `prd.properties` na hora do build (propriedade `db.name`). A codificação de caracteres deve ser o *UTF-8*.
 Crie o banco de dados através do comando SQL:
 
@@ -166,14 +162,167 @@ A maneira mais simples de executar o sistema é rodas o Wildfly em modo standalo
 ```shell
 # Copie o arquivo war após o build
 cp {caminho_da_pasta_backend-java}/target/forpdi.war /opt/wildfly/standalone/deployments/
-# Execute o Wildfly em modo standalone como root
+```
+
+Antes de inicializar o Wildfly, é necessário que habilitemos o conector AJP para que o Apache HTTPD possa posteriormente
+atuar como proxy reverso utilizando este protocolo. Edite o arquivo `standalone.xml` para incluir este conector e depois
+inicie o Wildfly:
+
+```xml
+<!-- Arquivo /opt/wildfly/standalone/configuration/standalone.xml -->
+...
+        <subsystem xmlns="urn:jboss:domain:undertow:2.0">
+            <buffer-cache name="default"/>
+            <server name="default-server">
+                <ajp-listener name="default-ajp" socket-binding="ajp" redirect-socket="http"/><!-- Inclua essa linha -->
+                <http-listener name="default" socket-binding="http" redirect-socket="https"/>
+                <host name="default-host" alias="localhost">
+                    <filter-ref name="server-header"/>
+                    <filter-ref name="x-powered-by-header"/>
+                </host>
+            </server>
+            <servlet-container name="default">
+                <jsp-config/>
+                <websockets/>
+            </servlet-container>
+            <handlers>
+                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
+            </handlers>
+            <filters>
+                <response-header name="server-header" header-name="Server" header-value="WildFly/9"/>
+                <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
+            </filters>
+        </subsystem>
+...
+```
+```shell
+vim /opt/wildfly/standalone/configuration/standalone.xml
 cd /opt/wildfly
 /opt/wildfly/bin/standalone.sh &
 # Você precisa sair do terminal com o comando exit para não encerrar o processo:
 exit
 ```
 
-Por padrão o sistema estará disponível em: `http://seuservidor.com/forpdi/`.
+Por padrão o backend do sistema estará disponível em: `http://ip-do-seu-servidor:8080/forpdi/`.
+Após a publicação do backend, é necessário configurar um servidor web para servir os arquivos de frontend
+e para atuar como um proxy reverso para as chamadas ao backend. Você pode usar o Apache HTTPD ou o NGINX.
+Neste tutorial iremos utilizar o Apache HTTPD, porém se você preferir o NGINX é só realizar a configuração
+equivalente neste servidor web.
+
+Você precisa instalar o Apache HTTPD (usaremos a versão 2.4, porém é possível realizar a mesma configuração
+na versão 2.2, basta consultar a documentação do Apache HTTPD). Instale também os módulos (se já não vierem
+junto com o pacote da sua distribuição) `mod_rewrite`, `mod_proxy` e `mod_proxy_ajp`. Além de instalar, é
+preciso ativá-los nos arquivos de configuração do Apache HTTPD (este procedimento pode variar de acordo com
+a sua distribuição). Nos próximos passos iremos considerar que os arquivos de configuração do HTTPD estão na
+pasta `/etc/httpd` e que você estará logado no terminal com o usuário `root`.
+
+Primeiramente você precisa criar um arquivo `.conf` para inserir as configurações do ForPDI. Para isso,
+você precisará definir alguns parâmetros que utilizaremos na configuração do sistema:
+
+- FRONTEND_DIR -> Deve ser substituído pelo caminho de uma pasta do servidor onde está a versão gerada pelo build da aplicação (disponível na pasta `frontend-web/dist`), ex: `/var/www/forpdi`
+- FORPDI_DOMAIN -> Domínio que será utilizado para acessar o ForPDI, ex: `www.forpdi.org`
+
+Com essas definições, podemos criar o arquivo `forpdi.conf` na pasta apropriada:
+
+```shell
+cd /etc/httpd/conf.d
+touch forpdi.conf
+vim forpdi.conf
+```
+```conf
+# Arquivo forpdi.conf
+<VirtualHost *:80>
+	ServerName FORPDI_DOMAIN
+	UseCanonicalName  Off
+	ServerAdmin contato@forpdi.org
+	DocumentRoot FRONTEND_DIR
+
+	ErrorLog logs/forpdi-error.log
+	CustomLog logs/forpdi-access.log combined
+
+	<Location /forpdi>
+		ProxyPreserveHost on
+		ProxyPass ajp://0.0.0.0:8009/forpdi
+		Order allow,deny
+		Allow from all
+	</Location>
+</VirtualHost>
+<Directory FRONTEND_DIR>
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+	<IfModule mod_rewrite.c>
+		RewriteEngine On
+		RewriteBase /
+		RewriteRule ^index\.html$ - [L]
+		RewriteCond %{REQUEST_FILENAME} !-f
+		RewriteCond %{REQUEST_FILENAME} !-d
+		RewriteCond %{REQUEST_FILENAME} !-l
+		RewriteRule . /index.html [L]
+	</IfModule>
+</Directory>
+
+# As configurações abaixo são opcionais mas são recomendadas para performance em produção
+KeepAlive on
+KeepAliveTimeout 15
+MaxKeepAliveRequests 0
+Header append Vary User-Agent
+AddOutputFilterByType DEFLATE text/html text/css application/json application/javascript text/javascript
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+DeflateCompressionLevel 4 # 1 a 9
+DeflateMemLevel 9 # 1 a 9
+DeflateWindowSize 15 # 1 a 15
+
+# As configurações abaixo servem para habilitar acesso via HTTPS:
+<VirtualHost *:443>
+	ServerName FORPDI_DOMAIN
+	UseCanonicalName  Off
+	ServerAdmin contato@forpdi.org
+	DocumentRoot FRONTEND_DIR
+
+	SSLEngine on
+	# Caminho dos arquivos de certificado digital fictícios, deve trocar pelo
+	# caminho dos arquivos em seu servidor
+	SSLCertificateFile "/etc/httpd/ssl/forpdi/cert.crt"
+	SSLCertificateKeyFile "/etc/httpd/ssl/forpdi/private.key"
+	SSLCACertificateFile "/etc/httpd/ssl/forpdi/ca-bundle.crt"
+	SSLCompression Off
+	SSLHonorCipherOrder On
+	SSLCipherSuite ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:!LOW:!MD5:!aNULL:!eNULL:!3DES:!EXP:!PSK:!SRP:!DSS
+
+	ErrorLog logs/forpdi-ssl-error.log
+	CustomLog logs/forpdi-ssl-access.log combined
+
+	<Location /forpdi>
+		ProxyPreserveHost on
+		ProxyPass ajp://0.0.0.0:8009/forpdi
+		Order allow,deny
+		Allow from all
+	</Location>
+</VirtualHost>
+# Para permitir apenas acesso SSL, pode trocar o virtual host da porta 80 para:
+<VirtualHost *:80>
+	ServerName FORPDI_DOMAIN
+	UseCanonicalName  Off
+	RewriteEngine On
+	RewriteCond %{HTTPS} !=on
+	RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+</VirtualHost>
+```
+
+Após realizar a configuração do arquivo para o HTTPD, é só copiar o conteúdo da pasta `frontend-web/dist` após o build do frontend para a
+pasta `FRONTEND_DIR` colocada na configuração. Em seguida basta reiniciar o HTTPD e a
+aplicação estará disponível em `http://FORPDI_DOMAIN/`:
+
+```shell
+# Copia o conteúdo do frontend e reinicia o HTTPD.
+cd frontend-web/dist
+cp -R ./* FRONTEND_DIR
+service httpd restart # pode variar entre distros
+```
+
 O primeiro acesso deve ser feito utilizando o usuário administrador de sistema:
 
 ```

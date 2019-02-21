@@ -58,9 +58,6 @@ public class PlanMacro extends SimpleLogicalDeletableEntity {
 	@Transient
 	private boolean haveSons;
 	
-	@Transient
-	private Long exportCompanyId;
-
 	public boolean isHaveSons() {
 		return haveSons;
 	}
@@ -133,12 +130,4 @@ public class PlanMacro extends SimpleLogicalDeletableEntity {
 		this.fields = fields;
 	}
 	
-	public Long getExportCompanyId() {
-		return exportCompanyId;
-	}
-
-	public void setExportCompanyId(Long exportCompanyId) {
-		this.exportCompanyId = exportCompanyId;
-	}
-
 }

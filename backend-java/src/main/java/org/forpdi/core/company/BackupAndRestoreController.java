@@ -1,25 +1,14 @@
 package org.forpdi.core.company;
 
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.time.LocalDateTime;
 
-
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.authz.AccessLevels;
@@ -28,21 +17,13 @@ import org.forpdi.core.user.authz.permission.ExportDataPermission;
 import org.forpdi.core.user.authz.permission.RestoreDataPermission;
 import org.forpdi.system.Archive;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.boilerplate.AbstractController;
 import br.com.caelum.vraptor.boilerplate.NoCache;
-import br.com.caelum.vraptor.boilerplate.util.StoragerUtils;
-import br.com.caelum.vraptor.observer.download.ByteArrayDownload;
-import br.com.caelum.vraptor.observer.download.Download;
 import br.com.caelum.vraptor.observer.upload.UploadSizeLimit;
 import br.com.caelum.vraptor.observer.upload.UploadedFile;
-
-
 
 @Controller
 public class BackupAndRestoreController extends AbstractController  {
@@ -50,7 +31,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	@Inject private BackupAndRestoreHelper dbbackup;
 	@Inject @Current private CompanyDomain domain;
 	
-	private static UploadedFile file=null;
+	private static UploadedFile file = null;
 	
 	/**
 	 * Backup das tabelas
@@ -61,16 +42,18 @@ public class BackupAndRestoreController extends AbstractController  {
 	 */
 	@Get("/company/export")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
-	public Download export() {
+	public void export() {
 		try {
 			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
-			byte[] exportData = dbbackup.export(this.domain.getCompany());
-			return new ByteArrayDownload(exportData, "application/octet-stream",
-				String.format("plans-%d-%s.fbk", domain.getCompany().getId(), LocalDateTime.now().toString()));
+			this.response.setHeader("Content-Disposition", String.format("attachment; filename=plans-%d-%s.fbk",
+					domain.getCompany().getId(), LocalDateTime.now().toString()));
+			this.response.setContentType("application/octet-stream");
+		
+			this.dbbackup.export(this.domain.getCompany(), this.response.getOutputStream());
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-			return null;
+			this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			this.result.nothing();
 		}
 	}
 
@@ -86,24 +69,22 @@ public class BackupAndRestoreController extends AbstractController  {
 	 */
 	@Post("/company/fbkupload")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
-	@UploadSizeLimit(fileSizeLimit=5 * 1024 * 1024)
+	@UploadSizeLimit(fileSizeLimit = 100 * 1024 * 1024, sizeLimit = 100 * 1024 * 1024)
 	public void  fbkupload(UploadedFile file) {
-		
 		if (file == null) {
 			this.fail("upload falhou");
-			return;
 		}else if (BackupAndRestoreController.file != null) {
 			this.fail("processo de importação já em andamento");
-			return;
-		}else{ 
+		} else { 
 			try {
-			
 				BackupAndRestoreController.file=file;
 				this.success("upload completo.");
+			} catch (IllegalArgumentException ex) {
+				this.fail(ex.getMessage());
 			} catch (Throwable ex) {
 				LOGGER.error("IO error", ex);
 				this.fail("Erro inesperado: " + ex.getMessage());
-			}	
+			}
 		}
 	}
 	
@@ -115,13 +96,13 @@ public class BackupAndRestoreController extends AbstractController  {
 	@Post("api/company/restore")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	public void  restore() {
-		
 		if (BackupAndRestoreController.file == null) {
 			this.fail("arquivo não especificado");
 			return;
 		}
 		
-		if(this.domain.getCompany() == null) {
+		if(this.domain == null || this.domain.getCompany() == null) {
+			BackupAndRestoreController.file = null;
 			this.fail("Instituição não definida");
 			return;
 		}
@@ -136,9 +117,7 @@ public class BackupAndRestoreController extends AbstractController  {
 			
 			this.success("Dados importados com sucesso.");
 		} catch (Throwable ex) {
-			
 			BackupAndRestoreController.file = null;
-			
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
@@ -149,7 +128,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * 
 	 */
 	@Get("api/company/state")
-	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
+	//@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	public void  state() {
 		try {
 			String  porcent =String.valueOf(dbbackup.getPorcentagem());
@@ -160,7 +139,8 @@ public class BackupAndRestoreController extends AbstractController  {
 			this.success(porcent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
+			//this.fail("Erro inesperado: " + ex.getMessage());
+			this.success("-1");
 		}
 	}
 	

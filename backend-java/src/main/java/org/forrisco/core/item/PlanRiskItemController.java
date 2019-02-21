@@ -83,6 +83,38 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
+	 * Salva um subitem
+	 *  
+	 * @return void
+	 */
+	@Post(PATH + "/new/subitem")
+	@Consumes
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void saveSubItem(@NotNull @Valid PlanRiskSubItem planRiskSubItem) {
+		try {
+			
+			if(planRiskSubItem.getPlanRiskItem() == null) {
+				this.fail("Item Vinculado não encontrado não encontrado");
+			}
+			
+			planRiskSubItem.setId(null);
+			this.planRiskItemBS.save(planRiskSubItem);
+			this.success(planRiskSubItem);
+			
+			for(int i = 0; i < planRiskSubItem.getPlanRiskSubItemField().size(); i++) {
+				PlanRiskSubItemField planRiskSubItemField = planRiskSubItem.getPlanRiskSubItemField().get(i);
+				planRiskSubItemField.setPlanRiskSubItem(planRiskSubItem);
+				this.planRiskItemBS.save(planRiskSubItemField);
+			}
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
 	 * Retorna as informações e os Campos de um Item
 	 * @param id do item a ser consultado
 	 *  
@@ -108,7 +140,7 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
-	 * Retorna as de um Item
+	 * Retorna as informaçõesde um Item
 	 * @param id do item a ser detalhado
 	 *  
 	 * @return void
@@ -125,30 +157,33 @@ public class PlanRiskItemController extends AbstractController {
 				planRiskItem.setPlanRiskItemField(this.planRiskItemBS.listItensByPlanRiskField(planRiskItem).getList());
 				this.success(planRiskItem);
 			}
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna as informaçõesde um subitem
+	 * @param id do subitem a ser detalhado
+	 *  
+	 * @return void
+	 */
+	@Get(PATH + "/subitem/{id}")
+	@NoCache
+	public void detailSubItem(@NotNull Long id) {
+		try {
+			PlanRiskSubItem planRiskSubItem = this.planRiskItemBS.exists(id, PlanRiskSubItem.class);
 			
-			
-			
-			/*for(int i = 0; i < fields.getList().size(); i++) {
-				
-			}*/
-			
+			if (planRiskSubItem == null) {
+				this.fail("O Subitem solicitado não foi encontrado.");
+			} else {
+				planRiskSubItem.setPlanRiskSubItemField(this.planRiskItemBS.listSubFieldsBySubItem(planRiskSubItem).getList());
+				this.success(planRiskSubItem);
+			}
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
 }
-
-/*
- * PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
-			if (planRiskItem == null) {
-				this.fail("O Item solicitado não foi encontrado.");
-			} else {
-				this.success(planRiskItem);
-			}
-			
-		} catch (Throwable e) {
-			LOGGER.error("Unexpected runtime error", e);
-			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
-		}
-*/

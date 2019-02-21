@@ -6,10 +6,12 @@ import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
 
+
 export default React.createClass({
 	contextTypes: {
 		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
+		tabPanel: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
 		permissions: React.PropTypes.array.isRequired
 	},
@@ -68,7 +70,7 @@ export default React.createClass({
 
 		/*Item de um Plano*/
 		PlanRiskItemStore.on('allItens', (response) => {
-			response.data.map(itens => {
+			response.data.map( itens => {
 				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
 
 				treeItens.push({
@@ -97,22 +99,25 @@ export default React.createClass({
 		/*Campos de um Item*/
 		PlanRiskItemStore.on('allSubItens', (response, node) => {
 			var fieldTree = [];
+			var toNewSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/new";
 
 			//Botão Novo SubItem
 			var newItemSubItem = {
 				label: "Novo Subitem",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
+				to: toNewSubItem,
 				key: "newPlanRiskSubItem"
 			};
 
-			 response.data.map(field => {
+			 response.data.map(subField => {
+				 var toSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/" + subField.id;
+
 				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
+					 label: subField.name,
+					 to: toSubItem,
+					 key: toSubItem,
+					 id: subField.id,
 				 })
 			});
 
