@@ -38,7 +38,8 @@ export default React.createClass({
 			info: {},
 			newItem: {},
 			myroute: window.location.hash,
-			showMenu:true
+			showMenu:true,
+			planriskactive:true
 		};
 	},
 
@@ -60,14 +61,6 @@ export default React.createClass({
 
 	setTreeItensUnit(unit, treeItensUnit = []) {
 		var me = this;
-		var  info = {
-			label: "Informações Gerais Unidade",
-			expanded: false,
-			to: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
-			key: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
-			model: unit,
-			id: unit.id,
-		};
 
 		//Botão Novo Item Geral
 		var newItem = {
@@ -87,7 +80,7 @@ export default React.createClass({
 				treeItensUnit.push({
 					label: itens.name,
 					expanded: false,
-					expandable: false, //Mudar essa condição para: Se houver subitens
+					expandable: true, //Mudar essa condição para: Se houver subitens
 					to: linkToItem,
 					key: linkToItem,
 					model: itens,
@@ -98,7 +91,6 @@ export default React.createClass({
 				});
 			});
 
-			treeItensUnit.unshift(info);
 			treeItensUnit.push(newItem);
 
 			this.setState({treeItensUnit: treeItensUnit});
@@ -138,7 +130,7 @@ export default React.createClass({
 
 //PlanRisk
 	setTreeItens(planRisk, treeItens = []) {
-		
+
 		var me = this;
 		var  info = {
 			label: "Informações Gerais",
@@ -261,27 +253,31 @@ export default React.createClass({
 
 	render() {
 		this.state.myroute= window.location.hash.substring(1)
-		const PlanVis = this.state.showMenu ? 'show' : 'hide';
-		const unitVis = this.state.showMenu ? 'hide' : 'show';
-		
+		var planriskactive
+
+		if(!this.props.location.pathname.includes("unit")){
+			planriskactive=true
+		}
+
 		return (
 			<div className="fpdi-tabs">
 				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
-					to={this.state.myroute} onClick={this.toggleMenu1}>
+					<Link role="tab" title="Plano"  className={"tabTreePanel "+(planriskactive? "active" :"")}
+					to={"forrisco/plan-risk/" + this.props.planRisk.id + "/"}>
 						{Messages.getEditable("label.plan", "fpdi-nav-label")}
 					</Link>
 
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
-					to={this.state.myroute} onClick={this.toggleMenu}>
-						{Messages.getEditable("label.unity", "fpdi-nav-label")}
+					<Link role="tab" title="Unidade"  className={"tabTreePanel "+(!planriskactive? "active" :"")}
+					to={"forrisco/plan-risk/" + this.props.planRisk.id + "/unit"}>
+						{Messages.getEditable("label.unitys", "fpdi-nav-label")}
 					</Link>
 				</ul>
-				
+
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-					
-					<div className={`fpdi-tabs ${PlanVis}`}  role="tablist">
-						Teste1
+
+
+				{planriskactive ?
+					<div className={"fpdi-tabs"}  role="tablist">
 						<div
 							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
 							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
@@ -295,9 +291,8 @@ export default React.createClass({
 						</div>
 						<TreeView tree={this.state.treeItens}/>
 					</div>
-
-					<div className={`fpdi-tabs ${unitVis}`}  role="tablist">
-						Teste2
+			:
+					<div className={"fpdi-tabs"}  role="tablist">
 						<div
 							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
 							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
@@ -309,15 +304,14 @@ export default React.createClass({
 							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
 							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 						</div>
-						
 						<Unit treeUnit={this.state.treeItensUnit}/>
 					</div>
+				}
 
-					
-					
+
 				</div>
 
-				
+
 
 			</div>
 		)

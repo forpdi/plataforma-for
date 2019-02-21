@@ -46,6 +46,7 @@ export default React.createClass({
 	},
 
 	render() {
+		console.log("U G I")
 		return (
 			<div>
 				<div className="fpdi-card fpdi-card-full floatLeft">

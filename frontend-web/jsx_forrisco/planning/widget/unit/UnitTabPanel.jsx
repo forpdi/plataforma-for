@@ -37,7 +37,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.params.unitId + "/unit/" + this.props.params.unitId);
+		//this.context.router.push("/forrisco/plan-risk/" + this.props.params.unitId + "/unit/" + this.props.params.unitId);
 	},
 
 	addTab(path, title) {
