@@ -91,12 +91,14 @@ Toastr.options.extendedTimeOut = 8000;
 
 ReactDOM.render((
 		<Router history={hashHistory}>
-			<Route path="comunidade" component={Community}/>
-			<Route path="recover-password" component={RecoverPassword}/>
-			<Route path="reset-password/:token" component={ResetPassword}/>
-			<Route path="register/:token" component={Register}/>
+			<Route path="/login" component={Login}/>
+			<Route path="/comunidade" component={Community}/>
+			<Route path="/recover-password" component={RecoverPassword}/>
+			<Route path="/reset-password/:token" component={ResetPassword}/>
+			<Route path="/register/:token" component={Register}/>
 
 			<Route path="/" component={Application}>
+				<IndexRedirect to="/home"/>
 				<Route path="forrisco" component={ForRiscoApplication}>
 					<Route path="home" component={Forrisco_Dashboard}/>
 					<Route path="risk" component={Forrisco_RiskList}/>
@@ -164,59 +166,58 @@ ReactDOM.render((
 						</Route>
 						<Route path="*" component={NotFound}/>
 					</Route>
+				</Route>
 
-					<Route path="" component={ForPDIApplication}>
-						<IndexRedirect to="login"/>
-						<Route path="home" component={Dashboard}/>
-						<Route path="login" component={Login}/>
-						<Route path="users" component={Users}>
-							<Route path=":modelId/edit" component={UserEdit}/>
-							<Route path="new" component={UserInvite}/>
-							<Route path="profilerUser/:modelId" component={ProfileUser}/>
+				<Route path="" component={ForPDIApplication}>
+					<Route path="home" component={Dashboard}/>
+					<Route path="login" component={Login}/>
+					<Route path="users" component={Users}>
+						<Route path=":modelId/edit" component={UserEdit}/>
+						<Route path="new" component={UserInvite}/>
+						<Route path="profilerUser/:modelId" component={ProfileUser}/>
+					</Route>
+
+					<Route path="structures" component={StructureList}>
+						<Route path="preview/:modelId" component={StructurePreview}/>
+					</Route>
+
+
+					<Route path="budget-element" component={BudgetElement}/>
+
+					<Route path="plan/new" component={PlanMacroEdit}/>
+					<Route path="plan/:id">
+						<IndexRedirect to="document"/>
+						<Route path="edit" component={PlanMacroEdit}/>
+						<Route path="details" component={PlanMacroDetails}>
+							<IndexRedirect to="overview"/>
+							<Route path="overview" component={PlanMacroTab}/>
+							<Route path="subplan/:subplanId" component={PlanRegister}/>
+							<Route path="subplans/new" component={PlanRegister}/>
+							<Route path="level/:subplanId/:levelId" component={LevelTab}/>
+							<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance}/>
+							<Route path="duplicate" component={DuplicatePlan}/>
 						</Route>
-
-						<Route path="structures" component={StructureList}>
-							<Route path="preview/:modelId" component={StructurePreview}/>
+						<Route path="document" component={PlanMacroDetails}>
+							<IndexRedirect to="overview"/>
+							<Route path="overview" component={DocumentDetails}/>
+							<Route path="section/:sectionId" component={DocumentSectionAttributes}/>
 						</Route>
+					</Route>
 
-
-						<Route path="budget-element" component={BudgetElement}/>
-
-						<Route path="plan/new" component={PlanMacroEdit}/>
-						<Route path="plan/:id">
-							<IndexRedirect to="document"/>
-							<Route path="edit" component={PlanMacroEdit}/>
-							<Route path="details" component={PlanMacroDetails}>
-								<IndexRedirect to="overview"/>
-								<Route path="overview" component={PlanMacroTab}/>
-								<Route path="subplan/:subplanId" component={PlanRegister}/>
-								<Route path="subplans/new" component={PlanRegister}/>
-								<Route path="level/:subplanId/:levelId" component={LevelTab}/>
-								<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance}/>
-								<Route path="duplicate" component={DuplicatePlan}/>
-							</Route>
-							<Route path="document" component={PlanMacroDetails}>
-								<IndexRedirect to="overview"/>
-								<Route path="overview" component={DocumentDetails}/>
-								<Route path="section/:sectionId" component={DocumentSectionAttributes}/>
-							</Route>
+					<Route path="system" component={SystemManagement}>
+						<IndexRedirect to="general"/>
+						<Route path="companies" component={Companies}>
+							<Route path="new" component={CompanyEdit}/>
+							<Route path="edit/:modelId" component={CompanyEdit}/>
 						</Route>
-
-						<Route path="system" component={SystemManagement}>
-							<IndexRedirect to="general"/>
-							<Route path="companies" component={Companies}>
-								<Route path="new" component={CompanyEdit}/>
-								<Route path="edit/:modelId" component={CompanyEdit}/>
-							</Route>
-							<Route path="domains" component={CompanyDomains}>
-								<Route path="new" component={CompanyDomainEdit}/>
-								<Route path="edit/:modelId" component={CompanyDomainEdit}/>
-							</Route>
-							<Route path="*" component={NotFound}/>
+						<Route path="domains" component={CompanyDomains}>
+							<Route path="new" component={CompanyDomainEdit}/>
+							<Route path="edit/:modelId" component={CompanyDomainEdit}/>
 						</Route>
 						<Route path="*" component={NotFound}/>
 					</Route>
 				</Route>
+				<Route path="*" component={NotFound}/>
 			</Route>
 		</Router>
 	),
