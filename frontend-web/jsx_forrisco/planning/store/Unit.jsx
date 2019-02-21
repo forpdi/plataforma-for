@@ -96,7 +96,6 @@ var UnitStore = Fluxbone.Store.extend({
 			}),
 			success(model) {
 				me.trigger("unitcreated", model);
-				//me.trigger("unitcreated", model);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("unitcreated",{msg:opts.responseJSON.message,data:{id:null}})
@@ -175,6 +174,21 @@ var UnitStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	retrieveUnit(data) {
+		var me = this;
+		var model = new me.model();
+		model.fetch({
+			url: this.url +"/"+ data,
+			success(model) {
+				me.trigger("retrivedunit", model);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+			}
+		});
+	},
+
 
 	mainMenuState(data){
 		var me = this;

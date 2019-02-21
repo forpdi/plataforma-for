@@ -15,11 +15,11 @@ var UnitItemStore = Fluxbone.Store.extend({
 		var me = this;
 		$.ajax({
 			method: "GET",
-			url: me.url,
+			url: me.url+"?planId="+params.planRiskId,
 			dataType: 'json',
 			data: params,
 			success(data, status, opts) {
-				me.trigger("allitens", data)
+				me.trigger("allitensunit", data)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);

@@ -73,6 +73,14 @@ import Forrisco_DetailPlanRiskSubItem
 	from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
 import Forrisco_EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
 
+/*Unit*/
+import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/RegistryUnit.jsx";
+import Forrisco_DetailUnit from "forpdi/jsx_forrisco/planning/view/unit/DetailUnit.jsx";
+import Forrisco_UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
+import Forrisco_UnitRegistryItem from "forpdi/jsx_forrisco/planning/view/unit/item/UnitRegistryItem.jsx";
+import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
+
+
 
 import Forrisco_UnitDetails from "forpdi/jsx_forrisco/planning/view/unit/UnitDetails.jsx";
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
@@ -140,6 +148,9 @@ ReactDOM.render((
 								<Route path="subunit/new" component={Forrisco_UnitDetails}/> /* Nova subunidade*/
 								<Route path="subunit/:subunitId" component={Forrisco_UnitDetails}/> /* Detalhar subunidade*/
 
+		/*Plano de Risco*/
+		<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk}/> /* Cadastrar novo plano de risco*/
+		<Route path="unit/new" component={Forrisco_RegistryUnit}/> /* Cadastrar nova unidade*/
 								<Route path="risk/new" component={Forrisco_RiskRegister}/> /* Novo risco*/
 								<Route path="risk/:riskId" component={Forrisco_RiskDetail}>
 									<Route path="details" component={Forrisco_RiskRegister}/> /* Detalhar o Risco*/
@@ -151,6 +162,23 @@ ReactDOM.render((
 							</Router>
 						</Route>
 
+		<Route path="plan-risk/:planRiskId">								/* Detalhar plano de risco*/
+			<IndexRedirect to="item"/>
+			<Route path="item" component={Forrisco_DetailPlanRisk}>
+				<IndexRedirect to="overview"/>
+				<Route path="overview" component={Forrisco_PlanRiskTabPanel}/>
+				<Route path="new" component={Forrisco_PlanRiskRegistryItem}/>  		/* Novo item do plano de risco*/
+				<Route path=":itemId" component={Forrisco_PlanRiskGeneralInfo}/> 	/* Informações gerais do plano de risco*/
+			</Route>
+			<Route path="unit" component={Forrisco_DetailUnit}>
+				<IndexRedirect to="overview"/>
+				<Route path="overview" component={Forrisco_UnitTabPanel}/>
+				<Route path="new" component={Forrisco_UnitRegistryItem}/>  		/* Novo item do plano de risco*/
+				<Route path=":itemId" component={Forrisco_UnitGeneralInfo}/> 	/* Informações gerais do plano de risco*/
+			</Route>
+
+
+		</Route>
 
 						<Route path="system" component={SystemManagement}>
 							<IndexRedirect to="general"/>
