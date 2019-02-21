@@ -1,6 +1,5 @@
 import React from "react";
 import $ from "jquery";
-import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Messages from "forpdi/jsx/core/util/Messages";
 import AttributeTypes from "@/planning/enum/AttributeTypes";
 import FileStore from "forpdi/jsx/core/store/File.jsx"
@@ -61,7 +60,7 @@ export default React.createClass({
 		}
 
 		if (!validation.errorField) {
-			if(validation.type.s === this.state.types[0].id) {
+			if (validation.type.s === this.state.types[0].id) {
 				this.props.fields.push({
 					name: validation.name.s,
 					type: validation.type.s,
@@ -73,7 +72,7 @@ export default React.createClass({
 				});
 			}
 
-			if(validation.type.s === this.state.types[1].id) {
+			if (validation.type.s === this.state.types[1].id) {
 				this.props.fields.push({
 					name: validation.name.s,
 					type: validation.type.s,
@@ -92,6 +91,10 @@ export default React.createClass({
 		this.props.deleteFields(this.props.index)
 	},
 
+	editField() {
+		this.props.editFields(this.props.index, true)
+	},
+
 	setRichTextValue(value) {
 		this.setState({
 			description: value
@@ -105,8 +108,7 @@ export default React.createClass({
 	},
 
 	resetTypes() {
-		this.props.toggle();
-		this.setState({fieldType: null})
+		this.props.editFields(this.props.index);
 	},
 
 	attachFile() {
@@ -127,7 +129,7 @@ export default React.createClass({
 				name: Modal.fileName,
 				id: resp.data.id,
 				description: Modal.fileName,
-				fileLink: BACKEND_URL + "file/" +(resp.data.id),
+				fileLink: BACKEND_URL + "file/" + (resp.data.id),
 				levelInstance: {
 					id: me.props.levelInstanceId
 				}
@@ -135,7 +137,7 @@ export default React.createClass({
 
 			me.setState({
 				fileData: file,
-				description:Modal.fileName
+				description: Modal.fileName
 			});
 		};
 
@@ -156,27 +158,184 @@ export default React.createClass({
 		return (
 			<div>
 				{this.props.field ?
-					<div>
-						<div className="panel panel-default panel-margins">
-							<div className="panel-heading attribute-input-opts">
-								<b className="budget-title">{this.props.field.value}</b>
-								{
-									<span type="submit" className="mdi mdi-delete attribute-input-edit inner"
-										  onClick={this.removeField}
-										  title={Messages.get("label.title.deleteField")}/>
-								}
 
-								{
-									<span className="mdi mdi-pencil attribute-input-edit inner"
-										  title={Messages.get("label.title.changeField")}/>
-								}
-							</div>
-							<span className="pdi-normal-text">
-								<div id={this.props.field.name}> {this.props.field.description} </div>
-							</span>
-						</div>
+					<div>
+						{
+							// /* CADASTRAMENTO */
+							this.props.field.name ?
+
+								<div className="panel panel-default panel-margins">
+									<div className="panel-heading attribute-input-opts">
+										<b className="budget-title">
+											{
+												this.props.field.name ?
+													this.props.field.value     //Proveniente do Cadastro
+													:
+													this.props.field.fieldName //Proveniente do Edição
+											}
+
+										</b>
+										{
+											<span type="submit" className="mdi mdi-delete attribute-input-edit inner"
+												  onClick={this.removeField}
+												  title={Messages.get("label.title.deleteField")}/>
+										}
+
+										{
+											<span className="mdi mdi-pencil attribute-input-edit inner"
+												  title={Messages.get("label.title.changeField")}
+												  onClick={this.editField}/>
+										}
+									</div>
+									<span className="pdi-normal-text">
+										<div id={this.props.field.name}> {this.props.field.description} </div>
+									</span>
+								</div>
+								// /* EDIÇÃO */
+								:
+								<div>
+									{
+										this.props.field.editInstance !== true ?
+
+											this.props.field.isText === true ?
+												<div className="panel panel-default panel-margins">
+													<div className="panel-heading attribute-input-opts">
+														<b className="budget-title">{this.props.field.fieldName} </b>
+														{
+															<span type="submit"
+																  className="mdi mdi-delete attribute-input-edit inner"
+																  onClick={this.removeField}
+																  title={Messages.get("label.title.deleteField")}/>
+														}
+
+														{
+															<span className="mdi mdi-pencil attribute-input-edit inner"
+																  onClick={this.editField}
+																  title={Messages.get("label.title.changeField")}/>
+														}
+													</div>
+													<span className="pdi-normal-text">
+														<div
+															id={this.props.field.fieldName}> {this.props.field.fieldContent} </div>
+													</span>
+												</div>
+												:
+												<div className="panel panel-default panel-margins">
+													<div className="panel-heading attribute-input-opts">
+														<b className="budget-title"> {this.props.field.fieldName} </b>
+														<span type="submit"
+															  className="mdi mdi-delete attribute-input-edit inner"
+															  onClick={this.removeField}
+															  title={Messages.get("label.title.deleteField")}/>
+
+														<span className="mdi mdi-pencil attribute-input-edit inner"
+															  onClick={this.editField}
+															  title={Messages.get("label.title.changeField")}/>
+													</div>
+													<span className="pdi-normal-text">
+														<div
+															id={this.props.field.fieldName}> {this.props.field.fieldContent} </div>
+													</span>
+												</div>
+											:
+
+											// /*INSTANCIA DE EDIÇÃO*/ //
+											<div className="form-group form-group-sm marginTop20">
+												<div className="row">
+													{/* Nome do Campo*/}
+													<div className="col-sm-6 col-md-4">
+														<input type="text"
+															   spellCheck={false}
+															   className="form-control"
+															   ref="newfield-name"
+															   placeholder={Messages.get("label.field.name")}
+															   value={this.props.field.fieldName}
+															   maxLength="255"/>
+													</div>
+
+													{/* Tipo do Campo*/}
+													<div className="col-sm-6 col-md-4">
+														<select
+															id="fieldType"
+															spellCheck={false}
+															className="form-control"
+															ref="newfield-type"
+															onChange={this.changeFieldType}
+															placeholder={Messages.get("label.field.type")}>
+
+															<option value={ this.props.field.isText === true ? this.state.types[0].id : this.state.types[1].id}>
+																{this.props.field.isText === true ? this.state.types[0].label : this.state.types[1].label}
+															</option>
+
+															<option key={"attr-type-1"} value={ this.props.field.isText === true ? this.state.types[1].id : this.state.types[0].id}>
+																{this.props.field.isText === true ? this.state.types[1].label : this.state.types[0].label}
+															</option>
+
+														</select>
+													</div>
+
+													{/*Botões Laterais*/}
+													<div className="col-sm-12 col-md-4">
+														<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.addField}
+															  title={Messages.get("label.submitLabel")}/>
+														<span>&nbsp;</span>
+														<span className="mdi mdi-close btn btn-sm btn-danger"
+															  title={Messages.get("label.cancel")}
+															  onClick={this.resetTypes}
+														/>
+													</div>
+												</div>
+
+												<div className="row">
+													<div className="col-sm-6 col-md-4">
+														<div className="formAlertError" ref="formAlertErrorName"/>
+													</div>
+													<div className="col-sm-6 col-md-4">
+														<div className="formAlertError" ref="formAlertErrorType"/>
+													</div>
+												</div>
+
+												<div>
+													{/*changeValue={this.changeRichText}*/}
+													{/*defaultValue ={this.props.field? this.props.field.description:null}*/}
+
+													{
+														<div>
+															{
+																this.props.field.isText === true ?
+																	<FPDIRichText
+																		maxLength='6500'
+																		className="form-control minHeight170"
+																		id="newfield-description"
+																		placeholder="Insira seu texto..."
+																		changeValue={this.setRichTextValue}
+																		defaultValue={this.props.field.fieldContent}
+																	/>
+
+																	:
+
+																	<div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+																		<a onClick={this.attachFile}>
+																			<span
+																				className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
+																			<span className="fpdi-nav-label">
+																				{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+																			</span>
+																		</a>
+																	</div>
+															}
+														</div>
+													}
+												</div>
+											</div>
+									}
+
+								</div>
+						}
+
 					</div>
 
+					//CADASTRAMENTO
 					:
 
 					<div className="form-group form-group-sm marginTop20">
@@ -214,9 +373,9 @@ export default React.createClass({
 
 							{/*Botões Laterais*/}
 							<div className="col-sm-12 col-md-4">
-							<span className="mdi mdi-check btn btn-sm btn-success"
-								  onClick={this.addField}
-								  title={Messages.get("label.submitLabel")}/>
+								<span className="mdi mdi-check btn btn-sm btn-success"
+									  onClick={this.addField}
+									  title={Messages.get("label.submitLabel")}/>
 								<span>&nbsp;</span>
 								<span className="mdi mdi-close btn btn-sm btn-danger"
 									  title={Messages.get("label.cancel")}
@@ -235,9 +394,6 @@ export default React.createClass({
 						</div>
 
 						<div>
-							{/*changeValue={this.changeRichText}*/}
-							{/*defaultValue ={this.props.field? this.props.field.description:null}*/}
-
 							{this.state.fieldType ?
 								<div>
 									{
@@ -257,8 +413,8 @@ export default React.createClass({
 												<a onClick={this.attachFile}>
 													<span className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
 													<span className="fpdi-nav-label">
-													{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
-												</span>
+														{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+													</span>
 												</a>
 											</div>
 									}
@@ -268,6 +424,7 @@ export default React.createClass({
 					</div>
 				}
 			</div>
+
 		)
 	}
 })

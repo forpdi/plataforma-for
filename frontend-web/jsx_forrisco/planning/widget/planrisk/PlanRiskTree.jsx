@@ -25,7 +25,6 @@ export default React.createClass({
 		className : React.PropTypes.object
 	},
 
-
 	getInitialState() {
 		return {
 			cleanTree: [],
@@ -136,10 +135,17 @@ export default React.createClass({
 		})
 	},
 
-//PlanRisk
+    //PlanRisk
 	setTreeItens(planRisk, treeItens = []) {
-		
+
 		var me = this;
+
+		/* Redireciona para as Informações gerais ao carregar a Tree*/
+		this.context.router.push(
+			"/forrisco/plan-risk/" + planRisk.id + "/item/" + planRisk.id + "/info"
+		);
+		/* ____________________  */
+
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
@@ -180,7 +186,6 @@ export default React.createClass({
 
 			treeItens.unshift(info);
 			treeItens.push(newItem);
-
 
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
@@ -263,23 +268,23 @@ export default React.createClass({
 		this.state.myroute= window.location.hash.substring(1)
 		const PlanVis = this.state.showMenu ? 'show' : 'hide';
 		const unitVis = this.state.showMenu ? 'hide' : 'show';
-		
+
 		return (
 			<div className="fpdi-tabs">
 				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel"
 					to={this.state.myroute} onClick={this.toggleMenu1}>
 						{Messages.getEditable("label.plan", "fpdi-nav-label")}
 					</Link>
 
-					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel" 
+					<Link role="tab" title="Plano" activeClassName="active" className="tabTreePanel"
 					to={this.state.myroute} onClick={this.toggleMenu}>
 						{Messages.getEditable("label.unity", "fpdi-nav-label")}
 					</Link>
 				</ul>
-				
+
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-					
+
 					<div className={`fpdi-tabs ${PlanVis}`}  role="tablist">
 						Teste1
 						<div
@@ -309,15 +314,13 @@ export default React.createClass({
 							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
 							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 						</div>
-						
+
 						<Unit treeUnit={this.state.treeItensUnit}/>
 					</div>
 
-					
-					
-				</div>
 
-				
+
+				</div>
 
 			</div>
 		)

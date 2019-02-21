@@ -42,50 +42,16 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
-			data: {
-				id: this.props.params.itemId
-			},
-		});
-		this.refreshComponent();
-	},
-
-	componentWillReceiveProps(newProps) {
-		if (this.props.params.itemId !== newProps.itemId) {
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
-				data: {
-					id: newProps.params.itemId
-				},
-			});
-
-			this.refreshComponent();
-
-			if(this.state.tabPath !== this.props.location.pathname) {
-				_.defer(() => {
-					this.context.tabPanel.addTab(
-						this.props.location.pathname,
-						this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
-							this.state.itemTitle.substring(0, 15)
-					);
-				});
-			}
-		}
-	},
-
-	refreshComponent() {
-		var content = [];
 		PlanRiskItemStore.on('detailItem', response => {
-			console.log(response.data);
+			const content = [];
 			if (response.data.planRiskItemField.length !== 0) {
-
 				response.data.planRiskItemField.map(field => {
 					content.push({
 						fieldName: field.name,
 						fieldContent: field.description,
 						isText: field.isText,
-						fileLink: field.fileLink
+						fileLink: field.fileLink,
+						editInstance: false
 					})
 				});
 
@@ -93,7 +59,8 @@ export default React.createClass({
 					itemTitle: response.data.name,
 					field: content,
 					isLoading: false,
-					tabPath: this.props.location.pathname
+					tabPath: this.props.location.pathname,
+					onEdit: false
 				});
 
 			} else {
@@ -102,13 +69,51 @@ export default React.createClass({
 					itemTitle: response.data.name,
 					field: [],
 					isLoading: false,
-					tabPath: this.props.location.pathname
+					tabPath: this.props.location.pathname,
+					onEdit: false
 				});
 			}
+		}, this);
+		this.refreshComponent(this.props.params.itemId);
+	},
 
-			this.forceUpdate();
-			PlanRiskItemStore.off('detailItem');
+	componentWillReceiveProps(newProps) {
+		if (this.props.params.itemId !== newProps.params.itemId) {
+			this.refreshComponent(newProps.params.itemId);
+
+			if(this.state.tabPath !== this.props.location.pathname) {
+				// _.defer(() => {
+				// 	this.context.tabPanel.addTab(
+				// 		this.props.location.pathname,
+				// 		this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
+				// 			this.state.itemTitle.substring(0, 15)
+				// 	);
+				// });
+			}
+		}
+	},
+
+	onEdit() {
+		this.setState({
+			onEdit: !this.state.onEdit
+		})
+	},
+
+	refreshComponent(itemId) {
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+			data: {
+				id: itemId
+			},
 		});
+
+		this.setState({
+			field: []
+		})
+	},
+
+	componentWillUnmount() {
+		PlanRiskItemStore.off(null, null, this);
 	},
 
 	renderBreadcrumb() {
@@ -141,9 +146,9 @@ export default React.createClass({
 		return(
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
+					<Link>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels" onClick={this.onEdit}> Editar Item </span>
+							<span id="menu-levels" onClick={this.onEdit}> Editar Informações </span>
 						</span>
 					</Link>
 				</li>
@@ -223,8 +228,11 @@ export default React.createClass({
 									)
 								}
 							}) :
-							 <SPAN> AE </SPAN>
-							/* <PlanRiskItemField/> */
+							 <EditPlanRiskItem
+								 itemTitle={this.state.itemTitle}
+								 fieldsValues={this.state.field}
+								 onEdit={this.state.onEdit}
+							 />
 					}
 				</div>
 			</div>

@@ -32,6 +32,7 @@ export default React.createClass({
 			undeletable: false
 		};
 	},
+
 	updateLoadingState(showName) {
 		this.setState({
 			loading: (this.props.params.id && !this.state.model)

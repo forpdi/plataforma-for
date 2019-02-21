@@ -75,10 +75,10 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			contentType: 'application/json',
 			data: JSON.stringify(planRiskSubItem),
 			success(model) {
-				me.trigger("itemSaved", model);
+				me.trigger("subItemSaved", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("itemSaved", opts);
+				me.trigger("subItemSaved", opts);
 			}
 		})
 	},

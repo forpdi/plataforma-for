@@ -44,6 +44,7 @@ export default React.createClass({
 			maxLength: 100,
 			label: "Título",
 			required: true,
+			edit: false
 		}];
 
 		this.setState({
@@ -115,7 +116,7 @@ export default React.createClass({
 							this.state.formFields.map((field, index) => {
 								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type ===  AttributeTypes.ATTACHMENT_FIELD) {
 									return (
-										<div>
+										<div key={index}>
 											<PlanRiskItemField
 												vizualization={this.state.vizualization}
 												getFields={this.getFields}
@@ -128,7 +129,7 @@ export default React.createClass({
 								}
 
 								return (
-									<div>
+									<div key={index}>
 										<VerticalInput key={index} fieldDef={field}/>
 									</div>
 								)
