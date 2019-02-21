@@ -12,8 +12,10 @@ import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 
 
 export default React.createClass({
+
 	contextTypes: {
-		router: React.PropTypes.object.isRequired
+		router: React.PropTypes.object.isRequired,
+		tabPanel: React.PropTypes.object,
 	},
 	childContextTypes: {
 		policy: React.PropTypes.object,
@@ -36,23 +38,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		/*var me = this;
-		StructureStore.on('levelAttributeSaved', (model) => {
-			var tabActive = document.getElementsByClassName("fpdi-mainTabs active");
-			//Consulta para encontrar qual aba está ativo
-			if(tabActive.length>0){// Caso encontre um valor, o texto dele será alterado pelo nome atual do nó
-				if(model.data.name.length>14){
-					tabActive[0].innerHTML = (model.data.name.substring(0, 14)+"...")+"<span class='mdi mdi-close-circle'/>";
-					tabActive[0].title = (model.data.name.substring(0, 14)+"...");
-				}else{
-					tabActive[0].innerHTML = model.data.name +"<span class='mdi mdi-close-circle'/>";
-					tabActive[0].title = model.data.name;
-				}
-				tabActive[0].getElementsByClassName("mdi mdi-close-circle")[0].onclick =
-				this.removeTabByPath.bind(this, tabActive[0].hash.replace("#",""));
-			}
-		});*/
-
 		RiskStore.on("findRisk", (model) => {
 			if(model.success){
 				this.setState({
@@ -61,11 +46,11 @@ export default React.createClass({
 			}
 		})
 
+		_.defer(() => {
+			this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
+		});
+
 		this.refresh()
-	},
-
-	componentWillUnmount() {
-
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -81,13 +66,10 @@ export default React.createClass({
 
 	renderUnarchiveRisk(){
 
-					//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId >
-
 		return (
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link
-						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
 						onClick={this.changeVizualization}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}>
 						<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
@@ -96,21 +78,18 @@ export default React.createClass({
 				</li>
 				{this.state.undeletable ?
 				<li>
-					<Link
-						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
-						>
+					<Link>
 						<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}>
-							<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")}</span>
+							<span id="menu-levels"> {Messages.getEditable("label.deleteRisk","fpdi-nav-label")}</span>
 						</span>
 					</Link>
 				</li>
 				:
 				<li>
 					<Link
-						//to={"/forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/risk/"+this.props.params.riskId+"/details"}
 						onClick={this.deleteItem}>
 						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteItem")}>
-							<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")} </span>
+							<span id="menu-levels"> {Messages.getEditable("label.deleteRisk","fpdi-nav-label")} </span>
 						</span>
 					</Link>
 				</li>
@@ -125,6 +104,7 @@ export default React.createClass({
 			visualization: false,
 		});
 	},
+
 	deleteRisco() {
 		var me = this;
 		if (me.state.riskModel != null) {
@@ -140,38 +120,34 @@ export default React.createClass({
 	},
 
 	selectInfo(){
-		console.log(this.state.selected)
-		//return
 		switch(this.state.selected){
 			case 0:
-				console.log("RiskRegister")
-				return(<div>
-				{/*<RiskRegister
+				return(<RiskRegister
+					{...this.props}
 					visualization={this.state.visualization}
 					risk={this.state.riskModel}
-				/>)*/} </div>)
+				/>)
 
 			case 1:
-				console.log("Monitor")
 				return(
 				<Monitor
+					visualization={this.state.visualization}
 					risk={this.state.riskModel}
 				/>)
 
 			case 2:
-				console.log("Incident")
 				return(
 				<Incident
+					visualization={this.state.visualization}
 					risk={this.state.riskModel}
 				/>)
 
 			case 3:
-				console.log("Contingency")
 				return(
 				<Contingency
+					visualization={this.state.visualization}
 					risk={this.state.riskModel}
 				/>)
-
 		}
 	},
 
@@ -205,8 +181,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log("props",this.props)
-		console.log("state",this.state)
 		return (<div className="fpdi-card fpdi-card-full floatLeft">
 				<h1>
 					{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}
