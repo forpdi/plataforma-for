@@ -203,6 +203,10 @@ export default React.createClass({
 					&& field.type != AttributeTypes.ATTACHMENT_FIELD) {
 						showButtons = !this.props.vizualization;
 
+						if(showButtons && this.props.showButtons !=null){
+							showButtons = this.props.showButtons;
+						}
+
 						return (<div>
 
 

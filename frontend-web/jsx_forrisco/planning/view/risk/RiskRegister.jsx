@@ -28,6 +28,7 @@ export default React.createClass({
 			planRiskId: null,
 			unitId: null,
 			riskModel:null,
+			policyModel:null,
 			strategy:[],
 			process:[],
 			activity:[],
@@ -103,7 +104,6 @@ export default React.createClass({
 	},
 
 	refreshData(){
-		console.log(this.context.planRisk.attributes.policy)
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 		});
@@ -112,7 +112,7 @@ export default React.createClass({
 			action: PolicyStore.ACTION_FIND_POLICY,
 			data: this.state.plan.policyId
 		});*/
-		this.setState({policy:this.context.planRisk.attributes.policy})
+		this.setState({policyModel:this.context.planRisk.attributes.policy})
 
 		if(this.props.risk){
 			this.state.risk_pdi=this.props.risk.risk_pdi
@@ -175,7 +175,8 @@ export default React.createClass({
 			},{
 				name: "probability",
 				type: AttributeTypes.SELECT_FIELD,
-				optionsField:[{}],
+				optionsField: this.getImpacts(),
+				displayField: 'label',
 				placeholder: "Selecione",
 				maxLength: 100,
 				label: "Probabilidade",
@@ -183,7 +184,8 @@ export default React.createClass({
 			},{
 				name: "impact",
 				type: AttributeTypes.SELECT_FIELD,
-				optionsField:[{}],
+				optionsField: this.getProbabilities(),
+				displayField: 'label',
 				placeholder: "Selecione",
 				maxLength: 100,
 				label: "Impacto",
@@ -194,7 +196,7 @@ export default React.createClass({
 				placeholder: "",
 				maxLength: 100,
 				label: "Grau do risco",
-				value: this.getLevel(this.state.riskModel.probability, this.state.riskModel.impact),
+				value: this.state.riskModel? this.state.riskModel.riskLevel.level : null
 			},{
 				name: "periodicity",
 				label: "Periodicidade da análise",
@@ -231,8 +233,7 @@ export default React.createClass({
 				maxLength: 100,
 				label: "Tipo",
 				value: this.state.riskModel.type,
-			}
-		);
+			});
 		}
 
 		return fields;
@@ -333,25 +334,28 @@ export default React.createClass({
 	},
 
 
-	getProbLabel(i){
-		var probs=	this.state.policyModel.data.probability.match(/\[.*?\]/g)
-		if(probs[i] != null){
-			return probs[i].substring(1,probs[i].length-1)
+	getProbabilities(){
+		var probility=	this.state.policyModel.probability.match(/\[.*?\]/g)
+		var fields=[]
+
+		if(probility != null){
+			for(var i in probility){
+				fields.push({label:probility[i].substring(1,probility[i].length-1)})
+			}
 		}
-		return null
+		return fields
 	},
 
-	getImpacLabel(i){
-		var impac=	this.state.policyModel.data.impact.match(/\[.*?\]/g)
-		if(impac[i] != null){
-			return impac[i].substring(1,impac[i].length-1)
-		}
-		return null
-	},
+	getImpacts(){
+		var impact=	this.state.policyModel.impact.match(/\[.*?\]/g)
+		var fields=[]
 
-	getLevel(prob, imp){
-		//console.log(prob,imp)
-		return "zero grau";
+		if(impact != null){
+			for(var i in impact){
+				fields.push({label:impact[i].substring(1,impact[i].length-1)})
+			}
+		}
+		return fields
 	},
 
 	getUsers(){
@@ -422,28 +426,22 @@ export default React.createClass({
 
 	render(){
 
-		console.log(this.props)
+
+		//console.log(">>", this.state.riskModel.activities)
 
 			return( <div>
 				<div className="fpdi-card fpdi-card-full floatLeft">
 
-
 				{!this.state.visualization?
 					<VerticalForm
-							vizualization={this.state.visualization}
-							fields={this.getName()}
-							submitLabel={Messages.get("label.submitLabel")}
-							noButtons={true}
-							ref={'field-name'}
-						/>
+						vizualization={this.state.visualization}
+						fields={this.getName()}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+						ref={'field-name'}/>
 				:""}
 
 				{this.getFields().map((fielditem, index) => {
-
-							if(fielditem.type== AttributeTypes.SELECT_FIELD){
-								//console.log(fielditem.name, fielditem.optionsField)
-							}
-
 					if((fielditem.name=="riskLevel" || fielditem.name=="date") && !this.state.visualization){
 						return
 					}
@@ -452,9 +450,9 @@ export default React.createClass({
 						vizualization={this.state.visualization}
 						fields={[fielditem]}
 						submitLabel={Messages.get("label.submitLabel")}
-						noButtons={true}
-						ref={'field-'+index}
-					/></div>)
+						showButtons={false}
+						ref={'field-'+index}/>
+						</div>)
 				})}
 
 
@@ -471,15 +469,16 @@ export default React.createClass({
 					vizualization={this.state.visualization}
 					fields={this.getProcesses()}
 					submitLabel={Messages.get("label.submitLabel")}
-					noButtons={true}
-				/>}
+					showButtons={false}/>
+				}
+
 
 
 				{!this.state.visualization ?<div>
 				<div  style={{"display": "-webkit-box", margin: "10px 0px"}} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
 					<form>
-						<input  style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_pdi===true} onChange={this.handleProcessChange}  value="Sim"/>Sim
-						<input style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_pdi ===false} onChange={this.handleProcessChange}  value="Não"/>Não
+						<input  style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_obj_process===true} onChange={this.handleProcessChange}  value="Sim"/>Sim
+						<input style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_obj_process ===false} onChange={this.handleProcessChange}  value="Não"/>Não
 					</form>
 					<br/>
 				 </div>
@@ -488,14 +487,15 @@ export default React.createClass({
 					vizualization={this.state.visualization}
 					fields={this.getStrategies()}
 					submitLabel={Messages.get("label.submitLabel")}
-				/>}
+					showButtons={false}/>
+				}
 
 
 				{!this.state.visualization ?<div>
 				<div  style={{"display": "-webkit-box", margin: "10px 0px"}} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
 					<form>
-						<input  style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_pdi===true} onChange={this.handleActivityChange}  value="Sim"/>Sim
-						<input style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_pdi ===false} onChange={this.handleActivityChange}  value="Não"/>Não
+						<input  style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_act_process===true} onChange={this.handleActivityChange}  value="Sim"/>Sim
+						<input style={{"margin":"0px 5px"}} type="radio" name="objectivePDI"  checked={this.state.risk_act_process ===false} onChange={this.handleActivityChange}  value="Não"/>Não
 					</form>
 					<br/>
 				 </div>
@@ -504,7 +504,8 @@ export default React.createClass({
 					vizualization={this.state.visualization}
 					fields={this.getActivities()}
 					submitLabel={Messages.get("label.submitLabel")}
-				/>}
+					showButtons={false}/>
+				}
 
 
 				<br/>

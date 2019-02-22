@@ -194,8 +194,8 @@ var VerticalForm =  React.createClass({
 					&& field.type != AttributeTypes.ATTACHMENT_FIELD) {
 						showButtons = !this.props.vizualization;
 
-						if(showButtons && this.props.noButtons !=null){
-							showButtons = !this.props.noButtons;
+						if(showButtons && this.props.showButtons != null){
+							showButtons = this.props.showButtons;
 						}
 
 						return (<AttributeInput
