@@ -631,6 +631,51 @@ public class RiskController extends AbstractController {
 	}
 	
 	
+	/**
+	 * Atualiza risk.
+	 * 
+	 * @param id
+	 *            Id da ação a ser atualizada.
+	 */
+	@Post( PATH + "/update")
+	@NoCache
+	@Consumes
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void updateRisk(@NotNull Risk risk) {
+		try {
+			Risk oldrisk = this.riskBS.exists(risk.getId(), Risk.class);
+			if (oldrisk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			User user = this.riskBS.exists(risk.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário solicitado não foi encontrado.");
+				return;
+			} 
+			
+			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			
+			if (risk.getRiskLevel() == null) {
+				this.fail("Grau de Risco solicitado não foi encontrado.");
+				return;
+			}
+			
+			this.riskBS.deleteAPS(oldrisk);
+
+			this.riskBS.saveRisk(risk);
+						
+			this.riskBS.saveActivities(risk);
+			this.riskBS.saveProcesses(risk);
+			this.riskBS.saveStrategies(risk);
+			
+			this.success(risk);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
 	
 	
 	

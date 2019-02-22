@@ -56,36 +56,31 @@ import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
 import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
+import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/ItemRegister.jsx";
 import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/SubItemRegister.jsx";
-import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
-import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
-import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
-import Forrisco_DetailPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx";
-import Forrisco_PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
-import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx";
-import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx";
-import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
-import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
-import Forrisco_PlanRiskRegistrySubItem
-	from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
-import Forrisco_DetailPlanRiskSubItem
-	from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
-import Forrisco_EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
 
-/*Unit*/
+import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
+import Forrisco_PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
+import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx"
+import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
+import Forrisco_DetailPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx";
+import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
+import Forrisco_DetailPlanRiskSubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
+import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx";
+import Forrisco_PlanRiskRegistrySubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
+
+
+
 import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/RegistryUnit.jsx";
-import Forrisco_DetailUnit from "forpdi/jsx_forrisco/planning/view/unit/DetailUnit.jsx";
+import Forrisco_RegistrySubunit from "forpdi/jsx_forrisco/planning/view/unit/RegistrySubunit.jsx";
 import Forrisco_UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
 import Forrisco_UnitRegistryItem from "forpdi/jsx_forrisco/planning/view/unit/item/UnitRegistryItem.jsx";
-import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
 
 
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
 import Forrisco_RiskDetail from "forpdi/jsx_forrisco/planning/view/risk/RiskDetail.jsx";
-import Forrisco_RiskMonitor from "forpdi/jsx_forrisco/planning/view/risk/Monitor.jsx";
-import Forrisco_RiskIncident from "forpdi/jsx_forrisco/planning/view/risk/Incident.jsx";
-import Forrisco_RiskContingency from "forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx";
+import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -126,6 +121,7 @@ ReactDOM.render((
 					</Route>
 				</Route>
 
+
 				<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk} /> /* Cadastrar novo plano de risco*/
 
 				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>        /* Detalhar plano de risco*/
@@ -140,25 +136,21 @@ ReactDOM.render((
 					</Route>
 
 
-					{/*<Route path="unit/new" component={Forrisco_DetailUnit} />  Nova Unidade*/}
 					<Route path="unit">
 						<IndexRedirect to="overview" />
 						<Route path="overview" component={Forrisco_UnitTabPanel} />
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
-						<Route path=":unitId">
-							<Route path="subunit/new" component={Forrisco_RegistryUnit} /> /* Nova subunidade*/
-							<Route path="subunit/:subunitId" component={Forrisco_UnitRegistryItem} /> /* Detalhar subunidade*/
-
-
-							<Route path="risk/new" component={Forrisco_RiskRegister} /> /* Novo risco*/
-							<Route path="risk/:riskId" component={Forrisco_RiskDetail}>
+						<Route path=":unitId/risk">
+						<Route path="new" component={Forrisco_RiskRegister} /> /* Novo risco*/
+							<Route path=":riskId" component={Forrisco_RiskDetail}>
 								<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
-								{/*<Route path="monitor" component={Forrisco_RiskMonitor}/>		// Monitoramento do Risco
-								<Route path="incident" component={Forrisco_RiskIncident}/>		// Incidentes do Risco
-								<Route path="contigency" component={Forrisco_RiskContingency}/>	// Contigenciamento do Risco
-									*/}
 							</Route>
+						</Route>
+
+						<Route path=":unitId" component={Forrisco_RegistryUnit}>
+							<Route path="subunit/new" component={Forrisco_RegistrySubunit} /> /* Nova subunidade*/
+							<Route path="subunit/:subunitId" component={Forrisco_RegistrySubunit} /> /* Detalhar subunidade*/
 						</Route>
 					</Route>
 

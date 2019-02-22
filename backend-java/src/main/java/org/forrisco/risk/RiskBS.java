@@ -38,35 +38,11 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
  * @author Matheus Nascimento
  */
 @RequestScoped
-public class RiskBS implements Business {
-	
-	//protected final Logger LOGGER;
+public class RiskBS extends HibernateBusiness {
+
 	
 	@Inject protected HibernateDAO dao;
 	@Inject protected HttpServletRequest request;
-	
-	/*public HibernateBusiness() {
-		LOGGER = Logger.getLogger(this.getClass());
-	}*/
-	
-	@Override
-	public <E extends Serializable> E exists(Serializable id, Class<E> clazz) {
-		return this.dao.exists(id, clazz);
-	}
-	
-	@Override
-	public <E extends Serializable> void persist(E model) {
-		this.dao.persist(model);
-	}
-	
-	@Override
-	public <E extends Serializable> void remove(E model) {
-		this.dao.delete(model);
-	}
-	
-	public <E extends Serializable> void save(E model) {
-		this.dao.save(model);
-	}
 	
 
 
@@ -168,6 +144,7 @@ public class RiskBS implements Business {
 	public void saveActivities(Risk risk) {	
 		
 		for(RiskActivity activity : risk.getActivities().getList()) {
+			activity.setId(null);
 			activity.setRisk(risk);
 			activity.setDeleted(false);
 			activity.setName( activity.getActivity() +" - "+ activity.getProcess().getName());
@@ -187,6 +164,7 @@ public class RiskBS implements Business {
 	public void saveProcesses(Risk risk) {
 		
 		for(RiskProcess process : risk.getProcess().getList()) {
+			process.setId(null);
 			process.setRisk(risk);
 			process.setDeleted(false);
 			process.setName(process.getProcess().getObjective()+ " - " + process.getProcess().getName());
@@ -207,6 +185,7 @@ public class RiskBS implements Business {
 	public void saveStrategies(Risk risk) throws Exception {
 		
 		for(RiskStrategy strategy : risk.getStrategies().getList()) {
+			strategy.setId(null);
 			strategy.setRisk(risk);
 			strategy.setDeleted(false);
 			
@@ -228,6 +207,8 @@ public class RiskBS implements Business {
 	
 	
 
+	
+	
 	
 	/**
 	 *Deleta do banco de dados  graus de risco
@@ -284,7 +265,39 @@ public class RiskBS implements Business {
 		this.persist(contingency);
 	}
 	
-
+	/**
+	 * Deleta do banco de dados uma atividade do processo
+	 * 
+	 * @param RiskActivity,
+	 *			instância da atividade do processo
+	 */
+	private void delete(RiskActivity act) {
+		act.setDeleted(true);
+		this.persist(act);
+	}
+	
+	/**
+	 * Deleta do banco de dados um processo do objetivo
+	 * 
+	 * @param RiskProcess,
+	 *			instância do processo
+	 */
+	private void delete(RiskProcess pro) {
+		pro.setDeleted(true);
+		this.persist(pro);
+	}
+	
+	/**
+	 * Deleta do banco de dados um objetivo estratégico
+	 * 
+	 * @param RiskStrategy,
+	 *			instância do objetivo
+	 */
+	private void delete(RiskStrategy str) {
+		str.setDeleted(true);
+		this.persist(str);
+	}
+	
 	
 	
 	
@@ -759,5 +772,41 @@ public class RiskBS implements Business {
 		this.persist(risk);
 		
 	}
+
+	/**
+	 * Deleta do banco de dados as atividades,
+	 *	os processos e os objetivos estratégicos de um risco
+	 * 
+	 * @param Risk,
+	 *			instância do risco
+	 */
+	public void deleteAPS(Risk oldrisk) {
+		
+		Risk risk = this.dao.exists(oldrisk.getId(), Risk.class);
+		if (risk == null) {
+			return;
+		}  
+		
+		PaginatedList<RiskActivity> activity= this.listRiskActivity(risk);
+		PaginatedList<RiskProcess> process= this.listRiskProcess(risk);
+		PaginatedList<RiskStrategy> strategy= this.listRiskStrategy(risk);
+		
+		
+		for(RiskActivity act : activity.getList()) {
+			this.delete(act);
+		}
+		
+		for(RiskProcess pro : process.getList()) {
+			this.delete(pro);
+		}
+		
+		for(RiskStrategy str : strategy.getList()) {
+			this.delete(str);
+		}
+		
+		
+	}
+
+
 	
 }
