@@ -51,7 +51,7 @@ export default React.createClass({
 			var url = window.location.href.split("#");
 			var path = url[1].split("?");
 			if (path[0] == "/login")
-				location.assign("#/home");
+				location.assign("#/forrisco/home");
 		}, me);
 		UserSession.on("loaded", () => {
 			me.setState({loaded: true});
@@ -60,7 +60,7 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		if (!!UserSession.get("logged")) {
-			location.assign("#/home");
+			location.assign("#/forrisco/home");
 		} else {
 			this.setState({loaded: true});
 		}
@@ -85,8 +85,8 @@ export default React.createClass({
 
 
 		    <div className="row">
-				<div className="col-md-4 col-md-offset-4">	
-					<div className="fpdi-card-login">		
+				<div className="col-md-4 col-md-offset-4">
+					<div className="fpdi-card-login">
 						<div className="panel panel-default">
 						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.login","fpdi-nav-label")}</p></div>
 							  <div className="panel-body">
@@ -103,7 +103,7 @@ export default React.createClass({
 											id="login-form"
 										/>
 									</div>
-									
+
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">

@@ -121,7 +121,6 @@ ReactDOM.render((
 					</Route>
 				</Route>
 
-
 				<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk} /> /* Cadastrar novo plano de risco*/
 
 				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>        /* Detalhar plano de risco*/
