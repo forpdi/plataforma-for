@@ -14,24 +14,53 @@ class GeneralTable extends Component {
     super(props);
     this.state = {
       data: [{
-        name: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
-        age: 26,
+        resume: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
+        probability: 'Alta',
+        impact: 'Baixo',
+        responsible: 'Gustavo Melo',
+        dateTime: '11/07/2018 14:10',
+        tools: this.renderRowTools()
       }, {
-        name: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
-        age: 20,  
+        resume: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
+        probability: 'Baixa',
+        impact: 'Medio',
+        responsible: 'Camila Dias Magalhaes',
+        dateTime: '11/07/2018 14:10',
+        tools: this.renderRowTools()
       }, {
-        name: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
-        age: 22,
+        resume: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
+        probability: 'Media',
+        impact: 'Alto',
+        responsible: 'Gustavo Melo',
+        dateTime: '11/07/2018 14:10',
+        tools: this.renderRowTools()
       }, {
-        name: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
-        age: 36,
+        resume: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Blanditiis dolorum, unde repellat quos modi expedita nobis eos doloribus obcaecati iste excepturi tempora quidem quo impedit earum? Doloribus eveniet sunt repudiandae.',
+        probability: 'Alta',
+        impact: 'Baixo',
+        responsible: 'Camila Dias Magalhaes',
+        dateTime: '11/07/2018 14:10',
+        tools: this.renderRowTools()
       }],
     }
     this.insertNewRow = this.insertNewRow.bind(this);
   }
 
+  renderRowTools() {
+    return(
+      <div className="row-tools-box">
+        <button className="row-button-icon">
+          <span className="mdi mdi-pencil" />
+        </button>
+        <button className="row-button-icon">
+          <span className="mdi mdi-delete" />
+        </button>
+      </div>
+    );
+  }
+
     insertNewRow(data) {
-        const newRow = {name: this.renderInput(), age: this.renderInput()}
+        const newRow = {resume: this.renderInput(), probability: this.renderInput(), impact: this.renderInput(), responsible: this.renderInput(), dateTime: '', tools: <div className="row-tools-box"><button className="row-button-icon"><span className="mdi mdi-check" /></button><button className="row-button-icon"><span className="mdi mdi-delete" /></button></div>}
         data.unshift(newRow);
         this.setState({ data: data });
     }
@@ -44,12 +73,25 @@ class GeneralTable extends Component {
     render() {
 
           const columns = [{
-            Header: 'Name',
-            accessor: 'name', // String-based value accessors!
+            Header: 'Parecer',
+            accessor: 'resume',
+            minWidth: 200
           }, {
-            Header: 'Age',
-            accessor: 'age',
-            // Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
+            Header: 'Probabilidade',
+            accessor: 'probability',
+          }, {
+            Header: 'Impacto',
+            accessor: 'impact',
+          }, {
+            Header: 'Responsavel',
+            accessor: 'responsible',
+          }, {
+            Header: 'Data e horario',
+            accessor: 'dateTime',
+          }, {
+            Header: '',
+            accessor: 'tools',
+            width: 100
           }]
         return(
             <div className='general-table'>
