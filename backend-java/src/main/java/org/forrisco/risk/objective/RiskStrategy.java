@@ -39,6 +39,17 @@ public class RiskStrategy extends SimpleLogicalDeletableEntity {
 	
 	@Column(nullable=false, length=1000)
 	private String linkFPDI;
+	
+	@Column(nullable=false, length=1000)
+	private String name;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Risk getRisk() {
 		return risk;

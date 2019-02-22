@@ -19,7 +19,7 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 @RequestScoped
 public class PlanRiskItemBS extends HibernateBusiness {
 		
-		//listItensByPlanRisk
+	// ------------LISTAGENS------------//
 	
 	/**
 	 * Lista os itens de um plano de risco.
@@ -59,11 +59,7 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("planRiskItem", planRiskItem));
 		
-		//Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
-				//.add(Restrictions.eq("planRiskItem", planRiskItem)).setProjection(Projections.countDistinct("id"));
-		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskItemField.class));
-		//results.setTotal((Long) count.uniqueResult());
 		return results;
 		
 	}
@@ -93,20 +89,18 @@ public class PlanRiskItemBS extends HibernateBusiness {
 	 * @return
 	 */
 	
-	public PaginatedList<PlanRiskSubItem> listSubFieldsBySubItem(PlanRiskSubItem planRiskSubItem) {
+	public PaginatedList<PlanRiskSubItemField> listSubFieldsBySubItem(PlanRiskSubItem planRiskSubItem) {
 		
-		PaginatedList<PlanRiskSubItem> results = new PaginatedList<PlanRiskSubItem>();
+		PaginatedList<PlanRiskSubItemField> results = new PaginatedList<PlanRiskSubItemField>();
 		
-		Criteria criteria = this.dao.newCriteria(FieldSubItem.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("subitem", planRiskSubItem)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItemField.class).add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem)).addOrder(Order.asc("name"));
 		
-		Criteria count = this.dao.newCriteria(FieldSubItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subitem", planRiskSubItem)).setProjection(Projections.countDistinct("id"));
-		
-		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItem.class));
-		results.setTotal((Long) count.uniqueResult());
+		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItemField.class));
 		return results;
 	}
+	
+	// ------------SAVES------------//
 	
 	/**
 	 * Salva no banco de dados um novo item
@@ -131,18 +125,31 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		this.persist(planRiskItemField);
 	}
 	
-
-	
-	public void deleteSubitens(PlanRiskItem planRiskItem) {
+	/**
+	 * Salva no banco de dados um novo subitem
+	 * 
+	 * @param plaRiskItem instância do subitem a ser salvo
+	 */
+	public void save(PlanRiskSubItem plaRiskSubItem) {
+		plaRiskSubItem.setId(null);
+		plaRiskSubItem.setDeleted(false);
 		
-		PaginatedList<PlanRiskSubItem> subitens = this.listSubItemByItem(planRiskItem);
-		
-		for(int i = 0; i < subitens.getList().size(); i++) {
-			this.deleteSubitem(subitens.getList().get(i));
-		}
+		this.persist(plaRiskSubItem);
 	}
 	
+	/**
+	 * Salva no banco de dados um campo de um  subitem
+	 * 
+	 * @param plaRiskItem instância do campo a ser salvo
+	 */
+	public void save(PlanRiskSubItemField plaRiskSubItemField) {
+		plaRiskSubItemField.setId(null);
+		plaRiskSubItemField.setDeleted(false);
+		
+		this.persist(plaRiskSubItemField);
+	}
 	
+	// ------------DELETES------------//
 	/**
 	 * Deleta do banco de dados um item
 	 * 
@@ -177,15 +184,12 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		this.persist(planRiskSubItem);
 	}
 	
-	public void deleteSubitem(PlanRiskSubItem planRiskSubItem) {
+	/*public void deleteSubitens(PlanRiskItem planRiskItem) {
 		
-		PaginatedList<PlanRiskSubItem> subfields = this.listSubFieldsBySubItem(planRiskSubItem);
+		PaginatedList<PlanRiskSubItem> subitens = this.listSubItemByItem(planRiskItem);
 		
-		for(int i = 0; i < subfields.getList().size(); i++) {
-			this.delete(subfields.getList().get(i));
+		for(int i = 0; i < subitens.getList().size(); i++) {
+			this.deleteSubitem(subitens.getList().get(i));
 		}
-		
-		this.delete(planRiskSubItem);
-	}
-
+	}*/
 }

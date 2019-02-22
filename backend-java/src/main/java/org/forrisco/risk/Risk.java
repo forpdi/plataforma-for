@@ -30,7 +30,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_risk";
 	private static final long serialVersionUID = 1L;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
@@ -38,7 +38,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Unit.class, optional=false, fetch=FetchType.EAGER)
 	private Unit unit;
 	
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=RiskLevel.class, optional=false, fetch=FetchType.EAGER)
 	private RiskLevel riskLevel;
 	
@@ -231,7 +231,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public PaginatedList<RiskProcess> getProcess() {
 		return processes;
 	}
-	public void setProcess(PaginatedList<RiskProcess> process) {
+	public void setProcesses(PaginatedList<RiskProcess> process) {
 		this.processes = process;
 	}
 	public PaginatedList<RiskStrategy> getStrategies() {

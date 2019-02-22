@@ -27,6 +27,12 @@ public class PlanRiskBS extends HibernateBusiness {
 		planRisk.setDeleted(false);
 		this.persist(planRisk);
 	}
+	/**
+	 * Lista os planos de risco
+	 * 
+	 * @param page
+	 * @return
+	 */
 	
 	public PaginatedList<PlanRisk> listPlanRisk(Integer page) {
 		
@@ -45,6 +51,12 @@ public class PlanRiskBS extends HibernateBusiness {
 		return results;
 	}
 	
+	
+	/**
+	 * 
+	 * @param plan
+	 * @return
+	 */
 	
 	public Policy listPolicybyPlanRisk (PlanRisk plan) {
 			

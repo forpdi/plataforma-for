@@ -1,11 +1,9 @@
 import React from 'react';
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
+import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
+import UnitItemField from "forpdi/jsx_forrisco/planning/widget/unit/item/UnitItemField.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-import _ from "underscore";
 
 
 export default React.createClass({
@@ -28,10 +26,6 @@ export default React.createClass({
 
 	componentDidMount() {
 		this.getFields();
-
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Item');
-		});
 	},
 
 	getFields() {
@@ -57,21 +51,6 @@ export default React.createClass({
 		});
 	},
 
-	deleteFields(id) {
-		Modal.confirmCustom( () => {
-			Modal.hide();
-			this.state.formFields.map( (fieldItem, index) => {
-				if (id === index) {
-					this.state.formFields.splice(index, 1)
-				}
-			});
-
-			this.setState({
-				formFields: this.state.formFields
-			})
-		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
-	},
-
 	onSubmit(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
@@ -81,47 +60,35 @@ export default React.createClass({
 			return false;
 		}
 
-		this.state.formFields.shift(); 		 //Remove o Título da lista de Campos
+		this.state.formFields.shift(); //Remove o Título da lista de Campos
 
-		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_SAVE_ITENS,
+		UnitItemStore.dispatch({
+			action: UnitItemStore.ACTION_SAVE_ITENS,
 			data: {
 				name:  formData.get('description'),
 				description: formData.get('description'),
-				planRisk: {
-					id: this.props.params.planRiskId
+				unit: {
+					id: this.props.params.unitId
 				},
-				planRiskItemField: this.state.formFields
+				unitItemField: this.state.formFields
 			}
 		});
-
-		PlanRiskItemStore.on('itemSaved', response => {
-			this.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-			this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + response.data.id);
-			PlanRiskItemStore.off('itemSaved');
-		});
-	},
-
-	onCancel() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" +  this.props.params.planRiskId + '/info');
 	},
 
 	render() {
 		return (
 			<div>
-				<form onSubmit={this.onSubmit} ref="newPlanRiskItemForm">
+				<form onSubmit={this.onSubmit} ref="newUnitItemForm">
 					<div className="fpdi-card fpdi-card-full floatLeft">
 						{
 							this.state.formFields.map((field, index) => {
 								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type ===  AttributeTypes.ATTACHMENT_FIELD) {
 									return (
 										<div>
-											<PlanRiskItemField
+											<UnitItemField
 												vizualization={this.state.vizualization}
 												getFields={this.getFields}
 												toggle={this.toggleFields}
-												deleteFields={this.deleteFields}
-												index={index}
 												field={field}/>
 										</div>
 									)
@@ -136,9 +103,10 @@ export default React.createClass({
 						}
 
 						{
+							/*<FieldItemInput/>*/
 							this.state.vizualization ?
 
-								<PlanRiskItemField
+								<UnitItemField
 									fields={this.state.formFields}
 									vizualization={this.state.vizualization}
 									getFields={this.getFields}
@@ -154,7 +122,7 @@ export default React.createClass({
 						<br/><br/><br/>
 						<div className="form-group">
 							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-							<button className="btn btn-sm btn-default" onClick={this.onCancel}>{this.state.cancelLabel}</button>
+							<button className="btn btn-sm btn-default">{this.state.cancelLabel}</button>
 						</div>
 					</div>
 				</form>

@@ -80,9 +80,6 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-
-	//	console.log("newProps",newProps)
-
 		var me = this;
 		this.state.plan=newProps.plan
 		this.state.units=newProps.units

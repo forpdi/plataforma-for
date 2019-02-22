@@ -1,10 +1,13 @@
 import React from "react";
+import Messages from "@/core/util/Messages";
 import UnitTree from "forpdi/jsx_forrisco/planning/widget/unit/UnitTree.jsx";
-import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
-import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
+import UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
+import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-
+import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
+import {Link} from "react-router";
+import {number} from "prop-types";
+import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy";
 
 export default React.createClass({
 	contextTypes: {
@@ -24,12 +27,15 @@ export default React.createClass({
 			resultSearch: [],
 			isLoading: true,
 			planRiskData: [],
-			planRiskId: null
+			unitData: [],
+			planRiskId: null,
+			unitId: null
 		};
 	},
 
 	componentDidMount() {
-		PlanRiskStore.on('retrivedplanrisk', (response) => {
+		console.log("D U")
+		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
 					planRiskData: response,
@@ -39,30 +45,43 @@ export default React.createClass({
 			}
 		});
 
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+		UnitStore.on('retrivedunit', (response) => {
+			if (response !== null) {
+				this.setState({
+					unitData: response,
+					unitId: response.get("id"),
+					isLoading: false
+				});
+			}
+		});
+
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_PLANRISK,
 			data: this.props.params.planRiskId
 		});
 
-		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+
+		UnitItemStore.dispatch({
+			action: UnitItemStore.ACTION_GET_ALL_ITENS,
 			data: {
 				planRiskId: this.props.params.planRiskId
 			}
 		});
 
+
 		this.forceUpdate();
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.planRiskId != this.state.planRiskId) {
-			PlanRiskStore.dispatch({
-				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+		if (newProps.params.planRiskId !== this.state.planRiskId) {
+
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_PLANRISK,
 				data: newProps.params.planRiskId
 			});
 
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+			UnitItemStore.dispatch({
+				action: UnitItemStore.ACTION_GET_ALL_ITENS,
 				data: {
 					planRiskId: newProps.params.planRiskId
 				}
@@ -72,20 +91,20 @@ export default React.createClass({
 
 	render() {
 		if (this.state.isLoading === true) {
-			return <LoadingGauge/>;
+			//return <LoadingGauge/>;
 		}
 
 		if (this.state.planRiskData) {
 			return (
 				<div className="fpdi-plan-details">
-					<UnitTree planRisk={this.state.planRiskData} ref="tree" treeType={this.props.route.path}/>
+					<UnitTree planRisk={this.state.planRiskData} unit={this.state.planRiskData} ref="tree" treeType={this.props.route.path}/>
 					<div className="fpdi-plan-tabs">
-						{<PlanRiskTabPanel
+						<UnitTabPanel
 							{...this.props}
 							planRisk={this.state.planRiskData}
 							ref={"tabpanel-" + this.props.params.planRiskId}
 							key={"tabpanel-" + this.props.params.planRiskId}
-						/>}
+						/>
 					</div>
 				</div>
 			)

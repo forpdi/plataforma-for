@@ -17,6 +17,7 @@ import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.policy.Policy;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
+import org.forrisco.risk.objective.RiskActivity;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -50,7 +51,7 @@ public class RiskController extends AbstractController {
 	@NoCache
 	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Risk risk){
-		try {
+		try {			
 			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
 			if (unit == null) {
 				this.fail("A unidade solicitada não foi encontrada.");
@@ -248,6 +249,17 @@ public class RiskController extends AbstractController {
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 			} else {
+				
+			/*RiskActivity act = new RiskActivity();
+				act.setProcess(process);
+				save(Risk)
+				*/
+				
+				risk.setStrategies(this.riskBS.listRiskStrategy(risk));
+				risk.setProcesses(this.riskBS.listRiskProcess(risk));
+				risk.setActivities(this.riskBS.listRiskActivity(risk));
+				
+				
 				this.success(risk);
 			}
 		} catch (Throwable ex) {
@@ -255,32 +267,7 @@ public class RiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	/**
-	 * Retorna riscos.
-	 * 
-	 * @param Unit
-	 *            Id da unidade.
-	 * @return <PaginatedList> Risk
-	 *
-	@Get( PATH + "")
-	@NoCache
-	public void listRisksbyUnit(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			} 
-			
-			PaginatedList<Risk> units= this.riskBS.listRiskbyUnit(unit);
-			this.success(units.getList(),unitId);
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}*/
+
 	
 	/**
 	 * Retorna unidades.
