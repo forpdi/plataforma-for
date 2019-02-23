@@ -1,17 +1,10 @@
-import React from "react";
+import React from 'react';
+import GeneralTable from '../../widget/GeneralTable';
 
+const Monitor = () => {
+	return(
+		<GeneralTable />
+	);
+}
 
-export default React.createClass({
-
-getInitialState() {
-	return {
-
-
-		}
-	},
-render(){
-	return <div>
-	Monitor here
-	</div>
-	}
-});
+export default Monitor;

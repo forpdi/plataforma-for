@@ -57,6 +57,7 @@
     "react-progressbar": "^15.4.1",
     "react-quill": "^1.3.2",
     "react-router": "^2.4.0",
+    "react-table": "^6.9.2",
     "react-toastr": "^2.8.1",
     "react-tooltip": "^3.8.0",
     "string": "^3.3.3",
