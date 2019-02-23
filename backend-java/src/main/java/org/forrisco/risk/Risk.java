@@ -79,15 +79,6 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	private boolean risk_act_process;
 
 	@Column(nullable=false)
-	private int pdi;
-
-	@Column(nullable=false)
-	private int obj_process;
-
-	@Column(nullable=false)
-	private int act_process;
-	
-	@Column(nullable=false)
 	private Date begin;
 	
 	@Column(nullable=true)
@@ -186,24 +177,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public void setRisk_act_process(boolean risk_act_process) {
 		this.risk_act_process = risk_act_process;
 	}
-	public int getPdi() {
-		return pdi;
-	}
-	public void setPdi(int pdi) {
-		this.pdi = pdi;
-	}
-	public int getObj_process() {
-		return obj_process;
-	}
-	public void setObj_process(int obj_process) {
-		this.obj_process = obj_process;
-	}
-	public int getAct_process() {
-		return act_process;
-	}
-	public void setAct_process(int act_process) {
-		this.act_process = act_process;
-	}
+	
 	public Date getBegin() {
 		return begin;
 	}
