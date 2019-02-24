@@ -36,10 +36,13 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
 	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
 	ACTION_FIND_RISK: "risk-findRisk",
+	ACTION_LIST_CONTINGENCY: "risk-listContingency",
+	ACTION_NEW_CONTINGENCY: "risk-newContingency",
+	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
+	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
+
 	url: URL,
 	model: RiskModel,
-
-
 
 	findRisk(data){
 		var me = this;
@@ -285,7 +288,85 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+	listContingency(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/contingency",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data.riskId},
+			success(model) {
+				me.trigger("contingencyListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("contingencyListed", opts);
+			}
+		});
+	},
 
+	newContingency(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/contingencynew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				contingency: data.contingency,
+			}),
+			success(model) {
+				me.trigger("contingencyCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("contingencyCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deleteContingency(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/contingency/${data.contingencyId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("contingencyDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("contingencyDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updateContingency(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/contingency/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				contingency: data.contingency,
+			}),
+			success(model) {
+				me.trigger("contingencyUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("contingencyUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
 
 
 	mainMenuState(data){
