@@ -27,7 +27,7 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_UNARCHIVED: 'risk-findUnarchived',
 	ACTION_MAIN_MENU_STATE: "risk-mainMenuState",
 	ACTION_DELETE: "risk-delete",
-	ACTION_NEWUNIT: "risk-newRisk",
+	ACTION_NEWRISK: "risk-newRisk",
 	dispatchAcceptRegex: /^risk-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "risk-customUpdate",
 	ACTION_FIND_BY_PLAN: 'risk-findByPlan',
@@ -123,7 +123,6 @@ var RiskStore = Fluxbone.Store.extend({
 			}),
 			success(model) {
 				me.trigger("riskcreated", model);
-				//me.trigger("riskcreated", model);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskcreated",{msg:opts.responseJSON.message,data:{id:null}})
@@ -185,6 +184,10 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 	customUpdate(data) {
+		console.log(JSON.stringify({
+			risk: data
+		}))
+
 		var me = this;
 		$.ajax({
 			url: me.url+"/update",

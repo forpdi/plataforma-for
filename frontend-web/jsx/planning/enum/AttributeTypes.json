@@ -12,6 +12,7 @@
 	"RESPONSIBLE_FIELD": "org.forpdi.planning.attribute.types.ResponsibleField",
 	"SCHEDULE_FIELD": "org.forpdi.planning.attribute.types.ScheduleField",
 	"SELECT_FIELD": "org.forpdi.planning.attribute.types.SelectField",
+	"SELECT_MULTI_FIELD": "org.forpdi.planning.attribute.types.SelectMultiField",
 	"SELECT_PLAN_FIELD": "org.forpdi.planning.attribute.types.SelectPlan",
 	"SELECT_STRUCTURE": "select-structure",
 	"STRATEGIC_OBJECTIVE_FIELD": "org.forpdi.planning.attribute.types.StrategicObjective",
@@ -20,4 +21,5 @@
 	"TEXT_FIELD": "org.forpdi.planning.attribute.types.TextField",
 	"TOTAL_FIELD": "org.forpdi.planning.attribute.types.TotalField",
 	"ATTACHMENT_FIELD": "org.forpdi.planning.attribute.types.AttachmentField"
+
 }

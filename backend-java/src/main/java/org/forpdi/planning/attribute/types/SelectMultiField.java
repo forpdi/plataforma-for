@@ -3,11 +3,11 @@ package org.forpdi.planning.attribute.types;
 import org.forpdi.planning.attribute.AttributeType;
 import org.forpdi.planning.attribute.AttributeTypeWrapper;
 
-public class SelectField extends AttributeType{
+public class SelectMultiField extends AttributeType{
 
 	private AttributeTypeWrapper wrapper = new Wrapper();
 
-	public final String WIDGET_NAME = "SelectField";
+	public final String WIDGET_NAME = "SelectMultiField";
 	@Override
 	public String getWidget() {
 		return WIDGET_NAME;
@@ -20,7 +20,7 @@ public class SelectField extends AttributeType{
 
 	@Override
 	public String getDisplayName() {
-		return "Campo de multipla seleção";
+		return "Campo de seleção";
 	}
 
 	public static class Wrapper extends TextField.Wrapper {

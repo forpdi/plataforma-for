@@ -632,17 +632,18 @@ public class RiskController extends AbstractController {
 	
 	
 	/**
-	 * Atualiza risk.
+	 * Atualiza risco.
 	 * 
 	 * @param id
 	 *            Id da ação a ser atualizada.
+	 * @throws Exception 
 	 */
 	@Post( PATH + "/update")
 	@NoCache
 	@Consumes
 	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
-	public void updateRisk(@NotNull Risk risk) {
-		try {
+	public void updateRisk(@NotNull Risk risk) throws Exception {
+		//try {
 			Risk oldrisk = this.riskBS.exists(risk.getId(), Risk.class);
 			if (oldrisk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
@@ -655,26 +656,50 @@ public class RiskController extends AbstractController {
 				return;
 			} 
 			
-			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrada.");
+				return;
+			}
 			
-			if (risk.getRiskLevel() == null) {
+			oldrisk.setUnit(unit);
+			oldrisk.setUser(user);
+			oldrisk.setImpact(risk.getImpact());
+			oldrisk.setProbability(risk.getProbability());
+			oldrisk.setPeriodicity(risk.getPeriodicity());
+			oldrisk.setCode(risk.getCode());
+			oldrisk.setLinkFPDI(risk.getLinkFPDI());
+			oldrisk.setName(risk.getName());
+			oldrisk.setReason(risk.getReason());
+			oldrisk.setResult(risk.getResult());
+			oldrisk.setTipology(risk.getTipology());
+			oldrisk.setType(risk.getType());
+			oldrisk.setRisk_act_process(risk.isRisk_act_process());
+			oldrisk.setRisk_obj_process(risk.isRisk_obj_process());
+			oldrisk.setRisk_pdi(risk.isRisk_pdi());
+			
+			
+			oldrisk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(oldrisk,null));
+
+			if (oldrisk.getRiskLevel() == null) {
 				this.fail("Grau de Risco solicitado não foi encontrado.");
 				return;
 			}
 			
-			this.riskBS.deleteAPS(oldrisk);
-
-			this.riskBS.saveRisk(risk);
-						
+			/*this.riskBS.deleteAPS(oldrisk);
+			
 			this.riskBS.saveActivities(risk);
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
 			
-			this.success(risk);
-		} catch (Throwable ex) {
+			*/
+			this.riskBS.saveRisk(oldrisk);
+			
+			this.success(oldrisk);
+		/*} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
-		}
+		}*/
 	}
 	
 	
@@ -844,6 +869,44 @@ public class RiskController extends AbstractController {
 	
 	
 	
+	
+	
+	
+	/**
+	 * Exclui um risco.
+	 * 
+	 * @param id
+	 *            Id do risco.
+	 */
+	@Delete( PATH + "/{actionId}")
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void deleteRisk(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			
+			this.riskBS.deleteAPS(risk);
+			
+			/*TODO
+			this.delete(monitors);
+			this.delete(incident);
+			this.delete(contingency);
+			*/
+			
+			this.riskBS.delete(risk);
+			this.success();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	/**
 	 * Exclui ação preventiva.
 	 * 
@@ -857,7 +920,7 @@ public class RiskController extends AbstractController {
 		try {
 			PreventiveAction action = this.riskBS.exists(actionId, PreventiveAction.class);
 			if (action == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("A ação solicitada não foi encontrado.");
 				return;
 			} 
 			
@@ -883,7 +946,7 @@ public class RiskController extends AbstractController {
 		try {
 			Monitor monitor = this.riskBS.exists(monitorId, Monitor.class);
 			if (monitor == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("O monitoramento solicitado não foi encontrado.");
 				return;
 			} 
 			
@@ -909,7 +972,7 @@ public class RiskController extends AbstractController {
 		try {
 			Incident incident = this.riskBS.exists(incidentId, Incident.class);
 			if (incident == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("O incidente solicitado não foi encontrado.");
 				return;
 			} 
 			

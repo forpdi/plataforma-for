@@ -6,7 +6,7 @@ import RiskRegister from 'forpdi/jsx_forrisco/planning/view/risk/RiskRegister.js
 import Monitor from 'forpdi/jsx_forrisco/planning/view/risk/Monitor.jsx';
 import Incident from 'forpdi/jsx_forrisco/planning/view/risk/Incident.jsx';
 import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx';
-
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 
 
@@ -34,6 +34,7 @@ export default React.createClass({
 			selected:0,
 			riskModel:null,
 			visualization:true,
+			loading:true,
 		};
 	},
 
@@ -41,7 +42,8 @@ export default React.createClass({
 		RiskStore.on("findRisk", (model) => {
 			if(model.success){
 				this.setState({
-					riskModel:model.data
+					riskModel:model.data,
+					loading:false
 				})
 			}
 		})
@@ -181,6 +183,11 @@ export default React.createClass({
 	},
 
 	render() {
+		if (this.state.loading) {
+			return <LoadingGauge />;
+		}
+
+
 		return (<div className="fpdi-card fpdi-card-full floatLeft">
 			<h1>
 				{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}

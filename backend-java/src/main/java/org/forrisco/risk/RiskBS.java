@@ -298,6 +298,49 @@ public class RiskBS extends HibernateBusiness {
 		this.persist(str);
 	}
 	
+	/**
+	 * Deleta do banco de dados as atividades,
+	 *	os processos e os objetivos estratégicos de um risco
+	 * 
+	 * @param Risk,
+	 *			instância do risco
+	 */
+	public void deleteAPS(Risk oldrisk) {
+		
+		Risk risk = this.dao.exists(oldrisk.getId(), Risk.class);
+		if (risk == null) {
+			return;
+		}  
+		
+		PaginatedList<RiskActivity> activity= this.listRiskActivity(risk);
+		PaginatedList<RiskProcess> process= this.listRiskProcess(risk);
+		PaginatedList<RiskStrategy> strategy= this.listRiskStrategy(risk);
+		
+		
+		for(RiskActivity act : activity.getList()) {
+			this.delete(act);
+		}
+		
+		for(RiskProcess pro : process.getList()) {
+			this.delete(pro);
+		}
+		
+		for(RiskStrategy str : strategy.getList()) {
+			this.delete(str);
+		}
+	}
+	
+	
+	/**
+	 * Deleta do banco de dados um risco,
+	 * 
+	 * @param Risk,
+	 *			instância do risco
+	 */
+	public void delete(Risk risk) {
+		risk.setDeleted(true);
+		this.persist(risk);
+	}
 	
 	
 	
@@ -773,40 +816,6 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 
-	/**
-	 * Deleta do banco de dados as atividades,
-	 *	os processos e os objetivos estratégicos de um risco
-	 * 
-	 * @param Risk,
-	 *			instância do risco
-	 */
-	public void deleteAPS(Risk oldrisk) {
-		
-		Risk risk = this.dao.exists(oldrisk.getId(), Risk.class);
-		if (risk == null) {
-			return;
-		}  
-		
-		PaginatedList<RiskActivity> activity= this.listRiskActivity(risk);
-		PaginatedList<RiskProcess> process= this.listRiskProcess(risk);
-		PaginatedList<RiskStrategy> strategy= this.listRiskStrategy(risk);
-		
-		
-		for(RiskActivity act : activity.getList()) {
-			this.delete(act);
-		}
-		
-		for(RiskProcess pro : process.getList()) {
-			this.delete(pro);
-		}
-		
-		for(RiskStrategy str : strategy.getList()) {
-			this.delete(str);
-		}
-		
-		
-	}
-
-
+	
 	
 }
