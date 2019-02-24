@@ -310,6 +310,7 @@ export default React.createClass({
 		}, {
 			Header: '',
 			accessor: 'tools',
+			sortable: false,
 			width: 100
 		}];
 		return (

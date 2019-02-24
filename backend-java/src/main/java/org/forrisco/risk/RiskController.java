@@ -12,12 +12,9 @@ import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
-import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
-import org.forrisco.risk.objective.RiskActivity;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -182,9 +179,14 @@ public class RiskController extends AbstractController {
 				this.fail("Usuário solicitada não foi encontrado.");
 				return;
 			}
+			if (IncidentType.getById(incident.getType()) == null) {
+				this.fail("Tipo de incidente inválido.");
+				return;
+			}
 			
 			incident.setId(null);
-			incident.setBegin(new Date());
+//			incident.setBegin(new Date());
+			
 			this.riskBS.saveIncident(incident);
 			
 			this.success(incident);
@@ -812,11 +814,16 @@ public class RiskController extends AbstractController {
 				this.fail("O usuário solicitado não foi encontrado.");
 				return;
 			} 
+			if (IncidentType.getById(incident.getType()) == null) {
+				this.fail("Tipo de incidente inválido.");
+				return;
+			}
 			
 			oldincident.setAction(incident.getAction());
 			oldincident.setDescription(incident.getDescription());
 			oldincident.setUser(user);
 			oldincident.setType(incident.getType());
+			oldincident.setBegin(incident.getBegin());
 			
 			this.riskBS.saveIncident(oldincident);
 			

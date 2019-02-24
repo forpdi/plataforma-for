@@ -36,6 +36,10 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
 	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
 	ACTION_FIND_RISK: "risk-findRisk",
+	ACTION_LIST_INCIDENT: "risk-listIncident",
+	ACTION_NEW_INCIDENT: "risk-newIncident",
+	ACTION_DELETE_INCIDENT: "risk-deleteIncident",
+	ACTION_UPDATE_INCIDENT: "risk-updateIncident",
 	ACTION_LIST_CONTINGENCY: "risk-listContingency",
 	ACTION_NEW_CONTINGENCY: "risk-newContingency",
 	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
@@ -184,10 +188,6 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 	customUpdate(data) {
-		console.log(JSON.stringify({
-			risk: data
-		}))
-
 		var me = this;
 		$.ajax({
 			url: me.url+"/update",
@@ -287,6 +287,86 @@ var RiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("monitorHistoryByUnit", opts);
+			}
+		});
+	},
+
+	listIncident(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/incident",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data.planId},
+			success(model) {
+				me.trigger("incidentListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentListed", opts);
+			}
+		});
+	},
+
+	newIncident(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/incidentnew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				incident: data.incident,
+			}),
+			success(model) {
+				me.trigger("incidentCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deleteIncident(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/incident/${data.incidentId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("incidentDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updateIncident(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/incident/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				incident: data.incident,
+			}),
+			success(model) {
+				me.trigger("incidentUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
 			}
 		});
 	},

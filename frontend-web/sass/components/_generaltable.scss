@@ -9,7 +9,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        
+
         button {
             border: none;
             font-weight: bold;
@@ -23,7 +23,7 @@
         padding: 10px 22px!important;
     }
     .rt-td {
-        padding: 18px 22px!important;
+        padding: 18px 22px;
     }
     .rt-td, .rt-th {
         min-height: 36px;
@@ -37,15 +37,21 @@
         flex-direction: row;
         justify-content: space-around;
         width: fit-content;
-        
+
         .row-button-icon {
             background-color: transparent;
             border: none;
             cursor: pointer;
-            
+
             span {
                 cursor: inherit;
             }
         }
-    }
+	}
+
+	.double-input-cell {
+		.form-group:first-child {
+			margin-bottom: 0;
+		}
+	}
 }

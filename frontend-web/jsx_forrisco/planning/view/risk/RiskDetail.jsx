@@ -142,6 +142,7 @@ export default React.createClass({
 				<Incident
 					visualization={this.state.visualization}
 					risk={this.state.riskModel}
+					planRiskId={this.props.params.planRiskId}
 				/>)
 
 			case 3:
