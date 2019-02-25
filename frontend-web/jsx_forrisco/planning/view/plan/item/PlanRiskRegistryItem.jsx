@@ -58,6 +58,19 @@ export default React.createClass({
 		});
 	},
 
+	editFields(id, bool){
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.editInstance = bool
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields,
+			vizualization: !this.state.vizualization
+		})
+	},
+
 	deleteFields(id) {
 		Modal.confirmCustom( () => {
 			Modal.hide();
@@ -74,6 +87,8 @@ export default React.createClass({
 	},
 
 	onSubmit(event) {
+		var submitFields = [];
+
 		event.preventDefault();
 		const formData = new FormData(event.target);
 
@@ -84,6 +99,22 @@ export default React.createClass({
 
 		this.state.formFields.shift(); 		 //Remove o Título da lista de Campos
 
+		this.setState({
+			formFields: this.state.formFields
+		});
+
+		this.state.formFields.map( (field, index) => {
+			delete field.editInstance;
+
+			submitFields.push({
+				name: field.fieldName,
+				type: field.type,
+				description: field.fieldContent,
+				fileLink: field.fileLink,
+				isText: field.isText
+			})
+		});
+
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_SAVE_ITENS,
 			data: {
@@ -92,11 +123,12 @@ export default React.createClass({
 				planRisk: {
 					id: this.props.params.planRiskId
 				},
-				planRiskItemField: this.state.formFields
+				planRiskItemField: submitFields
 			}
 		});
 
 		PlanRiskItemStore.on('itemSaved', response => {
+			console.log(response);
 			this.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
 			this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + response.data.id);
 			PlanRiskItemStore.off('itemSaved');
@@ -122,6 +154,7 @@ export default React.createClass({
 												getFields={this.getFields}
 												toggle={this.toggleFields}
 												deleteFields={this.deleteFields}
+												editFields={this.editFields}
 												index={index}
 												field={field}/>
 										</div>
@@ -143,6 +176,7 @@ export default React.createClass({
 									fields={this.state.formFields}
 									vizualization={this.state.vizualization}
 									getFields={this.getFields}
+									editFields={this.editFields}
 									toggle={this.toggleFields}/>
 								:
 

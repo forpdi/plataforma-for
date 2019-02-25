@@ -3,6 +3,7 @@ import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import Messages from "@/core/util/Messages";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import _ from "underscore";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
 
 export default React.createClass({
@@ -18,13 +19,13 @@ export default React.createClass({
 		return {
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
-			planRiskFields: []
+			planRiskFields: [],
+			isLoading: true
 		};
 	},
 
 	componentDidMount() {
 		PlanRiskStore.on('retrivedplanrisk', response => {
-
 			var fields = [];
 			fields.push({
 				name: "name",
@@ -57,17 +58,32 @@ export default React.createClass({
 			});
 
 			this.setState({
-				planRiskFields: fields
+				planRiskFields: fields,
+				isLoading: false
 			});
 
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
 			});
-		});
+		}, this);
+		this.refreshComponent(this.props.params.planRiskId);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (this.props.params.planRiskId !== newProps.params.planRiskId) {
+			this.refreshComponent(newProps.params.planRiskId)
+		}
+	},
+
+	refreshComponent(planRiskId) {
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+			data: planRiskId
+		})
 	},
 
 	componentWillUnmount() {
-		//PlanRiskStore.off('retrivedplanrisk');
+		PlanRiskStore.off(null, null, this);
 	},
 
 	getFields() {
@@ -100,6 +116,11 @@ export default React.createClass({
 	},
 
 	render() {
+
+		if (this.state.isLoading === true) {
+			return <LoadingGauge/>;
+		}
+
 		return (
 			<div>
 				<h1 className="marginLeft115">Editar Plano de Risco</h1>

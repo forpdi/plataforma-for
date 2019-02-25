@@ -51,7 +51,8 @@ export default React.createClass({
 						fieldContent: field.description,
 						isText: field.isText,
 						fileLink: field.fileLink,
-						editInstance: false
+						editInstance: false,
+						required: true
 					})
 				});
 
@@ -95,7 +96,7 @@ export default React.createClass({
 
 	onEdit() {
 		this.setState({
-			onEdit: !this.state.onEdit
+			onEdit:true
 		})
 	},
 
@@ -232,6 +233,8 @@ export default React.createClass({
 								 itemTitle={this.state.itemTitle}
 								 fieldsValues={this.state.field}
 								 onEdit={this.state.onEdit}
+								 itemId={this.props.params.itemId}
+								 planRiskId={this.props.params.planRiskId}
 							 />
 					}
 				</div>

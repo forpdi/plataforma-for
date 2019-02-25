@@ -116,7 +116,7 @@ ReactDOM.render((
 							<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
 							<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 						</Route>
-						{/*<Route path="unit/new" component={Forrisco_DetailUnit} />  Nova Unidade*/}
+						{/*<Route path="unit/new" component={Forrisco_DetailUnit} />  Nova Unidade*/},
 						<Route path="unit">
 							<IndexRedirect to="overview" />
 							<Route path="overview" component={Forrisco_UnitTabPanel} />

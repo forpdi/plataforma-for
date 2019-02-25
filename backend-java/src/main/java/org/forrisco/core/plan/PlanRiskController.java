@@ -179,7 +179,7 @@ public class PlanRiskController extends AbstractController {
 			
 			for(PlanRiskItem item : planRiskItem.getList()) {
 				
-				PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listItensByPlanRiskField(item);
+				PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listFieldsByPlanRiskItem(item);
 				
 				for(PlanRiskItemField field : fields.getList()) {
 					this.planRiskItemBS.delete(field);
