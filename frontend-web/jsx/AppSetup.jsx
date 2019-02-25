@@ -57,7 +57,7 @@ import Forrisco_PlanRiskRegistrySubItem
 	from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
 import Forrisco_DetailPlanRiskSubItem
 	from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
-import Forrisco_EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
+import Forrisco_EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/EditPlanRiskItem.jsx";
 /*Unit*/
 import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/RegistryUnit.jsx";
 import Forrisco_DetailUnit from "forpdi/jsx_forrisco/planning/view/unit/DetailUnit.jsx";

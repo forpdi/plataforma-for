@@ -1,13 +1,12 @@
 import React from "react";
 import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-import AttributeTypes from "@/planning/enum/AttributeTypes";
-import _ from "underscore";
+import AttributeTypes from "forpdi/jsx/planning/enum/AttributeTypes";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import Modal from "@/core/widget/Modal";
-import Messages from "@/core/util/Messages";
-import caos from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem";
+import Modal from "forpdi/jsx/core/widget/Modal";
+import Messages from "forpdi/jsx/core/util/Messages";
 import $ from "jquery";
+import _ from "underscore";
 
 export default React.createClass({
 	contextTypes: {

@@ -4,9 +4,8 @@ import {Link} from "react-router";
 import Form from "@/planning/widget/attributeForm/AttributeForm";
 import Validation from "forpdi/jsx_forrisco/core/util/Validation";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
-import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/EditPlanRiskItem.jsx";
-import Messages from "@/core/util/Messages";
+import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/EditPlanRiskItem.jsx";
+import Messages from "forpdi/jsx/core/util/Messages";
 import _ from "underscore";
 
 var VerticalForm = Form.VerticalForm;
