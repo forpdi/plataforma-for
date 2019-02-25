@@ -76,6 +76,7 @@ import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/Regist
 import Forrisco_RegistrySubunit from "forpdi/jsx_forrisco/planning/view/unit/RegistrySubunit.jsx";
 import Forrisco_UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
 import Forrisco_UnitRegistryItem from "forpdi/jsx_forrisco/planning/view/unit/item/UnitRegistryItem.jsx";
+import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
 
 
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
@@ -140,11 +141,14 @@ ReactDOM.render((
 						<Route path="overview" component={Forrisco_UnitTabPanel} />
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
-						<Route path=":unitId/risk">
-							<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
-							<Route path=":riskId" component={Forrisco_RiskDetail}>
-								{//<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
-								}
+						<Route path=":unitId">
+							<Route path="info" component={Forrisco_UnitGeneralInfo} /> /* Nova subunidade*/
+							<Route path="risk">
+								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
+								<Route path=":riskId" component={Forrisco_RiskDetail}>
+									{//<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
+									}
+								</Route>
 							</Route>
 						</Route>
 
