@@ -1,21 +1,18 @@
-import _ from 'underscore';
 import React from "react";
-import {Link, hashHistory} from "react-router";
-import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
-import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import { Link } from 'react-router';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
+import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
+import ListForm from "forpdi/jsx/planning/widget/attributeForm/ListAttributeForm.jsx";
+import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
+import UserStore from "forpdi/jsx/core/store/User.jsx";
+import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
+import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
-import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
-import AttributeInput from 'forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx';
-import FieldItemInput from  'forpdi/jsx_forrisco/planning/view/item/FieldItemInput.jsx'
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import _ from 'underscore';
+
 
 var VerticalForm = Form.VerticalForm;
-var Validate = Validation.validate;
-
 
 export default React.createClass({
 	contextTypes: {
@@ -24,930 +21,756 @@ export default React.createClass({
 		toastr: React.PropTypes.object.isRequired,
 		permissions: React.PropTypes.array.isRequired,
 		tabPanel: React.PropTypes.object,
-		policy: React.PropTypes.object.isRequired
+		planRisk: React.PropTypes.object.isRequired,
+		unit: React.PropTypes.object.isRequired
 	},
 	getInitialState() {
 		return {
-			loading: true,
-			itemModel: null,
+			loading:true,
+			visualization: true,
+			fields: [],
+			users: [],
+			planRiskId: null,
+			unitId: null,
+			riskModel: null,
 			policyModel: null,
-			risklevelModel: null,
-			fields:[],
-
-			vizualization: false,
-			tabPath: this.props.location.pathname,
-			undeletable: false,
-
-			//editar
-			cancelLabel: "Cancelar",
-			submitLabel: "Salvar",
-			newField: false,
-			newFieldType: null,
-			length: 0,
-			titulo: null,
-			info: false
-		};
-	},
-	getFields() {
-		var fields = [];
-
-		if(typeof this.state.fields === "undefined" || this.state.fields == null){
-			fields.push({
-				name: "description",
-				type: AttributeTypes.TEXT_AREA_FIELD,
-				placeholder: "",
-				maxLength: 1000,
-				label: Messages.getEditable("label.description","fpdi-nav-label"),
-				value: this.state.itemModel ? this.state.itemModel.attributes.name : null,
-				edit:false
-			});
-		}else{
-			this.state.fields.map((fielditem, index) => {
-				fields.push(fielditem)
-			})
+			strategy: [],
+			process: [],
+			activity: [],
+			activities: 1,
+			risk_pdi: false,
+			risk_obj_process: false,
+			risk_act_process: false,
 		}
-
-		return fields;
-	},
-	getField() {
-		var fields;
-		fields= {
-			name: "description",
-			type: AttributeTypes.TEXT_FIELD,
-			placeholder: "Título do item",
-			maxLength: 100,
-			label: "Título",
-			value: this.state.itemModel != null ? this.state.itemModel.attributes.name : null,
-			edit:false
-		}
-		return fields;
-	},
-	getMatrixValue(matrix, line, column) {
-
-		var result=""
-
-		for(var i=0; i<matrix.length;i++){
-			if(matrix[i][1]==line){
-				if(matrix[i][2]==column){
-					if(matrix[i][2]==0 ){
-					return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
-					}else if(matrix[i][1]==this.state.policyModel.data.nline){
-						return <div style={{"text-align":"-webkit-center",margin: "5px"}} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
-					}else{
-
-						var current_color=0;
-						var cor=""
-						if(this.state.risklevelModel != null){
-							for(var k=0; k< this.state.risklevelModel.data.length;k++){
-								if(this.state.risklevelModel.data[k]['level']==matrix[i][0]){
-									current_color=this.state.risklevelModel.data[k]['color']
-								}
-							}
-						}
-
-						switch(current_color) {
-							case 0: cor="Vermelho"; break;
-							case 1: cor="Marron"; break;
-							case 2: cor="Amarelo"; break;
-							case 3: cor="Laranja"; break;
-							case 4: cor="Verde"; break;
-							case 5: cor="Azul"; break;
-							default: cor="Vermelho";
-						}
-
-						return <div  className={"Cor "+cor} >{matrix[i][0]}</div>
-
-					}
-				}
-			}
-		}
-		return ""
 	},
 
-	getMatrix() {
-
-		if(this.state.policyModel ==null){
-			return
-		}
-
-
-		var fields = [];
-		if(typeof this.state.fields === "undefined" || this.state.fields == null){
-			fields.push({
-				name: "description",
-				type: AttributeTypes.TEXT_AREA_FIELD,
-				placeholder: "",
-				maxLength: 9000,
-				label: Messages.getEditable("label.description","fpdi-nav-label"),
-				value: this.state.itemModel ? this.state.itemModel.get("description") : null,
-				edit:false
-			});
-		}else{
-			fields=this.state.fields
-		}
-
-		var aux=this.state.policyModel.data.matrix.split(/;/)
-		var matrix=[]
-
-		for(var i=0; i< aux.length;i++){
-			matrix[i]= new Array(3)
-			matrix[i][0]=aux[i].split(/\[.*\]/)[1]
-			matrix[i][1]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[0]
-			matrix[i][2]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[1]
-		}
-
-		var table=[]
-		for (var i=0; i<=this.state.policyModel.data.nline;i++){
-			var children=[]
-			for (var j=0; j<=this.state.policyModel.data.ncolumn;j++){
-				children.push(<td key={j}>{this.getMatrixValue(matrix,i,j)} </td>)
-			}
-			table.push(<tr key={i} >{children}</tr>)
-		}
-
-	return (
-		<div>
-			<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-				{"MATRIZ DE RISCO"}
-			</label>
-			<br/>
-			<br/>
-			<table style={{width: "min-content"}}>
-			<th>
-				<tr>
-					<td style={{position: "relative", left: "30px"}}>
-						{table}
-					</td>
-				</tr>
-				<tr>
-					<th style={{bottom: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
-						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
-					</th>
-				</tr>
-				<tr>
-					<div style={{"text-align":"-webkit-center", position: "relative", left: "75px"}}>IMPACTO</div>
-				</tr>
-				</th>
-			</table>
-
-		</div>
-		);
-	},
-
-
-	/*
-	policy-Model
-	policy-delete
-
-	risklevel-Model
-
-	item-Model
-	item-new
-	item-update
-	item-delete
-
-	itemfields-Model
-	*/
 	componentDidMount() {
-		var me = this;
-		PolicyStore.on("findpolicy", (model) => {
+		UserStore.on("retrieve-user", (model) => {
+			this.setState({
+				users: model.data,
 
-			if(!model.deleted){
-				me.setState({
-					policyModel: model,
+		//this.setState({
+			loading: false
+		//})
+			})
+		}, this)
 
-				});
-				me.forceUpdate();
-				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
-			}else{
-				me.setState({
-					policyModel: null,
+		StructureStore.on("companyobjectivesretrivied", (model) => {
+			this.setState({
+				strategy: model.data
+			})
+		}, this)
+
+
+		//UnitStore.on("retrieveprocess",(model)=>{},this)
+
+		RisktStore.on("riskUpdated",(model)=>{
+			console.log("riskUpdated",(model))
+		},this)
+
+		RisktStore.on("riskcreated",(model)=>{
+			console.log("riskcreated",(model))
+		},this)
+
+
+
+		/*PolicyStore.on("findpolicy", (model) => {
+			me.setState({
+				policyModel: model.data
+			});
+			if(model != null){
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+					data: model.data.id
 				});
 			}
-		}, me);
-
-		PolicyStore.on("retrieverisklevel", (model) => {
-				me.setState({
-					risklevelModel: model
-				});
-				me.forceUpdate();
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
-		}, me);
-
-		ItemStore.on("retrieveItem", (model) => {
-			if(!model.attributes.deleted){
+		}, this);*/
 
 
-				var fields = [];
-				for (var i in model.attributes.fieldItem) {
-					var item=model.attributes.fieldItem[i]
-					if(!item.deleted){
-
-						fields.push({
-							name:item.name+"-"+(i),
-							value: item.name,
-							label:item.name,
-							description: item.description,
-							isText:  item.isText,
-							type: item.isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							edit: false,
-							fileLink: item.fileLink
-						});
-					}
-				}
-
-				//me.setState({
-
-			//	})
-
-				me.setState({
-					itemModel: model,
-					titulo: model.get("name"),
-					vizualization: true,
-					loading:false,
-					//fields: this.getFields(),
-					fields: fields
-				});
-
-				if(model.get("name")=="Informações gerais"){
-					me.setState({
-						info:true
-					})
-				}
-
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
-			}else{
-				me.setState({
-					//model: null,
-					titulo: null,
-					vizualization: true
-				});
-				me.context.tabPanel.removeTabByPath(me.state.tabPath);
-				//me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
-			}
-		}, me);
-
-	/*	ItemStore.on("retrieveField", (model) => {
-			if(model.attributes != null){
-				var fields = [];
-				for (var i in model.attributes) {
-
-					if(!model.attributes[i].deleted){
-						fields.push({
-							name: model.attributes[i].name+"-"+(i),
-							value: model.attributes[i].name,
-							label: model.attributes[i].name,
-							description: model.attributes[i].description,
-							isText:  model.attributes[i].isText,
-							type: model.attributes[i].isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							edit: false,
-							fileLink: model.attributes[i].fileLink
-						});
-					}
-				}
-
-				me.setState({
-					fields: fields
-				})
-			}
-		}, me);*/
-
-		ItemStore.on("itemUpdated", (model) => {
-			if(model !=null){
-
-				var mod = this.state.itemModel;
-				mod.attributes.name = model.data.name;
-				mod.attributes.description = model.data.description;
-				mod.attributes.policy = model.data.policy;
-
-				for (var i in model.attributes) {
-					if(!model.attributes[i].deleted){
-						var fields = [];
-
-						fields.push({
-							name: model.attributes[i].name,
-							description: model.attributes[i].description,
-							isText:  model.attributes[i].isText,
-							type: model.attributes[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							value: model.attributes[i].description,
-							label: model.attributes[i].name,
-							edit: false,
-							fileLink: model.attributes[i].fileLink
-						});
-					}
-				}
-
-				me.setState({
-					fields: fields,
-					itemModel: mod,
-					titulo: model.data.name,
-					vizualization: true,
-					fields: me.getFields()
-				});
-				me.forceUpdate();
-
-				me.context.toastr.addAlertSuccess(Messages.get("label.successUpdatedItem"));
-			}else{
-				me.context.toastr.addAlertError(Messages.get("label.errorUpdatedItem"));
-			}
-		}, me);
-
-		ItemStore.on("newItem", (model) => {
-
-			if(model !=null){
-				this.state.fields.map((fielditem, index) => {
-					ItemStore.dispatch({
-						action: ItemStore.ACTION_CREATE_FIELD,
-						data:{
-							item: model.data,
-							name: fielditem.value,
-							isText: fielditem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
-							description: fielditem.description,
-							fileLink:  fielditem.fileLink
-						}
-					})
-				})
-				me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-				this.context.router.push("/forrisco/policy/"+this.state.policyModel.data.id+"/item/"+model.data.id);
-			}else{
-				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
-			}
-		}, me);
-
-		PolicyStore.on("policyDeleted", (model) => {
-			if(model.success){
-				this.context.router.push("/forrisco/home");
-			}else{
-				if(model.message != null){
-					me.context.toastr.addAlertError(model.message);
-				}
-			}
-
-		})
-
-		ItemStore.on("itemDeleted", (model) => {
-			this.context.router.push("forrisco/policy/"+this.context.policy.id+"/item/overview");
-		})
-
-		me.refreshData(me.props, me.context);
+		this.refresh()
 	},
-
-
 	componentWillUnmount() {
-		ItemStore.off(null, null, this);
-		PolicyStore.off(null, null, this);
+		UserStore.off(this, this, this)
+		StructureStore.off(this,this,this)
+		RiskStore.off(this,this,this)
 	},
+
 
 	componentWillReceiveProps(newProps, newContext) {
 
-		if (newProps.params.itemId != this.props.params.itemId) {
+
+
+	if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
+			//console.log("State	")
+			//var bool=this.state.riskModel.id !=newProps.routeParams.riskId ?  true: newProps.visualization
+			console.log(newProps.risk.id !=newProps.params.riskId),
 			this.setState({
 				loading: true,
+				//visualization:true,
 				fields: [],
-				tabPath: newProps.location.pathname,
-				vizualization: false,
-
-				newField: false,
-				newFieldType: null,
-				itemModel: null,
-				policyModel: null,
-				description: null,
-				fileData: null,
-				titulo: null,
-				info: false
+				visualization: newProps.visualization,
+				planRiskId: newProps.planRiskId,
+				unitId: newProps.risk.unit.id,
+				riskModel: newProps.risk,
 			});
-
-			this.refreshData(newProps, newContext);
-
 		}
+		this.refreshData()
 	},
-	UpdateLoading(bool){
-		this.setState({
-			loading: bool,
+
+
+	// users
+	// structure (objetivos estratégicos)
+	//processo (pendente)
+	refresh() {
+		console.log("this.props.risk",this.props.risk)
+		if (this.props.risk != null) {
+			this.setState({
+				//loading: true,
+				fields: [],
+				//visualization: newProps.visualization,
+				//newField: false,
+				//newFieldType: null,
+				planRiskId: this.context.planRisk.attributes.id,
+				unitId: this.props.risk.unit.id,
+				riskModel: this.props.risk,
+			});
+		}
+
+		this.refreshData()
+	},
+
+	refreshData() {
+		UserStore.dispatch({
+			action: UserStore.ACTION_RETRIEVE_USER,
 		});
-	},
 
-	refreshData(props, context) {
+		StructureStore.dispatch({
+			action: StructureStore.ACTION_GET_OBJECTIVES_BY_COMPANY
+		});
 
-		PolicyStore.dispatch({
+		/*UnitStore.dispatch({
+			action: UnitStore.ACTION_GET_OBJECTIVES_PROCESSES
+		});
+*/
+		/*PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_POLICY,
-			data: props.params.policyId
-		});
+			data: this.state.plan.policyId
+		});*/
+		this.setState({ policyModel: this.context.planRisk.attributes.policy })
 
-		if (props.params.policyId && props.params.itemId) {
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-				data: props.params.policyId
-			});
-
-			if(props.params.itemId){
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_RETRIEVE_ITEM,
-					data: props.params.itemId
-				});
-				/*ItemStore.dispatch({
-					action: ItemStore.ACTION_RETRIEVE_FIELD,
-					data: props.params.itemId
-				});*/
-			}else{
-				this.setState({
-					titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
-					loading: false
-				});
-			}
-		} else {
-			this.setState({
-				titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
-				loading: false,
-			});
+		if (this.props.risk) {
+			this.state.risk_pdi = this.props.risk.risk_pdi
+			this.state.risk_obj_process = this.props.risk.risk_obj_process
+			this.state.risk_act_process = this.props.risk.risk_act_process
 		}
 	},
-	refreshCancel () {
-		Modal.hide();
-	},
-	onCancel() {
-		if (this.state.itemModel) {
-			this.setState({
-				vizualization: true,
-				//fields: this.getFields()
-			});
-		} else {
-			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-		}
-	},
-	changeVizualization() {
-		this.setState({
-			vizualization: false,
-			//fields: this.getFields()
-		});
-	},
-	deleteItem() {
-		var me = this;
-		if (me.state.itemModel != null) {
 
-			if(this.state.info){
-				var msg = "Você tem certeza que deseja excluir essa política?"
-				Modal.confirmCustom(() => {
-					Modal.hide();
-					PolicyStore.dispatch({
-						action: PolicyStore.ACTION_DELETE,
-						data: me.state.policyModel.data.id
-					});
-				},msg,me.refreshCancel);
+	getName() {
+		return [{
+			name: "nome",
+			type: AttributeTypes.TEXT_AREA,
+			placeholder: "Nome do Risco",
+			maxLength: 100,
+			label: "Nome do Risco",
+			value: this.state.riskModel != null ? this.state.riskModel.name : null,
+		}]
+	},
 
-			}else{
-				var msg = "Você tem certeza que deseja excluir esse item?"
-				Modal.confirmCustom(() => {
-					Modal.hide();
-					ItemStore.dispatch({
-						action: ItemStore.ACTION_DELETE,
-						data: me.state.itemModel.id
-					});
-				},msg,me.refreshCancel);
-			}
-			/*var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
-			Modal.confirmCancelCustom(() => {
-				Modal.hide();
-				PlanStore.dispatch({
-					action: PlanStore.ACTION_DELETE_PLAN,
-					data: me.state.model
+	getFields() {
+		var fields = [];
+
+		if (this.state.riskModel != null) {
+			fields.push({
+				name: "code",
+				type: AttributeTypes.TEXT_AREA,
+				placeholder: "Código",
+				maxLength: 100,
+				label: "Código de indentificação do risco",
+				value: this.state.riskModel.code,
+			}, {
+					name: "user",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField: this.getUsers(),
+					placeholder: "Selecione um responsável",
+					maxLength: 100,
+					label: "Responsável",
+					value: this.state.riskModel.user.name,
+				}, {
+					name: "date",
+					type: AttributeTypes.DATE,
+					placeholder: "",
+					maxLength: 100,
+					label: "Data e hora de criação do risco",
+					value: this.state.riskModel.begin,
+				}, {
+					name: "reason",
+					type: AttributeTypes.TEXT_AREA_FIELD,
+					placeholder: "Causas do risco",
+					maxLength: 1000,
+					label: "Causa",
+					value: this.state.riskModel.reason,
+				}, {
+					name: "result",
+					type: AttributeTypes.TEXT_AREA_FIELD,
+					placeholder: "Consequência do risco",
+					maxLength: 1000,
+					label: "Consequência",
+					value: this.state.riskModel.result,
+				}, {
+					name: "probability",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField:  this.getProbabilities(),
+					displayField: 'label',
+					placeholder: "Selecione",
+					maxLength: 100,
+					label: "Probabilidade",
+					value: this.state.riskModel.probability,
+				}, {
+					name: "impact",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField: this.getImpacts(),
+					displayField: 'label',
+					placeholder: "Selecione",
+					maxLength: 100,
+					label: "Impacto",
+					value: this.state.riskModel.impact,
+				}, {
+					name: "riskLevel",
+					type: AttributeTypes.TEXT_AREA,
+					placeholder: "",
+					maxLength: 100,
+					label: "Grau do risco",
+					value: this.state.riskModel ? this.state.riskModel.riskLevel.level : null
+				}, {
+					name: "periodicity",
+					label: "Periodicidade da análise",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField: [{ label: 'Diária' },
+					{ label: 'Semanal' },
+					{ label: 'Quinzenal' },
+					{ label: 'Mensal' },
+					{ label: 'Bimestral' },
+					{ label: 'Trimestral' },
+					{ label: 'Semestral' },
+					{ label: 'Anual' }],
+					displayField: 'label',
+					placeholder: "Selecione a periodicidade",
+					maxLength: 100,
+					value: this.state.riskModel.periodicity,
+				}, {
+					name: "tipology",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField: [{ label: 'Risco operacional' },
+					{ label: 'Risco de imagem/reputação do órgão' },
+					{ label: 'Risco legal' },
+					{ label: 'Risco financeiro/orçamentário' }],
+					placeholder: "Selecione",
+					maxLength: 100,
+					label: "Tipologia",
+					value: this.state.riskModel.tipology,
+				}, {
+					name: "type",
+					type: AttributeTypes.SELECT_FIELD,
+					optionsField: [{ label: 'Ameaça' }, { label: 'Oportunidade' }],
+					displayField: 'label',
+					placeholder: "Selecione",
+					maxLength: 100,
+					label: "Tipo",
+					value: this.state.riskModel.type,
 				});
-			},msg,()=>{Modal.hide();me.refreshCancel;});*/
 		}
-	},tweakNewField() {
-		this.setState({
-			newField: !this.state.newField,
-			newFieldType: null
-		});
+
+		return fields;
 	},
-	reset(){
-		this.setState({
-			newField: false,
-			newFieldType: null,
-			description: null,
-			fileData: null
-		});
-	},
-	getLength(){
-		return this.state.length++
-	},
-	editFunc(id,bool){
-		this.state.fields.map( (fielditem, i) => {
-			if (id==i){
-				fielditem.edit=bool
-			}
-		})
-		this.setState({
-			fields: this.state.fields
-		})
-	},
-	deleteFunc(id){
-		Modal.confirmCustom(() => {
-			Modal.hide();
-			this.state.fields.map( (fielditem, index) => {
-				if (id==index){
-					this.state.fields.splice(index,1)
-				}
+
+	getStrategies() {
+
+		if (this.state.riskModel == null || this.state.riskModel.strategies == null || !this.state.riskModel.risk_pdi) {
+			return [];
+		}
+
+		if (this.state.riskModel.strategies.total == 0) {
+			return [{
+				label: "Objetivo(s) do(s) processo(s) vinculado(s)",
+				value: "Não está vinculado a nenhum objetivo estratégido do PDI",
+				name: "",
+				type:AttributeTypes.SELECT_MULTI_FIELD
+			}]
+		}
+
+		var fields = []
+		this.state.riskModel.strategies.list.map((fielditem, index) => {
+			fields.push({
+				name: "strategy-" + (index),
+				type: AttributeTypes.SELECT_MULTI_FIELD,
+				label: "Objetivo(s) do(s) processo(s) vinculado(s)",//index==0 ? (this.state.visualization ?"Objetivo(s) do(s) processo(s) vinculado(s)":"") : null,
+				linkName: "(Visualizar no PDI)",
+				placeholder: "Selecione um ou mais objetivos",
+				maxLength: 100,
+				value: fielditem.name,
+				link: fielditem.linkFPDI,
+				optionsField: index == 0 ? this.getAllStrategies() : null,
 			})
-			this.setState({
-				fields: this.state.fields
-			})
-		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
-	},
-	setItem(index,item){
-		this.state.fields.map( (fielditem, i) => {
-			if (index==i){
-				fielditem.name= item.name,
-				fielditem.type= item.type,
-				fielditem.label= item.label,
-				fielditem.value= item.value,
-				fielditem.description= item.description,
-				fielditem.isText= item.isText,
-				fielditem.fileLink = item.fileLink
-				fielditem.edit=false
-			}
 		})
-		this.setState({
-			fields: this.state.fields
-		})
+
+		return fields;
 	},
-	cancelWrapper(evt) {
-		for (var i = 0; i < this.getField().length; i++) {
-			if (this.refs[this.getField().name])
-				this.refs[this.getField().name].refs.formAlertError.innerHTML = "";
+
+	getProcesses() {
+
+		if (this.state.riskModel == null || this.state.riskModel.processes == null || !this.state.riskModel.risk_obj_process) {
+			return [];
 		}
+		if (this.state.riskModel.processes.total == 0) {
+			return [{
+				label: "Objetivo(s) do(s) processo(s) vinculado(s)",
+				value: "Não está vinculado a nenhum objetivo do processo",
+				name: "",
+				type:AttributeTypes.SELECT_MULTI_FIELD
+			}]
+		}
+
+		var fields = []
+		this.state.riskModel.processes.list.map((fielditem, index) => {
+			fields.push({
+				name: "process-" + (index),
+				type: AttributeTypes.SELECT_MULTI_FIELD,
+				placeholder: "Selecione um ou mais objetivos",
+				label: "Objetivo(s) do(s) processo(s) vinculado(s)",//index==0 ? (this.state.visualization ?"Objetivo(s) do(s) processo(s) vinculado(s)":"") : null,
+				linkName: "(Visualizar objetivo do processo)",
+				link: fielditem.linkFPDI,
+				maxLength: 100,
+				value: fielditem.name,
+				optionsField: index == 0 ? this.getAllProcesses() : null,
+			})
+		})
+
+		return fields;
+	},
+
+	getActivities() {
+
+		if (this.state.riskModel == null || this.state.riskModel.activities == null || !this.state.riskModel.risk_act_process) {
+			return [];
+		}
+		if (this.state.riskModel.activities.total == 0) {
+			return [{
+				label: "Atividade(s) do(s) processo(s) vinculado(s)",
+				value: "Não está vinculado a nenhuma atividade",
+				name: ""
+			}]
+		}
+
+		var fields = []
+		this.state.riskModel.activities.list.map((fielditem, index) => {
+			fields.push({
+				name: "activity-" + (index),
+				type: AttributeTypes.SELECT_FIELD,
+				placeholder: "",
+				maxLength: 100,
+				label: index == 0 ? (this.state.visualization ? "Atividade(s) do(s) processo(s) vinculado(s)" : "") : null,
+				value: fielditem.name,
+				link: fielditem.linkFPDI,
+				linkName: "(Visualizar processo)",
+			})
+		})
+		return fields;
+	},
+
+
+	getProbabilities() {
+		var probility = this.state.policyModel.probability.match(/\[.*?\]/g)
+		var fields = []
+
+		if (probility != null) {
+			for (var i in probility) {
+				fields.push({ label: probility[i].substring(1, probility[i].length - 1) })
+			}
+		}
+		return fields
+	},
+
+	getImpacts() {
+		var impact = this.state.policyModel.impact.match(/\[.*?\]/g)
+		var fields = []
+
+		if (impact != null) {
+			for (var i in impact) {
+				fields.push({ label: impact[i].substring(1, impact[i].length - 1) })
+			}
+		}
+		return fields
+	},
+
+	getUsers() {
+		var fields = []
+		for (var i = 0; i < this.state.users.length; i++) {
+			fields.push(
+				{ label: this.state.users[i].name, id: this.state.users[i].id }
+			)
+		}
+		return fields
+	},
+
+	getAllStrategies() {
+		var fields = []
+		for (var i in this.state.strategy) {
+			fields.push({ label: this.state.strategy[i].name, value: this.state.strategy[i].id })
+		}
+
+		return fields
+	},
+
+	getAllProcesses() {
+		return [{ label: "AGM 2017", value: 1 }]
+	},
+
+
+	onCancel(evt) {
 		evt.preventDefault();
-		if (typeof this.props.onCancel === 'function') {
-			this.props.onCancel();
-		} else {
-			hashHistory.goBack();
-		}
+
+		this.setState({
+			visualization: true
+		})
+
+		/*this.state.visualization=false
+		if(this.state.riskModel){
+			console.log("cancel",this.state.visualization)
+			this.context.router.push("/forrisco/plan-risk/1/unit/1/risk/1");
+			this.context.router.push("/forrisco/plan-risk/1/unit/1/risk/1/details");
+			return
+		}*/
+
+		/*document.getElementById("field-name").value = "";
+		document.getElementById("field-description").value = "";
+		document.getElementById("field-risk_level_1").value = "";
+		document.getElementById("field-risk_cor_1").value = "";
+		document.getElementById("field-nline").value = "";
+		document.getElementById("field-ncolumn").value = "";
+		this.setState({
+			policyModel: null,
+			fields: null,
+			visualization: true,
+			hide: true,
+			hidePI: true,
+			validPI: false,
+			ncolumn: 0,
+			nline: 0,
+			matrix_l: 0,
+			matrix_c: 0,
+			color: 1,
+		})*/
+	},
+	handleStrategyChange: function (changeEvent) {
+		this.setState({
+			risk_pdi: (changeEvent.target.value == "Sim" ? true : false)
+		});
+	},
+
+	handleProcessChange: function (changeEvent) {
+		this.setState({
+			risk_obj_process: (changeEvent.target.value == "Sim" ? true : false)
+		});
+	},
+
+	handleActivityChange: function (changeEvent) {
+		this.setState({
+			risk_act_process: (changeEvent.target.value == "Sim" ? true : false)
+		});
 	},
 
 
-
-
-
-
-
-
-	renderArchivePolicy() {
-		return (
-			<ul className="dropdown-menu">
-				<li>
-					<a onClick={this.deleteLevelAttribute}>
-						<span className="mdi mdi-pencil disabledIcon" title={Messages.get("label.title.unableArchivedPlan")}>
-							<span id="menu-levels">	{Messages.getEditable("label.title.unableArchivedPlan","fpdi-nav-label")} </span>
-						</span>
-					</a>
-				</li>
-			</ul>
-		);
-
-	},
-	renderUnarchivePolicy() {
-		if(this.state.info){
-			return (<ul id="level-menu" className="dropdown-menu">
-			<li>
-				<Link
-					to={"/forrisco/policy/"+this.props.params.policyId+"/edit"}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-						<span id="menu-levels"> {"Editar Política"/*Messages.getEditable("label.title.editPolicy","fpdi-nav-label")*/} </span>
-						</span>
-				</Link>
-			</li>
-			<li>
-				<Link
-					to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
-					onClick={this.deleteItem}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-						<span id="menu-levels"> {"Deletar Política" /*Messages.getEditable("label.deletePolicy","fpdi-nav-label")*/} </span>
-					</span>
-				</Link>
-			</li>
-			</ul>);
-
-		}else{
-			return (
-				<ul id="level-menu" className="dropdown-menu">
-					<li>
-						<Link
-							to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}
-							onClick={this.changeVizualization}>
-							<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}>
-								<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
-							</span>
-						</Link>
-					</li>
-					{this.state.undeletable ?
-					<li>
-						<Link
-							to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}>
-							<span className="mdi mdi-delete disabledIcon cursorPointer" title={Messages.get("label.notDeletedHasChild")}>
-								<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")}</span>
-							</span>
-						</Link>
-					</li>
-					:
-					<li>
-						<Link
-							to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
-							onClick={this.deleteItem}>
-							<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteItem")}>
-								<span id="menu-levels"> {Messages.getEditable("label.deleteItem","fpdi-nav-label")} </span>
-							</span>
-						</Link>
-					</li>
-					}
-				</ul>
-			);
-		}
-	},
-	renderBreadcrumb() {
-		return(
-			<div>
-				<span>
-					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						to={'/forrisco/policy/'+this.context.policy.id}
-						title={this.context.policy.name}>{this.context.policy.name.length > 15 ? this.context.policy.name.substring(0, 15)+"..." : this.context.policy.name.substring(0, 15)
-					}</Link>
-					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
-				</span>
-				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
-					{this.state.titulo > 15 ? this.state.titulo.substring(0, 15)+"..." : this.state.titulo.substring(0, 15)}
-				</span>
-			</div>
-		);
+	getPA(n) {
+		var fields = [];
+		var cor = null
+		var risk = null
+		fields.push({
+			name: "process_" + n,
+			type: "select",
+			required: true,
+			maxLength: 40,
+			placeholder: "Selecione um processo",
+			label: Messages.getEditable("label.policySelect", "hide"),
+			value: cor,
+			valueField: 'label',
+			displayField: 'label',
+			options: [{ label: "processo 1", id: 1, name: "processo 1" }]
+			//onChange: this.onChangeMatrix
+		},
+			{
+				name: "activity_" + n,
+				type: "text",
+				required: true,
+				maxLength: 40,
+				placeholder: "Com quais atividades do processo o risco está associado?",
+				label: Messages.getEditable("label.policyConfig", "hide"),
+				value: risk,
+				//onChange: this.onChangeMatrix
+			})
+		return fields
 	},
 
-	onSubmit(event) {
-		event && event.preventDefault();
+	getProcessActivity() {
+		var grau = []
 
-		if(this.state.itemModel){
-			/*var msg = "";
-			Modal.confirmCustom(() => {
-				Modal.hide();*/
+		for (var i = 0; i < this.state.activities; i++) {
+			grau.push(
+				this.getPA(i).map((field, idx) => {
+					return (<HorizontalInput
+						name={field.name}
+						fieldDef={field}
+						key={field.value ? field.value : field.name}
+						ref={'pa-' + (i) + "-" + (idx)}
+					/>);
+				})
+			)
 
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_CUSTOM_UPDATE,
-					data: {
-						id: this.state.itemModel.attributes.id,
-						name: this.refs.newItemForm['field-description'].value,//this.state.itemModel.attributes.name,
-						policy: this.state.policyModel,
-						fieldItem: this.state.fields
-					}
-				});
-			//},msg,this.refreshCancel);
-		} else {
-
-			var name = this.refs.newItemForm['field-description'].value
-
-			var validation = Validate.validationNewItem(this.refs.newItemForm);
-			if (validation.errorField) {
-				this.context.toastr.addAlertError(Messages.get("label.error.form"));
-			} else {
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_NEW_ITEM,
-					data: { name: validation.titulo.s,
-							description: "",
-							policy: this.state.policyModel.data
-					}
-				});
+			if (i > 0) {
+				grau.push(<Link onClick={this.deleteActivity.bind(this, i)}>
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteActicity")}></span>
+				</Link>)
 			}
-
-
+			grau.push(<br />)
 		}
+
+		return (<div>{grau}<br /></div>)
+	},
+
+	deleteActivity(x, y) {
+		console.log(x)
+		if (this.state.activities > 1) {
+			this.setState({
+				activities: this.state.activities - 1
+			})
+
+			for (var i = x; i < this.state.activities - 1; i++) {
+				document.getElementById("field-process_" + (i)).value = document.getElementById("field-process_" + (i + 1)).value;
+				document.getElementById("field-activity_" + (i)).value = document.getElementById("field-activity_" + (i + 1)).value;
+			}
+		}
+
+	},
+
+	addActivity() {
+		console.log("add activity", this.state.activities + 1)
+		this.setState({
+			activities: this.state.activities + 1
+		})
+	},
+
+	getValues() {
+		var data = {};
+
+		data['name']=document.getElementById("field-nome").value
+		data['code']=document.getElementById("field-code").value
+		data['impact']=document.getElementById("field-impact").value
+		data['probability']=document.getElementById("field-probability").value
+		data['periodicity']=document.getElementById("field-periodicity").value
+		data['reason']=document.getElementById("field-reason").value
+		data['result']=document.getElementById("field-result").value
+		data['tipology']=document.getElementById("field-tipology").value
+		data['type']=document.getElementById("field-type").value
+
+		var index=this.refs["field-1"].refs.user.refs["field-user"].selectedIndex
+
+		data['user']={id:this.state.users[index].id}
+		data['unit']={id:this.state.unitId}
+
+		data["risk_pdi"] = this.state.risk_pdi
+		data["risk_obj_process"] = this.state.risk_obj_process
+		data["risk_act_process"] = this.state.risk_act_process
+		data['strategies']={}
+		data['processes']={}
+		data['activities']={}
+
+		console.log("data", data)
+
+		return data;
 	},
 
 
+	submitWrapper(evnt) {
+		evnt.preventDefault();
 
+		if (this.onSubmit(this.getValues())){
+				$(this.refs['btn-submit']).attr("disabled", "disabled");
+		}
+	},
+
+	onSubmit(data) {
+
+		console.log("get all data and update if model exists or save a new risk")
+
+		var me = this;
+		var msg = "";
+
+		//var msg = Validate.validationPolicyEdit(data, this.refs);
+
+		if (msg != "") {
+			this.context.toastr.addAlertError(msg);
+			return;
+		}
+
+		if (me.props.params.riskId) {
+			data.id=me.props.params.riskId
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_CUSTOM_UPDATE,
+				data: data
+			});
+		} else {
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_NEWRISK,
+				data: data
+			});
+		}
+	},
 
 	render() {
+	console.log(this.getStrategies())
+	console.log(this.getProcesses())
+
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
+		return (<div>
+				<form onSubmit={this.submitWrapper} className="fpdi-card fpdi-card-full floatLeft"  id={this.props.id} ref="riskEditForm">
 
-		var showButtons = !this.state.vizualization;
-
-		if(this.state.vizualization){
-
-			return <div>
-				{this.state.itemModel ? this.renderBreadcrumb() : ""}
-
-				<div className="fpdi-card fpdi-card-full floatLeft">
-
-				<h1>
-					{(this.state.info && this.state.policyModel) ? this.state.policyModel.data.name : this.state.itemModel.attributes.name}
-					{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
-						(<span className="dropdown">
-							<a
-								className="dropdown-toggle"
-								data-toggle="dropdown"
-								aria-haspopup="true"
-								aria-expanded="true"
-								title={Messages.get("label.actions")}
-								>
-								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down" />
-							</a>
-							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
-						</span>
-						):""}
-				</h1>
+				{!this.state.visualization ?
+					<VerticalForm
+						vizualization={this.state.visualization}
+						fields={this.getName()}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+						ref={'field-name'} />
+					: ""}
 
 				{this.getFields().map((fielditem, index) => {
-					if(fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD){
-						return (<div><VerticalForm
-							vizualization={this.state.vizualization}
-							onCancel={this.onCancel}
-							onSubmit={this.onSubmit}
-							fields={[fielditem]}
-							submitLabel={Messages.get("label.submitLabel")}
-							//store={ItemStore}
-							//ref='planRegisterForm'
-						/></div>)
-					}else{
-						return (
-							<div>
-							<label className="fpdi-text-label">{fielditem.value}</label>
-							<div className="panel panel-default">
-								<table className="budget-field-table table">
-									<tbody>
-										<tr>
-											<td className="fdpi-table-cell">
-												<a target="_blank" rel="noopener noreferrer" href={fielditem.fileLink}>
-													{fielditem.description}</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-								</div>
-							</div>
-						)
-					}
-				})
-				}
-			<br/>
-			{this.state.info ?
-			<div>
-				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-					{"DESCRIÇÃO"}
-				</label>
-				<br/>
-				{this.state.itemModel.attributes.description}
-				<br/><br/>
-			</div>: ""}
-
-			{this.state.info ? this.getMatrix(): ""}
-			</div>
-			</div>;
-		}else{
-
-			//editar
-			return (
-				<div>
-
-				<form onSubmit={this.onSubmit} ref="newItemForm">
-
-				{this.state.itemModel ? this.renderBreadcrumb() : ""}
-
-				<div className="fpdi-card fpdi-card-full floatLeft">
-
-					<h1>
-
-						{(this.state.titulo)}
-						{/*this.state.itemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
-							(<span className="dropdown">
-								<a
-									className="dropdown-toggle"
-									data-toggle="dropdown"
-									aria-haspopup="true"
-									aria-expanded="true"
-									title={Messages.get("label.actions")}
-									>
-									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-									<span className="mdi mdi-chevron-down" />
-								</a>
-								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
-							</span>
-						):""*/}
-					</h1>
-
-					{
-						//título
+					if ((fielditem.name == "riskLevel" || fielditem.name == "date") && !this.state.visualization) {
+						return
 					}
 
-					<AttributeInput
-						fieldDef={this.getField()}
-						undeletable={false}
-						vizualization={this.props.vizualization}
-						//ref="formAlertErrorTitulo"
-						//ref={this.getField().name}
-						//key={this.getField().name}
-						//deleteFunc={this.props.deleteFunc}
-						//editFunc={this.props.editFunc}
-						//alterable={this.props.alterable}
-						//isDocument={this.props.isDocument}
-						//onClick={this.props.onClick}
-						//onChage={this.props.onChage}
-					/>
+					return (<div><VerticalForm
+						vizualization={this.state.visualization}
+						fields={[fielditem]}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+						ref={'field-' + index}
+						 />
+					</div>)
+				})}
 
 
-					{
-						//campos
-					}
-
-					{this.state.fields && (this.state.fields.length > 0) ?
-					this.state.fields.map((fielditem, index) => {
-						if(fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD){
-							//fielditem.name=fielditem.name
-							//fielditem.value=fielditem.label
-							fielditem.isText=true;
-							return (
-								<div>
-								<FieldItemInput
-									vizualization={!this.props.vizualization}
-									deleteFunc={this.deleteFunc}
-									editFunc={this.editFunc}
-									setItem={this.setItem}
-									fields={this.state.fields}
-									reset={this.reset}
-									field={fielditem}
-									index={index}
-									getLength={this.getLength}
-									/>
-								</div>
-							)
-						}else if (fielditem.type ==  AttributeTypes.ATTACHMENT_FIELD){
-							fielditem.isText=false;
-							return (<div>
-								<FieldItemInput
-									vizualization={!this.props.vizualization}
-									deleteFunc={this.deleteFunc}
-									editFunc={this.editFunc}
-									setItem={this.setItem}
-									fields={this.state.fields}
-									reset={this.reset}
-									field={fielditem}
-									index={index}
-									getLength={this.getLength}
-									/>
-								</div>)
-						}
-					}):""}
-
-
-					{
-						//Adicioonar novo campo
-					}
-
-					{this.state.newField ?
-						<FieldItemInput
-							//key={this.getLength()}
-							vizualization={this.props.vizualization}
-							deleteFunc={this.deleteFunc}
-							editFunc={this.editFunc}
-							setItem={this.setItem}
-							fields={this.state.fields}
-							reset={this.reset}
-							getLength={this.getLength}
-						/>
-					:
-					(((this.context.roles.MANAGER || _.contains(this.context.permissions,
-					PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && this.props.params.policyId) ? // && !this.state.model.preTextSection) ?
-					<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
-						<span className="mdi mdi-plus" /> {Messages.get("label.addNewField")}
-					</button>
-					:"")}
-
-
-					<br/><br/><br/>
-					{showButtons ?
-					(!!this.props.blockButtons ?
-						(<div className="form-group">
-							<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
-							{!this.props.hideCanel ? (!this.props.cancelUrl ?
-								<button className="btn btn-default  btn-block" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
-								:(
-									<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
-								)):""}
-						</div>)
-					:
-						(<div className="form-group text-left">
-							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-							{!this.props.hideCanel ? (!this.props.cancelUrl ?
-								<button className="btn btn-sm btn-default" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
-								:
-								<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
-							):""}
-						</div>)
-					)
-				: ""}
+				{!this.state.visualization ? <div>
+					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
+					<form>
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
+					</form>
+					<br />
 				</div>
+					: ""}
+				{!this.state.visualization && this.state.risk_pdi ?
+					<label htmlFor={"texto"} className="fpdi-text-label-none">
+						{"Objetivo Estratégico do PDI"}
+					</label>
+					: ""}
+				{this.state.risk_pdi ?
+					<ListForm
+						vizualization={this.state.visualization}
+						fields={this.getStrategies()}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+						/>
+					: ""}
+				<br />
+
+
+				{!this.state.visualization ? <div>
+					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
+					<form>
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
+					</form>
+					<br />
+				</div>
+					: ""}
+				{!this.state.visualization && this.state.risk_obj_process ?
+					<label htmlFor={"texto"} className="fpdi-text-label-none">
+						{"Processo/Objetivo"}
+					</label>
+					: ""}
+				{this.state.risk_obj_process ?
+					<ListForm
+					vizualization={this.state.visualization}
+					fields={this.getProcesses()}
+					submitLabel={Messages.get("label.submitLabel")}
+					showButtons={false}
+					/>
+					: ""}
+				<br />
+
+				{!this.state.visualization ?
+					<div>
+						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
+						<form>
+							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
+							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
+						</form>
+						<br />
+					</div>
+				: ""}
+				{!this.state.visualization && this.state.risk_act_process ?
+					<div>
+						<div style={{ position: "relative", bottom: '5px' }}>
+							<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
+								{"Processo"}&nbsp;&nbsp;
+						</label>
+							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+								<a className="mdi mdi-plus-circle icon-link" onClick={this.addActivity}></a> : ""
+							}
+							<br />
+						</div>
+					</div>
+					: ""}
+				{!this.state.visualization && this.state.risk_act_process ?
+					this.getProcessActivity() : ""}
+
+				<br />
+				<br />
+
+				{/*<VerticalForm
+					vizualization={this.state.visualization}
+					onCancel={this.onCancel}
+					onSubmit={this.submitWrapper}
+				/>*/
+				}
+				{!this.state.visualization ?
+							(<div className="form-group padding40">
+								<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
+								{!this.props.hideCanel ? (!this.props.cancelUrl ?
+									<button className="btn btn-default  btn-block" onClick={this.onCancel}>{this.state.cancelLabel}</button>
+									: (
+										<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
+									)) : ""}
+							</div>)
+							:
+							(<div className="form-group text-left">
+								<input type="submit" className="btn btn-sm btn-success" ref="btn-submit" value={this.state.submitLabel} />
+								{!this.props.hideCanel ? (!this.props.cancelUrl ?
+									<button className="btn btn-sm btn-default" onClick={this.onCancel}>{this.state.cancelLabel}</button>
+									:
+									<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
+								) : ""}
+							</div>)
+							}
 			</form>
 		</div>);
-
-		}
+		/*}else{
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname+"/edit", this.state.riskModel?  this.state.riskModel.name:"");
+			});
+			return( <div> visualization = false (edit & save) </div>)
+		}*/
 	}
-
 });

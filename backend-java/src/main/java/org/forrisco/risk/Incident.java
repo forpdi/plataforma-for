@@ -26,7 +26,6 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_incident";
 	private static final long serialVersionUID = 1L;
 
-	@SkipSerialization
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
@@ -41,7 +40,7 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	private String action;
 
 	@Column(nullable=false)
-	private int type;
+	private Integer type;
 	
 	@Column(nullable=false)
 	private Date begin;

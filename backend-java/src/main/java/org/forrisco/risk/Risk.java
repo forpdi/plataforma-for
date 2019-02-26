@@ -30,7 +30,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_risk";
 	private static final long serialVersionUID = 1L;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
@@ -38,7 +38,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Unit.class, optional=false, fetch=FetchType.EAGER)
 	private Unit unit;
 	
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=RiskLevel.class, optional=false, fetch=FetchType.EAGER)
 	private RiskLevel riskLevel;
 	
@@ -78,15 +78,6 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false)
 	private boolean risk_act_process;
 
-	@Column(nullable=false)
-	private int pdi;
-
-	@Column(nullable=false)
-	private int obj_process;
-
-	@Column(nullable=false)
-	private int act_process;
-	
 	@Column(nullable=false)
 	private Date begin;
 	
@@ -186,24 +177,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public void setRisk_act_process(boolean risk_act_process) {
 		this.risk_act_process = risk_act_process;
 	}
-	public int getPdi() {
-		return pdi;
-	}
-	public void setPdi(int pdi) {
-		this.pdi = pdi;
-	}
-	public int getObj_process() {
-		return obj_process;
-	}
-	public void setObj_process(int obj_process) {
-		this.obj_process = obj_process;
-	}
-	public int getAct_process() {
-		return act_process;
-	}
-	public void setAct_process(int act_process) {
-		this.act_process = act_process;
-	}
+	
 	public Date getBegin() {
 		return begin;
 	}
@@ -231,7 +205,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public PaginatedList<RiskProcess> getProcess() {
 		return processes;
 	}
-	public void setProcess(PaginatedList<RiskProcess> process) {
+	public void setProcesses(PaginatedList<RiskProcess> process) {
 		this.processes = process;
 	}
 	public PaginatedList<RiskStrategy> getStrategies() {

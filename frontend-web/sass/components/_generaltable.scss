@@ -1,0 +1,57 @@
+.general-table {
+
+    .table-outter-header {
+        font-weight: bold;
+        font-size: 16px;
+        padding: 15px 22px;
+        text-align: left;
+        background-color: rgb(230, 230, 230);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        button {
+            border: none;
+            font-weight: bold;
+        }
+    }
+    .rt-th{
+        font-weight: bold;
+        align-content: center;
+        display: flex;
+        align-items: center;
+        padding: 10px 22px!important;
+    }
+    .rt-td {
+        padding: 18px 22px!important;
+    }
+    .rt-td, .rt-th {
+        min-height: 36px;
+        white-space: normal!important;
+        border-right: none!important;
+        text-align: left;
+    }
+
+    .row-tools-box {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        width: fit-content;
+
+        .row-button-icon {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+
+            span {
+                cursor: inherit;
+            }
+        }
+	}
+
+	.double-input-cell {
+		.form-group:first-child {
+			margin-bottom: 0;
+		}
+	}
+}

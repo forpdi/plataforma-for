@@ -1,8 +1,7 @@
-
-//import Toastr from 'toastr';
+import Toastr from 'toastr';
 import React from "react";
 import {Link, hashHistory} from "react-router";
-import AttributeInput from "forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx";
+import ListAttributeInput from "forpdi/jsx/planning/widget/attributeForm/ListAttributeInput.jsx";
 import BudgetField from "forpdi/jsx/planning/view/field/BudgetField.jsx";
 import AttachmentField from "forpdi/jsx/planning/view/field/AttachmentField.jsx";
 import ActionPlanField from "forpdi/jsx/planning/view/field/ActionPlanField.jsx";
@@ -15,8 +14,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var Title = Validation.validate;
 
-
-var VerticalForm =  React.createClass({
+export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired
 	},
@@ -148,10 +146,10 @@ var VerticalForm =  React.createClass({
 			//Toastr.error("Um erro inesperado ocorreu.");
 			this.context.toastr.addAlertError("Um erro inesperado ocorreu.");
 		}
-		/*this.setState({
-			error: true,
-			errorMessage: errors
-		});*/
+		//this.setState({
+		//	error: true,
+		//	errorMessage: errors
+		//});
 	},
 	closeAlerts() {
 		this.setState({
@@ -159,10 +157,15 @@ var VerticalForm =  React.createClass({
 		});
 	},
 	render() {
-
 		var alerts = null;
-		var showButtons =  !this.props.vizualization;
+		var showButtons = !this.props.vizualization;
 		var requiredFields = false;
+
+
+		if(showButtons && this.props.showButtons != null){
+			showButtons = this.props.showButtons;
+		}
+
 		if (this.state.error) {
 			if (typeof this.state.errorMessage == 'string') {
 				alerts = (<div className="alert alert-danger animated fadeIn" role="alert">
@@ -186,19 +189,49 @@ var VerticalForm =  React.createClass({
 		}
 
 		return (<form onSubmit={this.submitWrapper}>
-			{this.props.fields.map((field,idx) => {
+
+			{this.props.fields.length>0 && this.props.vizualization?
+				<div className={"form-group form-group-sm"}>
+					<label htmlFor={"field-"+this.props.fields[0].name.replace(/\./g, "-")} className="fpdi-text-label">
+						{this.props.fields[0].label}
+					</label>
+				</div>
+			:""}
+			{this.props.fields.length>0 && this.props.fields[0].type==AttributeTypes.SELECT_MULTI_FIELD ?
+
+				<div> <ListAttributeInput
+					id={this.props.fields}
+					fieldDef={this.props.fields}
+					ref={this.props.fields.name}
+					key={this.props.fields.name}
+					undeletable={this.props.undeletable}
+					deleteFunc={this.props.deleteFunc}
+					editFunc={this.props.editFunc}
+					alterable={this.props.alterable}
+					vizualization={this.props.vizualization}
+					isDocument={this.props.isDocument}
+					onClick={this.props.onClick}
+					onChage={this.props.onChage}
+					/>
+					</div>
+				:
+
+				this.props.fields.map((field,idx) => {
+
 				if (field.type != AttributeTypes.BUDGET_FIELD
 					&& field.type != AttributeTypes.ACTION_PLAN_FIELD
 					&& field.type != AttributeTypes.SCHEDULE_FIELD
 					&& field.type != AttributeTypes.TABLE_FIELD
 					&& field.type != AttributeTypes.ATTACHMENT_FIELD) {
-						showButtons = !this.props.vizualization;
 
-						if(showButtons && this.props.showButtons != null){
+						showButtons = !this.props.vizualization;
+						if(showButtons && this.props.showButtons !=null){
 							showButtons = this.props.showButtons;
 						}
+						return (<div>
 
-						return (<AttributeInput
+
+							<ListAttributeInput
 							id={field.id}
 							index={idx}
 							fieldDef={field}
@@ -213,6 +246,8 @@ var VerticalForm =  React.createClass({
 							onClick={this.props.onClick}
 							onChage={this.props.onChage}
 							/>
+							<br/>
+							</div>
 						);
 				}
 				if (field.required)
@@ -265,7 +300,3 @@ var VerticalForm =  React.createClass({
 		</form>);
 	}
 });
-
-export default {
-	VerticalForm: VerticalForm
-};

@@ -34,6 +34,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+		console.log("D U")
 		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -90,7 +91,7 @@ export default React.createClass({
 
 	render() {
 		if (this.state.isLoading === true) {
-			return <LoadingGauge/>;
+			//return <LoadingGauge/>;
 		}
 
 		if (this.state.planRiskData) {

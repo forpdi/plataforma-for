@@ -19,14 +19,14 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_CREATE: 'unit-create',
 	ACTION_DESTROY: 'unit-destroy',
 	ACTION_FIND: 'unit-find',
-	ACTION_RETRIEVE: 'unit-retrieve',
-	ACTION_UPDATE: 'unit-update',
+	ACTION_RETRIEVE_UNIT: 'unit-retrieveUnit',
+	ACTION_UPDATE_UNIT: 'unit-updateUnit',
 	ACTION_ARCHIVE: "unit-archive",
 	ACTION_UNARCHIVE: "unit-unarchive",
 	ACTION_FIND_ARCHIVED: 'unit-findArchived',
 	ACTION_FIND_UNARCHIVED: 'unit-findUnarchived',
 	ACTION_MAIN_MENU_STATE: "unit-mainMenuState",
-	ACTION_DELETE: "unit-delete",
+	ACTION_DELETE_UNIT: "unit-deleteUnit",
 	ACTION_NEWUNIT: "unit-newUnit",
 	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
@@ -177,18 +177,54 @@ var UnitStore = Fluxbone.Store.extend({
 
 	retrieveUnit(data) {
 		var me = this;
-		var model = new me.model();
-		model.fetch({
-			url: this.url +"/"+ data,
+		$.ajax({
+			url: `${me.url}/${data.unitId}`,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
 			success(model) {
-				me.trigger("retrivedunit", model);
+				me.trigger("unitRetrieved", model);
 			},
-			error(model, response, options) {
-				me.handleRequestErrors([], options.xhr);
+			error(opts, status, errorMsg) {
+				me.trigger("unitRetrieved", opts);
 			}
 		});
 	},
 
+	updateUnit(data) {
+		var me = this;
+		$.ajax({
+			url: me.url,
+			method: 'PUT',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				unit: data.unit,
+			}),
+			success(model) {
+				me.trigger("unitUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unitUpdated", opts);
+			}
+		});
+	},
+
+	deleteUnit(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/${data.id}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("unitDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unitDeleted", opts);
+			}
+		});
+	},
 
 	mainMenuState(data){
 		var me = this;

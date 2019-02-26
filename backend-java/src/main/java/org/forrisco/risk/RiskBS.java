@@ -38,35 +38,11 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
  * @author Matheus Nascimento
  */
 @RequestScoped
-public class RiskBS implements Business {
-	
-	//protected final Logger LOGGER;
+public class RiskBS extends HibernateBusiness {
+
 	
 	@Inject protected HibernateDAO dao;
 	@Inject protected HttpServletRequest request;
-	
-	/*public HibernateBusiness() {
-		LOGGER = Logger.getLogger(this.getClass());
-	}*/
-	
-	@Override
-	public <E extends Serializable> E exists(Serializable id, Class<E> clazz) {
-		return this.dao.exists(id, clazz);
-	}
-	
-	@Override
-	public <E extends Serializable> void persist(E model) {
-		this.dao.persist(model);
-	}
-	
-	@Override
-	public <E extends Serializable> void remove(E model) {
-		this.dao.delete(model);
-	}
-	
-	public <E extends Serializable> void save(E model) {
-		this.dao.save(model);
-	}
 	
 
 
@@ -168,10 +144,13 @@ public class RiskBS implements Business {
 	public void saveActivities(Risk risk) {	
 		
 		for(RiskActivity activity : risk.getActivities().getList()) {
+			activity.setId(null);
 			activity.setRisk(risk);
 			activity.setDeleted(false);
 			activity.setName( activity.getActivity() +" - "+ activity.getProcess().getName());
-			activity.setLinkFPDI(activity.getLinkFPDI()+"/#/forrisco/plan/x/unit/"+activity.getRisk().getUnit().getId());//pegar link correto da unidade que contem o processo
+			
+			//pegar link correto da unidade que contem o processo
+			activity.setLinkFPDI("#/forrisco/plan-risk/"+activity.getRisk().getUnit().getPlan().getId()+"/unit/"+activity.getRisk().getUnit().getId());
 			this.dao.persist(activity);
 		}
 	}
@@ -185,11 +164,13 @@ public class RiskBS implements Business {
 	public void saveProcesses(Risk risk) {
 		
 		for(RiskProcess process : risk.getProcess().getList()) {
+			process.setId(null);
 			process.setRisk(risk);
 			process.setDeleted(false);
 			process.setName(process.getProcess().getObjective()+ " - " + process.getProcess().getName());
 			
-			process.setLinkFPDI(process.getLinkFPDI()+"/#/forrisco/plan/x/unit/"+process.getRisk().getUnit().getId());//pegar link correto da unidade que contem o processo
+			//pegar link correto da unidade que contem o processo
+			process.setLinkFPDI("#/forrisco/plan-risk/"+process.getRisk().getUnit().getPlan().getId()+"/unit/"+process.getRisk().getUnit().getId());
 			this.dao.persist(process);
 		}
 	}
@@ -199,16 +180,25 @@ public class RiskBS implements Business {
 	 * 
 	 * @param PaginatedList<RiskStrategy>
 	 *            instância de uma lista de objetivos estratégicos
+	 * @throws Exception 
 	 */
-	public void saveStrategies(Risk risk) {
+	public void saveStrategies(Risk risk) throws Exception {
 		
 		for(RiskStrategy strategy : risk.getStrategies().getList()) {
+			strategy.setId(null);
 			strategy.setRisk(risk);
 			strategy.setDeleted(false);
 			
-			Plan plan = this.dao.exists(this.dao.exists(strategy.getStructure().getId(), StructureLevelInstance.class).getId(), Plan.class);
+			StructureLevelInstance structure =this.dao.exists(strategy.getStructure().getId(), StructureLevelInstance.class);
+			Plan plan = this.dao.exists(structure.getPlan().getId(), Plan.class);
+
+			if(plan ==null) {
+				throw new Exception("Objetivo do PDI não foi encontrado");
+			}
 			
-			strategy.setLinkFPDI(strategy.getLinkFPDI()+"/#/plan/"+plan.getParent().getId()+"/details/subplan/level/"+strategy.getStructure().getId());
+			//pegar link correto do Objetivo na Plataforma ForPDI.
+			strategy.setLinkFPDI("#/plan/"+plan.getParent().getId()+"/details/subplan/level/"+strategy.getStructure().getId());
+			strategy.setName(structure.getName());
 			this.dao.persist(strategy);
 		}
 	}
@@ -217,6 +207,8 @@ public class RiskBS implements Business {
 	
 	
 
+	
+	
 	
 	/**
 	 *Deleta do banco de dados  graus de risco
@@ -273,7 +265,82 @@ public class RiskBS implements Business {
 		this.persist(contingency);
 	}
 	
-
+	/**
+	 * Deleta do banco de dados uma atividade do processo
+	 * 
+	 * @param RiskActivity,
+	 *			instância da atividade do processo
+	 */
+	private void delete(RiskActivity act) {
+		act.setDeleted(true);
+		this.persist(act);
+	}
+	
+	/**
+	 * Deleta do banco de dados um processo do objetivo
+	 * 
+	 * @param RiskProcess,
+	 *			instância do processo
+	 */
+	private void delete(RiskProcess pro) {
+		pro.setDeleted(true);
+		this.persist(pro);
+	}
+	
+	/**
+	 * Deleta do banco de dados um objetivo estratégico
+	 * 
+	 * @param RiskStrategy,
+	 *			instância do objetivo
+	 */
+	private void delete(RiskStrategy str) {
+		str.setDeleted(true);
+		this.persist(str);
+	}
+	
+	/**
+	 * Deleta do banco de dados as atividades,
+	 *	os processos e os objetivos estratégicos de um risco
+	 * 
+	 * @param Risk,
+	 *			instância do risco
+	 */
+	public void deleteAPS(Risk oldrisk) {
+		
+		Risk risk = this.dao.exists(oldrisk.getId(), Risk.class);
+		if (risk == null) {
+			return;
+		}  
+		
+		PaginatedList<RiskActivity> activity= this.listRiskActivity(risk);
+		PaginatedList<RiskProcess> process= this.listRiskProcess(risk);
+		PaginatedList<RiskStrategy> strategy= this.listRiskStrategy(risk);
+		
+		
+		for(RiskActivity act : activity.getList()) {
+			this.delete(act);
+		}
+		
+		for(RiskProcess pro : process.getList()) {
+			this.delete(pro);
+		}
+		
+		for(RiskStrategy str : strategy.getList()) {
+			this.delete(str);
+		}
+	}
+	
+	
+	/**
+	 * Deleta do banco de dados um risco,
+	 * 
+	 * @param Risk,
+	 *			instância do risco
+	 */
+	public void delete(Risk risk) {
+		risk.setDeleted(true);
+		this.persist(risk);
+	}
 	
 	
 	
@@ -354,37 +421,7 @@ public class RiskBS implements Business {
 		
 		return results;
 	}
-		/*PaginatedList<Risk> results = new PaginatedList<Risk>();
-		List<Risk> risks= new ArrayList<Risk>();
-		
-		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("unit", unit));
-		
-		for( ProcessUnit pu : this.dao.findByCriteria(criteria, ProcessUnit.class)){
-			risks.addAll(this.listRiskbyProcessUnit(pu));
-		}
-		
-		results.setList(risks);
-		results.setTotal((long) risks.size());*
-	
 
-
-	**
-	 * Retorna lista de riscos a partir de processunit
-	 * 
-	 * @param ProcessUnit,
-	 *            instância processunit
-	 * 
-	 * @return List<Risk>
-	 *
-	private List<Risk> listRiskbyProcessUnit(ProcessUnit pu) {
-		Criteria criteria = this.dao.newCriteria(Risk.class)
-		.add(Restrictions.eq("deleted", false))
-		.add(Restrictions.eq("pu", pu));
-		
-		return this.dao.findByCriteria(criteria, Risk.class);
-	}*/
 
 	//recuperar o risklevel do risco
 	//risco -> unidade -> plano -> politica -> risco level
@@ -395,8 +432,9 @@ public class RiskBS implements Business {
 	 *            instância processunit
 	 * 
 	 * @return List<Risk>
+	 * @throws Exception 
 	 */
-	public RiskLevel getRiskLevelbyRisk(Risk risk, Policy policy) {
+	public RiskLevel getRiskLevelbyRisk(Risk risk, Policy policy) throws Exception {
 		
 		if(policy == null) {
 			Unit unit = this.exists(risk.getUnit().getId(), Unit.class);
@@ -420,7 +458,7 @@ public class RiskBS implements Business {
 		int linha=0;
 		int coluna=0;
 		for(int i=0;i<total;i++){
-			if(i%policy.getNline() ==0){
+			if(i%(policy.getNline()+1) ==0){
 				
 				if(risk.getProbability().equals(matrix[i][0])){
 					i=total;
@@ -436,9 +474,13 @@ public class RiskBS implements Business {
 			coluna+=1;
 		}
 		
-		//String result=matrix[((linha)*policy.getNcolumn()-1)+coluna][0];
+		int position =((linha-1)*(policy.getNcolumn()+1))+coluna;
 		
-		String result=matrix[((linha-1)*policy.getNcolumn())+coluna][0];
+		if(position>=total) {
+			throw new Exception("falha ao carregar grau de risco");
+		}
+		
+		String result=matrix[position][0];
 		
 		Criteria criteria = this.dao.newCriteria(RiskLevel.class)
 				.add(Restrictions.eq("deleted", false))
@@ -588,8 +630,90 @@ public class RiskBS implements Business {
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
+	
+	/**
+	 * Retorna os objetivos estrategicos vinculados ao risco
+	 * 
+	 * @param risk
+	 * 			instância do Risk
+	 * @return 
+	 * 		PaginatedList<RiskStrategy> lista de objetivos estrategicos
+	 */
+	public PaginatedList<RiskStrategy> listRiskStrategy(Risk risk) {
+		PaginatedList<RiskStrategy> results = new PaginatedList<RiskStrategy>();
+		
+		Criteria criteria = this.dao.newCriteria(RiskStrategy.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk));
+
+		Criteria count = this.dao.newCriteria(RiskStrategy.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
+
+		results.setList(this.dao.findByCriteria(criteria, RiskStrategy.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+	}
+	
+	/**
+	 * Retorna os objetivos de processo do risco
+	 * 
+	 * @param risk
+	 * 			instância do Risk
+	 * @return 
+	 * 		PaginatedList<RiskProcess> lista de objetivos de processo
+	 */
+	public PaginatedList<RiskProcess> listRiskProcess(Risk risk) {
+		PaginatedList<RiskProcess> results = new PaginatedList<RiskProcess>();
+		
+		Criteria criteria = this.dao.newCriteria(RiskProcess.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk));
+
+		Criteria count = this.dao.newCriteria(RiskProcess.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
+
+		results.setList(this.dao.findByCriteria(criteria, RiskProcess.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+	}
+	
+	/**
+	 * Retorna as atividades do processo do risco
+	 * 
+	 * @param risk
+	 * 			instância do Risk
+	 * @return 
+	 * 		PaginatedList<RiskActivity> lista de atividades do processo 
+	 */
+	public PaginatedList<RiskActivity> listRiskActivity(Risk risk) {
+		PaginatedList<RiskActivity> results = new PaginatedList<RiskActivity>();
+		
+		Criteria criteria = this.dao.newCriteria(RiskActivity.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk));
+
+		Criteria count = this.dao.newCriteria(RiskActivity.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
+
+		results.setList(this.dao.findByCriteria(criteria, RiskActivity.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+	}
 
 
+	
+	
+	
+	
+	
+	
+	
 	
 	
 
@@ -691,5 +815,7 @@ public class RiskBS implements Business {
 		this.persist(risk);
 		
 	}
+
+	
 	
 }

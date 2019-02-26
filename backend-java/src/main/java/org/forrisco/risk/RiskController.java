@@ -11,12 +11,14 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
-import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -50,7 +52,7 @@ public class RiskController extends AbstractController {
 	@NoCache
 	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Risk risk){
-		try {
+		try {			
 			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
 			if (unit == null) {
 				this.fail("A unidade solicitada não foi encontrada.");
@@ -129,6 +131,7 @@ public class RiskController extends AbstractController {
 	@NoCache
 	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Monitor monitor){
+//		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(monitor)));
 		try {
 			Risk risk = this.riskBS.exists(monitor.getRisk().getId(), Risk.class);
 			if (risk == null) {
@@ -143,7 +146,8 @@ public class RiskController extends AbstractController {
 			}
 			
 			monitor.setId(null);
-			monitor.setBegin(new Date());
+//			monitor.setBegin(new Date());
+			
 			this.riskBS.saveMonitor(monitor);
 			
 			risk.setImpact(monitor.getImpact());
@@ -181,9 +185,14 @@ public class RiskController extends AbstractController {
 				this.fail("Usuário solicitada não foi encontrado.");
 				return;
 			}
+			if (IncidentType.getById(incident.getType()) == null) {
+				this.fail("Tipo de incidente inválido.");
+				return;
+			}
 			
 			incident.setId(null);
-			incident.setBegin(new Date());
+//			incident.setBegin(new Date());
+			
 			this.riskBS.saveIncident(incident);
 			
 			this.success(incident);
@@ -248,6 +257,17 @@ public class RiskController extends AbstractController {
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 			} else {
+				
+			/*RiskActivity act = new RiskActivity();
+				act.setProcess(process);
+				save(Risk)
+				*/
+				
+				risk.setStrategies(this.riskBS.listRiskStrategy(risk));
+				risk.setProcesses(this.riskBS.listRiskProcess(risk));
+				risk.setActivities(this.riskBS.listRiskActivity(risk));
+				
+				
 				this.success(risk);
 			}
 		} catch (Throwable ex) {
@@ -255,32 +275,7 @@ public class RiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	/**
-	 * Retorna riscos.
-	 * 
-	 * @param Unit
-	 *            Id da unidade.
-	 * @return <PaginatedList> Risk
-	 *
-	@Get( PATH + "")
-	@NoCache
-	public void listRisksbyUnit(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			} 
-			
-			PaginatedList<Risk> units= this.riskBS.listRiskbyUnit(unit);
-			this.success(units.getList(),unitId);
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}*/
+
 	
 	/**
 	 * Retorna unidades.
@@ -644,6 +639,76 @@ public class RiskController extends AbstractController {
 	}
 	
 	
+	/**
+	 * Atualiza risco.
+	 * 
+	 * @param id
+	 *            Id da ação a ser atualizada.
+	 * @throws Exception 
+	 */
+	@Post( PATH + "/update")
+	@NoCache
+	@Consumes
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void updateRisk(@NotNull Risk risk) throws Exception {
+		//try {
+			Risk oldrisk = this.riskBS.exists(risk.getId(), Risk.class);
+			if (oldrisk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			User user = this.riskBS.exists(risk.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário solicitado não foi encontrado.");
+				return;
+			} 
+			
+			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrada.");
+				return;
+			}
+			
+			oldrisk.setUnit(unit);
+			oldrisk.setUser(user);
+			oldrisk.setImpact(risk.getImpact());
+			oldrisk.setProbability(risk.getProbability());
+			oldrisk.setPeriodicity(risk.getPeriodicity());
+			oldrisk.setCode(risk.getCode());
+			oldrisk.setLinkFPDI(risk.getLinkFPDI());
+			oldrisk.setName(risk.getName());
+			oldrisk.setReason(risk.getReason());
+			oldrisk.setResult(risk.getResult());
+			oldrisk.setTipology(risk.getTipology());
+			oldrisk.setType(risk.getType());
+			oldrisk.setRisk_act_process(risk.isRisk_act_process());
+			oldrisk.setRisk_obj_process(risk.isRisk_obj_process());
+			oldrisk.setRisk_pdi(risk.isRisk_pdi());
+			
+			
+			oldrisk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(oldrisk,null));
+
+			if (oldrisk.getRiskLevel() == null) {
+				this.fail("Grau de Risco solicitado não foi encontrado.");
+				return;
+			}
+			
+			/*this.riskBS.deleteAPS(oldrisk);
+			
+			this.riskBS.saveActivities(risk);
+			this.riskBS.saveProcesses(risk);
+			this.riskBS.saveStrategies(risk);
+			
+			*/
+			this.riskBS.saveRisk(oldrisk);
+			
+			this.success(oldrisk);
+		/*} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}*/
+	}
 	
 	
 	
@@ -755,11 +820,16 @@ public class RiskController extends AbstractController {
 				this.fail("O usuário solicitado não foi encontrado.");
 				return;
 			} 
+			if (IncidentType.getById(incident.getType()) == null) {
+				this.fail("Tipo de incidente inválido.");
+				return;
+			}
 			
 			oldincident.setAction(incident.getAction());
 			oldincident.setDescription(incident.getDescription());
 			oldincident.setUser(user);
 			oldincident.setType(incident.getType());
+			oldincident.setBegin(incident.getBegin());
 			
 			this.riskBS.saveIncident(oldincident);
 			
@@ -812,6 +882,44 @@ public class RiskController extends AbstractController {
 	
 	
 	
+	
+	
+	
+	/**
+	 * Exclui um risco.
+	 * 
+	 * @param id
+	 *            Id do risco.
+	 */
+	@Delete( PATH + "/{actionId}")
+	@NoCache
+	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	public void deleteRisk(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			
+			this.riskBS.deleteAPS(risk);
+			
+			/*TODO
+			this.delete(monitors);
+			this.delete(incident);
+			this.delete(contingency);
+			*/
+			
+			this.riskBS.delete(risk);
+			this.success();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	/**
 	 * Exclui ação preventiva.
 	 * 
@@ -825,7 +933,7 @@ public class RiskController extends AbstractController {
 		try {
 			PreventiveAction action = this.riskBS.exists(actionId, PreventiveAction.class);
 			if (action == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("A ação solicitada não foi encontrado.");
 				return;
 			} 
 			
@@ -851,7 +959,7 @@ public class RiskController extends AbstractController {
 		try {
 			Monitor monitor = this.riskBS.exists(monitorId, Monitor.class);
 			if (monitor == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("O monitoramento solicitado não foi encontrado.");
 				return;
 			} 
 			
@@ -877,7 +985,7 @@ public class RiskController extends AbstractController {
 		try {
 			Incident incident = this.riskBS.exists(incidentId, Incident.class);
 			if (incident == null) {
-				this.fail("A ação solicitado não foi encontrado.");
+				this.fail("O incidente solicitado não foi encontrado.");
 				return;
 			} 
 			
