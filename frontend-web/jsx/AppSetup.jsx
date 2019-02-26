@@ -76,6 +76,7 @@ import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/Regist
 import Forrisco_RegistrySubunit from "forpdi/jsx_forrisco/planning/view/unit/RegistrySubunit.jsx";
 import Forrisco_UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
 import Forrisco_UnitRegistryItem from "forpdi/jsx_forrisco/planning/view/unit/item/UnitRegistryItem.jsx";
+import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
 
 
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";

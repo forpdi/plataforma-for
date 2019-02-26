@@ -11,11 +11,15 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.objective.RiskActivity;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -130,6 +134,7 @@ public class RiskController extends AbstractController {
 	@NoCache
 	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
 	public void save(@NotNull @Valid Monitor monitor){
+//		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(monitor)));
 		try {
 			Risk risk = this.riskBS.exists(monitor.getRisk().getId(), Risk.class);
 			if (risk == null) {
@@ -144,7 +149,8 @@ public class RiskController extends AbstractController {
 			}
 			
 			monitor.setId(null);
-			monitor.setBegin(new Date());
+//			monitor.setBegin(new Date());
+			
 			this.riskBS.saveMonitor(monitor);
 			
 			risk.setImpact(monitor.getImpact());

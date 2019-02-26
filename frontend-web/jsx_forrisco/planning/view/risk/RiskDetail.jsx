@@ -144,6 +144,7 @@ export default React.createClass({
 				<Monitor
 					visualization={this.state.visualization}
 					risk={this.state.riskModel}
+					planRiskId={this.props.params.planRiskId}
 				/>)
 
 			case 2:
