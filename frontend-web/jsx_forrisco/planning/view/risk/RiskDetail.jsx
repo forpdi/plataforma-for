@@ -45,12 +45,17 @@ export default React.createClass({
 					riskModel:model.data,
 					loading:false
 				})
-			}
-		})
 
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
-		});
+				/*_.defer(() => {
+					this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
+				});*/
+			}
+
+			/*_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
+			});
+*/
+		})
 
 		this.refresh()
 	},
@@ -63,6 +68,10 @@ export default React.createClass({
 		RiskStore.dispatch({
 			action:RiskStore.ACTION_FIND_RISK,
 			data: this.props.params.riskId
+		})
+
+		this.setState({
+			visualization:true
 		})
 	},
 
@@ -185,6 +194,7 @@ export default React.createClass({
 	},
 
 	render() {
+
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}

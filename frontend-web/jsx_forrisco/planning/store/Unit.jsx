@@ -31,6 +31,7 @@ var UnitStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
+	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
 	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
 	model: unitModel,
@@ -225,6 +226,23 @@ var UnitStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	retrieveProcess(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/process",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("retrieveProcess", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("retrieveProcess", opts);
+			}
+		});
+	},
+
 
 	mainMenuState(data){
 		var me = this;

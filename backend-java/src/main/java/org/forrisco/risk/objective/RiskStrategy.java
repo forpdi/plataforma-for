@@ -32,7 +32,7 @@ public class RiskStrategy extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@JoinColumn(name="structure_id") 
 	@ManyToOne(targetEntity=StructureLevelInstance.class, optional=false, fetch=FetchType.EAGER)
 	private StructureLevelInstance structure;
