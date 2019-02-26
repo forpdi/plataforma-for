@@ -92,7 +92,7 @@ public class PlanRiskController extends AbstractController {
 		if (page == null) page = 0;
 		try {
 			if (this.domain != null) {
-			PaginatedList<PlanRisk> planRisks = this.planRiskBS.listPlanRisk(page);
+			PaginatedList<PlanRisk> planRisks = this.planRiskBS.listPlanRisk(this.domain.getCompany(),page);
 				this.success(planRisks);
 			} else {
 				this.fail("Não possui domínio!");

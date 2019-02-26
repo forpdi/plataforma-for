@@ -133,9 +133,9 @@ export default React.createClass({
 		var me = this;
 
 		/* Redireciona para as Informações gerais ao carregar a Tree*/
-		this.context.router.push(
-			"/forrisco/plan-risk/" + planRisk.id + "/item/" + planRisk.id + "/info"
-		);
+		if(!this.props.location.pathname.includes("unit")){
+			this.context.router.push("/forrisco/plan-risk/" + planRisk.id + "/item/" + planRisk.id + "/info");
+		}
 		/* ____________________  */
 
 		var  info = {

@@ -362,7 +362,7 @@ export default React.createClass({
 
 		}else if(this.props.fieldDef[0].type == AttributeTypes.SELECT_MULTI_FIELD){
 
-			var fields=[]
+			//var fields=[]
 
 			if(!this.state.selected){
 				var fields=[]
@@ -372,27 +372,20 @@ export default React.createClass({
 					}
 				}
 
-
 				var optionsField=[]
 
 				for(var i in this.props.fieldDef[0].optionsField){
-
 					optionsField.push({ label: this.props.fieldDef[0].optionsField[i].label, value: this.props.fieldDef[0].optionsField[i].value})
 				}
 
 				this.state.selected=true
-
 
 				this.setState({
 					selectedOption:fields,
 					optionsField:optionsField
 				})
 				this.handleSelect(fields)
-
-
 			}
-
-			//console.log("selectedOption",this.state.selectedOption)
 
 			fieldEl=(<ReactMultiSelectCheckboxes
 				className={"multiselect"}

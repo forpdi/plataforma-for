@@ -3,6 +3,7 @@ package org.forrisco.core.plan;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.forpdi.core.company.Company;
 import org.forrisco.core.policy.Policy;
 
 import org.hibernate.Criteria;
@@ -34,16 +35,20 @@ public class PlanRiskBS extends HibernateBusiness {
 	 * @param page
 	 * @return
 	 */
-	public PaginatedList<PlanRisk> listPlanRisk(Integer page) {
+	public PaginatedList<PlanRisk> listPlanRisk(Company company, Integer page) {
 		
 		PaginatedList<PlanRisk> results = new PaginatedList<PlanRisk>();
 		
 		Criteria criteria = this.dao.newCriteria(PlanRisk.class)
 				.add(Restrictions.eq("deleted", false))
+				.createAlias("policy", "policy")
+				.add(Restrictions.eq("policy.company", company))
 				.addOrder(Order.asc("id"));						
 		
 		Criteria count = this.dao.newCriteria(PlanRisk.class)
 				.add(Restrictions.eq("deleted", false))
+				.createAlias("policy", "policy")
+				.add(Restrictions.eq("policy.company", company))
 				.setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, PlanRisk.class));
