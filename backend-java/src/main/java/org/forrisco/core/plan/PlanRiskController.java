@@ -185,7 +185,7 @@ public class PlanRiskController extends AbstractController {
 					this.planRiskItemBS.delete(field);
 				}
 				
-				//this.planRiskItemBS.deleteSubitens(item);
+				this.planRiskItemBS.deleteSubItens(item);
 				this.planRiskItemBS.delete(item);
 			}
 			

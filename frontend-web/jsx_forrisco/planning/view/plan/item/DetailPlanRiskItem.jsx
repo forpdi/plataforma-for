@@ -6,6 +6,7 @@ import Validation from "forpdi/jsx_forrisco/core/util/Validation";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/EditPlanRiskItem.jsx";
 import Messages from "forpdi/jsx/core/util/Messages";
+import Modal from "@/core/widget/Modal";
 import _ from "underscore";
 
 var VerticalForm = Form.VerticalForm;
@@ -73,6 +74,11 @@ export default React.createClass({
 					onEdit: false
 				});
 			}
+
+			//Construção da Aba Superior
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.itemTitle);
+			});
 		}, this);
 		this.refreshComponent(this.props.params.itemId);
 
@@ -81,17 +87,31 @@ export default React.createClass({
 	componentWillReceiveProps(newProps) {
 		if (this.props.params.itemId !== newProps.params.itemId) {
 			this.refreshComponent(newProps.params.itemId);
-
-
-			// if(this.state.tabPath !== this.props.location.pathname) {
-			//
-			// }
 		}
 	},
 
 	onEdit() {
 		this.setState({
 			onEdit:true
+		})
+	},
+
+	onDeleteItem() {
+		var me = this;
+		var msg = "Você tem certeza que deseja excluir esse item?";
+
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_DELETE_ITEM,
+				data: this.props.params.itemId
+			});
+		}, msg, me.refreshCancel);
+
+		PlanRiskItemStore.on('deletePlanRiskItem', response => {
+			if(response.success === true) {
+				this.context.router.push("forrisco/home/");
+			}
 		})
 	},
 
@@ -142,14 +162,14 @@ export default React.createClass({
 		return(
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
-					<Link>
+					<Link onClick={this.onEdit}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels" onClick={this.onEdit}> Editar Informações </span>
+							<span id="menu-levels"> Editar Informações </span>
 						</span>
 					</Link>
 				</li>
 				<li>
-					<Link>
+					<Link onClick={this.onDeleteItem}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
 						<span id="menu-levels"> Deletar Item </span>
 					</span>

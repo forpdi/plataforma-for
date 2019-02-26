@@ -42,10 +42,9 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		var content = [];
 		PlanRiskItemStore.on('detailSubItem', response => {
+			var content = [];
 			if (response.data.length !== 0) {
-
 				response.data.planRiskSubItemField.map(field => {
 					content.push({
 						fieldName: field.name,
@@ -75,25 +74,23 @@ export default React.createClass({
 					onEdit: false
 				});
 			}
+
+			//Construção da Aba Superior
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.itemTitle);
+			});
 		}, this);
 		this.refreshComponent(this.props.params.subItemId);
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (this.props.params.subItemId !== newProps.subItemId) {
-			this.refreshComponent(newProps.subItemId);
+		if (this.props.params.subItemId !== newProps.params.subItemId) {
+			this.refreshComponent(newProps.params.subItemId);
 		}
+	},
 
-		if (this.state.tabPath !== this.props.location.pathname) {
-			// _.defer(() => {
-			// 	this.context.tabPanel.addTab(
-			// 		this.props.location.pathname,
-			// 		this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
-			// 			this.state.itemTitle.substring(0, 15)
-			// 	);
-			// });
-		}
-
+	componentWillUnmount() {
+		PlanRiskItemStore.off(null, null, this);
 	},
 
 	refreshComponent(subItemId) {

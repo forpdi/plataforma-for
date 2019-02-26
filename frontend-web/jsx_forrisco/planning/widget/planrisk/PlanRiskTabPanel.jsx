@@ -127,13 +127,13 @@ export default React.createClass({
 			hash = "",
 			tabs = [];
 		for (var t = 0; t < this.state.tabs.length; t++) {
-			if (t != index) {
+			if (t !== index) {
 				tabs.push(this.state.tabs[t]);
 				hash += this.state.tabs[t].props.to + "|||" + this.state.tabs[t].props.title + "|||";
 			}
 		}
 		if (this.context.router.isActive(this.state.tabs[index].props.to, false)) {
-			if (tabs.length == 0) {
+			if (tabs.length === 0) {
 				newPath = "/plan-risk/" + this.props.params.id + "/details";
 			} else {
 				newPath = tabs[(index >= tabs.length) ? (tabs.length - 1) : index].props.to;
