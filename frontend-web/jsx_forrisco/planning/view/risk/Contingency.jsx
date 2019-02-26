@@ -327,7 +327,7 @@ export default React.createClass({
 					resizable={true}
 					pageSize={this.state.data.length}
 					NoDataComponent={() =>
-						<div className="marginLeft10">
+						<div className="rt-td">
 							Nenhuma ação de contingenciamento cadastrada
 						</div>
 					}
