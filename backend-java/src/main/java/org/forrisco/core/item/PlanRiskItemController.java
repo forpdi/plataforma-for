@@ -187,7 +187,8 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
-	 * 
+	 * Atualiza campos e título do item
+	 * @param planRiskItem
 	 */
 	@Post( PATH + "/update")
 	@Consumes
@@ -220,6 +221,46 @@ public class PlanRiskItemController extends AbstractController {
 			
 			existent.setDescription(planRiskItem.getDescription());
 			existent.setName(planRiskItem.getName());
+			this.planRiskItemBS.persist(existent);
+			this.success(existent);
+			
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	@Post( PATH + "/update-subitem")
+	@Consumes
+	@NoCache
+	public void updatePlanRiskSubItem(@NotNull @Valid PlanRiskSubItem planRiskSubItem) {
+		try {
+			PlanRiskSubItem existent = planRiskItemBS.exists(planRiskSubItem.getId(), PlanRiskSubItem.class);
+			
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
+			
+			if(existent.getPlanRiskItem() == null) {
+				this.fail("Subitem sem item associado");	
+			}
+			
+			PaginatedList<PlanRiskSubItemField> fields = this.planRiskItemBS.listSubFieldsBySubItem(planRiskSubItem);
+			
+			for(int i = 0; i < fields.getList().size(); i++) {
+				this.planRiskItemBS.delete(fields.getList().get(i));
+			}
+			
+			for(int i = 0; i < planRiskSubItem.getPlanRiskSubItemField().size(); i++) {
+				PlanRiskSubItemField planRiskItemField = planRiskSubItem.getPlanRiskSubItemField().get(i);
+				
+				planRiskItemField.setPlanRiskSubItem(existent);
+				this.planRiskItemBS.save(planRiskItemField);
+			}
+			
+			existent.setDescription(planRiskSubItem.getDescription());
+			existent.setName(planRiskSubItem.getName());
 			this.planRiskItemBS.persist(existent);
 			this.success(existent);
 			

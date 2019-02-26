@@ -133,6 +133,8 @@ ReactDOM.render((
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
 						<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
+						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
+						<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 					</Route>
 
 
@@ -153,8 +155,6 @@ ReactDOM.render((
 						</Route>
 					</Route>
 
-
-
 					<Route path="system" component={SystemManagement}>
 						<IndexRedirect to="general" />
 						<Route path="companies" component={Companies}>
@@ -169,9 +169,6 @@ ReactDOM.render((
 					</Route>
 					<Route path="*" component={NotFound} />
 				</Route>
-
-
-
 			</Route>
 
 			<Route path="" component={ForPDIApplication}>

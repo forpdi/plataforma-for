@@ -75,21 +75,17 @@ export default React.createClass({
 			}
 		}, this);
 		this.refreshComponent(this.props.params.itemId);
+
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (this.props.params.itemId !== newProps.params.itemId) {
 			this.refreshComponent(newProps.params.itemId);
 
-			if(this.state.tabPath !== this.props.location.pathname) {
-				// _.defer(() => {
-				// 	this.context.tabPanel.addTab(
-				// 		this.props.location.pathname,
-				// 		this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
-				// 			this.state.itemTitle.substring(0, 15)
-				// 	);
-				// });
-			}
+
+			// if(this.state.tabPath !== this.props.location.pathname) {
+			//
+			// }
 		}
 	},
 
@@ -109,7 +105,7 @@ export default React.createClass({
 
 		this.setState({
 			field: []
-		})
+		});
 	},
 
 	componentWillUnmount() {
@@ -153,7 +149,7 @@ export default React.createClass({
 					</Link>
 				</li>
 				<li>
-					<Link onClick={this.deletePlanRisk}>
+					<Link>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
 						<span id="menu-levels"> Deletar Item </span>
 					</span>

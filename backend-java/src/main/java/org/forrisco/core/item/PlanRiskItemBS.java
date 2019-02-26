@@ -184,6 +184,18 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		this.persist(planRiskSubItem);
 	}
 	
+	/**
+	 * Deleta do banco de dados um subcampo
+	 * 
+	 * @param PlanRiskSubItemField,
+	 *            instância do PlanRiskSubItemField a ser deletado
+	 */
+	
+	public void delete(PlanRiskSubItemField planRiskSubItemField) {
+		planRiskSubItemField.setDeleted(true);
+		this.persist(planRiskSubItemField);
+	}
+	
 	/*public void deleteSubitens(PlanRiskItem planRiskItem) {
 		
 		PaginatedList<PlanRiskSubItem> subitens = this.listSubItemByItem(planRiskItem);

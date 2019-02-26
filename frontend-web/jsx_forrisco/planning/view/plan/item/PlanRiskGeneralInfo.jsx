@@ -37,9 +37,6 @@ export default React.createClass({
 				policy: response.attributes.policy.name,
 				isLoading: false
 			});
-			_.defer(() => {
-				this.context.tabPanel.addTab(this.props.location.pathname,  response.attributes.name);
-			});
 		}, this);
 		this.refreshData(this.props.params.planRiskId);
 	},
