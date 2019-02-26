@@ -36,6 +36,10 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
 	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
 	ACTION_FIND_RISK: "risk-findRisk",
+	ACTION_LIST_MONITOR: "risk-listMonitor",
+	ACTION_NEW_MONITOR: "risk-newMonitor",
+	ACTION_DELETE_MONITOR: "risk-deleteMonitor",
+	ACTION_UPDATE_MONITOR: "risk-updateMonitor",
 	ACTION_LIST_INCIDENT: "risk-listIncident",
 	ACTION_NEW_INCIDENT: "risk-newIncident",
 	ACTION_DELETE_INCIDENT: "risk-deleteIncident",
@@ -44,7 +48,7 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_NEW_CONTINGENCY: "risk-newContingency",
 	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
 	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
-
+	ACTION_RETRIEVE_ACTIVITIES: "risk-retrieveActivities",
 	url: URL,
 	model: RiskModel,
 
@@ -291,6 +295,89 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+
+	listMonitor(data) {
+		var me = this;
+		console.log(data);
+		$.ajax({
+			url: me.url + "/monitor",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data.planId},
+			success(model) {
+				me.trigger("monitorListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorListed", opts);
+			}
+		});
+	},
+
+	newMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/monitornew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				monitor: data.monitor,
+			}),
+			success(model) {
+				me.trigger("monitorCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deleteMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/monitor/${data.monitorId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("monitorDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updateMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/monitor/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				monitor: data.monitor,
+			}),
+			success(model) {
+				me.trigger("monitorUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+
 	listIncident(data) {
 		var me = this;
 		$.ajax({
@@ -447,6 +534,23 @@ var RiskStore = Fluxbone.Store.extend({
 					msg: opts.responseJSON.message,
 				});
 				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	retrieveActivities(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/activity",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data},
+			success(model) {
+				me.trigger("retrieveActivities", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("retrieveActivities", opts);
 			}
 		});
 	},

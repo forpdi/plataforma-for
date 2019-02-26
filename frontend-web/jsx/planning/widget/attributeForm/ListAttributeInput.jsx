@@ -50,7 +50,6 @@ export default React.createClass({
 		};
 	},
 	getInitialState() {
-		console.log(this.props.fieldDef)
 		return {
 			fieldId: "field-"+this.props.fieldDef[0].name.replace(/\./g, "-"),
 			strategicObjectivesPlansParam: -1
@@ -142,8 +141,6 @@ export default React.createClass({
             });
 		}, this);
 
-
-		$( ".css-15brt4p" ).hide()
 	},
 
 	onStrategicObjectivesSelectPlanChange(){
@@ -210,7 +207,8 @@ export default React.createClass({
 	},
 
 	handleSelect(selectedOption){
-			this.setState({ selectedOption });
+		this.props.onChange(selectedOption)
+		this.setState({ selectedOption });
 	},
 
 	render() {
@@ -247,14 +245,10 @@ export default React.createClass({
 				fieldEl=[]
 				for(var i in this.props.fieldDef){
 					fieldEl.push(<div>
-							<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef[i].value}} style={{"display": "unset"}}/>
+							<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef[i].value.name}} style={{"display": "unset"}}/>
 							{this.props.fieldDef[i].link? <a href={this.props.fieldDef[i].link}  >{this.props.fieldDef[i].linkName}</a>:""}
 						</div>)
 				}
-
-				//fieldEl=fields
-
-
 			} else {
 
 				if(this.props.fieldDef.description != null){
@@ -373,22 +367,32 @@ export default React.createClass({
 			if(!this.state.selected){
 				var fields=[]
 				for(var i in this.props.fieldDef){
-					fields.push({ label: this.props.fieldDef[i].value, value: i},)
+					if(this.props.fieldDef[i].isvalue){
+						fields.push({ label: this.props.fieldDef[i].value.name, value: this.props.fieldDef[i].value.id},)
+					}
 				}
+
 
 				var optionsField=[]
 
 				for(var i in this.props.fieldDef[0].optionsField){
-					optionsField.push({ label: this.props.fieldDef[0].optionsField[i].label, value: i})
+
+					optionsField.push({ label: this.props.fieldDef[0].optionsField[i].label, value: this.props.fieldDef[0].optionsField[i].value})
 				}
+
+				this.state.selected=true
+
 
 				this.setState({
 					selectedOption:fields,
-					selected:true,
 					optionsField:optionsField
 				})
+				this.handleSelect(fields)
+
+
 			}
 
+			//console.log("selectedOption",this.state.selectedOption)
 
 			fieldEl=(<ReactMultiSelectCheckboxes
 				className={"multiselect"}

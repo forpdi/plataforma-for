@@ -27,20 +27,20 @@ public class PlanRiskBS extends HibernateBusiness {
 		planRisk.setDeleted(false);
 		this.persist(planRisk);
 	}
+	
 	/**
 	 * Lista os planos de risco
 	 * 
 	 * @param page
 	 * @return
 	 */
-	
 	public PaginatedList<PlanRisk> listPlanRisk(Integer page) {
 		
 		PaginatedList<PlanRisk> results = new PaginatedList<PlanRisk>();
 		
 		Criteria criteria = this.dao.newCriteria(PlanRisk.class)
 				.add(Restrictions.eq("deleted", false))
-				.addOrder(Order.asc("name"));						
+				.addOrder(Order.asc("id"));						
 		
 		Criteria count = this.dao.newCriteria(PlanRisk.class)
 				.add(Restrictions.eq("deleted", false))
@@ -57,7 +57,6 @@ public class PlanRiskBS extends HibernateBusiness {
 	 * @param plan
 	 * @return
 	 */
-	
 	public Policy listPolicybyPlanRisk (PlanRisk plan) {
 			
 		Criteria criteria = this.dao.newCriteria(Policy.class)

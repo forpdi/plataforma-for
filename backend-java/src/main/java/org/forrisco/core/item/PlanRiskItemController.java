@@ -68,7 +68,6 @@ public class PlanRiskItemController extends AbstractController {
 			planRiskItem.setId(null);
 			this.planRiskItemBS.save(planRiskItem);
 			this.success(planRiskItem);
-			//PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listItensByPlanRiskField(planRiskItem);
 			
 			for(int i = 0; i < planRiskItem.getPlanRiskItemField().size(); i++) {
 				PlanRiskItemField planRiskItemField = planRiskItem.getPlanRiskItemField().get(i);
@@ -154,7 +153,7 @@ public class PlanRiskItemController extends AbstractController {
 			if (planRiskItem == null) {
 				this.fail("O Item solicitado não foi encontrado.");
 			} else {
-				planRiskItem.setPlanRiskItemField(this.planRiskItemBS.listItensByPlanRiskField(planRiskItem).getList());
+				planRiskItem.setPlanRiskItemField(this.planRiskItemBS.listFieldsByPlanRiskItem(planRiskItem).getList());
 				this.success(planRiskItem);
 			}
 		} catch (Throwable e) {
@@ -181,6 +180,49 @@ public class PlanRiskItemController extends AbstractController {
 				planRiskSubItem.setPlanRiskSubItemField(this.planRiskItemBS.listSubFieldsBySubItem(planRiskSubItem).getList());
 				this.success(planRiskSubItem);
 			}
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	@Post( PATH + "/update")
+	@Consumes
+	@NoCache
+	public void updatePlanRiskItem(@NotNull @Valid PlanRiskItem planRiskItem) {
+		try {
+			PlanRiskItem existent = planRiskItemBS.exists(planRiskItem.getId(), PlanRiskItem.class);
+			
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
+			
+			if(existent.getPlanRisk() == null) {
+				this.fail("Item sem plano de risco associado");	
+			}
+			
+			PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listFieldsByPlanRiskItem(planRiskItem);
+			
+			for(int i = 0; i < fields.getList().size(); i++) {
+				this.planRiskItemBS.delete(fields.getList().get(i));
+			}
+			
+			for(int i = 0; i < planRiskItem.getPlanRiskItemField().size(); i++) {
+				PlanRiskItemField planRiskItemField = planRiskItem.getPlanRiskItemField().get(i);
+				
+				planRiskItemField.setPlanRiskItem(existent);
+				this.planRiskItemBS.save(planRiskItemField);
+			}
+			
+			existent.setDescription(planRiskItem.getDescription());
+			existent.setName(planRiskItem.getName());
+			this.planRiskItemBS.persist(existent);
+			this.success(existent);
+			
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());

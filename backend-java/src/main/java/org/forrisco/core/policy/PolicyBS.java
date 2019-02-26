@@ -87,7 +87,7 @@ public class PolicyBS extends HibernateBusiness {
 	}
 	
 	/**
-	 * Lista as políticas de uma companhia.
+	 * Lista as políticas de uma instituição.
 	 * @param company
 	 * 			Companhia da qual se deseja obter aspolíticas.
 	 * @param archived
@@ -101,7 +101,7 @@ public class PolicyBS extends HibernateBusiness {
 		PaginatedList<Policy> results = new PaginatedList<Policy>();
 		Criteria criteria = this.dao.newCriteria(Policy.class).add(Restrictions.eq("deleted", false))								
 				.add(Restrictions.eq("archived", archived)).add(Restrictions.eq("company", company))
-				.addOrder(Order.asc("name"));
+				.addOrder(Order.asc("id"));
 		Criteria count = this.dao.newCriteria(Policy.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("archived", archived)).add(Restrictions.eq("company", company))
 				.setProjection(Projections.countDistinct("id"));

@@ -124,32 +124,29 @@ ReactDOM.render((
 
 				<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk} /> /* Cadastrar novo plano de risco*/
 
-				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>        /* Detalhar plano de risco*/
+				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}> /* Detalhar plano de risco*/
 					<IndexRedirect to="item" />
 					<Route path="item">
 						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_PlanRiskTabPanel} />
+						<Route path="overview" /> {/* component={Forrisco_PlanRiskTabPanel} /> */}
 						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco*/
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
 						<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
+						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
+						<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 					</Route>
 
 
 					<Route path="unit">
 						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_UnitTabPanel} />
+						<Route path="overview" />
+
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
-						<Route path=":unitId">
-							<Route path="info" component={Forrisco_UnitGeneralInfo} /> /* Nova subunidade*/
-							<Route path="risk">
-								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
-								<Route path=":riskId" component={Forrisco_RiskDetail}>
-									{//<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
-									}
-								</Route>
-							</Route>
+						<Route path=":unitId/risk">
+							<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
+							<Route path=":riskId" component={Forrisco_RiskDetail}/>
 						</Route>
 
 						<Route path=":unitId" component={Forrisco_RegistryUnit}>
@@ -157,8 +154,6 @@ ReactDOM.render((
 							<Route path="subunit/:subunitId" component={Forrisco_RegistrySubunit} /> /* Detalhar subunidade*/
 						</Route>
 					</Route>
-
-
 
 					<Route path="system" component={SystemManagement}>
 						<IndexRedirect to="general" />
@@ -174,9 +169,6 @@ ReactDOM.render((
 					</Route>
 					<Route path="*" component={NotFound} />
 				</Route>
-
-
-
 			</Route>
 
 			<Route path="" component={ForPDIApplication}>
@@ -234,6 +226,4 @@ ReactDOM.render((
 ),
 	document.getElementById('main-body')
 );
-
 module.exports = true;
-

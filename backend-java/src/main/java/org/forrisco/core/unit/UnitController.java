@@ -11,6 +11,7 @@ import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
+import org.forrisco.core.process.Process;
 
 import com.google.gson.GsonBuilder;
 
@@ -140,6 +141,28 @@ public class UnitController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Retorna processos das unidades.
+	 * 
+	 * @return PaginatedList<RiskProcess>
+	 * 			Lista de Processos 
+	 */
+	@Get(PATH + "/process")
+	@NoCache
+	@Permissioned
+	public void listProcess() {
+		try {
+			PaginatedList<Process> list= this.unitBS.listProcess();
+			
+			this.success(list);
+
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 
 	/**
 	 * Exclui unidade.
