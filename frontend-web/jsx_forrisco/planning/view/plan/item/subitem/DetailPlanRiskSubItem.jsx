@@ -58,13 +58,13 @@ export default React.createClass({
 			this.refreshComponent();
 
 			if(this.state.tabPath !== this.props.location.pathname) {
-				_.defer(() => {
-					this.context.tabPanel.addTab(
-						this.props.location.pathname,
-						this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
-							this.state.itemTitle.substring(0, 15)
-					);
-				});
+				// _.defer(() => {
+				// 	this.context.tabPanel.addTab(
+				// 		this.props.location.pathname,
+				// 		this.state.itemTitle.length > 15 ? this.state.itemTitle.substring(0, 15) + "..." :
+				// 			this.state.itemTitle.substring(0, 15)
+				// 	);
+				// });
 			}
 		}
 	},

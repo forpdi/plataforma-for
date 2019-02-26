@@ -52,7 +52,7 @@ public class PlanRiskItemBS extends HibernateBusiness {
 	 * @return PaginatedList<PlanRiskItemField>
 	 * 			Lista de campos.
 	 */
-	public PaginatedList<PlanRiskItemField> listItensByPlanRiskField(PlanRiskItem planRiskItem) {
+	public PaginatedList<PlanRiskItemField> listFieldsByPlanRiskItem(PlanRiskItem planRiskItem) {
 		
 		PaginatedList<PlanRiskItemField> results = new PaginatedList<PlanRiskItemField>();
 		

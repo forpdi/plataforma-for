@@ -36,9 +36,7 @@ export default React.createClass({
 		};
 	},
 
-	componentWillUnmount() {
-		console.log('desmontou');
-	},
+	componentWillUnmount() {},
 
 	componentDidMount() {
 		//this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + "/info");

@@ -643,7 +643,7 @@ public class RiskController extends AbstractController {
 			} 
 			
 			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
-			if (unit == null) {
+			if (unit.getId() == null) {
 				this.fail("A unidade solicitada não foi encontrada.");
 				return;
 			}
