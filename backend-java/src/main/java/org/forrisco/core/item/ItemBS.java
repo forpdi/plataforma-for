@@ -128,11 +128,15 @@ public class ItemBS extends HibernateBusiness {
 	
 		PaginatedList<Item> results = new PaginatedList<Item>();
 		
-		Criteria criteria = this.dao.newCriteria(Item.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("policy", policy)).addOrder(Order.asc("id"));
+		Criteria criteria = this.dao.newCriteria(Item.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("policy", policy))
+				.addOrder(Order.asc("id"));
 		
-		Criteria count = this.dao.newCriteria(Item.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("policy", policy)).setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(Item.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("policy", policy))
+				.setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, Item.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -179,11 +183,15 @@ public class ItemBS extends HibernateBusiness {
 		
 		PaginatedList<FieldItem> results = new PaginatedList<FieldItem>();
 		
-		Criteria criteria = this.dao.newCriteria(FieldItem.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("item", item)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(FieldItem.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("item", item))
+				.addOrder(Order.asc("id"));
 		
-		Criteria count = this.dao.newCriteria(FieldItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("item", item)).setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(FieldItem.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("item", item))
+				.setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, FieldItem.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -202,11 +210,15 @@ public class ItemBS extends HibernateBusiness {
 	public PaginatedList<SubItem> listSubItensByItem(Item item) {
 		PaginatedList<SubItem> results = new PaginatedList<SubItem>();
 		
-		Criteria criteria = this.dao.newCriteria(SubItem.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("item", item)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(SubItem.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("item", item))
+				.addOrder(Order.asc("id"));
 		
-		Criteria count = this.dao.newCriteria(SubItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("item", item)).setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(SubItem.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("item", item))
+				.setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, SubItem.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -226,11 +238,15 @@ public class ItemBS extends HibernateBusiness {
 		
 		PaginatedList<FieldSubItem> results = new PaginatedList<FieldSubItem>();
 		
-		Criteria criteria = this.dao.newCriteria(FieldSubItem.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("subitem", subitem)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(FieldSubItem.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("subitem", subitem))
+				.addOrder(Order.asc("name"));
 		
-		Criteria count = this.dao.newCriteria(FieldSubItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subitem", subitem)).setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(FieldSubItem.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("subitem", subitem))
+				.setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, FieldSubItem.class));
 		results.setTotal((Long) count.uniqueResult());

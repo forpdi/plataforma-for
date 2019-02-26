@@ -195,7 +195,7 @@ export default React.createClass({
 								ref="newfield-name"
 								placeholder={Messages.get("label.field.name")}
 								maxLength="255"
-								value ={this.props.field.value}
+								defaultValue ={this.props.field.value}
 								/>
 							:
 							<input

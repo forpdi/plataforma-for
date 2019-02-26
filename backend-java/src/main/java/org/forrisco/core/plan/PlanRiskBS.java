@@ -32,7 +32,9 @@ public class PlanRiskBS extends HibernateBusiness {
 	/**
 	 * Lista os planos de risco
 	 * 
-	 * @param page
+	 * @param Company
+	 * @param Integer
+	 * 
 	 * @return
 	 */
 	public PaginatedList<PlanRisk> listPlanRisk(Company company, Integer page) {

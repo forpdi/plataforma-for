@@ -235,6 +235,8 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveItem", (model) => {
+
+			console.log("retrieveItem", (model) )
 			if(!model.attributes.deleted){
 
 
@@ -313,36 +315,39 @@ export default React.createClass({
 		}, me);*/
 
 		ItemStore.on("itemUpdated", (model) => {
-			if(model !=null){
 
+			console.log("itemUpdated", (model) )
+			if(model !=null){
+				var fields = [];
 				var mod = this.state.itemModel;
 				mod.attributes.name = model.data.name;
 				mod.attributes.description = model.data.description;
 				mod.attributes.policy = model.data.policy;
 
-				for (var i in model.attributes) {
-					if(!model.attributes[i].deleted){
-						var fields = [];
-
+				for (var i in model.data.fieldItem) {
+					if(!model.data.deleted){
+						console.log(i,model.data.fieldItem.length,model.data.fieldItem[i])
 						fields.push({
-							name: model.attributes[i].name,
-							description: model.attributes[i].description,
-							isText:  model.attributes[i].isText,
-							type: model.attributes[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							value: model.attributes[i].description,
-							label: model.attributes[i].name,
+							name: model.data.fieldItem[i].name,
+							description: model.data.fieldItem[i].description,
+							isText:  model.data.fieldItem[i].isText,
+							type: model.data.fieldItem[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
+							value: model.data.fieldItem[i].description,
+							label: model.data.fieldItem[i].name,
 							edit: false,
-							fileLink: model.attributes[i].fileLink
+							fileLink: model.data.fieldItem[i].fileLink
 						});
 					}
 				}
 
+				//field.sort((a, b) => (a.id > b.id) ? 1 : -1)
+				console.log("fields",fields)
 				me.setState({
 					fields: fields,
 					itemModel: mod,
 					titulo: model.data.name,
 					vizualization: true,
-					fields: me.getFields()
+					//fields: me.getFields()
 				});
 				me.forceUpdate();
 

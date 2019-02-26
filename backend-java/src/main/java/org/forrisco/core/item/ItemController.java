@@ -392,6 +392,9 @@ public class ItemController extends AbstractController {
 			existent.setDescription(item.getDescription());
 			existent.setName(item.getName());
 			this.itemBS.persist(existent);
+			
+			existent.setFieldItem(this.itemBS.listFieldsByItem(existent).getList());
+			
 			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
