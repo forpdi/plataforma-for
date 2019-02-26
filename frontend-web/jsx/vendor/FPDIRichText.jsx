@@ -105,7 +105,7 @@ export default React.createClass({
 						[{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
 						[{ 'align': [] }],
 						[{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], // outdent/indent
-						['link', 'image'],
+						['link'], //, 'image'],
 
 						['blockquote', 'code-block'],
 						['clean'],										// remove formatting button
