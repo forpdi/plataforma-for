@@ -73,15 +73,13 @@ public class RiskController extends AbstractController {
 				return;
 			}
 			
-			this.riskBS.saveActivities(risk);
-			this.riskBS.saveProcesses(risk);
-			this.riskBS.saveStrategies(risk);
-			
 			risk.setId(null);
 			risk.setBegin(new Date());
 			this.riskBS.saveRisk(risk);
 			
-
+			this.riskBS.saveActivities(risk);
+			this.riskBS.saveProcesses(risk);
+			this.riskBS.saveStrategies(risk);
 			
 			this.success(risk);
 		} catch (Throwable e) {
@@ -643,7 +641,7 @@ public class RiskController extends AbstractController {
 			} 
 			
 			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
-			if (unit == null) {
+			if (unit.getId() == null) {
 				this.fail("A unidade solicitada não foi encontrada.");
 				return;
 			}

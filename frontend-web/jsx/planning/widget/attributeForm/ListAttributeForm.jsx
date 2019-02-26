@@ -197,8 +197,6 @@ export default React.createClass({
 					</label>
 				</div>
 			:""}
-				{//console.log(this.props.fields)
-				}
 			{this.props.fields.length>0 && this.props.fields[0].type==AttributeTypes.SELECT_MULTI_FIELD ?
 
 				<div> <ListAttributeInput
@@ -219,7 +217,6 @@ export default React.createClass({
 				:
 
 				this.props.fields.map((field,idx) => {
-					{console.log(this.props.fields)}
 				if (field.type != AttributeTypes.BUDGET_FIELD
 					&& field.type != AttributeTypes.ACTION_PLAN_FIELD
 					&& field.type != AttributeTypes.SCHEDULE_FIELD

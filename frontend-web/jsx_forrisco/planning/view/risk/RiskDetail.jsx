@@ -45,29 +45,20 @@ export default React.createClass({
 					riskModel:model.data,
 					loading:false
 				})
-
-				/*_.defer(() => {
-					this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
-				});*/
 			}
-
-			/*_.defer(() => {
-				this.context.tabPanel.addTab(this.props.location, this.state.riskModel?  this.state.riskModel.name:"Novo Risco");
-			});
-*/
 		})
 
-		this.refresh()
+		this.refresh(thi.props)
 	},
 
 	componentWillReceiveProps(newProps) {
-		this.refresh()
+		this.refresh(newProps)
 	},
 
-	refresh(){
+	refresh(newProps){
 		RiskStore.dispatch({
 			action:RiskStore.ACTION_FIND_RISK,
-			data: this.props.params.riskId
+			data: newProps.params.riskId
 		})
 
 		this.setState({

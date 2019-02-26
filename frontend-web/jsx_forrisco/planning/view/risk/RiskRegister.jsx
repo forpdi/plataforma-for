@@ -52,16 +52,17 @@ export default React.createClass({
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
-				loading: false
+				//loading: false
 			})
-			if (!this.state.visualization && this.state.riskModel == null) {
+			if (document.getElementById("field-user") !=null) {
 				document.getElementById("field-user").value = ''
 			}
 		}, this)
 
 		UnitStore.on("retrieveProcess", (model) => {
 			this.setState({
-				process:model.data
+				process:model.data,
+				loading: false
 			})
 		}, this)
 
@@ -144,14 +145,11 @@ export default React.createClass({
 				visualization: false,
 				newRisk: true
 			})
-			//document.getElementById("field-nome").value=''
-			//document.getElementById("field-code").value=''
+
 			if (document.getElementById("field-impact") != null) {
 				document.getElementById("field-impact").value = ''
 				document.getElementById("field-probability").value = ''
 				document.getElementById("field-periodicity").value = ''
-				//document.getElementById("field-reason").value=''
-				//document.getElementById("field-result").value=''
 				document.getElementById("field-tipology").value = ''
 				document.getElementById("field-type").value = ''
 			}
@@ -166,11 +164,7 @@ export default React.createClass({
 	refresh() {
 		if (this.props.risk != null) {
 			this.setState({
-				//loading: true,
 				fields: [],
-				//visualization: newProps.visualization,
-				//newField: false,
-				//newFieldType: null,
 				planRiskId: this.context.planRisk.attributes.id,
 				unitId: this.props.risk.unit.id,
 				riskModel: this.props.risk,
