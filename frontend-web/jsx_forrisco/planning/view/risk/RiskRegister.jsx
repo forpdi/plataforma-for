@@ -6,6 +6,7 @@ import ListForm from "forpdi/jsx/planning/widget/attributeForm/ListAttributeForm
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
+import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
@@ -26,12 +27,10 @@ export default React.createClass({
 	},
 	getInitialState() {
 		return {
-			loading:true,
+			loading: true,
 			visualization: true,
 			fields: [],
 			users: [],
-			planRiskId: null,
-			unitId: null,
 			riskModel: null,
 			policyModel: null,
 			strategy: [],
@@ -41,19 +40,34 @@ export default React.createClass({
 			risk_pdi: false,
 			risk_obj_process: false,
 			risk_act_process: false,
+			newRisk: false,
+			strategyList:[],
+			processList:[],
+
 		}
 	},
 
 	componentDidMount() {
+
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
+				loading: false
+			})
+			if (!this.state.visualization && this.state.riskModel == null) {
+				document.getElementById("field-user").value = ''
+			}
+		}, this)
 
-		//this.setState({
-			loading: false
-		//})
+		UnitStore.on("retrieveProcess", (model) => {
+			this.setState({
+				process:model.data
 			})
 		}, this)
+
+
+
+
 
 		StructureStore.on("companyobjectivesretrivied", (model) => {
 			this.setState({
@@ -61,58 +75,86 @@ export default React.createClass({
 			})
 		}, this)
 
+		RiskStore.on("retrieveRiskProcess", (model) => {
+			this.setState({
+				riskprocess:model.data
+			})
+		}, this)
 
-		//UnitStore.on("retrieveprocess",(model)=>{},this)
-
-		RisktStore.on("riskUpdated",(model)=>{
-			console.log("riskUpdated",(model))
-		},this)
-
-		RisktStore.on("riskcreated",(model)=>{
-			console.log("riskcreated",(model))
-		},this)
+		RiskStore.on("retrieveActivities", (model) => {
+			this.setState({
+				activity:model.data,
+				activities: model.data.length>1 ?model.data.length :1
+			})
+		})
 
 
 
-		/*PolicyStore.on("findpolicy", (model) => {
-			me.setState({
-				policyModel: model.data
-			});
-			if(model != null){
-				PolicyStore.dispatch({
-					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-					data: model.data.id
-				});
+		RiskStore.on("riskUpdated", (model) => {
+			if (model.success) {
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id);
+			} else {
+				if (model.message != null) {
+					this.context.toastr.addAlertError(model.message);
+				}
 			}
-		}, this);*/
+		}, this)
 
+		RiskStore.on("riskcreated", (model) => {
+			if (model.success) {
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id);
+			} else {
+				if (model.message != null) {
+					this.context.toastr.addAlertError(model.message);
+				}
+			}
+		}, this)
+
+
+		_.defer(() => {
+			this.context.tabPanel.addTab(this.props.location, this.state.riskModel ? this.state.riskModel.name : "Novo Risco");
+		});
 
 		this.refresh()
 	},
 	componentWillUnmount() {
 		UserStore.off(this, this, this)
-		StructureStore.off(this,this,this)
-		RiskStore.off(this,this,this)
+		StructureStore.off(this, this, this)
+		RiskStore.off(this, this, this)
+		UnitStore.off(this, this, this)
 	},
 
 
 	componentWillReceiveProps(newProps, newContext) {
 
-
-
-	if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
-			//console.log("State	")
-			//var bool=this.state.riskModel.id !=newProps.routeParams.riskId ?  true: newProps.visualization
-			console.log(newProps.risk.id !=newProps.params.riskId),
+		if (newProps, newProps.route.path != "new") {
+			if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
+				this.setState({
+					loading: true,
+					fields: [],
+					visualization: newProps.visualization,
+					planRiskId: newProps.planRiskId,
+					unitId: newProps.risk.unit.id,
+					riskModel: newProps.risk,
+				});
+			}
+		} else {
 			this.setState({
-				loading: true,
-				//visualization:true,
-				fields: [],
-				visualization: newProps.visualization,
-				planRiskId: newProps.planRiskId,
-				unitId: newProps.risk.unit.id,
-				riskModel: newProps.risk,
-			});
+				loading: false,
+				visualization: false,
+				newRisk: true
+			})
+			//document.getElementById("field-nome").value=''
+			//document.getElementById("field-code").value=''
+			if (document.getElementById("field-impact") != null) {
+				document.getElementById("field-impact").value = ''
+				document.getElementById("field-probability").value = ''
+				document.getElementById("field-periodicity").value = ''
+				//document.getElementById("field-reason").value=''
+				//document.getElementById("field-result").value=''
+				document.getElementById("field-tipology").value = ''
+				document.getElementById("field-type").value = ''
+			}
 		}
 		this.refreshData()
 	},
@@ -122,7 +164,6 @@ export default React.createClass({
 	// structure (objetivos estratégicos)
 	//processo (pendente)
 	refresh() {
-		console.log("this.props.risk",this.props.risk)
 		if (this.props.risk != null) {
 			this.setState({
 				//loading: true,
@@ -145,17 +186,20 @@ export default React.createClass({
 		});
 
 		StructureStore.dispatch({
-			action: StructureStore.ACTION_GET_OBJECTIVES_BY_COMPANY
+			action: StructureStore.ACTION_RETRIEVE_OBJECTIVES_BY_COMPANY
 		});
 
-		/*UnitStore.dispatch({
-			action: UnitStore.ACTION_GET_OBJECTIVES_PROCESSES
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_PROCESSES
 		});
-*/
-		/*PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_POLICY,
-			data: this.state.plan.policyId
-		});*/
+
+		if (this.props.risk) {
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_RETRIEVE_ACTIVITIES,
+				data: this.props.risk.id
+			})
+		}
+
 		this.setState({ policyModel: this.context.planRisk.attributes.policy })
 
 		if (this.props.risk) {
@@ -179,122 +223,122 @@ export default React.createClass({
 	getFields() {
 		var fields = [];
 
-		if (this.state.riskModel != null) {
-			fields.push({
-				name: "code",
-				type: AttributeTypes.TEXT_AREA,
-				placeholder: "Código",
+		var risk = this.state.riskModel
+
+		fields.push({
+			name: "code",
+			type: AttributeTypes.TEXT_AREA,
+			placeholder: "Código",
+			maxLength: 100,
+			label: "Código de indentificação do risco",
+			value: risk != null ? risk.code : null,
+		}, {
+				name: "user",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: this.getUsers(),
+				placeholder: "Selecione um responsável",
 				maxLength: 100,
-				label: "Código de indentificação do risco",
-				value: this.state.riskModel.code,
+				label: "Responsável",
+				value: risk != null ? risk.user.name : null,
 			}, {
-					name: "user",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField: this.getUsers(),
-					placeholder: "Selecione um responsável",
-					maxLength: 100,
-					label: "Responsável",
-					value: this.state.riskModel.user.name,
-				}, {
-					name: "date",
-					type: AttributeTypes.DATE,
-					placeholder: "",
-					maxLength: 100,
-					label: "Data e hora de criação do risco",
-					value: this.state.riskModel.begin,
-				}, {
-					name: "reason",
-					type: AttributeTypes.TEXT_AREA_FIELD,
-					placeholder: "Causas do risco",
-					maxLength: 1000,
-					label: "Causa",
-					value: this.state.riskModel.reason,
-				}, {
-					name: "result",
-					type: AttributeTypes.TEXT_AREA_FIELD,
-					placeholder: "Consequência do risco",
-					maxLength: 1000,
-					label: "Consequência",
-					value: this.state.riskModel.result,
-				}, {
-					name: "probability",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField:  this.getProbabilities(),
-					displayField: 'label',
-					placeholder: "Selecione",
-					maxLength: 100,
-					label: "Probabilidade",
-					value: this.state.riskModel.probability,
-				}, {
-					name: "impact",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField: this.getImpacts(),
-					displayField: 'label',
-					placeholder: "Selecione",
-					maxLength: 100,
-					label: "Impacto",
-					value: this.state.riskModel.impact,
-				}, {
-					name: "riskLevel",
-					type: AttributeTypes.TEXT_AREA,
-					placeholder: "",
-					maxLength: 100,
-					label: "Grau do risco",
-					value: this.state.riskModel ? this.state.riskModel.riskLevel.level : null
-				}, {
-					name: "periodicity",
-					label: "Periodicidade da análise",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField: [{ label: 'Diária' },
-					{ label: 'Semanal' },
-					{ label: 'Quinzenal' },
-					{ label: 'Mensal' },
-					{ label: 'Bimestral' },
-					{ label: 'Trimestral' },
-					{ label: 'Semestral' },
-					{ label: 'Anual' }],
-					displayField: 'label',
-					placeholder: "Selecione a periodicidade",
-					maxLength: 100,
-					value: this.state.riskModel.periodicity,
-				}, {
-					name: "tipology",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField: [{ label: 'Risco operacional' },
-					{ label: 'Risco de imagem/reputação do órgão' },
-					{ label: 'Risco legal' },
-					{ label: 'Risco financeiro/orçamentário' }],
-					placeholder: "Selecione",
-					maxLength: 100,
-					label: "Tipologia",
-					value: this.state.riskModel.tipology,
-				}, {
-					name: "type",
-					type: AttributeTypes.SELECT_FIELD,
-					optionsField: [{ label: 'Ameaça' }, { label: 'Oportunidade' }],
-					displayField: 'label',
-					placeholder: "Selecione",
-					maxLength: 100,
-					label: "Tipo",
-					value: this.state.riskModel.type,
-				});
-		}
+				name: "date",
+				type: AttributeTypes.DATE,
+				placeholder: "",
+				maxLength: 100,
+				label: "Data e hora de criação do risco",
+				value: risk != null ? risk.begin : null,
+			}, {
+				name: "reason",
+				type: AttributeTypes.TEXT_AREA_FIELD,
+				placeholder: "Causas do risco",
+				maxLength: 1000,
+				label: "Causa",
+				value: risk != null ? risk.reason : null,
+			}, {
+				name: "result",
+				type: AttributeTypes.TEXT_AREA_FIELD,
+				placeholder: "Consequência do risco",
+				maxLength: 1000,
+				label: "Consequência",
+				value: risk != null ? risk.result : null,
+			}, {
+				name: "probability",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: this.getProbabilities(),
+				displayField: 'label',
+				placeholder: "Selecione",
+				maxLength: 100,
+				label: "Probabilidade",
+				value: risk != null ? risk.probability : null,
+			}, {
+				name: "impact",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: this.getImpacts(),
+				displayField: 'label',
+				placeholder: "Selecione",
+				maxLength: 100,
+				label: "Impacto",
+				value: risk != null ? risk.impact : null,
+			}, {
+				name: "riskLevel",
+				type: AttributeTypes.TEXT_AREA,
+				placeholder: "",
+				maxLength: 100,
+				label: "Grau do risco",
+				value: risk != null ? risk.riskLevel.level : null,
+			}, {
+				name: "periodicity",
+				label: "Periodicidade da análise",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: [{ label: 'Diária' },
+				{ label: 'Semanal' },
+				{ label: 'Quinzenal' },
+				{ label: 'Mensal' },
+				{ label: 'Bimestral' },
+				{ label: 'Trimestral' },
+				{ label: 'Semestral' },
+				{ label: 'Anual' }],
+				displayField: 'label',
+				placeholder: "Selecione a periodicidade",
+				maxLength: 100,
+				value: risk != null ? risk.periodicity : null,
+			}, {
+				name: "tipology",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: [{ label: 'Risco operacional' },
+				{ label: 'Risco de imagem/reputação do órgão' },
+				{ label: 'Risco legal' },
+				{ label: 'Risco financeiro/orçamentário' }],
+				placeholder: "Selecione",
+				maxLength: 100,
+				label: "Tipologia",
+				value: risk != null ? risk.tipology : null,
+			}, {
+				name: "type",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: [{ label: 'Ameaça' }, { label: 'Oportunidade' }],
+				displayField: 'label',
+				placeholder: "Selecione",
+				maxLength: 100,
+				label: "Tipo",
+				value: risk != null ? risk.type : null,
+			});
+
 
 		return fields;
 	},
 
 	getStrategies() {
 
-		if (this.state.riskModel == null || this.state.riskModel.strategies == null || !this.state.riskModel.risk_pdi) {
-			return [];
-		}
-
-		if (this.state.riskModel.strategies.total == 0) {
+		if (this.state.riskModel == null || this.state.riskModel.strategies == null || !this.state.riskModel.risk_pdi || this.state.riskModel.strategies.list.length == 0) {
 			return [{
-				label: "Objetivo(s) do(s) processo(s) vinculado(s)",
+				label: "Objetivo(s) Estratégico(s) do PDI vinculado(s)",
 				value: "Não está vinculado a nenhum objetivo estratégido do PDI",
 				name: "",
-				type:AttributeTypes.SELECT_MULTI_FIELD
+				placeholder: "Selecione um ou mais objetivos",
+				type: AttributeTypes.SELECT_MULTI_FIELD,
+				optionsField: this.getAllStrategies(),
+				isvalue:false,
 			}]
 		}
 
@@ -303,13 +347,14 @@ export default React.createClass({
 			fields.push({
 				name: "strategy-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
-				label: "Objetivo(s) do(s) processo(s) vinculado(s)",//index==0 ? (this.state.visualization ?"Objetivo(s) do(s) processo(s) vinculado(s)":"") : null,
+				label: "Objetivo(s) Estratégico(s) do PDI vinculado(s)",//index==0 ? (this.state.visualization ?"Objetivo(s) do(s) processo(s) vinculado(s)":"") : null,
 				linkName: "(Visualizar no PDI)",
 				placeholder: "Selecione um ou mais objetivos",
 				maxLength: 100,
-				value: fielditem.name,
+				value: {name: fielditem.structure.name, id:fielditem.structure.id},
 				link: fielditem.linkFPDI,
 				optionsField: index == 0 ? this.getAllStrategies() : null,
+				isvalue:true,
 			})
 		})
 
@@ -317,18 +362,22 @@ export default React.createClass({
 	},
 
 	getProcesses() {
+		if (this.state.riskModel == null
+			|| this.state.riskModel.processes == null
+			|| !this.state.riskModel.risk_obj_process
+			||this.state.riskModel.processes.list.length == 0) {
 
-		if (this.state.riskModel == null || this.state.riskModel.processes == null || !this.state.riskModel.risk_obj_process) {
-			return [];
-		}
-		if (this.state.riskModel.processes.total == 0) {
 			return [{
 				label: "Objetivo(s) do(s) processo(s) vinculado(s)",
 				value: "Não está vinculado a nenhum objetivo do processo",
 				name: "",
-				type:AttributeTypes.SELECT_MULTI_FIELD
+				placeholder: "Selecione um ou mais objetivos",
+				type: AttributeTypes.SELECT_MULTI_FIELD,
+				optionsField: this.getAllProcessesObjective(),
+				isvalue:false,
 			}]
 		}
+
 
 		var fields = []
 		this.state.riskModel.processes.list.map((fielditem, index) => {
@@ -340,8 +389,9 @@ export default React.createClass({
 				linkName: "(Visualizar objetivo do processo)",
 				link: fielditem.linkFPDI,
 				maxLength: 100,
-				value: fielditem.name,
-				optionsField: index == 0 ? this.getAllProcesses() : null,
+				value: {name: fielditem.process.name, id:fielditem.process.id},
+				optionsField: index == 0 ? this.getAllProcessesObjective() : null,
+				isvalue:true,
 			})
 		})
 
@@ -350,31 +400,36 @@ export default React.createClass({
 
 	getActivities() {
 
-		if (this.state.riskModel == null || this.state.riskModel.activities == null || !this.state.riskModel.risk_act_process) {
-			return [];
-		}
-		if (this.state.riskModel.activities.total == 0) {
+		if (this.state.riskModel == null
+			|| this.state.riskModel.activities == null
+			|| !this.state.riskModel.risk_act_process
+			|| this.state.activity.length == 0) {
+
 			return [{
 				label: "Atividade(s) do(s) processo(s) vinculado(s)",
 				value: "Não está vinculado a nenhuma atividade",
-				name: ""
+				name: "",
+				type: AttributeTypes.SELECT_MULTI_FIELD
 			}]
 		}
 
 		var fields = []
-		this.state.riskModel.activities.list.map((fielditem, index) => {
+
+		this.state.activity.map((fielditem, index) => {
 			fields.push({
 				name: "activity-" + (index),
-				type: AttributeTypes.SELECT_FIELD,
-				placeholder: "",
+				type: AttributeTypes.SELECT_MULTI_FIELD,
+				placeholder: "*",
 				maxLength: 100,
 				label: index == 0 ? (this.state.visualization ? "Atividade(s) do(s) processo(s) vinculado(s)" : "") : null,
-				value: fielditem.name,
+				value: {name: fielditem.name, id:fielditem.id},
 				link: fielditem.linkFPDI,
 				linkName: "(Visualizar processo)",
 			})
 		})
-		return fields;
+
+
+		return fields
 	},
 
 
@@ -422,44 +477,54 @@ export default React.createClass({
 	},
 
 	getAllProcesses() {
-		return [{ label: "AGM 2017", value: 1 }]
+		var fields = []
+		for (var i in this.state.process) {
+			fields.push({ label: this.state.process[i].name, value: this.state.process[i].id })
+		}
+
+		return fields
+	},
+
+	getAllProcessesObjective() {
+		var fields = []
+		for (var i in this.state.process) {
+			fields.push({ label: this.state.process[i].objective, value: this.state.process[i].id })
+		}
+
+		return fields
 	},
 
 
-	onCancel(evt) {
-		evt.preventDefault();
+	onCancel() {
 
-		this.setState({
-			visualization: true
-		})
 
-		/*this.state.visualization=false
-		if(this.state.riskModel){
-			console.log("cancel",this.state.visualization)
-			this.context.router.push("/forrisco/plan-risk/1/unit/1/risk/1");
-			this.context.router.push("/forrisco/plan-risk/1/unit/1/risk/1/details");
-			return
-		}*/
+		if (this.state.newRisk) {
+			document.getElementById("field-nome").value = ''
+			document.getElementById("field-code").value = ''
+			document.getElementById("field-user").value = ''
+			document.getElementById("field-impact").value = ''
+			document.getElementById("field-probability").value = ''
+			document.getElementById("field-periodicity").value = ''
+			document.getElementById("field-reason").value = ''
+			document.getElementById("field-result").value = ''
+			document.getElementById("field-tipology").value = ''
+			document.getElementById("field-type").value = ''
 
-		/*document.getElementById("field-name").value = "";
-		document.getElementById("field-description").value = "";
-		document.getElementById("field-risk_level_1").value = "";
-		document.getElementById("field-risk_cor_1").value = "";
-		document.getElementById("field-nline").value = "";
-		document.getElementById("field-ncolumn").value = "";
-		this.setState({
-			policyModel: null,
-			fields: null,
-			visualization: true,
-			hide: true,
-			hidePI: true,
-			validPI: false,
-			ncolumn: 0,
-			nline: 0,
-			matrix_l: 0,
-			matrix_c: 0,
-			color: 1,
-		})*/
+			//var index=this.refs["field-1"].refs.user.refs["field-user"].selectedIndex
+
+			//data['user']={id:this.state.users[index].id}
+			//data['unit']={id:this.state.unitId}
+			this.setState({
+				risk_pdi: false,
+				risk_obj_process: false,
+				risk_act_process: false
+			})
+		} else {
+			this.setState({
+				visualization: true
+			})
+		}
+
 	},
 	handleStrategyChange: function (changeEvent) {
 		this.setState({
@@ -482,21 +547,38 @@ export default React.createClass({
 
 	getPA(n) {
 		var fields = [];
-		var cor = null
-		var risk = null
-		fields.push({
-			name: "process_" + n,
-			type: "select",
-			required: true,
-			maxLength: 40,
-			placeholder: "Selecione um processo",
-			label: Messages.getEditable("label.policySelect", "hide"),
-			value: cor,
-			valueField: 'label',
-			displayField: 'label',
-			options: [{ label: "processo 1", id: 1, name: "processo 1" }]
-			//onChange: this.onChangeMatrix
-		},
+
+		var processes=[]
+
+		for(var i in this.state.process){
+			processes.push({ label: this.state.process[i].name,  value: this.state.process[i].id, name: this.state.process[i].name })
+		}
+
+			var process=null;
+
+			for(var j in this.state.activity){
+				for(var k in this.state.process){
+					if(this.state.activity[j].process.id==this.state.process[k].id){
+						process=this.state.process[j]
+						j=this.state.activity.length
+						break;
+					}
+				}
+			}
+
+
+			fields.push({
+				name: "process_" + n,
+				type: "select",
+				required: true,
+				maxLength: 40,
+				placeholder: "Selecione um processo",
+				label: Messages.getEditable("label.policySelect", "hide"),
+				value: process!=null? process.name : null,
+				valueField: 'label',
+				displayField: 'label',
+				options:  processes,
+			},
 			{
 				name: "activity_" + n,
 				type: "text",
@@ -504,9 +586,9 @@ export default React.createClass({
 				maxLength: 40,
 				placeholder: "Com quais atividades do processo o risco está associado?",
 				label: Messages.getEditable("label.policyConfig", "hide"),
-				value: risk,
-				//onChange: this.onChangeMatrix
+				value: this.state.activity[n] !=null ? this.state.activity[n].name : null,
 			})
+
 		return fields
 	},
 
@@ -520,7 +602,7 @@ export default React.createClass({
 						name={field.name}
 						fieldDef={field}
 						key={field.value ? field.value : field.name}
-						ref={'pa-' + (i) + "-" + (idx)}
+						ref={'pa-' + (i)+"-"+(idx)}
 					/>);
 				})
 			)
@@ -537,7 +619,6 @@ export default React.createClass({
 	},
 
 	deleteActivity(x, y) {
-		console.log(x)
 		if (this.state.activities > 1) {
 			this.setState({
 				activities: this.state.activities - 1
@@ -552,55 +633,80 @@ export default React.createClass({
 	},
 
 	addActivity() {
-		console.log("add activity", this.state.activities + 1)
 		this.setState({
 			activities: this.state.activities + 1
 		})
 	},
 
+	onChangeStrategies(list){
+		if(list !=null){
+			this.state.strategyList=list
+		}
+
+	},
+
+	onChangeProcesses(list){
+		if(list !=null){
+			this.state.processList=list
+		}
+	},
+
+
 	getValues() {
 		var data = {};
 
-		data['name']=document.getElementById("field-nome").value
-		data['code']=document.getElementById("field-code").value
-		data['impact']=document.getElementById("field-impact").value
-		data['probability']=document.getElementById("field-probability").value
-		data['periodicity']=document.getElementById("field-periodicity").value
-		data['reason']=document.getElementById("field-reason").value
-		data['result']=document.getElementById("field-result").value
-		data['tipology']=document.getElementById("field-tipology").value
-		data['type']=document.getElementById("field-type").value
+		var strategyList=[]
+		for(var i in this.state.strategyList){
+			strategyList.push({name:this.state.strategyList[i].label, structure:{id:parseInt(this.state.strategyList[i].value)}})
+		}
 
-		var index=this.refs["field-1"].refs.user.refs["field-user"].selectedIndex
+		var processList=[]
+		for(var i in this.state.processList){
+			processList.push({name:this.state.processList[i].label, process:{id: parseInt(this.state.processList[i].value)}})
+		}
 
-		data['user']={id:this.state.users[index].id}
-		data['unit']={id:this.state.unitId}
+		var activityList=[]
+
+		if(this.state.risk_act_process){
+			for(var i=0; i < this.state.activities; i++){
+				var index=this.refs["pa-"+(i)+"-0"].refs["field-process_"+(i)].selectedIndex
+				activityList.push({name: this.refs["pa-"+(i)+"-1"].refs["field-activity_"+(i)].value, process:this.state.process[index-1]})
+			}
+		}
+
+
+		data['name'] = document.getElementById("field-nome").value
+		data['code'] = document.getElementById("field-code").value
+		data['impact'] = document.getElementById("field-impact").value
+		data['probability'] = document.getElementById("field-probability").value
+		data['periodicity'] = document.getElementById("field-periodicity").value
+		data['reason'] = document.getElementById("field-reason").value
+		data['result'] = document.getElementById("field-result").value
+		data['tipology'] = document.getElementById("field-tipology").value
+		data['type'] = document.getElementById("field-type").value
+
+		data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex].id }
+		data['unit'] = { id: this.props.params.unitId }
 
 		data["risk_pdi"] = this.state.risk_pdi
 		data["risk_obj_process"] = this.state.risk_obj_process
 		data["risk_act_process"] = this.state.risk_act_process
-		data['strategies']={}
-		data['processes']={}
-		data['activities']={}
 
-		console.log("data", data)
+		data['strategies'] = {list:strategyList ,total:strategyList.length}
+		data['processes'] = {list:processList ,total:processList.length}
+		data['activities'] = {list:activityList, total:activityList.length}
 
 		return data;
 	},
 
 
-	submitWrapper(evnt) {
-		evnt.preventDefault();
-
-		if (this.onSubmit(this.getValues())){
-				$(this.refs['btn-submit']).attr("disabled", "disabled");
+	submitWrapper() {
+		if (this.onSubmit(this.getValues())) {
+			$(this.refs['btn-submit']).attr("disabled", "disabled");
 		}
 	},
 
 	onSubmit(data) {
-
-		console.log("get all data and update if model exists or save a new risk")
-
 		var me = this;
 		var msg = "";
 
@@ -612,7 +718,7 @@ export default React.createClass({
 		}
 
 		if (me.props.params.riskId) {
-			data.id=me.props.params.riskId
+			data.id = me.props.params.riskId
 			RiskStore.dispatch({
 				action: RiskStore.ACTION_CUSTOM_UPDATE,
 				data: data
@@ -626,14 +732,16 @@ export default React.createClass({
 	},
 
 	render() {
-	console.log(this.getStrategies())
-	console.log(this.getProcesses())
-
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
+
 		return (<div>
-				<form onSubmit={this.submitWrapper} className="fpdi-card fpdi-card-full floatLeft"  id={this.props.id} ref="riskEditForm">
+			{this.state.newRisk ?
+				<h1>Novo Risco</h1>
+				: ""}
+
+			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} ref="riskEditForm"  >{/*onSubmit={this.submitWrapper}*/}
 
 				{!this.state.visualization ?
 					<VerticalForm
@@ -655,35 +763,42 @@ export default React.createClass({
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
 						ref={'field-' + index}
-						 />
+					/>
 					</div>)
 				})}
 
+					{//Plano Estratégico
+					}
 
-				{!this.state.visualization ? <div>
-					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
-					<form>
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
-					</form>
-					<br />
-				</div>
+
+				{!this.state.visualization ?
+					<div>
+						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
+						<form>
+							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
+							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
+						</form>
+						<br />
+					</div>
 					: ""}
 				{!this.state.visualization && this.state.risk_pdi ?
 					<label htmlFor={"texto"} className="fpdi-text-label-none">
 						{"Objetivo Estratégico do PDI"}
 					</label>
 					: ""}
-				{this.state.risk_pdi ?
+				{this.state.visualization || this.state.risk_pdi ?
 					<ListForm
 						vizualization={this.state.visualization}
 						fields={this.getStrategies()}
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
-						/>
-					: ""}
+						onChange={this.onChangeStrategies}
+					/>
+				: ""}
 				<br />
 
+					{//Processo
+					}
 
 				{!this.state.visualization ? <div>
 					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
@@ -699,15 +814,21 @@ export default React.createClass({
 						{"Processo/Objetivo"}
 					</label>
 					: ""}
-				{this.state.risk_obj_process ?
+
+				{this.state.visualization || this.state.risk_obj_process ?
 					<ListForm
-					vizualization={this.state.visualization}
-					fields={this.getProcesses()}
-					submitLabel={Messages.get("label.submitLabel")}
-					showButtons={false}
+						vizualization={this.state.visualization}
+						fields={this.getProcesses()}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+						onChange={this.onChangeProcesses}
 					/>
-					: ""}
+				:""}
 				<br />
+
+
+					{//Atividade
+					}
 
 				{!this.state.visualization ?
 					<div>
@@ -718,7 +839,7 @@ export default React.createClass({
 						</form>
 						<br />
 					</div>
-				: ""}
+					: ""}
 				{!this.state.visualization && this.state.risk_act_process ?
 					<div>
 						<div style={{ position: "relative", bottom: '5px' }}>
@@ -733,44 +854,32 @@ export default React.createClass({
 						</div>
 					</div>
 					: ""}
+
 				{!this.state.visualization && this.state.risk_act_process ?
 					this.getProcessActivity() : ""}
 
+				{this.state.visualization  ?
+					<ListForm
+						vizualization={this.state.visualization}
+						fields={this.getActivities()}
+						submitLabel={Messages.get("label.submitLabel")}
+						showButtons={false}
+
+					/>
+				: ""}
+
 				<br />
 				<br />
 
-				{/*<VerticalForm
-					vizualization={this.state.visualization}
-					onCancel={this.onCancel}
-					onSubmit={this.submitWrapper}
-				/>*/
-				}
 				{!this.state.visualization ?
-							(<div className="form-group padding40">
-								<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
-								{!this.props.hideCanel ? (!this.props.cancelUrl ?
-									<button className="btn btn-default  btn-block" onClick={this.onCancel}>{this.state.cancelLabel}</button>
-									: (
-										<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
-									)) : ""}
-							</div>)
-							:
-							(<div className="form-group text-left">
-								<input type="submit" className="btn btn-sm btn-success" ref="btn-submit" value={this.state.submitLabel} />
-								{!this.props.hideCanel ? (!this.props.cancelUrl ?
-									<button className="btn btn-sm btn-default" onClick={this.onCancel}>{this.state.cancelLabel}</button>
-									:
-									<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
-								) : ""}
-							</div>)
-							}
+					<VerticalForm
+						vizualization={this.state.visualization}
+						onCancel={this.onCancel}
+						onSubmit={this.submitWrapper}
+					/>
+				: ""}
+
 			</form>
 		</div>);
-		/*}else{
-			_.defer(() => {
-				this.context.tabPanel.addTab(this.props.location.pathname+"/edit", this.state.riskModel?  this.state.riskModel.name:"");
-			});
-			return( <div> visualization = false (edit & save) </div>)
-		}*/
 	}
 });

@@ -38,7 +38,6 @@ var StructureStore = Fluxbone.Store.extend({
 	ACTION_GOALSGENERATE: 'structure-goalsgenerate',
 	ACTION_GET_INDICATORS: "structure-getIndicators",
 	ACTION_GET_OBJECTIVES: "structure-getObjectives",
-	ACTION_GET_OBJECTIVES_BY_COMPANY: "structure-getObjectivesByCompany",
 	ACTION_GET_GOALS: "structure-getGoals",
 	ACTION_GET_INDICATORS_MACRO_PLAN: "structure-getIndicatorsMacroPlan",
 	ACTION_GET_LEVELSONS_FILTER: "structure-getLevelSonsFilter",
@@ -47,6 +46,7 @@ var StructureStore = Fluxbone.Store.extend({
 	ACTION_REMOVE_FAVORITE: "structure-removeFavorite",
 	ACTION_LIST_FAVORITES: "structure-listFavorites",
 	ACTION_LIST_AGGREGATES: "structure-listAggregateIndicatorsByAggregate",
+	ACTION_RETRIEVE_OBJECTIVES_BY_COMPANY: "structure-retrieveObjectivesByCompany",
 	dispatchAcceptRegex: /^structure-[a-zA-Z0-9]+$/,
 
 	url: URL,
@@ -335,7 +335,7 @@ var StructureStore = Fluxbone.Store.extend({
 		});
 	},
 
-	getObjectivesByCompany(data){
+	retrieveObjectivesByCompany(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/allobjectives",

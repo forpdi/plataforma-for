@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
+import org.forpdi.planning.structure.StructureLevelInstance;
+import org.forpdi.system.CriteriaCompanyFilter;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.Incident;
@@ -16,10 +19,12 @@ import org.forrisco.risk.MonitorHistory;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskHistory;
 import org.forrisco.risk.RiskLevel;
+import org.forrisco.core.process.Process;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -30,6 +35,11 @@ import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 @RequestScoped
 public class UnitBS extends HibernateBusiness {
 
+	
+	
+	@Inject
+	private CriteriaCompanyFilter filter;
+	
 	/**
 	 * Recuperar unidade de um plano
 	 * 
@@ -434,13 +444,32 @@ public class UnitBS extends HibernateBusiness {
 	 */
 	public Monitor lastMonitorbyRisk(Risk risk) {
 
-		Criteria criteria = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).addOrder(Order.desc("begin"));
+		Criteria criteria = this.dao.newCriteria(Monitor.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.addOrder(Order.desc("begin"));
 
 		criteria.setMaxResults(1);
 		Monitor monitor = (Monitor) criteria.uniqueResult();
 
 		return monitor;
+	}
+
+	
+	public PaginatedList<Process> listProcess() {
+		
+		PaginatedList<Process> results = new PaginatedList<Process>();
+
+		Criteria criteria = this.dao.newCriteria(Process.class)
+				.add(Restrictions.eq("deleted", false));
+
+		List<Process> list = this.filter.filterAndList(criteria, Process.class,"company");
+		
+		results.setList(list);
+		results.setTotal( (long) list.size());
+
+		return results;
+		
 	}
 
 }

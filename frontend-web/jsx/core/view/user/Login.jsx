@@ -9,6 +9,7 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AppLogo from "forpdi/img/logoLogin.png";
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
 var Validate = Validation.validate;
@@ -77,8 +78,9 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.getEditable("label.forPdiLogo","fpdi-nav-label")} />
-							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titleRiskComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>

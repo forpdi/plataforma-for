@@ -31,16 +31,13 @@ public class RiskActivity extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 	
-	@SkipSerialization
+	//@SkipSerialization
 	@JoinColumn(name="process_id") 
 	@ManyToOne(targetEntity=Process.class, optional=false, fetch=FetchType.EAGER)
 	private Process process;
 	
 	@Column(nullable=false, length=1000)
 	private String linkFPDI;
-
-	@Column(nullable=false, length=400)
-	private String activity;
 	
 	@Column(nullable=false, length=400)
 	private String name;
@@ -59,14 +56,6 @@ public class RiskActivity extends SimpleLogicalDeletableEntity {
 
 	public void setLinkFPDI(String linkFPDI) {
 		this.linkFPDI = linkFPDI;
-	}
-
-	public String getActivity() {
-		return activity;
-	}
-
-	public void setActivity(String activity) {
-		this.activity = activity;
 	}
 
 	public String getName() {

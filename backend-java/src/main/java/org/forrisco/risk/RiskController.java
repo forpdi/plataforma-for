@@ -15,6 +15,7 @@ import org.forpdi.core.user.User;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
+import org.forrisco.risk.objective.RiskActivity;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -68,13 +69,15 @@ public class RiskController extends AbstractController {
 				return;
 			}
 			
+			this.riskBS.saveActivities(risk);
+			this.riskBS.saveProcesses(risk);
+			this.riskBS.saveStrategies(risk);
+			
 			risk.setId(null);
 			risk.setBegin(new Date());
 			this.riskBS.saveRisk(risk);
 			
-			this.riskBS.saveActivities(risk);
-			this.riskBS.saveProcesses(risk);
-			this.riskBS.saveStrategies(risk);
+
 			
 			this.success(risk);
 		} catch (Throwable e) {
@@ -439,64 +442,7 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
-	/**
-	 * Retorna monitoramentos.
-	 * 
-	 * @param id
-	 *			Id da unidade.
-	 * @return <PaginedList> Monitor
-	 * 			 Retorna lista de monitoramentos.
-	 *
-	@Get( PATH + "/monitor")
-	@NoCache
-	//@Permissioned
-	public void listMonitors(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			}
-			
-			PaginatedList<Monitor> monitors = this.unitBS.listMonitorbyUnit(unit);
-			
-			this.success(monitors);
-			
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}
 	
-	
-*
-	 * Retorna incidentes.
-	 * 
-	 * @param id
-	 *			Id da unidade.
-	 * @return <PaginedList> Incident
-	 * 		 Retorna lista de incidentes.
-	 *
-	@Get( PATH + "/incident")
-	@NoCache
-	//@Permissioned
-	public void listIncidents(@NotNull Long unitId) {
-		try {
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			if (unit == null) {
-				this.fail("A unidade solicitada não foi encontrada.");
-				return;
-			}
-			
-			PaginatedList<Incident> incidents = this.unitBS.listIncidentsbyUnit(unit);
-			
-			this.success(incidents);
-			
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}*/
 
 	/**
 	 * Retorna contingeciamentos.
@@ -580,6 +526,38 @@ public class RiskController extends AbstractController {
 	}
 	
 	/**
+	 * Retorna atividades do processo.
+	 * 
+	 * @param RiskId
+	 *			Id do risco.
+	 *
+	 *
+	 * @return <PaginedList> RiskActivity
+	 * 			 Retorna lista de atividades do processo
+	 */
+	@Get( PATH + "/activity")
+	@NoCache
+	//@Permissioned
+	public void lisActivity(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			PaginatedList<RiskActivity> activities = this.riskBS.listActivityByRisk(risk);
+			
+			this.success(activities);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
 	 * Retorna historico.
 	 * 
 	 * @param planId
@@ -645,7 +623,7 @@ public class RiskController extends AbstractController {
 	@Consumes
 	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
 	public void updateRisk(@NotNull Risk risk) throws Exception {
-		//try {
+		try {
 			Risk oldrisk = this.riskBS.exists(risk.getId(), Risk.class);
 			if (oldrisk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
@@ -688,20 +666,19 @@ public class RiskController extends AbstractController {
 				return;
 			}
 			
-			/*this.riskBS.deleteAPS(oldrisk);
+			this.riskBS.deleteAPS(oldrisk);
 			
 			this.riskBS.saveActivities(risk);
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
 			
-			*/
 			this.riskBS.saveRisk(oldrisk);
 			
 			this.success(oldrisk);
-		/*} catch (Throwable ex) {
+		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
-		}*/
+		}
 	}
 	
 	

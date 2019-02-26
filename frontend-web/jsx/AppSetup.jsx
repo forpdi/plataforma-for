@@ -123,11 +123,11 @@ ReactDOM.render((
 
 				<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk} /> /* Cadastrar novo plano de risco*/
 
-				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}>        /* Detalhar plano de risco*/
+				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}> /* Detalhar plano de risco*/
 					<IndexRedirect to="item" />
 					<Route path="item">
 						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_PlanRiskTabPanel} />
+						<Route path="overview" /> {/* component={Forrisco_PlanRiskTabPanel} /> */}
 						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco*/
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
 						<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
@@ -137,15 +137,13 @@ ReactDOM.render((
 
 					<Route path="unit">
 						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_UnitTabPanel} />
+						<Route path="overview" />
+
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
 						<Route path=":unitId/risk">
 							<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
-							<Route path=":riskId" component={Forrisco_RiskDetail}>
-								{//<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
-								}
-							</Route>
+							<Route path=":riskId" component={Forrisco_RiskDetail}/>
 						</Route>
 
 						<Route path=":unitId" component={Forrisco_RegistryUnit}>

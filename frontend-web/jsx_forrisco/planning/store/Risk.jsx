@@ -44,7 +44,7 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_NEW_CONTINGENCY: "risk-newContingency",
 	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
 	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
-
+	ACTION_RETRIEVE_ACTIVITIES: "risk-retrieveActivities",
 	url: URL,
 	model: RiskModel,
 
@@ -447,6 +447,23 @@ var RiskStore = Fluxbone.Store.extend({
 					msg: opts.responseJSON.message,
 				});
 				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	retrieveActivities(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/activity",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data},
+			success(model) {
+				me.trigger("retrieveActivities", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("retrieveActivities", opts);
 			}
 		});
 	},

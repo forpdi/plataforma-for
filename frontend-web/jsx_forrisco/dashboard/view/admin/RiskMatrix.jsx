@@ -30,7 +30,6 @@ export default React.createClass({
     },
 
 	componentDidMount(){
-	//	console.log("componentDidMount",this.props)
 		var me = this;
 		if(EnvInfo && EnvInfo.company == null){
 			me.setState({
@@ -63,8 +62,6 @@ export default React.createClass({
 
     componentWillReceiveProps(newProps){
 		var me = this;
-
-		//console.log("newProps",newProps)
 
 		this.state.plan=newProps.plan
 		this.state.risks=newProps.risks
