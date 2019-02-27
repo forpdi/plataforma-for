@@ -99,11 +99,16 @@ public class PolicyBS extends HibernateBusiness {
 	 */
 	public PaginatedList<Policy> listPolicies(Company company, boolean archived, Integer page) {
 		PaginatedList<Policy> results = new PaginatedList<Policy>();
-		Criteria criteria = this.dao.newCriteria(Policy.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("archived", archived)).add(Restrictions.eq("company", company))
+		Criteria criteria = this.dao.newCriteria(Policy.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("archived", archived))
+				.add(Restrictions.eq("company", company))
 				.addOrder(Order.asc("id"));
-		Criteria count = this.dao.newCriteria(Policy.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("archived", archived)).add(Restrictions.eq("company", company))
+		
+		Criteria count = this.dao.newCriteria(Policy.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("archived", archived))
+				.add(Restrictions.eq("company", company))
 				.setProjection(Projections.countDistinct("id"));
 		
 		if(page != null){
