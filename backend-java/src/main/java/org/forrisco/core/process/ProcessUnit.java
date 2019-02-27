@@ -28,7 +28,6 @@ public class ProcessUnit extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Process.class,  fetch=FetchType.EAGER)
 	private Process process;
 	
-	@SkipSerialization
 	@JoinColumn(name="unit_id") 
 	@ManyToOne(targetEntity=Unit.class,  fetch=FetchType.EAGER)
 	private Unit unit;

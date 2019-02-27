@@ -46,14 +46,28 @@ public class ProcessController extends AbstractController{
 				this.fail("Unidade não encontrada.");
 				return;
 			}
+			if(this.domain == null) {
+				this.fail("Instituição não definida");
+				return;
+			}
+			process.setCompany(this.domain.getCompany());
 			
 			this.processBS.save(process);
 
-			ProcessUnit processunit= new ProcessUnit();
-			processunit.setProcess(process);
-			processunit.setUnit(unit);
-			
-			this.processBS.save(processunit);
+			ProcessUnit processUnit = new ProcessUnit();
+			processUnit.setProcess(process);
+			processUnit.setUnit(unit);
+			this.processBS.save(processUnit);
+
+			if (process.getRelatedUnits() != null) {
+				for (Unit relatedUnit : process.getRelatedUnits()) {
+					processUnit = new ProcessUnit();
+					processUnit.setProcess(process);
+					processUnit.setUnit(relatedUnit);
+					this.processBS.save(processUnit);
+				}
+			}
+
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
