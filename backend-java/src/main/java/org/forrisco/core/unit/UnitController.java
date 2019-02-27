@@ -51,12 +51,12 @@ public class UnitController extends AbstractController {
 	// ManagePolicyPermission.class })
 	public void save(@NotNull @Valid Unit unit) {
 		try {
-
-			if (unit.getPlan() == null) {
+			PlanRisk planRisk = this.unitBS.exists(unit.getPlan().getId(), PlanRisk.class);
+			if (planRisk == null) {
 				this.fail("Unidade não possui Plano de Risco");
 			}
-
 			unit.setId(null);
+			unit.setPlan(planRisk);
 			this.unitBS.save(unit);
 			this.success(unit);
 		} catch (Throwable ex) {

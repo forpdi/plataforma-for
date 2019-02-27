@@ -141,7 +141,6 @@ ReactDOM.render((
 					<Route path="unit">
 						<IndexRedirect to="overview" />
 						<Route path="overview" />
-
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
 						<Route path=":unitId/risk">
