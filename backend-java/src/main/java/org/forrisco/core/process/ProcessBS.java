@@ -2,7 +2,7 @@ package org.forrisco.core.process;
 
 
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -59,25 +59,40 @@ public class ProcessBS extends HibernateBusiness {
 	 *
 	 */
 	public PaginatedList<Process> listProcessbyUnit(Unit unit) {
-		//PaginatedList<ProcessUnit> processunit = new PaginatedList<ProcessUnit>();
 		PaginatedList<Process> results = new PaginatedList<Process>();
-		List<Process> list= new ArrayList<Process>();
+		List<Process> list = new LinkedList<Process>();
 		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
 
-		Criteria count = this.dao.newCriteria(ProcessUnit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("unit", unit))
-				.setProjection(Projections.countDistinct("id"));
+//		Criteria count = this.dao.newCriteria(ProcessUnit.class)
+//				.add(Restrictions.eq("deleted", false))
+//				.add(Restrictions.eq("unit", unit))
+//				.setProjection(Projections.countDistinct("id"));
 		
-		for(ProcessUnit processunit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
-			list.add(processunit.getProcess());
+		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
+			Process process = processUnit.getProcess();
+			List<Unit> relatedUnits = this.listRelatedUnits(process);
+			process.setRelatedUnits(relatedUnits);
+			list.add(process);
 		}
 		results.setList(list);
-		results.setTotal((Long) count.uniqueResult());
+		results.setTotal((long) list.size());
 	 
 		return results;
+	}
+
+	public List<Unit> listRelatedUnits(Process process) {
+		List<Unit> units = new LinkedList<Unit>();
+		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("process", process));
+		for (ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)) {
+			Unit unit = processUnit.getUnit();
+			unit.setUser(null);
+			units.add(unit);
+		}
+		return units;
 	}
 
 	public PaginatedList<Process> listProcessbyCompany(CompanyDomain domain) {
