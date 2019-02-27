@@ -19,6 +19,7 @@ var ProcessStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^process-[a-zA-Z0-9]+$/,
 	ACTION_LIST: 'process-listProcess',
 	ACTION_CREATE: 'process-newProcess',
+	ACTION_DELETE: 'process-deleteProcess',
 	url: URL,
 	model: processModel,
 
@@ -51,6 +52,22 @@ var ProcessStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("processCreated", opts);
+			}
+		});
+	},
+
+	deleteProcess(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/${data.processId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("processDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("processDeleted", opts);
 			}
 		});
 	},
