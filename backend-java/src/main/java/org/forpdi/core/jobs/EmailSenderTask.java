@@ -24,7 +24,7 @@ import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
 @Scheduled(fixedRate = 60000)
 public class EmailSenderTask implements Task {
 
-	private static Logger LOG = Logger.getLogger(EmailSenderTask.class);
+	public static Logger LOG = Logger.getLogger(EmailSenderTask.class);
 	private Queue<NotificationEmail> queue;
 
 	public EmailSenderTask() {

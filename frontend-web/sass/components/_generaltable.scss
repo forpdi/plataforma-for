@@ -22,9 +22,9 @@
         align-items: center;
         padding: 10px 22px!important;
     }
-    .rt-td {
-        padding: 18px 22px!important;
-    }
+	div.rt-table, div.rt-tbody, div.rt-td {
+		overflow: visible;
+	}
     .rt-td, .rt-th {
         min-height: 36px;
         white-space: normal!important;
@@ -42,16 +42,35 @@
             background-color: transparent;
             border: none;
             cursor: pointer;
-
             span {
                 cursor: inherit;
-            }
-        }
+			}
+		}
+		.btn {
+			margin-left: 0 !important;
+			margin-top: 18px;
+		}
 	}
 
 	.double-input-cell {
 		.form-group:first-child {
 			margin-bottom: 0;
 		}
+	}
+
+	.unit-multi-select {
+		width: 100%;
+		& > div {
+			margin-top: 15px;
+			width: 100%;
+			button {
+				width: 100%;
+			}
+		}
+	}
+
+	.fpdi-nav-hide-btn {
+		margin: 20px 0 0 0;
+		padding: 0;
 	}
 }

@@ -48,6 +48,8 @@ export default React.createClass({
 			info: false
 		};
 	},
+
+
 	getFields() {
 		var fields = [];
 
@@ -332,7 +334,7 @@ export default React.createClass({
 							description: model.data.fieldItem[i].description,
 							isText:  model.data.fieldItem[i].isText,
 							type: model.data.fieldItem[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							value: model.data.fieldItem[i].description,
+							value: model.data.fieldItem[i].name,
 							label: model.data.fieldItem[i].name,
 							edit: false,
 							fileLink: model.data.fieldItem[i].fileLink
@@ -560,6 +562,7 @@ export default React.createClass({
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
 	setItem(index,item){
+		console.log("setItem",index,item)
 		this.state.fields.map( (fielditem, i) => {
 			if (index==i){
 				fielditem.name= item.name,

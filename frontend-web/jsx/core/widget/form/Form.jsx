@@ -67,7 +67,7 @@ var VerticalForm =  React.createClass({
 		Modal.hide();
 		//this.setState({
 		//	editUser: false
-		//	
+		//
 		//});
 	},
 	componentDidMount() {
@@ -95,8 +95,8 @@ var VerticalForm =  React.createClass({
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
 				Toastr.error(errors);
-			}else{			
-				this.context.toastr.addAlertError(errors);
+			}else{
+				Toastr.error(errors)
 			}
 		} else if (typeof this.state.errorMessage == 'object') {
 			var msg = "<ul>";
@@ -108,14 +108,14 @@ var VerticalForm =  React.createClass({
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
 				Toastr.error(msg);
-			}else{			
+			}else{
 				this.context.toastr.addAlertError(msg);
 			}
-		} else {			
+		} else {
 			if(this.context.toastr == 'undefined'){
 				Toastr.remove();
 				Toastr.error(Messages.get("label.errorUnexpected"));
-			}else{			
+			}else{
 				this.context.toastr.addAlertError(Messages.get("label.errorUnexpected"));
 			}
 		}
@@ -152,7 +152,7 @@ var VerticalForm =  React.createClass({
 				</div>);
 			}
 		}
-		return (<form onSubmit={this.submitWrapper} id={this.props.id} ref={this.props.id}> 
+		return (<form onSubmit={this.submitWrapper} id={this.props.id} ref={this.props.id}>
 			{this.props.fields.map((field, idx) => {
 				return (<VerticalInput
 					formId={this.props.id}

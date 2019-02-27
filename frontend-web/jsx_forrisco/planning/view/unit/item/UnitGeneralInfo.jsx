@@ -80,9 +80,6 @@ export default React.createClass({
 		UserStore.off(null, null, this);
 	},
 
-	componentWillReceiveProps(newProps) {
-	},
-
 	switchUpdateMode() {
 		this.setState({
 			showUpdateMode: !this.state.showUpdateMode,
@@ -283,7 +280,10 @@ export default React.createClass({
 						: this.renderInfo()
 					}
 
-					<UnitProcess />
+					<UnitProcess
+						planRiskId={this.props.params.planRiskId}
+						unitId={this.props.params.unitId}
+					/>
 
 				</div>
 			</div>

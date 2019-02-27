@@ -5,6 +5,7 @@ import FPDIRichText from 'forpdi/jsx/vendor/FPDIRichText';
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import $ from "jquery";
 
 var Validate = Validation.validate;
 
@@ -21,6 +22,10 @@ export default React.createClass({
 			newFieldType: null,
 			types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
 		}
+	},
+
+	componentWillReceiveProps(newProps){
+		this.state.description=newProps.field.description
 	},
 	changeRichText(value){
 		this.setState({
@@ -178,7 +183,7 @@ export default React.createClass({
 					</div>
 					<span className="pdi-normal-text">
 						<div id={this.props.field.name}>
-							{this.props.field.description}
+							{$(this.props.field.description).text()}
 						</div>
 					</span>
 				</div>
