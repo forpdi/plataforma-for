@@ -237,11 +237,7 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveItem", (model) => {
-
-			console.log("retrieveItem", (model) )
 			if(!model.attributes.deleted){
-
-
 				var fields = [];
 				for (var i in model.attributes.fieldItem) {
 					var item=model.attributes.fieldItem[i]
@@ -260,16 +256,11 @@ export default React.createClass({
 					}
 				}
 
-				//me.setState({
-
-			//	})
-
 				me.setState({
 					itemModel: model,
 					titulo: model.get("name"),
 					vizualization: true,
 					loading:false,
-					//fields: this.getFields(),
 					fields: fields
 				});
 
@@ -317,8 +308,6 @@ export default React.createClass({
 		}, me);*/
 
 		ItemStore.on("itemUpdated", (model) => {
-
-			console.log("itemUpdated", (model) )
 			if(model !=null){
 				var fields = [];
 				var mod = this.state.itemModel;
@@ -328,7 +317,6 @@ export default React.createClass({
 
 				for (var i in model.data.fieldItem) {
 					if(!model.data.deleted){
-						console.log(i,model.data.fieldItem.length,model.data.fieldItem[i])
 						fields.push({
 							name: model.data.fieldItem[i].name,
 							description: model.data.fieldItem[i].description,
@@ -342,14 +330,11 @@ export default React.createClass({
 					}
 				}
 
-				//field.sort((a, b) => (a.id > b.id) ? 1 : -1)
-				console.log("fields",fields)
 				me.setState({
 					fields: fields,
 					itemModel: mod,
 					titulo: model.data.name,
 					vizualization: true,
-					//fields: me.getFields()
 				});
 				me.forceUpdate();
 
@@ -562,7 +547,6 @@ export default React.createClass({
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
 	setItem(index,item){
-		console.log("setItem",index,item)
 		this.state.fields.map( (fielditem, i) => {
 			if (index==i){
 				fielditem.name= item.name,

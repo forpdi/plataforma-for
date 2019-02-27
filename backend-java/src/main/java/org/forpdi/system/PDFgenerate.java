@@ -109,10 +109,13 @@ import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.codec.Base64;
 import com.itextpdf.text.pdf.draw.DottedLineSeparator;
 
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
+import org.jboss.logging.Logger;
+
 
 public class PDFgenerate {
 	
@@ -146,6 +149,8 @@ public class PDFgenerate {
 	@Inject
 	private RiskBS riskBS;
 	
+
+	protected final Logger LOGGER = Logger.getLogger(this.getClass());
 
 
 	
@@ -2369,8 +2374,14 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		writer.setPageEvent(event);
 		
-		File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
-
+		File outputDir;
+		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
+		
+		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
+			outputDir = contentFile.getParentFile();//File.createTempFile("frisco-document-export", ".pdf").getParentFile();
+		/*}else {
+			 outputDir = new File(storagePath);
+		}*/
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		
 		
@@ -2388,7 +2399,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		boolean haveContent = false;
 
 		document.open();
-		
+		document.add(new Chunk(""));
 		
 		//para cada item selecionado
 		if(sections !=null) {
@@ -2409,7 +2420,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					}
 				}
 					
-				haveContent = true;
+				//haveContent = true;
 				boolean secTitlePrinted = false;
 				subSecIndex = 0;
 				String secName =item.getName();
@@ -2418,7 +2429,21 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					secIndex++;
 				}
 				
+				//att.setFirstLineIndent(firstLineIndent);
+				
+				
+				//TODO informações gerais matrix
+				//descrição
+				/*Paragraph description = new Paragraph(item.getDescription());
+				description.setAlignment(Element.ALIGN_JUSTIFIED);
+				document.add(description);*/
+				//matrix de risco
+				
+				
+				
 				for (FieldItem fielditem: fielditens.getList()) {
+					
+					haveContent = true;
 					
 					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
 						
@@ -2489,7 +2514,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								// LOGGER.info("------->"+att.getContent());
 								if (att.getContent().contains("||IMAGE||")) {
 									String img = allMatches.poll();
-									if (img != null) {
+									if (img != null 
+											&& !img.substring(0, 100).contains("data:image/png;base64")
+											&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+
 										// LOGGER.info("IMG------->"+img);
 										Image image = Image.getInstance(
 												new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
@@ -2498,6 +2526,23 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 										image.scalePercent(scaler * 0.4f);
 										image.setAlignment(Element.ALIGN_CENTER);
 										document.add(image);
+										
+									}else if(img != null ){
+										try {
+											img=img.replace("<img src=\"", "").replace("\">", "");
+											final String base64Data = img.substring(img.indexOf(",") + 1);
+											Image image = null;
+											image = Image.getInstance(Base64.decode(base64Data));
+	
+											if (image != null) {
+												float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+															- document.rightMargin()) / image.getWidth()) * 100;
+												image.scalePercent(scaler * 0.4f);
+												document.add(image);
+											}
+										}catch(Exception e) {
+											LOGGER.error("Imagem não foi exportada no documento pdf.");
+										}
 									}
 								} else {
 									att.setFirstLineIndent(firstLineIndent);
@@ -2521,6 +2566,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	
 				for (SubItem sub: actualsubitens) {
 						
+					haveContent = true;
 					subSecIndex++;
 					
 					String subSecName =sub.getName();
@@ -2594,15 +2640,35 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									// LOGGER.info("------->"+att.getContent());
 									if (att.getContent().contains("||IMAGE||")) {
 										String img = allMatches.poll();
-										if (img != null) {
+										if (img != null 
+												&& !img.substring(0, 100).contains("data:image/png;base64")
+												&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+
 											// LOGGER.info("IMG------->"+img);
 											Image image = Image.getInstance(
-													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
+													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
 											float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
 													- document.rightMargin()) / image.getWidth()) * 100;
 											image.scalePercent(scaler * 0.4f);
 											image.setAlignment(Element.ALIGN_CENTER);
 											document.add(image);
+											
+										}else if(img != null ){
+											try {
+												img=img.replace("<img src=\"", "").replace("\">", "");
+												final String base64Data = img.substring(img.indexOf(",") + 1);
+												Image image = null;
+												image = Image.getInstance(Base64.decode(base64Data));
+		
+												if (image != null) {
+													float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+																- document.rightMargin()) / image.getWidth()) * 100;
+													image.scalePercent(scaler * 0.4f);
+													document.add(image);
+												}
+											}catch(Exception e) {
+												LOGGER.error("Imagem não foi exportada no documento pdf.");
+											}
 										}
 									} else {
 										att.setFirstLineIndent(firstLineIndent);
@@ -2623,17 +2689,27 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			}
 
 		}
-			
+
 		if (haveContent) {
 			document.close();
 		}
-	
+		outputDir.delete();
 	}
 	
 	
 	private int generateSummary(File finalSummaryPdfFile, TOCEvent event, int Npages) throws DocumentException, IOException {
 		
-		File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
+		File outputDir;
+		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
+		
+		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
+			//outputDir = File.createTempFile("frisco-document-export", ".pdf").getParentFile();
+		outputDir=tempFile();
+		/*}else {
+			 outputDir = new File(storagePath);
+		}*/
+		
+		//File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		File summaryPdfFile = new File(outputDir, String.format("%s-summary.pdf", prefix));
 		
@@ -2703,18 +2779,30 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return summaryCountPages;
 	}
 	
+	private File tempFile() throws IOException {
+		File outputDir = File.createTempFile("frisco-document-export", ".pdf").getParentFile();
+		//final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+		return outputDir;
+	}
 	
-	
-	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws FileNotFoundException, DocumentException {
+	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws DocumentException, IOException {
 		
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
 		
 		writer.setPageEvent(event);
 		
-		File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
-
+		File outputDir;
+		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
+		
+		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
+			//outputDir = File.createTempFile("fprisco-document-export", ".pdf").getParentFile();
+		outputDir=tempFile();
+		/*}else {
+			 outputDir = new File(storagePath);
+		}*/
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+
 		
 		
 		String[] sections = null;
@@ -3013,7 +3101,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			}
 		}
 			
-		if (haveContent) {
+		if (haveContent ) {
 			document.close();
 		}
 	}
@@ -3033,15 +3121,13 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	 */
 	public File exportReport(String title, String author,String itens, String subitens) throws IOException, DocumentException {
 
-		
-		File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
-		//File outputDir = File.createTempFile("frisco-report-export", ".pdf").getParentFile();
+		File outputDir=tempFile();
 
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 
 		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
 		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
-		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
+		File finalPdfFile = new File(outputDir, String.format("final-%s.pdf", prefix));
 		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
 		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
 
@@ -3049,8 +3135,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		TOCEvent event = new TOCEvent();
 		PdfReader cover = new PdfReader(coverPdfFile.getPath());
-
+		
 		generateContent(contentFile, itens, subitens, event);
+		
+		//contentFile.delete();
 		
 		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
 		
@@ -3064,21 +3152,22 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
 		PdfReader content;
-		// int unnumberedPgsCount = summaryCountPages;
+		
 		// CAPA
 		n = cover.getNumberOfPages();
-		// unnumberedPgsCount += n;
-		for (int i = 0; i < n;) {
+			for (int i = 0; i < n;) {
 			page = copy.getImportedPage(cover, ++i);
 			copy.addPage(page);
 		}
 
-			// SUMÁRIO
-			n = summary.getNumberOfPages();
-			for (int i = 0; i < n;) {
-				page = copy.getImportedPage(summary, ++i);
-				copy.addPage(page);
-			}
+		// SUMÁRIO
+		n = summary.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(summary, ++i);
+			copy.addPage(page);
+		}
+			
+		if(contentFile.length()>0) {
 			content = new PdfReader(contentFile.getPath());
 			// CONTEÚDO
 			n = content.getNumberOfPages();
@@ -3086,30 +3175,38 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				page = copy.getImportedPage(content, ++i);
 				copy.addPage(page);
 			}
+			content.close();
+		}
 			
 		cover.close();
 		summary.close();
-		content.close();
-			
 		newDocument.close();
 
 		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		
-		destinationFile.delete();
+		/*destinationFile.delete();
 		coverPdfFile.delete();
-		//summaryPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
+		
+		outputDir.delete();*/
 	
-		return finalPdfFile;  //capa+sumario+conteudo+paginação
+		for (File f : outputDir.listFiles()) {
+		    if (f.getName().startsWith("frisco-") 
+		    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
+		        f.delete();
+		    }
+		}
+		
+		return finalPdfFile; //capa+sumario+conteudo+paginação
 		
 	}
 
+
 	public File exportReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
 		
-		File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
-		//File outputDir = File.createTempFile("frisco-report-export", ".pdf").getParentFile();
-
+		File outputDir=tempFile();
+		
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 
 		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
@@ -3137,21 +3234,22 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
 		PdfReader content;
-		// int unnumberedPgsCount = summaryCountPages;
+
 		// CAPA
 		n = cover.getNumberOfPages();
-		// unnumberedPgsCount += n;
 		for (int i = 0; i < n;) {
 			page = copy.getImportedPage(cover, ++i);
 			copy.addPage(page);
 		}
 
-			// SUMÁRIO
-			n = summary.getNumberOfPages();
-			for (int i = 0; i < n;) {
-				page = copy.getImportedPage(summary, ++i);
-				copy.addPage(page);
-			}
+		// SUMÁRIO
+		n = summary.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(summary, ++i);
+			copy.addPage(page);
+		}
+		
+		if(contentFile.length()>0) {
 			content = new PdfReader(contentFile.getPath());
 			// CONTEÚDO
 			n = content.getNumberOfPages();
@@ -3159,20 +3257,21 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				page = copy.getImportedPage(content, ++i);
 				copy.addPage(page);
 			}
+			content.close();
+		}
 			
 		cover.close();
-		summary.close();
-		content.close();
-			
+		summary.close();		
 		newDocument.close();
 
 		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		
 		destinationFile.delete();
 		coverPdfFile.delete();
-		//summaryPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
+		
+		outputDir.delete();
 	
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
