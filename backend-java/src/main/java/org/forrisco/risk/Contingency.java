@@ -22,7 +22,6 @@ public class Contingency extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_contingency";
 	private static final long serialVersionUID = 1L;
 
-	@SkipSerialization
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 

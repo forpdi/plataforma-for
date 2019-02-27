@@ -9,6 +9,7 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AppLogo from "forpdi/img/logoLogin.png";
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
 var Validate = Validation.validate;
@@ -51,7 +52,7 @@ export default React.createClass({
 			var url = window.location.href.split("#");
 			var path = url[1].split("?");
 			if (path[0] == "/login")
-				location.assign("#/home");
+				location.assign("#/forrisco/home");
 		}, me);
 		UserSession.on("loaded", () => {
 			me.setState({loaded: true});
@@ -60,7 +61,7 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		if (!!UserSession.get("logged")) {
-			location.assign("#/home");
+			location.assign("#/forrisco/home");
 		} else {
 			this.setState({loaded: true});
 		}
@@ -77,16 +78,17 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.getEditable("label.forPdiLogo","fpdi-nav-label")} />
-							<h3 className="fpdi-login-subtitle">{Messages.get("label.login.titleComplement")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titleRiskComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>
 
 
 		    <div className="row">
-				<div className="col-md-4 col-md-offset-4">	
-					<div className="fpdi-card-login">		
+				<div className="col-md-4 col-md-offset-4">
+					<div className="fpdi-card-login">
 						<div className="panel panel-default">
 						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.login","fpdi-nav-label")}</p></div>
 							  <div className="panel-body">
@@ -103,7 +105,7 @@ export default React.createClass({
 											id="login-form"
 										/>
 									</div>
-									
+
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">

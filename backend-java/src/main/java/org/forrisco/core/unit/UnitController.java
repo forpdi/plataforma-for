@@ -5,18 +5,22 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.jobs.EmailSenderTask;
+import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.risk.Incident;
-import org.forrisco.risk.Monitor;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
+import org.forrisco.core.process.Process;
+
+import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Delete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
@@ -137,6 +141,28 @@ public class UnitController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Retorna processos das unidades.
+	 * 
+	 * @return PaginatedList<RiskProcess>
+	 * 			Lista de Processos 
+	 */
+	@Get(PATH + "/process")
+	@NoCache
+	@Permissioned
+	public void listProcess() {
+		try {
+			PaginatedList<Process> list= this.unitBS.listProcess();
+			
+			this.success(list);
+
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 
 	/**
 	 * Exclui unidade.
@@ -180,4 +206,42 @@ public class UnitController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Atualiza unidade.
+	 * 
+	 * @param unit
+	 *            Unidade a ser atualizada.
+	 *
+	 */
+	@Put(PATH)
+	@NoCache
+	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
+	// ManagePolicyPermission.class })
+	@Consumes
+	public void updateUnit(@NotNull Unit unit) {
+		try {
+			Unit existent = this.unitBS.exists(unit.getId(), Unit.class);
+			if (existent == null) {
+				this.fail("A unidade não foi encontrada.");
+				return;
+			}
+			
+			User user = this.riskBS.exists(unit.getUser().getId(), User.class);
+			if (user == null) {
+				this.fail("O usuário responsável não foi encontrado.");
+				return;
+			}
+
+			existent.setAbbreviation(unit.getAbbreviation());
+			existent.setUser(user);
+			existent.setDescription(unit.getDescription());
+			
+			this.unitBS.persist(existent);
+			
+			this.success();
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
 }

@@ -13,6 +13,7 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_GET_SUB_ITENS: 'planRiskItem-getSubItens',
 	ACTION_SAVE_ITENS: 'planRiskItem-saveNewItens',
 	ACTION_SAVE_SUBITENS: 'planRiskItem-saveNewSubItens',
+	ACTION_UPDATE_ITEM: 'planRiskItem-updateItens',
 
 
 	url: URL,
@@ -75,10 +76,27 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			contentType: 'application/json',
 			data: JSON.stringify(planRiskSubItem),
 			success(model) {
-				me.trigger("itemSaved", model);
+				me.trigger("subItemSaved", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("itemSaved", opts);
+				me.trigger("subItemSaved", opts);
+			}
+		})
+	},
+
+	updateItens(planRiskItem) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/update",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(planRiskItem),
+			success(model) {
+				me.trigger("itemUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("itemUpdated", opts);
 			}
 		})
 	},

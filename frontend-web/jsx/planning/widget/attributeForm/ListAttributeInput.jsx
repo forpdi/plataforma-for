@@ -20,6 +20,8 @@ import SelectStructure from "forpdi/jsx/planning/view/field/SelectStructureField
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
+
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -41,12 +43,15 @@ export default React.createClass({
 				undeletable: false,
 				alterable: false,
 				editing: false
-			}
+			},
+			selectedOption:[],
+			selected:[],
+			optionsField:[]
 		};
 	},
 	getInitialState() {
 		return {
-			fieldId: "field-"+this.props.fieldDef.name.replace(/\./g, "-"),
+			fieldId: "field-"+this.props.fieldDef[0].name.replace(/\./g, "-"),
 			strategicObjectivesPlansParam: -1
 		};
 	},
@@ -134,7 +139,8 @@ export default React.createClass({
             this.setState({
                 menuHidden: data
             });
-        }, this);
+		}, this);
+
 	},
 
 	onStrategicObjectivesSelectPlanChange(){
@@ -200,6 +206,11 @@ export default React.createClass({
 		);
 	},
 
+	handleSelect(selectedOption){
+		this.props.onChange(selectedOption)
+		this.setState({ selectedOption });
+	},
+
 	render() {
 		var fieldEl;
 		if (this.props.vizualization) {
@@ -229,6 +240,15 @@ export default React.createClass({
 				fieldEl = (
 					<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
 				);
+
+			} else if (this.props.fieldDef[0].type == AttributeTypes.SELECT_MULTI_FIELD) {
+				fieldEl=[]
+				for(var i in this.props.fieldDef){
+					fieldEl.push(<div>
+							<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef[i].value.name}} style={{"display": "unset"}}/>
+							{this.props.fieldDef[i].link? <a href={this.props.fieldDef[i].link}  >{this.props.fieldDef[i].linkName}</a>:""}
+						</div>)
+				}
 			} else {
 
 				if(this.props.fieldDef.description != null){
@@ -238,12 +258,11 @@ export default React.createClass({
 						</div>
 					);
 				}else{
-
- 				fieldEl = (
- 					<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef.value}} style={{"display": "unset"}}/>
-					 {this.props.fieldDef.link? <a href={this.props.fieldDef.link}  >{this.props.fieldDef.linkName}</a>:""}
-					 </div>
-				 );
+					fieldEl = (
+						<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef.value}} style={{"display": "unset"}}/>
+						{this.props.fieldDef.link? <a href={this.props.fieldDef.link}  >{this.props.fieldDef.linkName}</a>:""}
+						</div>
+					);
 				}
 			}
 		} else if (this.props.fieldDef.type == AttributeTypes.STRATEGIC_OBJECTIVE_FIELD) {
@@ -340,6 +359,49 @@ export default React.createClass({
 						}):''}
 				</select>
 			);
+
+		}else if(this.props.fieldDef[0].type == AttributeTypes.SELECT_MULTI_FIELD){
+
+			//var fields=[]
+
+			if(!this.state.selected){
+				var fields=[]
+				for(var i in this.props.fieldDef){
+					if(this.props.fieldDef[i].isvalue){
+						fields.push({ label: this.props.fieldDef[i].value.name, value: this.props.fieldDef[i].value.id},)
+					}
+				}
+
+				var optionsField=[]
+
+				for(var i in this.props.fieldDef[0].optionsField){
+					optionsField.push({ label: this.props.fieldDef[0].optionsField[i].label, value: this.props.fieldDef[0].optionsField[i].value})
+				}
+
+				this.state.selected=true
+
+				this.setState({
+					selectedOption:fields,
+					optionsField:optionsField
+				})
+				this.handleSelect(fields)
+			}
+
+			fieldEl=(<ReactMultiSelectCheckboxes
+				className={"multiselect"}
+				options={this.state.optionsField}
+				value={this.state.selectedOption}
+				onChange={this.handleSelect}
+				isSearchable={true}
+				placeholderButtonLabel={this.props.fieldDef[0].placeholder}
+				getDropdownButtonLabel={({ placeholderButtonLabel, value }) => {
+										if(value==null){ return placeholderButtonLabel	}
+										else if(value.length == 0){return placeholderButtonLabel}
+										else if(value.length == 1){return value.length+" item selecionado"}
+										else{return value.length+" item selecionados"}}}
+				/>)
+
+
 		} else if (this.props.fieldDef.type == AttributeTypes.RESPONSIBLE_FIELD) {
 			if (!this.props.fieldDef.users || this.props.fieldDef.users.length <= 0) {
 				fieldEl = (

@@ -25,7 +25,6 @@ export default React.createClass({
 		className : React.PropTypes.object
 	},
 
-
 	getInitialState() {
 		return {
 			cleanTree: [],
@@ -128,10 +127,17 @@ export default React.createClass({
 		})
 	},
 
-//PlanRisk
+    //PlanRisk
 	setTreeItens(planRisk, treeItens = []) {
 
 		var me = this;
+
+		/* Redireciona para as Informações gerais ao carregar a Tree*/
+		if(!this.props.location.pathname.includes("unit")){
+			this.context.router.push("/forrisco/plan-risk/" + planRisk.id + "/item/" + planRisk.id + "/info");
+		}
+		/* ____________________  */
+
 		var  info = {
 			label: "Informações Gerais",
 			expanded: false,
@@ -172,7 +178,6 @@ export default React.createClass({
 
 			treeItens.unshift(info);
 			treeItens.push(newItem);
-
 
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
@@ -275,7 +280,6 @@ export default React.createClass({
 
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
 
-
 				{planriskactive ?
 					<div className={"fpdi-tabs"}  role="tablist">
 						<div
@@ -307,12 +311,7 @@ export default React.createClass({
 						<Unit treeUnit={this.state.treeItensUnit}/>
 					</div>
 				}
-
-
 				</div>
-
-
-
 			</div>
 		)
 	},

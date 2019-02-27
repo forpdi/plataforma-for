@@ -218,6 +218,22 @@ export default React.createClass({
 					placeholderText="DD/MM/AAAA"
 					showYearDropdown
 					/></div>);
+		} else if (this.props.fieldDef.type == 'custom-mask') {
+			fieldEl = (<MaskedInput
+				mask={this.props.fieldDef.mask}
+				type="tel"
+				className="form-control"
+				name={this.props.fieldDef.name}
+				value={this.props.fieldDef.value}
+				id={this.state.fieldId}
+				ref={this.state.fieldId}
+				placeholder={this.props.fieldDef.placeholder}
+				onChange={this.props.fieldDef.onChange || _.noop}
+				// placeholder=""
+				onKeyPress={this.onKeyUp}
+				onPaste={this.onKeyUp}
+			/>);
+
 		} else if (this.props.fieldDef.type == 'daterange') {
 			fieldEl = (<input
 				className="form-control"

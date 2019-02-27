@@ -50,7 +50,7 @@ export default React.createClass({
 
 		UnitStore.on("unitbyplan",(model) =>{
 			if(model.data.length ==0){
-				Toastr.error(Messages.get("label.noUnit"))
+				//Toastr.error(Messages.get("label.noUnit"))
 			}
 			this.state.units = model.data
 			me.setState({
@@ -101,9 +101,6 @@ export default React.createClass({
 
 				}
 			}else{
-
-				console.log("listedunarchivedplanrisk",response.responseJSON)
-
 				if(response.responseJSON){
 					if(response.responseJSON.message =="Não possui domínio!"){
 						this.context.router.push("/forrisco/policy");

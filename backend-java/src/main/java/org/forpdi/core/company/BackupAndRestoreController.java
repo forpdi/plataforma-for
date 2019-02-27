@@ -169,7 +169,7 @@ public class BackupAndRestoreController extends AbstractController  {
 
 			archive = new Archive();
 			archive.setName(file.getFileName());
-			File targetFile = new File(SystemConfigs.getConfig("store.files")+"/"+archive.getName());
+			File targetFile = new File(SystemConfigs.getConfig("store.files")+archive.getName());
 			FileUtils.copyInputStreamToFile(file.getFile(), targetFile);
 
 			this.dbbackup.persist(archive);
@@ -194,9 +194,10 @@ public class BackupAndRestoreController extends AbstractController  {
 		Archive file =this.dbbackup.exists(id, Archive.class);
 		
 		if(file ==null){
-			this.fail("Arquivo não encontrado");
+			this.fail("(No such file or directory)");
 			return;
 		}
+		LOGGER.error("arquivo: "+SystemConfigs.getConfig("store.files")+file.getName());
 		
 		try{
 			File initialFile = new File(SystemConfigs.getConfig("store.files")+file.getName());
@@ -210,10 +211,13 @@ public class BackupAndRestoreController extends AbstractController  {
 				response.getOutputStream().write(bytes);
 				response.getOutputStream().close();
 				this.result.nothing();
+			}else {
+				this.fail("(No such file or directory):"+SystemConfigs.getConfig("store.files")+file.getName() );
+				this.fail("arquivo: "+SystemConfigs.getConfig("store.files")+file.getName());
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Error while proxying the file upload.", ex);
-			this.fail(ex.getMessage());
+			this.fail("(No such file or directory): "+SystemConfigs.getConfig("store.files")+file.getName() );
 		}
 	}
 

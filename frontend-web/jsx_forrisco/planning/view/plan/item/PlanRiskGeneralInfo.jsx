@@ -5,6 +5,8 @@ import _ from "underscore";
 import {Link} from "react-router";
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
 
 export default React.createClass({
 	contextTypes: {
@@ -22,7 +24,8 @@ export default React.createClass({
 			fields: [],
 			title: '',
 			description: '',
-			policy: ''
+			policy: '',
+			isLoading: true
 		}
 	},
 
@@ -31,12 +34,31 @@ export default React.createClass({
 			this.setState({
 				title: response.attributes.name,
 				description: response.attributes.description,
-				policy: response.attributes.policy.name
+				policy: response.attributes.policy.name,
+				isLoading: false
 			});
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname,  response.attributes.name);
 			});
+		}, this);
+		this.refreshData(this.props.params.planRiskId);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.params.planRiskId !== this.props.params.planRiskId) {
+			this.refreshData(newProps.params.planRiskId);
+		}
+	},
+
+	refreshData(planRiskId) {
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+			data: planRiskId
 		});
+	},
+
+	componentWillUnmount() {
+		PlanRiskStore.off(null, null, this);
 	},
 
 	deletePlanRisk() {
@@ -84,6 +106,11 @@ export default React.createClass({
 	},
 
 	render() {
+
+		if (this.state.isLoading === true) {
+			return <LoadingGauge/>;
+		}
+
 		return (
 			<div>
 				<div className="fpdi-card fpdi-card-full floatLeft">

@@ -48,6 +48,8 @@ export default React.createClass({
 			info: false
 		};
 	},
+
+
 	getFields() {
 		var fields = [];
 
@@ -236,8 +238,6 @@ export default React.createClass({
 
 		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
-
-
 				var fields = [];
 				for (var i in model.attributes.fieldItem) {
 					var item=model.attributes.fieldItem[i]
@@ -256,16 +256,11 @@ export default React.createClass({
 					}
 				}
 
-				//me.setState({
-
-			//	})
-
 				me.setState({
 					itemModel: model,
 					titulo: model.get("name"),
 					vizualization: true,
 					loading:false,
-					//fields: this.getFields(),
 					fields: fields
 				});
 
@@ -314,25 +309,23 @@ export default React.createClass({
 
 		ItemStore.on("itemUpdated", (model) => {
 			if(model !=null){
-
+				var fields = [];
 				var mod = this.state.itemModel;
 				mod.attributes.name = model.data.name;
 				mod.attributes.description = model.data.description;
 				mod.attributes.policy = model.data.policy;
 
-				for (var i in model.attributes) {
-					if(!model.attributes[i].deleted){
-						var fields = [];
-
+				for (var i in model.data.fieldItem) {
+					if(!model.data.deleted){
 						fields.push({
-							name: model.attributes[i].name,
-							description: model.attributes[i].description,
-							isText:  model.attributes[i].isText,
-							type: model.attributes[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							value: model.attributes[i].description,
-							label: model.attributes[i].name,
+							name: model.data.fieldItem[i].name,
+							description: model.data.fieldItem[i].description,
+							isText:  model.data.fieldItem[i].isText,
+							type: model.data.fieldItem[i].isText? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
+							value: model.data.fieldItem[i].name,
+							label: model.data.fieldItem[i].name,
 							edit: false,
-							fileLink: model.attributes[i].fileLink
+							fileLink: model.data.fieldItem[i].fileLink
 						});
 					}
 				}
@@ -342,7 +335,6 @@ export default React.createClass({
 					itemModel: mod,
 					titulo: model.data.name,
 					vizualization: true,
-					fields: me.getFields()
 				});
 				me.forceUpdate();
 

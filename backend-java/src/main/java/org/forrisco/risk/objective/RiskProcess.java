@@ -32,7 +32,7 @@ public class RiskProcess extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@JoinColumn(name="process_id") 
 	@ManyToOne(targetEntity=Process.class, optional=false, fetch=FetchType.EAGER)
 	private Process process;

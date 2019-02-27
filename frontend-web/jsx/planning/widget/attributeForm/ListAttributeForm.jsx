@@ -1,7 +1,7 @@
 import Toastr from 'toastr';
 import React from "react";
 import {Link, hashHistory} from "react-router";
-import AttributeInput from "forpdi/jsx/planning/widget/attributeForm/ListAttributeInput.jsx";
+import ListAttributeInput from "forpdi/jsx/planning/widget/attributeForm/ListAttributeInput.jsx";
 import BudgetField from "forpdi/jsx/planning/view/field/BudgetField.jsx";
 import AttachmentField from "forpdi/jsx/planning/view/field/AttachmentField.jsx";
 import ActionPlanField from "forpdi/jsx/planning/view/field/ActionPlanField.jsx";
@@ -160,6 +160,12 @@ export default React.createClass({
 		var alerts = null;
 		var showButtons = !this.props.vizualization;
 		var requiredFields = false;
+
+
+		if(showButtons && this.props.showButtons != null){
+			showButtons = this.props.showButtons;
+		}
+
 		if (this.state.error) {
 			if (typeof this.state.errorMessage == 'string') {
 				alerts = (<div className="alert alert-danger animated fadeIn" role="alert">
@@ -184,33 +190,47 @@ export default React.createClass({
 
 		return (<form onSubmit={this.submitWrapper}>
 
-			{this.props.fields.length>0 ?
+			{this.props.fields.length>0 && this.props.vizualization?
 				<div className={"form-group form-group-sm"}>
 					<label htmlFor={"field-"+this.props.fields[0].name.replace(/\./g, "-")} className="fpdi-text-label">
 						{this.props.fields[0].label}
-						{//this.props.fieldDef.required && !this.props.vizualization ? <span className="fpdi-required">&nbsp;</span>:""
-					}
 					</label>
 				</div>
 			:""}
+			{this.props.fields.length>0 && this.props.fields[0].type==AttributeTypes.SELECT_MULTI_FIELD ?
 
-			{this.props.fields.map((field,idx) => {
+				<div> <ListAttributeInput
+					id={this.props.fields}
+					fieldDef={this.props.fields}
+					ref={this.props.fields.name}
+					key={this.props.fields.name}
+					undeletable={this.props.undeletable}
+					deleteFunc={this.props.deleteFunc}
+					editFunc={this.props.editFunc}
+					alterable={this.props.alterable}
+					vizualization={this.props.vizualization}
+					isDocument={this.props.isDocument}
+					onClick={this.props.onClick}
+					onChange={this.props.onChange}
+					/>
+					</div>
+				:
 
+				this.props.fields.map((field,idx) => {
 				if (field.type != AttributeTypes.BUDGET_FIELD
 					&& field.type != AttributeTypes.ACTION_PLAN_FIELD
 					&& field.type != AttributeTypes.SCHEDULE_FIELD
 					&& field.type != AttributeTypes.TABLE_FIELD
 					&& field.type != AttributeTypes.ATTACHMENT_FIELD) {
-						showButtons = !this.props.vizualization;
 
+						showButtons = !this.props.vizualization;
 						if(showButtons && this.props.showButtons !=null){
 							showButtons = this.props.showButtons;
 						}
-
 						return (<div>
 
 
-							<AttributeInput
+							<ListAttributeInput
 							id={field.id}
 							index={idx}
 							fieldDef={field}
@@ -223,7 +243,7 @@ export default React.createClass({
 							vizualization={this.props.vizualization}
 							isDocument={this.props.isDocument}
 							onClick={this.props.onClick}
-							onChage={this.props.onChage}
+							onChange={this.props.onChange}
 							/>
 							<br/>
 							</div>

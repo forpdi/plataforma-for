@@ -1,6 +1,9 @@
 package org.forrisco.core.process;
 
 
+import java.io.Serializable;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,7 +24,7 @@ import br.com.caelum.vraptor.serialization.SkipSerialization;
 @Entity(name = Process.TABLE)
 @Table(name = Process.TABLE)
 
-public class Process extends SimpleLogicalDeletableEntity {
+public class Process extends SimpleLogicalDeletableEntity implements Serializable {
 	public static final String TABLE = "frisco_process";
 	private static final long serialVersionUID = 1L;
 
@@ -38,8 +41,14 @@ public class Process extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000) 
 	private String fileLink;
 	
+	@Column(nullable=false, length=255) 
+	private String fileName;
+	
 	@Transient
 	private Unit unit;
+	
+	@Transient
+	private List<Unit> relatedUnits;
 	
 	public Unit getUnit() {
 		return unit;
@@ -72,6 +81,14 @@ public class Process extends SimpleLogicalDeletableEntity {
 	public void setFileLink(String fileLink) {
 		this.fileLink = fileLink;
 	}
+	
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
 	public Company getCompany() {
 		return company;
@@ -81,4 +98,11 @@ public class Process extends SimpleLogicalDeletableEntity {
 		this.company = company;
 	}
 
+	public List<Unit> getRelatedUnits() {
+		return relatedUnits;
+	}
+
+	public void setRelatedUnits(List<Unit> relatedUnits) {
+		this.relatedUnits = relatedUnits;
+	}
 }
