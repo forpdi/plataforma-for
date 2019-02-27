@@ -94,9 +94,14 @@ export default React.createClass({
 		if (this.state.planRiskData) {
 			return (
 				<div className="fpdi-plan-details">
-					<PlanRiskTree planRisk={this.state.planRiskData} unit={this.state.planRiskData} ref="tree" treeType={this.props.route.path} location={this.props.location}/>
+					<PlanRiskTree
+						planRisk={this.state.planRiskData}
+						unit={this.state.planRiskData}
+						ref="tree"
+						treeType={this.props.route.path}
+						location={this.props.location}
+					/>
 					<div className="fpdi-plan-tabs">
-
 						<PlanRiskTabPanel
 							{...this.props}
 							planRisk={this.state.planRiskData}

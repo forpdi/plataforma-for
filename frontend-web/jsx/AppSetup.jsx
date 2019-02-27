@@ -138,13 +138,13 @@ ReactDOM.render((
 
 					<Route path="unit">
 						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_UnitTabPanel} />
+						<Route path="overview" />
 						<Route path="new" component={Forrisco_RegistryUnit} />  		/* Nova unidade*/
 
 						<Route path=":unitId/risk">
-						<Route path="new" component={Forrisco_RiskRegister} /> /* Novo risco*/
+							<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
 							<Route path=":riskId" component={Forrisco_RiskDetail}>
-								<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/
+							{/*<Route path="details" component={Forrisco_RiskRegister} /> /* Detalhar o Risco*/}
 							</Route>
 						</Route>
 
@@ -232,4 +232,3 @@ ReactDOM.render((
 );
 
 module.exports = true;
-

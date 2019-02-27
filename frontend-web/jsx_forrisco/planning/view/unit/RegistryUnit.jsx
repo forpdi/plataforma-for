@@ -1,7 +1,9 @@
 import React from "react";
+import _ from 'underscore';
 import Messages from "@/core/util/Messages";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
+// import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
+import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import UserStore from "forpdi/jsx/core/store/User.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Router from "react-router";
 import UserSession from "@/core/store/UserSession";
@@ -19,70 +21,116 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
-			planRiskModel: null,
+			// planRiskModel: null,
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
-			policyId: null,
+			// policyId: null,
 			plansLength: null,
-			policies: [{
-				id: null,
-				label: ''
-			}],
+			users: [],
+			unit: {
+				name: '',
+				abbreviation: '',
+				user: null,
+				description: '',
+				planRisk: { id: this.props.params.planRiskId },
+			},
 		};
 	},
 
 	componentDidMount() {
-		var policiData = [];
-		var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
+		// var policiData = [];
+		// var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
+		//
+		// 	if (response.status !== true) {
+		// 		this.setState({domainError: true});
+		// 	}
+		//
+		// 	if (response.success === true) {
+		// 		response.data.map((attr) => {
+		// 			policiData.push({
+		// 				id: attr.id,
+		// 				label: attr.name
+		// 			});
+		// 		});
+		//
+		// 		this.setState({
+		// 			policies: policiData, domainError: false,
+		// 		});
+		// 	}
+		// 	resultSelect.off("unarchivedpolicylisted");
+		// });
 
-			if (response.status !== true) {
-				this.setState({domainError: true});
-			}
+		// UnitStore.on("listedunarchivedplanrisk", (response) => {
+		// 	this.setState({
+		// 		plansLength: response.total
+		// 	});
+		// });
 
-			if (response.success === true) {
-				response.data.map((attr) => {
-					policiData.push({
-						id: attr.id,
-						label: attr.name
-					});
-				});
-
-				this.setState({
-					policies: policiData, domainError: false,
-				});
-			}
-			resultSelect.off("unarchivedpolicylisted");
-		});
-
-		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
-			this.setState({
-				plansLength: response.total
-			});
-		});
-
-		PlanRiskStore.on("plariskcreated", (response) => {
+		UserStore.on('retrieve-user', (response) => {
+			let arrUsers = []
 			if (response.data) {
-				this.context.toastr.addAlertSuccess(Messages.get("notification.plan.sav"));
+				response.data.map(users => {
+					arrUsers.push(users)
+				});
+				_.map(arrUsers, user => { return user });
+				this.setState({
+					users: arrUsers
+				});
+			} else {
+				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
+			}
+		});
+
+		UserStore.dispatch({
+      action: UserStore.ACTION_RETRIEVE_USER,
+      data: {
+          page: 1,
+          pageSize: 500,
+      },
+    });
+
+		UnitStore.on("unitcreated", (response) => {
+			if (response.data) {
+				this.context.toastr.addAlertSuccess(Messages.get("notification.unit.save"));
 				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
 			} else {
-				this.context.toastr.addAlertError("Erro ao criar Plano");
+				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}
 		});
 	},
 
-	componentWillMount() {
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_UNARCHIVED,
-		});
+	// componentWillMount() {
+	// 	PolicyStore.dispatch({
+	// 		action: PolicyStore.ACTION_FIND_UNARCHIVED,
+	// 	});
+	//
+	// 	PolicyStore.dispatch({
+	// 		action: UnitStore.ACTION_FIND_UNARCHIVED,
+	// 	});
+	// },
 
-		PolicyStore.dispatch({
-			action: PlanRiskStore.ACTION_FIND_UNARCHIVED,
+	componentWillUnmount() {
+		// PolicyStore.off(null, null, this);
+		UnitStore.off(null, null, this);
+	},
+
+	fieldChangeHandler(e) {
+		this.setState({
+			unit: {
+				...this.state.unit,
+				[e.target.name]: e.target.value,
+			}
 		});
 	},
 
-	componentWillUnmount() {
-		PolicyStore.off(null, null, this);
-		PlanRiskStore.off(null, null, this);
+	selectChangeHandler(e) {
+		const idx = e.target.options.selectedIndex - 1;
+		this.setState({
+			unit: {
+				...this.state.unit,
+				user: this.state.users[idx],
+			}
+		});
 	},
 
 	getFields() {
@@ -94,25 +142,32 @@ export default React.createClass({
 			maxLength: 240,
 			placeholder: "Novo Plano de Gestão de Riscos",
 			label: Messages.getEditable("label.name", "fpdi-nav-label"),
-			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.name : null,
+			onChange: this.fieldChangeHandler,
+		}, {
+			name: "abbreviation",
+			type: "text",
+			placeholder: "Descrição da Política",
+			maxLength: 240,
+			label: Messages.getEditable("label.abbreviation", "fpdi-nav-label"),
+			onChange: this.fieldChangeHandler,
+		}, {
+			name: "user",
+			type: "select",
+			options: _.map(this.state.users, user => user.name),
+			renderDisplay: value => value,
+			className: "form-control-h",
+			required: true,
+			displayField: 'label',
+			placeholder: "Selecone o Responsável",
+			label: Messages.getEditable("label.responsible", "fpdi-nav-label"),
+			onChange: this.selectChangeHandler,
 		}, {
 			name: "description",
 			type: "textarea",
 			placeholder: "Descrição da Política",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
-			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
-		}, {
-			name: "linkedPolicy",
-			type: "select",
-			options: this.state.policies,
-			className: "form-control-h",
-			required: true,
-			displayField: 'label',
-			valueField: 'id',
-			placeholder: "Selecone a Política",
-			label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
-			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
+			onChange: this.fieldChangeHandler,
 		});
 
 		return fields;
@@ -120,27 +175,18 @@ export default React.createClass({
 
 	handleSubmit(event) {
 		event.preventDefault();
-		const formData = new FormData(event.target);
+		const { unit } = this.state;
 
-		if (formData.get('name') === '') {
+		if (unit.name === '' || unit.user === null) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 			return false;
 		}
 
-		if (formData.get('linkedPolicy') === '') {
-			this.context.toastr.addAlertError(Messages.get("label.error.form"));
-			return false;
-		}
+		console.log(unit);
 
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_NEWPLANRISK,
-			data: {
-				name: formData.get('name'),
-				description: formData.get('description'),
-				policy: {
-					id: formData.get('linkedPolicy')
-				}
-			}
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_NEWUNIT,
+			data: unit,
 		});
 	},
 
@@ -157,7 +203,7 @@ export default React.createClass({
 	render() {
 		return (
 			<div>
-				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
+				<h1 className="marginLeft115">Nova Unidade</h1>
 				<div className="fpdi-card padding40">
 					<form onSubmit={this.handleSubmit}>
 
