@@ -434,25 +434,27 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Descrição',
 			accessor: 'description',
-			minWidth: 200,
+			minWidth: 250,
 		}, {
 			Header: 'Ações corretivas',
 			accessor: 'action',
-			minWidth: 200,
+			minWidth: 250,
 		}, {
 			Header: 'Tipo',
 			accessor: 'type',
+			minWidth: 130
 		}, {
 			Header: 'Responsável',
 			accessor: 'user.name',
+			minWidth: 210
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',
+			minWidth: 140
 		}, {
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
-			width: 100
 		}];
 		return (
 			<div className="general-table">
@@ -468,7 +470,7 @@ export default React.createClass({
 					resizable={true}
 					pageSize={this.state.data.length}
 					NoDataComponent={() =>
-						<div className="marginLeft10">
+						<div className="rt-td">
 							Nenhum incidente cadastrado
 						</div>
 					}
