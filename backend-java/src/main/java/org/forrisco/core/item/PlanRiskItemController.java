@@ -1,5 +1,8 @@
 package org.forrisco.core.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -308,4 +311,64 @@ public class PlanRiskItemController extends AbstractController {
 		}
 	}
 	
+	/**
+	 * Deleta um subitem do plano de risco
+	 * @param id
+	 */
+	@Delete(PATH + "/delete-subitem/{id}")
+	@NoCache
+	public void deletePlanRiskSubItem(@NotNull Long id) {
+		try {
+			PlanRiskSubItem planRiskSubItem = this.planRiskItemBS.exists(id, PlanRiskSubItem.class);
+			
+			if (GeneralUtils.isInvalid(planRiskSubItem)) {
+				this.result.notFound();
+				return;
+			}
+			
+			PaginatedList<PlanRiskSubItemField> fields = this.planRiskItemBS.listSubFieldsBySubItem(planRiskSubItem);
+			
+			for(int i = 0; i < fields.getList().size(); i ++) {
+				PlanRiskSubItemField result = fields.getList().get(i);
+				this.planRiskItemBS.delete(result);     //Delete os campos do subitem
+			}
+			
+			this.planRiskItemBS.delete(planRiskSubItem); //Delete o subitem
+			this.success(planRiskSubItem);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	@Get( PATH + "/allsubitens/{id}")
+	@NoCache
+	//@Permissioned
+	public void retrieveAllSubitem(@NotNull Long id) {
+		try {
+			PlanRisk planRisk = this.planRiskItemBS.exists(id, PlanRisk.class);
+			
+			if (planRisk == null) {
+				this.fail("O plano de risco solicitado não foi encontrado.");
+				return;
+			}
+
+			PaginatedList<PlanRiskItem> itens = this.planRiskItemBS.listItensByPlanRisk(planRisk);
+			PaginatedList<PlanRiskSubItem> subitens = new PaginatedList<>();
+			List<PlanRiskSubItem> list= new ArrayList<>();
+			
+			for(PlanRiskItem item :itens.getList()) {
+				PaginatedList<PlanRiskSubItem> subitem = this.planRiskItemBS.listSubItemByItem(item);
+				list.addAll(subitem.getList());
+			}
+		
+			subitens.setList(list);
+			subitens.setTotal((long) list.size());
+			this.success(subitens);
+
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 }

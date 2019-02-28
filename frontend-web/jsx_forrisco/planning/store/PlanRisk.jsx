@@ -13,6 +13,8 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_UNARCHIVED: 'planRisk-getAllUnarchived',
 	ACTION_DELETE_PLANRISK: 'planRisk-deletePlanRisk',
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
+	ACTION_SEARCH_TERMS: 'planRisk-searchTerms',
+	ACTION_SEARCH_BY_KEY: 'planRisk-searchTermsByKey',
 	url: URL,
 	model: PlanRiskModel,
 
@@ -94,6 +96,38 @@ var PlanRiskStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], options.xhr);
 			}
 		})
+	},
+
+	searchTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/search",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("searchTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("searchTerms", opts);
+			}
+		});
+	},
+
+	searchTermsByKey(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/searchByKey",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("searchTermsByKey", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("searchTermsByKey", opts);
+			}
+		});
 	}
 });
 

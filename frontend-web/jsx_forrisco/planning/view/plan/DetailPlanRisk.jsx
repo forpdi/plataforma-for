@@ -43,11 +43,9 @@ export default React.createClass({
 					isLoading: false
 				});
 			}
-		});
+		}, this);
 		this.refreshData(this.props.params.planRiskId);
 	},
-
-
 
 	componentWillUnmount() {
 		PlanRiskStore.off(null, null, this);
@@ -58,6 +56,17 @@ export default React.createClass({
 		if (newProps.params.planRiskId !== this.props.params.planRiskId) {
 			this.refreshData(newProps.params.planRiskId);
 		}
+
+		// if(this.props.location.action !== newProps.location.action) {
+		// 	PlanRiskStore.on('retrivedplanrisk', (response) => {
+		// 		if (response !== null) {
+		// 			this.setState({
+		// 				planRiskData: response,
+		// 				isLoading: false
+		// 			});
+		// 		}
+		// 	}, this);
+		// }
 	},
 
 	refreshData(planRiskId) {

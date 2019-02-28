@@ -327,11 +327,6 @@ export default React.createClass({
 
 	refreshCancel () {
 		Modal.hide();
-		//this.context.router.push("/users/profilerUser/"+(this.state.model.id));
-		//this.setState({
-		//	editUser: false
-		//
-		//});
 	},
 
 

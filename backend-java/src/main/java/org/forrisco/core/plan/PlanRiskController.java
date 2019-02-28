@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.Column;
@@ -18,8 +20,11 @@ import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
+import org.forrisco.core.item.Item;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
+import org.forrisco.core.item.PlanRiskSubItem;
+import org.forrisco.core.item.SubItem;
 import org.forrisco.core.item.PlanRiskItemBS;
 import org.forrisco.core.policy.Policy;
 import org.forrisco.core.policy.PolicyBS;
@@ -236,6 +241,104 @@ public class PlanRiskController extends AbstractController {
 			LOGGER.error("Error while proxying the file upload.", ex);
 			this.fail(ex.getMessage());
 		}*/
+	}
+	
+	@Get(PATH + "/search")
+	@NoCache
+	@Permissioned
+	public void listItensTerms(Long planRiskId, Integer page, String terms, int ordResult, Long limit) {
+		if (page == null)
+			page = 0;
+		
+		try {
+			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
+			
+	
+			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, null, ordResult);
+			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, null, ordResult);
+
+			PaginatedList<PlanRiskSubItem> result = TermResult( itens,subitens, page, limit);
+			
+			
+			this.success(result);
+ 		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * 
+	 * @param planRiskId
+	 * @param page
+	 * @param terms
+	 * @param itensSelect
+	 * @param subitensSelect
+	 * @param ordResult
+	 * @param limit
+	 */
+	@Get(PATH + "/searchByKey")
+	@NoCache
+	@Permissioned
+	public void listItensTerms(Long planRiskId, Integer page, String terms, Long itensSelect[], Long subitensSelect[], int ordResult, Long limit) {
+		if (page == null)
+			page = 0;
+		
+		try {
+			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
+			
+			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, itensSelect, ordResult);
+			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, subitensSelect, ordResult);
+
+			PaginatedList<PlanRiskSubItem> result = TermResult(itens,subitens, page, limit);
+			
+			this.success(result);
+
+ 		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	private PaginatedList<PlanRiskSubItem> TermResult(List<PlanRiskItem> itens, List<PlanRiskSubItem> subitens,  Integer page,  Long limit){
+		int firstResult = 0;
+		int maxResult = 0;
+		int count = 0;
+		int add = 0;
+		if (limit != null) {
+			firstResult = (int) ((page - 1) * limit);
+			maxResult = limit.intValue();
+		}
+		
+		for(PlanRiskItem item : itens) {
+			PlanRiskSubItem subitem = new PlanRiskSubItem();
+			subitem.setDescription(item.getDescription());
+			subitem.setId(item.getId());
+			subitem.setName(item.getName());
+			//item.setSubitemParentId(subitem.getItem().getId());
+			subitens.add(subitem);
+		}
+		
+		List<PlanRiskSubItem> list = new ArrayList<>();
+		for(PlanRiskSubItem subitem : subitens) {
+			if (limit != null) {
+				if (count >= firstResult && add < maxResult) {
+					list.add(subitem);
+					count++;
+					add++;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(subitem);
+			}
+		}
+
+		PaginatedList<PlanRiskSubItem> result = new PaginatedList<PlanRiskSubItem>();
+		
+		result.setList(list);
+		result.setTotal((long)count);
+		return result;
 	}
 
 	

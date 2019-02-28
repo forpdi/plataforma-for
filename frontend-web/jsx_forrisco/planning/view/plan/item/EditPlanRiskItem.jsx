@@ -238,6 +238,10 @@ export default React.createClass({
 							// Se for um campo (Area de texto ou IMG) do Item
 							if (field.fieldContent) {
 
+								// if(field.isText === true) {
+								// 	field.fieldContent = field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "");
+								// }
+
 								// Recupera todos os campos do Item
 								if(field.editInstance !== true) {
 									return (
@@ -260,8 +264,6 @@ export default React.createClass({
 								}
 
 								//Entra na Instancia de Edição dos campos de um item
-								//vizualization={this.props.onEdit}
-								//vizualization={this.props.onEdit}
 								if(field.editInstance === true) {
 									return (
 										<div key={index}>

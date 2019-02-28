@@ -37,7 +37,8 @@ export default React.createClass({
 			}],
 			tabPath: "",
 			isLoading: true,
-			onEdit: false
+			onEdit: false,
+			//vizualization: true
 		};
 	},
 
@@ -48,6 +49,7 @@ export default React.createClass({
 				response.data.planRiskItemField.map(field => {
 					content.push({
 						fieldName: field.name,
+						fieldValue: field.name,
 						fieldContent: field.description,
 						isText: field.isText,
 						fileLink: field.fileLink,
@@ -110,9 +112,16 @@ export default React.createClass({
 
 		PlanRiskItemStore.on('deletePlanRiskItem', response => {
 			if(response.success === true) {
-				this.context.router.push("forrisco/home/");
+				this.context.toastr.addAlertSuccess('Item removido com sucesso');
+				this.context.router.push(
+					"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.planRiskId + "/info"
+				);
 			}
 		})
+	},
+
+	refreshCancel () {
+		Modal.hide();
 	},
 
 	refreshComponent(itemId) {
@@ -179,6 +188,14 @@ export default React.createClass({
 		)
 	},
 
+	onCancel() {
+
+	},
+
+	onSubmit() {
+
+	},
+
 	render() {
 
 		if (this.state.isLoading === true) {
@@ -216,8 +233,8 @@ export default React.createClass({
 										<div className="form-group form-group-sm" key={key}>
 											<label className="fpdi-text-label"> {field.fieldName} </label>
 
-											<div>
-												<span className="pdi-normal-text"> {field.fieldContent} </span>
+											<div key={key}>
+												<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: field.fieldContent}}/>
 											</div>
 										</div>
 									)

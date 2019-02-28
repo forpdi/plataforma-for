@@ -5,6 +5,8 @@ import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.j
 import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
+import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/planrisk/SearchResult.jsx";
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
@@ -38,13 +40,28 @@ export default React.createClass({
 			newItem: {},
 			myroute: window.location.hash,
 			showMenu:true,
-			planriskactive:true
+			planriskactive:true,
+			hiddenSearch: false,
+			termsSearch: '',
+			itensSelect: [],
+			subitensSelect: [],
+			ordResultSearch: null
 		};
 	},
 
 	componentDidMount() {
-		this.setTreeItens(this.props.planRisk),
-		this.setTreeItensUnit(this.props.planRisk)
+		this.setTreeItens(this.props.planRisk);
+		this.setTreeItensUnit(this.props.planRisk);
+
+		PlanRiskStore.on('searchTerms', response => {
+			if (response.data) {
+				this.setState({
+					termsSearch: response.terms,
+					itensSelect: response.itensSelect,
+					subitensSelect: response.subitensSelect,
+				})
+			}
+		}, this);
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -52,10 +69,6 @@ export default React.createClass({
 			this.setTreeItens(newProps.planRisk);
 			this.setTreeItensUnit(newProps.planRisk);
 		}
-	},
-
-	componentWillMount() {
-		//this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
 	},
 
 	setTreeItensUnit(unit, treeItensUnit = []) {
@@ -250,7 +263,7 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allItens');
+		PlanRiskItemStore.off(null, null, this);
 	},
 
 	toggleMenu() {
@@ -263,11 +276,54 @@ export default React.createClass({
 		this.setState({
 		  showMenu: true
 		})
-	  },
+	},
+
+	onKeyDown(event) {
+		var key = event.which;
+		if (key === 13) {
+			event.preventDefault();
+			this.treeSearch();
+		}
+	},
+
+	treeSearch() {
+		this.displayResult();
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_SEARCH_TERMS,
+			data: {
+				planRiskId: this.props.planRisk.id,
+				terms: this.refs.term.value,
+				page: 1,
+				limit: 10,
+			},
+			opts: {
+				wait: true
+			}
+		});
+	},
+
+	displayResult() {
+		this.setState({
+			hiddenResultSearch: true
+		});
+	},
+
+	resultSearch() {
+		this.setState({
+			hiddenResultSearch: false
+		});
+		this.refs.term.value = "";
+	},
+
+	searchFilter() {
+		this.setState({
+			hiddenSearch: !this.state.hiddenSearch
+		});
+	},
 
 	render() {
-		this.state.myroute= window.location.hash.substring(1)
-		var planriskactive
+		this.state.myroute= window.location.hash.substring(1);
+		var planriskactive;
 
 		if(!this.props.location.pathname.includes("unit")){
 			planriskactive=true
@@ -302,7 +358,34 @@ export default React.createClass({
 							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
 							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 						</div>
-						<TreeView tree={this.state.treeItens}/>
+
+						{
+							this.state.hiddenResultSearch === true ?
+							<SearchResult
+								planRiskId={this.props.planRisk.id}
+								terms={this.state.termsSearch}
+								itensSelect={this.state.itensSelect}
+								subitensSelect={this.state.subitensSelect}
+								ordResult={this.state.ordResultSearch}
+							/>
+
+							:
+
+							<TreeView tree={this.state.treeItens}/>
+						}
+						{
+							this.state.hiddenSearch === true ?
+								<div className="container Pesquisa-Avancada">
+									<LevelSearch
+										searchText={this.refs.term.value}
+										subplans={this.state.treeItens}
+										planRisk={this.props.planRisk.id}
+										hiddenSearch={this.searchFilter}
+										displayResult={this.displayResult}
+									/>
+								</div> : ""
+						}
+
 					</div>
 			:
 					<div className={"fpdi-tabs"}  role="tablist">

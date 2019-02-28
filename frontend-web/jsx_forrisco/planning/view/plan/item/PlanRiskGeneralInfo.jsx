@@ -77,8 +77,10 @@ export default React.createClass({
 
 		PlanRiskStore.on('deletePlanRisk', response => {
 			if(response.success === true) {
+				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
 				this.context.router.push("forrisco/home/");
 			}
+			PlanRiskStore.off('deletePlanRisk');
 		})
 	},
 
