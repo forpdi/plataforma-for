@@ -95,6 +95,13 @@ public class ProcessBS extends HibernateBusiness {
 		return units;
 	}
 
+	public List<ProcessUnit> getProcessUnitsByProcess(Process process) {
+		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process));
+		return this.dao.findByCriteria(criteria, ProcessUnit.class);
+	}	
+	
 	public PaginatedList<Process> listProcessbyCompany(CompanyDomain domain) {
 		
 		Criteria criteria = this.dao.newCriteria(Process.class)

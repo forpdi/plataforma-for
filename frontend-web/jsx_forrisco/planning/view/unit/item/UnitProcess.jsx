@@ -42,10 +42,10 @@ export default React.createClass({
 				}
 			));;
 			this.setState({
-				processes: _.map(filteredProcesses, value =>
+				processes: _.map(filteredProcesses, (value, idx) => (
 					_.assign(
 						value,
-						{ tools: this.getTools() },
+						{ tools: this.getTools(idx) },
 						{
 							fileData: {
 								fileName: value.fileName,
@@ -53,12 +53,24 @@ export default React.createClass({
 							}
 						}
 					)
-				),
+				)),
 				newRowDisplayed: false,
 				loading: false,
 			});
 		});
 		ProcessStore.on('processCreated', response => {
+			if (response.success) {
+				ProcessStore.dispatch({
+					action: ProcessStore.ACTION_LIST,
+					data: {
+						id: this.props.unitId,
+					},
+				});
+			} else {
+				this.context.toastr.addAlertError(response.responseJSON.message);
+			}
+		});
+		ProcessStore.on('processDeleted', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
 					action: ProcessStore.ACTION_LIST,
@@ -255,7 +267,17 @@ export default React.createClass({
 		});
 	},
 
-	getTools(id, idx) {
+	deleteProcess(idx) {
+		const process = this.state.processes[idx];
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_DELETE,
+			data: {
+				processId: process.id,
+			},
+		});
+	},
+
+	getTools(idx) {
 		return (
 			<div className="row-tools-box">
 				<button
@@ -266,7 +288,7 @@ export default React.createClass({
 				</button>
 				<button
 					className="row-button-icon"
-					onClick={null}
+					onClick={() => this.deleteProcess(idx)}
 				>
 					<span className="mdi mdi-delete" />
 				</button>
@@ -332,7 +354,7 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-                    HISTÓRICO DE INCIDENTES
+                    PROCESSOS DA UNIDADE
                     <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
                 </div>
 				<ReactTable

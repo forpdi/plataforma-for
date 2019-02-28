@@ -31,8 +31,7 @@ public class FieldSubItem extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false, length=255)
 	private String name;
 
-	@Column(nullable = true)
-	@Type(type="text")
+	@Column(nullable = true, columnDefinition="mediumtext")
 	private String description;
 
 	@Column(nullable = false)

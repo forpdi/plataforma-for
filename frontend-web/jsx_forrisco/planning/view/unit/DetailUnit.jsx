@@ -34,7 +34,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		console.log("D U")
 		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({
