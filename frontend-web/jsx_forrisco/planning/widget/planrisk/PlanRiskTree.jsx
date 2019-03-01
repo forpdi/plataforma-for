@@ -456,18 +456,6 @@ export default React.createClass({
 					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}/>
 					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}/>
 				</div>
-				<TreeView tree={this.state.treeItens}/>
-
-				<hr className="divider"/>
-
-				{
-					(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-						<a className="btn btn-sm btn-primary center" onClick={this.exportPlanRiskReport}>
-							{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-						</a>
-
-						: ""
-				}
 
 				{
 					this.state.hiddenResultSearch === true ?
@@ -483,9 +471,14 @@ export default React.createClass({
 							<TreeView tree={this.state.treeItens}/>
 							<hr className="divider"/>
 
-							<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
-								{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-							</a>
+							{
+								(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+									<a className="btn btn-sm btn-primary center" onClick={this.exportPlanRiskReport}>
+										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+									</a>
+
+									: ""
+							}
 						</div>
 
 				}
