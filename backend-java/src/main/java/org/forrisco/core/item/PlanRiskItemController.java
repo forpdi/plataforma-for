@@ -42,6 +42,11 @@ public class PlanRiskItemController extends AbstractController {
 	public void listItens(@NotNull Long planRiskId) {
 		try {
 			PlanRisk planRisk = this.planRiskItemBS.exists(planRiskId, PlanRisk.class);
+			
+			if(planRisk == null) {
+				this.fail("Plano de Risco não encontrado");
+			}
+			
 			PaginatedList<PlanRiskItem> itens = this.planRiskItemBS.listItensByPlanRisk(planRisk);
 			this.success(itens);
 		} catch (Throwable ex) {

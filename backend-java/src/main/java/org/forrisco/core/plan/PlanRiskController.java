@@ -217,7 +217,7 @@ public class PlanRiskController extends AbstractController {
 	public void exportreport(Long planId, String title, String author, boolean pre, String selecao) throws IOException, DocumentException{
 		//try {
 		
-			File pdf = this.pdf.exportReport(title, author, selecao,planId);
+			File pdf = this.pdf.exportPolicyReport(title, author, selecao,planId);
 
 			OutputStream out;
 			FileInputStream fis= new FileInputStream(pdf);

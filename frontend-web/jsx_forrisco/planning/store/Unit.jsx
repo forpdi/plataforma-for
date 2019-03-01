@@ -59,7 +59,7 @@ var UnitStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: { planId: data.planId },
+			data: {planId: data},
 			success(model) {
 				me.trigger("unitbyplan", model);
 			},
@@ -242,7 +242,6 @@ var UnitStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
 
 	mainMenuState(data){
 		var me = this;

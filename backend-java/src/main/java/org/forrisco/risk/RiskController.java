@@ -275,7 +275,7 @@ public class RiskController extends AbstractController {
 
 	
 	/**
-	 * Retorna unidades.
+	 * Retorna riscos.
 	 * 
 	 * @param PLanRisk
 	 *            Id do plano de risco.

@@ -1,7 +1,7 @@
 import React from 'react';
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
+//import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
 import UnitItemField from "forpdi/jsx_forrisco/planning/widget/unit/item/UnitItemField.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
@@ -62,7 +62,7 @@ export default React.createClass({
 
 		this.state.formFields.shift(); //Remove o Título da lista de Campos
 
-		UnitItemStore.dispatch({
+		/*UnitItemStore.dispatch({
 			action: UnitItemStore.ACTION_SAVE_ITENS,
 			data: {
 				name:  formData.get('description'),
@@ -72,7 +72,7 @@ export default React.createClass({
 				},
 				unitItemField: this.state.formFields
 			}
-		});
+		});*/
 	},
 
 	render() {

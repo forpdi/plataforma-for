@@ -27,7 +27,7 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			method: "GET",
 			url: me.url,
 			dataType: 'json',
-			data: params,
+			data:{planRiskId: params},
 			success(data, status, opts) {
 				me.trigger("allItens", data)
 			},

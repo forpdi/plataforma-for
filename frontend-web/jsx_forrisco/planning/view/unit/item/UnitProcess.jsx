@@ -115,9 +115,7 @@ export default React.createClass({
 		});
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: {
-				planId: this.props.planRiskId,
-			},
+			data: this.props.planRiskId,
 		});
 	},
 
