@@ -94,7 +94,7 @@ export default React.createClass({
 					if(matrix[i][2]==0 ){
 					return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
 					}else if(matrix[i][1]==this.state.policyModel.data.nline){
-						return <div style={{"text-align":"-webkit-center",margin: "5px"}} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
+						return <div style={{"text-align":"-webkit-center",margin: "5px"}}>{matrix[i][0]}</div>
 					}else{
 
 						var current_color=0;
@@ -175,7 +175,6 @@ export default React.createClass({
 			<br/>
 			<br/>
 			<table style={{width: "min-content"}}>
-			<th>
 				<tr>
 					<td style={{position: "relative", left: "30px"}}>
 						{table}
@@ -187,9 +186,10 @@ export default React.createClass({
 					</th>
 				</tr>
 				<tr>
-					<div style={{"text-align":"-webkit-center", position: "relative", left: "75px"}}>IMPACTO</div>
+					<th>
+					<div style={{"text-align":"-webkit-center", position: "relative", left: (20+(this.state.policyModel.data.ncolumn)*10)+"px"}}>IMPACTO</div>
+					</th>
 				</tr>
-				</th>
 			</table>
 
 		</div>

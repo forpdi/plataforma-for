@@ -89,7 +89,7 @@ public class ProcessBS extends HibernateBusiness {
 				.add(Restrictions.eq("process", process));
 		for (ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)) {
 			Unit unit = processUnit.getUnit();
-			unit.setUser(null);
+			//unit.setUser(null);
 			units.add(unit);
 		}
 		return units;
@@ -118,6 +118,18 @@ public class ProcessBS extends HibernateBusiness {
 		results.setTotal((Long) count.uniqueResult());
 	 
 		return results;
+	}
+
+	public void deleteProcess(Process process) {
+			
+		process.setDeleted(true);
+		this.persist(process);
+		List<ProcessUnit> processUnits = this.getProcessUnitsByProcess(process);
+		for (ProcessUnit processUnit : processUnits) {
+			processUnit.setDeleted(true);
+			this.persist(processUnit);
+		}
+
 	}
 
 

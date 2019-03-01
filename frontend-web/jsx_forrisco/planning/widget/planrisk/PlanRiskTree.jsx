@@ -8,7 +8,7 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
-
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -75,7 +75,7 @@ export default React.createClass({
 		UnitItemStore.on('allitensunit', (response) => {
 			response.data.map(itens => {
 				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/unit/' + itens.id;
+				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/unit/' + itens.id+"/info";
 				treeItensUnit.push({
 					label: itens.name,
 					expanded: false,
@@ -256,6 +256,99 @@ export default React.createClass({
 		})
 	  },
 
+	  renderRecords() {
+		return (<div>
+		<div className="row">Unidades
+			<div key="rootSection-selectall">
+					<div className="checkbox marginLeft5 col-md-10" >
+						<label name="labelSection-selectall" id="labelSection-selectall">
+							<input type="checkbox" value="selectall" id="selectall" onChange={this.selectAllitens}></input>
+							Selecionar todos
+						</label>
+					</div>
+			</div>
+
+			{this.state.treeItensUnit.map((rootSection, idx) => {
+				return (
+				<div key={"rootSection-filled"+idx}>
+					<div className="checkbox marginLeft5 col-md-10" >
+						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+							<input type="checkbox" value={rootSection.id} id={"checkbox-item-"+idx} onClick={this.verifySelectAllitens}></input>
+							{rootSection.name}
+						</label>
+					</div>
+
+				</div>);
+			})}
+			</div>
+			<div className="row">Subunidades
+
+				<div key="rootSection-selectall">
+						<div className="checkbox marginLeft5 col-md-10" >
+							<label name="labelSection-selectall" id="labelSection-selectall">
+								<input type="checkbox" value="selectall" id="selectall" onChange={this.selectAllsubitens}></input>
+								Selecionar todos
+							</label>
+						</div>
+				</div>
+
+			{/*this.state.subunits.map((rootSection, idx) => {
+				return (
+				<div key={"rootSection-filled"+idx}>
+					<div className="checkbox marginLeft5 col-md-10" >
+						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+							<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
+							{rootSection.name}
+						</label>
+					</div>
+
+				</div>);
+			})*/}
+			<br/><br/>
+			</div>
+		</div>);
+	},
+
+	  retrieveFilledSections(){
+		//var me = this;
+		//me.setState({
+			//rootSections: this.state.itens,
+			//rootSubsections: this.state.subitens,
+			//loadingexport:true,
+		//	});
+
+		//	$('#container') heigth 150px
+		Modal.exportDocument(
+			Messages.get("label.exportConfirmation"),
+			this.renderRecords(),
+			() => {this.visualization(false)},
+			({label:"Pré-visualizar",
+			onClick:this.preClick,
+			title:Messages.get("label.exportConfirmation")})
+		);
+		document.getElementById("paramError").innerHTML = "";
+		document.getElementById("documentAuthor").className = "";
+		document.getElementById("documentTitle").className = "";
+	},
+
+	  exportUnitReport(evt) {
+		evt.preventDefault();
+			//this.setState({exportUnit:true})
+
+		//	if(this.state.export){
+				this.retrieveFilledSections();
+				this.setState({
+					//subitens:model.data,
+					//export:false,
+				})
+		//	}
+	},
+
+	exportPlanRiskReport(evt) {
+		evt.preventDefault();
+			this.setState({exportPlanRisk:true})
+	},
+
 	render() {
 		this.state.myroute= window.location.hash.substring(1)
 		var planriskactive
@@ -294,6 +387,15 @@ export default React.createClass({
 							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 						</div>
 						<TreeView tree={this.state.treeItens}/>
+
+						<hr className="divider"></hr>
+						{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+							<a className="btn btn-sm btn-primary center" onClick={this.exportPlanRiskReport}>
+								<span/>{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+							</a>
+						: ""}
+
 					</div>
 			:
 					<div className={"fpdi-tabs"}  role="tablist">
@@ -309,6 +411,14 @@ export default React.createClass({
 							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 						</div>
 						<Unit treeUnit={this.state.treeItensUnit}/>
+
+						<hr className="divider"></hr>
+						{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+						PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+							<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
+								<span/>{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+							</a>
+						: ""}
 					</div>
 				}
 				</div>

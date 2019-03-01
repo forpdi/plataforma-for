@@ -116,6 +116,7 @@ public class ProcessController extends AbstractController{
 				this.fail("Processo não encontrado.");
 				return;
 			}
+			
 			if (this.riskBS.hasLinkedRiskProcess(process)) {
 				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir o processo.");
 				return;
@@ -124,14 +125,11 @@ public class ProcessController extends AbstractController{
 				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir o processo.");
 				return;
 			}
-			process.setDeleted(true);
-			this.processBS.persist(process);
-			List<ProcessUnit> processUnits = this.processBS.getProcessUnitsByProcess(process);
-			for (ProcessUnit processUnit : processUnits) {
-				processUnit.setDeleted(true);
-				processBS.persist(processUnit);
-			}
+			
+			this.processBS.deleteProcess(process);
+				
 			this.success();
+
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

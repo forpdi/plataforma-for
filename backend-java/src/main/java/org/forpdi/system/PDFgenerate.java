@@ -1,6 +1,7 @@
 package org.forpdi.system;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -84,6 +85,7 @@ import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 import org.forrisco.risk.RiskLevel;
 
+import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -94,7 +96,10 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.tool.xml.ElementList;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.text.html.simpleparser.StyleSheet;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.CMYKColor;
@@ -104,6 +109,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfReader;
@@ -2366,6 +2372,93 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		//return coverWriter;
 	}
 	
+	/*política*/
+	
+	private String getMatrixValue(Policy policy, String[][] matrix, int line, int column) {
+
+		String result="";
+
+		for(int i=0; i<matrix.length;i++){
+			if(Integer.parseInt(matrix[i][1])==line){
+				if(Integer.parseInt(matrix[i][2])==column){
+					if(Integer.parseInt(matrix[i][2])==0){
+						return "<div style=\"text-align:right;\">"+matrix[i][0]+"&nbsp;&nbsp;&nbsp;&nbsp;</div>";
+					}else if(Integer.parseInt(matrix[i][1])==policy.getNline()){
+						return "<div style=\"text-align:-webkit-center;margin: 5px\">"+matrix[i][0]+"</div>";
+					}else{
+
+						int current_color=-1;
+						String cor="";
+						PaginatedList<RiskLevel> risklevel = this.policyBS.listRiskLevelbyPolicy(policy);
+						if(risklevel != null){
+							for(int k=0; k< risklevel.getTotal();k++){
+								if(risklevel.getList().get(k).getLevel().equals(matrix[i][0])){
+									current_color=risklevel.getList().get(k).getColor();
+									break;
+								}
+							}
+						}
+
+						switch(current_color) {
+							case 0: cor="Vermelho"; break;
+							case 1: cor="Marron"; break;
+							case 2: cor="Amarelo"; break;
+							case 3: cor="Laranja"; break;
+							case 4: cor="Verde"; break;
+							case 5: cor="Azul"; break;
+							default: cor="Cinza";
+						}
+
+					return "<div class=\"Cor "+cor+"\">"+matrix[i][0]+"</div>";
+
+					}
+				}
+			}
+		}
+		return "";
+	}
+	
+	private BaseColor getMatrixWebColor(Policy policy, String[][] matrix, int line, int column) {
+
+		String result="";
+
+		for(int i=0; i<matrix.length;i++){
+			if(Integer.parseInt(matrix[i][1])==line){
+				if(Integer.parseInt(matrix[i][2])==column){
+					if(Integer.parseInt(matrix[i][2])==0){
+						return null;
+					}else if(Integer.parseInt(matrix[i][1])==policy.getNline()){
+						return null;
+					}else{
+
+						PaginatedList<RiskLevel> risklevel = this.policyBS.listRiskLevelbyPolicy(policy);
+						int current_color=-1;
+						if(risklevel != null){
+							for(int k=0; k< risklevel.getTotal();k++){
+								if(risklevel.getList().get(k).getLevel().equals(matrix[i][0])){
+									current_color=risklevel.getList().get(k).getColor();
+									break;
+								}
+							}
+						}
+
+						switch(current_color) {
+							case 0: return WebColors.getRGBColor("#FF0000");
+							case 1: return WebColors.getRGBColor("#774422");
+							case 2: return WebColors.getRGBColor("#FFFF00");
+							case 3: return WebColors.getRGBColor("#FF6600");
+							case 4: return WebColors.getRGBColor("#00CC00");
+							case 5: return WebColors.getRGBColor("#00FF00");
+							default: return WebColors.getRGBColor("#ddd");
+						}
+
+
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 	private void generateContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
 			
@@ -2375,13 +2468,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		writer.setPageEvent(event);
 		
 		File outputDir;
-		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
-		
-		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
-			outputDir = contentFile.getParentFile();//File.createTempFile("frisco-document-export", ".pdf").getParentFile();
-		/*}else {
-			 outputDir = new File(storagePath);
-		}*/
+
+		outputDir = contentFile.getParentFile();
+
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		
 		
@@ -2429,15 +2518,217 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					secIndex++;
 				}
 				
-				//att.setFirstLineIndent(firstLineIndent);
-				
-				
-				//TODO informações gerais matrix
-				//descrição
-				/*Paragraph description = new Paragraph(item.getDescription());
-				description.setAlignment(Element.ALIGN_JUSTIFIED);
-				document.add(description);*/
-				//matrix de risco
+				//informações gerais matrix
+				if(item.getDescription()!=null) {
+					haveContent = true;
+					secIndex++;
+					Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+					c.setGenericTag(secIndex + ". " + secName);
+					Paragraph secTitle = new Paragraph(c);
+					secTitle.setLeading(interLineSpacing);
+					secTitle.setSpacingAfter(paragraphSpacing);
+					//secTitle.setSpacingBefore(paragraphSpacing);
+					document.add(secTitle);
+					
+					
+					Paragraph attTitle = new Paragraph("Descrição", titulo);
+					attTitle.setLeading(interLineSpacing);
+					attTitle.setSpacingAfter(paragraphSpacing);
+					attTitle.setSpacingBefore(paragraphSpacing);
+					document.add(attTitle);
+	
+					Paragraph description = new Paragraph(item.getDescription());
+					description.setIndentationLeft(firstLineIndent);
+					description.setSpacingAfter(paragraphSpacing);
+					document.add(description);
+					
+					Policy policy = this.policyBS.exists(item.getPolicy().getId(), Policy.class);
+					
+					
+					//matrix de risco
+					
+					String css=".Cor {\n" + 
+					//"  padding: 30px 25px;\n" + 
+							"margin: 10px\n "+
+					"  white-space: nowrap;\n" + 
+					"  border: .5px solid #ddd;\n" + 
+					"  text-align: -webkit-center; }\n" + 
+					"\n" + 
+					".Cinza {\n" + 
+					"  background-color: #ddd; }\n" + 
+					"\n" + 
+					".Vermelho {\n" + 
+					"  background-color: #FF0000;\n" + 
+					"  color: white; }\n" + 
+					"\n" + 
+					".Marron {\n" + 
+					"  background-color: #774422;\n" + 
+					"  color: white; }\n" + 
+					"\n" + 
+					".Amarelo {\n" + 
+					"  background-color: #FFFF00; }\n" + 
+					"\n" + 
+					".Laranja {\n" + 
+					"  background-color: #FF6600;\n" + 
+					"  color: white; }\n" + 
+					"\n" + 
+					".Verde {\n" + 
+					"  background-color: #00CC00;\n" + 
+					"  color: white; }\n" + 
+					"\n" + 
+					".Azul {\n" + 
+					"  background-color: #0000FF;\n" + 
+					"  color: white; }\n" + 
+					"  \n" + 
+					"  .vertical-text {\n" + 
+					"  -webkit-transform: rotate(270deg);\n" + 
+					"          transform: rotate(270deg); "
+					+ "}\n"+
+					".rotate{\n"+
+					"	width: 135px;\n"+
+					"	bottom: 35px;\n"+
+					"	position: relative;\n"+
+					"	transform:rotate(270deg);}\n";
+					
+                    
+					String[][] matrix = this.riskBS.getMatrixVector(policy);
+					String table = "";
+					for (int x=0; x<=policy.getNline();x++){
+						String children ="";
+						for (int y=0; y<=policy.getNcolumn();y++){
+							children+="				"+
+									"<td id=\"x-"+x+"-y"+y+"\">"+this.getMatrixValue(policy,matrix,x,y)+"</td>\n";
+						}
+						table+="			"+
+								"<tr id=\"x-"+x+"\">\n"+children+"			"+"</tr>\n";
+					}
+					
+					String html="<html>\n" + 
+							"<head>\n" +
+							"</head>\n" + 
+							"<body>"+
+							"<div>\n"+
+							"<table style=\"width:100%\">\n" +
+							table + 
+
+							
+							/*"			<div>\n" + 
+							"				<div style=\"bottom: "+((policy.getNline()-2)*20+80)+"px ; right: 50px ; position: relative\">\n" + 
+							"					<div class=\"rotate vertical-text \">PROBABILIDADE</div>\n" + 
+							"				</div>\n" + 
+							"			</div>\n" + 
+							
+							"			<tr>\n" + 
+							"				<th></th>\n" + 
+							"				<th colspan=\""+String.valueOf(policy.getNcolumn())+"\" style=\"text-align:-webkit-center;\">\n"+
+							"					IMPACTO"+
+							"				</th>\n"+	
+							"			</tr>\n" +*/
+							"</table>"+
+							"</div>\n"+
+							"</body>\n"+
+							"</html>";
+					
+					Paragraph attTitleInfo = new Paragraph("Matrix De Risco", titulo);
+					attTitle.setLeading(interLineSpacing);
+					attTitle.setSpacingBefore(paragraphSpacing);
+					attTitle.setSpacingAfter(paragraphSpacing);
+					document.add(attTitleInfo);
+					
+					StyleSheet styles = new StyleSheet();
+
+                    
+                    
+
+					
+					File htmlFile = new File(outputDir, String.format("%s-0.html", prefix));
+					FileOutputStream out = new FileOutputStream(htmlFile);
+					out.write(html.getBytes());
+					out.close();
+
+					FileReader fr = new FileReader(htmlFile.getPath());
+					List<Element> p = HTMLWorker.parseToList(fr, styles);
+					 
+					//InputStream is = new ByteArrayInputStream(str.getBytes());
+			        //XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
+
+			        //String html ="<html><h1>Header</h1><p>A paragraph</p><p>Another Paragraph</p></html>";
+
+					
+					/*
+					*/
+			       /* ElementList elementsList = XMLWorkerHelper.parseToElementList(html, css);
+			        
+			        for(Element element : elementsList) {
+			        	document.add(element);
+			        }*/
+			        
+
+			        
+					fr.close();
+	
+					for (int k = 0; k < p.size(); ++k) {
+						
+						if (p.get(k) instanceof PdfPTable) {
+							PdfPTable att = (PdfPTable) p.get(k);
+							
+							ArrayList<PdfPRow> rows = att.getRows();
+							
+							for(int y = 0; y< rows.size();y++) {
+								
+								PdfPCell[] cells = rows.get(y).getCells();
+								
+								for(int x=0; x<cells.length ;x++) {
+									if(cells[x] != null) {
+										
+										BaseColor bc = this.getMatrixWebColor(policy, matrix, y,x);
+
+										cells[x].setBackgroundColor(bc);
+										cells[x].setBorder(2);
+										//cells[x].setHorizontalAlignment(Element.ALIGN_CENTER);
+										//cells[x].setVerticalAlignment(Element.ALIGN_MIDDLE);
+										
+										cells[x].setBorderColor( WebColors.getRGBColor("#ddd"));
+										//cells[x].setExtraParagraphSpace(2);
+										if(bc != null) {
+											cells[x].setBorderWidth((float) 1.0);
+											cells[x].setBorderWidthRight((float) 1.0);
+											cells[x].setPaddingBottom(15);
+											cells[x].setPaddingTop(15);
+											cells[x].setPaddingLeft(10);
+											cells[x].setPaddingRight(10);
+										}else {
+											//if(x==policy.getNline()*policy.getNcolumn()) {
+											if(x==0 && y==policy.getNline()+1) {
+												cells[x].setRotation(90);
+												//cells[x].setBottom(100);
+												//cells[x].setLeft(20);
+											}
+											
+											if(y==policy.getNline()+1) {
+												cells[x].setBottom((float) 100);
+											}
+										}
+										
+									}
+								}
+							}
+							document.add(att);
+						}
+					}
+					
+					for (int k = 0; k < p.size(); ++k) {
+						
+						if (p.get(k) instanceof Paragraph) {
+							Paragraph att = (Paragraph) p.get(k);
+							document.add(att);
+						}
+						
+					}
+					
+				}
+
+
 				
 				
 				
@@ -2561,8 +2852,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					
 				subSecIndex = 0;
 				secTitlePrinted=false;
-			
-				//List<FieldItem> fields = item.getFieldItem();
 	
 				for (SubItem sub: actualsubitens) {
 						
@@ -2626,7 +2915,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								}
 							}
 							str += value + "</p></body></html>";
-							File htmlFile = new File(outputDir, String.format("%s-1.html", prefix));
+							File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
 							FileWriter fw = new FileWriter(htmlFile, true);
 							BufferedWriter conexao = new BufferedWriter(fw);
 							conexao.write(str);
@@ -2700,16 +2989,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	private int generateSummary(File finalSummaryPdfFile, TOCEvent event, int Npages) throws DocumentException, IOException {
 		
 		File outputDir;
-		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
-		
-		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
-			//outputDir = File.createTempFile("frisco-document-export", ".pdf").getParentFile();
+
 		outputDir=tempFile();
-		/*}else {
-			 outputDir = new File(storagePath);
-		}*/
-		
-		//File outputDir = new File(SystemConfigs.getConfig("store.pdfs"));
+
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		File summaryPdfFile = new File(outputDir, String.format("%s-summary.pdf", prefix));
 		
@@ -2785,6 +3067,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return outputDir;
 	}
 	
+	
+	/*riscos*/
 	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws DocumentException, IOException {
 		
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
@@ -3138,10 +3422,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		generateContent(contentFile, itens, subitens, event);
 		
-		//contentFile.delete();
-		
 		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
-		
 
 		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
 
@@ -3188,16 +3469,14 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		coverPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
-		
 		outputDir.delete();*/
-	
+		
 		for (File f : outputDir.listFiles()) {
 		    if (f.getName().startsWith("frisco-") 
 		    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
 		        f.delete();
 		    }
-		}
-		
+		}	
 		return finalPdfFile; //capa+sumario+conteudo+paginação
 		
 	}

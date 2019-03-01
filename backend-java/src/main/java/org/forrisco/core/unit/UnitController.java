@@ -12,6 +12,7 @@ import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 import org.forrisco.core.process.Process;
+import org.forrisco.core.process.ProcessBS;
 
 import com.google.gson.GsonBuilder;
 
@@ -35,6 +36,8 @@ public class UnitController extends AbstractController {
 	private UnitBS unitBS;
 	@Inject
 	private RiskBS riskBS;
+	@Inject 
+	private ProcessBS processBS;
 
 	protected static final String PATH = BASEPATH + "/unit";
 
@@ -196,6 +199,26 @@ public class UnitController extends AbstractController {
 			if (risks.getTotal() > 0) {
 				this.fail("Unidade possui risco(s) vinculado(s).");
 				return;
+			}
+			
+			//verifica se possui processos vinculados com algum risco de outra unidade?
+			//um processo pode estar vinculado a um risco de outra unidade? parentemente sim
+			PaginatedList<Process> processes = this.processBS.listProcessbyUnit(unit);
+			for(Process process :processes.getList()) {
+				
+				if (this.riskBS.hasLinkedRiskProcess(process)) {
+					this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+					return;
+				}
+				if (this.riskBS.hasLinkedRiskActivity(process)) {
+					this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+					return;
+				}
+			}
+			
+			//deletar processos desta unidade
+			for(Process process :processes.getList()) {
+				this.processBS.deleteProcess(process);
 			}
 
 			this.unitBS.delete(unit);

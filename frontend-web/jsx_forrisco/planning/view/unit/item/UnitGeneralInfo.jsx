@@ -139,7 +139,7 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link onClick={this.switchUpdateMode}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editUnit")}>
 							<span id="menu-levels">
 								Editar Item
 							</span>
@@ -148,7 +148,7 @@ export default React.createClass({
 				</li>
 				<li>
 					<Link onClick={this.deleteUnit}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteUnit")}>
 						<span id="menu-levels"> Deletar Item </span>
 					</span>
 					</Link>
