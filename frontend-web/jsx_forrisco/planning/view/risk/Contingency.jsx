@@ -303,15 +303,15 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 200
+			minWidth: 770
 		}, {
 			Header: 'Responsável',
 			accessor: 'user.name',
+			minWidth: 210
 		}, {
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
-			width: 100
 		}];
 		return (
 			<div className="general-table">

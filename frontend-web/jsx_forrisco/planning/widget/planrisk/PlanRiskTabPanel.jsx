@@ -186,7 +186,7 @@ export default React.createClass({
 					role="tablist">
 					{/* Lista de abas superior */}
 					{this.state.tabs}
-					{this.state.tabsHidden.length>0 ?
+					{this.state.tabsHidden.length > 0 ?
 						(
 							<div className={"fpdi-tabs-hidden"+(this.state.showTabsHidden ? " show-border":"")}
 								 onClick={this.showAllTabs}>

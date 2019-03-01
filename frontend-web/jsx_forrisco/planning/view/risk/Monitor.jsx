@@ -12,12 +12,15 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
+		planRisk: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState() {
 		return {
 			data: [],
 			users: [],
+			impacts: [],
+			probabilities: [],
 			monitor: null,
 			beginDate: null,
 			beginHour: null,
@@ -116,6 +119,23 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+		
+		this.setState({
+			impacts: this.getSelectOptions(this.context.planRisk.attributes.policy.impact),
+			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability), 
+		})
+	},
+
+	getSelectOptions(originalArray) {
+		var originalArray = originalArray.match(/\[.*?\]/g);
+		var options = [];
+
+		if (originalArray != null) {
+			for (var i in originalArray) {
+				options.push(originalArray[i].substring(1, originalArray[i].length - 1))
+			}
+		}
+		return options;
 	},
 
 	componentWillUnmount() {
@@ -141,8 +161,9 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-monitor-probability",
-					type: "textarea",
-					rows: "1",
+					type: "select",
+					options: _.map(this.state.probabilities, probability => probability),
+					renderDisplay: value => value,
 					onChange: this.probabilityChangeHandler
 				}}
 			/>,
@@ -150,8 +171,9 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-monitor-impact",
-					type: "textarea",
-					rows: "1",
+					type: "select",
+					options: _.map(this.state.impacts, impact => impact),
+					renderDisplay: value => value,
 					onChange: this.impactChangeHandler
 				}}
 			/>,
@@ -208,6 +230,8 @@ export default React.createClass({
 			monitor: {
 				risk: this.props.risk,
 				user: this.state.users.length > 0 ? this.state.users[0] : null,
+				impact: this.state.impacts.length > 0 ? this.state.impacts[0] : null,
+				probability: this.state.probabilities.length > 0 ? this.state.probabilities[0] : null,
 			},
 		});
     },
@@ -220,9 +244,6 @@ export default React.createClass({
 		const monitor = {
 			...data[idx],
 		};
-		console.log("print data");
-		console.log(data);
-		console.log(idx);
 		data[idx] = {
 			report: <VerticalInput
 				fieldDef={{
@@ -236,8 +257,9 @@ export default React.createClass({
 			probability: <VerticalInput
 				fieldDef={{
 					name: "new-monitor-probability",
-					type: "textarea",
-					rows: "1",
+					type: "select",
+					options: _.map(this.state.probabilities, probability => probability),
+					renderDisplay: value => value,
 					value: data[idx].probability,
 					onChange: this.probabilityChangeHandler,
 				}}
@@ -245,8 +267,9 @@ export default React.createClass({
 			impact: <VerticalInput
 				fieldDef={{
 					name: "new-monitor-impact",
-					type: "textarea",
-					rows: "1",
+					type: "select",
+					options: _.map(this.state.impacts, impact => impact),
+					renderDisplay: value => value,
 					value: data[idx].impact,
 					onChange: this.impactChangeHandler,
 				}}
@@ -315,7 +338,6 @@ export default React.createClass({
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
-		console.log(this.state.monitor);
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_MONITOR,
 			data: {
@@ -360,19 +382,21 @@ export default React.createClass({
 	},
 
 	probabilityChangeHandler(e) {
+		const idx = e.target.options.selectedIndex;
 		this.setState({
 			monitor: {
 				...this.state.monitor,
-				probability: e.target.value,
+				probability: this.state.probabilities[idx],
 			}
 		});
 	},
 
 	impactChangeHandler(e) {
+		const idx = e.target.options.selectedIndex;
 		this.setState({
 			monitor: {
 				...this.state.monitor,
-				impact: e.target.value,
+				impact: this.state.impacts[idx],
 			}
 		});
 	},
@@ -404,13 +428,13 @@ export default React.createClass({
 			<div className="row-tools-box">
 				<button
 					className="row-button-icon"
-					onClick={() => {console.log("editing"); this.enableUpdateMode(idx)}}
+					onClick={() => this.enableUpdateMode(idx)}
 				>
 					<span className="mdi mdi-pencil" />
 				</button>
 				<button
 					className="row-button-icon"
-					onClick={() => {console.log("deleting"); this.deleteMonitor(id)}}
+					onClick={() => this.deleteMonitor(id)}
 				>
 					<span className="mdi mdi-delete" />
 				</button>
@@ -420,34 +444,32 @@ export default React.createClass({
 
 	render() {
 		if (this.state.isLoading === true) {
-			console.log('carregando esse paranaue');
 			return <LoadingGauge/>;
 		}
-		console.log('carregou');
 		const columns = [{
 			Header: 'Parecer',
 			accessor: 'report',
-			minWidth: 200,
+			minWidth: 350,
 		}, {
 			Header: 'Probabilidade',
 			accessor: 'probability',
-			minWidth: 100,
+			minWidth: 150,
 		}, {
 			Header: 'Impacto',
 			accessor: 'impact',
-			minWidth: 80,
+			minWidth: 130,
 		}, {
-			Header: 'Responsável',
 			accessor: 'user.name',
-			minWidth: 150,
+			Header: 'Responsável',
+			minWidth: 210,
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',
+			minWidth: 140,
 		}, {
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
-			width: 100
 		}];
 		return (
 			<div className="general-table">
@@ -463,7 +485,7 @@ export default React.createClass({
 					resizable={true}
 					pageSize={this.state.data.length}
 					NoDataComponent={() =>
-						<div className="marginLeft10">
+						<div className="rt-td">
 							Nenhum monitoramento cadastrado
 						</div>
 					}

@@ -298,7 +298,6 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listMonitor(data) {
 		var me = this;
-		console.log(data);
 		$.ajax({
 			url: me.url + "/monitor",
 			method: 'GET',

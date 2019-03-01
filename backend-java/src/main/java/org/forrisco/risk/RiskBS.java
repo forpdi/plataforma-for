@@ -12,6 +12,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forrisco.core.plan.PlanRisk;
@@ -877,7 +878,37 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 
-
+	/**
+	 * Verifica se um processo tem algum risco vinculado
+	 * 
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean   
+	 * 				booleano para verificação
+	 */
+	public boolean hasLinkedRiskProcess(Process process) {
+		Criteria criteria = this.dao.newCriteria(RiskProcess.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process)
+		);
+		return criteria.uniqueResult() != null;
+	}
 	
+	/**
+	 * Verifica se um processo tem alguma atividade vinculada
+	 * 
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean   
+	 * 				booleano para verificação
+	 */
+	public boolean hasLinkedRiskActivity(Process process) {
+		Criteria criteria = this.dao.newCriteria(RiskActivity.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process)
+		);
+		return criteria.uniqueResult() != null;
+	}
+
 	
 }
