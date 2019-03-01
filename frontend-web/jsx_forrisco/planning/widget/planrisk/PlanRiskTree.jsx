@@ -61,15 +61,6 @@ export default React.createClass({
 
 	setTreeItensUnit(unit, treeItensUnit = []) {
 		var me = this;
-		var  info = {
-			label: "Informações Gerais Unidade",
-			expanded: false,
-			to: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
-			key: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
-			model: unit,
-			id: unit.id,
-		};
-
 		//Botão Novo Item Geral
 		var newItem = {
 			label: Messages.get("label.newItem"),
@@ -99,7 +90,6 @@ export default React.createClass({
 				});
 			});
 
-			treeItensUnit.unshift(info);
 			treeItensUnit.push(newItem);
 
 			this.setState({treeItensUnit: treeItensUnit});
