@@ -120,9 +120,16 @@ public class UnitController extends AbstractController {
 	 */
 	@Get(PATH + "")
 	@NoCache
+	@Consumes
 	public void listUnits(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
+			
+			if (plan== null) {
+				this.fail("O Plano de Risco não foi encontrado");
+				return;
+			}
+			
 			PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
@@ -143,7 +150,7 @@ public class UnitController extends AbstractController {
 	@Permissioned
 	public void listUnit(Long id) {
 		try {
-			Unit unit = this.unitBS.exists(id, Unit.class);
+			Unit unit = this.unitBS.retrieveUnitById(id);
 			if (unit == null) {
 				this.fail("A unidade solicitada não foi encontrado.");
 			} else {
@@ -298,8 +305,7 @@ public class UnitController extends AbstractController {
 	public void exportreport(String title, String author, boolean pre, String units,String subunits){
 		try {
 		
-		//this.pdf.exportUnitReport(title, author, selecao, planId)
-			File pdf = this.pdf.exportReport(title, author, units, subunits);
+			File pdf = this.pdf.exportUnitReport(title, author, units, subunits);
 
 			OutputStream out;
 			FileInputStream fis= new FileInputStream(pdf);
