@@ -60,6 +60,14 @@ export default React.createClass({
 
 	setTreeItensUnit(unit, treeItensUnit = []) {
 		var me = this;
+		var  info = {
+			label: "Informações Gerais Unidade",
+			expanded: false,
+			to: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
+			key: '/forrisco/plan-risk/' + unit.id + '/unit/' + unit.id,
+			model: unit,
+			id: unit.id,
+		};
 
 		//Botão Novo Item Geral
 		var newItem = {
@@ -90,6 +98,7 @@ export default React.createClass({
 				});
 			});
 
+			treeItensUnit.unshift(info);
 			treeItensUnit.push(newItem);
 
 			this.setState({treeItensUnit: treeItensUnit});
@@ -129,7 +138,6 @@ export default React.createClass({
 
     //PlanRisk
 	setTreeItens(planRisk, treeItens = []) {
-
 		var me = this;
 
 		/* Redireciona para as Informações gerais ao carregar a Tree*/
@@ -178,6 +186,7 @@ export default React.createClass({
 
 			treeItens.unshift(info);
 			treeItens.push(newItem);
+
 
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
@@ -370,7 +379,7 @@ export default React.createClass({
 						{Messages.getEditable("label.unitys", "fpdi-nav-label")}
 					</Link>
 				</ul>
-
+				
 				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
 
 				{planriskactive ?

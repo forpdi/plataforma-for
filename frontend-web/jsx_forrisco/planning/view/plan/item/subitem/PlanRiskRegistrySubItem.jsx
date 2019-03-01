@@ -27,7 +27,6 @@ export default React.createClass({
 
 	componentDidMount() {
 		this.getFields();
-
 		_.defer(() => {
 			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Subitem');
 		});
@@ -163,7 +162,7 @@ export default React.createClass({
 								}
 
 								return (
-									<div>
+									<div key={index}>
 										<VerticalInput key={index} fieldDef={field}/>
 									</div>
 								)

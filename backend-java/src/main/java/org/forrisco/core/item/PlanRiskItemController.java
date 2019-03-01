@@ -12,6 +12,7 @@ import org.forrisco.core.policy.Policy;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Delete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
@@ -187,7 +188,8 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
-	 * 
+	 * Atualiza campos e título do item
+	 * @param planRiskItem
 	 */
 	@Post( PATH + "/update")
 	@Consumes
@@ -228,4 +230,82 @@ public class PlanRiskItemController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
+	
+	/**
+	 * Atualiza subitem eseus campos
+	 * @param planRiskSubItem
+	 */
+	@Post( PATH + "/update-subitem")
+	@Consumes
+	@NoCache
+	public void updatePlanRiskSubItem(@NotNull @Valid PlanRiskSubItem planRiskSubItem) {
+		try {
+			PlanRiskSubItem existent = planRiskItemBS.exists(planRiskSubItem.getId(), PlanRiskSubItem.class);
+			
+			if (GeneralUtils.isInvalid(existent)) {
+				this.result.notFound();
+				return;
+			}
+			
+			if(existent.getPlanRiskItem() == null) {
+				this.fail("Subitem sem item associado");	
+			}
+			
+			PaginatedList<PlanRiskSubItemField> fields = this.planRiskItemBS.listSubFieldsBySubItem(planRiskSubItem);
+			
+			for(int i = 0; i < fields.getList().size(); i++) {
+				this.planRiskItemBS.delete(fields.getList().get(i));
+			}
+			
+			for(int i = 0; i < planRiskSubItem.getPlanRiskSubItemField().size(); i++) {
+				PlanRiskSubItemField planRiskItemField = planRiskSubItem.getPlanRiskSubItemField().get(i);
+				
+				planRiskItemField.setPlanRiskSubItem(existent);
+				this.planRiskItemBS.save(planRiskItemField);
+			}
+			
+			existent.setDescription(planRiskSubItem.getDescription());
+			existent.setName(planRiskSubItem.getName());
+			this.planRiskItemBS.persist(existent);
+			this.success(existent);
+			
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Deleta um item do plano de risco
+	 * @param id
+	 */
+	@Delete(PATH + "/{id}")
+	@NoCache
+	public void deletePlanRiskItem(@NotNull Long id) {
+		try {
+			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
+			
+			if (GeneralUtils.isInvalid(planRiskItem)) {
+				this.result.notFound();
+				return;
+			}
+			
+			PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listFieldsByPlanRiskItem(planRiskItem);
+			
+			for(int i = 0; i < fields.getList().size(); i ++) {
+				PlanRiskItemField planRiskItemField = fields.getList().get(i);
+				
+				this.planRiskItemBS.deleteSubItens(planRiskItem);  //Deleta os SubItens
+				this.planRiskItemBS.delete(planRiskItemField);     //Delete os campos do item
+			}
+			
+			this.planRiskItemBS.delete(planRiskItem); //Delete o Item
+			this.success(planRiskItem);
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 }

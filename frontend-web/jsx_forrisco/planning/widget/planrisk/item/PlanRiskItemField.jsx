@@ -48,7 +48,6 @@ export default React.createClass({
 			document.getElementById( 'fieldTypeOnEdit' + (this.props.index)) ?
 				document.getElementById( 'fieldTypeOnEdit' + (this.props.index)).value : null;
 
-		console.log(selected);
 		var typeTextField = this.state.types[0].id;
 		var typeArquiveField = this.state.types[1].id;
 		//
