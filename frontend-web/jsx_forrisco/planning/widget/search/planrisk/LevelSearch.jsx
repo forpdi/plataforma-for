@@ -60,8 +60,8 @@ export default onClickOutside(React.createClass({
 			});
 		}
 
-		this.props.subplans.shift();
-		this.props.subplans.pop();
+		// this.props.subplans.shift();
+		// this.props.subplans.pop();
 
 		this.setState({
 			subplans: this.props.subplans

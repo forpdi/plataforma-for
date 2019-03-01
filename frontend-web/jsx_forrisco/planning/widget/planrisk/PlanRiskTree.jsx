@@ -10,7 +10,8 @@ import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/planrisk/Se
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import Modal from "@/core/widget/Modal";
+
 
 export default React.createClass({
 	contextTypes: {

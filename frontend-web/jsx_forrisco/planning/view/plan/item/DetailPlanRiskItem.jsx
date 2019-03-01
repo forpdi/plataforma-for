@@ -94,7 +94,13 @@ export default React.createClass({
 
 	onEdit() {
 		this.setState({
-			onEdit:true
+			onEdit: true
+		})
+	},
+
+	offEdit() {
+		this.setState({
+			onEdit: false
 		})
 	},
 
@@ -188,14 +194,6 @@ export default React.createClass({
 		)
 	},
 
-	onCancel() {
-
-	},
-
-	onSubmit() {
-
-	},
-
 	render() {
 
 		if (this.state.isLoading === true) {
@@ -265,6 +263,7 @@ export default React.createClass({
 								 itemTitle={this.state.itemTitle}
 								 fieldsValues={this.state.field}
 								 onEdit={this.state.onEdit}
+								 offEdit={this.offEdit}
 								 itemId={this.props.params.itemId}
 								 planRiskId={this.props.params.planRiskId}
 							 />

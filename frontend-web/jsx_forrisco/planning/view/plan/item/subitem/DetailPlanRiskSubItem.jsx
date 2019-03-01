@@ -135,6 +135,12 @@ export default React.createClass({
 		})
 	},
 
+	offEdit() {
+		this.setState({
+			onEdit: false
+		})
+	},
+
 	renderDropdown() {
 		return (
 			<ul id="level-menu" className="dropdown-menu">
@@ -251,6 +257,7 @@ export default React.createClass({
 								itemTitle={this.state.itemTitle}
 								fieldsValues={this.state.field}
 								onEdit={this.state.onEdit}
+								offEdit={this.offEdit}
 								itemId={this.props.params.itemId}
 								subitemId={this.props.params.subItemId}
 								planRiskId={this.props.params.planRiskId}
