@@ -122,10 +122,10 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			data: data,
 			success(model) {
-				me.trigger("searchTermsByKey", model, data);
+				me.trigger("searchTerms", model, data);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("searchTermsByKey", opts);
+				me.trigger("searchTerms", opts);
 			}
 		});
 	}

@@ -54,6 +54,7 @@ export default React.createClass({
 		this.setTreeItensUnit(this.props.planRisk);
 
 		PlanRiskStore.on('searchTerms', response => {
+			console.log(response.terms);
 			if (response.data) {
 				this.setState({
 					termsSearch: response.terms,
@@ -347,16 +348,11 @@ export default React.createClass({
 
 				{planriskactive ?
 					<div className={"fpdi-tabs"}  role="tablist">
-						<div
-							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-							title={Messages.get("label.clean")}> </i>
-							<input type="text" className="form-control-busca" ref="term"
-								onKeyDown={this.onKeyDown}/>
-							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-							title={Messages.get("label.advancedSearch")}> </i>
-							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+						<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")}/>
+							<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown}/>
+							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}/>
+							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}/>
 						</div>
 
 						{
@@ -370,8 +366,15 @@ export default React.createClass({
 							/>
 
 							:
+								<div>
+									<TreeView tree={this.state.treeItens}/>
+									<hr className="divider"/>
 
-							<TreeView tree={this.state.treeItens}/>
+									<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
+										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+									</a>
+								</div>
+
 						}
 						{
 							this.state.hiddenSearch === true ?

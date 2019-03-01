@@ -202,6 +202,7 @@ var PolicyStore = Fluxbone.Store.extend({
 		});
 	},
 
+	//Busca Avançada
 	findTerms(data) {
 		var me = this;
 		$.ajax({
