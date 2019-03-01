@@ -20,6 +20,7 @@ var ProcessStore = Fluxbone.Store.extend({
 	ACTION_LIST: 'process-listProcess',
 	ACTION_CREATE: 'process-newProcess',
 	ACTION_DELETE: 'process-deleteProcess',
+	ACTION_UPDATE: 'process-updateProcess',
 	url: URL,
 	model: processModel,
 
@@ -64,10 +65,27 @@ var ProcessStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'application/json',
 			success(model) {
-				me.trigger("processDeleted", model);
+				me.trigger("processDelete", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("processDeleted", opts);
+				me.trigger("processDelete", opts);
+			}
+		});
+	},
+
+	updateProcess(data) {
+		var me = this;
+		$.ajax({
+			url: me.url,
+			method: 'PUT',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(data.process),
+			success(model) {
+				me.trigger("processUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("processUpdated", opts);
 			}
 		});
 	},

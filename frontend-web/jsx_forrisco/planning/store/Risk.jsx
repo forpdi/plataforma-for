@@ -183,10 +183,10 @@ var RiskStore = Fluxbone.Store.extend({
 			url: me.url+"/"+data,
 			method: 'DELETE',
 			success(model) {
-				me.trigger("riskDeleted", model, data);
+				me.trigger("riskDelete", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("riskDeleted", opts);
+				me.trigger("riskDelete", opts);
 			}
 		});
 	},

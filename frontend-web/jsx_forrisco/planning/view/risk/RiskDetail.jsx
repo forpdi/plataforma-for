@@ -8,8 +8,8 @@ import Incident from 'forpdi/jsx_forrisco/planning/view/risk/Incident.jsx';
 import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
-
-
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import Toastr from 'toastr';
 
 export default React.createClass({
 
@@ -19,7 +19,8 @@ export default React.createClass({
 	},
 	childContextTypes: {
 		policy: React.PropTypes.object,
-		tabPanel: React.PropTypes.object
+		tabPanel: React.PropTypes.object,
+		planRisk: React.PropTypes.object
 	},
 	propTypes: {
 		policy: React.PropTypes.object.isRequired
@@ -46,9 +47,19 @@ export default React.createClass({
 					loading:false
 				})
 			}
-		})
+		},this)
 
-		this.refresh(thi.props)
+		RiskStore.on("riskDelete", (model) => {
+			if(model.success){
+				this.context.router.push("forrisco/plan-risk/"+this.props.params.planRiskId+"/unit/"+this.props.params.unitId+"/info")
+			}else{
+				var errorMsg = JSON.parse(model.responseText)
+				Toastr.error(errorMsg.message);
+
+			}
+		},this)
+
+		this.refresh(this.props)
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -89,8 +100,8 @@ export default React.createClass({
 				:
 				<li>
 					<Link
-						onClick={this.deleteItem}>
-						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteItem")}>
+						onClick={this.deleteRisco}>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRisk")}>
 							<span id="menu-levels"> {Messages.getEditable("label.deleteRisk","fpdi-nav-label")} </span>
 						</span>
 					</Link>
@@ -110,12 +121,13 @@ export default React.createClass({
 	deleteRisco() {
 		var me = this;
 		if (me.state.riskModel != null) {
+			console.log(me.state.riskModel)
 			var msg = "Você tem certeza que deseja excluir esse Risco?"
 			Modal.confirmCustom(() => {
 				Modal.hide();
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_DELETE,
-					data: me.state.itemModel.id
+				RiskStore.dispatch({
+					action: RiskStore.ACTION_DELETE,
+					data: me.state.riskModel.id
 				});
 			},msg,me.refreshCancel);
 		}

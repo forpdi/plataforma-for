@@ -1,6 +1,9 @@
 package org.forrisco.core.process;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -12,11 +15,14 @@ import org.forpdi.core.jobs.EmailSenderTask;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
 
+import com.google.gson.GsonBuilder;
+
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Delete;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 
@@ -116,6 +122,7 @@ public class ProcessController extends AbstractController{
 				this.fail("Processo não encontrado.");
 				return;
 			}
+			
 			if (this.riskBS.hasLinkedRiskProcess(process)) {
 				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir o processo.");
 				return;
@@ -124,19 +131,79 @@ public class ProcessController extends AbstractController{
 				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir o processo.");
 				return;
 			}
-			process.setDeleted(true);
-			this.processBS.persist(process);
-			List<ProcessUnit> processUnits = this.processBS.getProcessUnitsByProcess(process);
-			for (ProcessUnit processUnit : processUnits) {
-				processUnit.setDeleted(true);
-				processBS.persist(processUnit);
-			}
+			
+			this.processBS.deleteProcess(process);
+				
 			this.success();
+
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}	
+
+	/**
+	 * Alterar um processo
+	 * 
+	 * @param Process
+	 *            processo a ser alterado no banco de dados
+	 */
+	@Put(PATH)
+	@Consumes
+	@NoCache
+	public void updateProcess(Process process) {
+		try {
+			Process existent = this.processBS.exists(process.getId(), Process.class);
+			if (existent == null) {
+				this.fail("Processo não encontrado.");
+				return;
+			}
+			List<ProcessUnit> processUnitsExistent = this.processBS.getProcessUnitsByProcess(process);
+			// mapeia todas as processUnits
+			Map<Long, ProcessUnit> processUnitsExistentMap = new HashMap<>();
+			for (ProcessUnit processUnit : processUnitsExistent) {
+				processUnitsExistentMap.put(processUnit.getUnit().getId(), processUnit);
+			}
+			List<Unit> relatedUnits = process.getRelatedUnits();
+			List<ProcessUnit> newProcessUnits = new LinkedList<>();
+			// verifica as unidades que foram vinculadas e as que foram desvinculadas 
+			for (Unit unit : relatedUnits) {
+				ProcessUnit processUnit = processUnitsExistentMap.get(unit.getId());
+				if (processUnit == null) {
+					processUnit = new ProcessUnit();
+					processUnit.setProcess(process);
+					processUnit.setUnit(unit);
+					newProcessUnits.add(processUnit);
+				} else if (processUnit.isDeleted()) {
+					processUnit.setDeleted(false);
+					newProcessUnits.add(processUnit);
+				} else {
+					processUnitsExistentMap.remove(unit.getId());
+				}
+			}
+			// persiste as processUnits
+			for (ProcessUnit processUnit : newProcessUnits) {
+				this.processBS.persist(processUnit);
+			}
+			for (ProcessUnit processUnit : processUnitsExistentMap.values()) {
+				EmailSenderTask.LOG.info(new GsonBuilder().setPrettyPrinting().create().toJson(processUnit));
+				if (processUnit.getUnit().getId() != process.getUnit().getId()) {
+					processUnit.setDeleted(true);
+					this.processBS.persist(processUnit);
+				}
+			}
+			// atualiza e persiste o processo
+			existent.setFileLink(process.getFileLink());
+			existent.setFileName(process.getFileName());
+			existent.setName(process.getName());
+			existent.setObjective(process.getObjective());
+			this.processBS.persist(existent);
+			this.success();
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 
 	/**
 	 * Retorna Processos da instituição atual
