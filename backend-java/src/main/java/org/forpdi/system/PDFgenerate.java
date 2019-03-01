@@ -3555,5 +3555,78 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
+	public File exportUnitReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
+		
+		File outputDir=tempFile();
+		
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+
+		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
+		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
+		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
+		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
+		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
+
+		generateCover(coverPdfFile, title, author);
+
+		TOCEvent event = new TOCEvent();
+		PdfReader cover = new PdfReader(coverPdfFile.getPath());
+
+		generateContent(contentFile, selecao, planId, event);
+		
+		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
+		
+
+		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
+
+		PdfImportedPage page;
+		int n;
+		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
+		newDocument.open();
+
+		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
+		PdfReader content;
+
+		// CAPA
+		n = cover.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(cover, ++i);
+			copy.addPage(page);
+		}
+
+		// SUMÁRIO
+		n = summary.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(summary, ++i);
+			copy.addPage(page);
+		}
+		
+		if(contentFile.length()>0) {
+			content = new PdfReader(contentFile.getPath());
+			// CONTEÚDO
+			n = content.getNumberOfPages();
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(content, ++i);
+				copy.addPage(page);
+			}
+			content.close();
+		}
+			
+		cover.close();
+		summary.close();		
+		newDocument.close();
+
+		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
+		
+		destinationFile.delete();
+		coverPdfFile.delete();
+		finalSummaryPdfFile.delete();
+		contentFile.delete();	
+		
+		outputDir.delete();
+	
+		return finalPdfFile;  //capa+sumario+conteudo+paginação
+	}
+
 
 }

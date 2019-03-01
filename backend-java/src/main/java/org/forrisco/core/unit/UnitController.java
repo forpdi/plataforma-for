@@ -1,13 +1,20 @@
 package org.forrisco.core.unit;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.io.IOUtils;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.system.PDFgenerate;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
@@ -15,6 +22,7 @@ import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 
 import com.google.gson.GsonBuilder;
+import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -38,6 +46,8 @@ public class UnitController extends AbstractController {
 	private RiskBS riskBS;
 	@Inject 
 	private ProcessBS processBS;
+	@Inject
+	private PDFgenerate pdf;
 
 	protected static final String PATH = BASEPATH + "/unit";
 
@@ -265,6 +275,48 @@ public class UnitController extends AbstractController {
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
+	 * Cria arquivo pdf  para exportar relatório  
+	 * 
+	 * 
+	 * @param title
+	 * @param author
+	 * @param pre
+	 * @param item
+	 * @param subitem
+	 * @throws DocumentException 
+	 * @throws IOException 
+	 * 
+	 */
+	@Get(PATH + "/exportUnitReport")
+	@NoCache
+	//@Permissioned
+	public void exportreport(String title, String author, boolean pre, String units,String subunits){
+		try {
+		
+		//this.pdf.exportUnitReport(title, author, selecao, planId)
+			File pdf = this.pdf.exportReport(title, author, units, subunits);
+
+			OutputStream out;
+			FileInputStream fis= new FileInputStream(pdf);
+			this.response.reset();
+			this.response.setHeader("Content-Type", "application/pdf");
+			this.response.setHeader("Content-Disposition", "inline; filename=\"" + title + ".pdf\"");
+			out = this.response.getOutputStream();
+			
+			IOUtils.copy(fis, out);
+			out.close();
+			fis.close();
+			pdf.delete();
+			this.result.nothing();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Error while proxying the file upload.", ex);
+			this.fail(ex.getMessage());
 		}
 	}
 }
