@@ -83,8 +83,7 @@ export default React.createClass({
 			var treeItensUnit=[]
 
 			response.data.map(itens => {
-				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/unit/' + itens.id+"/info";
+				var linkToItem = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${itens.id}/info`;
 				treeItensUnit.push({
 					label: itens.name,
 					expanded: false,

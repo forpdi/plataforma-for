@@ -151,7 +151,7 @@ ReactDOM.render((
 							<Route path="info" component={Forrisco_UnitGeneralInfo} />
 						</Route>
 
-						<Route path=":unitId" component={Forrisco_RegistryUnit}>
+						<Route path=":unitId">
 							<Route path="subunit/new" component={Forrisco_RegistrySubunit} /> /* Nova subunidade*/
 							<Route path="subunit/:subunitId" component={Forrisco_RegistrySubunit} /> /* Detalhar subunidade*/
 						</Route>

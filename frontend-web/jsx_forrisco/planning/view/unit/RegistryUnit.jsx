@@ -82,12 +82,12 @@ export default React.createClass({
 		});
 
 		UserStore.dispatch({
-      action: UserStore.ACTION_RETRIEVE_USER,
-      data: {
-          page: 1,
-          pageSize: 500,
-      },
-    });
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: 1,
+				pageSize: 500,
+			},
+		});
 
 		UnitStore.on("unitcreated", (response) => {
 			if (response.data) {
@@ -146,6 +146,7 @@ export default React.createClass({
 		}, {
 			name: "abbreviation",
 			type: "text",
+			required: true,
 			placeholder: "Descrição da Política",
 			maxLength: 240,
 			label: Messages.getEditable("label.abbreviation", "fpdi-nav-label"),
