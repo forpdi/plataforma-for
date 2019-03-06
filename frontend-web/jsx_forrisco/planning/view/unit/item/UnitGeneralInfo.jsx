@@ -60,12 +60,6 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		});
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_RETRIEVE_UNIT,
-			data: {
-				unitId: this.props.params.unitId,
-			},
-		});
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
@@ -73,11 +67,30 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+		this.refreshComponent(this.props.params.unitId);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (this.props.params.unitId !== newProps.params.unitId) {
+			this.refreshComponent(newProps.params.unitId);
+		}
 	},
 
 	componentWillUnmount() {
 		UnitStore.off(null, null, this);
 		UserStore.off(null, null, this);
+	},
+
+	refreshComponent(unitId) {
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId },
+		});
+		this.setState({
+			showUpdateMode: false,
+			unitToUpdate: null,
+			loading: true,
+		});
 	},
 
 	switchUpdateMode() {

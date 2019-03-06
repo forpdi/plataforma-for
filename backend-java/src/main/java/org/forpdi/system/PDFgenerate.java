@@ -81,6 +81,8 @@ import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.plan.PlanRiskBS;
 import org.forrisco.core.policy.Policy;
 import org.forrisco.core.policy.PolicyBS;
+import org.forrisco.core.process.Process;
+import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.Incident;
@@ -160,6 +162,8 @@ public class PDFgenerate {
 	private FieldsBS fieldsBS;
 	@Inject
 	private RiskBS riskBS;
+	@Inject
+	private ProcessBS processBS;
 	
 
 	protected final Logger LOGGER = Logger.getLogger(this.getClass());
@@ -3434,11 +3438,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		if(sections !=null) {
 			for (int i = 0; i < sections.length; i++) {
 				Unit unit = this.unitBS.retrieveUnitById( Long.parseLong(sections[i]));
-				PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
+				//PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<Unit> subs = this.unitBS.listSubunitbyUnit(unit);
 				List <Unit> actualsubunits= new ArrayList<Unit>();	//lista de subitens selecionados
 
-				//lista subitens selecionados
+				//lista subunidades selecionados
 				for(Unit sub : subs.getList()) {
 					if(subsections !=null) {
 						for (int j = 0; j < subsections.length; j++) {
@@ -3448,36 +3452,56 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 					}
 				}
+
+
 					
-				//haveContent = true;
-				boolean secTitlePrinted = false;
-				subSecIndex = 0;
-				String secName =unit.getName();
-	
-				//if(fielditens.getTotal()>0){
-					//secIndex++;
-				//}
-							
-				/*for (FieldItem fielditem: unit.getList()) {
+					String secName =unit.getName();
+					haveContent = true;
+					secIndex++;
+					boolean secTitlePrinted = false;
+					
+					
+					if (lastAttWasPlan) {
+						document.setPageSize(PageSize.A4);
+						document.newPage();
+					}
+					if (!secTitlePrinted) {
+						Chunk c = new Chunk(secIndex + ". " + secName, titulo);
+						c.setGenericTag(secIndex + ". " + secName);
+						Paragraph secTitle = new Paragraph(c);
+						secTitle.setLeading(interLineSpacing);
+						secTitle.setSpacingAfter(paragraphSpacing);
+						secTitle.setSpacingBefore(paragraphSpacing);
+						document.add(secTitle);
+						secTitlePrinted = true;
+					}
+					
+					List<FieldItem> list = new ArrayList<FieldItem>();
+					
+					FieldItem field = new FieldItem();
+					field.setDescription(unit.getUser().getName());
+					field.setName("Responsável");
+					field.setText(true);
+					list.add(field);
+					
+					field = new FieldItem();
+					field.setDescription(unit.getAbbreviation());
+					field.setName("Sigla");
+					field.setText(true);
+					list.add(field);
+					
+					field = new FieldItem();
+					field.setDescription(unit.getDescription());
+					field.setName("Descrição");
+					field.setText(true);
+					list.add(field);
+					
+					for (FieldItem fielditem: list) {
 					
 					haveContent = true;
 					
 					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
 						
-						if (lastAttWasPlan) {
-							document.setPageSize(PageSize.A4);
-							document.newPage();
-						}
-						if (!secTitlePrinted) {
-							Chunk c = new Chunk(secIndex + ". " + secName, titulo);
-							c.setGenericTag(secIndex + ". " + secName);
-							Paragraph secTitle = new Paragraph(c);
-							secTitle.setLeading(interLineSpacing);
-							secTitle.setSpacingAfter(paragraphSpacing);
-							secTitle.setSpacingBefore(paragraphSpacing);
-							document.add(secTitle);
-							secTitlePrinted = true;
-						}
 						
 						String attName = fielditem.getName();
 						
@@ -3574,21 +3598,102 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						lastAttWasPlan = false;
 						htmlFile.delete();
 					}
-				}*/
+				}
+							
+					
+				//exportar processos da unidade
+				List<Process> processes =  this.processBS.listProcessbyUnit(unit).getList();
+				Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+				
+				if(!processes.isEmpty()) {
+					PdfPTable table = new PdfPTable(4);
+					table.setHeaderRows(1);
+					PdfPCell cell = new PdfPCell(new Phrase("Processos da Unidade",boldFont));
+			        cell.setColspan(4);
+			        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+			        table.addCell(cell);
+			        
+			        cell = new PdfPCell(new Phrase("Processo",boldFont));
+					table.addCell(cell);
+					cell = new PdfPCell(new Phrase("Objetivo",boldFont));
+					table.addCell(cell);
+					cell = new PdfPCell(new Phrase("Unidades relacionadas",boldFont));
+					table.addCell(cell);
+					cell = new PdfPCell(new Phrase("Anexo",boldFont));
+					table.addCell(cell);
+			        
+			        Paragraph attTitle = new Paragraph("Processo da Unidade", titulo);
+					attTitle.setLeading(interLineSpacing);
+					attTitle.setSpacingAfter(paragraphSpacing);
+					attTitle.setSpacingBefore(paragraphSpacing);
+					document.add(attTitle);
+					
+					for (int k = 0; k < processes.size(); ++k) {
+						cell = new PdfPCell(new Phrase(processes.get(k).getName()));
+						table.addCell(cell);
+						cell = new PdfPCell(new Phrase(processes.get(k).getObjective()));
+						table.addCell(cell);
+						cell = new PdfPCell(new Phrase(processes.get(k).getRelatedUnits().get(0).getName()));
+						table.addCell(cell);
+						
+						Chunk c = new Chunk(processes.get(k).getFileName(), 
+								new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, WebColors.getRGBColor("#0085D9")));
+						c.setAnchor(processes.get(k).getFileLink());
+						//c.setAction(PdfAction.gotoRemotePage("http://mydomain/mypage","page1",false,true)); 
+						cell = new PdfPCell();
+						cell.addElement(c);
+						table.addCell(cell);
+					        
+					}
+					 document.add(table);
+				}
+				
+				
 					
 				subSecIndex = 0;
 				secTitlePrinted=false;
 	
-				for (Unit sub: actualsubunits) {
+				for (Unit subunit: actualsubunits) {
 						
 					haveContent = true;
 					subSecIndex++;
 					
-					String subSecName =sub.getName();
+					String subSecName =subunit.getName();
 					
-					/*PaginatedList<FieldSubItem> fieldsubs = this.itemBS.listFieldsBySubItem(sub);
-						
-					for(FieldSubItem fieldsub : fieldsubs.getList()) {
+					
+					List<FieldItem> sublist = new ArrayList<FieldItem>();
+					
+					FieldItem subfield = new FieldItem();
+					subfield.setDescription(subunit.getUser().getName());
+					subfield.setName("Responsável");
+					subfield.setText(true);
+					sublist.add(subfield);
+					
+					subfield = new FieldItem();
+					subfield.setDescription(subunit.getAbbreviation());
+					subfield.setName("Sigla");
+					subfield.setText(true);
+					sublist.add(subfield);
+					
+					subfield = new FieldItem();
+					subfield.setDescription(subunit.getDescription());
+					subfield.setName("Descrição");
+					subfield.setText(true);
+					sublist.add(subfield);
+					
+					//if (!secTitlePrinted) {
+						Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+						c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+						Paragraph secTitle = new Paragraph(c);
+						secTitle.setLeading(interLineSpacing);
+						secTitle.setSpacingAfter(paragraphSpacing);
+						secTitle.setSpacingBefore(paragraphSpacing);
+						document.add(secTitle);
+						//secTitlePrinted = true;
+					//}
+					
+					
+					for(FieldItem fieldsub : sublist) {
 							
 						if( fieldsub.isText() && fieldsub.getDescription() != null && !fieldsub.getDescription().equals("")) {
 						
@@ -3596,16 +3701,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								document.setPageSize(PageSize.A4);
 								document.newPage();
 							}
-							if (!secTitlePrinted) {
-								Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-								c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
-								Paragraph secTitle = new Paragraph(c);
-								secTitle.setLeading(interLineSpacing);
-								secTitle.setSpacingAfter(paragraphSpacing);
-								secTitle.setSpacingBefore(paragraphSpacing);
-								document.add(secTitle);
-								//secTitlePrinted = true;
-							}
+							
 							
 							String attName = fieldsub.getName();
 							
@@ -3641,14 +3737,24 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								}
 							}
 							str += value + "</p></body></html>";
+							
+							
 							File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
-							FileWriter fw = new FileWriter(htmlFile, true);
+							/*FileWriter fw = new FileWriter(htmlFile, true);
 							BufferedWriter conexao = new BufferedWriter(fw);
 							conexao.write(str);
 							conexao.newLine();
 							conexao.close();
 							// LOGGER.info(htmlFile.getPath());
 							List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+							*/
+							FileOutputStream out = new FileOutputStream(htmlFile);
+							out.write(str.getBytes());
+							out.close();
+							FileReader fr = new FileReader(htmlFile.getPath());
+							List<Element> p = HTMLWorker.parseToList(fr, styles);
+							fr.close();
+			
 							for (int k = 0; k < p.size(); ++k) {
 								if (p.get(k) instanceof Paragraph) {
 									Paragraph att = (Paragraph) p.get(k);
@@ -3698,7 +3804,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							lastAttWasPlan = false;
 							htmlFile.delete();
 						}
-					}*/
+					}
 				}
 			
 			}

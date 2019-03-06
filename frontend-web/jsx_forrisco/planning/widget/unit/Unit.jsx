@@ -1,5 +1,5 @@
 import React from "react";
-import TreeViewNode from "forpdi/jsx_forrisco/core/widget/unit/UnitNode.jsx";
+import TreeViewNode from "forpdi/jsx_forrisco/planning/widget/unit/UnitNode.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
