@@ -497,7 +497,7 @@ public class PolicyController extends AbstractController {
 	@Get(PATH + "/exportReport")
 	@NoCache
 	//@Permissioned
-	public void exportreport(String title, String author, boolean pre, String itens,String subitens){
+	public void exportreport(String title, String author, boolean pre, String itens, String subitens){
 		try {
 		
 			File pdf = this.pdf.exportReport(title, author, itens, subitens);

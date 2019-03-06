@@ -219,4 +219,13 @@ public class PlanRiskItemBS extends HibernateBusiness {
 			this.deleteSubitem(subitens.getList().get(i));
 		}
 	}*/
+	
+	public PlanRiskItem retrievePlanRiskItembyId(long id) {
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("id", id));
+		
+	return	(PlanRiskItem) criteria.uniqueResult();
+}
 }

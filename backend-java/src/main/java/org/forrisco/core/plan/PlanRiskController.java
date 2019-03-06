@@ -219,10 +219,10 @@ public class PlanRiskController extends AbstractController {
 	@Get(PATH + "/exportReport")
 	@NoCache
 	//@Permissioned
-	public void exportreport(Long planId, String title, String author, boolean pre, String selecao) throws IOException, DocumentException{
+	public void exportReport(Long planRiskId, String title, String author, boolean pre, String itens, String subitens) throws IOException, DocumentException{
 		//try {
 		
-			File pdf = this.pdf.exportPolicyReport(title, author, selecao,planId);
+			File pdf = this.pdf.exportPlanRiskReport(title, author, itens, subitens);
 
 			OutputStream out;
 			FileInputStream fis= new FileInputStream(pdf);

@@ -72,6 +72,10 @@ import org.forrisco.core.item.FieldItem;
 import org.forrisco.core.item.FieldSubItem;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.item.ItemBS;
+import org.forrisco.core.item.PlanRiskItem;
+import org.forrisco.core.item.PlanRiskItemBS;
+import org.forrisco.core.item.PlanRiskItemField;
+import org.forrisco.core.item.PlanRiskSubItem;
 import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.plan.PlanRiskBS;
@@ -146,6 +150,8 @@ public class PDFgenerate {
 	private PolicyBS policyBS;
 	@Inject
 	private PlanRiskBS planriskBS;
+	@Inject
+	private PlanRiskItemBS planriskItemkBS;
 	@Inject
 	private UnitBS unitBS;
 	@Inject
@@ -3705,7 +3711,80 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
+	private void generatePlanRiskContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
+		
+		writer.setPageEvent(event);
+		
+		File outputDir;
+
+		outputDir = contentFile.getParentFile();
+
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+		
+		
+		String[] sections = null;
+		if (itens != null)
+			sections = itens.split(",");
+		
+		String[] subsections= null;
+		if (subitens != null)
+			subsections = subitens.split(",");
+		
+		int secIndex = 0;
+		int subSecIndex = 0;
+		boolean lastAttWasPlan = false;
+		boolean haveContent = false;
+
+		document.open();
+		document.add(new Chunk(""));
+		
+		//para cada item selecionado
+		if(sections !=null) {
+			for (int i = 0; i < sections.length; i++) {
+				PlanRiskItem planRiskItem = this.planriskItemkBS.retrievePlanRiskItembyId(Long.parseLong(sections[i]));
+				PaginatedList<PlanRiskItemField> planRiskItemField; //Lista de Campos dos Item
+				PaginatedList<PlanRiskSubItem> planRiskSubItem = this.planriskItemkBS.listSubItemByItem(planRiskItem);
+				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
+
+				//lista subitens selecionados
+				for(PlanRiskSubItem sub : planRiskSubItem.getList()) {
+					if(subsections != null) {
+						for (int j = 0; j < subsections.length; j++) {
+							if(sub.getId() == Long.parseLong(subsections[j])) {
+								actualsubitens.add(sub);
+							}
+						}
+					}
+				}
+
+				boolean secTitlePrinted = false;
+				subSecIndex = 0;
+				String secName = planRiskItem.getName();
+
+					
+				subSecIndex = 0;
+				secTitlePrinted=false;
 	
+				for (PlanRiskSubItem sub: actualsubitens) {
+						
+					haveContent = true;
+					subSecIndex++;
+					
+					String subSecName =sub.getName();
+				
+				}
+			
+			}
+
+		}
+
+		if (haveContent) {
+			document.close();
+		}
+		outputDir.delete();
+	}
 	
 	
 	/**
@@ -3944,5 +4023,75 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
+	public File exportPlanRiskReport(String title, String author,  String itens, String subitens) throws IOException, DocumentException {
+		
+		File outputDir=tempFile();
+		
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 
+		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
+		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
+		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
+		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
+		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
+
+		generateCover(coverPdfFile, title, author);
+
+		TOCEvent event = new TOCEvent();
+		PdfReader cover = new PdfReader(coverPdfFile.getPath());
+		
+		generatePlanRiskContent(contentFile, itens, subitens, event);
+		
+		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());	
+		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
+
+		PdfImportedPage page;
+		int n;
+		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
+		newDocument.open();
+
+		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
+		PdfReader content;
+
+		// CAPA
+		n = cover.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(cover, ++i);
+			copy.addPage(page);
+		}
+
+		// SUMÁRIO
+		n = summary.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(summary, ++i);
+			copy.addPage(page);
+		}
+		
+		if(contentFile.length()>0) {
+			content = new PdfReader(contentFile.getPath());
+			// CONTEÚDO
+			n = content.getNumberOfPages();
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(content, ++i);
+				copy.addPage(page);
+			}
+			content.close();
+		}
+			
+		cover.close();
+		summary.close();		
+		newDocument.close();
+
+		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
+		
+		destinationFile.delete();
+		coverPdfFile.delete();
+		finalSummaryPdfFile.delete();
+		contentFile.delete();	
+		
+		outputDir.delete();
+	
+		return finalPdfFile;  //capa+sumario+conteudo+paginação
+		
+	}
 }

@@ -155,6 +155,7 @@ export default React.createClass({
 												deleteFields={this.deleteFields}
 												editFields={this.editFields}
 												index={index}
+												fields={this.state.formFields}
 												field={field}/>
 										</div>
 									)
