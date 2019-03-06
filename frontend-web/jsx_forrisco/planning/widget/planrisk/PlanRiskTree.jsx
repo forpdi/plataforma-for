@@ -1,6 +1,6 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import Unit from "forpdi/jsx_forrisco/core/widget/unit/Unit.jsx";
+import Unit from "forpdi/jsx_forrisco/planning/widget/unit/Unit.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";

@@ -305,6 +305,7 @@ public class UnitController extends AbstractController {
 	public void exportreport(String title, String author, boolean pre, String units,String subunits){
 		try {
 		
+			//adicionar os arquivos anexos aos processos?
 			File pdf = this.pdf.exportUnitReport(title, author, units, subunits);
 
 			OutputStream out;

@@ -323,11 +323,13 @@ export default React.createClass({
 					id: me.props.levelInstanceId
 				}
 			};
+
+			console.log("modal",resp,Modal,fileData)
 			me.setState({
 				fileData,
 				process: {
 					...this.state.process,
-					fileLink: file.fileLink,
+					fileLink: fileData.fileLink,
 					fileName: Modal.fileName,
 				},
 			});

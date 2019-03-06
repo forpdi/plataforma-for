@@ -9,7 +9,8 @@ import {Link} from "react-router";
 import {number} from "prop-types";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import UnitTree from "forpdi/jsx_forrisco/core/widget/unit/UnitTree.jsx";
+import UnitTree from "forpdi/jsx_forrisco/planning/widget/unit/UnitTree.jsx";
+
 
 export default React.createClass({
 	contextTypes: {
