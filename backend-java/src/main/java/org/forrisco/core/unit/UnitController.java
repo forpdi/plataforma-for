@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -15,7 +17,11 @@ import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
+import org.forrisco.core.item.Item;
+import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
+import org.forrisco.core.plan.PlanRiskBS;
+import org.forrisco.core.policy.Policy;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 import org.forrisco.core.process.Process;
@@ -40,6 +46,8 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 @Controller
 public class UnitController extends AbstractController {
 
+	@Inject
+	private PlanRiskBS planBS;
 	@Inject
 	private UnitBS unitBS;
 	@Inject
@@ -284,6 +292,122 @@ public class UnitController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	
+	
+	
+	
+	/**
+	 * Listar Unidades e seus níveis segundo uma chave de busca.
+	 * 
+	 * @param parentId
+	 *            Id do Plano de risco.
+	 * @param page
+	 *            Número da página da lista de plano de metas.
+	 * @param terms
+	 *            Termo de busca.
+	 * @param itensSelect
+	 *            Conjunto de unidades a serem buscadas.
+	 * @param subitensSelect
+	 *            Conjunto de subunidades que podem ser buscados.
+	 * @param ordResult
+	 *            Ordenação do resultado, 1 para crescente e 2 para decrescente.
+	 *            
+	 * @return PaginatedList<Plan> Retorna lista de planos de metas de acordo
+	 *         com os filtros.
+	 */
+	@Get(PATH + "/findTerms")
+	@NoCache
+	@Permissioned
+	public void listItensTerms(Long planId, Integer page, String terms, Long itensSelect[], Long subitensSelect[], int ordResult, Long limit) {
+		if (page == null)
+			page = 0;
+		
+		try {
+	
+			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
+			
+			if(plan.isDeleted()) {
+				this.fail("plano não foi encontrado");
+			}
+			
+			List<Item> itens = this.unitBS.listItemTerms(plan, terms, itensSelect, ordResult);
+			List<SubItem> subitens = this.unitBS.listSubitemTerms(plan, terms, subitensSelect, ordResult);
+
+			PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
+			
+			this.success(result);
+ 		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	@Get(PATH + "/findAllTerms")
+	@NoCache
+	@Permissioned
+	public void listItensTerms(Long planId, Integer page, String terms, int ordResult, Long limit) {
+		if (page == null)
+			page = 0;
+		
+		try {
+			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
+			
+			if(plan.isDeleted()) {
+				this.fail("plano não foi encontrado");
+			}
+			
+			List<Item> itens = this.unitBS.listItemTerms(plan, terms, null, ordResult);
+			List<SubItem> subitens = this.unitBS.listSubitemTerms(plan, terms, null, ordResult);
+
+			PaginatedList<SubItem> result = TermResult( itens,subitens, page, limit);
+			
+			this.success(result);
+ 		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	private PaginatedList<SubItem> TermResult(List<Item> itens, List<SubItem> subitens,  Integer page,  Long limit){
+		int firstResult = 0;
+		int maxResult = 0;
+		int count = 0;
+		int add = 0;
+		if (limit != null) {
+			firstResult = (int) ((page - 1) * limit);
+			maxResult = limit.intValue();
+		}
+		
+		for(Item item : itens) {
+			SubItem subitem = new SubItem();
+			subitem.setDescription(item.getDescription());
+			subitem.setId(item.getId());
+			subitem.setName(item.getName());
+			//item.setSubitemParentId(subitem.getItem().getId());
+			subitens.add(subitem);
+		}
+		
+		List<SubItem> list = new ArrayList<>();
+		for(SubItem subitem : subitens) {
+			if (limit != null) {
+				if (count >= firstResult && add < maxResult) {
+					list.add(subitem);
+					count++;
+					add++;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(subitem);
+			}
+		}
+
+		PaginatedList<SubItem> result = new PaginatedList<SubItem>();
+		
+		result.setList(list);
+		result.setTotal((long)count);
+		return result;
+	}
+	
 	
 	
 	/**

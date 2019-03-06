@@ -59,8 +59,10 @@ public class ProcessBS extends HibernateBusiness {
 	 *
 	 */
 	public PaginatedList<Process> listProcessbyUnit(Unit unit) {
+		
 		PaginatedList<Process> results = new PaginatedList<Process>();
 		List<Process> list = new LinkedList<Process>();
+		
 		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));

@@ -1,13 +1,17 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import Unit from "forpdi/jsx_forrisco/planning/widget/unit/Unit.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
+//import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import {Link} from "react-router";
 import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
+
+
+
+import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -46,6 +50,17 @@ export default React.createClass({
 
 		this.setTreeItensUnit(this.props.planRisk)
 		this.refresh()
+
+		UnitStore.on('searchTerms', response => {
+			console.log(response.terms);
+			if (response.data) {
+				this.setState({
+					termsSearch: response.terms,
+					itensSelect: response.itensSelect,
+					subitensSelect: response.subitensSelect,
+				})
+			}
+		}, this);
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -360,6 +375,49 @@ export default React.createClass({
 			this.setState({exportPlanRisk:true})
 	},
 
+	onKeyDown(event) {
+		var key = event.which;
+		if (key === 13) {
+			event.preventDefault();
+			this.treeSearch();
+		}
+	},
+
+	treeSearch() {
+		this.displayResult();
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_TERMS,
+			data: {
+				planRiskId: this.props.planRisk.id,
+				terms: this.refs.term.value,
+				page: 1,
+				limit: 10,
+			},
+			opts: {
+				wait: true
+			}
+		});
+	},
+
+	displayResult() {
+		this.setState({
+			hiddenResultSearch: true
+		});
+	},
+
+	resultSearch() {
+		this.setState({
+			hiddenResultSearch: false
+		});
+		this.refs.term.value = "";
+	},
+
+	searchFilter() {
+		this.setState({
+			hiddenSearch: !this.state.hiddenSearch
+		});
+	},
+
 	render() {
 		return(<div className={"fpdi-tabs"}  role="tablist">
 			<div
@@ -373,15 +431,44 @@ export default React.createClass({
 				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
 					onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 			</div>
-			<TreeView tree={this.state.treeItensUnit}/>
 
-			{<hr className="divider"></hr>}
-			{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-				<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
-					<span/>{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-				</a>
-			: ""}
+				{
+					this.state.hiddenResultSearch === true ?
+						<SearchResult
+							planRiskId={this.props.planRisk.id}
+							terms={this.state.termsSearch}
+							itensSelect={this.state.itensSelect}
+							subitensSelect={this.state.subitensSelect}
+							ordResult={this.state.ordResultSearch}
+						/>
+						:
+						<div>
+							<TreeView tree={this.state.treeItensUnit}/>
+							<hr className="divider"/>
+
+							{
+								(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+									<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
+										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+									</a>
+
+									: ""
+							}
+						</div>
+
+				}
+				{
+					this.state.hiddenSearch === true ?
+						<div className="container Pesquisa-Avancada">
+							<LevelSearch
+								searchText={this.refs.term.value}
+								subplans={this.state.treeItens}
+								planRisk={this.props.planRisk.id}
+								hiddenSearch={this.searchFilter}
+								displayResult={this.displayResult}
+							/>
+						</div> : ""
+				}
 		</div>)
 	},
 })
