@@ -387,7 +387,7 @@ public class UnitController extends AbstractController {
 			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, null, ordResult);
 			//PaginatedList<Unit> result = TermResult(units, page, limit);
 			
-			this.success(result);
+			//this.success(result);
  		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
