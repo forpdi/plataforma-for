@@ -34,6 +34,8 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_NEW_SUBUNIT: "unit-newSubunit",
 	ACTION_LIST_SUBUNIT: "unit-listSubunits",
 	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
+	ACTION_FIND_TERMS:'unit-findTerms',
+	ACTION_FINDALL_TERMS:'unit-findAllTerms',
 	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
 	model: unitModel,
@@ -280,6 +282,42 @@ var UnitStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+
+
+		//Busca Avançada
+		findTerms(data) {
+			var me = this;
+			$.ajax({
+				url: me.url+"/findTerms",
+				method: 'GET',
+				dataType: 'json',
+				data: data,
+				success(model) {
+					me.trigger("findTerms", model, data);
+				},
+				error(opts, status, errorMsg) {
+					me.trigger("findTerms", opts);
+				}
+			});
+		},
+
+
+		findAllTerms(data) {
+			var me = this;
+			$.ajax({
+				url: me.url+"/findAllTerms",
+				method: 'GET',
+				dataType: 'json',
+				data: data,
+				success(model) {
+					me.trigger("findTerms", model, data);
+				},
+				error(opts, status, errorMsg) {
+					me.trigger("findTerms", opts);
+				}
+			});
+		},
 
 	mainMenuState(data){
 		var me = this;

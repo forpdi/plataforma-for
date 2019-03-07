@@ -327,7 +327,9 @@ export default React.createClass({
 													</div>
 													<span className="pdi-normal-text">
 														<div
-															id={this.props.field.fieldName}> {this.props.field.fieldContent}
+															id={this.props.field.fieldName}> {
+																this.props.field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "")
+															}
 														</div>
 													</span>
 												</div>

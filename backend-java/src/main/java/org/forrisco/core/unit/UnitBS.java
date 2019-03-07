@@ -10,6 +10,8 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.forpdi.system.CriteriaCompanyFilter;
+import org.forrisco.core.item.Item;
+import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.Incident;
@@ -516,5 +518,15 @@ public class UnitBS extends HibernateBusiness {
 				//}
 			}
 		}
+	}
+
+	public List<Item> listItemTerms(PlanRisk plan, String terms, Long[] itensSelect, int ordResult) {
+		 //TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<SubItem> listSubitemTerms(PlanRisk plan, String terms, Long[] subitensSelect, int ordResult) {
+		 //TODO Auto-generated method stub
+		return null;
 	}
 }
