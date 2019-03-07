@@ -27,6 +27,7 @@ public class EmailUtilsPlugin {
 		email.setFrom(SystemConfigs.getConfig("smtp.from.email"), SystemConfigs.getConfig("smtp.from.name"));
 		email.setHostName(SystemConfigs.getConfig("smtp.host"));
 		email.setSmtpPort(Integer.parseInt(SystemConfigs.getConfig("smtp.port")));
+		email.setSslSmtpPort(SystemConfigs.getConfig("smtp.port"));
 		email.addTo(toEmail, toName);
 		email.setSubject(subject);
 		email.setMsg(msg);
@@ -54,6 +55,7 @@ public class EmailUtilsPlugin {
 		email.setFrom(SystemConfigs.getConfig("smtp.from.email"), SystemConfigs.getConfig("smtp.from.name"));
 		email.setHostName(SystemConfigs.getConfig("smtp.host"));
 		email.setSmtpPort(Integer.parseInt(SystemConfigs.getConfig("smtp.port")));
+		email.setSslSmtpPort(SystemConfigs.getConfig("smtp.port"));
 		email.addTo(toEmail, toName);
 		email.setSubject(subject);
 		email.setMsg(msg);
