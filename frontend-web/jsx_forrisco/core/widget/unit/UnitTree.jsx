@@ -43,55 +43,34 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+		const me = this;
 
-		this.setTreeItensUnit(this.props.planRisk)
-		this.refresh()
-	},
-
-	componentWillReceiveProps(newProps) {
-		if (newProps.planRisk.id !== this.props.planRisk.id) {
-			this.setTreeItensUnit(newProps.planRisk);
-		}
-
-		this.refresh()
-	},
-
-	refresh(){
-		if(this.props.planRisk.id !=null){
-			UnitStore.dispatch({
-				action: UnitStore.ACTION_FIND_BY_PLAN,
-				data: this.props.planRisk.id,
-			});
-		}
-	},
-
-	setTreeItensUnit(unit, treeItensUnit = []) {
-		var me = this;
-
+		//Botão Novo Item Geral
+		const newItem = {
+			label: Messages.get("label.newItem"),
+			labelCls: 'fpdi-new-node-label',
+			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+			to: `forrisco/plan-risk/${this.props.planRisk.id}/unit/new`,
+			key: "newUnitItem"
+		};
 
 		/*Unidades*/
-		UnitStore.on('unitbyplan', (response) => {
+		UnitStore.on('unitbyplan', (response, opt) => {
+			if (!opt || !opt.refreshUnitTree) {
+				return;
+			}
 
-			//Botão Novo Item Geral
-			var newItem = {
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '/forrisco/plan-risk/' + this.props.unit.id + '/unit/new',
-				key: "newUnitItem"
-			};
-			var treeItensUnit=[]
-
-			response.data.map(itens => {
-				var linkToItem = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${itens.id}/info`;
+			const treeItensUnit = [];
+			response.data.map(item => {
+				const linkToItem = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${item.id}/info`;
 				treeItensUnit.push({
-					label: itens.name,
+					label: item.name,
 					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitens
+					expandable: true, //Mudar essa condição para: Se houver subitem
 					to: linkToItem,
 					key: linkToItem,
-					model: itens,
-					id: itens.id,
+					model: item,
+					id: item.id,
 					children: [],
 					onExpand: this.expandRoot,
 					onShrink: this.shrinkRoot
@@ -100,48 +79,68 @@ export default React.createClass({
 
 			treeItensUnit.push(newItem);
 
-			this.setState({treeItensUnit: treeItensUnit});
+			this.setState({ treeItensUnit });
 			this.forceUpdate();
+		}, me);
 
-		},me);
-
-
-		/*UnitItemStore.on('allFieldsUnit', (response, node) => {
-			var fieldTree = [];
-
-			//Botão Novo SubItem
-			var newItemSubItem = {
-				label: Messages.get("label.newItem"),
+		UnitStore.on('subunitsListed', (response, node) => {
+			const fieldTree = [];
+			const toNewSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`;
+			const newSubunit = {
+				label: "Nova Subunidade",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
-				key: "newUnitSubItem"
+				to: toNewSubunit,
+				key: "newPlanRiskSubItem"
 			};
 
-			 response.data.map(field => {
-				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
-				 })
+			//Botão Novo SubItem
+			 response.data.map(subField => {
+				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subField.id}`;
+				fieldTree.push({
+					label: subField.name,
+					to: toSubunit,
+					key: toSubunit,
+					id: subField.id,
+				});
 			});
 
-			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+			fieldTree.push(newSubunit);  //Adiciona o Botão de Novo SubItem
 
 			node.node.children = fieldTree;
 			me.forceUpdate();
-		})*/
+		});
+		this.refresh();
 	},
 
+	componentWillReceiveProps(newProps) {
+		if (newProps.planRisk.id !== this.props.planRisk.id) {
+			// this.refresh(newProps.planRisk.id);
+		}
+	},
+
+	componentWillUnmount() {
+		UnitStore.off('unitbyplan');
+		UnitStore.off('subunitsListed');
+	},
+
+	refresh(){
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_BY_PLAN,
+			data: this.props.planRisk.id,
+			opts: {
+				refreshUnitTree: true,
+			},
+		});
+	},
 
 
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_LIST_SUBUNIT,
 				data: {
-					id: nodeProps.id
+					unitId: nodeProps.id
 				},
 				opts: {
 					node: nodeProps

@@ -12,11 +12,9 @@ import StructureStore from "@/planning/store/Structure";
 export default React.createClass({
 
 	contextTypes: {
-		accessLevel: React.PropTypes.number.isRequired,
-		roles: React.PropTypes.object.isRequired,
-		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired
+		tabPanel: React.PropTypes.object,
+		router: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -96,6 +94,10 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}
+		});
+
+		_.defer(() => {
+			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Unidade');
 		});
 	},
 

@@ -13,6 +13,7 @@ export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
+		tabPanel: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -30,6 +31,10 @@ export default React.createClass({
 			this.setState({
 				unit: response.data,
 				loading: false,
+			});
+			//Construção da Aba Superior
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.unit.name);
 			});
 		});
 		UnitStore.on('unitUpdated', response => {
@@ -67,18 +72,32 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
-		this.refreshComponent(this.props.params.unitId);
+		this.refreshComponent(this.getUnitId());
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (this.props.params.unitId !== newProps.params.unitId) {
-			this.refreshComponent(newProps.params.unitId);
+		if (this.props.isSubunit) {
+			if (this.props.params.subunitId !== newProps.params.subunitId) {
+				this.refreshComponent(newProps.params.subunitId);
+			}
+		} else {
+			if (this.props.params.unitId !== newProps.params.unitId) {
+				this.refreshComponent(newProps.params.unitId);
+			}
 		}
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		UserStore.off(null, null, this);
+		UnitStore.off('unitRetrieved');
+		UnitStore.off('unitUpdated');
+		UnitStore.off('unitDeleted');
+		UserStore.off('retrieve-user');
+	},
+
+	getUnitId() {
+		return this.props.isSubunit
+				? this.props.params.subunitId
+				: this.props.params.unitId;
 	},
 
 	refreshComponent(unitId) {
@@ -293,7 +312,7 @@ export default React.createClass({
 
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
-						unitId={this.props.params.unitId}
+						unitId={unit.id}
 					/>
 
 				</div>

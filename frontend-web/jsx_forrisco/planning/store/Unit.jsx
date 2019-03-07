@@ -32,6 +32,7 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
 	ACTION_NEW_SUBUNIT: "unit-newSubunit",
+	ACTION_LIST_SUBUNIT: "unit-listSubunits",
 	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
 	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
@@ -53,7 +54,7 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByPlan(data){
+	findByPlan(data, info){
 		var me = this;
 		$.ajax({
 			url: me.url,
@@ -62,7 +63,7 @@ var UnitStore = Fluxbone.Store.extend({
 			contentType: 'application/json',
 			data: {planId: data},
 			success(model) {
-				me.trigger("unitbyplan", model);
+				me.trigger("unitbyplan", model, info);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("unitbyplan", opts);
@@ -244,6 +245,22 @@ var UnitStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.trigger("subunitCreated",{msg:opts.responseJSON.message,data:{id:null}})
 				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	listSubunits(data, node) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/listsub/${data.unitId}`,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("subunitsListed", model, node);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("subunitsListed", opts);
 			}
 		});
 	},

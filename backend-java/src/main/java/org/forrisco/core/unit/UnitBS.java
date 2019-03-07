@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
@@ -24,7 +23,6 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -61,13 +59,14 @@ public class UnitBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("parent", unit));
 
-		Criteria count = this.dao.newCriteria(Unit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("parent", unit))
-				.setProjection(Projections.countDistinct("id"));
+//		Criteria count = this.dao.newCriteria(Unit.class)
+//				.add(Restrictions.eq("deleted", false))
+//				.add(Restrictions.eq("parent", unit))
+//				.setProjection(Projections.countDistinct("id"));
 
-		results.setList(this.dao.findByCriteria(criteria, Unit.class));
-		results.setTotal((Long) count.uniqueResult());
+		List<Unit> subunits = this.dao.findByCriteria(criteria, Unit.class);
+		results.setList(subunits);
+		results.setTotal((long) subunits.size());
 
 		return results;
 	}
@@ -177,7 +176,7 @@ public class UnitBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Recuperar unidade de um plano
+	 * Recuperar unidades e subunidades de um plano
 	 * 
 	 * @param PlanRisk,
 	 *            instância da plano de risco
@@ -202,6 +201,27 @@ public class UnitBS extends HibernateBusiness {
 		return results;
 	}
 	
+	/**
+	 * Recuperar unidades de um plano
+	 * 
+	 * @param PlanRisk,
+	 *            instância da plano de risco
+	 * 
+	 */
+	public PaginatedList<Unit> listOnlyUnitsbyPlanRisk(PlanRisk planrisk) {
+		PaginatedList<Unit> results = new PaginatedList<Unit>();
+
+		Criteria criteria = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.isNull("parent"))
+				.add(Restrictions.eq("planRisk", planrisk));
+
+		List<Unit> units = this.dao.findByCriteria(criteria, Unit.class);
+		results.setList(units);
+		results.setTotal((long) units.size());
+
+		return results;
+	}
 	
 	
 	

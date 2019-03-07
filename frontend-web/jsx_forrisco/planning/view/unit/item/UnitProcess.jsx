@@ -120,8 +120,11 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		ProcessStore.off(null, null, this);
+		ProcessStore.off('processListed');
+		ProcessStore.off('processCreated');
+		ProcessStore.off('processDeleted');
+		ProcessStore.off('processUpdated');
+		UnitStore.off('unitbyplan');
 	},
 
 	insertNewRow() {
