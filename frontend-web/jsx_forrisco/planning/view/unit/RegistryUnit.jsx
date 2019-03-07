@@ -209,7 +209,6 @@ export default React.createClass({
 				<h1 className="marginLeft115">Nova Unidade</h1>
 				<div className="fpdi-card padding40">
 					<form onSubmit={this.handleSubmit}>
-
 						{
 							this.getFields().map((field, index) => {
 								return (
@@ -217,7 +216,6 @@ export default React.createClass({
 								);
 							})
 						}
-
 						<div className="fpdi-editable-data-input-group">
 							<button type="submit" className="btn btn-success">{this.state.submitLabel}</button>
 							<button type="button" className="btn btn-default"
