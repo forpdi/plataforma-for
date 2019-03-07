@@ -90,14 +90,21 @@ export default React.createClass({
 				<li>
 					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels"> Editar Política </span>
+							<span id="menu-levels"> Editar Plano </span>
 						</span>
+					</Link>
+				</li>
+				<li>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/duplicate"}>
+					<span className="mdi mdi-content-copy cursorPointer" title={Messages.get("label.deletePolicy")}>
+						<span id="menu-levels"> Duplicar Plano </span>
+					</span>
 					</Link>
 				</li>
 				<li>
 					<Link onClick={this.deletePlanRisk}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-						<span id="menu-levels"> Deletar Política </span>
+						<span id="menu-levels"> Excluir Plano </span>
 					</span>
 					</Link>
 				</li>
