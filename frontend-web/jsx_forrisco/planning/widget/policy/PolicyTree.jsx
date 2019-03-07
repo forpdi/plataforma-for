@@ -147,6 +147,7 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveAllSubitens",(model) => {
+			console.log("retrieveAllSubitens",(model))
 			this.setState({
 				subitens:model.data,
 				rootSections: this.state.itens,
@@ -281,7 +282,7 @@ export default React.createClass({
 		var i;
 		for(i=0; i<this.state.rootSubsections.length; i++){
 			if(document.getElementById("checkbox-subitem-"+i).disabled == false){
-				document.getElementById("checkbox-subitem-"+i).checked = document.getElementById("selectall").checked;
+				document.getElementById("checkbox-subitem-"+i).checked = document.getElementById("selectallsub").checked;
 			}
 		}
 	},
@@ -303,7 +304,7 @@ export default React.createClass({
 				selectedAll = false;
 			}
 		}
-		document.getElementById("selectall").checked = selectedAll;
+		document.getElementById("selectallsub").checked = selectedAll;
 	},
 
 
@@ -337,7 +338,7 @@ export default React.createClass({
 				<div key="rootSection-selectall">
 						<div className="checkbox marginLeft5 col-md-10" >
 							<label name="labelSection-selectall" id="labelSection-selectall">
-								<input type="checkbox" value="selectall" id="selectall" onChange={this.selectAllsubitens}></input>
+								<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllsubitens}></input>
 								Selecionar todos
 							</label>
 						</div>

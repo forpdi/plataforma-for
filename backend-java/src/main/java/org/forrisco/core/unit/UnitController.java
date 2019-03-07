@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
 import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
@@ -27,7 +26,6 @@ import org.forrisco.risk.RiskBS;
 import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 
-import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
@@ -138,7 +136,7 @@ public class UnitController extends AbstractController {
 				return;
 			}
 			
-			PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
+			PaginatedList<Unit> units = this.unitBS.listOnlyUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -156,7 +154,7 @@ public class UnitController extends AbstractController {
 	@Get(PATH + "/{id}")
 	@NoCache
 	@Permissioned
-	public void listUnit(Long id) {
+	public void getUnit(Long id) {
 		try {
 			Unit unit = this.unitBS.retrieveUnitById(id);
 			if (unit == null) {
@@ -164,6 +162,33 @@ public class UnitController extends AbstractController {
 			} else {
 				this.success(unit);
 			}
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
+	 * Retorna subunidades.
+	 * 
+	 * @param unitId
+	 *            Id da unidade parent.
+	 * @return <PaginatedList> Subunidades filhas da unidade passada
+	 */
+	@Get(PATH + "/listsub/{unitId}")
+	@NoCache
+	@Consumes
+	public void listSubunits(@NotNull Long unitId) {
+		try {
+			Unit unit = this.unitBS.exists(unitId, Unit.class);
+			
+			if (unit == null) {
+				this.fail("A unidade não foi encontrada");
+				return;
+			}
+			
+			PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
+			this.success(subunits);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

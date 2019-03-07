@@ -11,3 +11,4 @@ prd.properties
 dependency-reduced-pom.xml
 buildNumber.properties
 *.sublime-workspace
+/.metadata/

@@ -123,14 +123,14 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
-	 * Retorna as informações e os Campos de um Item
+	 * Retorna as informações e os Campos de um Subitem
 	 * @param id do item a ser consultado
 	 *  
 	 * @return void
 	 */
 	@Get(PATH + "/sub-itens/{id}")
 	@NoCache
-	public void lisFields(Long id) {
+	public void listSubitens(Long id) {
 		try {
 			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
 			
@@ -146,6 +146,44 @@ public class PlanRiskItemController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	
+	/**
+	 * Retorna as informações e os Campos de todos os Subitens
+	 * @param id do item a ser consultado
+	 *  
+	 * @return void
+	 */
+	@Get(PATH + "/allsub-itens/{id}")
+	@NoCache
+	public void listAllSubitens(Long id) {
+		try {
+			PlanRisk planRisk = this.planRiskItemBS.exists(id, PlanRisk.class);
+			
+			if (planRisk == null) {
+				this.fail("O Plano solicitado não foi encontrado.");
+			} else {
+				
+				PaginatedList<PlanRiskItem> itens = this.planRiskItemBS.listItensByPlanRisk(planRisk);
+				PaginatedList<PlanRiskSubItem> subitens = new PaginatedList<>();
+				List<PlanRiskSubItem> list= new ArrayList<>();
+				
+				for(PlanRiskItem item : itens.getList()) {
+					PaginatedList<PlanRiskSubItem> subitem = this.planRiskItemBS.listSubItemByItem(item);
+					list.addAll(subitem.getList());
+				}
+			
+				subitens.setList(list);
+				subitens.setTotal((long) list.size());
+				this.success(subitens);
+			}
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * Retorna as informaçõesde um Item

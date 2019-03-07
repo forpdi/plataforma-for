@@ -21,7 +21,6 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_DESTROY: 'policy-destroy',
 	ACTION_FIND: 'policy-find',
 	ACTION_FIND_POLICY: 'policy-findPolicy',
-	//ACTION_RETRIEVE: 'policy-retrieve',
 	ACTION_UPDATE: 'policy-update',
 	ACTION_ARCHIVE: "policy-archive",
 	ACTION_UNARCHIVE: "policy-unarchive",
@@ -30,13 +29,12 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_MAIN_MENU_STATE: "policy-mainMenuState",
 	ACTION_DELETE: "policy-delete",
 	ACTION_NEWPOLICY: "policy-newPolicy",
-	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "policy-customUpdate",
 	ACTION_RETRIEVE_RISK_LEVEL: "policy-retrieveRiskLevel",
 	ACTION_FIND_TERMS:'policy-findTerms',
 	ACTION_FINDALL_TERMS:'policy-findAllTerms',
 	ACTION_RETRIEVE_FILLED_SECTIONS: 'policy-retrieveFilledSections',
-
+	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: PolicyModel,
 

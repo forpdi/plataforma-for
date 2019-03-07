@@ -10,11 +10,9 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
 	contextTypes: {
-		roles: React.PropTypes.object.isRequired,
-		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired,
 		tabPanel: React.PropTypes.object,
+		router: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -54,13 +52,20 @@ export default React.createClass({
 		UnitStore.on("subunitCreated", (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.subunit.save"));
-				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}
-					/unit/${this.props.params.unitId}/subunit/${response.data}`
-				);
+				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${this.props.params.unitId}/subunit/${response.data.id}`);
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}
 		});
+
+		_.defer(() => {
+			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Subunidade');
+		});
+	},
+
+	componentWillUnmount() {
+		UserStore.off(null, null, this);
+		UnitStore.off(null, null, this);
 	},
 
 	getFields() {
