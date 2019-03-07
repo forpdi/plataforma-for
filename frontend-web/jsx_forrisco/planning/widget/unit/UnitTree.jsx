@@ -1,17 +1,9 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import Unit from "forpdi/jsx_forrisco/planning/widget/unit/Unit.jsx";
-//import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
-import {Link} from "react-router";
-import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
-
-
-
-import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -47,67 +39,34 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+		const me = this;
 
-		this.setTreeItensUnit(this.props.planRisk)
-		this.refresh()
-
-		UnitStore.on('searchTerms', response => {
-			console.log(response.terms);
-			if (response.data) {
-				this.setState({
-					termsSearch: response.terms,
-					itensSelect: response.itensSelect,
-					subitensSelect: response.subitensSelect,
-				})
-			}
-		}, this);
-	},
-
-	componentWillReceiveProps(newProps) {
-		if (newProps.planRisk.id !== this.props.planRisk.id) {
-			this.setTreeItensUnit(newProps.planRisk);
-		}
-
-		this.refresh()
-	},
-
-	refresh(){
-		if(this.props.planRisk.id !=null){
-			UnitStore.dispatch({
-				action: UnitStore.ACTION_FIND_BY_PLAN,
-				data: this.props.planRisk.id,
-			});
-		}
-	},
-
-	setTreeItensUnit(unit, treeItensUnit = []) {
-		var me = this;
-
+		//Botão Novo Item Geral
+		const newItem = {
+			label: Messages.get("label.newItem"),
+			labelCls: 'fpdi-new-node-label',
+			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+			to: `forrisco/plan-risk/${this.props.planRisk.id}/unit/new`,
+			key: "newUnitItem"
+		};
 
 		/*Unidades*/
-		UnitStore.on('unitbyplan', (response) => {
+		UnitStore.on('unitbyplan', (response, opt) => {
+			if (!opt || !opt.refreshUnitTree) {
+				return;
+			}
 
-			//Botão Novo Item Geral
-			var newItem = {
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/unit/new',
-				key: "newUnitItem"
-			};
-			var treeItensUnit=[]
-
-			response.data.map(itens => {
-				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-				var linkToItem = '/forrisco/plan-risk/' + this.props.planRisk.id + '/unit/' + itens.id+"/info";
+			const treeItensUnit = [];
+			response.data.map(item => {
+				const linkToItem = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${item.id}/info`;
 				treeItensUnit.push({
-					label: itens.name,
+					label: item.name,
 					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitens
+					expandable: true, //Mudar essa condição para: Se houver subitem
 					to: linkToItem,
 					key: linkToItem,
-					model: itens,
-					id: itens.id,
+					model: item,
+					id: item.id,
 					children: [],
 					onExpand: this.expandRoot,
 					onShrink: this.shrinkRoot
@@ -116,48 +75,68 @@ export default React.createClass({
 
 			treeItensUnit.push(newItem);
 
-			this.setState({treeItensUnit: treeItensUnit});
+			this.setState({ treeItensUnit });
 			this.forceUpdate();
+		}, me);
 
-		},me);
-
-
-		/*UnitItemStore.on('allFieldsUnit', (response, node) => {
-			var fieldTree = [];
-
-			//Botão Novo SubItem
-			var newItemSubItem = {
-				label: Messages.get("label.newItem"),
+		UnitStore.on('subunitsListed', (response, node) => {
+			const fieldTree = [];
+			const toNewSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`;
+			const newSubunit = {
+				label: "Nova Subunidade",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
-				key: "newUnitSubItem"
+				to: toNewSubunit,
+				key: "newPlanRiskSubItem"
 			};
 
-			 response.data.map(field => {
-				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
-				 })
+			//Botão Novo SubItem
+			 response.data.map(subField => {
+				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subField.id}`;
+				fieldTree.push({
+					label: subField.name,
+					to: toSubunit,
+					key: toSubunit,
+					id: subField.id,
+				});
 			});
 
-			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+			fieldTree.push(newSubunit);  //Adiciona o Botão de Novo SubItem
 
 			node.node.children = fieldTree;
 			me.forceUpdate();
-		})*/
+		});
+		this.refresh();
 	},
 
+	componentWillReceiveProps(newProps) {
+		if (newProps.planRisk.id !== this.props.planRisk.id) {
+			// this.refresh(newProps.planRisk.id);
+		}
+	},
+
+	componentWillUnmount() {
+		UnitStore.off('unitbyplan');
+		UnitStore.off('subunitsListed');
+	},
+
+	refresh(){
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_BY_PLAN,
+			data: this.props.planRisk.id,
+			opts: {
+				refreshUnitTree: true,
+			},
+		});
+	},
 
 
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_LIST_SUBUNIT,
 				data: {
-					id: nodeProps.id
+					unitId: nodeProps.id
 				},
 				opts: {
 					node: nodeProps
@@ -174,7 +153,7 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
+		PlanRiskItemStore.off('allItens');
 	},
 
 	toggleMenu() {
@@ -256,6 +235,7 @@ export default React.createClass({
 			})}
 			</div>
 			<div className="row">Subunidades
+
 				<div key="rootSection-selectall">
 						<div className="checkbox marginLeft5 col-md-10" >
 							<label name="labelSection-selectall" id="labelSection-selectall">
@@ -282,7 +262,7 @@ export default React.createClass({
 		</div>);
 	},
 
-	retrieveFilledSections(){
+	  retrieveFilledSections(){
 		//var me = this;
 		//me.setState({
 			//rootSections: this.state.itens,
@@ -302,10 +282,6 @@ export default React.createClass({
 		document.getElementById("paramError").innerHTML = "";
 		document.getElementById("documentAuthor").className = "";
 		document.getElementById("documentTitle").className = "";
-	},
-
-	preClick(){
-		this.visualization(true);
 	},
 
 	visualization(pre){
@@ -361,7 +337,7 @@ export default React.createClass({
 		}
 	},
 
-	exportUnitReport(evt) {
+	  exportUnitReport(evt) {
 		evt.preventDefault();
 			//this.setState({exportUnit:true})
 
@@ -379,49 +355,6 @@ export default React.createClass({
 			this.setState({exportPlanRisk:true})
 	},
 
-	onKeyDown(event) {
-		var key = event.which;
-		if (key === 13) {
-			event.preventDefault();
-			this.treeSearch();
-		}
-	},
-
-	treeSearch() {
-		this.displayResult();
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_TERMS,
-			data: {
-				planRiskId: this.props.planRisk.id,
-				terms: this.refs.term.value,
-				page: 1,
-				limit: 10,
-			},
-			opts: {
-				wait: true
-			}
-		});
-	},
-
-	displayResult() {
-		this.setState({
-			hiddenResultSearch: true
-		});
-	},
-
-	resultSearch() {
-		this.setState({
-			hiddenResultSearch: false
-		});
-		this.refs.term.value = "";
-	},
-
-	searchFilter() {
-		this.setState({
-			hiddenSearch: !this.state.hiddenSearch
-		});
-	},
-
 	render() {
 		return(<div className={"fpdi-tabs"}  role="tablist">
 			<div
@@ -435,44 +368,15 @@ export default React.createClass({
 				<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
 					onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
 			</div>
+			<TreeView tree={this.state.treeItensUnit}/>
 
-				{
-					this.state.hiddenResultSearch === true ?
-						<SearchResult
-							planRiskId={this.props.planRisk.id}
-							terms={this.state.termsSearch}
-							itensSelect={this.state.itensSelect}
-							subitensSelect={this.state.subitensSelect}
-							ordResult={this.state.ordResultSearch}
-						/>
-						:
-						<div>
-							<TreeView tree={this.state.treeItensUnit}/>
-							<hr className="divider"/>
-
-							{
-								(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-									<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
-										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-									</a>
-
-									: ""
-							}
-						</div>
-
-				}
-				{
-					this.state.hiddenSearch === true ?
-						<div className="container Pesquisa-Avancada">
-							<LevelSearch
-								searchText={this.refs.term.value}
-								subplans={this.state.treeItens}
-								planRisk={this.props.planRisk.id}
-								hiddenSearch={this.searchFilter}
-								displayResult={this.displayResult}
-							/>
-						</div> : ""
-				}
+			{<hr className="divider"></hr>}
+			{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+				<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
+					<span/>{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+				</a>
+			: ""}
 		</div>)
 	},
 })
