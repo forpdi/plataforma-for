@@ -6,7 +6,7 @@ import {Link} from "react-router";
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
+import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -37,8 +37,10 @@ export default React.createClass({
 				policy: response.attributes.policy.name,
 				isLoading: false
 			});
+
+			//Construção da Aba Superior
 			_.defer(() => {
-				this.context.tabPanel.addTab(this.props.location.pathname,  response.attributes.name);
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.title);
 			});
 		}, this);
 		this.refreshData(this.props.params.planRiskId);
@@ -75,8 +77,10 @@ export default React.createClass({
 
 		PlanRiskStore.on('deletePlanRisk', response => {
 			if(response.success === true) {
+				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
 				this.context.router.push("forrisco/home/");
 			}
+			PlanRiskStore.off('deletePlanRisk');
 		})
 	},
 

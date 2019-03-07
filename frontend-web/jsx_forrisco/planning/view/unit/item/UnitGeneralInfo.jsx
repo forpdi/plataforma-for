@@ -13,6 +13,7 @@ export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
+		tabPanel: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -30,6 +31,10 @@ export default React.createClass({
 			this.setState({
 				unit: response.data,
 				loading: false,
+			});
+			//Construção da Aba Superior
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.unit.name);
 			});
 		});
 		UnitStore.on('unitUpdated', response => {
@@ -60,12 +65,6 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		});
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_RETRIEVE_UNIT,
-			data: {
-				unitId: this.props.params.unitId,
-			},
-		});
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
@@ -73,11 +72,44 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+		this.refreshComponent(this.getUnitId());
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (this.props.isSubunit) {
+			if (this.props.params.subunitId !== newProps.params.subunitId) {
+				this.refreshComponent(newProps.params.subunitId);
+			}
+		} else {
+			if (this.props.params.unitId !== newProps.params.unitId) {
+				this.refreshComponent(newProps.params.unitId);
+			}
+		}
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		UserStore.off(null, null, this);
+		UnitStore.off('unitRetrieved');
+		UnitStore.off('unitUpdated');
+		UnitStore.off('unitDeleted');
+		UserStore.off('retrieve-user');
+	},
+
+	getUnitId() {
+		return this.props.isSubunit
+				? this.props.params.subunitId
+				: this.props.params.unitId;
+	},
+
+	refreshComponent(unitId) {
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId },
+		});
+		this.setState({
+			showUpdateMode: false,
+			unitToUpdate: null,
+			loading: true,
+		});
 	},
 
 	switchUpdateMode() {
@@ -139,17 +171,15 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link onClick={this.switchUpdateMode}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels">
-								Editar Item
-							</span>
+						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editUnit")}>
+							<span id="menu-levels">{Messages.get("label.editUnit")}</span>
 						</span>
 					</Link>
 				</li>
 				<li>
 					<Link onClick={this.deleteUnit}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-						<span id="menu-levels"> Deletar Item </span>
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteUnit")}>
+						<span id="menu-levels">{Messages.get("label.deleteUnit")}</span>
 					</span>
 					</Link>
 				</li>
@@ -282,7 +312,7 @@ export default React.createClass({
 
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
-						unitId={this.props.params.unitId}
+						unitId={unit.id}
 					/>
 
 				</div>

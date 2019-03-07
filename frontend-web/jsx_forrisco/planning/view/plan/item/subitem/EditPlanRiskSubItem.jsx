@@ -203,33 +203,33 @@ export default React.createClass({
 		});
 
 		PlanRiskItemStore.dispatch({
-			action: PlanRiskItemStore.ACTION_UPDATE_ITEM,
+			action: PlanRiskItemStore.ACTION_UPDATE_SUBITEM,
 			data: {
-				planRiskItem: {
+				planRiskSubItem: {
 					name: this.state.itemTitle,
 					description: this.state.itemDescription,
-					id: this.props.itemId,
-					planRisk: {
-						id: this.props.planRiskId
+					id: this.props.subitemId,
+					planRiskItem: {
+						id: this.props.itemId
 					},
-					planRiskItemField: submitFields
+					planRiskSubItemField: submitFields
 				},
 
 			}
 		});
 
-		PlanRiskItemStore.on('itemUpdated', () => {
+		PlanRiskItemStore.on('subitemUpdated', () => {
 			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
 
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+				action: PlanRiskItemStore.ACTION_DETAIL_SUBITEM,
 				data: {
-					id: this.props.itemId
+					id: this.props.subitemId
 				},
 			});
 
 			this.props.offEdit();
-			PlanRiskItemStore.off('itemUpdated');
+			PlanRiskItemStore.off('subitemUpdated');
 		});
 	},
 
@@ -245,10 +245,6 @@ export default React.createClass({
 						this.state.formFields.map((field, index) => {
 							// Se for um campo (Area de texto ou IMG) do Item
 							if (field.fieldContent) {
-
-								// if(field.isText === true) {
-								// 	field.fieldContent = field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "");
-								// }
 
 								// Recupera todos os campos do Item
 								if(field.editInstance !== true) {
@@ -272,6 +268,8 @@ export default React.createClass({
 								}
 
 								//Entra na Instancia de Edição dos campos de um item
+								//vizualization={this.props.onEdit}
+								//vizualization={this.props.onEdit}
 								if(field.editInstance === true) {
 									return (
 										<div key={index}>
@@ -315,7 +313,7 @@ export default React.createClass({
 									toggle={this.toggleFields}/>
 							</div>
 
-								:
+							:
 
 							/* Botão de dicionar Novo Campo */
 							<div>

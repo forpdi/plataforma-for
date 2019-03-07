@@ -59,8 +59,10 @@ public class ProcessBS extends HibernateBusiness {
 	 *
 	 */
 	public PaginatedList<Process> listProcessbyUnit(Unit unit) {
+		
 		PaginatedList<Process> results = new PaginatedList<Process>();
 		List<Process> list = new LinkedList<Process>();
+		
 		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
@@ -89,12 +91,19 @@ public class ProcessBS extends HibernateBusiness {
 				.add(Restrictions.eq("process", process));
 		for (ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)) {
 			Unit unit = processUnit.getUnit();
-			unit.setUser(null);
+			//unit.setUser(null);
 			units.add(unit);
 		}
 		return units;
 	}
 
+	public List<ProcessUnit> getProcessUnitsByProcess(Process process) {
+		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process));
+		return this.dao.findByCriteria(criteria, ProcessUnit.class);
+	}	
+	
 	public PaginatedList<Process> listProcessbyCompany(CompanyDomain domain) {
 		
 		Criteria criteria = this.dao.newCriteria(Process.class)
@@ -111,6 +120,18 @@ public class ProcessBS extends HibernateBusiness {
 		results.setTotal((Long) count.uniqueResult());
 	 
 		return results;
+	}
+
+	public void deleteProcess(Process process) {
+			
+		process.setDeleted(true);
+		this.persist(process);
+		List<ProcessUnit> processUnits = this.getProcessUnitsByProcess(process);
+		for (ProcessUnit processUnit : processUnits) {
+			processUnit.setDeleted(true);
+			this.persist(processUnit);
+		}
+
 	}
 
 

@@ -1,5 +1,7 @@
 import React from "react";
-import TreeViewNode from "forpdi/jsx_forrisco/core/widget/unit/UnitNode.jsx";
+import TreeViewNode from "forpdi/jsx_forrisco/planning/widget/unit/UnitNode.jsx";
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object
@@ -63,6 +65,10 @@ export default React.createClass({
 		this.props
 		return <div className="fpdi-treeview">
 			{this.props.treeUnit.map(this.renderNode)}
-		</div>;
+			<hr className="divider"></hr>
+							<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
+								<span/>{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+							</a>
+						</div>
 	}
 });

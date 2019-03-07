@@ -128,7 +128,6 @@ export default React.createClass({
 		});
 
 		PlanRiskItemStore.on('itemSaved', response => {
-			console.log(response);
 			this.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
 			this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + response.data.id);
 			PlanRiskItemStore.off('itemSaved');

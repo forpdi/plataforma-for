@@ -48,7 +48,6 @@ export default React.createClass({
 			document.getElementById( 'fieldTypeOnEdit' + (this.props.index)) ?
 				document.getElementById( 'fieldTypeOnEdit' + (this.props.index)).value : null;
 
-		console.log(selected);
 		var typeTextField = this.state.types[0].id;
 		var typeArquiveField = this.state.types[1].id;
 		//
@@ -328,7 +327,9 @@ export default React.createClass({
 													</div>
 													<span className="pdi-normal-text">
 														<div
-															id={this.props.field.fieldName}> {this.props.field.fieldContent}
+															id={this.props.field.fieldName}> {
+																this.props.field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "")
+															}
 														</div>
 													</span>
 												</div>

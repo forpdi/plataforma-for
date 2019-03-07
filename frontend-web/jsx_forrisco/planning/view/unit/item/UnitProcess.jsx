@@ -3,7 +3,6 @@ import _ from "underscore";
 import ReactTable from 'react-table';
 import { Button } from 'react-bootstrap';
 import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
-import { Link } from "react-router";
 import $ from "jquery";
 
 import ProcessStore from "forpdi/jsx_forrisco/planning/store/Process.jsx";
@@ -28,6 +27,7 @@ export default React.createClass({
 			selectedUnits: [],
 			fileData: null,
 			newRowDisplayed: false,
+			updateRowDisplayed: false,
 			loading: true,
 		}
 	},
@@ -40,12 +40,12 @@ export default React.createClass({
 						unit.id !== parseInt(this.props.unitId)
 					)),
 				}
-			));;
+			));
 			this.setState({
-				processes: _.map(filteredProcesses, value =>
+				processes: _.map(filteredProcesses, (value, idx) => (
 					_.assign(
 						value,
-						{ tools: this.getTools() },
+						{ tools: this.getTools(idx) },
 						{
 							fileData: {
 								fileName: value.fileName,
@@ -53,12 +53,37 @@ export default React.createClass({
 							}
 						}
 					)
-				),
+				)),
 				newRowDisplayed: false,
+				updateRowDisplayed: false,
 				loading: false,
 			});
 		});
 		ProcessStore.on('processCreated', response => {
+			if (response.success) {
+				ProcessStore.dispatch({
+					action: ProcessStore.ACTION_LIST,
+					data: {
+						id: this.props.unitId,
+					},
+				});
+			} else {
+				this.context.toastr.addAlertError(response.responseJSON.message);
+			}
+		});
+		ProcessStore.on('processDeleted', response => {
+			if (response.success) {
+				ProcessStore.dispatch({
+					action: ProcessStore.ACTION_LIST,
+					data: {
+						id: this.props.unitId,
+					},
+				});
+			} else {
+				this.context.toastr.addAlertError(response.responseJSON.message);
+			}
+		});
+		ProcessStore.on('processUpdated', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
 					action: ProcessStore.ACTION_LIST,
@@ -77,7 +102,8 @@ export default React.createClass({
 			this.setState({
 				units: _.map(filteredUnits, unit => ({
 					label: unit.name,
-					value: unit,
+					value: unit.id,
+					data: unit,
 				})),
 			});
 		});
@@ -89,15 +115,16 @@ export default React.createClass({
 		});
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: {
-				planId: this.props.planRiskId,
-			},
+			data: this.props.planRiskId,
 		});
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		ProcessStore.off(null, null, this);
+		ProcessStore.off('processListed');
+		ProcessStore.off('processCreated');
+		ProcessStore.off('processDeleted');
+		ProcessStore.off('processUpdated');
+		UnitStore.off('unitbyplan');
 	},
 
 	insertNewRow() {
@@ -169,6 +196,89 @@ export default React.createClass({
 		});
     },
 
+	enableUpdateMode(idx) {
+		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
+			return;
+		}
+		const { processes } = this.state;
+		const process = processes[idx];
+		const selectedUnits = _.map(process.relatedUnits, unit => (
+			{
+				value: unit.id,
+				label: unit.name,
+				data: unit
+			}
+		));
+        processes[idx] = {
+			name: <VerticalInput
+				className="padding7"
+				fieldDef={{
+					name: "new-process-name",
+					type: "text",
+					placeholder: "Nome do processo",
+					value: process.name,
+					onChange: this.nameChangeHandler
+				}}
+			/>,
+			objective: <VerticalInput
+				className="padding7"
+				fieldDef={{
+					name: "new-process-objective",
+					type: "text",
+					placeholder: "Nome do objetivo",
+					objective: process.objective,
+					value: process.objective,
+					onChange: this.objectiveChangeHandler
+				}}
+			/>,
+			relatedUnits: [
+				{
+					name: <div className="unit-multi-select">
+						<ReactMultiSelectCheckboxes
+							className="unit-mult-select"
+							placeholderButtonLabel="Selecione uma ou mais"
+							options={this.state.units}
+							defaultValue={selectedUnits}
+							onChange={this.unitChangeHandler}
+						/>
+					</div>
+				}
+			],
+			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+				<a onClick={this.fileLinkChangeHandler}>
+					<span className="fpdi-nav-label" id="process-file-upload">
+						{process.fileName}
+					</span>
+				</a>
+			</div>,
+			tools: <div className="row-tools-box">
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.updateProcess}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
+					onClick={() => {
+						const { processes } = this.state;
+						processes[idx] = process;
+						this.setState({
+							processes,
+							updateRowDisplayed: false,
+						})
+					}}
+				/>
+			</div>,
+		}
+        this.setState({
+			selectedUnits,
+			processes,
+			process,
+			updateRowDisplayed: true,
+		});
+    },
+
 	nameChangeHandler(e) {
 		this.setState({
 			process: {
@@ -187,10 +297,10 @@ export default React.createClass({
 		})
 	},
 
-	unitChangeHandler(value) {
+	unitChangeHandler(values) {
 		this.setState({
-			selectedUnits: value,
-		})
+			selectedUnits: values,
+		});
 	},
 
 	fileLinkChangeHandler() {
@@ -203,11 +313,11 @@ export default React.createClass({
 				</p>
 			</div>
 		);
-		var url = FileStore.url + "/uploadlocal";
+		const url = `${FileStore.url}/uploadlocal`;
 
 		const onSuccess = (resp) => {
 			Modal.hide();
-			var file = {
+			const fileData = {
 				name: Modal.fileName,
 				id: resp.data.id,
 				description: Modal.fileName,
@@ -216,11 +326,13 @@ export default React.createClass({
 					id: me.props.levelInstanceId
 				}
 			};
+
+			console.log("modal",resp,Modal,fileData)
 			me.setState({
-				fileData: file,
+				fileData,
 				process: {
 					...this.state.process,
-					fileLink: file.fileLink,
+					fileLink: fileData.fileLink,
 					fileName: Modal.fileName,
 				},
 			});
@@ -237,7 +349,17 @@ export default React.createClass({
 		const formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz, Documentos: pdf\n";
 		const formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf";
 
-		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile(
+			title,
+			msg,
+			url,
+			formatsRegex,
+			formatsBlocked,
+			onSuccess,
+			onFailure,
+			formats,
+			maxSize,
+		);
 	},
 
 	newProcess() {
@@ -247,7 +369,7 @@ export default React.createClass({
 				process: _.assign(
 					this.state.process,
 					{
-						relatedUnits: _.map(this.state.selectedUnits, unit => unit.value),
+						relatedUnits: _.map(this.state.selectedUnits, value => value.data),
 						unit: { id: this.props.unitId }
 					}
 				),
@@ -255,46 +377,48 @@ export default React.createClass({
 		});
 	},
 
-	getTools(id, idx) {
+	deleteProcess(idx) {
+		const process = this.state.processes[idx];
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_DELETE,
+			data: {
+				processId: process.id,
+			},
+		});
+	},
+
+	updateProcess() {
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_UPDATE,
+			data: {
+				process: {
+					...this.state.process,
+					relatedUnits: _.map(this.state.selectedUnits, value => value.data),
+					unit: { id: this.props.unitId },
+					tools: undefined,
+					fileData: undefined,
+				},
+			},
+		});
+	},
+
+	getTools(idx) {
 		return (
 			<div className="row-tools-box">
 				<button
 					className="row-button-icon"
-					onClick={null}
+					onClick={() => this.enableUpdateMode(idx)}
 				>
 					<span className="mdi mdi-pencil" />
 				</button>
 				<button
 					className="row-button-icon"
-					onClick={null}
+					onClick={() => this.deleteProcess(idx)}
 				>
 					<span className="mdi mdi-delete" />
 				</button>
 			</div>
 		);
-	},
-
-	renderDropdown() {
-		return(
-			<ul id="level-menu" className="dropdown-menu">
-				<li>
-					<Link onClick={null}>
-						<span className="mdi mdi-pencil cursorPointer" title="item 1">
-							<span id="menu-levels">
-								Editar Item
-							</span>
-						</span>
-					</Link>
-				</li>
-				<li>
-					<Link onClick={null}>
-					<span className="mdi mdi-delete cursorPointer" title="item 2">
-						<span id="menu-levels"> Deletar Item </span>
-					</span>
-					</Link>
-				</li>
-			</ul>
-		)
 	},
 
 	render() {
@@ -332,7 +456,7 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-                    HISTÓRICO DE INCIDENTES
+                    PROCESSOS DA UNIDADE
                     <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
                 </div>
 				<ReactTable

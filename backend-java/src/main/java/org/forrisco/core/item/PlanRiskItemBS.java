@@ -33,11 +33,15 @@ public class PlanRiskItemBS extends HibernateBusiness {
 	
 		PaginatedList<PlanRiskItem> results = new PaginatedList<PlanRiskItem>();
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("planRisk", planRisk)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("planRisk", planRisk))
+				.addOrder(Order.asc("id"));
 		
-		Criteria count = this.dao.newCriteria(PlanRiskItem.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("planRisk", planRisk)).setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(PlanRiskItem.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRisk", planRisk))
+				.setProjection(Projections.countDistinct("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskItem.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -56,10 +60,17 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		
 		PaginatedList<PlanRiskItemField> results = new PaginatedList<PlanRiskItemField>();
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class).add(Restrictions.eq("deleted", false))
+		Criteria criteria = this.dao.newCriteria(PlanRiskItemField.class)
+				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("planRiskItem", planRiskItem));
 		
+		Criteria count = this.dao.newCriteria(PlanRiskItemField.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRiskItem", planRiskItem))
+				.setProjection(Projections.countDistinct("id"));
+		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskItemField.class));
+		results.setTotal((Long) count.uniqueResult());
 		return results;
 		
 	}
@@ -76,12 +87,15 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		
 		PaginatedList<PlanRiskSubItem> results = new PaginatedList<PlanRiskSubItem>();
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskSubItem.class).add(Restrictions.eqOrIsNull("deleted", false))
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItem.class)
+				.add(Restrictions.eqOrIsNull("deleted", false))
 				.add(Restrictions.eq("planRiskItem", planRiskItem));
 		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItem.class));
 		return results;
 	}
+
+	
 	/**
 	 * Lista de campos de um subitem
 	 * 
@@ -93,8 +107,10 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		
 		PaginatedList<PlanRiskSubItemField> results = new PaginatedList<PlanRiskSubItemField>();
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskSubItemField.class).add(Restrictions.eq("deleted", false))								
-				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem)).addOrder(Order.asc("name"));
+		Criteria criteria = this.dao.newCriteria(PlanRiskSubItemField.class)
+				.add(Restrictions.eq("deleted", false))								
+				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem))
+				.addOrder(Order.asc("id"));
 		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItemField.class));
 		return results;
@@ -183,6 +199,34 @@ public class PlanRiskItemBS extends HibernateBusiness {
 		planRiskSubItem.setDeleted(true);
 		this.persist(planRiskSubItem);
 	}
+	
+	/**
+	 * Deleta uma serie de subitens
+	 * 
+	 * @param PlanRiskSubItem,
+	 *            instância do PlanRiskSubItem a ser deletado
+	 */
+	public void deleteSubItens(PlanRiskItem planRiskItem) {
+		
+		PaginatedList<PlanRiskSubItem> subitens = this.listSubItemByItem(planRiskItem);
+		
+		for(int j = 0; j < subitens.getList().size(); j ++) {
+			this.delete(subitens.getList().get(j));
+		}
+	}
+	
+	/**
+	 * Deleta do banco de dados um subcampo
+	 * 
+	 * @param PlanRiskSubItemField,
+	 *            instância do PlanRiskSubItemField a ser deletado
+	 */
+	
+	public void delete(PlanRiskSubItemField planRiskSubItemField) {
+		planRiskSubItemField.setDeleted(true);
+		this.persist(planRiskSubItemField);
+	}
+
 	
 	/*public void deleteSubitens(PlanRiskItem planRiskItem) {
 		

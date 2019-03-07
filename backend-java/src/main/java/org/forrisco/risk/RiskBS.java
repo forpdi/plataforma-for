@@ -12,6 +12,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forrisco.core.plan.PlanRisk;
@@ -153,10 +154,9 @@ public class RiskBS extends HibernateBusiness {
 			activity.setRisk(risk);
 			activity.setDeleted(false);
 			
-			
-			
-			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
 			Process process =this.dao.exists(activity.getProcess().getId(), Process.class);
+			Unit unit =this.dao.exists(process.getUnit().getId(), Unit.class);
+			
 			activity.setProcess(process);
 			
 			if(activity.getName() == null) {
@@ -165,7 +165,7 @@ public class RiskBS extends HibernateBusiness {
 
 			
 			//pegar link correto da unidade que contem o processo
-			activity.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId());
+			activity.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
 			this.dao.persist(activity);
 		}
 	}
@@ -195,7 +195,7 @@ public class RiskBS extends HibernateBusiness {
 			riskprocess.setProcess(process);
 			
 			//pegar link correto da unidade que contem o processo
-			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId());
+			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
 			this.dao.persist(riskprocess);
 		}
 	}
@@ -374,13 +374,25 @@ public class RiskBS extends HibernateBusiness {
 		risk.setDeleted(true);
 		this.persist(risk);
 	}
-	
-	
-	
-	
+		
+	/**
+	 * Retorna um risco 
+	 * 
+	 * @param id
+	 * 		Id do risco
+	 */
+	public Risk listRiskById(Long id) {
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("id", id));
+			criteria.setMaxResults(1);
+			
+		return (Risk) criteria.uniqueResult();
+	}
 	
 	/**
 	 * Retorna uma lista de grau de risco a partir da política
+	 * 
 	 * política não salva no banco (acho que da para usar a outra função)
 	 * @param policy
 	 * 
@@ -877,7 +889,40 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 
-
+	/**
+	 * Verifica se um processo tem algum risco vinculado
+	 * 
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean   
+	 * 				booleano para verificação
+	 */
+	public boolean hasLinkedRiskProcess(Process process) {
+		Criteria criteria = this.dao.newCriteria(RiskProcess.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process)
+		);
+		criteria.setMaxResults(1);
+		
+		return criteria.uniqueResult() != null;
+	}
 	
+	/**
+	 * Verifica se um processo tem alguma atividade vinculada
+	 * 
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean   
+	 * 				booleano para verificação
+	 */
+	public boolean hasLinkedRiskActivity(Process process) {
+		Criteria criteria = this.dao.newCriteria(RiskActivity.class)
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("process", process)
+		);
+		criteria.setMaxResults(1);
+		return criteria.uniqueResult() != null;
+	}
+
 	
 }

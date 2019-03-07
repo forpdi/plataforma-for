@@ -254,15 +254,11 @@ public class RiskController extends AbstractController {
 	//@Permissioned
 	public void listUnit(Long id) {
 		try {
-			Risk risk = this.riskBS.exists(id, Risk.class);
+			Risk risk = this.riskBS.listRiskById(id);
+	
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 			} else {
-				
-			/*RiskActivity act = new RiskActivity();
-				act.setProcess(process);
-				save(Risk)
-				*/
 				
 				risk.setStrategies(this.riskBS.listRiskStrategy(risk));
 				risk.setProcesses(this.riskBS.listRiskProcess(risk));
@@ -279,7 +275,7 @@ public class RiskController extends AbstractController {
 
 	
 	/**
-	 * Retorna unidades.
+	 * Retorna riscos.
 	 * 
 	 * @param PLanRisk
 	 *            Id do plano de risco.
@@ -866,7 +862,7 @@ public class RiskController extends AbstractController {
 	 * @param id
 	 *            Id do risco.
 	 */
-	@Delete( PATH + "/{actionId}")
+	@Delete( PATH + "/{riskId}")
 	@NoCache
 	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
 	public void deleteRisk(@NotNull Long riskId) {
@@ -880,13 +876,24 @@ public class RiskController extends AbstractController {
 			
 			this.riskBS.deleteAPS(risk);
 			
-			/*TODO
-			this.delete(monitors);
-			this.delete(incident);
-			this.delete(contingency);
-			*/
+			PaginatedList<Monitor> monitors = this.riskBS.listMonitorbyRisk(risk);
+			PaginatedList<Incident> incidents = this.riskBS.listIncidentsbyRisk(risk);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesbyRisk(risk);
 			
+			 for(Monitor monitor : monitors.getList()) {
+				 this.riskBS.delete(monitor);
+			 }
+			 
+			 for(Incident incident : incidents.getList()) {
+				 this.riskBS.delete(incident);
+			 }
+			 
+			 for(Contingency contingency : contingencies.getList()) {
+				 this.riskBS.delete(contingency);
+			 }
+			 
 			this.riskBS.delete(risk);
+			
 			this.success();
 			
 		} catch (Throwable ex) {

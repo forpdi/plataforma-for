@@ -1,13 +1,12 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import Unit from "forpdi/jsx_forrisco/core/widget/unit/Unit.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
-import UnitItemStore from "forpdi/jsx_forrisco/planning/store/UnitItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
-import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
+import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/planrisk/SearchResult.jsx";
 import {Link} from "react-router";
-import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
+import Modal from "@/core/widget/Modal";
 
 
 export default React.createClass({
@@ -21,15 +20,14 @@ export default React.createClass({
 
 	propTypes: {
 		planRisk: React.PropTypes.object.isRequired,
-		unit: React.PropTypes.object,
-		className : React.PropTypes.object
+		className: React.PropTypes.object
 	},
 
 	getInitialState() {
 		return {
 			cleanTree: [],
 			treeItens: [],
-			treeItensUnit: [],
+			treeSubitens: [],
 			treeItemFields: [],
 			newProps: null,
 			actualType: this.props.treeType,
@@ -37,108 +35,61 @@ export default React.createClass({
 			info: {},
 			newItem: {},
 			myroute: window.location.hash,
-			showMenu:true,
-			planriskactive:true
+			showMenu: true,
+			planriskactive: true,
+			hiddenSearch: false,
+			termsSearch: '',
+			itensSelect: [],
+			subitensSelect: [],
+			subitens: [],
+			ordResultSearch: null,
+			planRiskId: null,
+			export:false
 		};
 	},
 
 	componentDidMount() {
-		this.setTreeItens(this.props.planRisk),
-		this.setTreeItensUnit(this.props.planRisk)
+		this.setTreeItens(this.props.planRisk);
+		this.refresh();
+
+		PlanRiskStore.on('searchTerms', response => {
+			if (response.data) {
+				this.setState({
+					termsSearch: response.terms,
+					itensSelect: response.itensSelect,
+					subitensSelect: response.subitensSelect,
+				})
+			}
+		}, this);
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.planRisk.id !== this.props.planRisk.id) {
 			this.setTreeItens(newProps.planRisk);
-			this.setTreeItensUnit(newProps.planRisk);
 		}
+
+		this.refresh()
 	},
-
-	componentWillMount() {
-		//this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id);
-	},
-
-	setTreeItensUnit(unit, treeItensUnit = []) {
-		var me = this;
-
-		//Botão Novo Item Geral
-		var newItem = {
-			label: Messages.get("label.newItem"),
-			labelCls: 'fpdi-new-node-label',
-			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-			to: '/forrisco/plan-risk/' + unit.id + '/unit/new',
-			key: "newUnitItem"
-		};
-
-		/*Item de um Plano*/
-
-		UnitItemStore.on('allitensunit', (response) => {
-			response.data.map(itens => {
-				//var linkToItem = '/forrisco/plan-risk/' + itens.id + '/item/' + itens.id;
-				var linkToItem = '/forrisco/plan-risk/' + itens.id + '/unit/' + itens.id;
-				treeItensUnit.push({
-					label: itens.name,
-					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitens
-					to: linkToItem,
-					key: linkToItem,
-					model: itens,
-					id: itens.id,
-					children: [],
-					onExpand: this.expandRoot,
-					onShrink: this.shrinkRoot
-				});
+	refresh() {
+		/*if(this.props.planRisk.id !=null && this.state.planRiskId != this.props.planRisk.id){
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+				data: this.props.planRisk.id
 			});
-
-			treeItensUnit.push(newItem);
-
-			this.setState({treeItensUnit: treeItensUnit});
-			this.forceUpdate();
-
-			UnitItemStore.off('allitensunit');
-		}, me);
-
-		/*Campos de um Item*/
-		UnitItemStore.on('allFieldsUnit', (response, node) => {
-			var fieldTree = [];
-
-			//Botão Novo SubItem
-			var newItemSubItem = {
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '#',
-				key: "newUnitSubItem"
-			};
-
-			 response.data.map(field => {
-				 fieldTree.push({
-					 label: field.name,
-					 to: '',
-					 key: '',
-					 id: field.id,
-				 })
-			});
-
-			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
-
-			node.node.children = fieldTree;
-			me.forceUpdate();
-		})
+		}*/
 	},
 
-    //PlanRisk
+	//PlanRisk
 	setTreeItens(planRisk, treeItens = []) {
-
 		var me = this;
 
 		/* Redireciona para as Informações gerais ao carregar a Tree*/
-		if(!this.props.location.pathname.includes("unit")){
+		if (!this.props.location.pathname.includes("unit")) {
 			this.context.router.push("/forrisco/plan-risk/" + planRisk.id + "/item/" + planRisk.id + "/info");
 		}
 		/* ____________________  */
 
-		var  info = {
+		var info = {
 			label: "Informações Gerais",
 			expanded: false,
 			to: '/forrisco/plan-risk/' + planRisk.id + '/item/' + planRisk.id + '/info',
@@ -156,11 +107,10 @@ export default React.createClass({
 			key: "newPlanRiskItem"
 		};
 
-
 		/*Item de um Plano*/
 		PlanRiskItemStore.on('allItens', (response) => {
-			response.data.map( itens => {
-				var linkToItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + itens.id;
+			response.data.map(itens => {
+				var linkToItem = '/forrisco/plan-risk/' + planRisk.id + '/item/' + itens.id;
 
 				treeItens.push({
 					label: itens.name,
@@ -179,16 +129,18 @@ export default React.createClass({
 			treeItens.unshift(info);
 			treeItens.push(newItem);
 
+
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allItens');
+			//PlanRiskItemStore.off('allItens');
 		}, me);
 
 		/*Campos de um Item*/
-		PlanRiskItemStore.on('allSubItens', (response, node) => {
+		PlanRiskItemStore.on('retrieveSubitens', (response, node) => {
+
 			var fieldTree = [];
-			var toNewSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/new";
+			var toNewSubItem = '/forrisco/plan-risk/' + planRisk.id + '/item/' + node.node.id + "/subitem/new";
 
 			//Botão Novo SubItem
 			var newItemSubItem = {
@@ -199,15 +151,15 @@ export default React.createClass({
 				key: "newPlanRiskSubItem"
 			};
 
-			 response.data.map(subField => {
-				 var toSubItem = '/forrisco/plan-risk/' + planRisk.id  + '/item/' + node.node.id + "/subitem/" + subField.id;
+			response.data.map(subField => {
+				var toSubItem = '/forrisco/plan-risk/' + planRisk.id + '/item/' + node.node.id + "/subitem/" + subField.id;
 
-				 fieldTree.push({
-					 label: subField.name,
-					 to: toSubItem,
-					 key: toSubItem,
-					 id: subField.id,
-				 })
+				fieldTree.push({
+					label: subField.name,
+					to: toSubItem,
+					key: toSubItem,
+					id: subField.id,
+				})
 			});
 
 			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
@@ -215,14 +167,34 @@ export default React.createClass({
 			node.node.children = fieldTree;
 			me.forceUpdate();
 
-			//PlanRiskItemStore.off('allFields');
-		})
+			this.setState({treeSubitens: fieldTree});
+		},me);
+
+		PlanRiskItemStore.on("retrieveAllSubitens",(model) => {
+			this.setState({
+				subitens:model.data,
+			})
+
+			if(this.state.export){
+				this.retrieveFilledSections();
+				this.setState({
+					subitens:model.data,
+					export:false,
+				})
+			}
+		},me);
+
+
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
+			data: this.props.planRisk.id
+		});
 	},
 
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
+				action: PlanRiskItemStore.ACTION_GET_SUBITENS,
 				data: {
 					id: nodeProps.id
 				},
@@ -241,77 +213,304 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allItens');
+		PlanRiskItemStore.off(null, null, this);
+		PlanRiskStore.off(null, null, this);
 	},
 
 	toggleMenu() {
 		this.setState({
-		  showMenu: false
+			showMenu: false
 		})
-	  },
+	},
 
 	toggleMenu1() {
 		this.setState({
-		  showMenu: true
+			showMenu: true
 		})
-	  },
+	},
 
-	render() {
-		this.state.myroute= window.location.hash.substring(1)
-		var planriskactive
+	onKeyDown(event) {
+		var key = event.which;
+		if (key === 13) {
+			event.preventDefault();
+			this.treeSearch();
+		}
+	},
 
-		if(!this.props.location.pathname.includes("unit")){
-			planriskactive=true
+	treeSearch() {
+		this.displayResult();
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_SEARCH_TERMS,
+			data: {
+				planRiskId: this.props.planRisk.id,
+				terms: this.refs.term.value,
+				page: 1,
+				limit: 10,
+			},
+			opts: {
+				wait: true
+			}
+		});
+	},
+
+	displayResult() {
+		this.setState({
+			hiddenResultSearch: true
+		});
+	},
+
+	resultSearch() {
+		this.setState({
+			hiddenResultSearch: false
+		});
+		this.refs.term.value = "";
+	},
+
+	searchFilter() {
+		this.setState({
+			hiddenSearch: !this.state.hiddenSearch
+		});
+	},
+
+	verifySelectAllItens() {
+		var i;
+		var selectedAll = true;
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).disabled == false && !document.getElementById("checkbox-item-" + i).checked) {
+				selectedAll = false;
+			}
+		}
+		document.getElementById("selectall").checked = selectedAll;
+	},
+
+	selectAllItens() {
+		var i;
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).disabled == false) {
+				document.getElementById("checkbox-item-" + i).checked = document.getElementById("selectall").checked;
+			}
+		}
+	},
+	verifySelectAllsubitens() {
+		var i;
+		var selectedAll = true;
+		for (i = 0; i < this.state.subitens.length; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).disabled == false && !document.getElementById("checkbox-subitem-" + i).checked) {
+				selectedAll = false;
+			}
+		}
+		document.getElementById("selectallsub").checked = selectedAll;
+	},
+	selectAllSubitens() {
+		var i;
+		for (i = 0; i < this.state.subitens.length; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).disabled == false) {
+				document.getElementById("checkbox-subitem-" + i).checked = document.getElementById("selectallsub").checked;
+			}
+		}
+	},
+
+
+	renderRecords() {
+		return (<div>
+			<div className="row">Itens
+				<div key="rootSection-selectall">
+					<div className="checkbox marginLeft5 col-md-10">
+						<label name="labelSection-selectall" id="labelSection-selectall">
+							<input type="checkbox" value="selectall" id="selectall"  onChange={this.selectAllItens}></input>
+							Selecionar todos
+						</label>
+					</div>
+				</div>
+				{this.state.treeItens.map((rootSection, idx) => {
+					if(this.state.treeItens.length-1 !=idx){
+						return (
+							<div key={"rootSection-filled" + idx}>
+								<div className="checkbox marginLeft5 col-md-10">
+									<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
+										<input type="checkbox" value={rootSection.id} id={"checkbox-item-" + idx}	onClick={this.verifySelectAllItens}></input>
+										{rootSection.label}
+									</label>
+								</div>
+							</div>
+						);
+					}
+				})}
+
+			</div>
+			<div className="row">Subitens
+
+				<div key="rootSection-selectall">
+					<div className="checkbox marginLeft5 col-md-10">
+						<label name="labelSection-selectall" id="labelSection-selectall">
+							<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllSubitens}></input>
+							Selecionar todos
+						</label>
+					</div>
+				</div>
+
+				{this.state.subitens.map((rootSection, idx) => {
+						return (
+							<div key={"rootSection-filled"+idx}>
+								<div className="checkbox marginLeft5 col-md-10" >
+									<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+										<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
+										{rootSection.name}
+									</label>
+								</div>
+							</div>
+						);
+				})}
+				<br/><br/>
+			</div>
+		</div>);
+	},
+
+	retrieveFilledSections() {
+		//	$('#container') heigth 150px
+
+
+		Modal.exportDocument(
+			Messages.get("label.exportConfirmation"),
+			this.renderRecords(),
+			() => {
+				this.visualization(false)
+			},
+			({
+				label: "Pré-visualizar",
+				onClick: this.preClick,
+				title: Messages.get("label.exportConfirmation")
+			})
+		);
+		document.getElementById("paramError").innerHTML = "";
+		document.getElementById("documentAuthor").className = "";
+		document.getElementById("documentTitle").className = "";
+	},
+
+	preClick(){
+		this.visualization(true);
+	},
+
+	visualization(pre) {
+
+		var i = 0;
+		var sections = "";
+		var subsections = "";
+		var author = document.getElementById("documentAuthor").value;
+		var title = document.getElementById("documentTitle").value;
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).checked == true) {
+				sections = sections.concat(this.state.treeItens[i].id + "%2C");
+			}
+		}
+		for (i = 0; i < this.state.subitens.length-1; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).checked == true) {
+				subsections = subsections.concat(this.state.subitens[i].id + "%2C");
+			}
 		}
 
-		return (
-			<div className="fpdi-tabs">
-				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-					<Link role="tab" title="Plano"  className={"tabTreePanel "+(planriskactive? "active" :"")}
-					to={"forrisco/plan-risk/" + this.props.planRisk.id + "/"}>
-						{Messages.getEditable("label.plan", "fpdi-nav-label")}
-					</Link>
+		var item = sections.substring(0, sections.length - 3);
+		var subitem = subsections.substring(0, subsections.length - 3);
+		var elemError = document.getElementById("paramError");
+		if (sections == '' || author.trim() == '' || title.trim() == '') {
+			elemError.innerHTML = Messages.get("label.exportError");
+			if (author.trim() == '') {
+				document.getElementById("documentAuthor").className = "borderError";
+			} else {
+				document.getElementById("documentAuthor").className = "";
+			}
+			if (title.trim() == '') {
+				document.getElementById("documentTitle").className = "borderError";
+			} else {
+				document.getElementById("documentTitle").className = "";
+			}
+		} else {
+			document.getElementById("documentAuthor").className = "";
+			document.getElementById("documentTitle").className = "";
 
-					<Link role="tab" title="Unidade"  className={"tabTreePanel "+(!planriskactive? "active" :"")}
-					to={"forrisco/plan-risk/" + this.props.planRisk.id + "/unit"}>
-						{Messages.getEditable("label.unitys", "fpdi-nav-label")}
-					</Link>
-				</ul>
 
-				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
+			var url = PlanRiskStore.url + "/exportReport" + "?title=" + title + "&author=" + author + "&pre=" + pre + "&planId=" + this.props.planRisk.id + "&itens=" + item + "&subitens=" + subitem;
+			url = url.replace(" ", "+");
 
-				{planriskactive ?
-					<div className={"fpdi-tabs"}  role="tablist">
-						<div
-							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-							title={Messages.get("label.clean")}> </i>
-							<input type="text" className="form-control-busca" ref="term"
-								onKeyDown={this.onKeyDown}/>
-							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-							title={Messages.get("label.advancedSearch")}> </i>
-							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
-						</div>
-						<TreeView tree={this.state.treeItens}/>
-					</div>
-			:
-					<div className={"fpdi-tabs"}  role="tablist">
-						<div
-							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-							title={Messages.get("label.clean")}> </i>
-							<input type="text" className="form-control-busca" ref="term"
-								onKeyDown={this.onKeyDown}/>
-							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-							title={Messages.get("label.advancedSearch")}> </i>
-							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-							onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
-						</div>
-						<Unit treeUnit={this.state.treeItensUnit}/>
-					</div>
+			if (pre) {
+				window.open(url, title);
+			} else {
+				//this.context.router.push(url);
+				window.open(url, title);
+				Modal.hide();
+			}
+		}
+	},
+
+	exportPlanRiskReport(evt) {
+		evt.preventDefault();
+
+		if(this.props.planRisk){
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_ALL_SUBITENS,
+				data: {
+					id: this.props.planRisk.id
+				},
+				opts: {
+					node:{id:null}
 				}
+			})
+
+			this.setState({export:true})
+		}
+
+	},
+
+
+	render() {
+		return (
+			<div className={"fpdi-tabs"} role="tablist">
+				<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+					<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")}/>
+					<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown}/>
+					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")}/>
+					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")}/>
 				</div>
+
+				{
+					this.state.hiddenResultSearch === true ?
+						<SearchResult
+							planRiskId={this.props.planRisk.id}
+							terms={this.state.termsSearch}
+							itensSelect={this.state.itensSelect}
+							subitensSelect={this.state.subitensSelect}
+							ordResult={this.state.ordResultSearch}
+						/>
+						:
+						<div>
+							<TreeView tree={this.state.treeItens}/>
+							<hr className="divider"/>
+
+							{
+								(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+									<a className="btn btn-sm btn-primary center" onClick={this.exportPlanRiskReport}>
+										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+									</a>
+
+									: ""
+							}
+						</div>
+
+				}
+
+				{
+					this.state.hiddenSearch === true ?
+						<div className="container Pesquisa-Avancada">
+							<LevelSearch
+								searchText={this.refs.term.value}
+								subplans={this.state.treeItens}
+								planRisk={this.props.planRisk.id}
+								hiddenSearch={this.searchFilter}
+								displayResult={this.displayResult}
+							/>
+						</div> : ""
+				}
+
 			</div>
 		)
 	},

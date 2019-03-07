@@ -150,7 +150,6 @@ var ItemStore = Fluxbone.Store.extend({
 		});
 	},
 
-
 	retrieveAllSubitens(id,pigback) {
 		var me = this;
 		var model = new me.model();
