@@ -219,10 +219,10 @@ public class PlanRiskController extends AbstractController {
 	@Get(PATH + "/exportReport")
 	@NoCache
 	//@Permissioned
-	public void exportreport(Long planId, String title, String author, boolean pre, String selecao) throws IOException, DocumentException{
-		//try {
+	public void exportreport(String title, String author, boolean pre,Long planId, String itens, String subitens) throws IOException, DocumentException{
+		try {
 		
-			File pdf = this.pdf.exportPolicyReport(title, author, selecao,planId);
+			File pdf = this.pdf.exportPlanRiskReport(title, author,planId, itens,subitens);
 
 			OutputStream out;
 			FileInputStream fis= new FileInputStream(pdf);
@@ -237,10 +237,10 @@ public class PlanRiskController extends AbstractController {
 			pdf.delete();
 			this.result.nothing();
 			
-	/*	} catch (Throwable ex) {
+		} catch (Throwable ex) {
 			LOGGER.error("Error while proxying the file upload.", ex);
 			this.fail(ex.getMessage());
-		}*/
+		}
 	}
 	
 	@Get(PATH + "/search")

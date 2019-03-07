@@ -174,7 +174,7 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		PlanRiskItemStore.off('allItens');
+		UnitStore.off(null, null, this);
 	},
 
 	toggleMenu() {
@@ -282,7 +282,7 @@ export default React.createClass({
 		</div>);
 	},
 
-	  retrieveFilledSections(){
+	retrieveFilledSections(){
 		//var me = this;
 		//me.setState({
 			//rootSections: this.state.itens,
@@ -302,6 +302,10 @@ export default React.createClass({
 		document.getElementById("paramError").innerHTML = "";
 		document.getElementById("documentAuthor").className = "";
 		document.getElementById("documentTitle").className = "";
+	},
+
+	preClick(){
+		this.visualization(true);
 	},
 
 	visualization(pre){
@@ -357,7 +361,7 @@ export default React.createClass({
 		}
 	},
 
-	  exportUnitReport(evt) {
+	exportUnitReport(evt) {
 		evt.preventDefault();
 			//this.setState({exportUnit:true})
 

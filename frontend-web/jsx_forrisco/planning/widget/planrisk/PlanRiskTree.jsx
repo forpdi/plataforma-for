@@ -1,13 +1,10 @@
 import React from "react";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import Unit from "forpdi/jsx_forrisco/planning/widget/unit/Unit.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
-import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/planrisk/SearchResult.jsx";
 import {Link} from "react-router";
-import LoadingGauge from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails";
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
 
@@ -23,7 +20,6 @@ export default React.createClass({
 
 	propTypes: {
 		planRisk: React.PropTypes.object.isRequired,
-		unit: React.PropTypes.object,
 		className: React.PropTypes.object
 	},
 
@@ -31,8 +27,7 @@ export default React.createClass({
 		return {
 			cleanTree: [],
 			treeItens: [],
-			treeItensUnit: [],
-			treeItensSubunit: [],
+			treeSubitens: [],
 			treeItemFields: [],
 			newProps: null,
 			actualType: this.props.treeType,
@@ -46,8 +41,10 @@ export default React.createClass({
 			termsSearch: '',
 			itensSelect: [],
 			subitensSelect: [],
+			subitens: [],
 			ordResultSearch: null,
-			planRiskId: null
+			planRiskId: null,
+			export:false
 		};
 	},
 
@@ -56,7 +53,6 @@ export default React.createClass({
 		this.refresh();
 
 		PlanRiskStore.on('searchTerms', response => {
-			console.log(response.terms);
 			if (response.data) {
 				this.setState({
 					termsSearch: response.terms,
@@ -137,11 +133,12 @@ export default React.createClass({
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
 
-			PlanRiskItemStore.off('allItens');
+			//PlanRiskItemStore.off('allItens');
 		}, me);
 
 		/*Campos de um Item*/
-		PlanRiskItemStore.on('allSubItens', (response, node) => {
+		PlanRiskItemStore.on('retrieveSubitens', (response, node) => {
+
 			var fieldTree = [];
 			var toNewSubItem = '/forrisco/plan-risk/' + planRisk.id + '/item/' + node.node.id + "/subitem/new";
 
@@ -170,8 +167,24 @@ export default React.createClass({
 			node.node.children = fieldTree;
 			me.forceUpdate();
 
-			//PlanRiskItemStore.off('allFields');
-		});
+			this.setState({treeSubitens: fieldTree});
+		},me);
+
+		PlanRiskItemStore.on("retrieveAllSubitens",(model) => {
+			this.setState({
+				subitens:model.data,
+			})
+
+			if(this.state.export){
+				this.retrieveFilledSections();
+				this.setState({
+					subitens:model.data,
+					export:false,
+				})
+			}
+		},me);
+
+
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
 			data: this.props.planRisk.id
@@ -181,7 +194,7 @@ export default React.createClass({
 	expandRoot(nodeProps, nodeLevel) {
 		if (nodeLevel === 0) {
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS,
+				action: PlanRiskItemStore.ACTION_GET_SUBITENS,
 				data: {
 					id: nodeProps.id
 				},
@@ -201,6 +214,7 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		PlanRiskItemStore.off(null, null, this);
+		PlanRiskStore.off(null, null, this);
 	},
 
 	toggleMenu() {
@@ -258,40 +272,40 @@ export default React.createClass({
 		});
 	},
 
-	verifySelectAllUnits() {
+	verifySelectAllItens() {
 		var i;
 		var selectedAll = true;
-		for (i = 0; i < this.state.treeItensUnit.length; i++) {
-			if (document.getElementById("checkbox-unit-" + i).disabled == false && !document.getElementById("checkbox-unit-" + i).checked) {
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).disabled == false && !document.getElementById("checkbox-item-" + i).checked) {
 				selectedAll = false;
 			}
 		}
 		document.getElementById("selectall").checked = selectedAll;
 	},
 
-	selectAllUnits() {
+	selectAllItens() {
 		var i;
-		for (i = 0; i < this.state.treeItensUnit.length; i++) {
-			if (document.getElementById("checkbox-unit-" + i).disabled == false) {
-				document.getElementById("checkbox-unit-" + i).checked = document.getElementById("selectall").checked;
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).disabled == false) {
+				document.getElementById("checkbox-item-" + i).checked = document.getElementById("selectall").checked;
 			}
 		}
 	},
 	verifySelectAllsubitens() {
 		var i;
 		var selectedAll = true;
-		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
-			if (document.getElementById("checkbox-subunit-" + i).disabled == false && !document.getElementById("checkbox-subunit-" + i).checked) {
+		for (i = 0; i < this.state.subitens.length; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).disabled == false && !document.getElementById("checkbox-subitem-" + i).checked) {
 				selectedAll = false;
 			}
 		}
-		document.getElementById("selectall").checked = selectedAll;
+		document.getElementById("selectallsub").checked = selectedAll;
 	},
-	selectAllSubunits() {
+	selectAllSubitens() {
 		var i;
-		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
-			if (document.getElementById("checkbox-subunit-" + i).disabled == false) {
-				document.getElementById("checkbox-subunit-" + i).checked = document.getElementById("selectall").checked;
+		for (i = 0; i < this.state.subitens.length; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).disabled == false) {
+				document.getElementById("checkbox-subitem-" + i).checked = document.getElementById("selectallsub").checked;
 			}
 		}
 	},
@@ -299,68 +313,63 @@ export default React.createClass({
 
 	renderRecords() {
 		return (<div>
-			<div className="row">Unidades
+			<div className="row">Itens
 				<div key="rootSection-selectall">
 					<div className="checkbox marginLeft5 col-md-10">
 						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall"
-								   onChange={this.selectAllUnits}></input>
+							<input type="checkbox" value="selectall" id="selectall"  onChange={this.selectAllItens}></input>
 							Selecionar todos
 						</label>
 					</div>
 				</div>
-				{this.state.treeItensUnit.map((rootSection, idx) => {
-					return (
-						<div key={"rootSection-filled" + idx}>
-							<div className="checkbox marginLeft5 col-md-10">
-								<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
-									<input type="checkbox" value={rootSection.id} id={"checkbox-unit-" + idx}
-										   onClick={this.verifySelectAllUnits}></input>
-									{rootSection.label}
-								</label>
+				{this.state.treeItens.map((rootSection, idx) => {
+					if(this.state.treeItens.length-1 !=idx){
+						return (
+							<div key={"rootSection-filled" + idx}>
+								<div className="checkbox marginLeft5 col-md-10">
+									<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
+										<input type="checkbox" value={rootSection.id} id={"checkbox-item-" + idx}	onClick={this.verifySelectAllItens}></input>
+										{rootSection.label}
+									</label>
+								</div>
 							</div>
-
-						</div>);
+						);
+					}
 				})}
+
 			</div>
-			<div className="row">Subunidades
+			<div className="row">Subitens
 
 				<div key="rootSection-selectall">
 					<div className="checkbox marginLeft5 col-md-10">
 						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall"
-								   onChange={this.selectAllSubunits}></input>
+							<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllSubitens}></input>
 							Selecionar todos
 						</label>
 					</div>
 				</div>
 
-				{/*this.state.subunits.map((rootSection, idx) => {
-				return (
-				<div key={"rootSection-filled"+idx}>
-					<div className="checkbox marginLeft5 col-md-10" >
-						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
-							<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
-							{rootSection.label}
-						</label>
-					</div>
-
-				</div>);
-			})*/}
+				{this.state.subitens.map((rootSection, idx) => {
+						return (
+							<div key={"rootSection-filled"+idx}>
+								<div className="checkbox marginLeft5 col-md-10" >
+									<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+										<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
+										{rootSection.name}
+									</label>
+								</div>
+							</div>
+						);
+				})}
 				<br/><br/>
 			</div>
 		</div>);
 	},
 
 	retrieveFilledSections() {
-		//var me = this;
-		//me.setState({
-		//rootSections: this.state.itens,
-		//rootSubsections: this.state.subitens,
-		//loadingexport:true,
-		//	});
-
 		//	$('#container') heigth 150px
+
+
 		Modal.exportDocument(
 			Messages.get("label.exportConfirmation"),
 			this.renderRecords(),
@@ -378,6 +387,10 @@ export default React.createClass({
 		document.getElementById("documentTitle").className = "";
 	},
 
+	preClick(){
+		this.visualization(true);
+	},
+
 	visualization(pre) {
 
 		var i = 0;
@@ -385,14 +398,14 @@ export default React.createClass({
 		var subsections = "";
 		var author = document.getElementById("documentAuthor").value;
 		var title = document.getElementById("documentTitle").value;
-		for (i = 0; i < this.state.treeItensUnit.length; i++) {
-			if (document.getElementById("checkbox-unit-" + i).checked == true) {
-				sections = sections.concat(this.state.treeItensUnit[i].id + "%2C");
+		for (i = 0; i < this.state.treeItens.length-1; i++) {
+			if (document.getElementById("checkbox-item-" + i).checked == true) {
+				sections = sections.concat(this.state.treeItens[i].id + "%2C");
 			}
 		}
-		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
-			if (document.getElementById("checkbox-subunit-" + i).checked == true) {
-				subsections = subsections.concat(this.state.treeItensSubunit[i].id + "%2C");
+		for (i = 0; i < this.state.subitens.length-1; i++) {
+			if (document.getElementById("checkbox-subitem-" + i).checked == true) {
+				subsections = subsections.concat(this.state.subitens[i].id + "%2C");
 			}
 		}
 
@@ -416,7 +429,7 @@ export default React.createClass({
 			document.getElementById("documentTitle").className = "";
 
 
-			var url = UnitStore.url + "/exportUnitReport" + "?title=" + title + "&author=" + author + "&pre=" + pre + "&units=" + item + "&subunits=" + subitem;
+			var url = PlanRiskStore.url + "/exportReport" + "?title=" + title + "&author=" + author + "&pre=" + pre + "&planId=" + this.props.planRisk.id + "&itens=" + item + "&subitens=" + subitem;
 			url = url.replace(" ", "+");
 
 			if (pre) {
@@ -429,23 +442,25 @@ export default React.createClass({
 		}
 	},
 
-	exportUnitReport(evt) {
-		evt.preventDefault();
-		//this.setState({exportUnit:true})
-
-		//	if(this.state.export){
-		this.retrieveFilledSections();
-		this.setState({
-			//subitens:model.data,
-			//export:false,
-		})
-		//	}
-	},
-
 	exportPlanRiskReport(evt) {
 		evt.preventDefault();
-		this.setState({exportPlanRisk: true})
+
+		if(this.props.planRisk){
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_ALL_SUBITENS,
+				data: {
+					id: this.props.planRisk.id
+				},
+				opts: {
+					node:{id:null}
+				}
+			})
+
+			this.setState({export:true})
+		}
+
 	},
+
 
 	render() {
 		return (
