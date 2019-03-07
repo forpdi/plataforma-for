@@ -341,7 +341,7 @@ public class UnitController extends AbstractController {
 	 * @return PaginatedList<Plan> Retorna lista de planos de metas de acordo
 	 *         com os filtros.
 	 */
-	@Get(PATH + "/findTerms")
+	/*@Get(PATH + "/findTerms")
 	@NoCache
 	@Permissioned
 	public void listItensTerms(Long planId, Integer page, String terms, Long itensSelect[], Long subitensSelect[], int ordResult, Long limit) {
@@ -366,25 +366,26 @@ public class UnitController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
-	}
+	}*/
 	@Get(PATH + "/findAllTerms")
 	@NoCache
 	@Permissioned
 	public void listItensTerms(Long planId, Integer page, String terms, int ordResult, Long limit) {
-		if (page == null)
-			page = 0;
+		if (page == null) page = 0;
 		
 		try {
-			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
+			PlanRisk planRisk = this.unitBS.exists(planId, PlanRisk.class);
 			
-			if(plan.isDeleted()) {
+			if(planRisk.isDeleted()) {
 				this.fail("plano não foi encontrado");
 			}
 			
-			List<Item> itens = this.unitBS.listItemTerms(plan, terms, null, ordResult);
-			List<SubItem> subitens = this.unitBS.listSubitemTerms(plan, terms, null, ordResult);
-
-			PaginatedList<SubItem> result = TermResult( itens,subitens, page, limit);
+			//List<Item> itens = this.unitBS.listItemTerms(plan, terms, null, ordResult);
+			//PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
+			//List<SubItem> subitens = this.unitBS.listSubitemTerms(planRisk, terms, null, ordResult);
+			
+			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, null, ordResult);
+			//PaginatedList<Unit> result = TermResult(units, page, limit);
 			
 			this.success(result);
  		} catch (Throwable ex) {
@@ -392,7 +393,8 @@ public class UnitController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	private PaginatedList<SubItem> TermResult(List<Item> itens, List<SubItem> subitens,  Integer page,  Long limit){
+	
+	/*private PaginatedList<Unit> TermResult(List<Unit> units, Integer page,  Long limit){
 		int firstResult = 0;
 		int maxResult = 0;
 		int count = 0;
@@ -402,16 +404,16 @@ public class UnitController extends AbstractController {
 			maxResult = limit.intValue();
 		}
 		
-		for(Item item : itens) {
-			SubItem subitem = new SubItem();
-			subitem.setDescription(item.getDescription());
-			subitem.setId(item.getId());
-			subitem.setName(item.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			subitens.add(subitem);
+		for(Unit unit : units) {
+			Unit subUnit = new Unit();
+			subUnit.setParent(unit.getParent());
+			subUnit.setDescription(unit.getDescription());
+			subUnit.setAbbreviation(unit.getAbbreviation());
+			
+			units.add(subUnit);
 		}
 		
-		List<SubItem> list = new ArrayList<>();
+		List<Unit> list = new ArrayList<>();
 		for(SubItem subitem : subitens) {
 			if (limit != null) {
 				if (count >= firstResult && add < maxResult) {
@@ -431,7 +433,7 @@ public class UnitController extends AbstractController {
 		result.setList(list);
 		result.setTotal((long)count);
 		return result;
-	}
+	}*/
 	
 	
 	

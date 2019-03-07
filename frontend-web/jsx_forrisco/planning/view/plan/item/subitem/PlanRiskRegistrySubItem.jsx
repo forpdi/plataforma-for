@@ -131,7 +131,6 @@ export default React.createClass({
 			this.context.router.push(
 				"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/subitem/" + response.data.id
 			);
-			PlanRiskItemStore.off('subItemSaved');
 		});
 	},
 

@@ -135,6 +135,7 @@ export default React.createClass({
 			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
 
 			node.node.children = fieldTree;
+			this.setState({treeSubitens: fieldTree});
 			me.forceUpdate();
 		}, me);
 
@@ -147,6 +148,20 @@ export default React.createClass({
 				})
 			}
 		}, this);
+
+		PlanRiskItemStore.on("retrieveAllSubitens",(model) => {
+			this.setState({
+				subitens:model.data,
+			});
+
+			if(this.state.export){
+				this.retrieveFilledSections();
+				this.setState({
+					subitens:model.data,
+					export:false,
+				})
+			}
+		}, me);
 
 		PlanRiskItemStore.on('allSubItensByPlan', response => {
 			this.setState({
@@ -167,19 +182,25 @@ export default React.createClass({
 
 		}, this);
 
-		PlanRiskItemStore.on("retrieveAllSubitens",(model) => {
-			this.setState({
-				subitens:model.data,
-			});
+		//Atualiza a Tree quando un novo item é cadastrado
+		PlanRiskItemStore.on("itemSaved", () => {
+			this.refresh(this.props.planRisk.id);
+		});
 
-			if(this.state.export){
-				this.retrieveFilledSections();
-				this.setState({
-					subitens:model.data,
-					export:false,
-				})
-			}
-		},me);
+		//Atualiza a Tree quando un novo subitem é cadastrado
+		PlanRiskItemStore.on("subItemSaved", () => {
+			this.refresh(this.props.planRisk.id);
+		});
+
+		//Atualiza a Tree quando un novo item é deletado
+		PlanRiskItemStore.on("deletePlanRiskItem", () => {
+			this.refresh(this.props.planRisk.id);
+		});
+
+		//Atualiza a Tree quando subitem é deletado
+		PlanRiskItemStore.on("deletePlanRiskSubItem", () => {
+			this.refresh(this.props.planRisk.id);
+		});
 
 		this.refresh(this.props.planRisk.id);
 	},
@@ -299,6 +320,7 @@ export default React.createClass({
 			}
 		}
 	},
+
 	verifySelectAllsubitens() {
 		var i;
 		var selectedAll = true;
@@ -309,6 +331,7 @@ export default React.createClass({
 		}
 		document.getElementById("selectallsub").checked = selectedAll;
 	},
+
 	selectAllSubitens() {
 		var i;
 		for (i = 0; i < this.state.subitens.length; i++) {
@@ -318,25 +341,24 @@ export default React.createClass({
 		}
 	},
 
-
 	renderRecords() {
 		return (<div>
 			<div className="row">Itens
 				<div key="rootSection-selectall">
 					<div className="checkbox marginLeft5 col-md-10">
 						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall"  onChange={this.selectAllItens}></input>
+							<input type="checkbox" value="selectall" id="selectall"  onChange={this.selectAllItens}/>
 							Selecionar todos
 						</label>
 					</div>
 				</div>
 				{this.state.treeItens.map((rootSection, idx) => {
-					if(this.state.treeItens.length-1 !=idx){
+					if(this.state.treeItens.length-1 !== idx){
 						return (
 							<div key={"rootSection-filled" + idx}>
 								<div className="checkbox marginLeft5 col-md-10">
 									<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
-										<input type="checkbox" value={rootSection.id} id={"checkbox-item-" + idx}	onClick={this.verifySelectAllItens}></input>
+										<input type="checkbox" value={rootSection.id} id={"checkbox-item-" + idx} onClick={this.verifySelectAllItens}/>
 										{rootSection.label}
 									</label>
 								</div>
@@ -351,7 +373,7 @@ export default React.createClass({
 				<div key="rootSection-selectall">
 					<div className="checkbox marginLeft5 col-md-10">
 						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllSubitens}></input>
+							<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllSubitens}/>
 							Selecionar todos
 						</label>
 					</div>
@@ -460,7 +482,6 @@ export default React.createClass({
 			});
 			this.setState({export:true})
 		}
-
 	},
 
 	render() {
@@ -511,7 +532,6 @@ export default React.createClass({
 							/>
 						</div> : ""
 				}
-
 			</div>
 		)
 	},
