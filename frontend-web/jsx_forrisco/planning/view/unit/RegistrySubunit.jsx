@@ -39,7 +39,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
+		}, this);
 
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
@@ -60,7 +60,7 @@ export default React.createClass({
 
 		_.defer(() => {
 			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Subunidade');
-		});
+		}, this);
 	},
 
 	componentWillUnmount() {

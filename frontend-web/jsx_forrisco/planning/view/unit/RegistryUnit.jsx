@@ -77,7 +77,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
+		}, this);
 
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
@@ -89,8 +89,8 @@ export default React.createClass({
 
 		UnitStore.on("unitcreated", (response) => {
 			if (response.data) {
+				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${response.data.id}/info`);
 				this.context.toastr.addAlertSuccess(Messages.get("notification.unit.save"));
-				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}
@@ -114,6 +114,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		// PolicyStore.off(null, null, this);
 		UnitStore.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
 
 	fieldChangeHandler(e) {
@@ -185,10 +186,8 @@ export default React.createClass({
 			return false;
 		}
 
-		console.log(unit);
-
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_NEWUNIT,
+			action: UnitStore.ACTION_NEW_UNIT,
 			data: unit,
 		});
 	},

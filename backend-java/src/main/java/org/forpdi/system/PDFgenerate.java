@@ -3443,7 +3443,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			for (int i = 0; i < sections.length; i++) {
 				Unit unit = this.unitBS.retrieveUnitById( Long.parseLong(sections[i]));
 				//PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
-				PaginatedList<Unit> subs = this.unitBS.listSubunitbyUnit(unit);
+				PaginatedList<Unit> subs = this.unitBS.listSubunitByUnit(unit);
 				List <Unit> actualsubunits= new ArrayList<Unit>();	//lista de subitens selecionados
 
 				//lista subunidades selecionados
@@ -3640,7 +3640,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						cell = new PdfPCell(new Phrase(processes.get(k).getRelatedUnits().get(0).getName()));
 						table.addCell(cell);
 						
-						Chunk c = new Chunk(processes.get(k).getFileName(), 
+						Chunk c = new Chunk(processes.get(k).getFile().getName(), 
 								new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, WebColors.getRGBColor("#0085D9")));
 						c.setAnchor(processes.get(k).getFileLink());
 						//c.setAction(PdfAction.gotoRemotePage("http://mydomain/mypage","page1",false,true)); 

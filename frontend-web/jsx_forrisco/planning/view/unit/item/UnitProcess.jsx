@@ -41,23 +41,28 @@ export default React.createClass({
 					)),
 				}
 			));
-			this.setState({
-				processes: _.map(filteredProcesses, (value, idx) => (
-					_.assign(
-						value,
-						{ tools: this.getTools(idx) },
-						{
-							fileData: {
-								fileName: value.fileName,
-								fileLink: value.fileLink,
-							}
+
+			_.map(filteredProcesses, (value, idx) => {
+				_.assign(
+					value,
+					{ tools: this.getTools(idx) },
+					{
+						fileData: {
+							fileName: value.file.name,
+							fileLink: value.fileLink,
 						}
-					)
-				)),
+					}
+				)
+			})
+
+			this.setState({
+				processes:filteredProcesses,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
 				loading: false,
 			});
+
+
 		});
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
@@ -113,6 +118,7 @@ export default React.createClass({
 				id: this.props.unitId,
 			},
 		});
+
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
 			data: this.props.planRiskId,
@@ -327,13 +333,13 @@ export default React.createClass({
 				}
 			};
 
-			console.log("modal",resp,Modal,fileData)
 			me.setState({
 				fileData,
 				process: {
 					...this.state.process,
 					fileLink: fileData.fileLink,
-					fileName: Modal.fileName,
+					//fileName: Modal.fileName,
+					file: {name: fileData.name, id:  fileData.id}
 				},
 			});
 			$('#process-file-upload').text(Modal.fileName);
@@ -397,6 +403,7 @@ export default React.createClass({
 					unit: { id: this.props.unitId },
 					tools: undefined,
 					fileData: undefined,
+					//file: {id: }
 				},
 			},
 		});

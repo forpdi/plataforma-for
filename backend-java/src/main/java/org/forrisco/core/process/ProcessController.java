@@ -7,11 +7,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-
+import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
+import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.jobs.EmailSenderTask;
+import org.forpdi.core.notification.NotificationType;
+import org.forpdi.core.user.User;
+import org.forpdi.core.user.UserRecoverRequest;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
 
@@ -35,6 +39,7 @@ public class ProcessController extends AbstractController{
 	@Inject @Current private CompanyDomain domain;
 	@Inject private ProcessBS processBS;
 	@Inject private RiskBS riskBS;
+	@Inject private NotificationBS notificationBS;
 	
 	protected static final String PATH =  BASEPATH +"/process";
 
@@ -63,7 +68,7 @@ public class ProcessController extends AbstractController{
 				return;
 			}
 			process.setCompany(this.domain.getCompany());
-			
+					
 			this.processBS.save(process);
 
 			ProcessUnit processUnit = new ProcessUnit();
@@ -72,11 +77,39 @@ public class ProcessController extends AbstractController{
 			this.processBS.save(processUnit);
 
 			if (process.getRelatedUnits() != null) {
-				for (Unit relatedUnit : process.getRelatedUnits()) {
-					processUnit = new ProcessUnit();
-					processUnit.setProcess(process);
-					processUnit.setUnit(relatedUnit);
-					this.processBS.save(processUnit);
+				for (Unit singleunit : process.getRelatedUnits()) {
+					
+					Unit relatedUnit = this.processBS.exists(singleunit.getId(), Unit.class);
+					
+					if (relatedUnit != null && !relatedUnit.isDeleted()) {
+
+						processUnit = new ProcessUnit();
+						processUnit.setProcess(process);
+						processUnit.setUnit(relatedUnit);
+						this.processBS.save(processUnit);
+						
+						User user=relatedUnit.getUser();
+						
+						//enviar email de notificação de criação de processo(unidade relacionada)
+						String texto="Prezado(a) "+user.getName()+
+								", A sua unidade ["+relatedUnit.getName()+"] foi relacionada ao Processo ["+process.getName()+
+								"] com o objetivo ["+process.getObjective()+"] da unidade ["+unit.getName()+"]. O responsável"+
+								" por essa unidade é o(a) "+unit.getUser().getName()+
+								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";
+						
+						
+						
+						
+						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlan().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
+		
+						try {
+								this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());
+						} catch (Throwable ex) {
+							LOGGER.errorf(ex, "Unexpected error occurred.");
+							this.fail(ex.getMessage());
+						}
+							
+					}
 				}
 			}
 
@@ -194,7 +227,8 @@ public class ProcessController extends AbstractController{
 			}
 			// atualiza e persiste o processo
 			existent.setFileLink(process.getFileLink());
-			existent.setFileName(process.getFileName());
+			//existent.setFileName(process.getFileName());
+			existent.setFile(process.getFile());
 			existent.setName(process.getName());
 			existent.setObjective(process.getObjective());
 			this.processBS.persist(existent);
