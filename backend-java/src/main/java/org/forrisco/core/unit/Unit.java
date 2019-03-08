@@ -35,7 +35,6 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, length=4000)
 	private String description;
 
-	@SkipSerialization
 	@OneToOne(targetEntity=Unit.class, optional=true, fetch=FetchType.EAGER)
 	private Unit parent;
 	

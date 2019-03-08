@@ -1,4 +1,6 @@
 import React from "react";
+import _ from 'underscore';
+
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
@@ -105,19 +107,88 @@ export default React.createClass({
 
 			node.node.children = fieldTree;
 			me.forceUpdate();
-		});
+		}, me);
+
+		UnitStore.on('unitDeleted', response => {
+			if (response.data) {
+				const unitToDelete = response.data;
+				if (!unitToDelete.parent) { // unit
+					const unit = unitToDelete;
+					const treeItensUnit = _.filter(this.state.treeItensUnit, unitItem => unitItem.id !== unit.id);
+					this.setState({ treeItensUnit });
+				} else { // subunit
+					const subunit = unitToDelete;
+					const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+						if (unitItem.id && unitItem.id === subunit.parent.id) {
+							let { children } = unitItem;
+							children = _.filter(children, child => child.id !== subunit.id);
+							unitItem.children = children;
+						}
+						return unitItem;
+					});
+					this.setState({ treeItensUnit });
+				}
+			}
+		}, me);
+
+		UnitStore.on("unitcreated", (response) => {
+			if (response.data) {
+				const unit = response.data;
+				const { treeItensUnit } = this.state;
+				const linkToUnit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unit.id}/info`;
+				treeItensUnit.splice(treeItensUnit.length - 1, 0, {
+					label: unit.name,
+					expanded: false,
+					expandable: true, //Mudar essa condição para: Se houver subitem
+					to: linkToUnit,
+					key: linkToUnit,
+					model: unit,
+					id: unit.id,
+					children: [],
+					onExpand: this.expandRoot,
+					onShrink: this.shrinkRoot
+				});
+				this.setState({
+					treeItensUnit,
+				})
+			}
+		}, me);
+
+		UnitStore.on("subunitCreated", (response) => {
+			if (response.data) {
+				const subunit = response.data;
+				const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+					if (unitItem.id && unitItem.id === subunit.parent.id) {
+						const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitItem.id}/subunit/${subunit.id}`;
+						const { children } = unitItem;
+						children.splice(children.length - 1, 0, {
+							label: subunit.name,
+							to: toSubunit,
+							key: toSubunit,
+							id: subunit.id,
+						});
+					}
+					return unitItem;
+				});
+				this.setState({ treeItensUnit });
+			}
+		}, me);
+
 		this.refresh();
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.planRisk.id !== this.props.planRisk.id) {
-			// this.refresh(newProps.planRisk.id);
-		}
+		// if (newProps.location.pathname.includes('overview')) {
+		// 	this.refresh();
+		// }
 	},
 
 	componentWillUnmount() {
 		UnitStore.off('unitbyplan');
 		UnitStore.off('subunitsListed');
+		UnitStore.off('unitDeleted');
+		UnitStore.off('unitCreated');
+		UnitStore.off('subunitCreated');
 	},
 
 	refresh(){
