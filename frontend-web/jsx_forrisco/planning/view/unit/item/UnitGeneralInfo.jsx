@@ -120,16 +120,7 @@ export default React.createClass({
 		})
 	},
 
-	abbreviationChangeHandler(e) {
-		this.setState({
-			unitToUpdate: {
-				...this.state.unitToUpdate,
-				abbreviation: e.target.value,
-			}
-		});
-	},
-
-	userChangeHandler(e) {
+	selectChangeHandler(e) {
 		const idx = e.target.options.selectedIndex;
 		this.setState({
 			unitToUpdate: {
@@ -139,11 +130,11 @@ export default React.createClass({
 		});
 	},
 
-	descriptionChangeHandler(e) {
+	fieldChangeHandler(e) {
 		this.setState({
 			unitToUpdate: {
 				...this.state.unitToUpdate,
-				description: e.target.value,
+				[e.target.name]: e.target.value,
 			}
 		});
 	},
@@ -235,14 +226,27 @@ export default React.createClass({
 			<form onSubmit={this.updateUnit}>
 				<div className="form-group form-group-sm">
 					<label className="fpdi-text-label">
+						Nome
+					</label>
+					<VerticalInput
+						fieldDef={{
+							name: "name",
+							type: "text",
+							value: unit.name,
+							onChange: this.fieldChangeHandler,
+						}}
+					/>
+				</div>
+				<div className="form-group form-group-sm">
+					<label className="fpdi-text-label">
 						SIGLA
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "abbreviation",
 							type: "text",
 							value: unit.abbreviation,
-							onChange: this.abbreviationChangeHandler,
+							onChange: this.fieldChangeHandler,
 						}}
 					/>
 				</div>
@@ -252,12 +256,12 @@ export default React.createClass({
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "unit-user",
 							type: "select",
 							options: _.map(this.state.users, user => user.name),
 							value: unit.user.name,
 							renderDisplay: value => value,
-							onChange: this.userChangeHandler,
+							onChange: this.selectChangeHandler,
 						}}
 					/>
 				</div>
@@ -267,11 +271,11 @@ export default React.createClass({
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "description",
 							type: "textarea",
 							rows: 4,
 							value: unit.description,
-							onChange: this.descriptionChangeHandler,
+							onChange: this.fieldChangeHandler,
 						}}
 					/>
 				</div>

@@ -47,10 +47,9 @@ export default React.createClass({
 
 	componentDidMount() {
 		const me = this;
-		var treeItensUnit = [];
 
 		//Botão Novo Item Geral
-		var newItem = {
+		const newItem = {
 			label: Messages.get("label.newItem"),
 			labelCls: 'fpdi-new-node-label',
 			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
@@ -160,6 +159,45 @@ export default React.createClass({
 			}
 		}, me);
 
+		UnitStore.on("unitUpdated", (response) => {
+			if (response.data) {
+				const unitToUpdate = response.data;
+				if (!unitToUpdate.parent) { // unit
+					const unit = unitToUpdate;
+					const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+						if (unitItem.id === unit.id) {
+							return {
+								...unitItem,
+								model: unit,
+								label: unit.name,
+							}
+						}
+						return unitItem;
+					});
+					this.setState({ treeItensUnit });
+				} else { // subunit
+					const subunit = unitToUpdate;
+					const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+						if (unitItem.id && unitItem.id === subunit.parent.id) {
+							let { children } = unitItem;
+							children = _.map(children, child => {
+								if (child.id === subunit.id) {
+									return {
+										...child,
+										label: subunit.name,
+									}
+								}
+								return child;
+							});
+							unitItem.children = children;
+						}
+						return unitItem;
+					});
+					this.setState({ treeItensUnit });
+				}
+			}
+		}, me);
+
 		UnitStore.on("subunitCreated", (response) => {
 			if (response.data) {
 				const subunit = response.data;
@@ -195,6 +233,7 @@ export default React.createClass({
 		UnitStore.off('unitDeleted');
 		UnitStore.off('unitCreated');
 		UnitStore.off('subunitCreated');
+		UnitStore.off('unitUpdated');
 	},
 
 	refresh(){

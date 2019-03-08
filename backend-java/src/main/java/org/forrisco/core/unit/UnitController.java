@@ -309,13 +309,14 @@ public class UnitController extends AbstractController {
 				return;
 			}
 
+			existent.setName(unit.getName());
 			existent.setAbbreviation(unit.getAbbreviation());
 			existent.setUser(user);
 			existent.setDescription(unit.getDescription());
 			
 			this.unitBS.persist(existent);
 			
-			this.success();
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
