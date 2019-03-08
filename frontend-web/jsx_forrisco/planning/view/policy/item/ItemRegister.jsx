@@ -980,13 +980,10 @@ export default React.createClass({
 								:
 								""
 							}
-					</div>
-				</form>
-		</div>
-	);
-
-			}
-		);
+						</div>
+					</form>
+				</div>
+			);
+		}
 	}
-
 });
