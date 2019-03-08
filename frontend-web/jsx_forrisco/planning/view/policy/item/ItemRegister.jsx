@@ -716,227 +716,274 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 
-		var showButtons = !this.state.vizualization;
+		let showButtons = !this.state.vizualization;
 
-		if(this.state.vizualization){
+		if (this.state.vizualization) {
+			return (
+				<div>
+					{this.state.itemModel ? this.renderBreadcrumb() : ""}
+					<div className="fpdi-card fpdi-card-full floatLeft">
+						<h1>
+							{
+								(this.state.info && this.state.policyModel)
+								? this.state.policyModel.data.name
+								: this.state.itemModel.attributes.name
+							}
+							{
+								this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true
+								?
+								<span className="dropdown">
+									<a
+										className="dropdown-toggle"
+										data-toggle="dropdown"
+										aria-haspopup="true"
+										aria-expanded="true"
+										title={Messages.get("label.actions")}
+										>
+										<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+										<span className="mdi mdi-chevron-down" />
+									</a>
+									{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
+								</span>
+								:
+								""
+							}
+						</h1>
 
-			return <div>
-				{this.state.itemModel ? this.renderBreadcrumb() : ""}
-
-				<div className="fpdi-card fpdi-card-full floatLeft">
-
-				<h1>
-					{(this.state.info && this.state.policyModel) ? this.state.policyModel.data.name : this.state.itemModel.attributes.name}
-					{this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
-						(<span className="dropdown">
-							<a
-								className="dropdown-toggle"
-								data-toggle="dropdown"
-								aria-haspopup="true"
-								aria-expanded="true"
-								title={Messages.get("label.actions")}
-								>
-								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down" />
-							</a>
-							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
-						</span>
-						):""}
-				</h1>
-
-				{this.getFields().map((fielditem, index) => {
-					if(fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD){
-						return (<div><VerticalForm
-							vizualization={this.state.vizualization}
-							onCancel={this.onCancel}
-							onSubmit={this.onSubmit}
-							fields={[fielditem]}
-							submitLabel={Messages.get("label.submitLabel")}
-							//store={ItemStore}
-							//ref='planRegisterForm'
-						/></div>)
-					}else{
-						return (
+						{
+							this.getFields().map((fielditem, index) => {
+								if (fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD) {
+									return (
+										<div>
+											<VerticalForm
+												vizualization={this.state.vizualization}
+												onCancel={this.onCancel}
+												onSubmit={this.onSubmit}
+												fields={[fielditem]}
+												submitLabel={Messages.get("label.submitLabel")}
+												//store={ItemStore}
+												//ref='planRegisterForm'
+											/>
+										</div>
+									);
+								} else {
+									return (
+										<div>
+											<label className="fpdi-text-label">{fielditem.value}</label>
+											<div className="panel panel-default">
+												<table className="budget-field-table table">
+													<tbody>
+														<tr>
+															<td className="fdpi-table-cell">
+																<a target="_blank" rel="noopener noreferrer" href={fielditem.fileLink}>
+																	{fielditem.description}</a>
+															</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									);
+								}
+							})
+						}
+					<br/>
+					{
+						this.state.info
+						?
 							<div>
-							<label className="fpdi-text-label">{fielditem.value}</label>
-							<div className="panel panel-default">
-								<table className="budget-field-table table">
-									<tbody>
-										<tr>
-											<td className="fdpi-table-cell">
-												<a target="_blank" rel="noopener noreferrer" href={fielditem.fileLink}>
-													{fielditem.description}</a>
-											</td>
-										</tr>
-									</tbody>
-								</table>
-								</div>
+								<label htmlFor={this.state.fieldId} className="fpdi-text-label">
+									{"DESCRIÇÃO"}
+								</label>
+								<br/>
+								{this.state.policyModel.data.description}
+								<br/><br/>
 							</div>
-						)
+						:
+						""
 					}
-				})
-				}
-			<br/>
-			{this.state.info ?
-			<div>
-				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-					{"DESCRIÇÃO"}
-				</label>
-				<br/>
-				{this.state.itemModel.attributes.description}
-				<br/><br/>
-			</div>: ""}
 
-			{this.state.info ? this.getMatrix(): ""}
-			</div>
-			</div>;
-		}else{
-
+					{this.state.info ? this.getMatrix(): ""}
+					</div>
+				</div>
+			);
+		} else {
 			//editar
 			return (
 				<div>
+					<form onSubmit={this.onSubmit} ref="newItemForm">
+						{this.state.itemModel ? this.renderBreadcrumb() : ""}
+						<div className="fpdi-card fpdi-card-full floatLeft">
+							<h1>
+								{(this.state.titulo)}
+								{/*this.state.itemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
+									(<span className="dropdown">
+										<a
+											className="dropdown-toggle"
+											data-toggle="dropdown"
+											aria-haspopup="true"
+											aria-expanded="true"
+											title={Messages.get("label.actions")}
+											>
+											<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+											<span className="mdi mdi-chevron-down" />
+										</a>
+										{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
+									</span>
+								):""*/}
+							</h1>
 
-				<form onSubmit={this.onSubmit} ref="newItemForm">
+							{
+								//título
+							}
 
-				{this.state.itemModel ? this.renderBreadcrumb() : ""}
-
-				<div className="fpdi-card fpdi-card-full floatLeft">
-
-					<h1>
-
-						{(this.state.titulo)}
-						{/*this.state.itemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
-							(<span className="dropdown">
-								<a
-									className="dropdown-toggle"
-									data-toggle="dropdown"
-									aria-haspopup="true"
-									aria-expanded="true"
-									title={Messages.get("label.actions")}
-									>
-									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-									<span className="mdi mdi-chevron-down" />
-								</a>
-								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
-							</span>
-						):""*/}
-					</h1>
-
-					{
-						//título
-					}
-
-					<AttributeInput
-						fieldDef={this.getField()}
-						undeletable={false}
-						vizualization={this.props.vizualization}
-						//ref="formAlertErrorTitulo"
-						//ref={this.getField().name}
-						//key={this.getField().name}
-						//deleteFunc={this.props.deleteFunc}
-						//editFunc={this.props.editFunc}
-						//alterable={this.props.alterable}
-						//isDocument={this.props.isDocument}
-						//onClick={this.props.onClick}
-						//onChage={this.props.onChage}
-					/>
+							<AttributeInput
+								fieldDef={this.getField()}
+								undeletable={false}
+								vizualization={this.props.vizualization}
+								//ref="formAlertErrorTitulo"
+								//ref={this.getField().name}
+								//key={this.getField().name}
+								//deleteFunc={this.props.deleteFunc}
+								//editFunc={this.props.editFunc}
+								//alterable={this.props.alterable}
+								//isDocument={this.props.isDocument}
+								//onClick={this.props.onClick}
+								//onChage={this.props.onChage}
+							/>
 
 
-					{
-						//campos
-					}
+							{
+								//campos
+							}
 
-					{this.state.fields && (this.state.fields.length > 0) ?
-					this.state.fields.map((fielditem, index) => {
-						if(fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD){
-							//fielditem.name=fielditem.name
-							//fielditem.value=fielditem.label
-							fielditem.isText=true;
-							return (
-								<div>
-								<FieldItemInput
-									vizualization={!this.props.vizualization}
-									deleteFunc={this.deleteFunc}
-									editFunc={this.editFunc}
-									setItem={this.setItem}
-									fields={this.state.fields}
-									reset={this.reset}
-									field={fielditem}
-									index={index}
-									getLength={this.getLength}
-									/>
-								</div>
-							)
-						}else if (fielditem.type ==  AttributeTypes.ATTACHMENT_FIELD){
-							fielditem.isText=false;
-							return (<div>
-								<FieldItemInput
-									vizualization={!this.props.vizualization}
-									deleteFunc={this.deleteFunc}
-									editFunc={this.editFunc}
-									setItem={this.setItem}
-									fields={this.state.fields}
-									reset={this.reset}
-									field={fielditem}
-									index={index}
-									getLength={this.getLength}
-									/>
-								</div>)
-						}
-					}):""}
-
-
-					{
-						//Adicioonar novo campo
-					}
-
-					{this.state.newField ?
-						<FieldItemInput
-							//key={this.getLength()}
-							vizualization={this.props.vizualization}
-							deleteFunc={this.deleteFunc}
-							editFunc={this.editFunc}
-							setItem={this.setItem}
-							fields={this.state.fields}
-							reset={this.reset}
-							getLength={this.getLength}
-						/>
-					:
-					(((this.context.roles.MANAGER || _.contains(this.context.permissions,
-					PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && this.props.params.policyId) ? // && !this.state.model.preTextSection) ?
-					<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
-						<span className="mdi mdi-plus" /> {Messages.get("label.addNewField")}
-					</button>
-					:"")}
-
-
-					<br/><br/><br/>
-					{showButtons ?
-					(!!this.props.blockButtons ?
-						(<div className="form-group">
-							<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
-							{!this.props.hideCanel ? (!this.props.cancelUrl ?
-								<button className="btn btn-default  btn-block" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
-								:(
-									<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
-								)):""}
-						</div>)
-					:
-						(<div className="form-group text-left">
-							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-							{!this.props.hideCanel ? (!this.props.cancelUrl ?
-								<button className="btn btn-sm btn-default" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
+							{
+								this.state.fields && (this.state.fields.length > 0)
+								?
+								this.state.fields.map((fielditem, index) => {
+									if (fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD) {
+										//fielditem.name=fielditem.name
+										//fielditem.value=fielditem.label
+										fielditem.isText=true;
+										return (
+											<div>
+												<FieldItemInput
+													vizualization={!this.props.vizualization}
+													deleteFunc={this.deleteFunc}
+													editFunc={this.editFunc}
+													setItem={this.setItem}
+													fields={this.state.fields}
+													reset={this.reset}
+													field={fielditem}
+													index={index}
+													getLength={this.getLength}
+												/>
+											</div>
+										)
+									} else if (fielditem.type ==  AttributeTypes.ATTACHMENT_FIELD) {
+										fielditem.isText=false;
+										return (
+											<div>
+												<FieldItemInput
+													vizualization={!this.props.vizualization}
+													deleteFunc={this.deleteFunc}
+													editFunc={this.editFunc}
+													setItem={this.setItem}
+													fields={this.state.fields}
+													reset={this.reset}
+													field={fielditem}
+													index={index}
+													getLength={this.getLength}
+												/>
+											</div>
+										);
+									}
+								})
 								:
-								<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
-							):""}
-						</div>)
-					)
-				: ""}
-				</div>
-			</form>
-		</div>);
+								""
+							}
 
+
+							{
+								//Adicioonar novo campo
+							}
+
+							{
+								this.state.newField
+								?
+								<FieldItemInput
+									//key={this.getLength()}
+									vizualization={this.props.vizualization}
+									deleteFunc={this.deleteFunc}
+									editFunc={this.editFunc}
+									setItem={this.setItem}
+									fields={this.state.fields}
+									reset={this.reset}
+									getLength={this.getLength}
+								/>
+								:
+								(
+									((this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && this.props.params.policyId)  // && !this.state.model.preTextSection) ?
+									?
+									<button onClick={this.tweakNewField} id="addIconDocument" className="btn btn-sm btn-neutral marginTop20">
+										<span className="mdi mdi-plus" /> {Messages.get("label.addNewField")}
+									</button>
+									:
+									""
+								)
+							}
+
+
+							<br/><br/><br/>
+							{
+								showButtons
+								?
+								(
+									!!this.props.blockButtons
+									?
+									<div className="form-group">
+										<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
+										{
+											!this.props.hideCanel
+											?
+											(
+												!this.props.cancelUrl
+												?
+												<button className="btn btn-default  btn-block" onClick={this.cancelWrapper}>
+													{this.state.cancelLabel}
+												</button>
+												:
+												<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
+											)
+											:
+											""
+										}
+									</div>
+									:
+									<div className="form-group text-left">
+										<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
+										{
+											!this.props.hideCanel
+											?
+											(
+												!this.props.cancelUrl
+												?
+												<button className="btn btn-sm btn-default" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
+												:
+												<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
+											)
+											:
+											""
+										}
+									</div>
+								)
+								:
+								""
+							}
+						</div>
+					</form>
+				</div>
+			);
 		}
 	}
-
 });
