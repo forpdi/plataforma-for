@@ -303,7 +303,7 @@ var UnitStore = Fluxbone.Store.extend({
 	findAllTerms(data) {
 		var me = this;
 		$.ajax({
-			url: me.url + "/findAllTerms",
+			url: me.url + "/search",
 			method: 'GET',
 			dataType: 'json',
 			data: data,

@@ -537,7 +537,7 @@ public class UnitBS extends HibernateBusiness {
 		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name, description);
 		
-		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class)
+		Criteria criteria = this.dao.newCriteria(Unit.class)
 				.add(Restrictions.eq("planRisk", planRisk))
 				.add(Restrictions.eq("deleted", false));
 		
@@ -549,27 +549,28 @@ public class UnitBS extends HibernateBusiness {
 			criteria.add(or);
 		}
 		
-		Map<Unit, Unit> unit = new HashMap<Unit, Unit>();
+		Map<Unit, Unit> unit = new HashMap<Unit, Unit>(); //<SubUnit, Unit>
 		List<Unit> list = this.dao.findByCriteria(criteria, Unit.class);
 		
 		for(int i = 0; i < list.size(); i++) {
 			Criteria crit = this.dao.newCriteria(Unit.class)
 					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("planRisk", list.get(i)))
+					.add(Restrictions.eq("parent", list.get(i)))
 			 		.add(orExp);
-			
+			 
 			List<Unit> subUnits =  this.dao.findByCriteria(crit, Unit.class);
 			
 			for(int j = 0; j < subUnits.size(); j++) {
-				subUnits.get(j).getParent().setDescription(subUnits.get(j).getName());
-				unit.put(subUnits.get(j).getParent(), unit.get(j).getParent());
+				list.get(j).setParent(list.get(j).getParent());
+				unit.put(subUnits.get(j).getParent(), subUnits.get(j));
 			}
 		}
 		
 		criteria.add(orExp);
 		list = this.dao.findByCriteria(criteria, Unit.class);
 		
-		for(int i=0; i< list.size(); i++) {
+		for(int i = 0; i< list.size(); i++) {
+			list.get(i).setParent(list.get(i).getParent());
 			unit.put(list.get(i).getParent(), list.get(i));
 		}
 		

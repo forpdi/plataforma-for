@@ -367,34 +367,30 @@ public class UnitController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}*/
-	@Get(PATH + "/findAllTerms")
+	@Get(PATH + "/search")
 	@NoCache
 	@Permissioned
-	public void listItensTerms(Long planId, Integer page, String terms, int ordResult, Long limit) {
+	public void listItensTerms(Long planRiskId, Integer page, String terms, int ordResult, Long limit) {
 		if (page == null) page = 0;
 		
 		try {
-			PlanRisk planRisk = this.unitBS.exists(planId, PlanRisk.class);
+			PlanRisk planRisk = this.unitBS.exists(planRiskId, PlanRisk.class);
 			
 			if(planRisk.isDeleted()) {
 				this.fail("plano não foi encontrado");
 			}
 			
-			//List<Item> itens = this.unitBS.listItemTerms(plan, terms, null, ordResult);
-			//PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
-			//List<SubItem> subitens = this.unitBS.listSubitemTerms(planRisk, terms, null, ordResult);
-			
 			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, null, ordResult);
-			//PaginatedList<Unit> result = TermResult(units, page, limit);
+			PaginatedList<Unit> result = TermResult(units, page, limit);
 			
-			//this.success(result);
+			this.success(result);
  		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
 	
-	/*private PaginatedList<Unit> TermResult(List<Unit> units, Integer page,  Long limit){
+	private PaginatedList<Unit> TermResult(List<Unit> units, Integer page,  Long limit){
 		int firstResult = 0;
 		int maxResult = 0;
 		int count = 0;
@@ -404,36 +400,27 @@ public class UnitController extends AbstractController {
 			maxResult = limit.intValue();
 		}
 		
-		for(Unit unit : units) {
-			Unit subUnit = new Unit();
-			subUnit.setParent(unit.getParent());
-			subUnit.setDescription(unit.getDescription());
-			subUnit.setAbbreviation(unit.getAbbreviation());
-			
-			units.add(subUnit);
-		}
-		
 		List<Unit> list = new ArrayList<>();
-		for(SubItem subitem : subitens) {
+		for(Unit unit : units) {
 			if (limit != null) {
 				if (count >= firstResult && add < maxResult) {
-					list.add(subitem);
+					list.add(unit);
 					count++;
 					add++;
 				} else {
 					count++;
 				}
 			} else {
-				list.add(subitem);
+				list.add(unit);
 			}
 		}
 
-		PaginatedList<SubItem> result = new PaginatedList<SubItem>();
+		PaginatedList<Unit> result = new PaginatedList<Unit>();
 		
 		result.setList(list);
 		result.setTotal((long)count);
 		return result;
-	}*/
+	}
 	
 	
 	

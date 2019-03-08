@@ -35,13 +35,12 @@ export default React.createClass({
 
 		UnitStore.on("findTerms", (model, data) => {
 			if (model.data != null){
-
-				var i;
-				for (i = 0; i < model.data.length; i++) {
-					if(model.data[i].item != null){
-						model.data[i].level="Subitem"
+				for (var i = 0; i < model.data.length; i++) {
+					console.log(model.data[i].parent);
+					if(model.data[i].parent === undefined) {
+						model.data[i].level="Unidade"
 					}else{
-						model.data[i].level="Item"
+						model.data[i].level="Subunidade"
 					}
 				}
 
@@ -74,7 +73,7 @@ export default React.createClass({
 
 	showMoreOccurencesSearches() {
 
-		var newPage = this.state.page+1;
+		var newPage = this.state.page + 1;
 		UnitStore.dispatch({
 				action: UnitStore.ACTION_FINDALL_TERMS,
 				data: {
@@ -143,14 +142,15 @@ export default React.createClass({
 										<div id="fpdi-result-search-title">
 											{model.level}
 										</div>
+										&nbsp;
 										<Link
 											to={"/forrisco/policy/"+this.props.policyId+"/item/"+(model.subitemParentId? model.subitemParentId +"/subitem/":"")+model.id}
 											activeClassName="active"
-											title={Messages.get("label.title.viewMore")}
-											>
+											title={Messages.get("label.title.viewMore")}>
 											{model.name}
 										</Link>
-										{model.description ? (model.description != "" ? " "+model.description : "") :""}
+										&nbsp;
+										{model.description ? (model.description !== "" ? "" + model.description : "") : ""}
 									</div>
 								</div>
 							);

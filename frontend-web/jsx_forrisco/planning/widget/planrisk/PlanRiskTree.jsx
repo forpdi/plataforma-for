@@ -209,7 +209,6 @@ export default React.createClass({
 		if (newProps.planRisk.id !== this.props.planRisk.id) {
 			this.refresh(newProps.planRisk.id);
 		}
-
 	},
 
 	refresh(planRiskId) {
