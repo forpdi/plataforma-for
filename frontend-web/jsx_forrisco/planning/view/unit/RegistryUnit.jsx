@@ -187,7 +187,7 @@ export default React.createClass({
 		}
 
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_NEWUNIT,
+			action: UnitStore.ACTION_NEW_UNIT,
 			data: unit,
 		});
 	},

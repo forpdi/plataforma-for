@@ -189,13 +189,53 @@ public class UnitController extends AbstractController {
 				return;
 			}
 			
-			PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
+			PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
 			this.success(subunits);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	
+	/**
+	 * Retorna todas subunidades do plano.
+	 * 
+	 * @param planId
+	 *            Id do plano de risco
+	 * @return <PaginatedList> Subunidades
+	 */
+	@Get(PATH + "/listsub")
+	@NoCache
+	@Consumes
+	public void listSubunitsByPlan(@NotNull Long planId) {
+		try {
+			PlanRisk plan =this.unitBS.exists(planId, PlanRisk.class);
+			
+			if (plan == null || plan.isDeleted()) {
+				this.fail("O Plano de risco não foi encontrado");
+				return;
+			}
+			
+			PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
+			List<Unit> list = new ArrayList<>();
+			
+			for(Unit unit : units.getList()) {
+				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
+				list.addAll(subunits.getList());
+			}
+			
+			PaginatedList<Unit> result = new PaginatedList<Unit>();
+			
+			result.setList(list);
+			result.setTotal((long) list.size());
+			this.success(result);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * Retorna processos das unidades.
@@ -240,8 +280,9 @@ public class UnitController extends AbstractController {
 			}
 
 			// verifica se possui subunidades vinculadas
+
 			if (unit.getParent() == null) {
-				PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
+				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
 				if (subunits.getTotal() > 0) {
 					this.fail("Unidade possui subunidade(s) vinculada(s).");
 					return;

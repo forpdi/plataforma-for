@@ -7,7 +7,7 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
-import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
+import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/unit/LevelSearch.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -49,8 +49,8 @@ export default React.createClass({
 		const me = this;
 
 		//Botão Novo Item Geral
-		const newItem = {
-			label: Messages.get("label.newItem"),
+		var newItem = {
+			label: Messages.get("label.newUnity"),
 			labelCls: 'fpdi-new-node-label',
 			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/unit/new',
@@ -560,8 +560,8 @@ export default React.createClass({
 						<div className="container Pesquisa-Avancada">
 							<LevelSearch
 								searchText={this.refs.term.value}
-								subplans={this.state.treeItens}
 								planRisk={this.props.planRisk.id}
+								subplans={this.state.treeItensUnit}
 								hiddenSearch={this.searchFilter}
 								displayResult={this.displayResult}
 							/>
