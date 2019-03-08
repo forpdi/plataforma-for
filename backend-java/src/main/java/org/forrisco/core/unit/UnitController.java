@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
@@ -26,6 +27,7 @@ import org.forrisco.risk.RiskBS;
 import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 
+import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
@@ -238,10 +240,12 @@ public class UnitController extends AbstractController {
 			}
 
 			// verifica se possui subunidades vinculadas
-			PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
-			if (subunits.getTotal() > 0) {
-				this.fail("Unidade possui subunidade(s) vinculada(s).");
-				return;
+			if (unit.getParent() == null) {
+				PaginatedList<Unit> subunits = this.unitBS.listSubunitbyUnit(unit);
+				if (subunits.getTotal() > 0) {
+					this.fail("Unidade possui subunidade(s) vinculada(s).");
+					return;
+				}
 			}
 
 			// verifica se possui riscos vinculados
@@ -272,7 +276,7 @@ public class UnitController extends AbstractController {
 			}
 
 			this.unitBS.delete(unit);
-			this.success();
+			this.success(unit);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
