@@ -41,7 +41,6 @@ export default React.createClass({
 
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
 
-
 	changeFieldTypeOnEdit() {
 		var me = this;
 		var selected =
@@ -265,6 +264,7 @@ export default React.createClass({
 	},
 
 	render() {
+		console.log(this.props.field);
 		return (
 			<div>
 				{this.props.field ?

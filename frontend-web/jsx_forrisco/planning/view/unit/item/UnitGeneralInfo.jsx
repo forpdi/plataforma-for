@@ -8,6 +8,7 @@ import Messages from "@/core/util/Messages";
 import UnitProcess from "forpdi/jsx_forrisco/planning/view/unit/item/UnitProcess.jsx"
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
+import Modal from "@/core/widget/Modal";
 
 export default React.createClass({
 	contextTypes: {
@@ -36,7 +37,7 @@ export default React.createClass({
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, this.state.unit.name);
 			});
-		});
+		}, this);
 		UnitStore.on('unitUpdated', response => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("A unidade foi alterada com sucesso.");
@@ -47,15 +48,15 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		UnitStore.on('unitDeleted', response => {
 			if (response.success) {
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 				this.context.toastr.addAlertSuccess("A unidade foi excluída com sucesso.");
-				this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/unit`);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		UserStore.on('retrieve-user', (response) => {
 			if (response.data) {
 				this.setState({
@@ -64,7 +65,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
+		}, this);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
@@ -158,12 +159,15 @@ export default React.createClass({
 	},
 
 	deleteUnit() {
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_DELETE_UNIT,
-			data: {
-				id: this.props.params.unitId,
-			},
-		});
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_DELETE_UNIT,
+				data: {
+					id: this.getUnitId(),
+				},
+			});
+		}, 'Você tem certeza que deseja excluir essa Unidade?', () => Modal.hide());
 	},
 
 	renderDropdown() {

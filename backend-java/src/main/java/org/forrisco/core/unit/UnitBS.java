@@ -11,6 +11,8 @@ import javax.inject.Inject;
 
 import org.forpdi.system.CriteriaCompanyFilter;
 import org.forrisco.core.item.Item;
+import org.forrisco.core.item.PlanRiskItem;
+import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
@@ -22,6 +24,9 @@ import org.forrisco.risk.RiskHistory;
 import org.forrisco.risk.RiskLevel;
 import org.forrisco.core.process.Process;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -520,9 +525,55 @@ public class UnitBS extends HibernateBusiness {
 		}
 	}
 
-	public List<Item> listItemTerms(PlanRisk plan, String terms, Long[] itensSelect, int ordResult) {
-		 //TODO Auto-generated method stub
-		return null;
+	public List<Unit> listUnitTerms(PlanRisk planRisk, String terms, Long[] itensSelect, int ordResult) {
+		if (terms == null || terms.isEmpty()) {
+			return new ArrayList<Unit>();
+		}
+		if(itensSelect != null && itensSelect.length == 0) {
+			return new ArrayList<Unit>();
+		}
+		
+		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		LogicalExpression orExp = Restrictions.or(name, description);
+		
+		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class)
+				.add(Restrictions.eq("planRisk", planRisk))
+				.add(Restrictions.eq("deleted", false));
+		
+		if (itensSelect != null) {
+			Disjunction or = Restrictions.disjunction();
+			for (int i = 0; i < itensSelect.length; i++) {
+				or.add(Restrictions.eq("id", itensSelect[i]));
+			}
+			criteria.add(or);
+		}
+		
+		Map<Unit, Unit> unit = new HashMap<Unit, Unit>();
+		List<Unit> list = this.dao.findByCriteria(criteria, Unit.class);
+		
+		for(int i = 0; i < list.size(); i++) {
+			Criteria crit = this.dao.newCriteria(Unit.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("planRisk", list.get(i)))
+			 		.add(orExp);
+			
+			List<Unit> subUnits =  this.dao.findByCriteria(crit, Unit.class);
+			
+			for(int j = 0; j < subUnits.size(); j++) {
+				subUnits.get(j).getParent().setDescription(subUnits.get(j).getName());
+				unit.put(subUnits.get(j).getParent(), unit.get(j).getParent());
+			}
+		}
+		
+		criteria.add(orExp);
+		list = this.dao.findByCriteria(criteria, Unit.class);
+		
+		for(int i=0; i< list.size(); i++) {
+			unit.put(list.get(i).getParent(), list.get(i));
+		}
+		
+		return new ArrayList<Unit>(unit.values());
 	}
 
 	public List<SubItem> listSubitemTerms(PlanRisk plan, String terms, Long[] subitensSelect, int ordResult) {

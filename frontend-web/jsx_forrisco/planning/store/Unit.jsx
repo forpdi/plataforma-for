@@ -1,7 +1,7 @@
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 import string from "string";
 
-var URL = Fluxbone.BACKEND_URL+"unit";
+var URL = Fluxbone.BACKEND_URL + "unit";
 
 var unitModel = Fluxbone.Model.extend({
 	url: URL,
@@ -34,16 +34,16 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_NEW_SUBUNIT: "unit-newSubunit",
 	ACTION_LIST_SUBUNIT: "unit-listSubunits",
 	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
-	ACTION_FIND_TERMS:'unit-findTerms',
-	ACTION_FINDALL_TERMS:'unit-findAllTerms',
+	ACTION_FIND_TERMS: 'unit-findTerms',
+	ACTION_FINDALL_TERMS: 'unit-findAllTerms',
 	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
 	model: unitModel,
 
-	findArchived(data){
+	findArchived(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/archivedunit",
+			url: me.url + "/archivedunit",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -73,10 +73,10 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findUnarchived(data){
+	findUnarchived(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/unarchivedunit",
+			url: me.url + "/unarchivedunit",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -89,10 +89,10 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	newUnit(data){
+	newUnit(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+'/new',
+			url: me.url + '/new',
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -103,16 +103,16 @@ var UnitStore = Fluxbone.Store.extend({
 				me.trigger("unitcreated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("unitcreated",{msg:opts.responseJSON.message,data:{id:null}})
+				me.trigger("unitcreated", {msg: opts.responseJSON.message, data: {id: null}})
 				me.handleRequestErrors([], opts);
 			}
 		});
 	},
 
-	archive(data){
+	archive(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/archive",
+			url: me.url + "/archive",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -128,10 +128,10 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	unarchive(data){
+	unarchive(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/unarchive",
+			url: me.url + "/unarchive",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -147,10 +147,10 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	delete(data){
+	delete(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/"+data,
+			url: me.url + "/" + data,
 			method: 'DELETE',
 			success(model) {
 				me.trigger("unitDeleted", model, data);
@@ -164,7 +164,7 @@ var UnitStore = Fluxbone.Store.extend({
 	customUpdate(data) {
 		var me = this;
 		$.ajax({
-			url: me.url+"/update",
+			url: me.url + "/update",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -175,7 +175,7 @@ var UnitStore = Fluxbone.Store.extend({
 				me.trigger("unitUpdated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("unitUpdated",{msg:opts.responseJSON.message,data:{id:null}})
+				me.trigger("unitUpdated", {msg: opts.responseJSON.message, data: {id: null}})
 			}
 		});
 	},
@@ -231,7 +231,7 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	newSubunit(data){
+	newSubunit(data) {
 		var me = this;
 		$.ajax({
 			url: me.url + '/subnew',
@@ -245,7 +245,7 @@ var UnitStore = Fluxbone.Store.extend({
 				me.trigger("subunitCreated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("subunitCreated",{msg:opts.responseJSON.message,data:{id:null}})
+				me.trigger("subunitCreated", {msg: opts.responseJSON.message, data: {id: null}})
 				me.handleRequestErrors([], opts);
 			}
 		});
@@ -267,10 +267,10 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
-	retrieveProcess(){
+	retrieveProcess() {
 		var me = this;
 		$.ajax({
-			url: me.url+"/process",
+			url: me.url + "/process",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -283,43 +283,40 @@ var UnitStore = Fluxbone.Store.extend({
 		});
 	},
 
+	//Busca Avançada
+	findTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/findTerms",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
 
+	findAllTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/findAllTerms",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
 
-		//Busca Avançada
-		findTerms(data) {
-			var me = this;
-			$.ajax({
-				url: me.url+"/findTerms",
-				method: 'GET',
-				dataType: 'json',
-				data: data,
-				success(model) {
-					me.trigger("findTerms", model, data);
-				},
-				error(opts, status, errorMsg) {
-					me.trigger("findTerms", opts);
-				}
-			});
-		},
-
-
-		findAllTerms(data) {
-			var me = this;
-			$.ajax({
-				url: me.url+"/findAllTerms",
-				method: 'GET',
-				dataType: 'json',
-				data: data,
-				success(model) {
-					me.trigger("findTerms", model, data);
-				},
-				error(opts, status, errorMsg) {
-					me.trigger("findTerms", opts);
-				}
-			});
-		},
-
-	mainMenuState(data){
+	mainMenuState(data) {
 		var me = this;
 		me.trigger("getmainmenustate", data);
 	}

@@ -154,6 +154,8 @@ public class PDFgenerate {
 	@Inject
 	private PlanRiskBS planriskBS;
 	@Inject
+	private PlanRiskItemBS planriskItemkBS;
+	@Inject
 	private UnitBS unitBS;
 	@Inject
 	private ItemBS itemBS;
@@ -3819,7 +3821,80 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
+	private void generatePlanRiskContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
+		
+		writer.setPageEvent(event);
+		
+		File outputDir;
+
+		outputDir = contentFile.getParentFile();
+
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+		
+		
+		String[] sections = null;
+		if (itens != null)
+			sections = itens.split(",");
+		
+		String[] subsections= null;
+		if (subitens != null)
+			subsections = subitens.split(",");
+		
+		int secIndex = 0;
+		int subSecIndex = 0;
+		boolean lastAttWasPlan = false;
+		boolean haveContent = false;
+
+		document.open();
+		document.add(new Chunk(""));
+		
+		//para cada item selecionado
+		if(sections !=null) {
+			for (int i = 0; i < sections.length; i++) {
+				PlanRiskItem planRiskItem = this.planriskItemkBS.retrievePlanRiskItembyId(Long.parseLong(sections[i]));
+				PaginatedList<PlanRiskItemField> planRiskItemField; //Lista de Campos dos Item
+				PaginatedList<PlanRiskSubItem> planRiskSubItem = this.planriskItemkBS.listSubItemByItem(planRiskItem);
+				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
+
+				//lista subitens selecionados
+				for(PlanRiskSubItem sub : planRiskSubItem.getList()) {
+					if(subsections != null) {
+						for (int j = 0; j < subsections.length; j++) {
+							if(sub.getId() == Long.parseLong(subsections[j])) {
+								actualsubitens.add(sub);
+							}
+						}
+					}
+				}
+
+				boolean secTitlePrinted = false;
+				subSecIndex = 0;
+				String secName = planRiskItem.getName();
+
+					
+				subSecIndex = 0;
+				secTitlePrinted=false;
 	
+				for (PlanRiskSubItem sub: actualsubitens) {
+						
+					haveContent = true;
+					subSecIndex++;
+					
+					String subSecName =sub.getName();
+				
+				}
+			
+			}
+
+		}
+
+		if (haveContent) {
+			document.close();
+		}
+		outputDir.delete();
+	}
 	
 	/*plano de risco*/
 	private void generatePlanRiskContent(File contentFile, Long planId, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
