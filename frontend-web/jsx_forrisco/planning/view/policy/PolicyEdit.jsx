@@ -735,8 +735,8 @@ export default React.createClass({
 
 		return (
 			<div>
-				<h1 className="marginLeft115">{this.props.params.policyId ? Messages.getEditable("label.editPolicy", "fpdi-nav-label") : Messages.getEditable("label.newPolicy", "fpdi-nav-label")}</h1>
-				<div className="fpdi-card padding40">
+				<div className="fpdi-card padding40" style={{ "width": "90%" }}>
+					<h1>{this.props.params.policyId ? Messages.getEditable("label.editPolicy", "fpdi-nav-label") : Messages.getEditable("label.newPolicy", "fpdi-nav-label")}</h1>
 					<form onSubmit={this.submitWrapper} id={this.props.id} ref="policyEditForm">
 
 						{this.getFields().map((field, idx) => {
