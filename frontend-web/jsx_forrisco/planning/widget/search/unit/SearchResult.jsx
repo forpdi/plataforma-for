@@ -74,6 +74,7 @@ export default React.createClass({
 	showMoreOccurencesSearches() {
 
 		var newPage = this.state.page + 1;
+
 		UnitStore.dispatch({
 				action: UnitStore.ACTION_FINDALL_TERMS,
 				data: {
@@ -87,38 +88,6 @@ export default React.createClass({
 					wait: true
 				}
 			});
-		// if(this.props.itensSelect !== null && this.props.subitensSelect !== null) {
-		// 	UnitStore.dispatch({
-		// 		action: UnitStore.ACTION_FIND_TERMS,  //Busca Avançada
-		// 		data: {
-		// 			policyId: this.props.policyId,
-		// 			terms: this.props.terms,
-		// 			itensSelect:this.props.itensSelect,
-		// 			subitensSelect:this.props.subitensSelect,
-		// 			ordResult: this.props.ordResult,
-		// 			limit:10,
-		// 			page: newPage
-		// 		},
-		// 		opts: {
-		// 			wait: true
-		// 		}
-		// 	});
-		// }else{
-		// 	console.log('23');
-		// 	UnitStore.dispatch({
-		// 		action: UnitStore.ACTION_FINDALL_TERMS,
-		// 		data: {
-		// 			policyId: this.props.policyId,
-		// 			terms: this.props.terms,
-		// 			limit:10,
-		// 			page: newPage
-		// 			//ordResult: this.props.ordResult,
-		// 		},
-		// 		opts: {
-		// 			wait: true
-		// 		}
-		// 	});
-		// }
 
     	this.setState({
     		page: newPage

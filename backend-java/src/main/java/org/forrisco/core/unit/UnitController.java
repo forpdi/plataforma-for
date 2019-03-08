@@ -387,32 +387,33 @@ public class UnitController extends AbstractController {
 	 * @return PaginatedList<Plan> Retorna lista de planos de metas de acordo
 	 *         com os filtros.
 	 */
-	/*@Get(PATH + "/findTerms")
+	
+	@Get(PATH + "/searchByKey")
 	@NoCache
 	@Permissioned
-	public void listItensTerms(Long planId, Integer page, String terms, Long itensSelect[], Long subitensSelect[], int ordResult, Long limit) {
+	public void listItensTerms(Long planRiskId, Integer page, String terms, Long itensSelect[], Long subitensSelect[], int ordResult, Long limit) {
 		if (page == null)
 			page = 0;
 		
 		try {
 	
-			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
+			PlanRisk planRisk = this.unitBS.exists(planRiskId, PlanRisk.class);
 			
-			if(plan.isDeleted()) {
+			if(planRisk.isDeleted()) {
 				this.fail("plano não foi encontrado");
 			}
 			
-			List<Item> itens = this.unitBS.listItemTerms(plan, terms, itensSelect, ordResult);
-			List<SubItem> subitens = this.unitBS.listSubitemTerms(plan, terms, subitensSelect, ordResult);
+			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, itensSelect, ordResult);
 
-			PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
+			PaginatedList<Unit> result = TermResult(units, page, limit);
 			
 			this.success(result);
  		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
-	}*/
+	}
+	
 	@Get(PATH + "/search")
 	@NoCache
 	@Permissioned

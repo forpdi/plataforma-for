@@ -4,8 +4,6 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var onClickOutside = require('react-onclickoutside');
@@ -223,13 +221,13 @@ export default onClickOutside(React.createClass({
 		var subplansSelectP = [];
 		var levelsSelectP = [];
 		for (var i = 0; i < subplansSelect.length; i++) {
-			if (subplansSelect[i] != 'on') {
+			if (subplansSelect[i] !== 'on') {
 				subplansSelectP[i] = subplansSelect[i];
 			}
 		}
 
 		for (var i = 0; i < levelsSelect.length; i++) {
-			if (levelsSelect[i] != 'on') {
+			if (levelsSelect[i] !== 'on') {
 				levelsSelectP[i] = levelsSelect[i];
 			}
 		}
@@ -242,14 +240,15 @@ export default onClickOutside(React.createClass({
 			ordResultProps:valueResult
 		});
 
-		if(this.refs.termPesquisa.value== "" ||  !!this.refs.termPesquisa.value.match(/^(\s)+$/) ){
+		if(this.refs.termPesquisa.value === "" ||  !!this.refs.termPesquisa.value.match(/^(\s)+$/) ){
 			this.props.hiddenSearch();
 			return
 		}
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_TERMS,
+
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_TERMS,
 			data: {
-				policyId: this.props.policy,
+				planRiskId: this.props.planRisk,
 				terms:this.refs.termPesquisa.value,
 				itensSelect: subplansSelectP,
 				subitensSelect: levelsSelectP,
@@ -270,7 +269,7 @@ export default onClickOutside(React.createClass({
 	},
 
 	render() {
-
+		//console.log(this.props.subplans.map( () => {}));
 			return (
 
 				<div className="level-search">
@@ -300,25 +299,24 @@ export default onClickOutside(React.createClass({
 							Todos
 						</div>
 
-						{this.props.subplans.map( (opt,idx) => {
-							console.log("this.props.subplans",opt,idx )
-							return (
-								<div key={'subplan-opt-'+idx}>
-									<input
-										onChange={this.selectSubplansOutherFilds}
-										name={'subplan-opt'}
-										key={'subplan-opt-'+idx}
-										type="checkbox"
-										value={opt.id}
-										defaultChecked = {true} />
-									{opt.label}
-								</div>
-							);
-						})}
+						{
+							this.props.subplans.map( (opt,idx) => {
+								return (
+									<div key={'subplan-opt-'+idx}>
+										<input
+											onChange={this.selectSubplansOutherFilds}
+											name={'subplan-opt'}
+											key={'subplan-opt-'+idx}
+											type="checkbox"
+											value={opt.id}
+											defaultChecked = {true} />
+										{opt.label}
+									</div>
+								);
+							})
+						}
 					</div>
 				</div>
-
-
 
 				<div className="level-search-checkbox">
 					<h3>{Messages.getEditable("label.subunitys","fpdi-nav-label")}</h3>

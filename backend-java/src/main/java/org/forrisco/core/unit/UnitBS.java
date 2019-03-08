@@ -549,7 +549,7 @@ public class UnitBS extends HibernateBusiness {
 			criteria.add(or);
 		}
 		
-		Map<Unit, Unit> unit = new HashMap<Unit, Unit>(); //<SubUnit, Unit>
+		Map<Long, Unit> unit = new HashMap<Long, Unit>(); //<SubUnit, Unit>
 		List<Unit> list = this.dao.findByCriteria(criteria, Unit.class);
 		
 		for(int i = 0; i < list.size(); i++) {
@@ -562,7 +562,7 @@ public class UnitBS extends HibernateBusiness {
 			
 			for(int j = 0; j < subUnits.size(); j++) {
 				list.get(j).setParent(list.get(j).getParent());
-				unit.put(subUnits.get(j).getParent(), subUnits.get(j));
+				unit.put(subUnits.get(j).getId(), subUnits.get(j));
 			}
 		}
 		
@@ -571,7 +571,7 @@ public class UnitBS extends HibernateBusiness {
 		
 		for(int i = 0; i< list.size(); i++) {
 			list.get(i).setParent(list.get(i).getParent());
-			unit.put(list.get(i).getParent(), list.get(i));
+			unit.put(list.get(i).getId(), list.get(i));
 		}
 		
 		return new ArrayList<Unit>(unit.values());

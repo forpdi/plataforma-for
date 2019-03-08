@@ -34,11 +34,9 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
 	ACTION_LIST_SUBUNIT: "unit-listSubunits",
 	ACTION_LIST_SUBUNIT_BY_PLAN: "unit-listSubunitsByPlan",
-
 	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
 	ACTION_FIND_TERMS: 'unit-findTerms',
 	ACTION_FINDALL_TERMS: 'unit-findAllTerms',
-	//ACTION_FIND_INCIDENTS_BY_PLAN: "unit-findIncdents",
 	url: URL,
 	model: unitModel,
 
@@ -306,7 +304,7 @@ var UnitStore = Fluxbone.Store.extend({
 	findTerms(data) {
 		var me = this;
 		$.ajax({
-			url: me.url + "/findTerms",
+			url: me.url + "/searchByKey",
 			method: 'GET',
 			dataType: 'json',
 			data: data,
