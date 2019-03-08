@@ -20,7 +20,8 @@ public enum NotificationType implements Serializable{
 	ACTION_PLAN_CLOSE_TO_MATURITY(15, "http://cloud.progolden.com.br/file/8343", false),
 	SEND_MESSAGE(16, "http://cloud.progolden.com.br/file/8498", false),
 	DATE_ATTRIBUTE_UPDATED(17, " http://cloud.progolden.com.br/file/8707", false),
-	GOAL_OPENED(18, "http://cloud.progolden.com.br/file/8337", false);
+	GOAL_OPENED(18, "http://cloud.progolden.com.br/file/8337", false),
+	FORRISCO_PROCESS_CREATED(19, "", true);
 	
 	private Integer value;
 	private String imageUrl;

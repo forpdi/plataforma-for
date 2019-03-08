@@ -58,7 +58,7 @@ public class UnitBS extends HibernateBusiness {
 		this.persist(unit);
 	}
 
-	public PaginatedList<Unit> listSubunitbyUnit(Unit unit) {
+	public PaginatedList<Unit> listSubunitByUnit(Unit unit) {
 
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 

@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
+import org.forpdi.system.Archive;
 import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
@@ -32,6 +33,10 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	@ManyToOne(targetEntity=Company.class,  fetch=FetchType.EAGER)
 	private Company company;
 	
+	//@SkipSerialization
+	@ManyToOne(targetEntity=Archive.class,  fetch=FetchType.EAGER)
+	private Archive file;
+	
 	@Column(nullable=false, length=255)
 	private String name;
 
@@ -40,10 +45,7 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	
 	@Column(nullable=false, length=4000) 
 	private String fileLink;
-	
-	@Column(nullable=false, length=255) 
-	private String fileName;
-	
+		
 	@Transient
 	private Unit unit;
 	
@@ -81,14 +83,6 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	public void setFileLink(String fileLink) {
 		this.fileLink = fileLink;
 	}
-	
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
 
 	public Company getCompany() {
 		return company;
@@ -105,4 +99,13 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	public void setRelatedUnits(List<Unit> relatedUnits) {
 		this.relatedUnits = relatedUnits;
 	}
+
+	public Archive getFile() {
+		return file;
+	}
+
+	public void setFile(Archive file) {
+		this.file = file;
+	}
+	
 }

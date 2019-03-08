@@ -7,7 +7,7 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
-import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
+import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/unit/LevelSearch.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -47,11 +47,10 @@ export default React.createClass({
 
 	componentDidMount() {
 		const me = this;
-		var treeItensUnit = [];
 
 		//Botão Novo Item Geral
 		var newItem = {
-			label: Messages.get("label.newItem"),
+			label: Messages.get("label.newUnity"),
 			labelCls: 'fpdi-new-node-label',
 			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
 			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/unit/new',
@@ -160,6 +159,45 @@ export default React.createClass({
 			}
 		}, me);
 
+		UnitStore.on("unitUpdated", (response) => {
+			if (response.data) {
+				const unitToUpdate = response.data;
+				if (!unitToUpdate.parent) { // unit
+					const unit = unitToUpdate;
+					const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+						if (unitItem.id === unit.id) {
+							return {
+								...unitItem,
+								model: unit,
+								label: unit.name,
+							}
+						}
+						return unitItem;
+					});
+					this.setState({ treeItensUnit });
+				} else { // subunit
+					const subunit = unitToUpdate;
+					const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
+						if (unitItem.id && unitItem.id === subunit.parent.id) {
+							let { children } = unitItem;
+							children = _.map(children, child => {
+								if (child.id === subunit.id) {
+									return {
+										...child,
+										label: subunit.name,
+									}
+								}
+								return child;
+							});
+							unitItem.children = children;
+						}
+						return unitItem;
+					});
+					this.setState({ treeItensUnit });
+				}
+			}
+		}, me);
+
 		UnitStore.on("subunitCreated", (response) => {
 			if (response.data) {
 				const subunit = response.data;
@@ -195,6 +233,7 @@ export default React.createClass({
 		UnitStore.off('unitDeleted');
 		UnitStore.off('unitCreated');
 		UnitStore.off('subunitCreated');
+		UnitStore.off('unitUpdated');
 	},
 
 	refresh(){
@@ -521,8 +560,8 @@ export default React.createClass({
 						<div className="container Pesquisa-Avancada">
 							<LevelSearch
 								searchText={this.refs.term.value}
-								subplans={this.state.treeItens}
 								planRisk={this.props.planRisk.id}
+								subplans={this.state.treeItensUnit}
 								hiddenSearch={this.searchFilter}
 								displayResult={this.displayResult}
 							/>

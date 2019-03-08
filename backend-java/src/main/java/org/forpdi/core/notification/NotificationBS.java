@@ -27,6 +27,7 @@ import org.forpdi.planning.permissions.UpdateGoalPermission;
 import org.forpdi.planning.plan.PlanMacro;
 import org.forpdi.planning.structure.FavoriteLevelInstance;
 import org.forpdi.planning.structure.StructureLevelInstance;
+import org.forpdi.system.Archive;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -134,8 +135,53 @@ public class NotificationBS extends HibernateBusiness {
 		}
 		this.persist(notification);
 		this.emailTask
-				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody()));
+				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
 	}
+	
+	/**
+	 * Enviar notificação do sistema para o email do usuário com arquivo anexado.
+	 * 
+	 * @param type
+	 *            Tipo da notificação.
+	 * @param text
+	 *            Texto da notificação.
+	 * @param aux
+	 *            Nome do Plano de metas onde ocorreu a notificação.
+	 * @param user
+	 *            Id do usuário para receber a notificação.
+	 * @throws EmailException
+	 */
+	public void sendAttachedNotificationEmail(NotificationType type, String text, String aux, User user, String url, Archive attachment)
+			throws EmailException {
+		if (url == null) {
+			url = this.domain.getBaseUrl();
+		}
+		url = url.replaceAll("//#", "/#");
+		EmailBuilder builder;
+		Notification notification = new Notification();
+		notification.setUser(user);
+		notification.setCompany(domain.getCompany());
+		notification.setCreation(new Date());
+		notification.setOnlyEmail(true);
+		notification.setPicture(type.getImageUrl());
+		notification.setVizualized(false);
+		notification.setType(type.getValue());
+		notification.setUrl(url);
+		this.setDescriptionForNotification(notification, type, text, aux);
+		if (type == NotificationType.WELCOME) {
+			builder = new EmailBuilder(NotificationType.WELCOME);
+		} else if (type == NotificationType.INVITE_USER) {
+			builder = new EmailBuilder(NotificationType.INVITE_USER, user.getName(), text);
+		} else if (type == NotificationType.RECOVER_PASSWORD) {
+			builder = new EmailBuilder(NotificationType.RECOVER_PASSWORD, user.getName(), text);
+		} else {
+			builder = new EmailBuilder(type, notification.getDescription(), url);
+		}
+		this.persist(notification);
+		this.emailTask
+				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), attachment.getName()));
+	}
+	
 
 	/**
 	 * Listar as permissões do usuário em uma instituição.
@@ -256,6 +302,9 @@ public class NotificationBS extends HibernateBusiness {
 		} else if (type == NotificationType.DATE_ATTRIBUTE_UPDATED) {
 			notification.setDescription(
 					"<b>A data de </b>\"" + aux + "\" - \"" + text + "\"<b> foi alterada. Verifique o novo prazo.</b>");
+		} else if (type == NotificationType.FORRISCO_PROCESS_CREATED) {
+			notification.setDescription(
+					"<b>"+ text +"</b>");
 		} else {
 			notification.setDescription("");
 		}
@@ -394,6 +443,8 @@ public class NotificationBS extends HibernateBusiness {
 				return "Um plano de ação está próximo do vencimento no ForPDI";
 			case DATE_ATTRIBUTE_UPDATED:
 				return "Ocorreu uma alteração de data";
+			case FORRISCO_PROCESS_CREATED:
+				return "ForRisco - A sua unidade foi relacionada a um processo";
 			default:
 				return "";
 			}
@@ -575,7 +626,7 @@ public class NotificationBS extends HibernateBusiness {
 		this.emailTask.add(new NotificationEmail(messageHistory.getUserReceiver().getEmail(),
 				messageHistory.getUserReceiver().getName(), messageHistory.getSubject(),
 				"<" + "p style=\"font-size:12pt;\">" + "Você recebeu uma mensagem de "
-						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>"));
+						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>", null));
 		Notification notification = new Notification();
 		notification.setUser(messageHistory.getUserReceiver());
 		notification.setCompany(this.domain.getCompany());

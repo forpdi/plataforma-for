@@ -3,7 +3,7 @@ import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
-import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
+import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
@@ -48,7 +48,7 @@ export default onClickOutside(React.createClass({
 
 	componentDidMount(){
 
-		UnitStore.on("retrieveAllSubunits",(model) => {
+		UnitStore.on("allSubunitsListed",(model) => {
 			this.setState({
 				subitensSelect:model.data
 			})
@@ -57,8 +57,8 @@ export default onClickOutside(React.createClass({
 
 		if(this.props.planRisk){
 			UnitStore.dispatch({
-				action: ItemStore.ACTION_RETRIEVE_ALLSUBITENS,
-				data: this.props.policy
+				action: UnitStore.ACTION_LIST_SUBUNIT_BY_PLAN,
+				data: this.props.planRisk
 			});
 		}
 	},
@@ -287,7 +287,7 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-checkbox">
-					<h3>{Messages.getEditable("label.items","fpdi-nav-label")}</h3>
+					<h3>{Messages.getEditable("label.unitys","fpdi-nav-label")}</h3>
 
 					<div className="level-search-checkbox-inputs">
 						<div key={'subplan-opt-0'}>
@@ -301,6 +301,7 @@ export default onClickOutside(React.createClass({
 						</div>
 
 						{this.props.subplans.map( (opt,idx) => {
+							console.log("this.props.subplans",opt,idx )
 							return (
 								<div key={'subplan-opt-'+idx}>
 									<input
@@ -310,7 +311,7 @@ export default onClickOutside(React.createClass({
 										type="checkbox"
 										value={opt.id}
 										defaultChecked = {true} />
-									{opt.name}
+									{opt.label}
 								</div>
 							);
 						})}
@@ -320,7 +321,7 @@ export default onClickOutside(React.createClass({
 
 
 				<div className="level-search-checkbox">
-					<h3>{Messages.getEditable("label.subitems","fpdi-nav-label")}</h3>
+					<h3>{Messages.getEditable("label.subunitys","fpdi-nav-label")}</h3>
 
 					<div className="level-search-checkbox-inputs">
 						<div key={'level-opt-0'}>

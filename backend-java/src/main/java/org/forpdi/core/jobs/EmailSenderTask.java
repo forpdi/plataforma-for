@@ -60,7 +60,7 @@ public class EmailSenderTask implements Task {
 		while (!this.queue.isEmpty()) {
 			try {
 				NotificationEmail email = this.queue.poll();
-				EmailUtilsPlugin.sendHtmlEmail(email.getEmail(), email.getName(), email.getSubject(), email.getBody());
+				EmailUtilsPlugin.sendHtmlEmail(email.getEmail(), email.getName(), email.getSubject(), email.getBody(), email.getAttach());
 			} catch (EmailException e) {
 				LOG.error("Falha ao enviar e-mail.", e);
 			}
