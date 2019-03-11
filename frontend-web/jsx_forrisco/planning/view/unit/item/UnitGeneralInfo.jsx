@@ -51,7 +51,11 @@ export default React.createClass({
 		}, this);
 		UnitStore.on('unitDeleted', response => {
 			if (response.success) {
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 2 ? true : false;
 				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+				if (hasMinTabsLength) {
+					this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/unit/overview`);
+				}
 				this.context.toastr.addAlertSuccess("A unidade foi excluída com sucesso.");
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
@@ -89,10 +93,8 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		UnitStore.off('unitRetrieved');
-		UnitStore.off('unitUpdated');
-		UnitStore.off('unitDeleted');
-		UserStore.off('retrieve-user');
+		UnitStore.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
 
 	getUnitId() {
