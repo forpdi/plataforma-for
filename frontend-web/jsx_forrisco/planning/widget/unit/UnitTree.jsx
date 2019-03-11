@@ -20,7 +20,7 @@ export default React.createClass({
 
 	propTypes: {
 		planRisk: React.PropTypes.object.isRequired,
-		unit: React.PropTypes.object,
+		unit: React.PropTypes.array,
 		className: React.PropTypes.object
 	},
 
