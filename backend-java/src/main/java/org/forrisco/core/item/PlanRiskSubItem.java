@@ -37,8 +37,16 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	private List<PlanRiskSubItemField> planRiskSubItemField;
 	
 	@Transient
-	private Long subItemId;
+	private Long itemId;
 
+	public Long getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(Long itemId) {
+		this.itemId = itemId;
+	}
+	
 	public PlanRiskItem getPlanRiskItem() {
 		return planRiskItem;
 	}
@@ -70,14 +78,4 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	public void setPlanRiskSubItemField(List<PlanRiskSubItemField> planRiskSubItemField) {
 		this.planRiskSubItemField = planRiskSubItemField;
 	}
-
-	public Long getSubItemId() {
-		return subItemId;
-	}
-
-	public void setSubItemId(Long subItemId) {
-		this.subItemId = subItemId;
-	}
-
-	
 }

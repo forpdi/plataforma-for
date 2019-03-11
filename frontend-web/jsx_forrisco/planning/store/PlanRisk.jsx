@@ -10,9 +10,12 @@ var PlanRiskModel = Fluxbone.Model.extend({
 var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_NEWPLANRISK: 'planRisk-newPlanRisk',
 	ACTION_RETRIEVE_PLANRISK: 'planRisk-retrievePlanRisk',
+	ACTION_FIND_UNARCHIVED_FOR_MENU: 'planRisk-getAllUnarchivedForMenu',
 	ACTION_FIND_UNARCHIVED: 'planRisk-getAllUnarchived',
 	ACTION_DELETE_PLANRISK: 'planRisk-deletePlanRisk',
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
+	ACTION_SEARCH_TERMS: 'planRisk-searchTerms',
+	ACTION_SEARCH_BY_KEY: 'planRisk-searchTermsByKey',
 	url: URL,
 	model: PlanRiskModel,
 
@@ -30,6 +33,22 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.trigger("plariskcreated", {msg: opts})
 				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	getAllUnarchivedForMenu() {
+		var me = this;
+		$.ajax({
+			url: this.url + '/unarchivedplanrisk',
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("unarchivedPlanRiskForMenu", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unarchivedPlanRiskForMenu", opts);
 			}
 		});
 	},
@@ -94,6 +113,38 @@ var PlanRiskStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], options.xhr);
 			}
 		})
+	},
+
+	searchTerms(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/search",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("searchTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("searchTerms", opts);
+			}
+		});
+	},
+
+	searchTermsByKey(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/searchByKey",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("searchTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("searchTerms", opts);
+			}
+		});
 	}
 });
 

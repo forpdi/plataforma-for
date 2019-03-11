@@ -21,22 +21,21 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_DESTROY: 'policy-destroy',
 	ACTION_FIND: 'policy-find',
 	ACTION_FIND_POLICY: 'policy-findPolicy',
-	//ACTION_RETRIEVE: 'policy-retrieve',
 	ACTION_UPDATE: 'policy-update',
 	ACTION_ARCHIVE: "policy-archive",
 	ACTION_UNARCHIVE: "policy-unarchive",
 	ACTION_FIND_ARCHIVED: 'policy-findArchived',
+	ACTION_FIND_UNARCHIVED_FOR_MENU: 'policy-findUnarchivedForMenu',
 	ACTION_FIND_UNARCHIVED: 'policy-findUnarchived',
 	ACTION_MAIN_MENU_STATE: "policy-mainMenuState",
 	ACTION_DELETE: "policy-delete",
 	ACTION_NEWPOLICY: "policy-newPolicy",
-	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "policy-customUpdate",
 	ACTION_RETRIEVE_RISK_LEVEL: "policy-retrieveRiskLevel",
 	ACTION_FIND_TERMS:'policy-findTerms',
 	ACTION_FINDALL_TERMS:'policy-findAllTerms',
 	ACTION_RETRIEVE_FILLED_SECTIONS: 'policy-retrieveFilledSections',
-
+	dispatchAcceptRegex: /^policy-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: PolicyModel,
 
@@ -70,6 +69,22 @@ var PolicyStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("archivedpolicylisted", opts);
+			}
+		});
+	},
+
+	findUnarchivedForMenu(){
+		var me = this;
+		$.ajax({
+			url: me.url+"/unarchivedpolicy",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("unarchivedPolicyForMenu", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unarchivedPolicyForMenu", opts);
 			}
 		});
 	},
@@ -202,6 +217,7 @@ var PolicyStore = Fluxbone.Store.extend({
 		});
 	},
 
+	//Busca Avançada
 	findTerms(data) {
 		var me = this;
 		$.ajax({

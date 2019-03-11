@@ -41,7 +41,6 @@ export default React.createClass({
 
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
 
-
 	changeFieldTypeOnEdit() {
 		var me = this;
 		var selected =
@@ -265,6 +264,7 @@ export default React.createClass({
 	},
 
 	render() {
+		console.log(this.props.field);
 		return (
 			<div>
 				{this.props.field ?
@@ -327,7 +327,9 @@ export default React.createClass({
 													</div>
 													<span className="pdi-normal-text">
 														<div
-															id={this.props.field.fieldName}> {this.props.field.fieldContent}
+															id={this.props.field.fieldName}> {
+																this.props.field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "")
+															}
 														</div>
 													</span>
 												</div>

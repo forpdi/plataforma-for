@@ -41,23 +41,28 @@ export default React.createClass({
 					)),
 				}
 			));
-			this.setState({
-				processes: _.map(filteredProcesses, (value, idx) => (
-					_.assign(
-						value,
-						{ tools: this.getTools(idx) },
-						{
-							fileData: {
-								fileName: value.fileName,
-								fileLink: value.fileLink,
-							}
+
+			_.map(filteredProcesses, (value, idx) => {
+				_.assign(
+					value,
+					{ tools: this.getTools(idx) },
+					{
+						fileData: {
+							fileName: value.file.name,
+							fileLink: value.fileLink,
 						}
-					)
-				)),
+					}
+				)
+			})
+
+			this.setState({
+				processes:filteredProcesses,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
 				loading: false,
 			});
+
+
 		});
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
@@ -113,17 +118,19 @@ export default React.createClass({
 				id: this.props.unitId,
 			},
 		});
+
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: {
-				planId: this.props.planRiskId,
-			},
+			data: this.props.planRiskId,
 		});
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		ProcessStore.off(null, null, this);
+		ProcessStore.off('processListed');
+		ProcessStore.off('processCreated');
+		ProcessStore.off('processDeleted');
+		ProcessStore.off('processUpdated');
+		UnitStore.off('unitbyplan');
 	},
 
 	insertNewRow() {
@@ -325,12 +332,14 @@ export default React.createClass({
 					id: me.props.levelInstanceId
 				}
 			};
+
 			me.setState({
 				fileData,
 				process: {
 					...this.state.process,
-					fileLink: file.fileLink,
-					fileName: Modal.fileName,
+					fileLink: fileData.fileLink,
+					//fileName: Modal.fileName,
+					file: {name: fileData.name, id:  fileData.id}
 				},
 			});
 			$('#process-file-upload').text(Modal.fileName);
@@ -394,6 +403,7 @@ export default React.createClass({
 					unit: { id: this.props.unitId },
 					tools: undefined,
 					fileData: undefined,
+					//file: {id: }
 				},
 			},
 		});

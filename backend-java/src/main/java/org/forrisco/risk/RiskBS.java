@@ -375,7 +375,6 @@ public class RiskBS extends HibernateBusiness {
 		this.persist(risk);
 	}
 		
-	
 	/**
 	 * Retorna um risco 
 	 * 

@@ -218,11 +218,17 @@ export default React.createClass({
 			}
 		});
 
-		PlanRiskItemStore.on('subitemUpdated', response => {
+		PlanRiskItemStore.on('subitemUpdated', () => {
 			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
-			this.context.router.push(
-				"/forrisco/plan-risk/" + this.props.planRiskId + "/item/" + this.props.itemId + "/subitem/" + response.data.id
-			);
+
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_DETAIL_SUBITEM,
+				data: {
+					id: this.props.subitemId
+				},
+			});
+
+			this.props.offEdit();
 			PlanRiskItemStore.off('subitemUpdated');
 		});
 	},

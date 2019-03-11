@@ -2,10 +2,8 @@ import moment from 'moment';
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
-import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
-import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
+import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var onClickOutside = require('react-onclickoutside');
@@ -42,31 +40,37 @@ export default onClickOutside(React.createClass({
 			levelsSelectProps:null,
 			dataInitProps:null,
 			dataEndProps:null,
-			ordResultProps:null
+			ordResultProps:null,
+			subplans: []
 		};
 	},
 
-	componentDidMount(){
-
-		ItemStore.on("retrieveAllSubitens",(model) => {
+	componentDidMount() {
+		PlanRiskItemStore.on("allSubItensByPlan",(model) => {
 			this.setState({
-				subitensSelect:model.data
+				subitensSelect: model.data
 			})
 
 		},this);
 
-		if(this.props.policy){
-			ItemStore.dispatch({
-				action: ItemStore.ACTION_RETRIEVE_ALLSUBITENS,
-				data: this.props.policy
+		if (this.props.planRisk) {
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS_BY_PLANRISK,
+				data: this.props.planRisk
 			});
 		}
+
+		// this.props.subplans.shift();
+		// this.props.subplans.pop();
+
+		this.setState({
+			subplans: this.props.subplans
+		})
 	},
 
 	componentWillUnmount() {
-		PlanStore.off(null, null, this);
+		PlanRiskItemStore.off(null, null, this);
 	},
-
 
 	selectSubplans() {
 		var subplans = document.getElementsByName("subplan-opt");
@@ -94,8 +98,6 @@ export default onClickOutside(React.createClass({
 	selectSubplansOutherFilds () {
 		var subplans = document.getElementsByName("subplan-opt");
 		subplans[0].checked = false;
-
-
 	},
 
 	selectLevels() {
@@ -109,7 +111,6 @@ export default onClickOutside(React.createClass({
 			for (var i = levels.length - 1; i > 0; i--) {
 				levels[i].checked = false;
 			}
-
 		}
 	},
 
@@ -125,10 +126,10 @@ export default onClickOutside(React.createClass({
 		var value = selectedDate.options[selectedDate.selectedIndex].value;
 
 		this.setState({
-    		initDate: moment(),
+			initDate: moment(),
 			endDate: moment(),
 			hideDate: false
-    	});
+		});
 
 		var month = moment().month();
 		var year = moment().year();
@@ -247,10 +248,11 @@ export default onClickOutside(React.createClass({
 			this.props.hiddenSearch();
 			return
 		}
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_TERMS,
+
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_SEARCH_BY_KEY,
 			data: {
-				policyId: this.props.policy,
+				planRiskId: this.props.planRisk,
 				terms:this.refs.termPesquisa.value,
 				itensSelect: subplansSelectP,
 				subitensSelect: levelsSelectP,
@@ -272,19 +274,19 @@ export default onClickOutside(React.createClass({
 
 	render() {
 
-			return (
+		return (
 
-				<div className="level-search">
+			<div className="level-search">
 
-  	               <div className='displayFlex-level-search'>
-   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
-  	               	</div>
-					<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
+				<div className='displayFlex-level-search'>
+					<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
+				</div>
+				<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
 
-					<div className="level-search-keyword">
-						<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
-						<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
-					</div>
+				<div className="level-search-keyword">
+					<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
+					<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
+				</div>
 
 
 				<div className="level-search-checkbox">
@@ -301,9 +303,9 @@ export default onClickOutside(React.createClass({
 							Todos
 						</div>
 
-						{this.props.subplans.map( (opt,idx) => {
+						{this.state.subplans.map( (opt,idx) => {
 							return (
-								<div key={'subplan-opt-'+idx}>
+								<div key={'subplan-opt-' + idx}>
 									<input
 										onChange={this.selectSubplansOutherFilds}
 										name={'subplan-opt'}
@@ -311,7 +313,7 @@ export default onClickOutside(React.createClass({
 										type="checkbox"
 										value={opt.id}
 										defaultChecked = {true} />
-									{opt.name}
+									{opt.label}
 								</div>
 							);
 						})}
@@ -352,7 +354,7 @@ export default onClickOutside(React.createClass({
 
 				</div>
 
-			{/*
+				{/*
 				<div className="level-search-select">
 					<h3>Data de modificação</h3>
 					<select type="text" placeholder="Selecione" id="select-date" onChange={this.selectDate}>
@@ -378,11 +380,11 @@ export default onClickOutside(React.createClass({
 								onChange={this.onChangeInit}
 								placeholderText="DD/MM/AAAA"
 								showYearDropdown
-								/>
+							/>
 						</div>
 
 						<div className="level-search-date-init">
-						<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
+							<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
 							<DatePicker
 								type="datepicker"
 								ref='end'
@@ -391,7 +393,7 @@ export default onClickOutside(React.createClass({
 								onChange={this.onChangeEnd}
 								placeholderText="DD/MM/AAAA"
 								showYearDropdown
-								/>
+							/>
 						</div>
 					</div>) : ("")}
 

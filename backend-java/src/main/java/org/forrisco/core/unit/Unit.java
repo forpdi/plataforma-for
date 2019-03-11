@@ -1,7 +1,5 @@
 package org.forrisco.core.unit;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,7 +35,6 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, length=4000)
 	private String description;
 
-	@SkipSerialization
 	@OneToOne(targetEntity=Unit.class, optional=true, fetch=FetchType.EAGER)
 	private Unit parent;
 	

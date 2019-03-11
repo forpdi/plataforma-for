@@ -7,7 +7,7 @@ import Validation from "forpdi/jsx_forrisco/core/util/Validation";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import _ from "underscore";
 import Messages from "@/core/util/Messages";
-import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem";
+import Modal from "@/core/widget/Modal";
 
 var VerticalForm = Form.VerticalForm;
 var Validate = Validation.validate;
@@ -102,9 +102,42 @@ export default React.createClass({
 		});
 	},
 
+	onDelete() {
+		var me = this;
+		var msg = "Você tem certeza que deseja excluir esse subitem?";
+
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_DELETE_SUBITEM,
+				data: this.props.params.subItemId
+			});
+		}, msg, me.refreshCancel);
+
+		PlanRiskItemStore.on('deletePlanRiskSubItem', response => {
+			if(response.success === true) {
+				this.context.toastr.addAlertSuccess('Item removido com sucesso');
+				this.context.router.push(
+					"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.planRiskId + "/info"
+				);
+			}
+			PlanRiskItemStore.off('deletePlanRiskSubItem');
+		})
+	},
+
+	refreshCancel () {
+		Modal.hide();
+	},
+
 	onEdit() {
 		this.setState({
 			onEdit: true
+		})
+	},
+
+	offEdit() {
+		this.setState({
+			onEdit: false
 		})
 	},
 
@@ -119,7 +152,7 @@ export default React.createClass({
 					</Link>
 				</li>
 				<li>
-					<Link onClick={this.deletePlanRisk}>
+					<Link onClick={this.onDelete}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
 						<span id="menu-levels"> Deletar Item </span>
 					</span>
@@ -193,7 +226,7 @@ export default React.createClass({
 											<label className="fpdi-text-label"> {field.fieldName} </label>
 
 											<div>
-												<span className="pdi-normal-text"> {field.fieldContent} </span>
+												<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: field.fieldContent}}/>
 											</div>
 										</div>
 									)
@@ -224,6 +257,7 @@ export default React.createClass({
 								itemTitle={this.state.itemTitle}
 								fieldsValues={this.state.field}
 								onEdit={this.state.onEdit}
+								offEdit={this.offEdit}
 								itemId={this.props.params.itemId}
 								subitemId={this.props.params.subItemId}
 								planRiskId={this.props.params.planRiskId}

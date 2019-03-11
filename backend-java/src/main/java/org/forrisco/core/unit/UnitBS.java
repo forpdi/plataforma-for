@@ -9,8 +9,11 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
-import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
+import org.forrisco.core.item.Item;
+import org.forrisco.core.item.PlanRiskItem;
+import org.forrisco.core.item.PlanRiskItemField;
+import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.Incident;
@@ -21,10 +24,12 @@ import org.forrisco.risk.RiskHistory;
 import org.forrisco.risk.RiskLevel;
 import org.forrisco.core.process.Process;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -40,32 +45,7 @@ public class UnitBS extends HibernateBusiness {
 	@Inject
 	private CriteriaCompanyFilter filter;
 	
-	/**
-	 * Recuperar unidade de um plano
-	 * 
-	 * @param PlanRisk,
-	 *            instância da plano de risco
-	 * 
-	 */
-	public PaginatedList<Unit> listUnitsbyPlanRisk(PlanRisk planrisk) {
-		PaginatedList<Unit> results = new PaginatedList<Unit>();
-
-		Criteria criteria = this.dao.newCriteria(Unit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("planRisk", planrisk));
-				
-
-		Criteria count = this.dao.newCriteria(Unit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("planRisk", planrisk))
-				.setProjection(Projections.countDistinct("id"));
-
-		results.setList(this.dao.findByCriteria(criteria, Unit.class));
-		results.setTotal((Long) count.uniqueResult());
-
-		return results;
-	}
-
+	
 	/**
 	 * Salvar uma nova unidade
 	 * 
@@ -78,7 +58,7 @@ public class UnitBS extends HibernateBusiness {
 		this.persist(unit);
 	}
 
-	public PaginatedList<Unit> listSubunitbyUnit(Unit unit) {
+	public PaginatedList<Unit> listSubunitByUnit(Unit unit) {
 
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 
@@ -86,17 +66,21 @@ public class UnitBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("parent", unit));
 
-		Criteria count = this.dao.newCriteria(Unit.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("parent", unit))
-				.setProjection(Projections.countDistinct("id"));
+//		Criteria count = this.dao.newCriteria(Unit.class)
+//				.add(Restrictions.eq("deleted", false))
+//				.add(Restrictions.eq("parent", unit))
+//				.setProjection(Projections.countDistinct("id"));
 
-		results.setList(this.dao.findByCriteria(criteria, Unit.class));
-		results.setTotal((Long) count.uniqueResult());
+		List<Unit> subunits = this.dao.findByCriteria(criteria, Unit.class);
+		results.setList(subunits);
+		results.setTotal((long) subunits.size());
 
 		return results;
 	}
 
+	
+	
+	
 	/**
 	 * Deleta uma unidade
 	 * 
@@ -181,151 +165,76 @@ public class UnitBS extends HibernateBusiness {
 		return incidents;
 	}
 
+	
+
 	/**
-	 * Atualiza o historico de riscos
+	 * Retorna uma unidade 
 	 * 
-	 * @param plan
-	 *            Plano de Risco
-	 *
+	 * @param id
+	 * 		Id da unidade
 	 */
-	public void updateHistory(PlanRisk plan) {
-		if (plan == null) {
-			return;
-		}
-
-		Map<RiskLevel, Integer> map = new HashMap<RiskLevel, Integer>();
-		int year = new Date().getYear() + 1900;
-		int month = new Date().getMonth();
-
-		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
-			map.clear();
+	public Unit retrieveUnitById(Long id) {
+		Criteria criteria = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("id", id));
+			criteria.setMaxResults(1);
 			
-			Criteria criteria = this.dao.newCriteria(Risk.class)
-					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("unit", unit));
-
-			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
-				//String level =  risk.getRiskLevel().getLevel();
-				RiskLevel level =  risk.getRiskLevel();
-				
-				if(!map.containsKey(level)) {
-					map.put(level,0);
-				}
-				map.put(level, map.get(level) + 1);
-			}
-				
-			for ( RiskLevel level : map.keySet() ) {
-			
-				//for (int j = month + 1; j <= 12; j++) {
-	
-					criteria = this.dao.newCriteria(RiskHistory.class)
-							.add(Restrictions.eq("deleted", false))
-							.add(Restrictions.eq("month", month))
-							.add(Restrictions.eq("year", year))
-							.add(Restrictions.eq("riskLevel", level))
-							.add(Restrictions.eq("unit", unit));
-	
-					criteria.setMaxResults(1);
-					RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
-	
-					if (riskhistory == null) {
-						riskhistory = new RiskHistory();
-					}
-	
-					riskhistory.setUnit(unit);
-					riskhistory.setMonth(month);
-					riskhistory.setYear(year);
-					riskhistory.setRiskLevel(level);
-					riskhistory.setQuantity(map.get(level));
-					
-					this.persist(riskhistory);
-	
-				//}
-			}
-		}
+		return (Unit) criteria.uniqueResult();
 	}
 
 	/**
-	 * Atualiza o historico de monitoramentos
+	 * Recuperar unidades e subunidades de um plano
 	 * 
-	 * @param plan
-	 *            Plano de Risco com os monitoramentos
-	 *
+	 * @param PlanRisk,
+	 *            instância da plano de risco
+	 * 
 	 */
-	public void updateMonitorHistory(PlanRisk plan) {
-		if (plan == null) {
-			return;
-		}
+	public PaginatedList<Unit> listUnitsbyPlanRisk(PlanRisk planrisk) {
+		PaginatedList<Unit> results = new PaginatedList<Unit>();
 
-		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-		int year = new Date().getYear() + 1900;
-		int month = new Date().getMonth();
+		Criteria criteria = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRisk", planrisk));
+				
 
-		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
-			for (int i = 0; i < 4; i++) {
-				map.put(i, 0);
-			}
-			Criteria criteria = this.dao.newCriteria(Risk.class)
-					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("unit", unit));
+		Criteria count = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRisk", planrisk))
+				.setProjection(Projections.countDistinct("id"));
 
-			
-			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
-				Monitor monitor =this.lastMonitorbyRisk(risk);
-				int state = this.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin():null);
-				map.put(state, map.get(state) + 1);
-			}
+		results.setList(this.dao.findByCriteria(criteria, Unit.class));
+		results.setTotal((Long) count.uniqueResult());
 
-			for (int i = 0; i < map.size(); i++) {
-				Integer quantity = map.get(i);
-				String state = null;
-
-				switch (i) {
-				case 0:
-					state = "não iniciado";
-					break;
-				case 1:
-					state = "em dia";
-					break;
-				case 2:
-					state = "próximo a vencer";
-					break;
-				case 3:
-					state = "atrasado";
-					break;
-				}
-
-				//for (int j = month + 1; j <= 12; j++) {
-
-					criteria = this.dao.newCriteria(MonitorHistory.class)
-							.add(Restrictions.eq("deleted", false))
-							.add(Restrictions.eq("month", month))
-							.add(Restrictions.eq("year", year))
-							.add(Restrictions.eq("estado", state))
-							.add(Restrictions.eq("unit", unit));
-
-					criteria.setMaxResults(1);
-					MonitorHistory hmonitor = (MonitorHistory) criteria.uniqueResult();
-
-					if (hmonitor == null) {
-						hmonitor = new MonitorHistory();
-					}
-
-					hmonitor.setUnit(unit);
-					hmonitor.setMonth(month);
-					hmonitor.setYear(year);
-					hmonitor.setQuantity(quantity);
-					hmonitor.setEstado(state);
-
-					this.persist(hmonitor);
-
-				//}
-			}
-		}
+		return results;
 	}
+	
+	/**
+	 * Recuperar unidades de um plano
+	 * 
+	 * @param PlanRisk,
+	 *            instância da plano de risco
+	 * 
+	 */
+	public PaginatedList<Unit> listOnlyUnitsbyPlanRisk(PlanRisk planrisk) {
+		PaginatedList<Unit> results = new PaginatedList<Unit>();
+
+		Criteria criteria = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.isNull("parent"))
+				.add(Restrictions.eq("planRisk", planrisk));
+
+		List<Unit> units = this.dao.findByCriteria(criteria, Unit.class);
+		results.setList(units);
+		results.setTotal((long) units.size());
+
+		return results;
+	}
+	
+	
+	
 
 	/**
-	 * Retorna o estado de
+	 * Retorna o estado de cada risco a partir da data 
 	 * 
 	 * @param String
 	 *            periodicidade
@@ -472,4 +381,204 @@ public class UnitBS extends HibernateBusiness {
 		
 	}
 
+	
+	/**
+	 * Atualiza o historico de riscos
+	 * 
+	 * @param plan
+	 *            Plano de Risco
+	 *
+	 */
+	public void updateHistory(PlanRisk plan) {
+		if (plan == null) {
+			return;
+		}
+
+		Map<RiskLevel, Integer> map = new HashMap<RiskLevel, Integer>();
+		int year = new Date().getYear() + 1900;
+		int month = new Date().getMonth();
+
+		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
+			map.clear();
+			
+			Criteria criteria = this.dao.newCriteria(Risk.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("unit", unit));
+
+			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
+				//String level =  risk.getRiskLevel().getLevel();
+				RiskLevel level =  risk.getRiskLevel();
+				
+				if(!map.containsKey(level)) {
+					map.put(level,0);
+				}
+				map.put(level, map.get(level) + 1);
+			}
+				
+			for ( RiskLevel level : map.keySet() ) {
+			
+				//for (int j = month + 1; j <= 12; j++) {
+	
+					criteria = this.dao.newCriteria(RiskHistory.class)
+							.add(Restrictions.eq("deleted", false))
+							.add(Restrictions.eq("month", month))
+							.add(Restrictions.eq("year", year))
+							.add(Restrictions.eq("riskLevel", level))
+							.add(Restrictions.eq("unit", unit));
+	
+					criteria.setMaxResults(1);
+					RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
+	
+					if (riskhistory == null) {
+						riskhistory = new RiskHistory();
+					}
+	
+					riskhistory.setUnit(unit);
+					riskhistory.setMonth(month);
+					riskhistory.setYear(year);
+					riskhistory.setRiskLevel(level);
+					riskhistory.setQuantity(map.get(level));
+					
+					this.persist(riskhistory);
+	
+				//}
+			}
+		}
+	}
+
+	/**
+	 * Atualiza o historico de monitoramentos
+	 * 
+	 * @param plan
+	 *            Plano de Risco com os monitoramentos
+	 *
+	 */
+	public void updateMonitorHistory(PlanRisk plan) {
+		if (plan == null) {
+			return;
+		}
+
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		int year = new Date().getYear() + 1900;
+		int month = new Date().getMonth();
+
+		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
+			for (int i = 0; i < 4; i++) {
+				map.put(i, 0);
+			}
+			Criteria criteria = this.dao.newCriteria(Risk.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("unit", unit));
+
+			
+			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
+				Monitor monitor =this.lastMonitorbyRisk(risk);
+				int state = this.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin():null);
+				map.put(state, map.get(state) + 1);
+			}
+
+			for (int i = 0; i < map.size(); i++) {
+				Integer quantity = map.get(i);
+				String state = null;
+
+				switch (i) {
+				case 0:
+					state = "não iniciado";
+					break;
+				case 1:
+					state = "em dia";
+					break;
+				case 2:
+					state = "próximo a vencer";
+					break;
+				case 3:
+					state = "atrasado";
+					break;
+				}
+
+				//for (int j = month + 1; j <= 12; j++) {
+
+					criteria = this.dao.newCriteria(MonitorHistory.class)
+							.add(Restrictions.eq("deleted", false))
+							.add(Restrictions.eq("month", month))
+							.add(Restrictions.eq("year", year))
+							.add(Restrictions.eq("estado", state))
+							.add(Restrictions.eq("unit", unit));
+
+					criteria.setMaxResults(1);
+					MonitorHistory hmonitor = (MonitorHistory) criteria.uniqueResult();
+
+					if (hmonitor == null) {
+						hmonitor = new MonitorHistory();
+					}
+
+					hmonitor.setUnit(unit);
+					hmonitor.setMonth(month);
+					hmonitor.setYear(year);
+					hmonitor.setQuantity(quantity);
+					hmonitor.setEstado(state);
+
+					this.persist(hmonitor);
+
+				//}
+			}
+		}
+	}
+
+	public List<Unit> listUnitTerms(PlanRisk planRisk, String terms, Long[] itensSelect, int ordResult) {
+		if (terms == null || terms.isEmpty()) {
+			return new ArrayList<Unit>();
+		}
+		if(itensSelect != null && itensSelect.length == 0) {
+			return new ArrayList<Unit>();
+		}
+		
+		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		LogicalExpression orExp = Restrictions.or(name, description);
+		
+		Criteria criteria = this.dao.newCriteria(Unit.class)
+				.add(Restrictions.eq("planRisk", planRisk))
+				.add(Restrictions.eq("deleted", false));
+		
+		if (itensSelect != null) {
+			Disjunction or = Restrictions.disjunction();
+			for (int i = 0; i < itensSelect.length; i++) {
+				or.add(Restrictions.eq("id", itensSelect[i]));
+			}
+			criteria.add(or);
+		}
+		
+		Map<Long, Unit> unit = new HashMap<Long, Unit>(); //<SubUnit, Unit>
+		List<Unit> list = this.dao.findByCriteria(criteria, Unit.class);
+		
+		for(int i = 0; i < list.size(); i++) {
+			Criteria crit = this.dao.newCriteria(Unit.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("parent", list.get(i)))
+			 		.add(orExp);
+			 
+			List<Unit> subUnits =  this.dao.findByCriteria(crit, Unit.class);
+			
+			for(int j = 0; j < subUnits.size(); j++) {
+				list.get(j).setParent(list.get(j).getParent());
+				unit.put(subUnits.get(j).getId(), subUnits.get(j));
+			}
+		}
+		
+		criteria.add(orExp);
+		list = this.dao.findByCriteria(criteria, Unit.class);
+		
+		for(int i = 0; i< list.size(); i++) {
+			list.get(i).setParent(list.get(i).getParent());
+			unit.put(list.get(i).getId(), list.get(i));
+		}
+		
+		return new ArrayList<Unit>(unit.values());
+	}
+
+	public List<SubItem> listSubitemTerms(PlanRisk plan, String terms, Long[] subitensSelect, int ordResult) {
+		 //TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -64,20 +64,18 @@ import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/Re
 import Forrisco_PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
 import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx"
 import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
+import Forrisco_DuplicatePlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DuplicatePlanRisk.jsx";
 import Forrisco_DetailPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx";
 import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
 import Forrisco_DetailPlanRiskSubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
 import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx";
 import Forrisco_PlanRiskRegistrySubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
 
-
-
 import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/RegistryUnit.jsx";
 import Forrisco_RegistrySubunit from "forpdi/jsx_forrisco/planning/view/unit/RegistrySubunit.jsx";
 import Forrisco_UnitTabPanel from "forpdi/jsx_forrisco/planning/widget/unit/UnitTabPanel.jsx";
 import Forrisco_UnitRegistryItem from "forpdi/jsx_forrisco/planning/view/unit/item/UnitRegistryItem.jsx";
 import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
-
 
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
 import Forrisco_RiskDetail from "forpdi/jsx_forrisco/planning/view/risk/RiskDetail.jsx";
@@ -133,6 +131,7 @@ ReactDOM.render((
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
 						<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
+						<Route path=":itemId/duplicate" component={Forrisco_DuplicatePlanRisk} />
 						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
 						<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 					</Route>
@@ -148,12 +147,22 @@ ReactDOM.render((
 								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
 								<Route path=":riskId" component={Forrisco_RiskDetail}/>
 							</Route>
-							<Route path="info" component={Forrisco_UnitGeneralInfo} />
+							<Route
+								path="info"
+								component={props =>
+									<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />
+								}
+							/>
 						</Route>
 
-						<Route path=":unitId" component={Forrisco_RegistryUnit}>
+						<Route path=":unitId">
 							<Route path="subunit/new" component={Forrisco_RegistrySubunit} /> /* Nova subunidade*/
-							<Route path="subunit/:subunitId" component={Forrisco_RegistrySubunit} /> /* Detalhar subunidade*/
+							<Route
+								path="subunit/:subunitId"
+								component={props =>
+									<Forrisco_UnitGeneralInfo {...props} isSubunit={true} />
+								}
+							/> /* Detalhar subunidade*/
 						</Route>
 					</Route>
 

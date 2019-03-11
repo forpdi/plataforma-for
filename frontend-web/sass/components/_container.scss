@@ -431,10 +431,14 @@
 	border: .5px solid #ddd;
 	text-align: -webkit-center;
 }
+
 .Cinza {
 	background-color: #ddd;
 }
-
+.Quadro{
+	height: 77px;
+    width: 187px;
+}
 
 .Vermelho {
 	background-color: #FF0000;
@@ -472,9 +476,20 @@
 	width: auto;
     font-size: 12px !important;
     left: 10px;
-    bottom: 10px;
+    bottom: 8px;
     position: relative;
-    margin: 10px;
+	margin: 10px;
+
+	&.frisco-impact{
+		bottom: 16px;
+		padding: 0px;
+	}
+}
+
+.frisco-probability{
+	width: 150px;
+    font-size: 12px !important;
+    position: relative;
 }
 
 

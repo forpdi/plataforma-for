@@ -8,11 +8,13 @@ import Messages from "@/core/util/Messages";
 import UnitProcess from "forpdi/jsx_forrisco/planning/view/unit/item/UnitProcess.jsx"
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
+import Modal from "@/core/widget/Modal";
 
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
+		tabPanel: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -31,7 +33,11 @@ export default React.createClass({
 				unit: response.data,
 				loading: false,
 			});
-		});
+			//Construção da Aba Superior
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.unit.name);
+			});
+		}, this);
 		UnitStore.on('unitUpdated', response => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("A unidade foi alterada com sucesso.");
@@ -42,15 +48,15 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		UnitStore.on('unitDeleted', response => {
 			if (response.success) {
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 				this.context.toastr.addAlertSuccess("A unidade foi excluída com sucesso.");
-				this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/unit`);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		UserStore.on('retrieve-user', (response) => {
 			if (response.data) {
 				this.setState({
@@ -59,13 +65,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_RETRIEVE_UNIT,
-			data: {
-				unitId: this.props.params.unitId,
-			},
-		});
+		}, this);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
@@ -73,11 +73,44 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+		this.refreshComponent(this.getUnitId());
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (this.props.isSubunit) {
+			if (this.props.params.subunitId !== newProps.params.subunitId) {
+				this.refreshComponent(newProps.params.subunitId);
+			}
+		} else {
+			if (this.props.params.unitId !== newProps.params.unitId) {
+				this.refreshComponent(newProps.params.unitId);
+			}
+		}
 	},
 
 	componentWillUnmount() {
-		UnitStore.off(null, null, this);
-		UserStore.off(null, null, this);
+		UnitStore.off('unitRetrieved');
+		UnitStore.off('unitUpdated');
+		UnitStore.off('unitDeleted');
+		UserStore.off('retrieve-user');
+	},
+
+	getUnitId() {
+		return this.props.isSubunit
+				? this.props.params.subunitId
+				: this.props.params.unitId;
+	},
+
+	refreshComponent(unitId) {
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId },
+		});
+		this.setState({
+			showUpdateMode: false,
+			unitToUpdate: null,
+			loading: true,
+		});
 	},
 
 	switchUpdateMode() {
@@ -87,16 +120,7 @@ export default React.createClass({
 		})
 	},
 
-	abbreviationChangeHandler(e) {
-		this.setState({
-			unitToUpdate: {
-				...this.state.unitToUpdate,
-				abbreviation: e.target.value,
-			}
-		});
-	},
-
-	userChangeHandler(e) {
+	selectChangeHandler(e) {
 		const idx = e.target.options.selectedIndex;
 		this.setState({
 			unitToUpdate: {
@@ -106,11 +130,11 @@ export default React.createClass({
 		});
 	},
 
-	descriptionChangeHandler(e) {
+	fieldChangeHandler(e) {
 		this.setState({
 			unitToUpdate: {
 				...this.state.unitToUpdate,
-				description: e.target.value,
+				[e.target.name]: e.target.value,
 			}
 		});
 	},
@@ -126,12 +150,15 @@ export default React.createClass({
 	},
 
 	deleteUnit() {
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_DELETE_UNIT,
-			data: {
-				id: this.props.params.unitId,
-			},
-		});
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_DELETE_UNIT,
+				data: {
+					id: this.getUnitId(),
+				},
+			});
+		}, 'Você tem certeza que deseja excluir essa Unidade?', () => Modal.hide());
 	},
 
 	renderDropdown() {
@@ -199,14 +226,27 @@ export default React.createClass({
 			<form onSubmit={this.updateUnit}>
 				<div className="form-group form-group-sm">
 					<label className="fpdi-text-label">
+						Nome
+					</label>
+					<VerticalInput
+						fieldDef={{
+							name: "name",
+							type: "text",
+							value: unit.name,
+							onChange: this.fieldChangeHandler,
+						}}
+					/>
+				</div>
+				<div className="form-group form-group-sm">
+					<label className="fpdi-text-label">
 						SIGLA
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "abbreviation",
 							type: "text",
 							value: unit.abbreviation,
-							onChange: this.abbreviationChangeHandler,
+							onChange: this.fieldChangeHandler,
 						}}
 					/>
 				</div>
@@ -216,12 +256,12 @@ export default React.createClass({
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "unit-user",
 							type: "select",
 							options: _.map(this.state.users, user => user.name),
 							value: unit.user.name,
 							renderDisplay: value => value,
-							onChange: this.userChangeHandler,
+							onChange: this.selectChangeHandler,
 						}}
 					/>
 				</div>
@@ -231,11 +271,11 @@ export default React.createClass({
 					</label>
 					<VerticalInput
 						fieldDef={{
-							name: "new-incident-description",
+							name: "description",
 							type: "textarea",
 							rows: 4,
 							value: unit.description,
-							onChange: this.descriptionChangeHandler,
+							onChange: this.fieldChangeHandler,
 						}}
 					/>
 				</div>
@@ -280,7 +320,7 @@ export default React.createClass({
 
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
-						unitId={this.props.params.unitId}
+						unitId={unit.id}
 					/>
 
 				</div>

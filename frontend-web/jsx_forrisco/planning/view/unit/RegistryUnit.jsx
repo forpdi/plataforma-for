@@ -12,11 +12,9 @@ import StructureStore from "@/planning/store/Structure";
 export default React.createClass({
 
 	contextTypes: {
-		accessLevel: React.PropTypes.number.isRequired,
-		roles: React.PropTypes.object.isRequired,
-		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
-		permissions: React.PropTypes.array.isRequired
+		tabPanel: React.PropTypes.object,
+		router: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -79,23 +77,27 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
+		}, this);
 
 		UserStore.dispatch({
-      action: UserStore.ACTION_RETRIEVE_USER,
-      data: {
-          page: 1,
-          pageSize: 500,
-      },
-    });
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: 1,
+				pageSize: 500,
+			},
+		});
 
 		UnitStore.on("unitcreated", (response) => {
 			if (response.data) {
+				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${response.data.id}/info`);
 				this.context.toastr.addAlertSuccess(Messages.get("notification.unit.save"));
-				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}
+		});
+
+		_.defer(() => {
+			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Unidade');
 		});
 	},
 
@@ -112,6 +114,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		// PolicyStore.off(null, null, this);
 		UnitStore.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
 
 	fieldChangeHandler(e) {
@@ -146,6 +149,7 @@ export default React.createClass({
 		}, {
 			name: "abbreviation",
 			type: "text",
+			required: true,
 			placeholder: "Descrição da Política",
 			maxLength: 240,
 			label: Messages.getEditable("label.abbreviation", "fpdi-nav-label"),
@@ -182,10 +186,8 @@ export default React.createClass({
 			return false;
 		}
 
-		console.log(unit);
-
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_NEWUNIT,
+			action: UnitStore.ACTION_NEW_UNIT,
 			data: unit,
 		});
 	},
@@ -206,7 +208,6 @@ export default React.createClass({
 				<h1 className="marginLeft115">Nova Unidade</h1>
 				<div className="fpdi-card padding40">
 					<form onSubmit={this.handleSubmit}>
-
 						{
 							this.getFields().map((field, index) => {
 								return (
@@ -214,7 +215,6 @@ export default React.createClass({
 								);
 							})
 						}
-
 						<div className="fpdi-editable-data-input-group">
 							<button type="submit" className="btn btn-success">{this.state.submitLabel}</button>
 							<button type="button" className="btn btn-default"
