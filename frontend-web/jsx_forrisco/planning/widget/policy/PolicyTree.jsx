@@ -101,7 +101,6 @@ export default React.createClass({
 				itens:raw.data,
 				tree: tree
 			});
-
 		}, me);
 
 
@@ -188,20 +187,40 @@ export default React.createClass({
 			}
 		}, me);
 
-		ItemStore.dispatch({
-			action: ItemStore.ACTION_RETRIEVE_ITENS,
-			data: this.props.policy.id,
+		//Atualiza a árvore quando um novo item é cadastrado
+		ItemStore.on("newItem", () => {
+			this.refreshOnUpdate(this.props.policy.id);
 		});
 
+		//Atualiza a árvore quando um novo subitem é cadastrado
+		ItemStore.on("newSubItem", () => {
+			this.refreshOnUpdate(this.props.policy.id);
+		});
 
+		//Atualiza a árvore quando um  item é deletado
+		ItemStore.on("itemDeleted", () => {
+			this.refreshOnUpdate(this.props.policy.id);
+		});
+
+		//Atualiza a árvore quando um  subitem é deletado
+		ItemStore.on("subitemDeleted", () => {
+			this.refreshOnUpdate(this.props.policy.id);
+		});
+
+		this.refreshOnUpdate(this.props.policy.id);
 	},
 
+	refreshOnUpdate(policyId) {
+		ItemStore.dispatch({
+			action: ItemStore.ACTION_RETRIEVE_ITENS,
+			data: policyId,
+		});
+	},
 
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
 		ItemStore.off(null, null, this);
 	},
-
 
 	componentWillReceiveProps(newProps) {
 		ItemStore.dispatch({
@@ -241,6 +260,11 @@ export default React.createClass({
 		if (newProps.treeType == this.state.actualType && (exists || newProps.itemId == null)) {
 			return;
 		}
+
+		ItemStore.dispatch({
+			action: ItemStore.ACTION_RETRIEVE_ITENS,
+			data:newProps.policy.id,
+		});
 
 	},
 
@@ -329,7 +353,6 @@ export default React.createClass({
 
 
 	renderRecords() {
-
 		return (<div>
 		<div className="row">Itens
 			<div key="rootSection-selectall">
