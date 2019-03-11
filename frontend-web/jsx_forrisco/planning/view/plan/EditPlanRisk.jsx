@@ -77,34 +77,28 @@ export default React.createClass({
 			});
 
 
-			// if(this.state.policyOptions.length > 1) {
-				this.setState({
-					planRiskFields: fields,
-					isLoading: false
-				});
-			// }
+			this.setState({
+				planRiskFields: fields,
+				isLoading: false
+			});
+
 
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
 			});
 		}, this);
-		this.refreshComponent(this.props.params.planRiskId);
+		this.refreshComponent();
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (this.props.params.planRiskId !== newProps.params.planRiskId) {
-			this.refreshComponent(newProps.params.planRiskId)
+			this.refreshComponent()
 		}
 	},
 
-	refreshComponent(planRiskId) {
+	refreshComponent() {
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_UNARCHIVED
-		});
-
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: planRiskId
 		});
 	},
 
