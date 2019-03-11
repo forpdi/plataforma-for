@@ -132,30 +132,6 @@ export default React.createClass({
 			}
 		}, me);
 
-		/*ItemStore.on("retrieveSubField", (model) => {
-			if(model.data != null){
-				var fields = [];
-				for (var i in model.data) {
-					if(!model.data[i].deleted){
-						fields.push({
-							name: model.data[i].name+"-"+(i),
-							value: model.data[i].name,
-							label: model.data[i].name,
-							description: model.data[i].description,
-							isText:  model.data[i].isText,
-							type: model.data[i].isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							edit: false
-						});
-					}
-				}
-
-				me.setState({
-					fields: fields,
-					loading: false
-				})
-			}
-		}, me);*/
-
 		ItemStore.on("subitemUpdated", (model) => {
 			if(model !=null){
 				var mod = this.state.subitemModel;
@@ -229,7 +205,7 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("subitemDeleted", (model) => {
-			this.context.router.push("forrisco/policy/"+this.context.policy.get('id')+"/item/"+this.state.itemModel.attributes.id);
+			this.context.router.push("forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id);
 		})
 
 		me.refreshData(me.props, me.context);
@@ -278,11 +254,6 @@ export default React.createClass({
 						action: ItemStore.ACTION_RETRIEVE_SUBITEM,
 						data: props.params.subitemId
 					});
-
-					/*ItemStore.dispatch({
-						action: ItemStore.ACTION_RETRIEVE_SUBFIELD,
-						data: props.params.subitemId
-					});*/
 				}
 			}else{
 
@@ -319,7 +290,6 @@ export default React.createClass({
 		if (this.state.subitemModel) {
 			this.setState({
 				vizualization: true,
-				//fields: this.getFields(false)
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -328,7 +298,6 @@ export default React.createClass({
 	changeVizualization() {
 		this.setState({
 			vizualization: false,
-			//fields: this.getFields(true)
 		});
 	},
 	deleteSubitem() {
@@ -343,15 +312,6 @@ export default React.createClass({
 					});
 				},msg,me.refreshCancel);
 		}
-			/*var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
-			Modal.confirmCancelCustom(() => {
-				Modal.hide();
-				PlanStore.dispatch({
-					action: PlanStore.ACTION_DELETE_PLAN,
-					data: me.state.model
-				});
-			},msg,()=>{Modal.hide();me.refreshCancel;});
-		}*/
 	},
 	tweakNewField() {
 		this.setState({
@@ -478,15 +438,25 @@ export default React.createClass({
 	},
 
 	renderBreadcrumb() {
+
 		return(
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						to={'/forrisco/policy/'+this.context.policy.id+"/item/"+this.props.params.itemId}
+						to={'/forrisco/policy/'+this.context.policy.id}
 						title={this.context.policy.name}>{this.context.policy.name.length > 15 ? this.context.policy.name.substring(0, 15)+"..." : this.context.policy.name.substring(0, 15)
 					}</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
+
+				<span>
+					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
+						to={'/forrisco/policy/'+this.context.policy.id+"/item/"+this.props.params.itemId}
+						title={this.state.itemModel.attributes.name}>{this.state.itemModel.attributes.name.length > 15 ? this.state.itemModel.attributes.name.substring(0, 15)+"..." : this.state.itemModel.attributes.name.substring(0, 15)
+					}</Link>
+					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
+				</span>
+
 				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
 					{this.state.titulo > 15 ? this.state.titulo.substring(0, 15)+"..." : this.state.titulo.substring(0, 15)}
 				</span>

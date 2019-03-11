@@ -54,31 +54,33 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 
-		var info = {
-			label: "Informações Gerais",
-			expanded: false,
-			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-			key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-			model: this.props.planRisk,
-			id: this.props.planRisk.id,
-		};
 
-		//Botão Novo Item Geral
-		var newItem = {
-			label: Messages.get("label.newItem"),
-			labelCls: 'fpdi-new-node-label',
-			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
-			key: "newPlanRiskItem"
-		};
 
 		/*Item de um Plano*/
 		PlanRiskItemStore.on('allItens', (response) => {
 
+			var info = {
+				label: "Informações Gerais",
+				expanded: false,
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
+				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
+				model: this.props.planRisk,
+				id: this.props.planRisk.id,
+			};
+
+			//Botão Novo Item Geral
+			var newItem = {
+				label: Messages.get("label.newItem"),
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
+				key: "newPlanRiskItem"
+			};
+
 			/* Redireciona para as Informações gerais ao carregar a Tree*/
-			if (!this.props.location.pathname.includes("unit")) {
-				this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id + "/info");
-			}
+			//if (!this.props.location.pathname.includes("unit")) {
+		//		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");
+		//	}
 			/* ____________________  */
 
 			var treeItens = [];

@@ -21,7 +21,8 @@ export default React.createClass({
 		permissions: React.PropTypes.array.isRequired
 	},
 	propTypes: {
-		policy: React.PropTypes.object.isRequired
+		policy: React.PropTypes.object.isRequired,
+		className: React.PropTypes.object
 	},
 	getInitialState() {
 		return {
@@ -47,20 +48,21 @@ export default React.createClass({
 			itensSelect: [],
 			subitensSelect: [],
 			unnumberedSections: 0,
-			export:false
+			export:false,
+			policyId:null
 		};
 	},
+
 	componentDidMount() {
 		var me = this;
 
 		ItemStore.on("retrieveItens", (raw) => {
 			var tree = raw.data.map((policy, index) => {
-
 				var to = '/forrisco/policy/' + this.props.policy.id + '/item/' + policy.id;
 				return {
 					label: policy.name,
 					expanded: false,
-					expandable: policy.name == "Informações gerais" ? false : true,
+					expandable: true,
 					to: to,
 					key: to,
 					model: policy,
@@ -70,23 +72,36 @@ export default React.createClass({
 				};
 			});
 
-			var toNew = '/forrisco/policy/' + this.props.policy.id + '/item/new';
-				tree.push({
-					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
-						PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-					label: Messages.get("label.newItem"),
-					labelCls: 'fpdi-new-node-label',
-					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-					expandable: false,
-					to: toNew,
-					key: "newPolicy"
-				});
+			var overview= '/forrisco/policy/' + this.props.policyId + '/item/overview'
+			var info = {
+				label: "Informações Gerais",
+				expanded: false,
+				to: overview,
+				key: overview,
+				model: this.props.policy,
+				id: this.props.policy.id,
+			};
+
+			var newItem = {
+				hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
+					PermissionsTypes.MANAGE_PLAN_PERMISSION)),
+				label: Messages.get("label.newItem"),
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				expandable: false,
+				to: '/forrisco/policy/' + this.props.policy.id + '/item/new',
+				key: "newPolicy"
+			}
+
+			tree.unshift(info);
+			tree.push(newItem);
 
 			me.setState({
 				itensSelect: raw.data,
 				itens:raw.data,
 				tree: tree
 			});
+
 		}, me);
 
 
@@ -147,7 +162,6 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("retrieveAllSubitens",(model) => {
-			console.log("retrieveAllSubitens",(model))
 			this.setState({
 				subitens:model.data,
 				rootSections: this.state.itens,
@@ -181,16 +195,25 @@ export default React.createClass({
 
 
 	},
+
+
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
 		ItemStore.off(null, null, this);
 	},
+
+
 	componentWillReceiveProps(newProps) {
+		ItemStore.dispatch({
+			action: ItemStore.ACTION_RETRIEVE_ITENS,
+			data:newProps.policy.id,
+		});
+
+		this.state.policyId=newProps.policyId
 
 		if (document.URL.indexOf('details/overview') >= 0) {
 			this.refreshPlans(newProps.policy.id);
 		}
-
 
 		if(newProps.subitemId != null){
 			ItemStore.dispatch({
@@ -210,17 +233,14 @@ export default React.createClass({
 			}
 		}
 
+		if (newProps.itemId !== this.props.itemId) {
+			//this.refresh(newProps.planRisk.id);
+		}
 
 
 		if (newProps.treeType == this.state.actualType && (exists || newProps.itemId == null)) {
 			return;
 		}
-
-
-		ItemStore.dispatch({
-			action: ItemStore.ACTION_RETRIEVE_ITENS,
-			data:newProps.policy.id,
-		});
 
 	},
 
@@ -309,6 +329,7 @@ export default React.createClass({
 
 
 	renderRecords() {
+
 		return (<div>
 		<div className="row">Itens
 			<div key="rootSection-selectall">
@@ -469,70 +490,50 @@ export default React.createClass({
 	render() {
 		return (
 			<div className="fpdi-tabs">
-				<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
-
-					{this.props.policy.id ?
-						<Link
-							role="tab"
-							to={"forrisco/policy/" + this.props.policy.id + "/"}
-							title="Política"
-							activeClassName="active"
-							className="tabTreePanel">
-							{Messages.getEditable("label.forriscoPolicy", "fpdi-nav-label")}
-						</Link> : undefined}
-
-				</ul>
-				{this.context.router.isActive("forrisco/policy/" + this.props.policy.id + "/item") ||
-				this.context.router.isActive("forrisco/policy/" + this.props.policy.id + "/edit") ?
-					<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
-						<div
-							className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
-							<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-							   title={Messages.get("label.clean")}> </i>
-							<input type="text" className="form-control-busca" ref="term"
-								   onKeyDown={this.onKeyDown}/>
-							<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-							   title={Messages.get("label.advancedSearch")}> </i>
-							<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-							   onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+				<div
+					className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+					<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
+					   title={Messages.get("label.clean")}> </i>
+					<input type="text" className="form-control-busca" ref="term"
+						   onKeyDown={this.onKeyDown}/>
+					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
+					   title={Messages.get("label.advancedSearch")}> </i>
+					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
+					   onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+				</div>
+					{this.state.hiddenResultSearch ?
+						<SearchResult
+							policyId={this.props.policy.id}
+							terms={this.state.termsSearch}
+							itensSelect={this.state.itensSelect}
+							subitensSelect={this.state.subitensSelect}
+							ordResult={this.state.ordResultSearch}
+						/>
+						:
+						<div>
+							<TreeView tree={this.state.tree}/>
+								<hr className="divider"></hr>
+							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+								<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
+									<span/>
+									{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+								</a>
+							: ""}
 						</div>
-							{this.state.hiddenResultSearch ?
-								<SearchResult
-									policyId={this.props.policy.id}
-									terms={this.state.termsSearch}
-									itensSelect={this.state.itensSelect}
-									subitensSelect={this.state.subitensSelect}
-									ordResult={this.state.ordResultSearch}
-								/>
-								:
-								<div>
-									{this.context.roles.SYSADMIN ? "" : <FavoriteTree/>}
-									<TreeView tree={this.state.tree}/>
-										<hr className="divider"></hr>
-									{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-										PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-										<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
-											<span/>
-											{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-										</a>
-									: ""}
-								</div>
-							}
-							{this.state.hiddenSearch ?
-							<div className="container Pesquisa-Avancada">
-								<LevelSearch
-									searchText={this.refs.term.value}
-									subplans={this.state.itens}
-									policy={this.props.policy.id}
-									hiddenSearch={this.searchFilter}
-									displayResult={this.displayResult}
-								/>
-							</div> : ""
-						}
+					}
+					{this.state.hiddenSearch ?
+					<div className="container Pesquisa-Avancada">
+						<LevelSearch
+							searchText={this.refs.term.value}
+							subplans={this.state.itens}
+							policy={this.props.policy.id}
+							hiddenSearch={this.searchFilter}
+							displayResult={this.displayResult}
+						/>
 					</div> : ""
 				}
-				<div className="fpdi-tabs-fill">
-				</div>
+			<div className="fpdi-tabs-fill"></div>
 			</div>);
 		}
 });

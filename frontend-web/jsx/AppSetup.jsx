@@ -56,6 +56,7 @@ import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
 import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
+import Forrisco_PolicyGeneralInfo from "forpdi/jsx_forrisco/planning/view/policy/item/PolicyGeneralInfo.jsx"
 import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
 import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/ItemRegister.jsx";
 import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/SubItemRegister.jsx";
@@ -102,13 +103,15 @@ ReactDOM.render((
 			<Route path="forrisco" component={ForRiscoApplication}>
 				<Route path="home" component={Forrisco_Dashboard} />
 				<Route path="risk" component={Forrisco_RiskList} />
-				<Route path="policy" component={Forrisco_PolicyEdit} />
 
-				<Route path="policy/:policyId">
+
+				<Route path="policy/new" component={Forrisco_PolicyEdit} />
+
+				<Route path="policy/:policyId" component={Forrisco_PolicyDetails}>
 					<IndexRedirect to="item" />
-					<Route path="item" component={Forrisco_PolicyDetails}>
-						<IndexRedirect to="overview" />
-						<Route path="overview" component={Forrisco_PolicyTab} />
+					<Route path="item">
+						<IndexRedirect to="overview"/>
+						<Route path="overview" component={Forrisco_PolicyGeneralInfo} />
 						<Route path="new" component={Forrisco_ItemRegister} />
 						<Route path=":itemId/subitem/new" component={Forrisco_SubItemRegister} />
 						<Route path=":itemId/subitem/:subitemId" component={Forrisco_SubItemRegister} />
@@ -126,10 +129,11 @@ ReactDOM.render((
 					<IndexRedirect to="item" />
 					<Route path="item">
 						<IndexRedirect to="overview" />
-						<Route path="overview" /> {/* component={Forrisco_PlanRiskTabPanel} /> */}
+						<Route path="overview" component={Forrisco_PlanRiskGeneralInfo} />
 						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco*/
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
-						<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
+						{//<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
+						}
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
 						<Route path=":itemId/duplicate" component={Forrisco_DuplicatePlanRisk} />
 						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
