@@ -35,18 +35,26 @@ export default React.createClass({
 				policies.push({id: policy.id, label: policy.name})
 			});
 			this.setState({policyOptions: policies});
+
+			PlanRiskStore.dispatch({
+				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+				data: this.props.params.planRiskId
+			});
+
 		}, this);
 
 		PlanRiskStore.on('retrivedplanrisk', response => {
 			var fields = [];
 
-			console.log( this.state.policyOptions);
+			console.log(this.state.policyOptions.length);
+
+
 			fields.push({
 				name: "name",
 				type: "text",
 				//required: true,
 				maxLength: 240,
-				placeholder: "Novo Plano de Gestão de Riscos",
+				placeholder: "Nome do Plano de Gestão de Riscos",
 				label: Messages.getEditable("label.name", "fpdi-nav-label"),
 				value: response.attributes.name,
 			}, {
@@ -68,10 +76,13 @@ export default React.createClass({
 				options: this.state.policyOptions
 			});
 
-			this.setState({
-				planRiskFields: fields,
-				isLoading: false
-			});
+
+			// if(this.state.policyOptions.length > 1) {
+				this.setState({
+					planRiskFields: fields,
+					isLoading: false
+				});
+			// }
 
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
