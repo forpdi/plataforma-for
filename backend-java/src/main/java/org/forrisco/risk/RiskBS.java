@@ -89,7 +89,7 @@ public class RiskBS extends HibernateBusiness {
 	 */
 	public void saveAction(PreventiveAction action) {
 		action.setDeleted(false);
-		action.setAccomplished(false);
+//		action.setAccomplished(false);
 		this.persist(action);
 	}
 	

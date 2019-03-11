@@ -113,6 +113,7 @@ public class RiskController extends AbstractController {
 			}
 			
 			action.setId(null);
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(action)));
 			this.riskBS.saveAction(action);
 			this.success(action);
 		} catch (Throwable e) {
