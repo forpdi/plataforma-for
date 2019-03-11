@@ -1,4 +1,5 @@
 import React from "react";
+import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import Messages from "@/core/util/Messages";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
@@ -20,19 +21,40 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
 			planRiskFields: [],
+			policyOptions: [{id: null, label: ""}],
 			isLoading: true
 		};
 	},
 
 	componentDidMount() {
+
+		PolicyStore.on("unarchivedpolicylisted", response => {
+			const policies = [];
+
+			response.data.map(policy => {
+				policies.push({id: policy.id, label: policy.name})
+			});
+			this.setState({policyOptions: policies});
+
+			PlanRiskStore.dispatch({
+				action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+				data: this.props.params.planRiskId
+			});
+
+		}, this);
+
 		PlanRiskStore.on('retrivedplanrisk', response => {
 			var fields = [];
+
+			console.log(this.state.policyOptions.length);
+
+
 			fields.push({
 				name: "name",
 				type: "text",
 				//required: true,
 				maxLength: 240,
-				placeholder: "Novo Plano de Gestão de Riscos",
+				placeholder: "Nome do Plano de Gestão de Riscos",
 				label: Messages.getEditable("label.name", "fpdi-nav-label"),
 				value: response.attributes.name,
 			}, {
@@ -45,49 +67,44 @@ export default React.createClass({
 			}, {
 				name: "linkedPolicy",
 				type: "select",
-				options: [{
-					id: response.attributes.policy.id,
-					label: response.attributes.policy.name
-				}],
 				className: "form-control-h",
 				required: true,
 				displayField: 'label',
 				valueField: 'id',
 				label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
-				value: response.attributes.policy.name
+				value: response.attributes.policy.name,
+				options: this.state.policyOptions
 			});
+
 
 			this.setState({
 				planRiskFields: fields,
 				isLoading: false
 			});
 
+
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
 			});
 		}, this);
-		this.refreshComponent(this.props.params.planRiskId);
+		this.refreshComponent();
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (this.props.params.planRiskId !== newProps.params.planRiskId) {
-			this.refreshComponent(newProps.params.planRiskId)
+			this.refreshComponent()
 		}
 	},
 
-	refreshComponent(planRiskId) {
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: planRiskId
-		})
+	refreshComponent() {
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_UNARCHIVED
+		});
 	},
 
 	componentWillUnmount() {
 		PlanRiskStore.off(null, null, this);
-	},
-
-	getFields() {
-
+		PolicyStore.off(null, null, this);
 	},
 
 	handleSubmit(event) {
