@@ -177,6 +177,9 @@ export default React.createClass({
 				var msg = Messages.get("notification.policy.save");
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/" + model.data.id + "/item/overview");
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
 			} else {
 				var msg = model.msg ? model.msg.message : "Erro ao criar Política"
 				this.context.toastr.addAlertError(msg);
@@ -207,6 +210,9 @@ export default React.createClass({
 				if (model.data.id != null) {
 					this.context.toastr.addAlertSuccess(Messages.get("notification.policy.update"));
 					me.context.router.push("/forrisco/policy/" + model.data.id + "/item/" + this.state.itemModel.data.id);
+					PolicyStore.dispatch({
+						action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+					});
 				} else {
 					var msg = Messages.get("label.errorUpdatePolicy") + (model ? ": " + model.msg : "")
 					this.context.toastr.addAlertError(msg);

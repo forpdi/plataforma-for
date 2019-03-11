@@ -369,6 +369,9 @@ export default React.createClass({
 		PolicyStore.on("policyDeleted", (model) => {
 			if(model.success){
 				this.context.router.push("/forrisco/home");
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
 			}else{
 				if(model.message != null){
 					this.context.toastr.addAlertError(model.message);

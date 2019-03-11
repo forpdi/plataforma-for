@@ -38,7 +38,7 @@ export default React.createClass({
 		var me = this;
 
 		if (this.state.logged && EnvInfo.company != null) {
-			me.refreshPolicies();
+			me.refresh();
 		}
 		UserSession.on("login", session => {
 			me.setState({
@@ -47,7 +47,7 @@ export default React.createClass({
 			});
 
 			if (EnvInfo.company != null) {
-				me.refreshPolicies();
+				me.refresh();
 			}
 		}, me);
 		UserSession.on("logout", session => {
@@ -58,7 +58,7 @@ export default React.createClass({
 			});
 		}, me);
 
-		PolicyStore.on("unarchivedpolicylisted", (store) => {
+		PolicyStore.on("unarchivedPolicyForMenu", (store) => {
 			if (store.status === 400) {
 				me.setState({
 					domainError: true
@@ -71,7 +71,7 @@ export default React.createClass({
 			}
 		}, me);
 
-		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
+		PlanRiskStore.on("unarchivedPlanRiskForMenu", (response) => {
 			var listedPlans = [];
 			if (response.status !== true) {
 				this.setState({domainError: true});
@@ -120,10 +120,6 @@ export default React.createClass({
 		//});
 	},
 
-	componentWillReceiveProps() {
-			this.refreshPolicies();
-	},
-
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 		PolicyStore.off(null, null, this);
@@ -165,15 +161,15 @@ export default React.createClass({
 		});
 	},
 
-	refreshPolicies() {
+	refresh() {
 		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_UNARCHIVED
+			action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 		});
 		/*PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_ARCHIVED
 		});*/
 		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_FIND_UNARCHIVED
+			action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 		});
 		//PlanRiskStore.off(null, null, this);
 	},
