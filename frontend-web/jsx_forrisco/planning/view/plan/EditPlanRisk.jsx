@@ -1,4 +1,5 @@
 import React from "react";
+import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import Messages from "@/core/util/Messages";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
@@ -20,13 +21,26 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
 			planRiskFields: [],
+			policyOptions: [{id: null, label: ""}],
 			isLoading: true
 		};
 	},
 
 	componentDidMount() {
+
+		PolicyStore.on("unarchivedpolicylisted", response => {
+			const policies = [];
+
+			response.data.map(policy => {
+				policies.push({id: policy.id, label: policy.name})
+			});
+			this.setState({policyOptions: policies});
+		}, this);
+
 		PlanRiskStore.on('retrivedplanrisk', response => {
 			var fields = [];
+
+			console.log( this.state.policyOptions);
 			fields.push({
 				name: "name",
 				type: "text",
@@ -45,16 +59,13 @@ export default React.createClass({
 			}, {
 				name: "linkedPolicy",
 				type: "select",
-				options: [{
-					id: response.attributes.policy.id,
-					label: response.attributes.policy.name
-				}],
 				className: "form-control-h",
 				required: true,
 				displayField: 'label',
 				valueField: 'id',
 				label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
-				value: response.attributes.policy.name
+				value: response.attributes.policy.name,
+				options: this.state.policyOptions
 			});
 
 			this.setState({
@@ -76,18 +87,19 @@ export default React.createClass({
 	},
 
 	refreshComponent(planRiskId) {
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_UNARCHIVED
+		});
+
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
 			data: planRiskId
-		})
+		});
 	},
 
 	componentWillUnmount() {
 		PlanRiskStore.off(null, null, this);
-	},
-
-	getFields() {
-
+		PolicyStore.off(null, null, this);
 	},
 
 	handleSubmit(event) {
