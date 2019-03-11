@@ -147,6 +147,8 @@ export default React.createClass({
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
+		// const showusers = _.map(this.state.users, user => user.name);
+		// console.log(showusers);
         const newRow = {
 			report: <VerticalInput
 				className="padding7"
@@ -457,15 +459,15 @@ export default React.createClass({
 		}, {
 			Header: 'Impacto',
 			accessor: 'impact',
-			minWidth: 130,
+			minWidth: 150,
 		}, {
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 210,
+			minWidth: 250,
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',
-			minWidth: 140,
+			minWidth: 150,
 		}, {
 			Header: '',
 			accessor: 'tools',

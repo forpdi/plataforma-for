@@ -30,6 +30,9 @@
         white-space: normal!important;
         border-right: none!important;
         text-align: left;
+    }
+
+    .rt-td:not(:last-child), .rt-th {
         padding: 10px 22px!important;
     }
 

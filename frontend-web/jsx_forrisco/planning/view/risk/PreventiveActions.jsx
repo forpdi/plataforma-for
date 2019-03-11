@@ -9,6 +9,7 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
+
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -18,7 +19,8 @@ export default React.createClass({
 		return {
 			data: [],
 			users: [],
-			contingency: null,
+			accomplished: false,
+			action: null,
 			newRowDisplayed: false,
 			updateRowDisplayed: false,
 			isLoading: true,
@@ -26,11 +28,15 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		RiskStore.on('contingencyListed', (response) => {
+		RiskStore.on('preventiveActionsListed', (response) => {
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
-						_.assign(value, { tools: this.renderRowTools(value.id, idx) })
+						console.log(value),
+						_.assign(value, { 
+							accomplished: this.renderAccomplishmentOnList(value.accomplished, value.id, idx),
+							tools: this.renderRowTools(value.id, idx),
+						})
 					)),
 					isLoading: false,
 					newRowDisplayed: false,
@@ -38,52 +44,52 @@ export default React.createClass({
 				});
 			}
 		}, this);
-		RiskStore.on('contingencyCreated', (response) => {
+		RiskStore.on('preventiveActionCreated', (response) => {
 			if (response.data) {
-				this.context.toastr.addAlertSuccess("Ação de contingenciamento cadastrada com sucesso.");
+				this.context.toastr.addAlertSuccess("Ação de prevenção cadastrada com sucesso.");
 				this.setState({
 					isLoading: true,
 				});
 				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_CONTINGENCY,
+					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.risk.id,
+						riskId: this.props.planRiskId,
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao cadastrar a ação de contingenciamento.");
+				this.context.toastr.addAlertError("Erro ao cadastrar ação de prevenção.");
 			}
 		}, this);
-		RiskStore.on('contingencyDeleted', (response) => {
+		RiskStore.on('preventiveActionDeleted', (response) => {
 			if (response.success) {
-				this.context.toastr.addAlertSuccess("Ação de contingenciamento excluída com sucesso.");
+				this.context.toastr.addAlertSuccess("Ação de prevenção excluída com sucesso.");
 				this.setState({
 					isLoading: true,
 				});
 				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_CONTINGENCY,
+					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.risk.id,
+						riskId: this.props.planRiskId,
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao excluir a ação de contingenciamento.");
+				this.context.toastr.addAlertError("Erro ao excluir ação de prevenção.");
 			}
 		}, this);
-		RiskStore.on('contingencyUpdated', (response) => {
+		RiskStore.on('preventiveActionUpdated', (response) => {
 			if (response.success) {
-				this.context.toastr.addAlertSuccess("Ação de contingenciamento atualizada com sucesso.");
+				this.context.toastr.addAlertSuccess("Ação de prevenção atualizada com sucesso.");
 				this.setState({
 					isLoading: true,
 				});
 				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_CONTINGENCY,
+					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.risk.id,
+						riskId: this.props.planRiskId,
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao atualizar a ação de contingenciamento.");
+				this.context.toastr.addAlertError("Erro ao atualizar ação de prevenção.");
 			}
 		}, this);
 		UserStore.on('retrieve-user', (response) => {
@@ -91,7 +97,7 @@ export default React.createClass({
 			if (response.data) {
 				this.setState({
 					users: response.data,
-					contingency: {
+					action: {
 						risk: this.props.risk,
 						user: users.length > 0 ? users[0] : null,
 					},
@@ -102,9 +108,9 @@ export default React.createClass({
 			}
 		});
 		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_CONTINGENCY,
+			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 			data: {
-				riskId: this.props.risk.id,
+				riskId: this.props.planRiskId,
 			},
 		});
 		UserStore.dispatch({
@@ -114,6 +120,7 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+		
 	},
 
 	componentWillUnmount() {
@@ -126,9 +133,10 @@ export default React.createClass({
 			return;
 		}
         const newRow = {
-			action:	<VerticalInput
+			action: <VerticalInput
+				className="padding7"
 				fieldDef={{
-					name: "new-contingency-action",
+					name: "new-preventive-action-action",
 					type: "textarea",
 					rows: "3",
 					onChange: this.actionChangeHandler
@@ -137,7 +145,7 @@ export default React.createClass({
 			user: {
 				name: <VerticalInput
 					fieldDef={{
-						name: "new-contingency-user",
+						name: "new-preventive-action-user",
 						type: "select",
 						options: _.map(this.state.users, user => user.name),
 						renderDisplay: value => value,
@@ -145,8 +153,20 @@ export default React.createClass({
 					}}
 				/>
 			},
+			accomplished: <VerticalInput 
+				className="padding7"
+				fieldDef={{
+					name: "new-preventive-action-accomplishment",
+					type: "radio",
+					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
+					valueField: 'value',
+					value: false,
+					renderDisplay: value => value.label,
+					onClick: this.accomplishmentChangeHandler
+				}}
+			/>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.newContingency}>
+				<button className="row-button-icon" onClick={this.newPreventiveAction}>
 					<span className="mdi mdi-check" />
 				</button>
 				<button
@@ -166,7 +186,7 @@ export default React.createClass({
         this.setState({
 			data,
 			newRowDisplayed: true,
-			contingency: {
+			action: {
 				risk: this.props.risk,
 				user: this.state.users.length > 0 ? this.state.users[0] : null,
 			},
@@ -178,21 +198,23 @@ export default React.createClass({
 			return;
 		}
 		const { data } = this.state;
-		const contingency = data[idx];
+		const action = {
+			...data[idx],
+		};
 		data[idx] = {
-			action:	<VerticalInput
+			action: <VerticalInput
 				fieldDef={{
-					name: "new-contingency-action",
+					name: "new-preventive-action-action",
 					type: "textarea",
 					rows: "3",
 					value: data[idx].action,
-					onChange: this.actionChangeHandler,
+					onChange: this.reportChangeHandler,
 				}}
 			/>,
 			user: {
 				name: <VerticalInput
 					fieldDef={{
-						name: "new-contingency-user",
+						name: "new-preventive-action-user",
 						type: "select",
 						options: _.map(this.state.users, user => user.name),
 						renderDisplay: value => value,
@@ -201,15 +223,27 @@ export default React.createClass({
 					}}
 				/>
 			},
+			accomplished: <VerticalInput 
+				className="padding7"
+				fieldDef={{
+					name: "new-preventive-action-accomplishment",
+					type: "radio",
+					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
+					valueField: 'value',
+					value: data[idx].accomplished,
+					renderDisplay: value => value.label,
+					onClick: this.accomplishmentChangeHandler
+				}}
+			/>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updateContingency}>
+				<button className="row-button-icon" onClick={this.updatePreventiveAction}>
 					<span className="mdi mdi-check" />
 				</button>
 				<button
 					className="row-button-icon"
 					onClick={() => {
 						const { data } = this.state;
-						data[idx] = contingency;
+						data[idx] = action;
 						this.setState({
 							data,
 							updateRowDisplayed: false,
@@ -221,38 +255,44 @@ export default React.createClass({
 		}
 		this.setState({
 			data,
-			contingency,
+			action,
 			updateRowDisplayed: true,
 		});
 	},
 
-	newContingency() {
-		if (!this.state.contingency.user) {
+	newPreventiveAction() {
+		if (!this.state.action.user) {
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
 		RiskStore.dispatch({
-			action: RiskStore.ACTION_NEW_CONTINGENCY,
+			action: RiskStore.ACTION_NEW_PREVENTIVE_ACTION,
 			data: {
-				contingency: this.state.contingency,
+				action: {
+					...this.state.action,
+				},
 			},
 		});
 	},
 
-	deleteContingency(id) {
+	deletePreventiveAction(id) {
 		RiskStore.dispatch({
-			action: RiskStore.ACTION_DELETE_CONTINGENCY,
+			action: RiskStore.ACTION_DELETE_PREVENTIVE_ACTION,
 			data: {
-				contingencyId: id,
+				actionId: id,
 			},
 		});
 	},
 
-	updateContingency() {
+	updatePreventiveAction() {
+		console.log("action update");
 		RiskStore.dispatch({
-			action: RiskStore.ACTION_UPDATE_CONTINGENCY,
+			action: RiskStore.ACTION_UPDATE_PREVENTIVE_ACTION,
 			data: {
-				contingency: { ...this.state.contingency, tools: undefined },
+				action: {
+					...this.state.action,
+					tools: undefined,
+				},
 			},
 		});
 	},
@@ -260,8 +300,8 @@ export default React.createClass({
 
 	actionChangeHandler(e) {
 		this.setState({
-			contingency: {
-				...this.state.contingency,
+			action: {
+				...this.state.action,
 				action: e.target.value,
 			}
 		});
@@ -270,11 +310,42 @@ export default React.createClass({
 	userChangeHandler(e) {
 		const idx = e.target.options.selectedIndex;
 		this.setState({
-			contingency: {
-				...this.state.contingency,
+			action: {
+				...this.state.action,
 				user: this.state.users[idx],
 			}
 		});
+	},
+
+	accomplishmentChangeHandler(e) {
+		console.log(e.target.value);
+		this.setState({
+			action: {
+				...this.state.action,
+				accomplished: e.target.value,
+			}
+		});
+	},
+
+	renderAccomplishmentOnList(accomplishment, id, idx) {
+		return (
+			<VerticalInput 
+				className="padding7"
+				fieldDef={{
+					name: "new-preventive-action-accomplishment",
+					type: "radio",
+					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
+					valueField: 'value',
+					value: accomplishment,
+					renderDisplay: value => value.label,
+					onClick: e => {
+						console.log("clicking"),
+						this.accomplishmentChangeHandler(e),
+						this.updatePreventiveAction()
+					}
+				}}
+			/>
+		);
 	},
 
 	renderRowTools(id, idx) {
@@ -288,7 +359,7 @@ export default React.createClass({
 				</button>
 				<button
 					className="row-button-icon"
-					onClick={() => this.deleteContingency(id)}
+					onClick={() => this.deletePreventiveAction(id)}
 				>
 					<span className="mdi mdi-delete" />
 				</button>
@@ -303,11 +374,15 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 770
-		}, {
-			Header: 'Responsável',
+			minWidth: 350,
+		},{
 			accessor: 'user.name',
-			minWidth: 280
+			Header: 'Responsável',
+			minWidth: 250,
+		}, {
+			Header: 'Ação realizada?',
+			accessor: 'accomplished',
+			minWidth: 200,
 		}, {
 			Header: '',
 			accessor: 'tools',
@@ -316,7 +391,7 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-                    AÇÕES DE CONTINGENCIAMENTO
+					AÇÕES DE PREVENÇÃO
                     <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
                 </div>
 				<ReactTable
@@ -328,7 +403,7 @@ export default React.createClass({
 					pageSize={this.state.data.length}
 					NoDataComponent={() =>
 						<div className="rt-td">
-							Nenhuma ação de contingenciamento cadastrada
+							Nenhuma ação de prevenção cadastrada
 						</div>
 					}
 				/>

@@ -442,15 +442,15 @@ export default React.createClass({
 		}, {
 			Header: 'Tipo',
 			accessor: 'type',
-			minWidth: 130
+			minWidth: 150
 		}, {
 			Header: 'Responsável',
 			accessor: 'user.name',
-			minWidth: 210
+			minWidth: 250
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',
-			minWidth: 140
+			minWidth: 150
 		}, {
 			Header: '',
 			accessor: 'tools',
