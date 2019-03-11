@@ -157,6 +157,7 @@ public class PlanRiskController extends AbstractController {
 				this.fail("Plano sem política associada");
 			}
 			
+			existent.setPolicy(planRisk.getPolicy());
 			existent.setName(planRisk.getName());
 			existent.setDescription(planRisk.getDescription());
 			
