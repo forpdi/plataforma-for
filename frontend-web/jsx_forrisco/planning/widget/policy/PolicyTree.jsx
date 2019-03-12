@@ -101,7 +101,8 @@ export default React.createClass({
 			me.setState({
 				itensSelect: raw.data,
 				itens:raw.data,
-				tree: tree
+				tree: tree,
+				hiddenResultSearch:false
 			});
 		}, me);
 

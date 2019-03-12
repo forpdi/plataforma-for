@@ -126,6 +126,8 @@ export default React.createClass({
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
 						{this.state.resultSearchMore.map((model, idx) => {
+
+							console.log(model);
 							return(
 								<div key={"levelInstance-"+idx}>
 									<div id="fpdi-result-search">
@@ -133,10 +135,9 @@ export default React.createClass({
 											{model.level}
 										</div>
 										<Link
-											to={"/forrisco/policy/"+this.props.policyId+"/item/"+(model.subitemParentId? model.subitemParentId +"/subitem/":"")+model.id}
+											to={"/forrisco/policy/" + this.props.policyId + "/item/" + (model.item ? model.item.id + "/subitem/" : "") + model.id}
 											activeClassName="active"
-											title={Messages.get("label.title.viewMore")}
-											>
+											title={Messages.get("label.title.viewMore")}>
 											{model.name}
 										</Link>
 										{model.description ? (model.description != "" ? " "+model.description : "") :""}
