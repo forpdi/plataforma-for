@@ -83,7 +83,7 @@ public class FieldSubItem extends SimpleLogicalDeletableEntity {
 		this.isText = isText;
 	}
 
-	public String isFileLink() {
+	public String getFileLink() {
 		return fileLink;
 	}
 

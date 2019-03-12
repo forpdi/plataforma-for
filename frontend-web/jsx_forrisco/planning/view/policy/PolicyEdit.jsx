@@ -259,6 +259,7 @@ export default React.createClass({
 		}
 
 	},
+
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
 		ItemStore.off(null, null, this);
@@ -273,6 +274,7 @@ export default React.createClass({
 				$(this.refs['btn-submit']).attr("disabled", "disabled");
 		}
 	},
+
 	getValues() {
 		var data = {};
 		var risk_level = [];
@@ -356,7 +358,6 @@ export default React.createClass({
 		})
 
 	},
-
 
 	createTable() {
 

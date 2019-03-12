@@ -1,10 +1,8 @@
 package org.forpdi.system;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -94,6 +92,7 @@ import org.forrisco.risk.RiskLevel;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
@@ -105,8 +104,6 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.html.WebColors;
 import com.itextpdf.text.html.simpleparser.HTMLWorker;
-import com.itextpdf.tool.xml.ElementList;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.text.html.simpleparser.StyleSheet;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.CMYKColor;
@@ -2414,7 +2411,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		Paragraph p;
 		int summaryCountPages = 0;
 		for (SimpleEntry<String, SimpleEntry<String, Integer>> entry : entries) {
-			// LOGGER.info(entry.getKey());
+//			 LOGGER.info(entry.getKey());
 			Chunk chunk = new Chunk(entry.getKey(), titulo);
 			SimpleEntry<String, Integer> value = entry.getValue();
 			chunk.setAction(PdfAction.gotoLocalPage(value.getKey(), false));
@@ -2556,7 +2553,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return null;
 	}
 	
-	private void generatePolicyContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
+	private void generatePolicyContent(File contentFile, Long policyId, String itens, String subitens, TOCEvent event) 
+			throws DocumentException, IOException, MalformedURLException {
 			
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
@@ -2588,13 +2586,13 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		//para cada item selecionado
 		if(sections !=null) {
+
+			//informações gerais matrix
+			generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
+			
+			// demais itens
 			for (int i = 0; i < sections.length; i++) {
 				Item item = this.itemBS.retrieveItembyId(Long.parseLong(sections[i]));//item altual
-				
-				if(item ==null) {
-					continue;
-				}
-				
 				PaginatedList<FieldItem> fielditens = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<SubItem> subs = this.itemBS.listSubItensByItem(item);	//lista todos subitens
 				List <SubItem> actualsubitens= new ArrayList<SubItem>();	//lista de subitens selecionados
@@ -2613,376 +2611,39 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				//haveContent = true;
 				boolean secTitlePrinted = false;
 				subSecIndex = 0;
-				String secName =item.getName();
+				String secName = item.getName();
 	
-				if(fielditens.getTotal()>0){
+				if(fielditens.getTotal() > 0){
 					secIndex++;
 				}
 				
-				//informações gerais matrix
-				if(item.getDescription()!=null) {
+				// print do titulo
+				Chunk c = new Chunk(String.format("%d. %s", secIndex + 1, secName));
+				c.setGenericTag(String.format("%d. %s", secIndex + 1, secName));
+				Paragraph secTitle = new Paragraph(c);
+				secTitle.setLeading(interLineSpacing);
+				secTitle.setSpacingAfter(paragraphSpacing);
+				secTitle.setSpacingBefore(paragraphSpacing);
+				//secTitle.setSpacingBefore(paragraphSpacing);
+				document.add(secTitle);
+				if (item.getDescription() != null) {
 					haveContent = true;
-					secIndex++;
-					Chunk c = new Chunk(secIndex + ". " + secName, titulo);
-					c.setGenericTag(secIndex + ". " + secName);
-					Paragraph secTitle = new Paragraph(c);
-					secTitle.setLeading(interLineSpacing);
-					secTitle.setSpacingAfter(paragraphSpacing);
-					//secTitle.setSpacingBefore(paragraphSpacing);
-					document.add(secTitle);
-					
-					
-					Paragraph attTitle = new Paragraph("Descrição", titulo);
-					attTitle.setLeading(interLineSpacing);
-					attTitle.setSpacingAfter(paragraphSpacing);
-					attTitle.setSpacingBefore(paragraphSpacing);
-					document.add(attTitle);
-	
-					Paragraph description = new Paragraph(item.getDescription());
-					description.setIndentationLeft(firstLineIndent);
-					description.setSpacingAfter(paragraphSpacing);
-					document.add(description);
-					
-					Policy policy = this.policyBS.exists(item.getPolicy().getId(), Policy.class);
-					
-					
-					//matrix de risco
-					
-					String css=".Cor {\n" + 
-					//"  padding: 30px 25px;\n" + 
-							"margin: 10px\n "+
-					"  white-space: nowrap;\n" + 
-					"  border: .5px solid #ddd;\n" + 
-					"  text-align: -webkit-center; }\n" + 
-					"\n" + 
-					".Cinza {\n" + 
-					"  background-color: #ddd; }\n" + 
-					"\n" + 
-					".Vermelho {\n" + 
-					"  background-color: #FF0000;\n" + 
-					"  color: white; }\n" + 
-					"\n" + 
-					".Marron {\n" + 
-					"  background-color: #774422;\n" + 
-					"  color: white; }\n" + 
-					"\n" + 
-					".Amarelo {\n" + 
-					"  background-color: #FFFF00; }\n" + 
-					"\n" + 
-					".Laranja {\n" + 
-					"  background-color: #FF6600;\n" + 
-					"  color: white; }\n" + 
-					"\n" + 
-					".Verde {\n" + 
-					"  background-color: #00CC00;\n" + 
-					"  color: white; }\n" + 
-					"\n" + 
-					".Azul {\n" + 
-					"  background-color: #0000FF;\n" + 
-					"  color: white; }\n" + 
-					"  \n" + 
-					"  .vertical-text {\n" + 
-					"  -webkit-transform: rotate(270deg);\n" + 
-					"          transform: rotate(270deg); "
-					+ "}\n"+
-					".rotate{\n"+
-					"	width: 135px;\n"+
-					"	bottom: 35px;\n"+
-					"	position: relative;\n"+
-					"	transform:rotate(270deg);}\n";
-					
-                    
-					String[][] matrix = this.riskBS.getMatrixVector(policy);
-					String table = "";
-					for (int x=0; x<=policy.getNline();x++){
-						String children ="";
-						for (int y=0; y<=policy.getNcolumn();y++){
-							children+="				"+
-									"<td id=\"x-"+x+"-y"+y+"\">"+this.getMatrixValue(policy,matrix,x,y)+"</td>\n";
-						}
-						table+="			"+
-								"<tr id=\"x-"+x+"\">\n"+children+"			"+"</tr>\n";
-					}
-					
-					String html="<html>\n" + 
-							"<head>\n" +
-							"</head>\n" + 
-							"<body>"+
-							"<div>\n"+
-							"<table style=\"width:100%\">\n" +
-							table + 
-
-							
-							/*"			<div>\n" + 
-							"				<div style=\"bottom: "+((policy.getNline()-2)*20+80)+"px ; right: 50px ; position: relative\">\n" + 
-							"					<div class=\"rotate vertical-text \">PROBABILIDADE</div>\n" + 
-							"				</div>\n" + 
-							"			</div>\n" + 
-							
-							"			<tr>\n" + 
-							"				<th></th>\n" + 
-							"				<th colspan=\""+String.valueOf(policy.getNcolumn())+"\" style=\"text-align:-webkit-center;\">\n"+
-							"					IMPACTO"+
-							"				</th>\n"+	
-							"			</tr>\n" +*/
-							"</table>"+
-							"</div>\n"+
-							"</body>\n"+
-							"</html>";
-					
-					Paragraph attTitleInfo = new Paragraph("Matrix De Risco", titulo);
-					attTitle.setLeading(interLineSpacing);
-					attTitle.setSpacingBefore(paragraphSpacing);
-					attTitle.setSpacingAfter(paragraphSpacing);
-					document.add(attTitleInfo);
-					
-					StyleSheet styles = new StyleSheet();
-
-                    
-                    
-
-					
-					File htmlFile = new File(outputDir, String.format("%s-0.html", prefix));
-					FileOutputStream out = new FileOutputStream(htmlFile);
-					out.write(html.getBytes());
-					out.close();
-
-					FileReader fr = new FileReader(htmlFile.getPath());
-					List<Element> p = HTMLWorker.parseToList(fr, styles);
-					 
-					//InputStream is = new ByteArrayInputStream(str.getBytes());
-			        //XMLWorkerHelper.getInstance().parseXHtml(writer, document, is);
-
-			        //String html ="<html><h1>Header</h1><p>A paragraph</p><p>Another Paragraph</p></html>";
-
-					
-					/*
-					*/
-			       /* ElementList elementsList = XMLWorkerHelper.parseToElementList(html, css);
-			        
-			        for(Element element : elementsList) {
-			        	document.add(element);
-			        }*/
-			        
-
-			        
-					fr.close();
-	
-					for (int k = 0; k < p.size(); ++k) {
-						
-						if (p.get(k) instanceof PdfPTable) {
-							PdfPTable att = (PdfPTable) p.get(k);
-							
-							ArrayList<PdfPRow> rows = att.getRows();
-							
-							for(int y = 0; y< rows.size();y++) {
-								
-								PdfPCell[] cells = rows.get(y).getCells();
-								
-								for(int x=0; x<cells.length ;x++) {
-									if(cells[x] != null) {
-										
-										BaseColor bc = this.getMatrixWebColor(policy, matrix, y,x);
-
-										cells[x].setBackgroundColor(bc);
-										cells[x].setBorder(2);
-										//cells[x].setHorizontalAlignment(Element.ALIGN_CENTER);
-										//cells[x].setVerticalAlignment(Element.ALIGN_MIDDLE);
-										
-										cells[x].setBorderColor( WebColors.getRGBColor("#ddd"));
-										//cells[x].setExtraParagraphSpace(2);
-										if(bc != null) {
-											cells[x].setBorderWidth((float) 1.0);
-											cells[x].setBorderWidthRight((float) 1.0);
-											cells[x].setPaddingBottom(15);
-											cells[x].setPaddingTop(15);
-											cells[x].setPaddingLeft(10);
-											cells[x].setPaddingRight(10);
-										}else {
-											//if(x==policy.getNline()*policy.getNcolumn()) {
-											if(x==0 && y==policy.getNline()+1) {
-												cells[x].setRotation(90);
-												//cells[x].setBottom(100);
-												//cells[x].setLeft(20);
-											}
-											
-											if(y==policy.getNline()+1) {
-												cells[x].setBottom((float) 100);
-											}
-										}
-										
-									}
-								}
-							}
-							document.add(att);
-						}
-					}
-					
-					for (int k = 0; k < p.size(); ++k) {
-						
-						if (p.get(k) instanceof Paragraph) {
-							Paragraph att = (Paragraph) p.get(k);
-							document.add(att);
-						}
-						
-					}
-					
 				}
-
-
-				
+				secIndex++;
 				
 				
 				for (FieldItem fielditem: fielditens.getList()) {
 					
 					haveContent = true;
 					
-					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
-						
-						if (lastAttWasPlan) {
-							document.setPageSize(PageSize.A4);
-							document.newPage();
-						}
-						if (!secTitlePrinted) {
-							Chunk c = new Chunk(secIndex + ". " + secName, titulo);
-							c.setGenericTag(secIndex + ". " + secName);
-							Paragraph secTitle = new Paragraph(c);
-							secTitle.setLeading(interLineSpacing);
-							secTitle.setSpacingAfter(paragraphSpacing);
-							secTitle.setSpacingBefore(paragraphSpacing);
-							document.add(secTitle);
-							secTitlePrinted = true;
-						}
-						
-						String attName = fielditem.getName();
-						
-						if (!attName.equals(secName)) {
-							Paragraph attTitle = new Paragraph(attName, titulo);
-							attTitle.setLeading(interLineSpacing);
-							attTitle.setSpacingAfter(paragraphSpacing);
-							attTitle.setSpacingBefore(paragraphSpacing);
-							document.add(attTitle);
-						}
-						
-						Map<String, String> pc2 = new HashMap<String, String>();
-						pc2.put("line-height", "115%");
-						pc2.put("margin-bottom", "6.0pt");
-						pc2.put("text-align", "center");
-						HashMap<String, String> spanc1 = new HashMap<String, String>();
-						spanc1.put("text-justify", "inter-word");
-	
-						StyleSheet styles = new StyleSheet();
-						styles.loadTagStyle("p", "text-indent", "1.25cm");
-	
-						String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
-								+ "<p style=\"text-indent: 1.25cm; \">";
-							
-						Queue<String> allMatches = new LinkedList<>();
-						String value = fielditem.getDescription();
-						if (fielditem.getDescription().contains("<img")) {
-							Matcher m = Pattern.compile("<img [^>]*>").matcher(fielditem.getDescription());
-							while (m.find()) {
-								String match = m.group();
-								allMatches.add(match);
-								value = value.replace(match, "<p>||IMAGE||</p>");
-							}
-						}
-						str += value + "</p></body></html>";
-						
-						File htmlFile = new File(outputDir, String.format("%s-1.html", prefix));
-						FileOutputStream out = new FileOutputStream(htmlFile);
-						out.write(str.getBytes());
-						out.close();
-	
-						FileReader fr = new FileReader(htmlFile.getPath());
-						
-						List<Element> p = HTMLWorker.parseToList(fr, styles);
-						
-						fr.close();
-						
-						for (int k = 0; k < p.size(); ++k) {
-							if (p.get(k) instanceof Paragraph) {
-								Paragraph att = (Paragraph) p.get(k);
-								// LOGGER.info("------->"+att.getContent());
-								if (att.getContent().contains("||IMAGE||")) {
-									String img = allMatches.poll();
-									if (img != null 
-											&& !img.substring(0, 100).contains("data:image/png;base64")
-											&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
-
-										// LOGGER.info("IMG------->"+img);
-										Image image = Image.getInstance(
-												new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
-										float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
-												- document.rightMargin()) / image.getWidth()) * 100;
-										image.scalePercent(scaler * 0.4f);
-										image.setAlignment(Element.ALIGN_CENTER);
-										document.add(image);
-										
-									}else if(img != null ){
-										try {
-											img=img.replace("<img src=\"", "").replace("\">", "");
-											final String base64Data = img.substring(img.indexOf(",") + 1);
-											Image image = null;
-											image = Image.getInstance(Base64.decode(base64Data));
-	
-											if (image != null) {
-												float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
-															- document.rightMargin()) / image.getWidth()) * 100;
-												image.scalePercent(scaler * 0.4f);
-												document.add(image);
-											}
-										}catch(Exception e) {
-											LOGGER.error("Imagem não foi exportada no documento pdf.");
-										}
-									}
-								} else {
-									att.setFirstLineIndent(firstLineIndent);
-									document.add(att);
-								}
-							} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
-								com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
-								att.setIndentationLeft(firstLineIndent);
-								document.add(att);
-							}
-						}
-						lastAttWasPlan = false;
-						htmlFile.delete();
-					}
-				}
-					
-				subSecIndex = 0;
-				secTitlePrinted=false;
-	
-				for (SubItem sub: actualsubitens) {
-						
-					haveContent = true;
-					subSecIndex++;
-					
-					String subSecName =sub.getName();
-					
-					PaginatedList<FieldSubItem> fieldsubs = this.itemBS.listFieldsBySubItem(sub);
-						
-					for(FieldSubItem fieldsub : fieldsubs.getList()) {
-							
-						if( fieldsub.isText() && fieldsub.getDescription() != null && !fieldsub.getDescription().equals("")) {
-						
+					if(fielditem.isText()) { // campo de texto
+						if (!GeneralUtils.isEmpty(fielditem.getDescription())) {
 							if (lastAttWasPlan) {
 								document.setPageSize(PageSize.A4);
 								document.newPage();
 							}
-							if (!secTitlePrinted) {
-								Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
-								c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
-								Paragraph secTitle = new Paragraph(c);
-								secTitle.setLeading(interLineSpacing);
-								secTitle.setSpacingAfter(paragraphSpacing);
-								secTitle.setSpacingBefore(paragraphSpacing);
-								document.add(secTitle);
-								//secTitlePrinted = true;
-							}
 							
-							String attName = fieldsub.getName();
+							String attName = fielditem.getName();
 							
 							if (!attName.equals(secName)) {
 								Paragraph attTitle = new Paragraph(attName, titulo);
@@ -3006,9 +2667,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									+ "<p style=\"text-indent: 1.25cm; \">";
 								
 							Queue<String> allMatches = new LinkedList<>();
-							String value = fieldsub.getDescription();
-							if (fieldsub.getDescription().contains("<img")) {
-								Matcher m = Pattern.compile("<img [^>]*>").matcher(fieldsub.getDescription());
+							String value = fielditem.getDescription();
+							if (fielditem.getDescription().contains("<img")) {
+								Matcher m = Pattern.compile("<img [^>]*>").matcher(fielditem.getDescription());
 								while (m.find()) {
 									String match = m.group();
 									allMatches.add(match);
@@ -3016,14 +2677,18 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								}
 							}
 							str += value + "</p></body></html>";
-							File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
-							FileWriter fw = new FileWriter(htmlFile, true);
-							BufferedWriter conexao = new BufferedWriter(fw);
-							conexao.write(str);
-							conexao.newLine();
-							conexao.close();
-							// LOGGER.info(htmlFile.getPath());
-							List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+							
+							File htmlFile = new File(outputDir, String.format("%s-1.html", prefix));
+							FileOutputStream out = new FileOutputStream(htmlFile);
+							out.write(str.getBytes());
+							out.close();
+		
+							FileReader fr = new FileReader(htmlFile.getPath());
+							
+							List<Element> p = HTMLWorker.parseToList(fr, styles);
+							
+							fr.close();
+							
 							for (int k = 0; k < p.size(); ++k) {
 								if (p.get(k) instanceof Paragraph) {
 									Paragraph att = (Paragraph) p.get(k);
@@ -3033,7 +2698,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 										if (img != null 
 												&& !img.substring(0, 100).contains("data:image/png;base64")
 												&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
-
+	
 											// LOGGER.info("IMG------->"+img);
 											Image image = Image.getInstance(
 													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
@@ -3073,6 +2738,182 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							lastAttWasPlan = false;
 							htmlFile.delete();
 						}
+					} else { // campo de imagem
+						if (lastAttWasPlan) {
+							document.setPageSize(PageSize.A4);
+							document.newPage();
+						}
+						
+						String attName = fielditem.getName();
+						
+						if (!attName.equals(secName)) {
+							Paragraph attTitle = new Paragraph(attName, titulo);
+							attTitle.setLeading(interLineSpacing);
+							attTitle.setSpacingAfter(paragraphSpacing);
+							attTitle.setSpacingBefore(paragraphSpacing);
+							document.add(attTitle);
+						}
+						Chunk linkToImg = new Chunk(fielditem.getDescription());
+						Font fontBlue = new Font(linkToImg.getFont().getBaseFont(), linkToImg.getFont().getSize(), Font.NORMAL, BaseColor.BLUE);
+						linkToImg.setFont(fontBlue);
+						linkToImg.setAnchor(fielditem.getFileLink());
+						linkToImg.setUnderline(0.1F, -2F);
+						Paragraph attLinkField = new Paragraph();
+						attLinkField.add(linkToImg);
+						attLinkField.setFirstLineIndent(38f);
+						document.add(attLinkField);
+						lastAttWasPlan = false;
+					}
+				}
+					
+				subSecIndex = 0;
+				secTitlePrinted=false;
+	
+				for (SubItem sub: actualsubitens) {
+
+					haveContent = true;
+					subSecIndex++;
+					
+					String subSecName =sub.getName();
+					
+					PaginatedList<FieldSubItem> fieldsubs = this.itemBS.listFieldsBySubItem(sub);
+						
+					for(FieldSubItem fieldsub : fieldsubs.getList()) {
+							
+						if( fieldsub.isText()) { // campo de texto
+							if (!GeneralUtils.isEmpty(fieldsub.getDescription())) {
+								if (lastAttWasPlan) {
+									document.setPageSize(PageSize.A4);
+									document.newPage();
+								}
+								if (!secTitlePrinted) {
+									c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+									c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
+									secTitle = new Paragraph(c);
+									secTitle.setLeading(interLineSpacing);
+									secTitle.setSpacingAfter(paragraphSpacing);
+									secTitle.setSpacingBefore(paragraphSpacing);
+									document.add(secTitle);
+									//secTitlePrinted = true;
+								}
+								
+								String attName = fieldsub.getName();
+								
+								if (!attName.equals(secName)) {
+									Paragraph attTitle = new Paragraph(attName, titulo);
+									attTitle.setLeading(interLineSpacing);
+									attTitle.setSpacingAfter(paragraphSpacing);
+									attTitle.setSpacingBefore(paragraphSpacing);
+									document.add(attTitle);
+								}
+								
+								Map<String, String> pc2 = new HashMap<String, String>();
+								pc2.put("line-height", "115%");
+								pc2.put("margin-bottom", "6.0pt");
+								pc2.put("text-align", "center");
+								HashMap<String, String> spanc1 = new HashMap<String, String>();
+								spanc1.put("text-justify", "inter-word");
+			
+								StyleSheet styles = new StyleSheet();
+								styles.loadTagStyle("p", "text-indent", "1.25cm");
+			
+								String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
+										+ "<p style=\"text-indent: 1.25cm; \">";
+									
+								Queue<String> allMatches = new LinkedList<>();
+								String value = fieldsub.getDescription();
+								if (fieldsub.getDescription().contains("<img")) {
+									Matcher m = Pattern.compile("<img [^>]*>").matcher(fieldsub.getDescription());
+									while (m.find()) {
+										String match = m.group();
+										allMatches.add(match);
+										value = value.replace(match, "<p>||IMAGE||</p>");
+									}
+								}
+								str += value + "</p></body></html>";
+								File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
+								FileWriter fw = new FileWriter(htmlFile, true);
+								BufferedWriter conexao = new BufferedWriter(fw);
+								conexao.write(str);
+								conexao.newLine();
+								conexao.close();
+								// LOGGER.info(htmlFile.getPath());
+								List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+								for (int k = 0; k < p.size(); ++k) {
+									if (p.get(k) instanceof Paragraph) {
+										Paragraph att = (Paragraph) p.get(k);
+										// LOGGER.info("------->"+att.getContent());
+										if (att.getContent().contains("||IMAGE||")) {
+											String img = allMatches.poll();
+											if (img != null 
+													&& !img.substring(0, 100).contains("data:image/png;base64")
+													&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+	
+												// LOGGER.info("IMG------->"+img);
+												Image image = Image.getInstance(
+														new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
+												float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+														- document.rightMargin()) / image.getWidth()) * 100;
+												image.scalePercent(scaler * 0.4f);
+												image.setAlignment(Element.ALIGN_CENTER);
+												document.add(image);
+												
+											}else if(img != null ){
+												try {
+													img=img.replace("<img src=\"", "").replace("\">", "");
+													final String base64Data = img.substring(img.indexOf(",") + 1);
+													Image image = null;
+													image = Image.getInstance(Base64.decode(base64Data));
+			
+													if (image != null) {
+														float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+																	- document.rightMargin()) / image.getWidth()) * 100;
+														image.scalePercent(scaler * 0.4f);
+														document.add(image);
+													}
+												}catch(Exception e) {
+													LOGGER.error("Imagem não foi exportada no documento pdf.");
+												}
+											}
+										} else {
+											att.setFirstLineIndent(firstLineIndent);
+											document.add(att);
+										}
+									} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
+										com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
+										att.setIndentationLeft(firstLineIndent);
+										document.add(att);
+									}
+								}
+								lastAttWasPlan = false;
+								htmlFile.delete();
+							}
+						} else { // campo de imagem
+							if (lastAttWasPlan) {
+								document.setPageSize(PageSize.A4);
+								document.newPage();
+							}
+							
+							String attName = fieldsub.getName();
+							
+							if (!attName.equals(secName)) {
+								Paragraph attTitle = new Paragraph(attName, titulo);
+								attTitle.setLeading(interLineSpacing);
+								attTitle.setSpacingAfter(paragraphSpacing);
+								attTitle.setSpacingBefore(paragraphSpacing);
+								document.add(attTitle);
+							}
+							Chunk linkToImg = new Chunk(fieldsub.getDescription());
+							Font fontBlue = new Font(linkToImg.getFont().getBaseFont(), linkToImg.getFont().getSize(), Font.NORMAL, BaseColor.BLUE);
+							linkToImg.setFont(fontBlue);
+							linkToImg.setAnchor(fieldsub.getFileLink());
+							linkToImg.setUnderline(0.1F, -2F);
+							Paragraph attLinkField = new Paragraph();
+							attLinkField.add(linkToImg);
+							attLinkField.setFirstLineIndent(38f);
+							document.add(attLinkField);
+							lastAttWasPlan = false;
+						}
 					}
 				}
 			
@@ -3085,8 +2926,122 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		}
 		outputDir.delete();
 	}
-	
-	
+
+	private void generatePolicyGeneralInformation(Long policyId, Document document, File outputDir, String prefix) 
+			throws DocumentException, IOException {
+		Chunk c = new Chunk("1. Informações Gerais");
+		c.setGenericTag("1. Informações Gerais");
+		Paragraph secTitle = new Paragraph(c);
+		secTitle.setLeading(interLineSpacing);
+		document.add(secTitle);
+
+		Paragraph attTitle = new Paragraph("Descrição", titulo);
+		attTitle.setLeading(interLineSpacing);
+		attTitle.setSpacingAfter(paragraphSpacing);
+		attTitle.setSpacingBefore(paragraphSpacing);
+		document.add(attTitle);
+
+		Policy policy = this.policyBS.exists(policyId, Policy.class);
+		Paragraph description = new Paragraph(policy.getDescription());
+		description.setIndentationLeft(firstLineIndent);
+		description.setSpacingAfter(paragraphSpacing);
+		document.add(description);
+		
+		//matrix de risco
+		String[][] matrix = this.riskBS.getMatrixVector(policy);
+		String table = "";
+		for (int x = 0; x <= policy.getNline() ; x++){
+			String children ="";
+			for (int y = 0; y <= policy.getNcolumn(); y++){
+				children +="				" +
+						"<td id=\"x-" + x + "-y" + y + "\">" + this.getMatrixValue(policy,matrix,x,y) + "</td>\n";
+			}
+			table+="			" +
+					"<tr id=\"x-" + x + "\">\n" + children + "			" + "</tr>\n";
+		}
+		
+		String html = "<html>\n" + 
+				"<head>\n" +
+				"</head>\n" + 
+				"<body>" +
+				"<div>\n" +
+				"<table style=\"width:100%\">\n" +
+				table + 
+				"</table>" +
+				"</div>\n" +
+				"</body>\n" +
+				"</html>";
+		
+		Paragraph attTitleInfo = new Paragraph("Matrix De Risco", titulo);
+		attTitle.setLeading(interLineSpacing);
+		attTitle.setSpacingBefore(paragraphSpacing);
+		attTitle.setSpacingAfter(paragraphSpacing);
+		document.add(attTitleInfo);
+		
+		StyleSheet styles = new StyleSheet();
+		
+		File htmlFile = new File(outputDir, String.format("%s-0.html", prefix));
+		FileOutputStream out = new FileOutputStream(htmlFile);
+		out.write(html.getBytes());
+		out.close();
+
+		FileReader fr = new FileReader(htmlFile.getPath());
+		List<Element> p = HTMLWorker.parseToList(fr, styles);
+        
+		fr.close();
+
+		for (int k = 0; k < p.size(); ++k) {
+			if (p.get(k) instanceof PdfPTable) {
+				PdfPTable att = (PdfPTable) p.get(k);
+				
+				ArrayList<PdfPRow> rows = att.getRows();
+				
+				for(int y = 0; y < rows.size(); y++) {
+					
+					PdfPCell[] cells = rows.get(y).getCells();
+					
+					for(int x = 0; x < cells.length; x++) {
+						if(cells[x] != null) {
+							
+							BaseColor bc = this.getMatrixWebColor(policy, matrix, y, x);
+
+							cells[x].setBackgroundColor(bc);
+							cells[x].setBorder(2);
+							
+							cells[x].setBorderColor(WebColors.getRGBColor("#ddd"));
+							if(bc != null) {
+								cells[x].setBorderWidth((float) 1.0);
+								cells[x].setBorderWidthRight((float) 1.0);
+								cells[x].setPaddingBottom(15);
+								cells[x].setPaddingTop(15);
+								cells[x].setPaddingLeft(10);
+								cells[x].setPaddingRight(10);
+							}else {
+								//if(x==policy.getNline()*policy.getNcolumn()) {
+								if(x == 0 && y == policy.getNline() + 1) {
+									cells[x].setRotation(90);
+									//cells[x].setBottom(100);
+									//cells[x].setLeft(20);
+								}
+								
+								if(y == policy.getNline() + 1) {
+									cells[x].setBottom((float) 100);
+								}
+							}
+						}
+					}
+				}
+				document.add(att);
+			}
+		}
+		for (int k = 0; k < p.size(); ++k) {
+			
+			if (p.get(k) instanceof Paragraph) {
+				Paragraph att = (Paragraph) p.get(k);
+				document.add(att);
+			}
+		}
+	}
 
 	/*riscos*/
 	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws DocumentException, IOException {
@@ -3447,11 +3402,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		if(sections !=null) {
 			for (int i = 0; i < sections.length; i++) {
 				Unit unit = this.unitBS.retrieveUnitById( Long.parseLong(sections[i]));
-				
-				if (unit ==null ) {
-					continue;
-				}
-				
 				//PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<Unit> subs = this.unitBS.listSubunitByUnit(unit);
 				List <Unit> actualsubunits= new ArrayList<Unit>();	//lista de subitens selecionados
@@ -3939,6 +3889,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		
 		PlanRisk plan=this.planriskBS.exists(planId,PlanRisk.class);
+		//this.planriskBS.
 		String secName2 =plan.getName();
 		haveContent = true;
 		secIndex++;
@@ -3983,11 +3934,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			for (int i = 0; i < sections.length; i++) {
 				
 				PlanRiskItem item = this.planRiskItemBS.exists(Long.parseLong(sections[i]), PlanRiskItem.class);//item altual
-				
-				if(item == null) {
-					continue;
-				}
-				
 				PaginatedList<PlanRiskItemField> fielditens = this.planRiskItemBS.listFieldsByPlanRiskItem(item);//fields atual
 				PaginatedList<PlanRiskSubItem> subs = this.planRiskItemBS.listSubItemByItem(item);	//lista todos subitens
 				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
@@ -4282,7 +4228,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	public File exportReport(String title, String author,String itens, String subitens) throws IOException, DocumentException {
+	public File exportReport(Long policyId, String title, String author,String itens, String subitens) throws IOException, DocumentException {
 
 		File outputDir=tempFile();
 
@@ -4299,7 +4245,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		TOCEvent event = new TOCEvent();
 		PdfReader cover = new PdfReader(coverPdfFile.getPath());
 		
-		generatePolicyContent(contentFile, itens, subitens, event);
+		generatePolicyContent(contentFile, policyId, itens, subitens, event);
 		
 		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
 
