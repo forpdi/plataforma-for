@@ -56,20 +56,17 @@ export default React.createClass({
 
 
 			PolicyStore.on("policyDeleted", (model) => {
-				if(model.success){
+				if (model.success) {
 					this.context.router.push("/forrisco/home");
 					PolicyStore.dispatch({
 						action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 					});
-				}else{
+				} else {
 					if(model.message != null){
 						this.context.toastr.addAlertError(model.message);
 					}
 				}
-
-			},this)
-
-
+			}, this);
 
 			PolicyStore.on("retrieverisklevel", (model) => {
 				this.setState({
@@ -108,13 +105,22 @@ export default React.createClass({
 	deletePolicy() {
 		var me = this;
 		var msg = "Você tem certeza que deseja excluir essa política?"
-		Modal.confirmCustom(() => {
-			Modal.hide();
+
+		if (this.state.policyModel.data) {
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_DELETE,
 				data: me.state.policyModel.data.id
 			});
-		},msg,me.refreshCancel);
+		} else {
+			Modal.confirmCustom(() => {
+				Modal.hide();
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_DELETE,
+					data: me.state.policyModel.data.id
+				});
+			}, msg, me.refreshCancel);
+		}
+
 			/*var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
 			Modal.confirmCancelCustom(() => {
 				Modal.hide();
@@ -234,25 +240,28 @@ export default React.createClass({
 
 
 	renderDropdown() {
-		return (<ul id="level-menu" className="dropdown-menu">
-		<li>
-			<Link
-				to={"/forrisco/policy/"+this.props.params.policyId+"/edit"}>
-					<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-					<span id="menu-levels"> {"Editar Política"/*Messages.getEditable("label.title.editPolicy","fpdi-nav-label")*/} </span>
-					</span>
-			</Link>
-		</li>
-		<li>
-			<Link
-				//to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
-				onClick={this.deletePolicy}>
-				<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-					<span id="menu-levels"> {"Deletar Política" /*Messages.getEditable("label.deletePolicy","fpdi-nav-label")*/} </span>
-				</span>
-			</Link>
-		</li>
-		</ul>);
+		return (
+			<ul id="level-menu" className="dropdown-menu">
+				<li>
+					<Link
+						to={"/forrisco/policy/"+this.props.params.policyId+"/edit"}>
+							<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
+							<span id="menu-levels"> {"Editar Política"/*Messages.getEditable("label.title.editPolicy","fpdi-nav-label")*/} </span>
+							</span>
+					</Link>
+				</li>
+				<li>
+					<Link
+						//to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
+						onClick={this.deletePolicy}
+					>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
+							<span id="menu-levels"> {"Deletar Política" /*Messages.getEditable("label.deletePolicy","fpdi-nav-label")*/} </span>
+						</span>
+					</Link>
+				</li>
+			</ul>
+		);
 	},
 
 	renderBreadcrumb() {
