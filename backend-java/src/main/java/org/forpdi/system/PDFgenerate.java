@@ -2326,7 +2326,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		// CABEÇALHO
 		String imageUrl = domain.getCompany().getLogo();
-		// LOGGER.info("|"+imageUrl+"|");
+		 LOGGER.info("|"+imageUrl+"|");
 		if (!imageUrl.trim().isEmpty()) {
 			Image image = Image.getInstance(new URL(imageUrl));
 			// image.scaleAbsolute(150f, 150f);
@@ -2335,6 +2335,15 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			image.scalePercent(scaler * 0.4f);
 			image.setAlignment(Element.ALIGN_CENTER);
 			coverDocument.add(image);
+		} else {
+			Image image = Image.getInstance(
+				new URL(String.format("%s/images/forrisco-logo.png", this.domain.getBaseUrl()))
+			);
+			float scaler = ((coverDocument.getPageSize().getWidth() - coverDocument.leftMargin()
+				- coverDocument.rightMargin()) / image.getWidth()) * 100;
+			image.scalePercent(scaler * 0.4f);
+			image.setAlignment(Element.ALIGN_CENTER);
+			coverDocument.add(image);			
 		}
 
 		Paragraph TITULO = new Paragraph(title, tituloCapa);
