@@ -99,8 +99,10 @@ export default React.createClass({
 	addField() {
 		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
 
+		console.log(validation);
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
+			return false;
 		}
 
 		if (!validation.errorField) {
@@ -135,6 +137,7 @@ export default React.createClass({
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
+			return false;
 		}
 
 		if(!validation.errorField) {
@@ -364,7 +367,6 @@ export default React.createClass({
 															   className="form-control"
 															   ref="newfield-name"
 															   placeholder={Messages.get("label.field.name")}
-															   onChange={this.changeTitle}
 															   defaultValue={this.props.field.fieldName}
 															   maxLength="255"/>
 													</div>
