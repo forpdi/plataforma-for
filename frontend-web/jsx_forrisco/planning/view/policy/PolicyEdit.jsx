@@ -259,6 +259,7 @@ export default React.createClass({
 		}
 
 	},
+
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);
 		ItemStore.off(null, null, this);
@@ -273,6 +274,7 @@ export default React.createClass({
 				$(this.refs['btn-submit']).attr("disabled", "disabled");
 		}
 	},
+
 	getValues() {
 		var data = {};
 		var risk_level = [];
@@ -354,7 +356,6 @@ export default React.createClass({
 			matrix_c: this.state.ncolumn,
 		})
 	},
-
 
 	createTable() {
 
@@ -633,6 +634,7 @@ export default React.createClass({
 		}
 		return (<div>{grau}<br /></div>)
 	},
+
 	changeColumn() {
 
 		this.state.ncolumn = this.refs.policyEditForm['field-ncolumn'].value
@@ -799,7 +801,7 @@ export default React.createClass({
 
 		return (
 			<div>
-				<div className="fpdi-card padding40" style={{ "width": "90%" }}>
+				<div className="fpdi-card padding40" style={{ "width": "100%" }}>
 					<h1>{this.props.params.policyId ? Messages.getEditable("label.editPolicy", "fpdi-nav-label") : Messages.getEditable("label.newPolicy", "fpdi-nav-label")}</h1>
 					<form onSubmit={this.submitWrapper} id={this.props.id} ref="policyEditForm">
 

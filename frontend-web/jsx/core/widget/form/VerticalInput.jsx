@@ -196,6 +196,7 @@ export default React.createClass({
 						id={this.state.fieldId+"-"+idx}
 						defaultChecked={(this.props.fieldDef.value == null)?(idx==0?"checked":null):(checked ? "checked":null)}
 						value={fieldVal}
+						onClick={this.props.fieldDef.onClick || _.noop}
 						/> { this.props.fieldDef.renderDisplay ?
 							this.props.fieldDef.renderDisplay(opt)
 							:

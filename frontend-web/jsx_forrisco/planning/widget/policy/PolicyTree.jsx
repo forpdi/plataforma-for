@@ -57,20 +57,6 @@ export default React.createClass({
 		var me = this;
 
 		ItemStore.on("retrieveItens", (raw) => {
-			var tree = raw.data.map((policy, index) => {
-				var to = '/forrisco/policy/' + this.props.policy.id + '/item/' + policy.id;
-				return {
-					label: policy.name,
-					expanded: false,
-					expandable: true,
-					to: to,
-					key: to,
-					model: policy,
-					id: policy.id,
-					onExpand: this.expandRoot,
-					onShrink: this.shrinkRoot
-				};
-			});
 
 			var overview= '/forrisco/policy/' + this.props.policyId + '/item/overview'
 			var info = {
@@ -88,10 +74,26 @@ export default React.createClass({
 				label: Messages.get("label.newItem"),
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				expandable: false,
+				//expandable: false,
 				to: '/forrisco/policy/' + this.props.policy.id + '/item/new',
 				key: "newPolicy"
 			}
+
+			var tree = raw.data.map((policy, index) => {
+				var to = '/forrisco/policy/' + this.props.policy.id + '/item/' + policy.id;
+				return {
+					label: policy.name,
+					expanded: false,
+					expandable: true,
+					to: to,
+					key: to,
+					model: policy,
+					id: policy.id,
+					children: [],
+					onExpand: this.expandRoot,
+					onShrink: this.shrinkRoot
+				};
+			});
 
 			tree.unshift(info);
 			tree.push(newItem);
@@ -223,12 +225,14 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		ItemStore.dispatch({
-			action: ItemStore.ACTION_RETRIEVE_ITENS,
-			data:newProps.policy.id,
-		});
+		if(newProps.policy.id != this.props.policy.id){
+			ItemStore.dispatch({
+				action: ItemStore.ACTION_RETRIEVE_ITENS,
+				data:newProps.policy.id,
+			});
+		}
 
-		this.state.policyId=newProps.policyId
+	/*	this.state.policyId=newProps.policyId
 
 		if (document.URL.indexOf('details/overview') >= 0) {
 			this.refreshPlans(newProps.policy.id);
@@ -259,13 +263,18 @@ export default React.createClass({
 
 		if (newProps.treeType == this.state.actualType && (exists || newProps.itemId == null)) {
 			return;
-		}
+		}*/
 
+
+
+	},
+
+	refresh(policyId) {
 		ItemStore.dispatch({
 			action: ItemStore.ACTION_RETRIEVE_ITENS,
-			data:newProps.policy.id,
+			data:policyId,
 		});
-
+		this.forceUpdate();
 	},
 
 	treeSearch() {

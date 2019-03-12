@@ -23,11 +23,10 @@ public class PreventiveAction extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_preventive_action";
 	private static final long serialVersionUID = 1L;
 
-	@SkipSerialization
+//	@SkipSerialization
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 	
-	@SkipSerialization
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 

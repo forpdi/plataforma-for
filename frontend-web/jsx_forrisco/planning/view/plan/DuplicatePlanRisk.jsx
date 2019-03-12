@@ -154,7 +154,7 @@ export default React.createClass({
 	getForm() {
 		return (
 			<form onSubmit={this.handleSubmit} ref={"planRiskEditForm"}>
-				<h4 style={{ "margin-top": "30px" }}>MANTER ITENS DO PLANO</h4>
+				<h4 style={{ "marginTop": "30px" }}>MANTER ITENS DO PLANO</h4>
 				<Radio
 					name="keepItems"
 					value={1}
@@ -171,11 +171,11 @@ export default React.createClass({
 				/>
 				{(this.state.keepItems == 1) ? this.getCheckboxes(this.state.items, "keepItem") : null}
 
-				<h4 style={{ "margin-top": "30px" }}>MANTER CONTEÚDO DO PLANO</h4>
+				<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DO PLANO</h4>
 				<Radio name="keepPlanContent" label="Sim" />
 				<Radio name="keepPlanContent" label="Não" />
 
-				<h4 style={{ "margin-top": "30px" }}>MANTER UNIDADES</h4>
+				<h4 style={{ "marginTop": "30px" }}>MANTER UNIDADES</h4>
 				<Radio
 					name="keepUnits"
 					value={1}
@@ -192,11 +192,11 @@ export default React.createClass({
 				/>
 				{(this.state.keepUnits == 1) ? this.getCheckboxes(this.state.units, "keepUnit") : null}
 
-				<h4 style={{ "margin-top": "30px" }}>MANTER CONTEÚDO DAS UNIDADES</h4>
+				<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DAS UNIDADES</h4>
 				<Radio name="keepUnitContent" label="Sim" />
 				<Radio name="keepUnitContent" label="Não" />
 
-				<h4 style={{ "margin-top": "30px" }}>NOME DO NOVO PLANO A SER DUPLICADO</h4>
+				<h4 style={{ "marginTop": "30px" }}>NOME DO NOVO PLANO A SER DUPLICADO</h4>
 				<VerticalInput
 					fieldDef={{
 						type: "text",
@@ -206,7 +206,7 @@ export default React.createClass({
 					}}
 				/>
 
-				<h4 style={{ "margin-top": "30px" }}>DESCRIÇÃO DO NOVO PLANO A SER DUPLICADO</h4>
+				<h4 style={{ "marginTop": "30px" }}>DESCRIÇÃO DO NOVO PLANO A SER DUPLICADO</h4>
 				<VerticalInput
 					fieldDef={{
 						type: "textarea",

@@ -47,6 +47,7 @@ export default React.createClass({
 	},
 
 	refreshData(policyId) {
+		console.log("refreshData")
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_POLICY,
 			data: policyId
@@ -69,7 +70,7 @@ export default React.createClass({
 			<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
 						<Link role="tab" title="Politica"  className={"tabTreePanel active"}
 						to={"forrisco/policy/" + this.props.params.policyId + "/item/overview"}>
-							{Messages.getEditable("label.plan", "fpdi-nav-label")}
+							{Messages.getEditable("label.policy", "fpdi-nav-label")}
 						</Link>
 					</ul>
 				{this.state.policyId?

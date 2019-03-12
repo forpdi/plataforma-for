@@ -11,7 +11,7 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
-import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
+import PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -194,7 +194,7 @@ export default React.createClass({
 						{this.state.archived ? <span className="fpdi-archived-label">{Messages.getEditable("label.planField","fpdi-nav-label")}</span> : ""}
 						<div className="markdown-container" dangerouslySetInnerHTML={{__html: Marked(this.context.policy.description)}} />
 					</div>
-				: <Forrisco_PolicyEdit
+				: <PolicyEdit
 						params={{policyId:this.props.params.policyId}}
 				/>
 				}

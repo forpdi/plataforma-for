@@ -117,7 +117,7 @@ ReactDOM.render((
 						<Route path=":itemId/subitem/:subitemId" component={Forrisco_SubItemRegister} />
 						<Route path=":itemId" component={Forrisco_ItemRegister} />
 					</Route>
-					<Route path="edit" component={Forrisco_PolicyDetails}>
+					<Route path="edit" >
 						<IndexRedirect to="overview" />
 						<Route path="overview" component={Forrisco_PolicyTab} />
 					</Route>
