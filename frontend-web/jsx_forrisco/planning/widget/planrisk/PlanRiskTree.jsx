@@ -103,7 +103,7 @@ export default React.createClass({
 			treeItens.unshift(info);
 			treeItens.push(newItem);
 
-			this.setState({treeItens: treeItens});
+			this.setState({treeItens: treeItens, hiddenResultSearch: false});
 			this.forceUpdate();
 		}, this);
 
