@@ -449,7 +449,8 @@ export default React.createClass({
 			document.getElementById("documentTitle").className = "";
 
 
-			var url = PolicyStore.url + "/exportReport" + "?title=" + title + "&author=" + author + "&pre=" + pre+ "&itens=" + item +"&subitens=" + subitem;
+			var url = `${PolicyStore.url}/exportReport?policyId=${this.props.policyId}&title=${title}&
+				author=${author}&pre=${pre}&itens=${item}&subitens=${subitem}`;
 			url = url.replace(" ", "+");
 
 			if(pre){
