@@ -27,6 +27,10 @@
   font-weight:  $font-weight-normal;
   padding: 5px;
   width: 100%;
+
+  .card-field-content {
+    padding: 0px 10px
+  }
 }
 
 a.fpdi-text-label:hover,
