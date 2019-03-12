@@ -19,13 +19,20 @@ export default React.createClass({
 		return {
 			fileData: null,
 			description: null,
+			fileLink: null,
 			newFieldType: null,
 			types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
 		}
 	},
 
 	componentWillReceiveProps(newProps){
-		this.state.description=newProps.field.description
+		console.log("component will receive props");
+		this.state.description=newProps.field.description;
+		console.log(this.state.fileLink);
+		console.log(newProps.field.isText);
+		console.log(newProps.field.fileLink);
+		newProps.field.isText ? null : this.state.fileLink = newProps.field.fileLink;
+		console.log(this.state.fileLink);
 	},
 	changeRichText(value){
 		this.setState({
@@ -120,7 +127,16 @@ export default React.createClass({
 						value: validation.name.s,
 						description: validation.description,
 						isText: istext ,
-						fileLink:  istext ? null : (this.state.fileData ? this.state.fileData.file.fileLink: null),
+						fileLink:  istext ?
+							null
+							:
+							(this.state.fileData || this.state.fileLink) ?
+								// this.state.fileData.file.fileLink != null ? this.state.fileData.file.fileLink
+								// :
+								// this.state.fileLink
+								this.state.fileLink ? this.state.fileLink : this.state.fileData.file.fileLink
+							:
+							null,
 						edit:false
 					})
 
@@ -163,6 +179,7 @@ export default React.createClass({
 		this.props.deleteFunc(this.props.index)
 	},
 	edit(){
+		console.log();
 		this.props.editFunc(this.props.index,true)
 	},
 
@@ -181,9 +198,16 @@ export default React.createClass({
 							title={Messages.get("label.title.changeField")} onClick={this.edit}/>
 						}
 					</div>
+					{console.log(this.props.field)}
 					<span className="pdi-normal-text">
-						<div id={this.props.field.name}>
-							{$(this.props.field.description).text()}
+						<div className="card-field-content" id={this.props.field.name}>
+							{this.props.field.isText ? 
+								$(this.props.field.description).text()
+								:
+								<a target="_blank" rel="noopener noreferrer" href={this.props.field.fileLink}>
+									{this.props.field.description}
+								</a>
+							}
 						</div>
 					</span>
 				</div>

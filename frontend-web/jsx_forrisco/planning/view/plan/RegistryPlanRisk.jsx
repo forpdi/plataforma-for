@@ -100,7 +100,7 @@ export default React.createClass({
 		}, {
 			name: "description",
 			type: "textarea",
-			placeholder: "Descrição da Política",
+			placeholder: "Descrição do Plano de Risco",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,

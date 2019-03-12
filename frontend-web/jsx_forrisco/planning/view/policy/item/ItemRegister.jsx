@@ -321,9 +321,11 @@ export default React.createClass({
 				fielditem.edit=bool
 			}
 		})
+		// console.log(this.state.fields);
 		this.setState({
 			fields: this.state.fields
 		})
+		return this.state.fields[id].isText ? null : this.state.fields[id].fileLink;
 	},
 	deleteFunc(id){
 		Modal.confirmCustom(() => {

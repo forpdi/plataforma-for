@@ -36,6 +36,10 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_FIND_HISTORY_BY_UNIT:"risk-findHistoryByUnit",
 	ACTION_FIND_MONITOR_HISTORY_BY_UNIT:"risk-findMonitorHistoryByUnit",
 	ACTION_FIND_RISK: "risk-findRisk",
+	ACTION_LIST_PREVENTIVE_ACTIONS:"risk-listPreventiveActions",
+	ACTION_NEW_PREVENTIVE_ACTION:"risk-newPreventiveAction",
+	ACTION_DELETE_PREVENTIVE_ACTION:"risk-deletePreventiveAction",
+	ACTION_UPDATE_PREVENTIVE_ACTION:"risk-updatePreventiveAction",
 	ACTION_LIST_MONITOR: "risk-listMonitor",
 	ACTION_NEW_MONITOR: "risk-newMonitor",
 	ACTION_DELETE_MONITOR: "risk-deleteMonitor",
@@ -291,6 +295,89 @@ var RiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("monitorHistoryByUnit", opts);
+			}
+		});
+	},
+
+
+	listPreventiveActions(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/action",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data.riskId},
+			success(model) {
+				me.trigger("preventiveActionsListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionsListed", opts);
+			}
+		});
+	},
+
+	newPreventiveAction(data) {
+		console.log(data);
+		var me = this;
+		$.ajax({
+			url: me.url + '/actionnew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				action: data.action,
+			}),
+			success(model) {
+				me.trigger("preventiveActionCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deletePreventiveAction(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/action/${data.actionId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("preventiveActionDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updatePreventiveAction(data) {
+		console.log(data);
+		var me = this;
+		$.ajax({
+			url: me.url + '/action/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				action: data.action,
+			}),
+			success(model) {
+				me.trigger("preventiveActionUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
 			}
 		});
 	},
