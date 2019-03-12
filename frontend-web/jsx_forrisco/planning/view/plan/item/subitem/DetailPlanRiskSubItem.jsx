@@ -37,7 +37,8 @@ export default React.createClass({
 			}],
 			tabPath: "",
 			isLoading: true,
-			onEdit: false
+			onEdit: false,
+			itemModel: null
 		};
 	},
 
@@ -59,7 +60,7 @@ export default React.createClass({
 				this.setState({
 					itemTitle: response.data.name,
 					field: content,
-					isLoading: false,
+					isLoading: this.state.itemModel == null,
 					tabPath: this.props.location.pathname,
 					onEdit: false
 				});
@@ -80,6 +81,14 @@ export default React.createClass({
 				this.context.tabPanel.addTab(this.props.location.pathname, this.state.itemTitle);
 			});
 		}, this);
+
+		PlanRiskItemStore.on('detailItem', response => {
+			this.setState({
+				itemModel:response,
+				isLoading: this.state.field == null
+			})
+		},this);
+
 		this.refreshComponent(this.props.params.subItemId);
 	},
 
@@ -100,6 +109,13 @@ export default React.createClass({
 				id: subItemId
 			},
 		});
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+			data: {
+				id: this.props.params.itemId
+			},
+		});
+
 	},
 
 	onDelete() {
@@ -167,29 +183,37 @@ export default React.createClass({
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						  to={'/forrisco/plan-risk/' + this.props.params.planRiskId + '/item/' + this.props.params.planRiskId + '/info'}
+						  to={'/forrisco/plan-risk/' + this.props.params.planRiskId}
 						  title={this.context.planRisk.attributes.name}>
-						{
-							this.context.planRisk.attributes.name.length > 15 ?
+						{this.context.planRisk.attributes.name.length > 15 ?
 								this.context.planRisk.attributes.name.substring(0, 15) + "..." :
-								this.context.planRisk.attributes.name.substring(0, 15)
-						}
+								this.context.planRisk.attributes.name.substring(0, 15)}
 					</Link>
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"/>
 				</span>
+
+				{<span>
+					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
+						to={'/forrisco/plan-risk/' + this.props.params.planRiskId+"/item/"+this.props.params.itemId}
+						title={"item"}>{this.state.itemModel.data.name}
+					</Link>
+					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
+				</span>
+				}
+
 				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
-					{
-						this.state.itemTitle.length > 15 ?
+					{this.state.itemTitle.length > 15 ?
 							this.state.itemTitle.substring(0, 15) + "..." :
-							this.state.itemTitle.substring(0, 15)
-					}
+							this.state.itemTitle.substring(0, 15)}
 				</span>
 			</div>
 		)
 	},
 
-	render() {
 
+
+
+	render() {
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}

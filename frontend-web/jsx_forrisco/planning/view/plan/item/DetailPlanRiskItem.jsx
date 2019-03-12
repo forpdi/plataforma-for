@@ -38,7 +38,6 @@ export default React.createClass({
 			tabPath: "",
 			isLoading: true,
 			onEdit: false,
-			//vizualization: true
 		};
 	},
 
@@ -148,11 +147,12 @@ export default React.createClass({
 	},
 
 	renderBreadcrumb() {
+
 		return (
 			<div>
 				<span>
 					<Link className="fpdi-breadcrumb fpdi-breadcrumbDivisor"
-						  to={'/forrisco/plan-risk/' + this.props.params.planRiskId + '/item/' + this.props.params.planRiskId + '/info'}
+						  to={'/forrisco/plan-risk/' + this.props.params.planRiskId}
 						  title={this.context.planRisk.attributes.name}>
 						{
 							this.context.planRisk.attributes.name.length > 15 ?

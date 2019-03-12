@@ -21,7 +21,8 @@ export default React.createClass({
 			cancelLabel: "Cancelar",
 			submitLabel: "Salvar",
 			vizualization: false,
-			formFields: []
+			formFields: [],
+			title: Messages.getEditable("label.newSubitem","fpdi-nav-label"),
 		}
 	},
 
@@ -54,7 +55,7 @@ export default React.createClass({
 			vizualization: !this.state.vizualization,
 		});
 	},
-	
+
 	editFields(id, bool){
 		this.state.formFields.map( (fieldItem, index) => {
 			if (id === index){
@@ -143,6 +144,9 @@ export default React.createClass({
 			<div>
 				<form onSubmit={this.onSubmit} ref="newPlanRiskItemForm">
 					<div className="fpdi-card fpdi-card-full floatLeft">
+						<h1>
+							{this.state.title}
+						</h1>
 						{
 							this.state.formFields.map((field, index) => {
 								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type === AttributeTypes.ATTACHMENT_FIELD) {

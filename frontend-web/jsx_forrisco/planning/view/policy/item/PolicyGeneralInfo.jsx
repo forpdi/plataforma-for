@@ -89,17 +89,14 @@ export default React.createClass({
 
 
 	refresh() {
-
-
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_POLICY,
+			data: this.props.params.policyId
+		});
 			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_FIND_POLICY,
-				data: this.props.params.policyId
-			});
-
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-				data: this.props.params.policyId
-			});
+			action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+			data: this.props.params.policyId
+		});
 	},
 
 
@@ -176,11 +173,9 @@ export default React.createClass({
 	},
 
 	getMatrix() {
-
 		if(this.state.policyModel ==null){
 			return
 		}
-
 
 		var fields = [];
 		if(typeof this.state.fields === "undefined" || this.state.fields == null){
@@ -216,8 +211,7 @@ export default React.createClass({
 			table.push(<tr key={i} >{children}</tr>)
 		}
 
-	return (
-		<div>
+		return (<div>
 			<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 				{"MATRIZ DE RISCO"}
 			</label>
@@ -285,8 +279,6 @@ export default React.createClass({
 		}
 
 		return (<div>
-			{//this.renderBreadcrumb()
-			}
 			<div className="fpdi-card fpdi-card-full floatLeft">
 				<h1>
 					{this.state.policyModel.data.name}
@@ -303,9 +295,13 @@ export default React.createClass({
 
 				<div>
 					<br/>
+
 					<label  className="fpdi-text-label">{"DESCRIÇÃO"}</label>
 					<br/>
-					{this.state.policyModel.data.description}
+					<span className="pdi-normal-text">
+						<p>{this.state.policyModel.data.description}</p>
+					</span>
+
 					<br/><br/>
 					{this.getMatrix()}
 					<br/>
