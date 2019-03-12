@@ -2590,6 +2590,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		if(sections !=null) {
 			for (int i = 0; i < sections.length; i++) {
 				Item item = this.itemBS.retrieveItembyId(Long.parseLong(sections[i]));//item altual
+				
+				if(item ==null) {
+					continue;
+				}
+				
 				PaginatedList<FieldItem> fielditens = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<SubItem> subs = this.itemBS.listSubItensByItem(item);	//lista todos subitens
 				List <SubItem> actualsubitens= new ArrayList<SubItem>();	//lista de subitens selecionados
@@ -3442,6 +3447,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		if(sections !=null) {
 			for (int i = 0; i < sections.length; i++) {
 				Unit unit = this.unitBS.retrieveUnitById( Long.parseLong(sections[i]));
+				
+				if (unit ==null ) {
+					continue;
+				}
+				
 				//PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<Unit> subs = this.unitBS.listSubunitByUnit(unit);
 				List <Unit> actualsubunits= new ArrayList<Unit>();	//lista de subitens selecionados
@@ -3929,7 +3939,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		
 		PlanRisk plan=this.planriskBS.exists(planId,PlanRisk.class);
-		//this.planriskBS.
 		String secName2 =plan.getName();
 		haveContent = true;
 		secIndex++;
@@ -3974,6 +3983,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			for (int i = 0; i < sections.length; i++) {
 				
 				PlanRiskItem item = this.planRiskItemBS.exists(Long.parseLong(sections[i]), PlanRiskItem.class);//item altual
+				
+				if(item == null) {
+					continue;
+				}
+				
 				PaginatedList<PlanRiskItemField> fielditens = this.planRiskItemBS.listFieldsByPlanRiskItem(item);//fields atual
 				PaginatedList<PlanRiskSubItem> subs = this.planRiskItemBS.listSubItemByItem(item);	//lista todos subitens
 				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados

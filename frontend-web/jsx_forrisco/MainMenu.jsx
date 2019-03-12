@@ -243,7 +243,7 @@ export default React.createClass({
 				PermissionsTypes.MANAGE_FORRISCO_POLICY_PERMISSION))) ? // && !this.state.domainError
 				<div>
 					<div className="frisco-tabs-nav">
-						<Link to="/forrisco/policy/" activeClassName="active">
+						<Link to="/forrisco/policy/new" activeClassName="active">
 							<span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
 							<span className="fpdi-nav-label">
 						{Messages.getEditable("label.newPolicy", "fpdi-nav-label")}

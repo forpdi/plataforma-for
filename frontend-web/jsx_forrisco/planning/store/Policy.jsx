@@ -132,10 +132,10 @@ var PolicyStore = Fluxbone.Store.extend({
 				policy: data
 			}),
 			success(model) {
-				ItemStore.dispatch({
+				/*ItemStore.dispatch({
 					action: ItemStore.ACTION_CREATE_INFO,
 					data: model.data
-				});
+				});*/
 				me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {

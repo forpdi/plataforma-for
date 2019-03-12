@@ -95,10 +95,7 @@ public class ProcessController extends AbstractController{
 								", A sua unidade ["+relatedUnit.getName()+"] foi relacionada ao Processo ["+process.getName()+
 								"] com o objetivo ["+process.getObjective()+"] da unidade ["+unit.getName()+"]. O responsável"+
 								" por essa unidade é o(a) "+unit.getUser().getName()+
-								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";
-						
-						
-						
+								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";						
 						
 						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlan().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
 		

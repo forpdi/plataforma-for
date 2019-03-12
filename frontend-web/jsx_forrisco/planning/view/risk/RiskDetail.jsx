@@ -123,7 +123,6 @@ export default React.createClass({
 	deleteRisco() {
 		var me = this;
 		if (me.state.riskModel != null) {
-			console.log(me.state.riskModel)
 			var msg = "Você tem certeza que deseja excluir esse Risco?"
 			Modal.confirmCustom(() => {
 				Modal.hide();
