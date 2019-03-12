@@ -175,7 +175,7 @@ export default React.createClass({
 					</span>
 				</a>
 			</div>,
-			tools: <div className="row-tools-box" style={{ "marginLeft": "-30px" }}>
+			tools: <div className="row-tools-box" style={{ "marginLeft": "-10px" }}>
 				<span
 					className="mdi mdi-check btn btn-sm btn-success"
 					title="Salvar"
