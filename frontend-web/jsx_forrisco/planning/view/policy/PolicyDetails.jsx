@@ -47,7 +47,6 @@ export default React.createClass({
 	},
 
 	refreshData(policyId) {
-		console.log("refreshData")
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_POLICY,
 			data: policyId
