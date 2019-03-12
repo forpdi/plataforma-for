@@ -1,13 +1,14 @@
 import React from "react";
+import _ from 'underscore';
+
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/planrisk/LevelSearch.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/planrisk/SearchResult.jsx";
-import {Link} from "react-router";
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
-
+import PermissionsTypes from 'forpdi/jsx/planning/enum/PermissionsTypes.json';
 
 export default React.createClass({
 	contextTypes: {
@@ -102,7 +103,7 @@ export default React.createClass({
 			treeItens.unshift(info);
 			treeItens.push(newItem);
 
-			this.setState({treeItens: treeItens});
+			this.setState({treeItens: treeItens, hiddenResultSearch: false});
 			this.forceUpdate();
 		}, this);
 

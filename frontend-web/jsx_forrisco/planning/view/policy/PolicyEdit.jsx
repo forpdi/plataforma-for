@@ -223,13 +223,14 @@ export default React.createClass({
 			PolicyStore.on("retrieverisklevel", (model) => {
 				if (model != null) {
 					me.setState({
-						loading: false,
+						loading:false,
 						risklevelModel: model,
 						color: model.data.length
 					});
-
 				}
+
 				this.generateMatrix()
+
 			}, me);
 
 			/*ItemStore.on("retrieveInfo", (model) => {
@@ -252,7 +253,6 @@ export default React.createClass({
 				data: this.props.params.policyId
 			});
 		} else {
-
 			this.setState({
 				loading: false
 			})
@@ -352,12 +352,18 @@ export default React.createClass({
 
 		this.setState({
 			hide: false,
+			//loading:false,
 			matrix_l: this.state.nline,
 			matrix_c: this.state.ncolumn,
 		})
+
 	},
 
 	createTable() {
+
+		if(this.refs.policyEditForm ==null){
+			return
+		}
 
 		var table = []
 		var level = [];
@@ -436,7 +442,8 @@ export default React.createClass({
 								}
 							} else {
 								if (this.state.risklevelModel) {
-									if (this.state.risklevelModel[k]) {
+									console.log(k,this.state.risklevelModel,this.state.risklevelModel[k])
+									if (this.state.risklevelModel.data[k]) {
 										if (valor == this.state.risklevelModel.data[k]['level']) {
 											switch (this.state.risklevelModel.data[k]['color']) {
 												case 0: classe = "Vermelho"; break;
@@ -453,6 +460,8 @@ export default React.createClass({
 								}
 							}
 						}
+
+						//console.log(classe)
 
 						children.push(<td><div className={classe + " Quadro "}>{
 							<VerticalInput
@@ -883,6 +892,7 @@ export default React.createClass({
 						}
 
 						<br /><br />
+
 						{!this.state.hide ? this.createTable() : <br />}
 
 
