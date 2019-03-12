@@ -7,6 +7,10 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import _ from "underscore";
+
+
 
 import Toastr from 'toastr';
 import $ from 'jquery';
@@ -107,6 +111,7 @@ export default React.createClass({
 				type: "select",
 				required: true,
 				maxLength: 40,
+				placeholder: "Selecione a cor representativa",
 				label: Messages.getEditable("label.policySelect", "hide"),
 				value: cor,
 				valueField: 'label',
@@ -270,8 +275,9 @@ export default React.createClass({
 		if (!this.onSubmit)
 			console.warn("VerticalForm: You must pass your own onSubmit callback.");
 		else {
-			if (this.onSubmit(this.getValues()))
-				$(this.refs['btn-submit']).attr("disabled", "disabled");
+			this.onSubmit(this.getValues())
+			/*if ())
+				$(this.refs['btn-submit']).attr("disabled", "disabled");*/
 		}
 	},
 
@@ -329,10 +335,13 @@ export default React.createClass({
 		}
 
 		var matrix = ""
-		for (var i = 0; i <= this.state.matrix_l; i++) {
-			for (var j = 0; j <= this.state.matrix_c; j++) {
-				if (i != this.state.matrix_l || j != 0) {
-					matrix += "[" + i + "," + j + "]" + this.refs.policyEditForm["field-[" + i + "," + j + "]"].value + ";"
+
+		if(this.refs.policyEditForm["field-[0,0]"] !=null){
+			for (var i = 0; i <= this.state.matrix_l; i++) {
+				for (var j = 0; j <= this.state.matrix_c; j++) {
+					if (i != this.state.matrix_l || j != 0) {
+						matrix += "[" + i + "," + j + "]" + this.refs.policyEditForm["field-[" + i + "," + j + "]"].value + ";"
+					}
 				}
 			}
 		}
@@ -349,6 +358,8 @@ export default React.createClass({
 			Toastr.error("colunas ou linhas ultrapassou o limite")
 			return
 		}
+
+		Validate.validationPolicyEdit(this.getValues(), this.refs)
 
 		this.setState({
 			hide: false,
@@ -516,7 +527,7 @@ export default React.createClass({
 									options: probabilidade,
 									valueField: 'label',
 									displayField: 'label',
-									className: "frisco-probability",
+									className: "matrixSelect frisco-probability",
 									onChange: this.onChangeMatrix
 								}} />
 						}</td>)
@@ -637,11 +648,14 @@ export default React.createClass({
 		}))
 
 		if (n > 1) {
-			grau.push(<Link onClick={this.deleteGrauRisco.bind(this, n)}>
-				<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}></span>
-			</Link>)
+			grau.push(
+			<span>
+				<Link onClick={this.deleteGrauRisco.bind(this, n)} >
+					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}></span>
+				</Link>
+			</span>)
 		}
-		return (<div>{grau}<br /></div>)
+	return (<div><div style={{"display": "inline-flex"}}>{grau}</div><br/></div>)
 	},
 
 	changeColumn() {
@@ -662,7 +676,8 @@ export default React.createClass({
 
 		this.setState({
 			ncolumn: this.state.ncolumn,
-			hidePI: false
+			hidePI: false,
+			hide: true
 		})
 
 		if (this.state.nline > 1 && this.state.ncolumn > 1) {
@@ -694,7 +709,8 @@ export default React.createClass({
 
 		this.setState({
 			nline: this.state.nline,
-			hidePI: false
+			hidePI: false,
+			hide: true
 		})
 
 		if (this.state.nline > 1 && this.state.ncolumn > 1) {
@@ -862,11 +878,12 @@ export default React.createClass({
 						/>
 
 
-						<br />
+						<br/>
+						<br/>
 						<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
 							{Messages.getEditable("label.policyPI", "fpdi-nav-label fpdi-required")}
 						</label>
-						<br />
+						<br/>
 
 						{this.getNumero().map((field, idx) => {
 							return (<HorizontalInput

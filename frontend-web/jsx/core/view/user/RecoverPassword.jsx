@@ -16,6 +16,11 @@ var {ToastContainer} = ReactToastr;
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage);
 
 export default React.createClass({
+
+	contextTypes: {
+        router: React.PropTypes.object,
+    },
+
 	getInitialState() {
 		return {
 			fields: [{
@@ -36,6 +41,9 @@ export default React.createClass({
 		}else{
 			this.addAlertError(Messages.get("label.error.emptyEmail"));
 		}
+	},
+	onCancel(){
+		this.context.router.push("/login")
 	},
 	componentWillMount() {
 		UserSession.on("recoverpassword", model => {
@@ -103,15 +111,16 @@ export default React.createClass({
 					  <div className="panel-body">
 
 					  <p className="fpdi-recover-password-title">{Messages.getEditable("label.emailRecoveryPassword","fpdi-nav-label")}</p>
-									<div className="fpdi-login-body">
-										<VerticalForm
-											onSubmit={this.onSubmit}
-											fields={this.state.fields}
-											store={UserSession}
-											submitLabel={Messages.get("label.submit.passwordRecoveryEmail")}
-											blockButtons={true}
-										/>
-									</div>
+							<div className="fpdi-login-body">
+								<VerticalForm
+									onSubmit={this.onSubmit}
+									fields={this.state.fields}
+									store={UserSession}
+									submitLabel={Messages.get("label.submit.passwordRecoveryEmail")}
+									blockButtons={true}
+									onCancel={this.onCancel}
+								/>
+							</div>
 					  </div>
 					</div>
 				</div>
