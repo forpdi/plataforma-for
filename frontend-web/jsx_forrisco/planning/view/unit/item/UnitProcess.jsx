@@ -175,7 +175,7 @@ export default React.createClass({
 					</span>
 				</a>
 			</div>,
-			tools: <div className="row-tools-box">
+			tools: <div className="row-tools-box" style={{ "marginLeft": "-30px" }}>
 				<span
 					className="mdi mdi-check btn btn-sm btn-success"
 					title="Salvar"
@@ -447,7 +447,8 @@ export default React.createClass({
 			accessor: 'fileData',
 			Cell: props => {
 				return props.value.fileName !== undefined
-					? <a target="_blank" rel="noopener noreferrer" href={props.value.fileLink}>
+					?
+					<a target="_blank" rel="noopener noreferrer" href={props.value.fileLink}>
 						{props.value.fileName}
 					</a>
 					: props.value
@@ -463,9 +464,9 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-                    PROCESSOS DA UNIDADE
-                    <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
-                </div>
+          PROCESSOS DA UNIDADE
+          <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
+        </div>
 				<ReactTable
 					data={this.state.processes}
 					columns={columns}
