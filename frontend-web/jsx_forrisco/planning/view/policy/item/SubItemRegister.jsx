@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from "react";
 import {Link, hashHistory} from "react-router";
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
+//import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -35,7 +35,7 @@ export default React.createClass({
 			itemModel: null,
 			subitemModel:null,
 			subFields: [],
-			titulo:null,
+			title: Messages.getEditable("label.newSubitem","fpdi-nav-label"),
 			vizualization: false,
 			tabPath: this.props.location.pathname,
 			undeletable: false,
@@ -98,7 +98,6 @@ export default React.createClass({
 		ItemStore.on("retrieveSubitem", (model) => {
 
 			var fields = [];
-
 			if(!model.data.deleted){
 				if(model.data.fieldSubItem != null){
 
@@ -123,12 +122,12 @@ export default React.createClass({
 				me.setState({
 					subitemModel: model,
 					vizualization: true,
-					titulo: model.data.name,
+					title: model.data.name,
 					fields: fields,
-					loading: false
+					loading: this.state.itemModel == null
 				});
-				//me.forceUpdate();
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
+				me.forceUpdate();
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
 			}
 		}, me);
 
@@ -158,7 +157,7 @@ export default React.createClass({
 				me.setState({
 					//fields: fields,
 					subitemModel: mod,
-					titulo: model.data.name,
+					title: model.data.name,
 					vizualization: true,
 					fields: me.getInfo()
 				});
@@ -175,10 +174,10 @@ export default React.createClass({
 		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
 				me.setState({
-					itemModel: model
+					itemModel: model,
+					loading: false //this.state.subitemModel == null
 				});
-				me.forceUpdate();
-				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
+
 			}else{
 				me.setState({
 					itemModel: null,
@@ -214,11 +213,9 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		ItemStore.off(null, null, this);
-		PolicyStore.off(null, null, this);//??
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
-
 		if (newProps.params.subitemId != this.props.params.subitemId) {
 			this.setState({
 				loading: true,
@@ -233,17 +230,10 @@ export default React.createClass({
 				subfields:[],
 				description: null,
 				fileData: null,
-				titulo: null
+				title: Messages.getEditable("label.newSubitem","fpdi-nav-label")
 			});
 			this.refreshData(newProps, newContext);
 		}
-
-		/*if (newProps.params.subitemId == null){
-			this.setState({
-				loading: false
-			})
-		}*/
-		//this.forceUpdate()
 
 	},
 	refreshData(props, context) {
@@ -256,6 +246,7 @@ export default React.createClass({
 					});
 				}
 			}else{
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, this.state.title);});
 
 				this.setState({
 					loading: false
@@ -268,15 +259,9 @@ export default React.createClass({
 					data: props.params.itemId
 				})
 			}
-
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_FIND_POLICY,
-				data: props.params.policyId
-			});
-
 		} else {
 			this.setState({
-				titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
+				title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 				vizualization: false
 			});
 		}
@@ -438,7 +423,6 @@ export default React.createClass({
 	},
 
 	renderBreadcrumb() {
-
 		return(
 			<div>
 				<span>
@@ -458,7 +442,7 @@ export default React.createClass({
 				</span>
 
 				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
-					{this.state.titulo > 15 ? this.state.titulo.substring(0, 15)+"..." : this.state.titulo.substring(0, 15)}
+					{this.state.title > 15 ? this.state.title.substring(0, 15)+"..." : this.state.title.substring(0, 15)}
 				</span>
 			</div>
 		);
@@ -576,25 +560,10 @@ export default React.createClass({
 				{this.state.subitemModel ? this.renderBreadcrumb() : ""}
 
 				<div className="fpdi-card fpdi-card-full floatLeft">
-
 					<h1>
-						{(this.state.titulo)}
-						{/*this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
-							(<span className="dropdown">
-								<a
-									className="dropdown-toggle"
-									data-toggle="dropdown"
-									aria-haspopup="true"
-									aria-expanded="true"
-									title={Messages.get("label.actions")}
-									>
-									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-									<span className="mdi mdi-chevron-down" />
-								</a>
-								{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
-							</span>
-						):""*/}
+						{this.state.title}
 					</h1>
+
 
 					{
 						//título

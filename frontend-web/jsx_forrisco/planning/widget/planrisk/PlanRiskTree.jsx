@@ -61,24 +61,6 @@ export default React.createClass({
 			var info = {
 				label: "Informações Gerais",
 				expanded: false,
-				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-				model: this.props.planRisk,
-				id: this.props.planRisk.id,
-			};
-
-			//Botão Novo Item Geral
-			var newItem = {
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
-				key: "newPlanRiskItem"
-			};
-
-			var info = {
-				label: "Informações Gerais",
-				expanded: false,
 				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
 				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
 				model: this.props.planRisk,

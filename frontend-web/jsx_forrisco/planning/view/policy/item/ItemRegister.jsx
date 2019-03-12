@@ -30,7 +30,6 @@ export default React.createClass({
 		return {
 			loading: true,
 			itemModel: null,
-			//policyModel: null,
 			fields:[],
 
 			vizualization: false,
@@ -43,8 +42,7 @@ export default React.createClass({
 			newField: false,
 			newFieldType: null,
 			length: 0,
-			titulo: null,
-			//info: false
+			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 		};
 	},
 
@@ -101,20 +99,6 @@ export default React.createClass({
 	*/
 	componentDidMount() {
 		var me = this;
-		PolicyStore.on("findpolicy", (model) => {
-			if(!model.deleted){
-				me.setState({
-					policyModel: model,
-				});
-				me.forceUpdate();
-				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
-			}else{
-				me.setState({
-					policyModel: null,
-				});
-			}
-		}, me);
-
 		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
 				var fields = [];
@@ -133,30 +117,26 @@ export default React.createClass({
 						});
 					}
 				}
-
+				console.log("title",model.attributes.name)
 				me.setState({
 					itemModel: model,
-					titulo: model.get("name"),
+					title: model.attributes.name,
 					vizualization: true,
 					loading:false,
 					fields: fields
 				});
 
-				if(model.get("name")=="Informações gerais"){
-					me.setState({
-						info:true
-					})
-				}
+				me.forceUpdate();
+				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.attributes.name);});
 
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}else{
 				me.setState({
 					//model: null,
-					titulo: null,
+					title: null,
 					vizualization: true
 				});
 				me.context.tabPanel.removeTabByPath(me.state.tabPath);
-				//me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
+			//me.context.router.push("/plan/"+this.props.params.id+"/details/overview");
 			}
 		}, me);
 
@@ -186,7 +166,7 @@ export default React.createClass({
 				me.setState({
 					fields: fields,
 					itemModel: mod,
-					titulo: model.data.name,
+					title: model.data.name,
 					vizualization: true,
 				});
 				me.forceUpdate();
@@ -212,7 +192,7 @@ export default React.createClass({
 					})
 				})
 				me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-				this.context.router.push("/forrisco/policy/"+this.state.policyModel.data.id+"/item/"+model.data.id);
+				this.context.router.push("/forrisco/policy/"+this.context.policy.id+"/item/"+model.data.id);
 			}else{
 				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
 			}
@@ -224,6 +204,9 @@ export default React.createClass({
 		})
 
 		me.refreshData(me.props, me.context);
+
+
+		console.log(this.context)
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
@@ -237,11 +220,9 @@ export default React.createClass({
 				newField: false,
 				newFieldType: null,
 				itemModel: null,
-				policyModel: null,
 				description: null,
 				fileData: null,
-				titulo: null,
-				info: false
+				title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 			});
 
 			this.refreshData(newProps, newContext);
@@ -262,11 +243,6 @@ export default React.createClass({
 
 	refreshData(props, context) {
 
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_POLICY,
-			data: props.params.policyId
-		});
-
 		if (props.params.policyId && props.params.itemId) {
 
 			if(props.params.itemId){
@@ -276,13 +252,14 @@ export default React.createClass({
 				});
 			}else{
 				this.setState({
-					titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
+					title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 					loading: false
 				});
 			}
 		} else {
+			_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, this.state.title);});
 			this.setState({
-				titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
+				title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 				loading: false,
 			});
 		}
@@ -320,16 +297,8 @@ export default React.createClass({
 					data: me.state.itemModel.id
 				});
 			},msg,me.refreshCancel);
-
-			/*var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
-			Modal.confirmCancelCustom(() => {
-				Modal.hide();
-				PlanStore.dispatch({
-					action: PlanStore.ACTION_DELETE_PLAN,
-					data: me.state.model
-				});
-			},msg,()=>{Modal.hide();me.refreshCancel;});*/
-	},tweakNewField() {
+	},
+	tweakNewField() {
 		this.setState({
 			newField: !this.state.newField,
 			newFieldType: null
@@ -400,13 +369,6 @@ export default React.createClass({
 			hashHistory.goBack();
 		}
 	},
-
-
-
-
-
-
-
 
 	renderArchivePolicy() {
 		return (
@@ -481,6 +443,7 @@ export default React.createClass({
 		}
 	},
 	renderBreadcrumb() {
+		return
 		return(
 			<div>
 				<span>
@@ -491,7 +454,7 @@ export default React.createClass({
 					<span className="mdi mdi-chevron-right fpdi-breadcrumbDivisor"></span>
 				</span>
 				<span className="fpdi-breadcrumb fpdi-selectedOnBreadcrumb">
-					{this.state.titulo > 15 ? this.state.titulo.substring(0, 15)+"..." : this.state.titulo.substring(0, 15)}
+					{this.state.title > 15 ? this.state.title.substring(0, 15)+"..." : this.state.title.substring(0, 15)}
 				</span>
 			</div>
 		);
@@ -501,25 +464,18 @@ export default React.createClass({
 		event && event.preventDefault();
 
 		if(this.state.itemModel){
-			/*var msg = "";
-			Modal.confirmCustom(() => {
-				Modal.hide();*/
-
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_CUSTOM_UPDATE,
-					data: {
-						id: this.state.itemModel.attributes.id,
-						name: this.refs.newItemForm['field-description'].value,//this.state.itemModel.attributes.name,
-						policy: this.state.policyModel,
-						fieldItem: this.state.fields
-					}
-				});
-			//},msg,this.refreshCancel);
+			ItemStore.dispatch({
+				action: ItemStore.ACTION_CUSTOM_UPDATE,
+				data: {
+					id: this.state.itemModel.attributes.id,
+					name: this.refs.newItemForm['field-description'].value,
+					fieldItem: this.state.fields
+				}
+			});
 		} else {
-
 			var name = this.refs.newItemForm['field-description'].value
-
 			var validation = Validate.validationNewItem(this.refs.newItemForm);
+
 			if (validation.errorField) {
 				this.context.toastr.addAlertError(Messages.get("label.error.form"));
 			} else {
@@ -527,12 +483,10 @@ export default React.createClass({
 					action: ItemStore.ACTION_NEW_ITEM,
 					data: { name: validation.titulo.s,
 							description: "",
-							policy: this.state.policyModel.data
+							policy: this.context.policy
 					}
 				});
 			}
-
-
 		}
 	},
 
@@ -541,6 +495,7 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 
+		console.log(this.state.title)
 		let showButtons = !this.state.vizualization;
 
 		if (this.state.vizualization) {
@@ -613,22 +568,8 @@ export default React.createClass({
 							})
 						}
 					<br/>
-					{
-						this.state.info
-						?
-							<div>
-								<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-									{"DESCRIÇÃO"}
-								</label>
-								<br/>
-								{this.state.policyModel.data.description}
-								<br/><br/>
-							</div>
-						:
-						""
-					}
 
-					{this.state.info ? this.getMatrix(): ""}
+
 					</div>
 				</div>
 			);
@@ -640,50 +581,22 @@ export default React.createClass({
 						{this.state.itemModel ? this.renderBreadcrumb() : ""}
 						<div className="fpdi-card fpdi-card-full floatLeft">
 							<h1>
-								{(this.state.titulo)}
-								{/*this.state.itemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION))  ?
-									(<span className="dropdown">
-										<a
-											className="dropdown-toggle"
-											data-toggle="dropdown"
-											aria-haspopup="true"
-											aria-expanded="true"
-											title={Messages.get("label.actions")}
-											>
-											<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-											<span className="mdi mdi-chevron-down" />
-										</a>
-										{this.context.policy.attributes.archived ? this.renderArchivePolicy() : this.renderArchivePolicy()}
-									</span>
-								):""*/}
+								{this.state.title}
 							</h1>
 
-							{
-								//título
+							{//título
 							}
 
 							<AttributeInput
 								fieldDef={this.getField()}
 								undeletable={false}
 								vizualization={this.props.vizualization}
-								//ref="formAlertErrorTitulo"
-								//ref={this.getField().name}
-								//key={this.getField().name}
-								//deleteFunc={this.props.deleteFunc}
-								//editFunc={this.props.editFunc}
-								//alterable={this.props.alterable}
-								//isDocument={this.props.isDocument}
-								//onClick={this.props.onClick}
-								//onChage={this.props.onChage}
 							/>
 
-
-							{
-								//campos
+							{//campos
 							}
 
-							{
-								this.state.fields && (this.state.fields.length > 0)
+							{this.state.fields && (this.state.fields.length > 0)
 								?
 								this.state.fields.map((fielditem, index) => {
 									if (fielditem.type ==  AttributeTypes.TEXT_AREA_FIELD) {
@@ -724,17 +637,13 @@ export default React.createClass({
 										);
 									}
 								})
-								:
-								""
+								:""}
+
+
+							{//Adicioonar novo campo
 							}
 
-
-							{
-								//Adicioonar novo campo
-							}
-
-							{
-								this.state.newField
+							{this.state.newField
 								?
 								<FieldItemInput
 									//key={this.getLength()}
@@ -760,51 +669,31 @@ export default React.createClass({
 
 
 							<br/><br/><br/>
-							{
-								showButtons
-								?
-								(
-									!!this.props.blockButtons
-									?
-									<div className="form-group">
+							{showButtons ? (!!this.props.blockButtons?
+								<div className="form-group">
 										<button type="submit" className="btn btn-success btn-block">{this.state.submitLabel}</button>
-										{
-											!this.props.hideCanel
-											?
-											(
-												!this.props.cancelUrl
-												?
+										{!this.props.hideCanel?	(
+												!this.props.cancelUrl ?
 												<button className="btn btn-default  btn-block" onClick={this.cancelWrapper}>
 													{this.state.cancelLabel}
 												</button>
-												:
-												<Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
+												: <Link to={this.props.cancelUrl} className="btn btn-default btn-block">{this.state.cancelLabel}</Link>
 											)
-											:
-											""
-										}
+										:""	}
 									</div>
 									:
 									<div className="form-group text-left">
 										<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-										{
-											!this.props.hideCanel
-											?
-											(
-												!this.props.cancelUrl
+										{!this.props.hideCanel ?
+											(!this.props.cancelUrl
 												?
 												<button className="btn btn-sm btn-default" onClick={this.cancelWrapper}>{this.state.cancelLabel}</button>
 												:
 												<Link className="btn btn-sm btn-default" to={this.props.cancelUrl}>{this.state.cancelLabel}</Link>
 											)
-											:
-											""
-										}
+										:""}
 									</div>
-								)
-								:
-								""
-							}
+								):""}
 						</div>
 					</form>
 				</div>
