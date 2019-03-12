@@ -177,6 +177,9 @@ export default React.createClass({
 				var msg = Messages.get("notification.policy.save");
 				this.context.toastr.addAlertSuccess(msg);
 				me.context.router.push("/forrisco/policy/" + model.data.id + "/item/overview");
+				PolicyStore.dispatch({
+					action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
 			} else {
 				var msg = model.msg ? model.msg.message : "Erro ao criar Política"
 				this.context.toastr.addAlertError(msg);
@@ -206,11 +209,15 @@ export default React.createClass({
 			PolicyStore.on("policyUpdated", (model) => {
 				if (model.data.id != null) {
 					this.context.toastr.addAlertSuccess(Messages.get("notification.policy.update"));
-					me.context.router.push("/forrisco/policy/" + model.data.id + "/item/" + this.state.itemModel.data.id);
+					me.context.router.push("/forrisco/policy/" + model.data.id + "/item/overview");
+					PolicyStore.dispatch({
+						action: PolicyStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+					});
 				} else {
 					var msg = Messages.get("label.errorUpdatePolicy") + (model ? ": " + model.msg : "")
 					this.context.toastr.addAlertError(msg);
 				}
+
 			}, me);
 
 			PolicyStore.on("retrieverisklevel", (model) => {
@@ -225,7 +232,7 @@ export default React.createClass({
 				this.generateMatrix()
 			}, me);
 
-			ItemStore.on("retrieveInfo", (model) => {
+			/*ItemStore.on("retrieveInfo", (model) => {
 				if (model != null) {
 					me.setState({
 						itemModel: model
@@ -238,7 +245,8 @@ export default React.createClass({
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_RETRIEVE_INFO,
 				data: { policyId: this.props.params.policyId }
-			});
+			});*/
+
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_FIND_POLICY,
 				data: this.props.params.policyId
@@ -525,7 +533,7 @@ export default React.createClass({
 				<th>
 					{table}
 					<td></td>
-					<td colSpan="3" style={{"text-align":"-webkit-center"}}>IMPACTO</td>
+					<td colSpan={this.state.matrix_c} style={{"text-align":"-webkit-center"}}>IMPACTO</td>
 				</th>
 			</table>
 		);

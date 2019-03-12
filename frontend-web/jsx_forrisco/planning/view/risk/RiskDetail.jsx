@@ -3,9 +3,10 @@ import React from "react";
 import { Link } from 'react-router';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import RiskRegister from 'forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx';
-import Monitor from 'forpdi/jsx_forrisco/planning/view/risk/Monitor.jsx';
-import Incident from 'forpdi/jsx_forrisco/planning/view/risk/Incident.jsx';
-import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency.jsx';
+import PreventiveActions from 'forpdi/jsx_forrisco/planning/view/risk/PreventiveActions';
+import Monitor from 'forpdi/jsx_forrisco/planning/view/risk/Monitor';
+import Incident from 'forpdi/jsx_forrisco/planning/view/risk/Incident';
+import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -42,6 +43,7 @@ export default React.createClass({
 	componentDidMount() {
 		RiskStore.on("findRisk", (model) => {
 			if(model.success){
+				console.log(model);
 				this.setState({
 					riskModel:model.data,
 					loading:false
@@ -121,7 +123,6 @@ export default React.createClass({
 	deleteRisco() {
 		var me = this;
 		if (me.state.riskModel != null) {
-			console.log(me.state.riskModel)
 			var msg = "Você tem certeza que deseja excluir esse Risco?"
 			Modal.confirmCustom(() => {
 				Modal.hide();
@@ -223,6 +224,11 @@ export default React.createClass({
 				{this.header()}
 			</div>
 				{this.selectInfo()}
+				<PreventiveActions
+					visualization={this.state.visualization}
+					risk={this.state.riskModel}
+					planRiskId={this.props.params.planRiskId}
+				/>
 		</div>);
 	  }
 });

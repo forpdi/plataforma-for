@@ -49,6 +49,7 @@ export default React.createClass({
 				hash += this.state.tabs[t].props.to + "|||" + this.state.tabs[t].props.title + "|||";
 
 				if(this.state.tabs[t].props.to == "/plan/1/details") {
+					console.log('yo');
 					findPlan = t;
 				}
 			}

@@ -30,8 +30,7 @@ export default React.createClass({
 		return {
 			loading: true,
 			itemModel: null,
-			policyModel: null,
-			risklevelModel: null,
+			//policyModel: null,
 			fields:[],
 
 			vizualization: false,
@@ -45,7 +44,7 @@ export default React.createClass({
 			newFieldType: null,
 			length: 0,
 			titulo: null,
-			info: false
+			//info: false
 		};
 	},
 
@@ -84,117 +83,7 @@ export default React.createClass({
 		}
 		return fields;
 	},
-	getMatrixValue(matrix, line, column) {
 
-		var result=""
-
-		for(var i=0; i<matrix.length;i++){
-			if(matrix[i][1]==line){
-				if(matrix[i][2]==column){
-					if(matrix[i][2]==0 ){
-					return <div style={{"text-align":"right"}}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
-					}else if(matrix[i][1]==this.state.policyModel.data.nline){
-						return <div style={{"text-align":"-webkit-center",margin: "5px"}}>{matrix[i][0]}</div>
-					}else{
-
-						var current_color=0;
-						var cor=""
-						if(this.state.risklevelModel != null){
-							for(var k=0; k< this.state.risklevelModel.data.length;k++){
-								if(this.state.risklevelModel.data[k]['level']==matrix[i][0]){
-									current_color=this.state.risklevelModel.data[k]['color']
-								}
-							}
-						}
-
-						switch(current_color) {
-							case 0: cor="Vermelho"; break;
-							case 1: cor="Marron"; break;
-							case 2: cor="Amarelo"; break;
-							case 3: cor="Laranja"; break;
-							case 4: cor="Verde"; break;
-							case 5: cor="Azul"; break;
-							default: cor="Vermelho";
-						}
-
-						return <div  className={"Cor "+cor} >{matrix[i][0]}</div>
-
-					}
-				}
-			}
-		}
-		return ""
-	},
-
-	getMatrix() {
-
-		if(this.state.policyModel ==null){
-			return
-		}
-
-
-		var fields = [];
-		if(typeof this.state.fields === "undefined" || this.state.fields == null){
-			fields.push({
-				name: "description",
-				type: AttributeTypes.TEXT_AREA_FIELD,
-				placeholder: "",
-				maxLength: 9000,
-				label: Messages.getEditable("label.description","fpdi-nav-label"),
-				value: this.state.itemModel ? this.state.itemModel.get("description") : null,
-				edit:false
-			});
-		}else{
-			fields=this.state.fields
-		}
-
-		var aux=this.state.policyModel.data.matrix.split(/;/)
-		var matrix=[]
-
-		for(var i=0; i< aux.length;i++){
-			matrix[i]= new Array(3)
-			matrix[i][0]=aux[i].split(/\[.*\]/)[1]
-			matrix[i][1]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[0]
-			matrix[i][2]=aux[i].match(/\[.*\]/)[0].substring(1,aux[i].match(/\[.*\]/)[0].length-1).split(/,/)[1]
-		}
-
-		var table=[]
-		for (var i=0; i<=this.state.policyModel.data.nline;i++){
-			var children=[]
-			for (var j=0; j<=this.state.policyModel.data.ncolumn;j++){
-				children.push(<td key={j}>{this.getMatrixValue(matrix,i,j)} </td>)
-			}
-			table.push(<tr key={i} >{children}</tr>)
-		}
-
-	return (
-		<div>
-			<label htmlFor={this.state.fieldId} className="fpdi-text-label">
-				{"MATRIZ DE RISCO"}
-			</label>
-			<br/>
-			<br/>
-			<table style={{width: "min-content"}}>
-				<tr>
-					<td style={{position: "relative", left: "30px"}}>
-						{table}
-					</td>
-				</tr>
-				<tr>
-					<th style={{bottom: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
-						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
-					</th>
-				</tr>
-				<tr>
-					<th>
-					<div style={{"text-align":"-webkit-center", position: "relative", left: (20+(this.state.policyModel.data.ncolumn)*10)+"px"}}>IMPACTO</div>
-					</th>
-				</tr>
-			</table>
-
-		</div>
-		);
-	},
 
 
 	/*
@@ -213,11 +102,9 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		PolicyStore.on("findpolicy", (model) => {
-
 			if(!model.deleted){
 				me.setState({
 					policyModel: model,
-
 				});
 				me.forceUpdate();
 				_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.data.name);});
@@ -228,21 +115,12 @@ export default React.createClass({
 			}
 		}, me);
 
-		PolicyStore.on("retrieverisklevel", (model) => {
-				me.setState({
-					risklevelModel: model
-				});
-				me.forceUpdate();
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
-		}, me);
-
 		ItemStore.on("retrieveItem", (model) => {
 			if(!model.attributes.deleted){
 				var fields = [];
 				for (var i in model.attributes.fieldItem) {
 					var item=model.attributes.fieldItem[i]
 					if(!item.deleted){
-
 						fields.push({
 							name:item.name+"-"+(i),
 							value: item.name,
@@ -282,31 +160,6 @@ export default React.createClass({
 			}
 		}, me);
 
-	/*	ItemStore.on("retrieveField", (model) => {
-			if(model.attributes != null){
-				var fields = [];
-				for (var i in model.attributes) {
-
-					if(!model.attributes[i].deleted){
-						fields.push({
-							name: model.attributes[i].name+"-"+(i),
-							value: model.attributes[i].name,
-							label: model.attributes[i].name,
-							description: model.attributes[i].description,
-							isText:  model.attributes[i].isText,
-							type: model.attributes[i].isText ? AttributeTypes.TEXT_AREA_FIELD : AttributeTypes.ATTACHMENT_FIELD,
-							edit: false,
-							fileLink: model.attributes[i].fileLink
-						});
-					}
-				}
-
-				me.setState({
-					fields: fields
-				})
-			}
-		}, me);*/
-
 		ItemStore.on("itemUpdated", (model) => {
 			if(model !=null){
 				var fields = [];
@@ -345,7 +198,6 @@ export default React.createClass({
 		}, me);
 
 		ItemStore.on("newItem", (model) => {
-
 			if(model !=null){
 				this.state.fields.map((fielditem, index) => {
 					ItemStore.dispatch({
@@ -366,28 +218,12 @@ export default React.createClass({
 			}
 		}, me);
 
-		PolicyStore.on("policyDeleted", (model) => {
-			if(model.success){
-				this.context.router.push("/forrisco/home");
-			}else{
-				if(model.message != null){
-					this.context.toastr.addAlertError(model.message);
-				}
-			}
-
-		})
 
 		ItemStore.on("itemDeleted", (model) => {
 			this.context.router.push("forrisco/policy/"+this.context.policy.id+"/item/overview");
 		})
 
 		me.refreshData(me.props, me.context);
-	},
-
-
-	componentWillUnmount() {
-		ItemStore.off(null, null, this);
-		PolicyStore.off(null, null, this);
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
@@ -398,7 +234,6 @@ export default React.createClass({
 				fields: [],
 				tabPath: newProps.location.pathname,
 				vizualization: false,
-
 				newField: false,
 				newFieldType: null,
 				itemModel: null,
@@ -410,9 +245,15 @@ export default React.createClass({
 			});
 
 			this.refreshData(newProps, newContext);
-
 		}
 	},
+
+	componentWillUnmount() {
+		ItemStore.off(null, null, this);
+		PolicyStore.off(null, null, this);
+	},
+
+
 	UpdateLoading(bool){
 		this.setState({
 			loading: bool,
@@ -427,20 +268,12 @@ export default React.createClass({
 		});
 
 		if (props.params.policyId && props.params.itemId) {
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-				data: props.params.policyId
-			});
 
 			if(props.params.itemId){
 				ItemStore.dispatch({
 					action: ItemStore.ACTION_RETRIEVE_ITEM,
 					data: props.params.itemId
 				});
-				/*ItemStore.dispatch({
-					action: ItemStore.ACTION_RETRIEVE_FIELD,
-					data: props.params.itemId
-				});*/
 			}else{
 				this.setState({
 					titulo: Messages.getEditable("label.newItem","fpdi-nav-label"),
@@ -454,9 +287,11 @@ export default React.createClass({
 			});
 		}
 	},
+
 	refreshCancel () {
 		Modal.hide();
 	},
+
 	onCancel() {
 		if (this.state.itemModel) {
 			this.setState({
@@ -467,36 +302,25 @@ export default React.createClass({
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 		}
 	},
+
 	changeVizualization() {
 		this.setState({
 			vizualization: false,
 			//fields: this.getFields()
 		});
 	},
+
 	deleteItem() {
 		var me = this;
-		if (me.state.itemModel != null) {
+			var msg = "Você tem certeza que deseja excluir esse item?"
+			Modal.confirmCustom(() => {
+				Modal.hide();
+				ItemStore.dispatch({
+					action: ItemStore.ACTION_DELETE,
+					data: me.state.itemModel.id
+				});
+			},msg,me.refreshCancel);
 
-			if(this.state.info){
-				var msg = "Você tem certeza que deseja excluir essa política?"
-				Modal.confirmCustom(() => {
-					Modal.hide();
-					PolicyStore.dispatch({
-						action: PolicyStore.ACTION_DELETE,
-						data: me.state.policyModel.data.id
-					});
-				},msg,me.refreshCancel);
-
-			}else{
-				var msg = "Você tem certeza que deseja excluir esse item?"
-				Modal.confirmCustom(() => {
-					Modal.hide();
-					ItemStore.dispatch({
-						action: ItemStore.ACTION_DELETE,
-						data: me.state.itemModel.id
-					});
-				},msg,me.refreshCancel);
-			}
 			/*var msg = Messages.get("label.deleteConfirmation") + " " +me.state.model.attributes.name+"?";
 			Modal.confirmCancelCustom(() => {
 				Modal.hide();
@@ -505,7 +329,6 @@ export default React.createClass({
 					data: me.state.model
 				});
 			},msg,()=>{Modal.hide();me.refreshCancel;});*/
-		}
 	},tweakNewField() {
 		this.setState({
 			newField: !this.state.newField,
@@ -529,9 +352,11 @@ export default React.createClass({
 				fielditem.edit=bool
 			}
 		})
+		// console.log(this.state.fields);
 		this.setState({
 			fields: this.state.fields
 		})
+		return this.state.fields[id].isText ? null : this.state.fields[id].fileLink;
 	},
 	deleteFunc(id){
 		Modal.confirmCustom(() => {

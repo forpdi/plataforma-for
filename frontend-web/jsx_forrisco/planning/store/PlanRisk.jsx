@@ -10,6 +10,7 @@ var PlanRiskModel = Fluxbone.Model.extend({
 var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_NEWPLANRISK: 'planRisk-newPlanRisk',
 	ACTION_RETRIEVE_PLANRISK: 'planRisk-retrievePlanRisk',
+	ACTION_FIND_UNARCHIVED_FOR_MENU: 'planRisk-getAllUnarchivedForMenu',
 	ACTION_FIND_UNARCHIVED: 'planRisk-getAllUnarchived',
 	ACTION_DELETE_PLANRISK: 'planRisk-deletePlanRisk',
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
@@ -32,6 +33,22 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.trigger("plariskcreated", {msg: opts})
 				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	getAllUnarchivedForMenu() {
+		var me = this;
+		$.ajax({
+			url: this.url + '/unarchivedplanrisk',
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("unarchivedPlanRiskForMenu", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unarchivedPlanRiskForMenu", opts);
 			}
 		});
 	},

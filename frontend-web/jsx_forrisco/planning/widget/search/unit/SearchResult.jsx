@@ -36,7 +36,6 @@ export default React.createClass({
 		UnitStore.on("findTerms", (model, data) => {
 			if (model.data != null){
 				for (var i = 0; i < model.data.length; i++) {
-					console.log(model.data[i].parent);
 					if(model.data[i].parent === undefined) {
 						model.data[i].level="Unidade"
 					}else{

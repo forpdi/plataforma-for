@@ -109,7 +109,7 @@ export default React.createClass({
 					<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
 						<PlanRiskTree
 							planRisk={this.state.planRiskData}
-							unit={this.state.planRiskData}
+							//unit={this.state.planRiskData}
 							ref="tree"
 							treeType={this.props.route.path}
 							location={this.props.location}

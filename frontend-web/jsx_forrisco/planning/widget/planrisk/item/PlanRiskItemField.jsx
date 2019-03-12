@@ -264,7 +264,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.props.field);
 		return (
 			<div>
 				{this.props.field ?

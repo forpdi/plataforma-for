@@ -338,7 +338,6 @@ export default React.createClass({
 				process: {
 					...this.state.process,
 					fileLink: fileData.fileLink,
-					//fileName: Modal.fileName,
 					file: {name: fileData.name, id:  fileData.id}
 				},
 			});
@@ -403,7 +402,6 @@ export default React.createClass({
 					unit: { id: this.props.unitId },
 					tools: undefined,
 					fileData: undefined,
-					//file: {id: }
 				},
 			},
 		});

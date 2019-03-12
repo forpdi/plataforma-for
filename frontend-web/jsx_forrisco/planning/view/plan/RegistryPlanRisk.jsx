@@ -65,13 +65,14 @@ export default React.createClass({
 			if (response.data) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.plan.sav"));
 				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
+				PlanRiskStore.dispatch({
+					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Plano");
 			}
 		});
-	},
 
-	componentWillMount() {
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_UNARCHIVED,
 		});
@@ -99,7 +100,7 @@ export default React.createClass({
 		}, {
 			name: "description",
 			type: "textarea",
-			placeholder: "Descrição da Política",
+			placeholder: "Descrição do Plano de Risco",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,

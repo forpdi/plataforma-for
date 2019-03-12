@@ -4,7 +4,7 @@ import PolicyTabPanel from "forpdi/jsx_forrisco/planning/widget/policy/PolicyTab
 import PolicyTree from "forpdi/jsx_forrisco/planning/widget/policy/PolicyTree.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-
+import {Link} from "react-router";
 
 export default React.createClass({
 	contextTypes: {
@@ -14,29 +14,26 @@ export default React.createClass({
 	},
 	propTypes: {
 		location: React.PropTypes.object.isRequired
+
 	},
 	getInitialState() {
-
 		return {
 			policyId: null,
-			itemId: null,
-			subitemId: null,
 			model: null
 		};
 	},
+
 	componentDidMount() {
 		var me = this;
 		PolicyStore.on("findpolicy", (model) => {
+			if(this.props.params.policyId){}
 			me.setState({
 				model: model.data,
 				policyId: model.data.id
 			});
 		}, me);
 
-		PolicyStore.dispatch({
-			action: PolicyStore.ACTION_FIND_POLICY,
-			data: this.props.params.policyId
-		});
+		this.refreshData(this.props.params.policyId)
 	},
 
 	componentWillUnmount() {
@@ -44,21 +41,19 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		this.state.itemId=newProps.params.itemId
-		this.state.subitemId=newProps.params.subitemId
 		if (newProps.params.policyId != this.state.policyId) {
-			this.setState({
-				model: null,
-				policyId: null
-			});
-			PolicyStore.dispatch({
-				action: PolicyStore.ACTION_FIND_POLICY,
-				data: newProps.params.policyId
-			});
+			this.refreshData(newProps.params.policyId)
 		}
 	},
-	render() {
 
+	refreshData(policyId) {
+		PolicyStore.dispatch({
+			action: PolicyStore.ACTION_FIND_POLICY,
+			data: policyId
+		});
+	},
+
+	render() {
 		if (!this.state.model) {
 			return <LoadingGauge />;
 		}
@@ -69,15 +64,35 @@ export default React.createClass({
 		}
 
 		return (
-		<div className="fpdi-plan-details">
-			<PolicyTree policy={this.state.model} ref="tree" treeType={this.props.route.path} itemId={this.state.itemId} subitemId={this.state.subitemId}/>
+			<div className="fpdi-plan-details">
+			<div className="fpdi-tabs">
+			<ul className="fpdi-tabs-nav marginLeft0" role="tablist">
+						<Link role="tab" title="Politica"  className={"tabTreePanel active"}
+						to={"forrisco/policy/" + this.props.params.policyId + "/item/overview"}>
+							{Messages.getEditable("label.plan", "fpdi-nav-label")}
+						</Link>
+					</ul>
+				{this.state.policyId?
+				<div className="fpdi-tabs-content fpdi-plan-tree marginLeft0 plan-search-border">
+					<PolicyTree
+						policy={this.state.model}
+						policyId={this.props.params.policyId}
+						ref="tree"
+						treeType={this.props.route.path}
+						//itemId={this.state.itemId}
+						//subitemId={this.state.subitemId}
+					/>
+				</div>
+				: <p>Nenhum dado de política encontrada.</p>}
+			</div>
+
 			<div className="fpdi-plan-tabs">
-				{<PolicyTabPanel
+				<PolicyTabPanel
 					{...this.props}
 					policy={this.state.model}
 					ref={"tabpanel-"+this.state.policyId}
-					key={"tabpanel-"+this.state.policyId} />
-				}
+					key={"tabpanel-"+this.state.policyId}
+				/>
 			</div>
 		</div>
 		)

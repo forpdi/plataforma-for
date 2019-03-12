@@ -54,34 +54,52 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 
-		var info = {
-			label: "Informações Gerais",
-			expanded: false,
-			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-			key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
-			model: this.props.planRisk,
-			id: this.props.planRisk.id,
-		};
-
-		//Botão Novo Item Geral
-		var newItem = {
-			label: Messages.get("label.newItem"),
-			labelCls: 'fpdi-new-node-label',
-			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
-			key: "newPlanRiskItem"
-		};
-
 		/*Item de um Plano*/
 		PlanRiskItemStore.on('allItens', (response) => {
+			var treeItens = [];
+
+			var info = {
+				label: "Informações Gerais",
+				expanded: false,
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
+				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + this.props.planRisk.id + '/info',
+				model: this.props.planRisk,
+				id: this.props.planRisk.id,
+			};
+
+			//Botão Novo Item Geral
+			var newItem = {
+				label: Messages.get("label.newItem"),
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
+				key: "newPlanRiskItem"
+			};
+
+			var info = {
+				label: "Informações Gerais",
+				expanded: false,
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
+				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
+				model: this.props.planRisk,
+				id: this.props.planRisk.id,
+			};
+
+			//Botão Novo Item Geral
+			var newItem = {
+				label: Messages.get("label.newItem"),
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
+				key: "newPlanRiskItem"
+			};
 
 			/* Redireciona para as Informações gerais ao carregar a Tree*/
-			if (!this.props.location.pathname.includes("unit")) {
-				this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/" + this.props.planRisk.id + "/info");
-			}
+			//if (!this.props.location.pathname.includes("unit")) {
+		//		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");
+		//	}
 			/* ____________________  */
 
-			var treeItens = [];
 			response.data.map(itens => {
 				var linkToItem = '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + itens.id;
 
@@ -104,7 +122,7 @@ export default React.createClass({
 
 			this.setState({treeItens: treeItens});
 			this.forceUpdate();
-		}, me);
+		}, this);
 
 		/*Campos de um Item*/
 		PlanRiskItemStore.on('retrieveSubitens', (response, node) => {
@@ -137,7 +155,7 @@ export default React.createClass({
 			node.node.children = fieldTree;
 			this.setState({treeSubitens: fieldTree});
 			me.forceUpdate();
-		}, me);
+		}, this);
 
 		PlanRiskStore.on('searchTerms', response => {
 			if (response.data) {
@@ -161,7 +179,7 @@ export default React.createClass({
 					export:false,
 				})
 			}
-		}, me);
+		}, this);
 
 		PlanRiskItemStore.on('allSubItensByPlan', response => {
 			this.setState({
@@ -185,22 +203,22 @@ export default React.createClass({
 		//Atualiza a Tree quando un novo item é cadastrado
 		PlanRiskItemStore.on("itemSaved", () => {
 			this.refresh(this.props.planRisk.id);
-		});
+		}, this);
 
 		//Atualiza a Tree quando un novo subitem é cadastrado
 		PlanRiskItemStore.on("subItemSaved", () => {
 			this.refresh(this.props.planRisk.id);
-		});
+		}, this);
 
 		//Atualiza a Tree quando un novo item é deletado
 		PlanRiskItemStore.on("deletePlanRiskItem", () => {
 			this.refresh(this.props.planRisk.id);
-		});
+		}, this);
 
 		//Atualiza a Tree quando subitem é deletado
 		PlanRiskItemStore.on("deletePlanRiskSubItem", () => {
 			this.refresh(this.props.planRisk.id);
-		});
+		}, this);
 
 		this.refresh(this.props.planRisk.id);
 	},
@@ -209,6 +227,11 @@ export default React.createClass({
 		if (newProps.planRisk.id !== this.props.planRisk.id) {
 			this.refresh(newProps.planRisk.id);
 		}
+	},
+
+	componentWillUnmount() {
+		PlanRiskItemStore.off(null, null, this);
+		PlanRiskStore.off(null, null, this);
 	},
 
 	refresh(planRiskId) {
@@ -238,11 +261,6 @@ export default React.createClass({
 	shrinkRoot(nodeProps) {
 		nodeProps.expanded = !nodeProps.expanded;
 		this.forceUpdate();
-	},
-
-	componentWillUnmount() {
-		PlanRiskItemStore.off(null, null, this);
-		PlanRiskStore.off(null, null, this);
 	},
 
 	toggleMenu() {

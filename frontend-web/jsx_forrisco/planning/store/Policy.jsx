@@ -25,6 +25,7 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_ARCHIVE: "policy-archive",
 	ACTION_UNARCHIVE: "policy-unarchive",
 	ACTION_FIND_ARCHIVED: 'policy-findArchived',
+	ACTION_FIND_UNARCHIVED_FOR_MENU: 'policy-findUnarchivedForMenu',
 	ACTION_FIND_UNARCHIVED: 'policy-findUnarchived',
 	ACTION_MAIN_MENU_STATE: "policy-mainMenuState",
 	ACTION_DELETE: "policy-delete",
@@ -72,6 +73,22 @@ var PolicyStore = Fluxbone.Store.extend({
 		});
 	},
 
+	findUnarchivedForMenu(){
+		var me = this;
+		$.ajax({
+			url: me.url+"/unarchivedpolicy",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("unarchivedPolicyForMenu", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("unarchivedPolicyForMenu", opts);
+			}
+		});
+	},
+
 	findUnarchived(data){
 		var me = this;
 		$.ajax({
@@ -115,10 +132,10 @@ var PolicyStore = Fluxbone.Store.extend({
 				policy: data
 			}),
 			success(model) {
-				ItemStore.dispatch({
+				/*ItemStore.dispatch({
 					action: ItemStore.ACTION_CREATE_INFO,
 					data: model.data
-				});
+				});*/
 				me.trigger("policycreated", model);
 			},
 			error(opts, status, errorMsg) {
