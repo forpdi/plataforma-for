@@ -93,7 +93,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				var resp = JSON.parse(opts.responseText);
-				me.trigger("policyDeleted", resp);
+				me.trigger("deletePlanRisk", resp);
 			}
 		})
 	},
