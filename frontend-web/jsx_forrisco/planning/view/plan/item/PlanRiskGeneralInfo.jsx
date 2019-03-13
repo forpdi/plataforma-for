@@ -92,10 +92,11 @@ export default React.createClass({
 	},
 
 	renderDropdown() {
+		console.log(this.props);
 		return(
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + "/edit"}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
 							<span id="menu-levels"> Editar Plano </span>
 						</span>
@@ -120,7 +121,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}

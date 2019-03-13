@@ -1,25 +1,33 @@
 import React from "react";
 import TreeViewNode from "forpdi/jsx_forrisco/core/widget/treeview/TreeViewNode.jsx";
+
 export default React.createClass({
+
 	contextTypes: {
 		router: React.PropTypes.object
 	},
+
 	propTypes: {
 		tree: React.PropTypes.array
 	},
+
 	idGenOffset: 100000,
+
 	getInitialState() {
 		return {
 		};
 	},
+
 	componentDidMount() {
 		var me = this;
 	},
-	componentWillUnmount() {
 
-	},
-	componentWillReceiveProps() {
-	},
+	// componentWillUnmount() {
+	//
+	// },
+	// componentWillReceiveProps() {
+	//
+	// },
 
 	onExpand(nodeProps) {
 		if (typeof nodeProps.node.onExpand == 'function') {
@@ -51,17 +59,25 @@ export default React.createClass({
 				nodeLevel={loop}
 				onExpand={this.onExpand}
 				onShrink={this.onShrink}
-				>
-					{node.children ? node.children.map((nextNode, nextIndex) => {
+			>
+				{
+					node.children
+					?
+					node.children.map((nextNode, nextIndex) => {
 						return this.renderNode(nextNode, nextIndex, loop+1);
-					}):""}
+					})
+					:
+					""
+				}
 			</TreeViewNode>
 		);
 	},
 
 	render() {
-		return <div className="fpdi-treeview">
-			{this.props.tree.map(this.renderNode)}
-		</div>;
+		return (
+			<div className="fpdi-treeview">
+				{this.props.tree.map(this.renderNode)}
+			</div>
+		);
 	}
 });

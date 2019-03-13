@@ -51,7 +51,6 @@ import Community from "forpdi/jsx/dashboard/view/DashboardCommunityView.jsx";
 
 import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
-
 /* Forrisco */
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
@@ -151,8 +150,8 @@ ReactDOM.render((
 							</Route>
 							<Route
 								path="info"
-								component={props =>
-									<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />
+								component={
+									props => (<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />)
 								}
 							/>
 						</Route>

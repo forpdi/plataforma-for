@@ -229,8 +229,8 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			success(model) {
-				me.trigger("detailSubItem", model);
+			success(model, status) {
+				me.trigger("detailSubItem", model, status);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("detailSubItem", opts);

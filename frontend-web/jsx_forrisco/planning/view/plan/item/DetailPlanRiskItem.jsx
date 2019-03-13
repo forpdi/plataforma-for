@@ -117,10 +117,13 @@ export default React.createClass({
 
 		PlanRiskItemStore.on('deletePlanRiskItem', response => {
 			if(response.success === true) {
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+				if (hasMinTabsLength) {
+					this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/item/overview`);
+				}
+
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
-				this.context.router.push(
-					"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.planRiskId + "/info"
-				);
 			}
 		})
 	},
@@ -185,9 +188,9 @@ export default React.createClass({
 				</li>
 				<li>
 					<Link onClick={this.onDeleteItem}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanRisk")}>
-						<span id="menu-levels"> Deletar Item </span>
-					</span>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanRisk")}>
+							<span id="menu-levels"> Deletar Item </span>
+						</span>
 					</Link>
 				</li>
 			</ul>
@@ -195,7 +198,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
@@ -266,6 +268,7 @@ export default React.createClass({
 								 offEdit={this.offEdit}
 								 itemId={this.props.params.itemId}
 								 planRiskId={this.props.params.planRiskId}
+								 pathName={this.props.location.pathname}
 							 />
 					}
 				</div>

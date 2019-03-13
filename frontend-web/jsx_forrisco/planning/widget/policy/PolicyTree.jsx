@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from "react";
-import {Link} from "react-router";
+import { Link } from "react-router";
 import FavoriteTree from "forpdi/jsx/planning/widget/plan/FavoriteTree.jsx";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/policy/LevelSearch.jsx";
@@ -20,10 +20,12 @@ export default React.createClass({
 		toastr: React.PropTypes.object.isRequired,
 		permissions: React.PropTypes.array.isRequired
 	},
+
 	propTypes: {
 		policy: React.PropTypes.object.isRequired,
 		className: React.PropTypes.object
 	},
+
 	getInitialState() {
 		return {
 			subplans: [],
@@ -36,7 +38,7 @@ export default React.createClass({
 			hiddenSearch: false,
 			hiddenResultSearch: false,
 			resultSearch: [],
-			total:0,
+			total: 0,
 			dataInitSearch: null,
 			dataEndSearch: null,
 
@@ -48,8 +50,8 @@ export default React.createClass({
 			itensSelect: [],
 			subitensSelect: [],
 			unnumberedSections: 0,
-			export:false,
-			policyId:null
+			export: false,
+			policyId: null
 		};
 	},
 
@@ -226,14 +228,14 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if(newProps.policy.id != this.props.policy.id){
+		if (newProps.policy.id != this.props.policy.id) {
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_RETRIEVE_ITENS,
 				data:newProps.policy.id,
 			});
 		}
 
-	/*	this.state.policyId=newProps.policyId
+	/* this.state.policyId=newProps.policyId
 
 		if (document.URL.indexOf('details/overview') >= 0) {
 			this.refreshPlans(newProps.policy.id);
@@ -265,9 +267,6 @@ export default React.createClass({
 		if (newProps.treeType == this.state.actualType && (exists || newProps.itemId == null)) {
 			return;
 		}*/
-
-
-
 	},
 
 	refresh(policyId) {
@@ -312,6 +311,7 @@ export default React.createClass({
 		nodeProps.expanded = false;
 		this.forceUpdate();
 	},
+
 	exportReport(evt) {
 		evt.preventDefault();
 
@@ -324,95 +324,109 @@ export default React.createClass({
 			this.setState({export:true})
 		}
 	},
+
 	selectAllitens(){
 		var i;
-		for(i=0; i<this.state.rootSections.length; i++){
-			if(document.getElementById("checkbox-item-"+i).disabled == false){
+		for (i=0; i<this.state.rootSections.length; i++) {
+			if (document.getElementById("checkbox-item-"+i).disabled == false) {
 				document.getElementById("checkbox-item-"+i).checked = document.getElementById("selectall").checked;
 			}
 		}
 	},
+
 	selectAllsubitens(){
 		var i;
-		for(i=0; i<this.state.rootSubsections.length; i++){
-			if(document.getElementById("checkbox-subitem-"+i).disabled == false){
+		for (i=0; i<this.state.rootSubsections.length; i++) {
+			if (document.getElementById("checkbox-subitem-"+i).disabled == false) {
 				document.getElementById("checkbox-subitem-"+i).checked = document.getElementById("selectallsub").checked;
 			}
 		}
 	},
+
 	verifySelectAllitens() {
 		var i;
 		var selectedAll = true;
-		for(i=0; i<this.state.rootSections.length; i++){
-			if(document.getElementById("checkbox-item-"+i).disabled == false && !document.getElementById("checkbox-item-"+i).checked){
+		for (i=0; i<this.state.rootSections.length; i++) {
+			if (document.getElementById("checkbox-item-"+i).disabled == false && !document.getElementById("checkbox-item-"+i).checked) {
 				selectedAll = false;
 			}
 		}
 		document.getElementById("selectall").checked = selectedAll;
 	},
+
 	verifySelectAllsubitens() {
 		var i;
 		var selectedAll = true;
-		for(i=0; i<this.state.rootSubsections.length; i++){
-			if(document.getElementById("checkbox-subitem-"+i).disabled == false && !document.getElementById("checkbox-subitem-"+i).checked){
+		for (i=0; i<this.state.rootSubsections.length; i++) {
+			if (document.getElementById("checkbox-subitem-"+i).disabled == false && !document.getElementById("checkbox-subitem-"+i).checked) {
 				selectedAll = false;
 			}
 		}
 		document.getElementById("selectallsub").checked = selectedAll;
 	},
 
-
 	renderRecords() {
-		return (<div>
-		<div className="row">Itens
-			<div key="rootSection-selectall">
-					<div className="checkbox marginLeft5 col-md-10" >
-						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall" onChange={this.selectAllitens}></input>
-							Selecionar todos
-						</label>
-					</div>
-			</div>
-
-			{this.state.itens.map((rootSection, idx) => {
-				return (
-				<div key={"rootSection-filled"+idx}>
-					<div className="checkbox marginLeft5 col-md-10" >
-						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
-							<input type="checkbox" value={rootSection.id} id={"checkbox-item-"+idx} onClick={this.verifySelectAllitens}></input>
-							{rootSection.name}
-						</label>
+		return (
+			<div>
+				<div className="row">Itens
+					<div key="rootSection-selectall">
+							<div className="checkbox marginLeft5 col-md-10" >
+								<label name="labelSection-selectall" id="labelSection-selectall">
+									<input type="checkbox" value="selectall" id="selectall" onChange={this.selectAllitens}></input>
+									Selecionar todos
+								</label>
+							</div>
 					</div>
 
-				</div>);
-			})}
-			</div>
-			<div className="row">Subitens
-
-				<div key="rootSection-selectall">
-						<div className="checkbox marginLeft5 col-md-10" >
-							<label name="labelSection-selectall" id="labelSection-selectall">
-								<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllsubitens}></input>
-								Selecionar todos
-							</label>
-						</div>
+					{
+						this.state.itens.map((rootSection, idx) => {
+							return (
+								<div key={"rootSection-filled"+idx}>
+									<div className="checkbox marginLeft5 col-md-10" >
+										<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+											<input
+												type="checkbox"
+												value={rootSection.id}
+												id={"checkbox-item-"+idx}
+												onClick={this.verifySelectAllitens}
+											/>
+											{rootSection.name}
+										</label>
+									</div>
+								</div>
+							);
+						})
+					}
 				</div>
 
-			{this.state.subitens.map((rootSection, idx) => {
-				return (
-				<div key={"rootSection-filled"+idx}>
-					<div className="checkbox marginLeft5 col-md-10" >
-						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
-							<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
-							{rootSection.name}
-						</label>
+				<div className="row">Subitens
+					<div key="rootSection-selectall">
+							<div className="checkbox marginLeft5 col-md-10" >
+								<label name="labelSection-selectall" id="labelSection-selectall">
+									<input type="checkbox" value="selectall" id="selectallsub" onChange={this.selectAllsubitens}></input>
+									Selecionar todos
+								</label>
+							</div>
 					</div>
 
-				</div>);
-			})}
-			<br/><br/>
+					{
+						this.state.subitens.map((rootSection, idx) => {
+							return (
+								<div key={"rootSection-filled"+idx}>
+									<div className="checkbox marginLeft5 col-md-10" >
+										<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+											<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
+											{rootSection.name}
+										</label>
+									</div>
+								</div>
+							);
+						})
+					}
+					<br/><br/>
+				</div>
 			</div>
-		</div>);
+		);
 	},
 
 	preClick(){
@@ -463,9 +477,9 @@ export default React.createClass({
 				author=${author}&pre=${pre}&itens=${item}&subitens=${subitem}`;
 			url = url.replace(" ", "+");
 
-			if(pre){
+			if (pre) {
 				window.open(url,title);
-			}else{
+			} else {
 				//this.context.router.push(url);
 				window.open(url,title);
 				Modal.hide();
@@ -508,6 +522,7 @@ export default React.createClass({
 			hiddenSearch: !this.state.hiddenSearch
 		});
 	},
+
 	displayResult() {
 		this.setState({
 			hiddenResultSearch: true
@@ -524,16 +539,15 @@ export default React.createClass({
 	render() {
 		return (
 			<div className="fpdi-tabs">
-				<div
-					className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
+				<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
 					<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
-					   title={Messages.get("label.clean")}> </i>
+					   title={Messages.get("label.clean")} />
 					<input type="text" className="form-control-busca" ref="term"
-						   onKeyDown={this.onKeyDown}/>
+						   onKeyDown={this.onKeyDown} />
 					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
-					   title={Messages.get("label.advancedSearch")}> </i>
+					   title={Messages.get("label.advancedSearch")} />
 					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
-					   onClick={this.treeSearch} title={Messages.get("label.search")}> </i>
+					   onClick={this.treeSearch} title={Messages.get("label.search")} />
 				</div>
 					{this.state.hiddenResultSearch ?
 						<SearchResult
@@ -546,7 +560,7 @@ export default React.createClass({
 						:
 						<div>
 							<TreeView tree={this.state.tree}/>
-								<hr className="divider"></hr>
+								<hr className="divider" />
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
 								<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
