@@ -135,8 +135,13 @@ export default React.createClass({
 		})
 	},
 
-	render() {
+	onCancel() {
+		this.context.router.push(
+			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/overview"
+		);
+	},
 
+	render() {
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
