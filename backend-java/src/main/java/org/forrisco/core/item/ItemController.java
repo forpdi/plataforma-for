@@ -37,7 +37,7 @@ public class ItemController extends AbstractController {
 	 * Salvar Primeiro item
 	 * 
 	 * @return void
-	 */
+	 *
 	@Post( PATH + "/info")
 	@Consumes
 	@NoCache
@@ -62,11 +62,11 @@ public class ItemController extends AbstractController {
 		
 	}
 	
-	/**
+	 *
 	 * Recupera item de informações gerais
 	 * 
 	 * @return void
-	 */
+	 *
 	@Get( PATH + "/info")
 	@NoCache
 	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
@@ -83,7 +83,7 @@ public class ItemController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 		
-	}
+	}*/
 
 	
 	

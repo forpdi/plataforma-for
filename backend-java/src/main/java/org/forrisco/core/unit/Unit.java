@@ -89,7 +89,7 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		return planRisk;
 	}
 
-	public void setPlan(PlanRisk plan) {
+	public void setPlanRisk(PlanRisk plan) {
 		this.planRisk = plan;
 	}
 

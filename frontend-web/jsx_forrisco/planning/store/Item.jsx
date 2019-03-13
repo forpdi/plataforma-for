@@ -37,8 +37,8 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'item-update',
 	ACTION_CUSTOM_UPDATE: 'item-customUpdate',
 	ACTION_DELETE_PLAN: 'item-deleteItem',
-	ACTION_CREATE_INFO: 'item-createInfo',
-	ACTION_RETRIEVE_INFO: 'item-retrieveInfo',
+	//ACTION_CREATE_INFO: 'item-createInfo',
+	//ACTION_RETRIEVE_INFO: 'item-retrieveInfo',
 	dispatchAcceptRegex: /^item-[a-zA-Z0-9]+$/,
 	ACTION_DELETE: "item-delete",
 	ACTION_RETRIEVE_SUBITEM: "item-retrieveSubitem",
@@ -164,7 +164,7 @@ var ItemStore = Fluxbone.Store.extend({
 		});
 	},
 
-	createInfo(data) {
+	/*createInfo(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/info",
@@ -198,7 +198,7 @@ var ItemStore = Fluxbone.Store.extend({
 				me.trigger("retrieveInfo", null);
 			}
 		});
-	},
+	},*/
 
 	createField(data) {
 		var me = this;

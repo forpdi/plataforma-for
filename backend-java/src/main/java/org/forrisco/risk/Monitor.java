@@ -114,5 +114,12 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 		this.riskId = riskId;
 	}
 
+	public Monitor(Monitor monit) {
+		this.begin= monit.getBegin();
+		this.impact= monit.getImpact();
+		this.probability= monit.getProbability();
+		this.report= monit.getReport();
+		this.user= monit.getUser();
+	}
 	
 }

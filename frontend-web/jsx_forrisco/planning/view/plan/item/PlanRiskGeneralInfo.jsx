@@ -102,7 +102,7 @@ export default React.createClass({
 					</Link>
 				</li>
 				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/duplicate"}>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/duplicate"}>
 					<span className="mdi mdi-content-copy cursorPointer" title={Messages.get("label.deletePolicy")}>
 						<span id="menu-levels"> Duplicar Plano </span>
 					</span>

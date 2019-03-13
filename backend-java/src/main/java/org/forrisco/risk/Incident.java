@@ -48,6 +48,16 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	@Transient
 	private Long unitId;
 	
+	
+
+	public Incident(Incident incident) {
+		this.description =incident.getDescription();
+		this.action = incident.getAction();
+		this.type =incident.getType();
+		this.user = incident.getUser();
+		this.begin =incident.getBegin();
+	}
+
 	public User getUser() {
 		return user;
 	}

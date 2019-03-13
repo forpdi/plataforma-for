@@ -131,11 +131,9 @@ ReactDOM.render((
 						<IndexRedirect to="overview" />
 						<Route path="overview" component={Forrisco_PlanRiskGeneralInfo} />
 						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco*/
+						<Route path="duplicate" component={Forrisco_DuplicatePlanRisk} />
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
-						{//<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
-						}
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
-						<Route path=":itemId/duplicate" component={Forrisco_DuplicatePlanRisk} />
 						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
 						<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
 					</Route>

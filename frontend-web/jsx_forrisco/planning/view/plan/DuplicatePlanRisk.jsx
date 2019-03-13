@@ -25,86 +25,121 @@ export default React.createClass({
 			cancelLabel: "Cancelar",
 			// planRiskFields: [],
 			isLoading: true,
-      oldPlanRisk: {
-        planName: '',
-        plocyName: '',
-      },
-      units: [],
-			items: [],
-			keepItems: 0,
+			oldPlanRiskModel: null,
+			units: [],
+			itens: [],
+			keepItens: 0,
 			keepUnits: 0,
 		};
 	},
 
 	componentDidMount() {
-    PlanRiskItemStore.dispatch({
-      action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
-      data: { planRiskId: this.props.params.planRiskId }
-    });
 
 		PlanRiskItemStore.on('allItens', response => {
-			const items = response.data;
-			if (items) {
-				this.setState({ items });
+			const itens = response.data;
+			if (response.success) {
+				this.setState({ itens });
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar dados dos itens do plano");
 			}
-		});
+		},this);
 
-    UnitStore.dispatch({
-      action: UnitStore.ACTION_FIND_BY_PLAN,
-      data: { planId: this.props.params.planRiskId },
-    });
-
-    UnitStore.on('unitbyplan', response => {
-      const units = response.data;
-      if (units) {
-        this.setState({ units });
-      } else {
+		UnitStore.on('unitbyplan', response => {
+			const units = response.data;
+			if (response.data != null) {
+				this.setState({ units });
+			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar dados das unidades");
 			}
-    });
-
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
-			data: this.props.planRiskId,
-		});
+		},this);
 
 		PlanRiskStore.on('retrivedplanrisk', response => {
-      const plan = response.attributes;
-      if (plan) {
-        this.setState({
-          oldPlanRisk: {
-            planName: plan.name,
-            policyName: plan.policy.name,
-          },
-        })
-      } else {
+			if (response != null) {
+				this.setState({
+					oldPlanRiskModel: response.attributes,
+					isLoading: false
+				})
+			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar dados do plano");
 			}
 
 			_.defer(() => {
-				this.context.tabPanel.addTab(this.props.location.pathname, plan.policy.name);
+				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
 			});
-		});
+		},this);
+
+		PlanRiskItemStore.on("itemDuplicated",response => { console.log("itemDuplicated")});
+		UnitStore.on("duplicatedUnit",response => { console.log("duplicatedUnit")});
+
+		PlanRiskStore.on('plariskcreated', response => {
+
+			if (response.success != null) {
+
+				var itens=[];
+				var units=[];
+
+				if(this.state.keepItens == 1){
+					for(var i in this.state.itens){
+						if(this.refs['keepItens-'+i].checked){
+							itens.push(this.state.itens[i])
+						}
+					}
+				}
+				if(this.state.keepUnits == 1){
+					for(var i in this.state.units){
+						if(this.refs['keepUnits-'+i].checked){
+							units.push(this.state.units[i])
+						}
+					}
+				}
+
+				for(var i in itens){
+					PlanRiskItemStore.dispatch({
+						action: PlanRiskItemStore.ACTION_SAVE_ITENS_DUPLICATE,
+						data: {	id:itens[i].id,
+								planRisk: {id: response.data.id}
+							}
+					});
+				}
+
+				for(var i in units){
+					UnitStore.dispatch({
+						action: UnitStore.ACTION_DUPLICATE,
+						data: {	id: units[i].id,
+								planRisk: {id: response.data.id}
+							}
+					});
+					console.log("request unit:",units[i])
+				}
+
+
+			//this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+			//this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
+			}else{
+				var msg = model.msg ? "Erro ao duplicar Plano: "+model.msg.message : "Erro ao duplicar Plano"
+				this.context.toastr.addAlertError(msg);
+			}
+
+		},this);
+
 		this.refreshComponent(this.props.params.planRiskId);
-
-		this.setState({
-			isLoading: false
-		});
 	},
-
-	// componentWillReceiveProps(newProps) {
-	// 	if (this.props.params.planRiskId !== newProps.params.planRiskId) {
-	// 		this.refreshComponent(newProps.params.planRiskId)
-	// 	}
-	// },
 
 	refreshComponent(planRiskId) {
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_RETRIEVE_PLANRISK,
+			data: planRiskId,
+		});
+
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_GET_ALL_ITENS,
 			data: planRiskId
-		})
+		});
+
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_BY_PLAN,
+			data:  planRiskId,
+		});
 	},
 
 	componentWillUnmount() {
@@ -113,35 +148,27 @@ export default React.createClass({
 		UnitStore.off(null, null, this);
 	},
 
-	handleSubmit(event) {
+	onCancel(){
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+		this.context.router.push("/forrisco/plan-risk/"+this.props.params.planRiskId+"/item/overview")
+	},
+
+	onSubmit(event) {
 		event.preventDefault();
-		// const formData = new FormData(event.target);
-		//
-		// PlanRiskStore.dispatch({
-		// 	action: PlanRiskStore.ACTION_EDIT_PLANRISK,
-		// 	data: {
-		// 		planRisk: {
-		// 			id: this.props.params.planRiskId,	//ID do plano a ser editado
-		// 			name: formData.get('name'),
-		// 			description: formData.get('description'),
-		// 			policy: {
-		// 				id: formData.get('linkedPolicy')
-		// 			}
-		// 		}
-		// 	}
-		// });
-		//
-		// PlanRiskStore.on('editPlanRisk', response => {
-		// 	this.context.toastr.addAlertSuccess("Plano de Risco editado com sucesso");
-		// 	this.context.router.push("/forrisco/plan-risk/" + response.data.id + "/item/" + this.props.params.itemId + '/info');
-		// 	PlanRiskItemStore.off('editPlanRisk');
-		// })
+
+		PlanRiskStore.dispatch({
+			action: PlanRiskStore.ACTION_NEWPLANRISK,
+			data: {	policy: this.state.oldPlanRiskModel.policy,
+					name: this.refs.planRiskEditForm["field-name"].value,
+					description: this.refs.planRiskEditForm["field-description"].value,
+				}
+		});
 	},
 
 	getCheckboxes(list, groupName) {
 		return _.map(list, (item, idx) => (
 			<div key={idx}>
-				<input style={{ "margin": "0px 5px" }} type="checkbox" name={groupName} />
+				<input style={{ "margin": "0px 5px" }} type="checkbox" ref={groupName+"-"+(idx)} name={groupName} />
 				{item.name}
 			</div>
 		));
@@ -153,27 +180,28 @@ export default React.createClass({
 
 	getForm() {
 		return (
-			<form onSubmit={this.handleSubmit} ref={"planRiskEditForm"}>
+			<form onSubmit={this.onSubmit} ref={"planRiskEditForm"}>
 				<h4 style={{ "marginTop": "30px" }}>MANTER ITENS DO PLANO</h4>
 				<Radio
-					name="keepItems"
+					name="keepItens"
 					value={1}
-					checked={this.state.keepItems == 1}
+					checked={this.state.keepItens == 1}
 					onChange={this.onRadioChange}
 					label="Sim"
 				/>
 				<Radio
-					name="keepItems"
+					name="keepItens"
 					value={0}
-					checked={this.state.keepItems == 0}
+					checked={this.state.keepItens == 0}
 					onChange={this.onRadioChange}
 					label="Não"
 				/>
-				{(this.state.keepItems == 1) ? this.getCheckboxes(this.state.items, "keepItem") : null}
+				{(this.state.keepItens == 1) ? this.getCheckboxes(this.state.itens, "keepItens") : null}
 
-				<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DO PLANO</h4>
+				{/*<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DO PLANO</h4>
 				<Radio name="keepPlanContent" label="Sim" />
 				<Radio name="keepPlanContent" label="Não" />
+				*/}
 
 				<h4 style={{ "marginTop": "30px" }}>MANTER UNIDADES</h4>
 				<Radio
@@ -190,11 +218,12 @@ export default React.createClass({
 					onChange={this.onRadioChange}
 					label="Não"
 				/>
-				{(this.state.keepUnits == 1) ? this.getCheckboxes(this.state.units, "keepUnit") : null}
+				{(this.state.keepUnits == 1) ? this.getCheckboxes(this.state.units, "keepUnits") : null}
 
-				<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DAS UNIDADES</h4>
+				{/*<h4 style={{ "marginTop": "30px" }}>MANTER CONTEÚDO DAS UNIDADES</h4>
 				<Radio name="keepUnitContent" label="Sim" />
 				<Radio name="keepUnitContent" label="Não" />
+				*/}
 
 				<h4 style={{ "marginTop": "30px" }}>NOME DO NOVO PLANO A SER DUPLICADO</h4>
 				<VerticalInput
@@ -230,14 +259,14 @@ export default React.createClass({
 
 	render() {
 		if (this.state.isLoading === true) {
-			return <LoadingGauge/>;
+			return <LoadingGauge />;
 		}
 
 		return (
 			<div>
 				<h1>Duplicar Plano</h1>
-        <span>Plano a ser duplicado: <b>{this.state.oldPlanRisk.planName}</b></span><br/>
-        <span>Política vinculada: <b>{this.state.oldPlanRisk.policyName}</b></span>
+				<span>Plano a ser duplicado: <b>{this.state.oldPlanRiskModel.name}</b></span><br />
+				<span>Política vinculada: <b>{this.state.oldPlanRiskModel.policy.name}</b></span>
 				{this.getForm()}
 			</div>
 		)

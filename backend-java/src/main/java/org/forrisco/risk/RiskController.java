@@ -77,6 +77,7 @@ public class RiskController extends AbstractController {
 			risk.setBegin(new Date());
 			this.riskBS.saveRisk(risk);
 			
+			
 			this.riskBS.saveActivities(risk);
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
