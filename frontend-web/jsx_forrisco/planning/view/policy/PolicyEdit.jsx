@@ -766,6 +766,7 @@ export default React.createClass({
 		event.preventDefault();
 
 		if (this.state.policyModel) {
+			this.context.tabPanel.removeTabByPath(this.context.tabPanel.props.location.pathname);  //Fecha a aba de edição ao cancelar
 			this.context.router.push("/forrisco/policy/" + this.state.policyModel.data.id + "/item/overview");
 			return
 		}
