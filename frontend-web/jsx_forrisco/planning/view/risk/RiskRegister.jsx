@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from 'react-router';
+import _ from 'underscore';
+
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
 import ListForm from "forpdi/jsx/planning/widget/attributeForm/ListAttributeForm.jsx";
@@ -10,7 +12,6 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import _ from 'underscore';
 
 
 var VerticalForm = Form.VerticalForm;
@@ -43,7 +44,7 @@ export default React.createClass({
 			newRisk: false,
 			strategyList:[],
 			processList:[],
-
+			unit: null,
 		}
 	},
 
@@ -53,19 +54,25 @@ export default React.createClass({
 			this.setState({
 				users: model.data,
 				//loading: false
-			})
+			});
 			if (document.getElementById("field-user") !=null) {
 				document.getElementById("field-user").value = ''
 			}
-		}, this)
+		}, this);
 
 		UnitStore.on("retrieveProcess", (model) => {
 			this.setState({
 				process:model.data,
 				loading: false
-			})
-		}, this)
+			});
+		}, this);
 
+		UnitStore.on("unitRetrieved", (model) => {
+			if (model.data) {
+				const unit = model.data;
+				this.refreshTabinfo(this.props.location.pathname, `Novo Risco - ${unit.name}`);
+			}
+		}, this);
 
 
 
@@ -111,23 +118,22 @@ export default React.createClass({
 			}
 		}, this)
 
-
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location, this.state.riskModel ? this.state.riskModel.name : "Novo Risco");
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId: this.props.params.unitId },
 		});
 
-		this.refresh()
+		this.refresh();
 	},
 	componentWillUnmount() {
-		UserStore.off(this, this, this)
-		StructureStore.off(this, this, this)
-		RiskStore.off(this, this, this)
-		UnitStore.off(this, this, this)
+		UserStore.off(null, null, this)
+		StructureStore.off(null, null, this)
+		RiskStore.off(null, null, this)
+		UnitStore.off(null, null, this)
 	},
 
 
 	componentWillReceiveProps(newProps, newContext) {
-
 		if (newProps, newProps.route.path != "new") {
 			if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
 				this.setState({
@@ -154,7 +160,13 @@ export default React.createClass({
 				document.getElementById("field-type").value = ''
 			}
 		}
-		this.refreshData()
+		if (newProps.location.pathname !== this.props.location.pathname) {
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_UNIT,
+				data: { unitId: newProps.params.unitId },
+			});
+		}
+		this.refreshData();
 	},
 
 
@@ -201,6 +213,15 @@ export default React.createClass({
 			this.state.risk_obj_process = this.props.risk.risk_obj_process
 			this.state.risk_act_process = this.props.risk.risk_act_process
 		}
+	},
+
+	refreshTabinfo(newPathname, tabName) {
+		_.defer(() =>
+			this.context.tabPanel.addTab(
+				newPathname,
+				this.state.riskModel ? this.state.riskModel.name : tabName,
+			)
+		);
 	},
 
 	getName() {
@@ -768,10 +789,10 @@ export default React.createClass({
 				{!this.state.visualization ?
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
-						<form>
+						<div>
 							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
 							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
-						</form>
+						</div>
 						<br />
 					</div>
 					: ""}
@@ -796,10 +817,10 @@ export default React.createClass({
 
 				{!this.state.visualization ? <div>
 					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
-					<form>
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
-					</form>
+					<div>
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
+					</div>
 					<br />
 				</div>
 					: ""}
@@ -827,10 +848,10 @@ export default React.createClass({
 				{!this.state.visualization ?
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
-						<form>
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
-						</form>
+						<div>
+							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
+							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
+						</div>
 						<br />
 					</div>
 					: ""}

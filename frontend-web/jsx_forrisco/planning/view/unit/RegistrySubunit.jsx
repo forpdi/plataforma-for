@@ -58,14 +58,41 @@ export default React.createClass({
 			}
 		});
 
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Subunidade');
+		UnitStore.on("unitRetrieved", (model) => {
+			console.log('foi')
+			if (model.data) {
+				const unit = model.data;
+				this.refreshTabinfo(this.props.location.pathname, `Nova Subunidade - ${unit.name}`);
+			}
 		}, this);
+
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId: this.props.params.unitId },
+		});
 	},
 
 	componentWillUnmount() {
 		UserStore.off(null, null, this);
 		UnitStore.off(null, null, this);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.location.pathname !== this.props.location.pathname) {
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_UNIT,
+				data: { unitId: newProps.params.unitId },
+			});
+		}
+	},
+
+	refreshTabinfo(newPathname, tabName) {
+		_.defer(() =>
+			this.context.tabPanel.addTab(
+				newPathname,
+				this.state.riskModel ? this.state.riskModel.name : tabName,
+			)
+		);
 	},
 
 	getFields() {
