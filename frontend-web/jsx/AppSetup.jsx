@@ -51,7 +51,6 @@ import Community from "forpdi/jsx/dashboard/view/DashboardCommunityView.jsx";
 
 import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
-
 /* Forrisco */
 import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
 import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
@@ -132,8 +131,7 @@ ReactDOM.render((
 						<Route path="overview" component={Forrisco_PlanRiskGeneralInfo} />
 						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco*/
 						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano*/
-						{//<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/
-						}
+						{/*<Route path=":itemId/info" component={Forrisco_PlanRiskGeneralInfo} /> /* Informações gerais do plano de risco*/}
 						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
 						<Route path=":itemId/duplicate" component={Forrisco_DuplicatePlanRisk} />
 						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
@@ -153,8 +151,8 @@ ReactDOM.render((
 							</Route>
 							<Route
 								path="info"
-								component={props =>
-									<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />
+								component={
+									props => (<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />)
 								}
 							/>
 						</Route>
