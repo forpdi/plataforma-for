@@ -123,90 +123,101 @@ public class PlanRiskItemController extends AbstractController {
 	}
 	
 	/**
-	 * Duplica um item
+	 * Duplica uma lista de itens
 	 *  
-	 *  @Param PlanRiskItem um item com o id do item ogirinal
-	 *  				 e o id no plano a ser salvo o item duplicado
+	 *  @Param List<PlanRiskItem>lista de ites
+	 *  @Param PlanRisk plano a ser vinculado o item duplicado
+	 *  
 	 * @return void
 	 */
 	@Post(PATH + "/duplicate")
 	@Consumes
 	@NoCache
 	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
-	public void duplicateItem(@NotNull @Valid PlanRiskItem planRiskItem) {
+	public void duplicateItem(@NotNull @Valid List<PlanRiskItem> itens, PlanRisk planRisk) {
 		try {
 			
-			PlanRisk planRisk = this.planRiskItemBS.exists(planRiskItem.getPlanRisk().getId(), PlanRisk.class);
+			PlanRisk plan = this.planRiskItemBS.exists(planRisk.getId(), PlanRisk.class);
 			
-			if(planRisk == null || planRisk.isDeleted()) {
+			if(plan == null || plan.isDeleted()) {
 				this.fail("Plano de Risco não encontrado");
 			}
 			
 			
-			//item
-			PlanRiskItem item = this.planRiskItemBS.exists(planRiskItem.getId(), PlanRiskItem.class);
+			List<PlanRiskItem> result = new ArrayList<>();
 			
-			if(item == null || item.isDeleted()) {
-				this.fail("Item não encontrado");
-				return;
-			}
-
-			planRiskItem.setId(null);
-			planRiskItem.setDescription(item.getDescription());
-			planRiskItem.setName(item.getName());
-			planRiskItem.setPlanRisk(planRisk);
-			
-			this.planRiskItemBS.save(planRiskItem);
-			
-			
-			PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listFieldsByPlanRiskItem(item);
-			PaginatedList<PlanRiskSubItem> subitens = this.planRiskItemBS.listSubItemByItem(item);
-			
-			
-			//fields
-			for(PlanRiskItemField field :fields.getList()) {
+			for(PlanRiskItem planRiskItem : itens) {
 				
-				PlanRiskItemField f= new PlanRiskItemField();
-				f.setPlanRiskItem(planRiskItem);
-				f.setDescription(field.getDescription());
-				f.setFileLink(field.getFileLink());
-				f.setName(field.getName());
-				f.setText(field.isText());
-				f.setValue(field.getValue());
-				f.setId(null);
-				this.planRiskItemBS.save(f);
-			}
-			
-			//subitens
-			for(PlanRiskSubItem subitem :subitens.getList()) {
+				PlanRiskItem item = this.planRiskItemBS.exists(planRiskItem.getId(), PlanRiskItem.class);
 				
-				PlanRiskSubItem sub = new PlanRiskSubItem();
+				if(item == null || item.isDeleted()) {
+					//this.fail("Item não encontrado");
+					//return;
+					continue;
+				}
 				
-				sub.setId(null);
-				sub.setPlanRiskItem(planRiskItem);
-				sub.setDescription(subitem.getDescription());
-				sub.setName(subitem.getName());	
-				this.planRiskItemBS.save(sub);
+				planRiskItem.setId(null);
+				planRiskItem.setDescription(item.getDescription());
+				planRiskItem.setName(item.getName());
+				planRiskItem.setPlanRisk(plan);
 				
-				//subfields
-				 PaginatedList<PlanRiskSubItemField> subfields = this.planRiskItemBS.listSubFieldsBySubItem(subitem);
+				this.planRiskItemBS.save(planRiskItem);
 				
-				for( PlanRiskSubItemField subfield : subfields.getList()) {
+				result.add(planRiskItem);
+				
+				PaginatedList<PlanRiskItemField> fields = this.planRiskItemBS.listFieldsByPlanRiskItem(item);
+				PaginatedList<PlanRiskSubItem> subitens = this.planRiskItemBS.listSubItemByItem(item);
+				
+				
+				//fields
+				for(PlanRiskItemField field :fields.getList()) {
 					
-					PlanRiskSubItemField sf= new PlanRiskSubItemField();
-					sf.setPlanRiskSubItem(sub);
-					sf.setDescription(subfield.getDescription());
-					sf.setFileLink(subfield.getFileLink());
-					sf.setName(subfield.getName());
-					sf.setText(subfield.isText());
-					sf.setValue(subfield.getValue());
-					sf.setId(null);
-					this.planRiskItemBS.save(sf);
+					PlanRiskItemField f= new PlanRiskItemField();
+					f.setPlanRiskItem(planRiskItem);
+					f.setDescription(field.getDescription());
+					f.setFileLink(field.getFileLink());
+					f.setName(field.getName());
+					f.setText(field.isText());
+					f.setValue(field.getValue());
+					f.setId(null);
+					this.planRiskItemBS.save(f);
+				}
+				
+				//subitens
+				for(PlanRiskSubItem subitem :subitens.getList()) {
+					
+					PlanRiskSubItem sub = new PlanRiskSubItem();
+					
+					sub.setId(null);
+					sub.setPlanRiskItem(planRiskItem);
+					sub.setDescription(subitem.getDescription());
+					sub.setName(subitem.getName());	
+					this.planRiskItemBS.save(sub);
+					
+					//subfields
+					 PaginatedList<PlanRiskSubItemField> subfields = this.planRiskItemBS.listSubFieldsBySubItem(subitem);
+					
+					for( PlanRiskSubItemField subfield : subfields.getList()) {
+						
+						PlanRiskSubItemField sf= new PlanRiskSubItemField();
+						sf.setPlanRiskSubItem(sub);
+						sf.setDescription(subfield.getDescription());
+						sf.setFileLink(subfield.getFileLink());
+						sf.setName(subfield.getName());
+						sf.setText(subfield.isText());
+						sf.setValue(subfield.getValue());
+						sf.setId(null);
+						this.planRiskItemBS.save(sf);
+					}
+					
 				}
 				
 			}
 			
-			this.success(planRiskItem);
+			PaginatedList<PlanRiskItem> list = new PaginatedList<PlanRiskItem>();
+			list.setList(result);
+			list.setTotal((long) result.size());
+			this.success(list);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

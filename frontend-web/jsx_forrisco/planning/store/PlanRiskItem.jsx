@@ -107,20 +107,22 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 	},
 
 
-	duplicateItens(planRiskItem) {
-		console.log("duplicate:"+planRiskItem)
+	duplicateItens(data) {
 		var me = this;
 		$.ajax({
 			url: me.url + "/duplicate",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: JSON.stringify(planRiskItem),
+			data: JSON.stringify({
+				itens: data.itens,
+				planRisk: data.planRisk
+			}),
 			success(model) {
-				me.trigger("itemDuplicated", model);
+				me.trigger("itensDuplicated", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("itemDuplicated", opts);
+				me.trigger("itensDuplicated", opts);
 			}
 		})
 	},

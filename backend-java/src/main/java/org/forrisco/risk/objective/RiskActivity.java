@@ -28,6 +28,7 @@ public class RiskActivity extends SimpleLogicalDeletableEntity {
 	private static final long serialVersionUID = 1L;
 
 	@SkipSerialization
+	@JoinColumn(name="risk_id") 
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 	

@@ -7,7 +7,9 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
+import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
+import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.process.ProcessUnit;
 import org.forrisco.core.unit.Unit;
 import org.hibernate.Criteria;
@@ -74,7 +76,7 @@ public class ProcessBS extends HibernateBusiness {
 		
 		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
 			Process process = processUnit.getProcess();
-			List<Unit> relatedUnits = this.listRelatedUnits(process);
+			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlan());
 			process.setRelatedUnits(relatedUnits);
 			list.add(process);
 		}
@@ -84,11 +86,14 @@ public class ProcessBS extends HibernateBusiness {
 		return results;
 	}
 
-	public List<Unit> listRelatedUnits(Process process) {
+	public List<Unit> listRelatedUnits(Process process, PlanRisk planRisk) {
 		List<Unit> units = new LinkedList<Unit>();
 		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
+				.createAlias("unit", "unit")
 				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("process", process));
+				.add(Restrictions.eq("process", process))
+				.add(Restrictions.eq("unit.planRisk", planRisk));
+			
 		for (ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)) {
 			Unit unit = processUnit.getUnit();
 			//unit.setUser(null);
@@ -104,15 +109,22 @@ public class ProcessBS extends HibernateBusiness {
 		return this.dao.findByCriteria(criteria, ProcessUnit.class);
 	}	
 	
-	public PaginatedList<Process> listProcessbyCompany(CompanyDomain domain) {
+	/**
+	 * Retorna todos os processo da instituição
+	 * 
+	 *@Param CompanyDomain instituição
+	 *
+	 * @return PaginatedList<Process>  lista de processos
+	 */
+	public PaginatedList<Process> listProcessbyCompany(Company company) {
 		
 		Criteria criteria = this.dao.newCriteria(Process.class)
 				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("company", domain));
+				.add(Restrictions.eq("company", company));
 
 		Criteria count = this.dao.newCriteria(Process.class)
 				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("company", domain))
+				.add(Restrictions.eq("company", company))
 				.setProjection(Projections.countDistinct("id"));
 		
 		PaginatedList<Process> results = new PaginatedList<Process>();

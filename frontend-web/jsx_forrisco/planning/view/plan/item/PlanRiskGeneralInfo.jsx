@@ -43,6 +43,18 @@ export default React.createClass({
 				this.context.tabPanel.addTab(this.props.location.pathname, this.state.title);
 			});
 		}, this);
+
+		PlanRiskStore.on('deletePlanRisk', response => {
+			if(response.success === true) {
+				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
+				this.context.router.push("forrisco/home/");
+				PlanRiskStore.dispatch({
+					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
+			}
+			PlanRiskStore.off('deletePlanRisk');
+		})
+
 		this.refreshData(this.props.params.planRiskId);
 	},
 
@@ -75,16 +87,6 @@ export default React.createClass({
 			});
 		}, msg, me.refreshCancel);
 
-		PlanRiskStore.on('deletePlanRisk', response => {
-			if(response.success === true) {
-				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
-				this.context.router.push("forrisco/home/");
-				PlanRiskStore.dispatch({
-					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
-				});
-			}
-			PlanRiskStore.off('deletePlanRisk');
-		})
 	},
 
 	refreshCancel () {
@@ -144,15 +146,18 @@ export default React.createClass({
 						</span>
 					</h1>
 					{
-						this.state.description ?
-							<div>
-								<h3>{"DESCRIÇÃO"}</h3>
-								{this.state.description}
+						//this.state.description ?
+							<div >
+								<h3 className="fpdi-text-label">{"DESCRIÇÃO"}</h3>
 								<br/>
-								<h3>{"POLÍTICA VINCULADA"} </h3>
-								{this.state.policy}
+								<span className="pdi-normal-text"><p>{this.state.description}</p></span>
+								<br/>
+								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
+								<br/>
+								<span className="pdi-normal-text"><p>{this.state.policy}</p></span>
+								<br/>
 							</div>
-							: ""
+						//	: ""
 					}
 				</div>
 			</div>

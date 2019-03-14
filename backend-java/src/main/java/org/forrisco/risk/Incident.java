@@ -40,7 +40,7 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	private String action;
 
 	@Column(nullable=false)
-	private Integer type;
+	private int type;
 	
 	@Column(nullable=false)
 	private Date begin;
@@ -50,14 +50,30 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	
 	
 	public Incident() {
+		
 	}
 	
 	public Incident(Incident incident) {
+		
+		
 		this.description = incident.getDescription();
 		this.action = incident.getAction();
 		this.type = incident.getType();
 		this.user = incident.getUser();
 		this.begin =incident.getBegin();
+	}
+	
+	
+
+	public Incident(User user, Risk risk, String description, String action, Integer type, Date begin, Long unitId) {
+		super();
+		this.user = user;
+		this.risk = risk;
+		this.description = description;
+		this.action = action;
+		this.type = type;
+		this.begin = begin;
+		this.unitId = unitId;
 	}
 
 	public User getUser() {

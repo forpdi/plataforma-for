@@ -93,8 +93,7 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@Transient
 	private PaginatedList<RiskStrategy> strategies;
 
-	public Risk() {
-	}
+	public Risk() {}
 	
 	public Risk(Risk risk) {
 		this.begin=risk.getBegin();
@@ -110,16 +109,16 @@ public class Risk extends SimpleLogicalDeletableEntity {
 		this.risk_act_process=risk.isRisk_act_process();
 		this.risk_obj_process=risk.isRisk_obj_process();
 		this.risk_pdi=risk.isRisk_pdi();
-		this.tipology=this.getTipology();
+		this.tipology=risk.getTipology();
 		this.type=risk.getType();
 		this.user=risk.getUser();
 		
 		
 		//setar ainda ações de prevenção
 		
-		this.activities=risk.getActivities();
-		this.processes=risk.getProcess();
-		this.strategies=risk.getStrategies();
+		//this.activities=risk.getActivities();
+		//this.processes=risk.getProcess();
+		//this.strategies=risk.getStrategies();
 	}
 
 	public User getUser() {

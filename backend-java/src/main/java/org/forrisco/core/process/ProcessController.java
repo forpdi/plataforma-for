@@ -249,7 +249,7 @@ public class ProcessController extends AbstractController{
 				this.fail("Instituição não definida");
 				return;
 			}
-			PaginatedList<Process> process= this.processBS.listProcessbyCompany(this.domain);
+			PaginatedList<Process> process= this.processBS.listProcessbyCompany(this.domain.getCompany());
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

@@ -225,6 +225,7 @@ public class RiskBS extends HibernateBusiness {
 			//pegar link correto do Objetivo na Plataforma ForPDI.
 			strategy.setLinkFPDI("#/plan/"+plan.getParent().getId()+"/details/subplan/level/"+strategy.getStructure().getId());
 			strategy.setName(structure.getName());
+			strategy.setStructure(structure);
 			this.dao.persist(strategy);
 		}
 	}

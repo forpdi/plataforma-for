@@ -68,8 +68,8 @@ export default React.createClass({
 			});
 		},this);
 
-		PlanRiskItemStore.on("itemDuplicated",response => { console.log("itemDuplicated")});
-		UnitStore.on("duplicatedUnit",response => { console.log("duplicatedUnit")});
+		PlanRiskItemStore.on("itensDuplicated",response => { console.log("itensDuplicated")},this);
+		UnitStore.on("duplicatedUnits",response => { console.log("duplicatedUnits")},this);
 
 		PlanRiskStore.on('plariskcreated', response => {
 
@@ -93,28 +93,24 @@ export default React.createClass({
 					}
 				}
 
-				for(var i in itens){
-					PlanRiskItemStore.dispatch({
-						action: PlanRiskItemStore.ACTION_SAVE_ITENS_DUPLICATE,
-						data: {	id:itens[i].id,
-								planRisk: {id: response.data.id}
-							}
-					});
-				}
+				PlanRiskItemStore.dispatch({
+					action: PlanRiskItemStore.ACTION_SAVE_ITENS_DUPLICATE,
+					data: {	itens:itens,
+							planRisk: {id: response.data.id}
+						}
+				});
 
-				for(var i in units){
-					UnitStore.dispatch({
-						action: UnitStore.ACTION_DUPLICATE,
-						data: {	id: units[i].id,
-								planRisk: {id: response.data.id}
-							}
-					});
-					console.log("request unit:",units[i])
-				}
+				UnitStore.dispatch({
+					action: UnitStore.ACTION_DUPLICATE,
+					data: {	units: units,
+							planRisk: {id: response.data.id}
+						}
+				});
 
 
-			//this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-			//this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
+			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+			this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
+
 			}else{
 				var msg = model.msg ? "Erro ao duplicar Plano: "+model.msg.message : "Erro ao duplicar Plano"
 				this.context.toastr.addAlertError(msg);
