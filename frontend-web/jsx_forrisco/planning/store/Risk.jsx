@@ -91,7 +91,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByUnit(data, node){
+	findByUnit(data, payload){
 		var me = this;
 		$.ajax({
 			url: `${me.url}/listbyunit/${data.unitId}`,
@@ -99,7 +99,7 @@ var RiskStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'application/json',
 			success(model) {
-				me.trigger("riskbyunit", model, node);
+				me.trigger("riskbyunit", model, payload);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskbyunit", opts);

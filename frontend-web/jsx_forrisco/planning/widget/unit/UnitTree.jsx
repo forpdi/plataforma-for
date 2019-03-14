@@ -86,11 +86,13 @@ export default React.createClass({
 			this.forceUpdate();
 		}, me);
 
+		const subunitTree = [];
+
 		UnitStore.on('subunitsListed', (response, node) => {
 			const fieldTree = [];
 
 			//Botão Novo SubItem
-			 response.data.map(subunit => {
+			 _.forEach(response.data, subunit => {
 				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subunit.id}`;
 				fieldTree.push({
 					label: subunit.name,
@@ -112,16 +114,20 @@ export default React.createClass({
 					unitId: node.node.id,
 				},
 				opts: {
-					node: node.node,
+					payload: {
+						node,
+						subunitTree: fieldTree,
+					}
 				},
 			});
 
-			node.node.children = fieldTree;
-			me.forceUpdate();
+			node.node.children = [];
+			// me.forceUpdate();
 		}, me);
 
-		RiskStore.on('riskbyunit', (response, node) => {
-			const fieldTree = [];
+		RiskStore.on('riskbyunit', (response, { payload }) => {
+			const { node, subunitTree } = payload;
+			const fieldTree = subunitTree;
 			const newSubunit = {
 				label: "Nova Subunidade",
 				labelCls: 'fpdi-new-node-label',
