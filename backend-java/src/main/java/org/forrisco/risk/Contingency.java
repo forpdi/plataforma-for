@@ -33,7 +33,8 @@ public class Contingency extends SimpleLogicalDeletableEntity {
 	private String action;
 
 	
-	
+	public Contingency() {
+	}
 	
 	public Contingency(Contingency contigency) {
 		this.user = contigency.getUser();

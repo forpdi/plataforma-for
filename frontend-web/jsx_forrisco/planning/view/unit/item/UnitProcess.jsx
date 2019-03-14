@@ -253,7 +253,7 @@ export default React.createClass({
 			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 				<a onClick={this.fileLinkChangeHandler}>
 					<span className="fpdi-nav-label" id="process-file-upload">
-						{process.fileName}
+						{process.fileData.fileName}
 					</span>
 				</a>
 			</div>,

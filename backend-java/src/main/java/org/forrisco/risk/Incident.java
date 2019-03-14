@@ -49,11 +49,13 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	private Long unitId;
 	
 	
-
+	public Incident() {
+	}
+	
 	public Incident(Incident incident) {
-		this.description =incident.getDescription();
+		this.description = incident.getDescription();
 		this.action = incident.getAction();
-		this.type =incident.getType();
+		this.type = incident.getType();
 		this.user = incident.getUser();
 		this.begin =incident.getBegin();
 	}
