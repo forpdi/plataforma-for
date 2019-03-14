@@ -101,14 +101,7 @@ export default React.createClass({
 
 				}
 			}else{
-				if(response.responseJSON){
-					if(response.responseJSON.message =="Não possui domínio!"){
-						this.context.router.push("/forrisco/policy");
-					}
-				}
-
-
-				this.context.router.push("/forrisco/policy");
+				this.context.router.push("/forrisco/policy/new");
 			}
 		}, me);
 
