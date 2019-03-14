@@ -19,7 +19,6 @@ export default React.createClass({
 		return {
 			data: [],
 			users: [],
-			accomplished: false,
 			action: null,
 			newRowDisplayed: false,
 			updateRowDisplayed: false,
@@ -32,9 +31,7 @@ export default React.createClass({
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
-						console.log(value),
 						_.assign(value, { 
-							accomplished: this.renderAccomplishmentOnList(value.accomplished, value.id, idx),
 							tools: this.renderRowTools(value.id, idx),
 						})
 					)),
@@ -42,6 +39,7 @@ export default React.createClass({
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
 				});
+				this.changeAccomplishmentData();
 			}
 		}, this);
 		RiskStore.on('preventiveActionCreated', (response) => {
@@ -128,6 +126,17 @@ export default React.createClass({
 		UserStore.off(null, null, this);
 	},
 
+	changeAccomplishmentData() {
+		this.setState({
+			data: _.map(this.state.data, (action, idx) => (
+				console.log(action),
+				_.assign(action, {
+					accomplished: this.renderAccomplishmentOnList(action.accomplished, action.id, idx),
+				})
+			)),
+		});
+	},
+
 	insertNewRow() {
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
@@ -154,7 +163,7 @@ export default React.createClass({
 				/>
 			},
 			accomplished: <VerticalInput 
-				className="padding7"
+				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
 					type: "radio",
@@ -224,7 +233,7 @@ export default React.createClass({
 				/>
 			},
 			accomplished: <VerticalInput 
-				className="padding7"
+				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
 					type: "radio",
@@ -236,7 +245,14 @@ export default React.createClass({
 				}}
 			/>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updatePreventiveAction}>
+				<button
+					className="row-button-icon"
+					onClick={() => this.updatePreventiveAction({
+						...this.state.action,
+						accomplished: this.state.action.accomplished.props.fieldDef.value,
+						tools: undefined,
+					})}
+				>
 					<span className="mdi mdi-check" />
 				</button>
 				<button
@@ -284,15 +300,11 @@ export default React.createClass({
 		});
 	},
 
-	updatePreventiveAction() {
-		console.log("action update");
+	updatePreventiveAction(action) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_UPDATE_PREVENTIVE_ACTION,
 			data: {
-				action: {
-					...this.state.action,
-					tools: undefined,
-				},
+				action,
 			},
 		});
 	},
@@ -318,7 +330,6 @@ export default React.createClass({
 	},
 
 	accomplishmentChangeHandler(e) {
-		console.log(e.target.value);
 		this.setState({
 			action: {
 				...this.state.action,
@@ -327,22 +338,27 @@ export default React.createClass({
 		});
 	},
 
-	renderAccomplishmentOnList(accomplishment, id, idx) {
+	updateOnAccomplishmentChange(e, idx) {
+		const { data } = this.state;
+		this.updatePreventiveAction({
+			...data[idx],
+			accomplished: e.target.value,
+		});
+
+	},
+
+	renderAccomplishmentOnList(accomplished, id, idx) {
 		return (
-			<VerticalInput 
-				className="padding7"
+			<VerticalInput
+				className="accomplishment-radio"
 				fieldDef={{
-					name: "new-preventive-action-accomplishment",
+					name: `new-preventive-action-accomplishment${idx}`,
 					type: "radio",
 					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
 					valueField: 'value',
-					value: accomplishment,
+					value: accomplished,
 					renderDisplay: value => value.label,
-					onClick: e => {
-						console.log("clicking"),
-						this.accomplishmentChangeHandler(e),
-						this.updatePreventiveAction()
-					}
+					onClick: e => {this.updateOnAccomplishmentChange(e, idx)},
 				}}
 			/>
 		);
@@ -371,6 +387,7 @@ export default React.createClass({
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
+
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',

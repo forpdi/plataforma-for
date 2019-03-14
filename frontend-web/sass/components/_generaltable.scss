@@ -30,6 +30,23 @@
         white-space: normal!important;
         border-right: none!important;
         text-align: left;
+
+        .form-group, .form-group-sm {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0px;
+        }
+
+        .radio {
+            display: inline-flex;
+            width: 100%;
+            justify-content: flex-start;
+            margin: 0px;
+
+            div {
+                margin-right: 15px;
+            }
+        }
     }
 
     .rt-td:not(:last-child), .rt-th {

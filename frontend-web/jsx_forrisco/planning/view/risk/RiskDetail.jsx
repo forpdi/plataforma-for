@@ -137,11 +137,20 @@ export default React.createClass({
 	selectInfo(){
 		switch(this.state.selected){
 			case 0:
-				return(<RiskRegister
-					{...this.props}
-					visualization={this.state.visualization}
-					risk={this.state.riskModel}
-				/>)
+				return(
+					<div>
+						<RiskRegister
+							{...this.props}
+							visualization={this.state.visualization}
+							risk={this.state.riskModel}
+						/>
+						<PreventiveActions
+							visualization={this.state.visualization}
+							risk={this.state.riskModel}
+							planRiskId={this.props.params.planRiskId}
+						/>
+					</div>
+				)
 
 			case 1:
 				return(
@@ -224,11 +233,6 @@ export default React.createClass({
 				{this.header()}
 			</div>
 				{this.selectInfo()}
-				<PreventiveActions
-					visualization={this.state.visualization}
-					risk={this.state.riskModel}
-					planRiskId={this.props.params.planRiskId}
-				/>
 		</div>);
 	  }
 });
