@@ -64,12 +64,13 @@ export default React.createClass({
 		PlanRiskStore.on("plariskcreated", (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.plan.sav"));
-				this.context.router.push("forrisco/plan-risk/" + response.data + "/");
+				this.context.router.push("forrisco/plan-risk/" + response.data.id + "/");
 				PlanRiskStore.dispatch({
 					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao criar Plano");
+				var msg = model.msg ? model.msg.message : "Erro ao criar Plano"
+				this.context.toastr.addAlertError(msg);
 			}
 		});
 

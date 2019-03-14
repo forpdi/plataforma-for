@@ -8,6 +8,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import _ from "underscore";
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
+import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem";
 
 var VerticalForm = Form.VerticalForm;
 var Validate = Validation.validate;
@@ -285,6 +286,7 @@ export default React.createClass({
 								itemId={this.props.params.itemId}
 								subitemId={this.props.params.subItemId}
 								planRiskId={this.props.params.planRiskId}
+								pathName={this.props.location.pathname}
 							/>
 
 					}

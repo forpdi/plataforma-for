@@ -31,6 +31,7 @@ export default React.createClass({
 			}],
 
 			//Tipo do campo (TextArea, ExportDocument) ENQUANTO INSTACIA DE EDIÇÃO
+			fieldContent: null,
 			fieldTypeOnEdit: this.props.vizualization ? null : this.props.field.isText ,
 			fieldType: null,															//Tipo do campo (TextArea, ExportDocument)
 			vizualization: this.props.vizualization,    								//Habilita a visualização do field
@@ -99,8 +100,10 @@ export default React.createClass({
 	addField() {
 		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
 
+		console.log(validation);
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
+			return false;
 		}
 
 		if (!validation.errorField) {
@@ -135,9 +138,11 @@ export default React.createClass({
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
+			return false;
 		}
 
 		if(!validation.errorField) {
+			this.props.editRichTextField(this.state.fieldContent, this.props.index)
 			this.props.setFieldValue(this.props.field, this.props.index);
 		}
 	},
@@ -156,7 +161,9 @@ export default React.createClass({
 	},
 
 	setRichTextValueOnEdit(value) {
-		this.props.editRichTextField(value, this.props.index)
+		this.setState({
+			fieldContent: value
+		})
 	},
 
 	setRichTextValue(value) {
@@ -364,7 +371,6 @@ export default React.createClass({
 															   className="form-control"
 															   ref="newfield-name"
 															   placeholder={Messages.get("label.field.name")}
-															   onChange={this.changeTitle}
 															   defaultValue={this.props.field.fieldName}
 															   maxLength="255"/>
 													</div>

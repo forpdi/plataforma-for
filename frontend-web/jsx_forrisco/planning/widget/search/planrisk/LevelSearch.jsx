@@ -273,11 +273,8 @@ export default onClickOutside(React.createClass({
 	},
 
 	render() {
-
 		return (
-
 			<div className="level-search">
-
 				<div className='displayFlex-level-search'>
 					<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
 				</div>
@@ -299,28 +296,32 @@ export default onClickOutside(React.createClass({
 								name={'subplan-opt'}
 								key={'subplan-opt-0'}
 								type="checkbox"
-								defaultChecked = {true} />
+								defaultChecked = {true}
+							/>
 							Todos
 						</div>
 
-						{this.state.subplans.map( (opt,idx) => {
-							return (
-								<div key={'subplan-opt-' + idx}>
-									<input
-										onChange={this.selectSubplansOutherFilds}
-										name={'subplan-opt'}
-										key={'subplan-opt-'+idx}
-										type="checkbox"
-										value={opt.id}
-										defaultChecked = {true} />
-									{opt.label}
-								</div>
-							);
-						})}
+						{
+							this.state.subplans.map((opt, idx, arr) => {
+								if (idx != arr.length - 1) {
+									return (
+										<div key={'subplan-opt-' + idx}>
+											<input
+												onChange={this.selectSubplansOutherFilds}
+												name={'subplan-opt'}
+												key={'subplan-opt-' + idx}
+												type="checkbox"
+												value={opt.id}
+												defaultChecked = {true}
+											/>
+											{opt.label}
+										</div>
+									);
+								}
+							})
+						}
 					</div>
 				</div>
-
-
 
 				<div className="level-search-checkbox">
 					<h3>{Messages.getEditable("label.subitems","fpdi-nav-label")}</h3>

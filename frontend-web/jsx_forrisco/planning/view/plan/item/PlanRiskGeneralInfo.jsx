@@ -43,6 +43,18 @@ export default React.createClass({
 				this.context.tabPanel.addTab(this.props.location.pathname, this.state.title);
 			});
 		}, this);
+
+		PlanRiskStore.on('deletePlanRisk', response => {
+			if(response.success === true) {
+				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
+				this.context.router.push("forrisco/home/");
+				PlanRiskStore.dispatch({
+					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
+			}
+			PlanRiskStore.off('deletePlanRisk');
+		})
+
 		this.refreshData(this.props.params.planRiskId);
 	},
 
@@ -75,16 +87,6 @@ export default React.createClass({
 			});
 		}, msg, me.refreshCancel);
 
-		PlanRiskStore.on('deletePlanRisk', response => {
-			if(response.success === true) {
-				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
-				this.context.router.push("forrisco/home/");
-				PlanRiskStore.dispatch({
-					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
-				});
-			}
-			PlanRiskStore.off('deletePlanRisk');
-		})
 	},
 
 	refreshCancel () {
@@ -92,17 +94,18 @@ export default React.createClass({
 	},
 
 	renderDropdown() {
+		console.log(this.props);
 		return(
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/edit"}>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + "/edit"}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
 							<span id="menu-levels"> Editar Plano </span>
 						</span>
 					</Link>
 				</li>
 				<li>
-					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId + "/duplicate"}>
+					<Link to={"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/duplicate"}>
 					<span className="mdi mdi-content-copy cursorPointer" title={Messages.get("label.deletePolicy")}>
 						<span id="menu-levels"> Duplicar Plano </span>
 					</span>
@@ -120,7 +123,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
@@ -144,15 +146,18 @@ export default React.createClass({
 						</span>
 					</h1>
 					{
-						this.state.description ?
-							<div>
-								<h3>{"DESCRIÇÃO"}</h3>
-								{this.state.description}
+						//this.state.description ?
+							<div >
+								<h3 className="fpdi-text-label">{"DESCRIÇÃO"}</h3>
 								<br/>
-								<h3>{"POLÍTICA VINCULADA"} </h3>
-								{this.state.policy}
+								<span className="pdi-normal-text"><p>{this.state.description}</p></span>
+								<br/>
+								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
+								<br/>
+								<span className="pdi-normal-text"><p>{this.state.policy}</p></span>
+								<br/>
 							</div>
-							: ""
+						//	: ""
 					}
 				</div>
 			</div>

@@ -94,9 +94,11 @@ export default React.createClass({
 				<div className="col-3">
 					{fieldEl}
 					{this.props.fieldDef.helpBox}
+
 				</div>
+				<div className="formAlertError" ref="formAlertError"></div>
 			</div>
-			<div className="formAlertError" ref="formAlertError"></div>
+
 			</div>
 		);
 		/*

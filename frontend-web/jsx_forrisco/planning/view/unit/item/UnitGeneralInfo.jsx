@@ -51,7 +51,7 @@ export default React.createClass({
 		}, this);
 		UnitStore.on('unitDeleted', response => {
 			if (response.success) {
-				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 2 ? true : false;
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
 				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 				if (hasMinTabsLength) {
 					this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/unit/overview`);

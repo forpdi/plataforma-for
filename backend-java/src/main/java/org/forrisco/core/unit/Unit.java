@@ -44,6 +44,16 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	@SkipSerialization
 	@ManyToOne(targetEntity=PlanRisk.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRisk planRisk;
+	
+
+	public Unit() {}
+	
+	public Unit(Unit unit) {
+		this.name =unit.getName();
+		this.abbreviation = unit.getAbbreviation();
+		this.description = unit.getDescription();
+		this.user =unit.getUser();
+	}
 
 	public String getName() {
 		return name;
@@ -89,7 +99,7 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		return planRisk;
 	}
 
-	public void setPlan(PlanRisk plan) {
+	public void setPlanRisk(PlanRisk plan) {
 		this.planRisk = plan;
 	}
 

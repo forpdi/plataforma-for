@@ -1,18 +1,20 @@
 import moment from 'moment';
 import React from 'react';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
 import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import SearchResult from "forpdi/jsx/planning/widget/search/SearchResult.jsx";
-import Messages from "forpdi/jsx/core/util/Messages.jsx";
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 var onClickOutside = require('react-onclickoutside');
 
 export default onClickOutside(React.createClass({
 	contextTypes: {
-		toastr: React.PropTypes.object.isRequired
+		toastr: React.PropTypes.object.isRequired,
 	},
 
 	getDefaultProps() {
@@ -24,9 +26,7 @@ export default onClickOutside(React.createClass({
 			submit: null,
 			plan:null,
 			hiddenSearch: false,
-			displayResult: false
-
-
+			displayResult: false,
 		};
 	},
 
@@ -93,8 +93,6 @@ export default onClickOutside(React.createClass({
 	selectSubplansOutherFilds () {
 		var subplans = document.getElementsByName("subplan-opt");
 		subplans[0].checked = false;
-
-
 	},
 
 	selectLevels() {
@@ -108,7 +106,6 @@ export default onClickOutside(React.createClass({
 			for (var i = levels.length - 1; i > 0; i--) {
 				levels[i].checked = false;
 			}
-
 		}
 	},
 
@@ -116,7 +113,6 @@ export default onClickOutside(React.createClass({
 		var levels = document.getElementsByName("level-opt");
 		levels[0].checked = false;
 	},
-
 
 	selectDate() {
 		var selectedDate = document.getElementById("select-date");
@@ -168,24 +164,22 @@ export default onClickOutside(React.createClass({
 		for (var i = subplans.length - 1; i >= 0; i--) {
 			subplans[i].checked = false;
 		}
-
 		var levels = document.getElementsByName("level-opt");
 
 		for (var i = levels.length - 1; i >= 0; i--) {
 			levels[i].checked = false;
 		}
-
 		this.refs.termPesquisa.value = "";
 	},
 
 
-	maxLengthMask(){
-		if(this.refs.termPesquisa.value.length >= 255){
+	maxLengthMask() {
+		if (this.refs.termPesquisa.value.length >= 255) {
 			this.context.toastr.addAlertError(Messages.get("label.limitCaracteres"));
 		}
 	},
 
-	onKeyUp(evt){
+	onKeyUp(evt) {
 		this.maxLengthMask();
 	},
 
@@ -242,7 +236,7 @@ export default onClickOutside(React.createClass({
 			ordResultProps:valueResult
 		});
 
-		if(this.refs.termPesquisa.value== "" ||  !!this.refs.termPesquisa.value.match(/^(\s)+$/) ){
+		if (this.refs.termPesquisa.value== "" ||  !!this.refs.termPesquisa.value.match(/^(\s)+$/) ) {
 			this.props.hiddenSearch();
 			return
 		}
@@ -270,21 +264,21 @@ export default onClickOutside(React.createClass({
 	},
 
 	render() {
+		return (
+			<div className="level-search">
+       	<div className='displayFlex-level-search'>
+       		<span
+						className='mdi-level-search mdi mdi-close-circle cursorPointer'
+						onClick={this.props.hiddenSearch}
+						title={Messages.get("label.close")}
+					/>
+       	</div>
+				<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
 
-			return (
-
-				<div className="level-search">
-
-  	               <div className='displayFlex-level-search'>
-   	                   	<span className='mdi-level-search mdi mdi-close-circle cursorPointer' onClick={this.props.hiddenSearch} title={Messages.get("label.close")}></span>
-  	               	</div>
-					<h1>{Messages.getEditable("label.advancedSearch","fpdi-nav-label")}</h1>
-
-					<div className="level-search-keyword">
-						<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
-						<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText}  ref = "termPesquisa"/>
-					</div>
-
+				<div className="level-search-keyword">
+					<h3>{Messages.getEditable("label.keyword","fpdi-nav-label")}</h3>
+					<input type="text" maxLength="255" onChange={this.onKeyUp} defaultValue={this.props.searchText} ref="termPesquisa"/>
+				</div>
 
 				<div className="level-search-checkbox">
 					<h3>{Messages.getEditable("label.items","fpdi-nav-label")}</h3>
@@ -296,28 +290,30 @@ export default onClickOutside(React.createClass({
 								name={'subplan-opt'}
 								key={'subplan-opt-0'}
 								type="checkbox"
-								defaultChecked = {true} />
+								defaultChecked = {true}
+							/>
 							Todos
 						</div>
 
-						{this.props.subplans.map( (opt,idx) => {
-							return (
-								<div key={'subplan-opt-'+idx}>
-									<input
-										onChange={this.selectSubplansOutherFilds}
-										name={'subplan-opt'}
-										key={'subplan-opt-'+idx}
-										type="checkbox"
-										value={opt.id}
-										defaultChecked = {true} />
-									{opt.name}
-								</div>
-							);
-						})}
+						{
+							this.props.subplans.map((opt, idx) => {
+								return (
+									<div key={'subplan-opt-' + idx}>
+										<input
+											onChange={this.selectSubplansOutherFilds}
+											name={'subplan-opt'}
+											key={'subplan-opt-' + idx}
+											type="checkbox"
+											value={opt.id}
+											defaultChecked = {true}
+										/>
+										{opt.name}
+									</div>
+								);
+							})
+						}
 					</div>
 				</div>
-
-
 
 				<div className="level-search-checkbox">
 					<h3>{Messages.getEditable("label.subitems","fpdi-nav-label")}</h3>
@@ -348,53 +344,57 @@ export default onClickOutside(React.createClass({
 							);
 						})}
 					</div>
-
 				</div>
 
-			{/*
-				<div className="level-search-select">
-					<h3>Data de modificação</h3>
-					<select type="text" placeholder="Selecione" id="select-date" onChange={this.selectDate}>
-						<option value="0"  data-placement="right" title="Selecione uma data">Selecione uma data</option>
-						<option value="1"  data-placement="right" title="Qualquer data">Qualquer data</option>
-						<option value="2"  data-placement="right" title="Hoje">Hoje</option>
-						<option value="3"  data-placement="right" title="Ontem">Ontem</option>
-						<option value="4"  data-placement="right" title="Últimos 7 dias">Últimos 7 dias</option>
-						<option value="5"  data-placement="right" title="Últimos 30 dias">Últimos 30 dias</option>
-						<option value="6"  data-placement="right" title="Personalizado">Personalizado</option>
-					</select>
-				</div>
-			*/}
-				{!this.state.hideDate ?
-					(<div className="level-search-date">
-						<div className="level-search-date-init">
-							<h3>{Messages.getEditable("label.dateBegin","fpdi-nav-label")}</h3>
-							<DatePicker
-								type="datepicker"
-								ref='begin'
-								dateFormat="DD/MM/YYYY"
-								selected={this.state.initDate}
-								onChange={this.onChangeInit}
-								placeholderText="DD/MM/AAAA"
-								showYearDropdown
-								/>
+				{/*
+					<div className="level-search-select">
+						<h3>Data de modificação</h3>
+						<select type="text" placeholder="Selecione" id="select-date" onChange={this.selectDate}>
+							<option value="0"  data-placement="right" title="Selecione uma data">Selecione uma data</option>
+							<option value="1"  data-placement="right" title="Qualquer data">Qualquer data</option>
+							<option value="2"  data-placement="right" title="Hoje">Hoje</option>
+							<option value="3"  data-placement="right" title="Ontem">Ontem</option>
+							<option value="4"  data-placement="right" title="Últimos 7 dias">Últimos 7 dias</option>
+							<option value="5"  data-placement="right" title="Últimos 30 dias">Últimos 30 dias</option>
+							<option value="6"  data-placement="right" title="Personalizado">Personalizado</option>
+						</select>
+					</div>
+				*/}
+				{
+					!this.state.hideDate
+					?
+					(
+						<div className="level-search-date">
+							<div className="level-search-date-init">
+								<h3>{Messages.getEditable("label.dateBegin","fpdi-nav-label")}</h3>
+								<DatePicker
+									type="datepicker"
+									ref='begin'
+									dateFormat="DD/MM/YYYY"
+									selected={this.state.initDate}
+									onChange={this.onChangeInit}
+									placeholderText="DD/MM/AAAA"
+									showYearDropdown
+									/>
+							</div>
+
+							<div className="level-search-date-init">
+							<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
+								<DatePicker
+									type="datepicker"
+									ref='end'
+									dateFormat="DD/MM/YYYY"
+									selected={this.state.endDate}
+									onChange={this.onChangeEnd}
+									placeholderText="DD/MM/AAAA"
+									showYearDropdown
+									/>
+							</div>
 						</div>
-
-						<div className="level-search-date-init">
-						<h3>{Messages.getEditable("label.dataEnd","fpdi-nav-label")}</h3>
-							<DatePicker
-								type="datepicker"
-								ref='end'
-								dateFormat="DD/MM/YYYY"
-								selected={this.state.endDate}
-								onChange={this.onChangeEnd}
-								placeholderText="DD/MM/AAAA"
-								showYearDropdown
-								/>
-						</div>
-					</div>) : ("")}
-
-
+					)
+					:
+					("")
+				}
 
 				{/*<div className="level-search-select">
 					<h3>Ordenar resultados</h3>
@@ -406,13 +406,11 @@ export default onClickOutside(React.createClass({
 					</select>
 				</div>*/}
 
-
 				<div className="level-search-buttons">
 					<input type="submit" className="level-search-button-search" value={Messages.get("label.research")} onClick={this.sendSearch} />
 					<input type="submit" className="level-search-button-clear" value={Messages.get("label.clean")} onClick={this.clearSearch} />
 				</div>
-
-			</div>);
-
+			</div>
+		);
 	}
 }));

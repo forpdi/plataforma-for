@@ -155,16 +155,39 @@ var Validate = {
 		if(data.matrix==""){
 			if(msg==""){msg="Matriz de risco deve ser gerada."}
 		}else{//matriz em branco
-			for(var i=0; i<=data.nline; i++){
-				for(var j=0; j<=data.ncolumn; j++){
-					if(i!=data.nline || j!=0){
-						if(refs.policyEditForm['field-['+(i)+','+(j)+']'].value==""){
+			for (let i = 0; i <= data.nline; i++){
+				for (let j = 0; j <= data.ncolumn; j++){
+					if ( j != 0 && i != data.nline){
+						if (refs.policyEditForm['field-['+(i)+','+(j)+']'].value==""){
 							refs.policyEditForm['field-['+(i)+','+(j)+']'].className +=" borderError"
-							if(msg==""){msg="Matriz de risco deve ser completamente preenchida."}
-						}else{
+							if (msg==""){
+								msg="Matriz de risco deve ser completamente preenchida."
+							}
+						} else {
 							refs.policyEditForm['field-['+(i)+','+(j)+']'].className ="form-control matrixSelect"
 						}
+					} else if (j == 0 && i != data.nline){
+						if (refs.policyEditForm['field-['+(i)+','+(j)+']'].value==""){
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className +=" borderError"
+							if (msg=="") {
+								msg="Matriz de risco deve ser completamente preenchida."
+							}
+						} else {
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className ="form-control matrixSelect frisco-probability"
+						}
+					} else if (j != 0 && i == data.nline){
+						if (refs.policyEditForm['field-['+(i)+','+(j)+']'].value==""){
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className +=" borderError"
+							if (msg==""){
+								msg="Matriz de risco deve ser completamente preenchida."
+							}
+						} else {
+							refs.policyEditForm['field-['+(i)+','+(j)+']'].className ="form-control matrixSelect frisco-impact"
+						}
 					}
+
+
+
 				}
 			}
 		}

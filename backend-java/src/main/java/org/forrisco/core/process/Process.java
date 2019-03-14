@@ -52,6 +52,17 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	@Transient
 	private List<Unit> relatedUnits;
 	
+	
+	public Process() {}
+	
+	public Process(Process process) {
+		this.file =process.getFile();
+		this.name =process.getName();
+		this.objective =process.getObjective();
+		this.fileLink =process.getFileLink();
+		this.company= process.getCompany();
+	}
+
 	public Unit getUnit() {
 		return unit;
 	}

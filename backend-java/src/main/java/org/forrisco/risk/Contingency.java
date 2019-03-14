@@ -32,6 +32,15 @@ public class Contingency extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000)
 	private String action;
 
+	
+	public Contingency() {
+	}
+	
+	public Contingency(Contingency contigency) {
+		this.user = contigency.getUser();
+		this.action =contigency.getAction();
+	}
+
 	public User getUser() {
 		return user;
 	}

@@ -368,6 +368,8 @@ export default React.createClass({
 		} else {
 			hashHistory.goBack();
 		}
+
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname); //Fecha aba ao cancelar
 	},
 
 	renderArchivePolicy() {

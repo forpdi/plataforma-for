@@ -25,6 +25,8 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_UNARCHIVE: "risk-unarchive",
 	ACTION_FIND_ARCHIVED: 'risk-findArchived',
 	ACTION_FIND_UNARCHIVED: 'risk-findUnarchived',
+	ACTION_FIND_BY_UNIT: 'risk-findByUnit',
+	ACTION_FIND_BY_SUBUNITS: 'risk-findBySubunits',
 	ACTION_MAIN_MENU_STATE: "risk-mainMenuState",
 	ACTION_DELETE: "risk-delete",
 	ACTION_NEWRISK: "risk-newRisk",
@@ -89,16 +91,15 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByUnit(data){
+	findByUnit(data, payload){
 		var me = this;
 		$.ajax({
-			url: me.url,
+			url: `${me.url}/listbyunit/${data.unitId}`,
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {unitId: data},
 			success(model) {
-				me.trigger("riskbyunit", model);
+				me.trigger("riskbyunit", model, payload);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskbyunit", opts);
@@ -106,6 +107,21 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+	findBySubunits(data, node) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/listbysubunits/${data.unitId}`,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("riskbysubunits", model, node);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("riskbysubunits", opts);
+			}
+		});
+	},
 
 	findUnarchived(data){
 		var me = this;

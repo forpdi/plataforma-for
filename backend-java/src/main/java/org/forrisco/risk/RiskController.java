@@ -18,7 +18,6 @@ import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.objective.RiskActivity;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
@@ -28,6 +27,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Matheus Nascimento
@@ -76,6 +76,7 @@ public class RiskController extends AbstractController {
 			risk.setId(null);
 			risk.setBegin(new Date());
 			this.riskBS.saveRisk(risk);
+			
 			
 			this.riskBS.saveActivities(risk);
 			this.riskBS.saveProcesses(risk);
@@ -309,7 +310,55 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
-		
+
+	/**
+	 * Retorna riscos pela unidade.
+	 * 
+	 * @param PLanRisk
+	 *            Id da unidade.
+	 * @return <PaginatedList> Risk
+	 */
+	@Get( PATH + "/listbyunit/{unitId}")
+	@NoCache
+	public void listRisksByUnit(@NotNull Long unitId) {
+		try {			
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(unit);
+			this.success(risks);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Retorna riscos pela unidade.
+	 * 
+	 * @param PLanRisk
+	 *            Id da unidade.
+	 * @return <PaginatedList> Risk
+	 */
+	@Get( PATH + "/listbysubunits/{unitId}")
+	@NoCache
+	public void listSubunitsRisksByUnit(@NotNull Long unitId) {
+		try {			
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			if (unit == null) {
+				this.fail("A unidade não foi encontrada.");
+			}
+			List<Unit> subunits = this.unitBS.listSubunitByUnit(unit).getList();
+			if (GeneralUtils.isEmpty(subunits)) {
+				this.success(new ArrayList<>(0));
+			}
+			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnitList(subunits);
+			this.success(risks);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
 	/**
 	 * Retorna ações de prevenção.
 	 * 

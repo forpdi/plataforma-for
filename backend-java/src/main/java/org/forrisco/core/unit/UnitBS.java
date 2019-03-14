@@ -33,6 +33,7 @@ import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Matheus Nascimento
@@ -128,6 +129,8 @@ public class UnitBS extends HibernateBusiness {
 
 		return monitors;
 	}
+	
+	
 
 	public PaginatedList<Incident> listIncidentsbyUnit(Unit unit) {
 		PaginatedList<Incident> incidents = new PaginatedList<Incident>();
@@ -365,23 +368,6 @@ public class UnitBS extends HibernateBusiness {
 	}
 
 	
-	public PaginatedList<Process> listProcess() {
-		
-		PaginatedList<Process> results = new PaginatedList<Process>();
-
-		Criteria criteria = this.dao.newCriteria(Process.class)
-				.add(Restrictions.eq("deleted", false));
-
-		List<Process> list = this.filter.filterAndList(criteria, Process.class,"company");
-		
-		results.setList(list);
-		results.setTotal( (long) list.size());
-
-		return results;
-		
-	}
-
-	
 	/**
 	 * Atualiza o historico de riscos
 	 * 
@@ -581,4 +567,6 @@ public class UnitBS extends HibernateBusiness {
 		 //TODO Auto-generated method stub
 		return null;
 	}
+
+
 }

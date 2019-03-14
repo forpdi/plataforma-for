@@ -1,8 +1,6 @@
 package org.forrisco.risk;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,7 +10,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forrisco.core.plan.PlanRisk;
@@ -26,11 +23,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.jboss.logging.Logger;
 
-import com.ibm.icu.impl.duration.TimeUnit;
-
-import br.com.caelum.vraptor.boilerplate.Business;
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -232,6 +225,7 @@ public class RiskBS extends HibernateBusiness {
 			//pegar link correto do Objetivo na Plataforma ForPDI.
 			strategy.setLinkFPDI("#/plan/"+plan.getParent().getId()+"/details/subplan/level/"+strategy.getStructure().getId());
 			strategy.setName(structure.getName());
+			strategy.setStructure(structure);
 			this.dao.persist(strategy);
 		}
 	}
@@ -456,17 +450,38 @@ public class RiskBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
 		
-		Criteria count = this.dao.newCriteria(Risk.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("unit", unit))
-				.setProjection(Projections.countDistinct("id"));
+//		Criteria count = this.dao.newCriteria(Risk.class)
+//				.add(Restrictions.eq("deleted", false))
+//				.add(Restrictions.eq("unit", unit))
+//				.setProjection(Projections.countDistinct("id"));
 
-		results.setList(this.dao.findByCriteria(criteria, Risk.class));
-		results.setTotal((Long) count.uniqueResult());
+		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
+		results.setList(risks);
+		results.setTotal((long) risks.size());
 		
 		return results;
 	}
 
+	/**
+	 * Retorna riscos de uma lista de unidades
+	 * 
+	 * @param List<Unit>,
+	 *            lista da unidades
+	 *            
+	 */
+	public PaginatedList<Risk> listRiskbyUnitList(List<Unit> units) {
+		PaginatedList<Risk> results = new PaginatedList<Risk>();
+		
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.in("unit", units));
+		
+		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
+		results.setList(risks);
+		results.setTotal((long) risks.size());
+		
+		return results;
+	}
 
 	//recuperar o risklevel do risco
 	//risco -> unidade -> plano -> politica -> risco level

@@ -7,10 +7,14 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.policy.Policy;
+import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
+import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
@@ -36,6 +40,12 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 
 	private boolean archived = false;
 	
+	/*@Transient
+	private PaginatedList<PlanRiskItem> duplicateItens;
+	
+	@Transient
+	private PaginatedList<Unit> duplicateUnits;
+	*/
 	public boolean isArchived() {
 		return archived;
 	}
@@ -67,5 +77,22 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
+
+/*	public PaginatedList<PlanRiskItem> getDuplicateItens() {
+		return duplicateItens;
+	}
+
+	public void setDuplicateItens(PaginatedList<PlanRiskItem> duplicateItens) {
+		this.duplicateItens = duplicateItens;
+	}
+
+	public PaginatedList<Unit> getDuplicateUnits() {
+		return duplicateUnits;
+	}
+
+	public void setDuplicateUnits(PaginatedList<Unit> duplicateUnits) {
+		this.duplicateUnits = duplicateUnits;
+	}*/
+	
 
 }

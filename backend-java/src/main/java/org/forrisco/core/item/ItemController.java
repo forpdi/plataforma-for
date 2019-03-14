@@ -33,60 +33,6 @@ public class ItemController extends AbstractController {
 	
 	protected static final String PATH =  BASEPATH +"/item";
 	
-	/**
-	 * Salvar Primeiro item
-	 * 
-	 * @return void
-	 */
-	@Post( PATH + "/info")
-	@Consumes
-	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
-	public void saveInfo(@NotNull @Valid  Policy policy){
-		
-		try {
-			
-			Item item = new Item();
-			item.setId(null);
-			item.setPolicy(policy);
-			item.setDescription(policy.getDescription());
-			item.setName("Informações gerais");
-			item.setFieldItem(null);
-			this.itemBS.save(item);
-			this.success(item);
-			
-		} catch (Throwable e) {
-			LOGGER.error("Unexpected runtime error", e);
-			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
-		}
-		
-	}
-	
-	/**
-	 * Recupera item de informações gerais
-	 * 
-	 * @return void
-	 */
-	@Get( PATH + "/info")
-	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
-	public void retrieveInfo(@NotNull @Valid  Long policyId){
-		
-		try {
-			
-			Policy policy = this.itemBS.exists(policyId, Policy.class);
-			Item item= this.itemBS.listInfoByPolicy(policy);
-			this.success(item);
-
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-		
-	}
-
-	
-	
 	
 	/**
 	 * Salvar Novo Item

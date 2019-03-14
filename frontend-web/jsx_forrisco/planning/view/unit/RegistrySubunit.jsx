@@ -7,7 +7,6 @@ import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
-
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
@@ -58,14 +57,41 @@ export default React.createClass({
 			}
 		});
 
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location.pathname, 'Nova Subunidade');
+		UnitStore.on("unitRetrieved", (model) => {
+			console.log('foi')
+			if (model.data) {
+				const unit = model.data;
+				this.refreshTabinfo(this.props.location.pathname, `Nova Subunidade - ${unit.name}`);
+			}
 		}, this);
+
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId: this.props.params.unitId },
+		});
 	},
 
 	componentWillUnmount() {
 		UserStore.off(null, null, this);
 		UnitStore.off(null, null, this);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.location.pathname !== this.props.location.pathname) {
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_UNIT,
+				data: { unitId: newProps.params.unitId },
+			});
+		}
+	},
+
+	refreshTabinfo(newPathname, tabName) {
+		_.defer(() =>
+			this.context.tabPanel.addTab(
+				newPathname,
+				this.state.riskModel ? this.state.riskModel.name : tabName,
+			)
+		);
 	},
 
 	getFields() {
@@ -119,13 +145,16 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		if (this.state.plansLength > 0 || this.state.policies.length === 0) {
-			this.context.router.push("/forrisco/home/");
-		}
+		// if (this.state.plansLength > 0 || this.state.policies.length === 0) {
+		// 	this.context.router.push("/forrisco/home/");
+		// }
+		//
+		// if (this.state.policies.length && this.state.policies.length === 1) {
+		// 	this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/");
+		// }
 
-		if (this.state.policies.length && this.state.policies.length === 1) {
-			this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
-		}
+		const { id } = this.state.unit.planRisk;
+		this.context.router.push(`/forrisco/plan-risk/${id}/unit/`);
 	},
 
 	getFields() {
@@ -183,17 +212,10 @@ export default React.createClass({
 							})
 						}
 						<div className="fpdi-editable-data-input-group">
-							<button
-								type="submit"
-								className="btn btn-success"
-							>
+							<button type="submit" className="btn btn-success">
 								{Messages.get('label.save')}
 							</button>
-							<button
-								type="button"
-								className="btn btn-default"
-								onClick={this.onCancel}
-							>
+							<button type="button" className="btn btn-default" onClick={this.onCancel}>
 								{Messages.get('label.cancel')}
 							</button>
 						</div>
@@ -203,4 +225,3 @@ export default React.createClass({
 		)
 	}
 })
-
