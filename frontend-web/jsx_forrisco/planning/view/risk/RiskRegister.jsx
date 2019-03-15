@@ -63,7 +63,7 @@ export default React.createClass({
 		UnitStore.on("retrieveProcess", (model) => {
 			this.setState({
 				process:model.data,
-				loading: false
+				//loading: false
 			});
 		}, this);
 
@@ -134,15 +134,18 @@ export default React.createClass({
 
 
 	componentWillReceiveProps(newProps, newContext) {
+
+
+
 		if (newProps, newProps.route.path != "new") {
 			if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
 				this.setState({
-					loading: true,
 					fields: [],
 					visualization: newProps.visualization,
 					planRiskId: newProps.planRiskId,
 					unitId: newProps.risk.unit.id,
 					riskModel: newProps.risk,
+					loading:false,
 				});
 			}
 		} else {
@@ -535,9 +538,10 @@ export default React.createClass({
 				risk_act_process: false
 			})
 		} else {
-			this.setState({
+			this.props.onChange()
+			/*this.setState({
 				visualization: true
-			})
+			})*/
 		}
 
 	},
@@ -747,6 +751,7 @@ export default React.createClass({
 	},
 
 	render() {
+
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}

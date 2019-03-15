@@ -30,6 +30,7 @@ import org.forrisco.core.policy.Policy;
 import org.forrisco.risk.Contingency;
 import org.forrisco.risk.Incident;
 import org.forrisco.risk.Monitor;
+import org.forrisco.risk.PreventiveAction;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
 import org.forrisco.risk.objective.RiskActivity;
@@ -72,8 +73,7 @@ public class UnitController extends AbstractController {
 	@Current 
 	private CompanyDomain domain;
 	
-	private static Map<Long, Long> duplicateUnitsId= new HashMap <Long, Long>();
-	private static Map<Long, Long> duplicateProcessosId= new HashMap <Long, Long>();
+	private static Map<Long, Long> duplicatesUnitsId= new HashMap <Long, Long>();
 
 	protected static final String PATH = BASEPATH + "/unit";
 
@@ -161,7 +161,6 @@ public class UnitController extends AbstractController {
 			List<Unit> allunits = new ArrayList<>();
 			
 			//duplicar unidades/subunidades
-		
 			for(Unit unit: units) {
 				
 				unit = this.unitBS.exists(unit.getId(), Unit.class);
@@ -173,62 +172,27 @@ public class UnitController extends AbstractController {
 				Unit newUnit= new Unit(unit);
 				newUnit.setPlanRisk(plan);
 				this.unitBS.save(newUnit);
-				duplicateUnitsId.put(unit.getId(), newUnit.getId());
+				duplicatesUnitsId.put(unit.getId(), newUnit.getId());
 				allunits.add(newUnit);
 				
 				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);	
 				
 				for(Unit subunit: subunits.getList()) {
-	
 					Unit newSubunit= new Unit(subunit);
 					newSubunit.setParent(newUnit);
 					newSubunit.setPlanRisk(plan);
 					this.unitBS.save(newSubunit);
-					duplicateUnitsId.put(subunit.getId(), newSubunit.getId());
+					duplicatesUnitsId.put(subunit.getId(), newSubunit.getId());
 					allunits.add(newSubunit);
 				}
 			}
 			
-			
 			for(Unit unit: allunits) {
-				
 				duplicateProcess(unit);
 				duplicateRisk(unit);
 			}
 			
-			/*duplicar processos da unidade/subunidade
-			for(Unit unit: units) {
-
-				duplicateProcess(unit);
-				
-				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);	
-				
-				for(Unit subunit: subunits.getList()) {
-					
-					duplicateProcess(subunit);
-				}				
-			}
-			
-			
-			//duplicar risco
-			for(Unit unit: units) {
-
-				duplicateRisk(unit);
-				
-				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);	
-				
-				for(Unit subunit: subunits.getList()) {
-					
-					duplicateRisk(subunit);
-				}				
-			}
-			*/
-			
-		
-			
-			
-			
-			this.success();
+			this.success("successfully duplicated plan risk");;
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
@@ -242,37 +206,41 @@ public class UnitController extends AbstractController {
 			return;
 		}
 		
-		PaginatedList<Process> processes= this.processBS.listProcessbyUnit(unit);
+		Unit original = null;
+		for(Entry<Long, Long> entry : duplicatesUnitsId.entrySet()) {
+		    Long key = entry.getKey();
+		    Long value = entry.getValue();
 
-		for(Process process : processes.getList()) {
-
-			Unit mapedUnit = this.unitBS.exists(duplicateUnitsId.get(unit.getId()), Unit.class);
-			
-			List<Unit> oldunitsrelated = process.getRelatedUnits();
-			List<Unit> unitsrelated = new ArrayList<>();
-			
-			for(Unit oldunit  : oldunitsrelated) {
-				
-				Unit mapedrelatedUnit = this.unitBS.exists(duplicateUnitsId.get(oldunit.getId()), Unit.class);
-				
-				if(mapedrelatedUnit != null) {
-					unitsrelated.add(mapedrelatedUnit);
-				}
-			}
-			process.setRelatedUnits(null);
-			
-			ProcessUnit processUnit = new ProcessUnit();
-			processUnit.setProcess(process);
-			processUnit.setUnit(mapedUnit);
-			this.processBS.save(processUnit);
+		    if(value==unit.getId()) {
+		    	original = this.unitBS.exists(key, Unit.class);
+		    	break;
+		    }
 		}
+		
+		if(original!=null) {
+
+			PaginatedList<Process> processes= this.processBS.listProcessByUnit(original);
+	
+			for(Process process : processes.getList()) {
+	
+				ProcessUnit processUnit = new ProcessUnit();
+				Unit mapedUnit = this.unitBS.exists(duplicatesUnitsId.get(original.getId()), Unit.class);
+				
+				processUnit.setUnit(mapedUnit);
+				processUnit.setProcess(process);
+				process.setRelatedUnits(null);
+				this.processBS.save(processUnit);
+			}
+
+		}
+		
 	}
 
 	private void duplicateRisk(Unit unit){
 		
 		PaginatedList<Risk> risks= new PaginatedList<>();
 		
-		for(Entry<Long, Long> entry : duplicateUnitsId.entrySet()) {
+		for(Entry<Long, Long> entry : duplicatesUnitsId.entrySet()) {
 		    Long key = entry.getKey();
 		    Long value = entry.getValue();
 
@@ -282,22 +250,33 @@ public class UnitController extends AbstractController {
 				if (original == null || original.isDeleted()) {
 					continue;
 				}
-					risks = this.riskBS.listRiskbyUnit(original);
+					risks = this.riskBS.listRiskByUnit(original);
 		    	break;
 		    }
 		}
 		
 		
 		for(Risk risk : risks.getList()) {
-			PaginatedList<Monitor> monitors = this.riskBS.listMonitorbyRisk(risk);
-			PaginatedList<Incident> incidents = this.riskBS.listIncidentsbyRisk(risks);
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesbyRisk(risk);
+			PaginatedList<PreventiveAction> actions =this.riskBS.listPreventiveActionByRisk(risk);
+			
+			PaginatedList<RiskStrategy> strategies = this.riskBS.listRiskStrategy(risk);
+			PaginatedList<RiskActivity> activities = this.riskBS.listRiskActivity(risk);
+			PaginatedList<RiskProcess> processes = this.riskBS.listRiskProcess(risk);
+			
+			PaginatedList<Monitor> monitors = this.riskBS.listMonitorByRisk(risk);
+			PaginatedList<Incident> incidents = this.riskBS.listIncidentsByRisk(risks);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
 			
 			Risk newRisk = new Risk(risk);
 			newRisk.setUnit(unit);
 			this.riskBS.saveRisk(newRisk);
 			
 			
+			for( PreventiveAction action : actions.getList()) {
+				PreventiveAction act= new PreventiveAction(action);
+				act.setRisk(newRisk);
+				this.riskBS.saveAction(action);
+			}
 			
 			for(Monitor monitor : monitors.getList()) {
 				monitor= new Monitor(monitor);
@@ -317,29 +296,35 @@ public class UnitController extends AbstractController {
 				this.riskBS.saveContingency(cont);
 			}
 			
-			PaginatedList<RiskStrategy> stregies = risk.getStrategies();
-			
-			/*for(RiskStrategy strategy: stregies.getList()) {
-				RiskStrategy str= new RiskStrategy();
-				str.setLinkFPDI(strategy.getLinkFPDI());
-				str.setName(strategy.getName());
-				str.setRisk(newRisk);
-				str.setStructure(strategy.getStructure());
-				try {
-					this.riskBS.saveStrategies(newRisk);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				this.riskBS.persist(strategy);
-			}*/
-			
-			//atualizar  atividade,processo,estragegia após salvar as outras unidades/subunidades
-			PaginatedList<RiskActivity> act = risk.getActivities();
-			PaginatedList<RiskProcess> pro = risk.getProcess();
-			
 
+			if(strategies !=null) {
+				for(RiskStrategy strategy: strategies.getList()) {
+					RiskStrategy str= new RiskStrategy();
+					str.setLinkFPDI(strategy.getLinkFPDI());
+					str.setName(strategy.getName());
+					str.setRisk(newRisk);
+					str.setStructure(strategy.getStructure());
+					this.riskBS.persist(str);
+				}
+			}
 			
+			if(activities !=null) {
+				for(RiskActivity activity: activities.getList()) {
+					RiskActivity act = new RiskActivity(activity);
+						act.setRisk(newRisk);
+						act.setProcess(activity.getProcess());
+						this.riskBS.persist(act);
+				}
+			}
+			
+			if(processes !=null) {
+				for(RiskProcess process: processes.getList()) {
+					RiskProcess riskpro = new RiskProcess(process);
+					riskpro.setRisk(newRisk);
+					riskpro.setProcess(process.getProcess());
+					this.riskBS.persist(riskpro);
+				}
+			}
 		}
 	}
 	
@@ -556,7 +541,7 @@ public class UnitController extends AbstractController {
 	@Permissioned
 	public void listProcess() {
 		try {
-			PaginatedList<Process> list= this.processBS.listProcessbyCompany(this.domain.getCompany());			
+			PaginatedList<Process> list= this.processBS.listProcessByCompany(this.domain.getCompany());			
 			this.success(list);
 
 		} catch (Throwable ex) {
@@ -597,7 +582,7 @@ public class UnitController extends AbstractController {
 			}
 
 			// verifica se possui riscos vinculados
-			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(unit);
+			PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
 			if (risks.getTotal() > 0) {
 				this.fail("Unidade possui risco(s) vinculado(s).");
 				return;
@@ -605,7 +590,7 @@ public class UnitController extends AbstractController {
 			
 			//verifica se possui processos vinculados com algum risco de outra unidade?
 			//um processo pode estar vinculado a um risco de outra unidade? parentemente sim
-			PaginatedList<Process> processes = this.processBS.listProcessbyUnit(unit);
+			PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
 			for(Process process :processes.getList()) {
 				
 				if (this.riskBS.hasLinkedRiskProcess(process)) {

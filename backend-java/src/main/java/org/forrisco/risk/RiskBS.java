@@ -148,7 +148,7 @@ public class RiskBS extends HibernateBusiness {
 			activity.setDeleted(false);
 			
 			Process process =this.dao.exists(activity.getProcess().getId(), Process.class);
-			Unit unit =this.dao.exists(process.getUnit().getId(), Unit.class);
+			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
 			
 			activity.setProcess(process);
 			
@@ -357,7 +357,6 @@ public class RiskBS extends HibernateBusiness {
 		}
 	}
 	
-	
 	/**
 	 * Deleta do banco de dados um risco,
 	 * 
@@ -369,6 +368,7 @@ public class RiskBS extends HibernateBusiness {
 		this.persist(risk);
 	}
 		
+	
 	/**
 	 * Retorna um risco 
 	 * 
@@ -419,7 +419,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 			instância da política
 	 * @return
 	 */
-	public PaginatedList<RiskLevel> listRiskLevelbyPolicy(Policy policy) {
+	public PaginatedList<RiskLevel> listRiskLevelByPolicy(Policy policy) {
 		PaginatedList<RiskLevel> results = new PaginatedList<RiskLevel>();
 		
 		Criteria criteria = this.dao.newCriteria(RiskLevel.class)
@@ -443,7 +443,7 @@ public class RiskBS extends HibernateBusiness {
 	 *            instância da unidade
 	 *            
 	 */
-	public PaginatedList<Risk> listRiskbyUnit(Unit unit) {
+	public PaginatedList<Risk> listRiskByUnit(Unit unit) {
 		PaginatedList<Risk> results = new PaginatedList<Risk>();
 		
 		Criteria criteria = this.dao.newCriteria(Risk.class)
@@ -469,7 +469,7 @@ public class RiskBS extends HibernateBusiness {
 	 *            lista da unidades
 	 *            
 	 */
-	public PaginatedList<Risk> listRiskbyUnitList(List<Unit> units) {
+	public PaginatedList<Risk> listRiskByUnitList(List<Unit> units) {
 		PaginatedList<Risk> results = new PaginatedList<Risk>();
 		
 		Criteria criteria = this.dao.newCriteria(Risk.class)
@@ -494,7 +494,7 @@ public class RiskBS extends HibernateBusiness {
 	 * @return List<Risk>
 	 * @throws Exception 
 	 */
-	public RiskLevel getRiskLevelbyRisk(Risk risk, Policy policy) throws Exception {
+	public RiskLevel getRiskLevelByRisk(Risk risk, Policy policy) throws Exception {
 		
 		if(policy == null) {
 			Unit unit = this.exists(risk.getUnit().getId(), Unit.class);
@@ -551,7 +551,6 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 	
-	
 	/**
 	 * Retorna as ativiades do processo de um risco
 	 * 
@@ -579,7 +578,6 @@ public class RiskBS extends HibernateBusiness {
 		
 	}
 
-	
 	/**
 	 * Retorna as ações preventivas a partir de um risco
 	 * 
@@ -588,7 +586,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return PaginatedList<PreventiveAction>
 	 */
-	public PaginatedList<PreventiveAction> listActionbyRisk(Risk risk) {
+	public PaginatedList<PreventiveAction> listActionByRisk(Risk risk) {
 		
 		PaginatedList<PreventiveAction> results = new PaginatedList<PreventiveAction>();
 		
@@ -614,7 +612,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return PaginatedList<Monitor>
 	 */
-	public PaginatedList<Monitor> listMonitorbyRisk(Risk risk) {
+	public PaginatedList<Monitor> listMonitorByRisk(Risk risk) {
 		
 		PaginatedList<Monitor> results = new PaginatedList<Monitor>();
 		
@@ -632,7 +630,6 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 	}
 
-	
 	/**
 	 * Retorna os incidentes a partir de um risco
 	 * 
@@ -641,7 +638,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return PaginatedList<Incident>
 	 */
-	public PaginatedList<Incident> listIncidentsbyRisk(Risk risk){
+	public PaginatedList<Incident> listIncidentsByRisk(Risk risk){
 		
 		PaginatedList<Incident> results = new PaginatedList<Incident>();
 		
@@ -665,7 +662,6 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 	}
 	
-	
 	/**
 	 * Retorna os incidentes a partir de vários riscos
 	 * 
@@ -674,12 +670,12 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return PaginatedList<Incident>
 	 */
-	public PaginatedList<Incident> listIncidentsbyRisk(PaginatedList<Risk> risks){
+	public PaginatedList<Incident> listIncidentsByRisk(PaginatedList<Risk> risks){
 		
 		List<Incident> inc = new ArrayList<>();
 		
 		for(Risk risk: risks.getList()) {
-			PaginatedList<Incident> incident = listIncidentsbyRisk(risk);
+			PaginatedList<Incident> incident = listIncidentsByRisk(risk);
 			inc.addAll(incident.getList());
 		}
 		
@@ -691,8 +687,6 @@ public class RiskBS extends HibernateBusiness {
 		return incident;
 	}
 	
-	
-
 	/**
 	 * Retorna os contingenciamentos a partir de um risco
 	 * 
@@ -701,7 +695,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return PaginatedList<Contingency>
 	 */
-	public PaginatedList<Contingency> listContingenciesbyRisk(Risk risk) {
+	public PaginatedList<Contingency> listContingenciesByRisk(Risk risk) {
 		
 		PaginatedList<Contingency> results = new PaginatedList<Contingency>();
 		
@@ -879,7 +873,7 @@ public class RiskBS extends HibernateBusiness {
 	 */
 	public void updateRiskPI(Risk risk, Map<String, String> impact_probability) {
 		
-		PaginatedList<Monitor> monitors = this.listMonitorbyRisk(risk);
+		PaginatedList<Monitor> monitors = this.listMonitorByRisk(risk);
 		
 		//atualiza no monitor
 		for(Monitor monit : monitors.getList()) {
@@ -937,6 +931,33 @@ public class RiskBS extends HibernateBusiness {
 		);
 		criteria.setMaxResults(1);
 		return criteria.uniqueResult() != null;
+	}
+
+	
+	/**
+	 * Retorna as ações preventivas
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 * 
+	 * @return PaginatedList<PreventiveAction>
+	 */
+	public PaginatedList<PreventiveAction> listPreventiveActionByRisk(Risk risk) {
+			PaginatedList<PreventiveAction> results = new PaginatedList<PreventiveAction>();
+		
+		Criteria criteria = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk));
+
+		Criteria count = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
+
+		results.setList(this.dao.findByCriteria(criteria, PreventiveAction.class));
+		results.setTotal((Long) count.uniqueResult());
+		return results;
+
 	}
 
 	

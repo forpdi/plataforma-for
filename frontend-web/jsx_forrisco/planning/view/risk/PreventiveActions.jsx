@@ -31,7 +31,7 @@ export default React.createClass({
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
-						_.assign(value, { 
+						_.assign(value, {
 							tools: this.renderRowTools(value.id, idx),
 						})
 					)),
@@ -118,7 +118,7 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
-		
+
 	},
 
 	componentWillUnmount() {
@@ -162,7 +162,7 @@ export default React.createClass({
 					}}
 				/>
 			},
-			accomplished: <VerticalInput 
+			accomplished: <VerticalInput
 				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
@@ -232,7 +232,7 @@ export default React.createClass({
 					}}
 				/>
 			},
-			accomplished: <VerticalInput 
+			accomplished: <VerticalInput
 				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
@@ -386,8 +386,12 @@ export default React.createClass({
 	},
 
 	render() {
-		if (this.state.isLoading === true) {
+		/*if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
+		}*/
+
+		if(!this.props.visualization){
+			return <div></div>
 		}
 
 		const columns = [{

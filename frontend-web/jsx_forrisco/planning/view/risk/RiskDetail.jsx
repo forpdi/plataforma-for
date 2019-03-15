@@ -43,9 +43,9 @@ export default React.createClass({
 	componentDidMount() {
 		RiskStore.on("findRisk", (model) => {
 			if(model.success){
-				console.log(model);
 				this.setState({
 					riskModel:model.data,
+					selected:0,
 					loading:false
 				})
 			}
@@ -134,6 +134,12 @@ export default React.createClass({
 		}
 	},
 
+	onChange(){
+		this.setState({
+			visualization:!this.state.visualization
+		})
+	},
+
 	selectInfo(){
 		switch(this.state.selected){
 			case 0:
@@ -143,6 +149,7 @@ export default React.createClass({
 							{...this.props}
 							visualization={this.state.visualization}
 							risk={this.state.riskModel}
+							onChange={this.onChange}
 						/>
 						<PreventiveActions
 							visualization={this.state.visualization}
@@ -211,7 +218,6 @@ export default React.createClass({
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
-
 
 		return (<div className="fpdi-card fpdi-card-full floatLeft">
 			<h1>

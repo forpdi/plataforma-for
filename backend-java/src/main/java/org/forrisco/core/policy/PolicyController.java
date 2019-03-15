@@ -190,7 +190,7 @@ public class PolicyController extends AbstractController {
 			if (policy == null) {
 				this.fail("A política solicitada não foi encontrado.");
 			} else {
-				PaginatedList<RiskLevel> risklevels = this.riskBS.listRiskLevelbyPolicy(policy);
+				PaginatedList<RiskLevel> risklevels = this.riskBS.listRiskLevelByPolicy(policy);
 				this.success(risklevels);
 			}
 		} catch (Throwable ex) {
@@ -285,7 +285,7 @@ public class PolicyController extends AbstractController {
 			for(PlanRisk plan : plans.getList()) {
 				PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
 				for(Unit unit : units.getList()) {
-					PaginatedList<Risk> localrisks = this.riskBS.listRiskbyUnit(unit);
+					PaginatedList<Risk> localrisks = this.riskBS.listRiskByUnit(unit);
 					risks.addAll(localrisks.getList());
 				}
 			}
@@ -361,7 +361,7 @@ public class PolicyController extends AbstractController {
 				
 				//aplicar novamento a função de risklevel para achar o grau de risco correspondente
 				for(int i=0; i<risks.size(); i++){
-					RiskLevel rl = this.riskBS.getRiskLevelbyRisk(risks.get(i),existent);
+					RiskLevel rl = this.riskBS.getRiskLevelByRisk(risks.get(i),existent);
 					risks.get(i).setRiskLevel(rl);
 					this.riskBS.saveRisk(risks.get(i));
 				}

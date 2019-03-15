@@ -66,7 +66,7 @@ public class RiskController extends AbstractController {
 				return;
 			}
 			
-			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			risk.setRiskLevel(this.riskBS.getRiskLevelByRisk(risk,null));
 			
 			if (risk.getRiskLevel() == null) {
 				this.fail("Grau de Risco solicitado não foi encontrado.");
@@ -155,7 +155,7 @@ public class RiskController extends AbstractController {
 			
 			risk.setImpact(monitor.getImpact());
 			risk.setProbability(monitor.getProbability());
-			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			risk.setRiskLevel(this.riskBS.getRiskLevelByRisk(risk,null));
 			this.riskBS.persist(risk);
 		
 			this.success(monitor);
@@ -293,7 +293,7 @@ public class RiskController extends AbstractController {
 			List<Risk> list = new ArrayList<>();
 			
 			 for(Unit unit : units.getList()) {
-				 PaginatedList<Risk> risks= this.riskBS.listRiskbyUnit(unit);
+				 PaginatedList<Risk> risks= this.riskBS.listRiskByUnit(unit);
 				 list.addAll(risks.getList());
 			 }
 			 
@@ -323,7 +323,7 @@ public class RiskController extends AbstractController {
 	public void listRisksByUnit(@NotNull Long unitId) {
 		try {			
 			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(unit);
+			PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
 			this.success(risks);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -350,7 +350,7 @@ public class RiskController extends AbstractController {
 			if (GeneralUtils.isEmpty(subunits)) {
 				this.success(new ArrayList<>(0));
 			}
-			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnitList(subunits);
+			PaginatedList<Risk> risks = this.riskBS.listRiskByUnitList(subunits);
 			this.success(risks);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -378,7 +378,7 @@ public class RiskController extends AbstractController {
 				return;
 			} 
 			
-			PaginatedList<PreventiveAction> actions = this.riskBS.listActionbyRisk(risk);
+			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk);
 			
 			this.success(actions);
 			
@@ -388,6 +388,33 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
+	
+	/**
+	 * Retorna monitoramento.
+	 * 
+	 * @param id
+	 *            Id do monitoramento a ser retornado.
+	 */
+	@Get( PATH + "/monitor")
+	@NoCache
+	public void listMonitor(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null || risk.isDeleted()) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			
+			PaginatedList<Monitor> monitor = this.riskBS.listMonitorByRisk(risk);
+			 
+			this.success(monitor);
+		} catch (Throwable ex) {
+				LOGGER.error("Unexpected runtime error", ex);
+				this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
 	/**
 	 * Retorna monitoramentos.
 	 * 
@@ -396,7 +423,7 @@ public class RiskController extends AbstractController {
 	 * @return <PaginedList> Monitor
 	 * 			 Retorna lista de monitoramentos do risco.
 	 */
-	@Get( PATH + "/monitor")
+	@Get( PATH + "/monitors")
 	@NoCache
 	//@Permissioned
 	public void listMonitors(@NotNull Long planId) {
@@ -414,12 +441,12 @@ public class RiskController extends AbstractController {
 		
 			
 			 for(Unit unit : units.getList()) {
-				 PaginatedList<Risk> list= this.riskBS.listRiskbyUnit(unit);
+				 PaginatedList<Risk> list= this.riskBS.listRiskByUnit(unit);
 				 risks.addAll(list.getList());
 			 }
 			 
 			 for(Risk risk : risks) {
-				 PaginatedList<Monitor> list = this.riskBS.listMonitorbyRisk(risk);
+				 PaginatedList<Monitor> list = this.riskBS.listMonitorByRisk(risk);
 				 monitors.addAll(list.getList());
 			 }
 			 
@@ -442,6 +469,31 @@ public class RiskController extends AbstractController {
 	
 	
 	/**
+	 * Retorna monitoramento.
+	 * 
+	 * @param id
+	 *            Id do monitoramento a ser retornado.
+	 */
+	@Get( PATH + "/incident")
+	@NoCache
+	public void listIncident(@NotNull Long riskId) {
+		try {
+			Risk risk = this.riskBS.exists(riskId, Risk.class);
+			if (risk == null || risk.isDeleted()) {
+				this.fail("O risco solicitado não foi encontrado.");
+				return;
+			} 
+			 PaginatedList<Incident> incident = this.riskBS.listIncidentsByRisk(risk);
+			 
+			this.success(incident);
+		} catch (Throwable ex) {
+				LOGGER.error("Unexpected runtime error", ex);
+				this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	/**
 	 * Retorna incidentes.
 	 * 
 	 * @param planId
@@ -449,7 +501,7 @@ public class RiskController extends AbstractController {
 	 * @return <PaginedList> Incident
 	 * 			 Retorna lista de incidentes do risco.
 	 */
-	@Get( PATH + "/incident")
+	@Get( PATH + "/incidents")
 	@NoCache
 	//@Permissioned
 	public void listIncidents(@NotNull Long planId) {
@@ -466,12 +518,12 @@ public class RiskController extends AbstractController {
 			List<Incident> incidents = new ArrayList<>();
 			
 			 for(Unit unit : units.getList()) {
-				 PaginatedList<Risk> list= this.riskBS.listRiskbyUnit(unit);
+				 PaginatedList<Risk> list= this.riskBS.listRiskByUnit(unit);
 				 risks.addAll(list.getList());
 			 }
 			 
 			 for(Risk risk : risks) {
-				 PaginatedList<Incident> list = this.riskBS.listIncidentsbyRisk(risk);
+				 PaginatedList<Incident> list = this.riskBS.listIncidentsByRisk(risk);
 				 incidents.addAll(list.getList());
 			 }
 			 
@@ -513,7 +565,7 @@ public class RiskController extends AbstractController {
 				return;
 			} 
 			
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesbyRisk(risk);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
 			
 			this.success(contingencies);
 			
@@ -709,7 +761,7 @@ public class RiskController extends AbstractController {
 			oldrisk.setRisk_pdi(risk.isRisk_pdi());
 			
 			
-			oldrisk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(oldrisk,null));
+			oldrisk.setRiskLevel(this.riskBS.getRiskLevelByRisk(oldrisk,null));
 
 			if (oldrisk.getRiskLevel() == null) {
 				this.fail("Grau de Risco solicitado não foi encontrado.");
@@ -808,7 +860,7 @@ public class RiskController extends AbstractController {
 			
 			risk.setImpact(monitor.getImpact());
 			risk.setProbability(monitor.getProbability());
-			risk.setRiskLevel(this.riskBS.getRiskLevelbyRisk(risk,null));
+			risk.setRiskLevel(this.riskBS.getRiskLevelByRisk(risk,null));
 			this.riskBS.persist(risk);
 			
 			this.success(oldmonitor);
@@ -926,9 +978,9 @@ public class RiskController extends AbstractController {
 			
 			this.riskBS.deleteAPS(risk);
 			
-			PaginatedList<Monitor> monitors = this.riskBS.listMonitorbyRisk(risk);
-			PaginatedList<Incident> incidents = this.riskBS.listIncidentsbyRisk(risk);
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesbyRisk(risk);
+			PaginatedList<Monitor> monitors = this.riskBS.listMonitorByRisk(risk);
+			PaginatedList<Incident> incidents = this.riskBS.listIncidentsByRisk(risk);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
 			
 			 for(Monitor monitor : monitors.getList()) {
 				 this.riskBS.delete(monitor);

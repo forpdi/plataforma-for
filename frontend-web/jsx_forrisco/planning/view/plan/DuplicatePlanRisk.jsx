@@ -68,7 +68,7 @@ export default React.createClass({
 			});
 		},this);
 
-		PlanRiskItemStore.on("itensDuplicated",response => { console.log("itensDuplicated")},this);
+		PlanRiskItemStore.on("duplicatedItens",response => { console.log("itensDuplicated")},this);
 		UnitStore.on("duplicatedUnits",response => { console.log("duplicatedUnits")},this);
 
 		PlanRiskStore.on('plariskcreated', response => {

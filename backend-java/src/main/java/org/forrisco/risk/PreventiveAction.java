@@ -36,6 +36,15 @@ public class PreventiveAction extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false)
 	private boolean accomplished;
 
+	
+	public PreventiveAction() {}
+
+	public PreventiveAction(PreventiveAction action) {
+		this.user =action.getUser();
+		this.action = action.getAction();
+		this.accomplished = action.isAccomplished();
+	}
+
 	public Risk getRisk() {
 		return risk;
 	}

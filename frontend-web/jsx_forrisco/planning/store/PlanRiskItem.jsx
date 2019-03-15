@@ -119,10 +119,10 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 				planRisk: data.planRisk
 			}),
 			success(model) {
-				me.trigger("itensDuplicated", model);
+				me.trigger("duplicatedItens", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("itensDuplicated", opts);
+				me.trigger("duplicatedItens", opts);
 			}
 		})
 	},

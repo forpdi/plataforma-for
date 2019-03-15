@@ -246,41 +246,6 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
-	findIncdentsByPlan(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/incident",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {planId: data},
-			success(model) {
-				me.trigger("incidentbByPlan", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("incidentbByPlan", opts);
-			}
-		});
-	},
-
-	findMonitorsByPlan(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/monitor",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {planId: data},
-			success(model) {
-				me.trigger("monitorByPlan", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorByPlan", opts);
-			}
-		});
-	},
-
 	findHistoryByUnit(data){
 		var me = this;
 		$.ajax({
@@ -297,6 +262,41 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+	findIncdentsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/incidents",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("incidentbByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentbByPlan", opts);
+			}
+		});
+	},
+
+	findMonitorsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/monitors",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("monitorByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorByPlan", opts);
+			}
+		});
+	},
+
+
 
 	findMonitorHistoryByUnit(data){
 		var me = this;
@@ -311,6 +311,86 @@ var RiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("monitorHistoryByUnit", opts);
+			}
+		});
+	},
+
+	listMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/monitor",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data},
+			success(model) {
+				me.trigger("monitorListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorListed", opts);
+			}
+		});
+	},
+
+	newMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/monitornew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				monitor: data.monitor,
+			}),
+			success(model) {
+				me.trigger("monitorCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deleteMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/monitor/${data.monitorId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("monitorDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updateMonitor(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/monitor/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				monitor: data.monitor,
+			}),
+			success(model) {
+				me.trigger("monitorUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
 			}
 		});
 	},
@@ -399,85 +479,7 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 
-	listMonitor(data) {
-		var me = this;
-		$.ajax({
-			url: me.url + "/monitor",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {planId: data.planId},
-			success(model) {
-				me.trigger("monitorListed", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorListed", opts);
-			}
-		});
-	},
 
-	newMonitor(data) {
-		var me = this;
-		$.ajax({
-			url: me.url + '/monitornew',
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				monitor: data.monitor,
-			}),
-			success(model) {
-				me.trigger("monitorCreated", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorCreated", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
-	deleteMonitor(data) {
-		var me = this;
-		$.ajax({
-			url: `${me.url}/monitor/${data.monitorId}`,
-			method: 'DELETE',
-			dataType: 'json',
-			contentType: 'application/json',
-			success(model) {
-				me.trigger("monitorDeleted", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorDeleted", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
-	updateMonitor(data) {
-		var me = this;
-		$.ajax({
-			url: me.url + '/monitor/update',
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				monitor: data.monitor,
-			}),
-			success(model) {
-				me.trigger("monitorUpdated", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorUpdated", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
 
 
 	listIncident(data) {
@@ -487,7 +489,7 @@ var RiskStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {planId: data.planId},
+			data: {riskId: data},
 			success(model) {
 				me.trigger("incidentListed", model);
 			},

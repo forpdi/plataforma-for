@@ -3100,11 +3100,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		PaginatedList<Risk> risks = new PaginatedList<Risk>();
 		
 		List<Risk> list = new ArrayList<>();
-		for(Unit unit: units.getList()) list.addAll(this.riskBS.listRiskbyUnit(unit).getList());
+		for(Unit unit: units.getList()) list.addAll(this.riskBS.listRiskByUnit(unit).getList());
 		risks.setList(list);
 		risks.setTotal((long) list.size());
 	
-		PaginatedList<Incident> incidents= this.riskBS.listIncidentsbyRisk(risks);
+		PaginatedList<Incident> incidents= this.riskBS.listIncidentsByRisk(risks);
 		//PaginatedList<Monitor>
 
 		
@@ -3575,7 +3575,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							
 					
 				//exportar processos da unidade
-				List<Process> processes =  this.processBS.listProcessbyUnit(unit).getList();
+				List<Process> processes =  this.processBS.listProcessByUnit(unit).getList();
 				Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 				
 				if(!processes.isEmpty()) {

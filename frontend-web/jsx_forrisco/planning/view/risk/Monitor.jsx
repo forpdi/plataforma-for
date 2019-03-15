@@ -51,9 +51,7 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_MONITOR,
-					data: {
-						planId: this.props.planRiskId,
-					},
+					data:  this.props.risk.id,
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao cadastrar monitoramento.");
@@ -84,7 +82,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_MONITOR,
 					data: {
-						planId: this.props.planRiskId,
+						planId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -106,11 +104,10 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		});
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_MONITOR,
-			data: {
-				planId: this.props.planRiskId,
-			},
+			data: this.props.risk.id,
 		});
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
@@ -119,10 +116,10 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
-		
+
 		this.setState({
 			impacts: this.getSelectOptions(this.context.planRisk.attributes.policy.impact),
-			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability), 
+			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability),
 		})
 	},
 
