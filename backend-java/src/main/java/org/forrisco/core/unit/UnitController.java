@@ -282,6 +282,7 @@ public class UnitController extends AbstractController {
 				monitor= new Monitor(monitor);
 				monitor.setRisk(newRisk);
 				this.riskBS.saveMonitor(monitor);
+				//nao esta salvando no banco
 			}
 			
 			for(Incident incident : incidents.getList()) {
