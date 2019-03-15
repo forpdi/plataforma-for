@@ -65,9 +65,7 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_MONITOR,
-					data: {
-						planId: this.props.planRiskId,
-					},
+					data:  this.props.planRiskId,
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao excluir monitoramento.");
@@ -81,9 +79,7 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_MONITOR,
-					data: {
-						planId: this.props.risk.id,
-					},
+					data: this.props.risk.id,
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao atualizar monitoramento.");

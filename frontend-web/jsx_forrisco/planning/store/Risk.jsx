@@ -110,7 +110,7 @@ var RiskStore = Fluxbone.Store.extend({
 	findBySubunits(data, node) {
 		var me = this;
 		$.ajax({
-			url: `${me.url}/listbysubunits/${data.unitId}`,
+			url: `${me.url}/listbysubunits/${data.unit.id}`,
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -414,7 +414,6 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 	newPreventiveAction(data) {
-		console.log(data);
 		var me = this;
 		$.ajax({
 			url: me.url + '/actionnew',
@@ -456,7 +455,6 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 	updatePreventiveAction(data) {
-		console.log(data);
 		var me = this;
 		$.ajax({
 			url: me.url + '/action/update',

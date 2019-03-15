@@ -331,7 +331,7 @@ export default React.createClass({
 			RiskStore.dispatch({
 				action: RiskStore.ACTION_FIND_BY_SUBUNITS,
 				data: {
-					unitId: nodeLevel,
+					unit: nodeProps,
 				},
 				opts: {
 					node: nodeProps,

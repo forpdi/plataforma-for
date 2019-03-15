@@ -28,6 +28,7 @@ export default React.createClass({
 
 	componentDidMount() {
 		RiskStore.on('preventiveActionsListed', (response) => {
+			console.log('preventiveActionsListed', (response))
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
@@ -51,7 +52,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -67,7 +68,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -83,7 +84,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -108,7 +109,7 @@ export default React.createClass({
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 			data: {
-				riskId: this.props.planRiskId,
+				riskId: this.props.risk.id,
 			},
 		});
 		UserStore.dispatch({

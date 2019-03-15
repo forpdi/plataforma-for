@@ -1017,6 +1017,7 @@ public class StructureController extends AbstractController {
 	
 	/**
 	 * Listar instâncias do level objetivo pela instituição.
+	 * 	(structlevel.name='objective')
 	 * 
 	 * @return list Lista de instâncias do level objetivo.
 	 */
@@ -1030,10 +1031,15 @@ public class StructureController extends AbstractController {
 		
 		try {
 			for(PlanMacro plan :plans) {
-				PaginatedList<StructureLevelInstance> sli = this.bs.listObjective(plan);
-				list.addAll(sli.getList());
+				PaginatedList<StructureLevelInstance> sli = this.bs.listObjectives(plan);
+				
+				for(StructureLevelInstance instance : sli.getList()) {	
+					if(instance.getLevel().getName().equals("Objetivo")){
+						list.add(instance);
+					}
+				}
 			}
-			
+
 			PaginatedList<StructureLevelInstance> result= new PaginatedList<StructureLevelInstance>();
 			
 			result.setList(list);

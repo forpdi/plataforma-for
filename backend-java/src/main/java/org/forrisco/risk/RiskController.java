@@ -342,15 +342,15 @@ public class RiskController extends AbstractController {
 	@NoCache
 	public void listSubunitsRisksByUnit(@NotNull Long unitId) {
 		try {			
-			Unit unit = this.riskBS.exists(unitId, Unit.class);
-			if (unit == null) {
-				this.fail("A unidade não foi encontrada.");
+			Unit subunit = this.riskBS.exists(unitId, Unit.class);
+			if (subunit == null || subunit.isDeleted()) {
+				this.fail("A Subunidade não foi encontrada.");
 			}
-			List<Unit> subunits = this.unitBS.listSubunitByUnit(unit).getList();
+			/*List<Unit> subunits = this.unitBS.listSubunitByUnit(unit).getList();
 			if (GeneralUtils.isEmpty(subunits)) {
 				this.success(new ArrayList<>(0));
-			}
-			PaginatedList<Risk> risks = this.riskBS.listRiskByUnitList(subunits);
+			}*/
+			PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(subunit);
 			this.success(risks);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -381,7 +381,7 @@ public class RiskController extends AbstractController {
 			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk);
 			
 			this.success(actions);
-			
+
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
