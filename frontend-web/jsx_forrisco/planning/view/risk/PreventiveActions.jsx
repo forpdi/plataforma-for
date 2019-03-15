@@ -217,7 +217,7 @@ export default React.createClass({
 					type: "textarea",
 					rows: "3",
 					value: data[idx].action,
-					onChange: this.reportChangeHandler,
+					onChange: this.actionChangeHandler,
 				}}
 			/>,
 			user: {
@@ -247,11 +247,13 @@ export default React.createClass({
 			tools: <div className="row-tools-box">
 				<button
 					className="row-button-icon"
-					onClick={() => this.updatePreventiveAction({
-						...this.state.action,
-						accomplished: this.state.action.accomplished.props.fieldDef.value,
-						tools: undefined,
-					})}
+					onClick={() => {
+						this.updatePreventiveAction({
+							...this.state.action,
+							accomplished: this.state.action.accomplished.props.fieldDef.value,
+							tools: undefined,
+						}),
+					console.log(this.state.action)}}
 				>
 					<span className="mdi mdi-check" />
 				</button>
@@ -391,11 +393,11 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 350,
+			minWidth: 400,
 		},{
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 250,
+			minWidth: 300,
 		}, {
 			Header: 'Ação realizada?',
 			accessor: 'accomplished',

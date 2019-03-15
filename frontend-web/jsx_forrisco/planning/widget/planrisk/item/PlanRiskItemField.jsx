@@ -304,7 +304,8 @@ export default React.createClass({
 										}
 									</div>
 									<span className="pdi-normal-text">
-										<div id={this.props.field.name}> {this.props.field.description} </div>
+										<h1>Hoje</h1>
+										<div id={this.props.field.name}> Account{this.props.field.description} </div>
 									</span>
 								</div>
 
@@ -332,6 +333,7 @@ export default React.createClass({
 														}
 													</div>
 													<span className="pdi-normal-text">
+														{console.log("ediçao1")}
 														<div
 															id={this.props.field.fieldName}> {
 																this.props.field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "")
@@ -352,9 +354,21 @@ export default React.createClass({
 															  onClick={this.editField}
 															  title={Messages.get("label.title.changeField")}/>
 													</div>
-													<span className="pdi-normal-text">
-														<div
-															id={this.props.field.fieldName}> {this.props.field.fieldContent} </div>
+													<span className="card-field-content pdi-normal-text">
+														{console.log("ediçao2")}
+														<div id={this.props.field.fieldName}>
+															{console.log(this.props.field)}
+															
+															{this.props.field.fileLink ?
+																<a target="_blank" rel="noopener noreferrer" href={this.props.field.fileLink}>
+																	{this.props.field.fieldContent}
+																</a>
+																:
+																$(this.props.field.fieldContent).text()
+															}
+															
+															{/* {this.props.field.fieldContent} */}
+														</div>
 													</span>
 												</div>
 											:
