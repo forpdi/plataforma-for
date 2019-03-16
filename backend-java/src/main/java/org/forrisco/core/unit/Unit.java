@@ -41,7 +41,7 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=PlanRisk.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRisk planRisk;
 	

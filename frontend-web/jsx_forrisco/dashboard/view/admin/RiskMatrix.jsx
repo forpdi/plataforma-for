@@ -6,7 +6,7 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import RiskQuantity from "forpdi/jsx_forrisco/dashboard/view/admin/RiskQuantity.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
-
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 var numeral = require('numeral');
 
@@ -132,7 +132,7 @@ export default React.createClass({
 	},
 
 	showRisk(probability,impact){
-		console.log("//TODO mostrar lista de riscos",probability,impact,this.state.threats,this.state.plan, this.state.unit)
+		Modal.riskList(probability, impact);
 	},
 
 	countRisks(risks,impact, probability, color){
@@ -175,11 +175,13 @@ export default React.createClass({
 							default: color="Cinza";
 						}
 						var impact=matrix[this.state.policyModel.nline*(this.state.policyModel.ncolumn+1)+column-1][0]
-						var probability=matrix[(line)*(this.state.policyModel.ncolumn+1)][0]
+						var probability=matrix[(line)*(this.state.policyModel.ncolumn+1)][0];
 
-						return (<div  className={"icon-link Cor "+color} onClick={() => this.showRisk(probability,impact)}>
-									{this.countRisks(risks, impact, probability, color)}
-								</div>)
+						return (
+							<div  className={"icon-link Cor "+color} onClick={() => this.showRisk(probability,impact)}>
+								{this.countRisks(risks, impact, probability, color)}
+							</div>
+						)
 					}
 				}
 			}

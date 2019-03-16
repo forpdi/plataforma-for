@@ -79,7 +79,7 @@ export default React.createClass({
 
 			/* Redireciona para as Informações gerais ao carregar a Tree*/
 			//if (!this.props.location.pathname.includes("unit")) {
-		//		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");
+		//		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");
 		//	}
 			/* ____________________  */
 

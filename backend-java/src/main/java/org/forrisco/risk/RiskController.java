@@ -358,6 +358,29 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
+
+	/**
+	 * Retorna Risco a partir do impacto e probabilidade
+	 * 
+	 * @param impact
+	 * @param probability
+	 */
+	@Get(PATH + "/listByPI")
+	@NoCache
+	public void listRiskByPI(String impact, String probability, Integer page, Integer pageSize) {
+		if (page == null)
+			page = 0;
+		
+		try {
+		
+			PaginatedList<Risk> risks = this.riskBS.listRiskByPI(impact, probability, page, pageSize);
+			this.success(risks.getList(), risks.getTotal());
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
+		}
+	}
+	
 	
 	/**
 	 * Retorna ações de prevenção.
@@ -542,6 +565,46 @@ public class RiskController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
+	}
+	
+	/**
+	 * Retorna riscos a partir de uma unidade
+	 * @param unitId
+	 */
+	
+	@Get( PATH + "/incidentByUnit")
+	@NoCache
+	public void listIncidentsByUnit(@NotNull Long unitId) {
+		
+		try {
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			List<Risk> risks = new ArrayList<>();
+			List<Incident> incidents = new ArrayList<>();
+			
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrado.");
+				return;
+			}
+			
+			PaginatedList<Risk> listRisk = this.riskBS.listRiskByUnit(unit);
+			risks.addAll(listRisk.getList());
+			
+			for(Risk risk : risks) {
+				PaginatedList<Incident> list = this.riskBS.listIncidentsByRisk(risk);
+				incidents.addAll(list.getList());
+			}
+			
+			PaginatedList<Incident> incident = new  PaginatedList<Incident>();
+			
+			incident.setList(incidents);
+			incident.setTotal((long) incidents.size());
+			
+			this.success(incident);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+		
 	}
 	
 	
@@ -1107,6 +1170,4 @@ public class RiskController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	
 }
