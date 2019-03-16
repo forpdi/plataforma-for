@@ -30,7 +30,11 @@ import org.forrisco.core.policy.Policy;
 import org.forrisco.core.policy.PolicyBS;
 import org.forrisco.core.policy.permissions.ManagePlanRiskPermission;
 import org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.core.process.Process;
+import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;
+import org.forrisco.core.unit.UnitBS;
+import org.forrisco.core.unit.UnitController;
 
 import com.itextpdf.text.DocumentException;
 
@@ -56,6 +60,8 @@ public class PlanRiskController extends AbstractController {
 	@Inject private PlanRiskBS planRiskBS;
 	@Inject private PlanRisk planRisk;
 	@Inject private PlanRiskItemBS planRiskItemBS;
+	@Inject private UnitBS unitBS;
+	@Inject private ProcessBS processBS;
 	@Inject private PDFgenerate pdf;
 	
 	protected static final String PATH = BASEPATH +"/planrisk";
@@ -193,6 +199,30 @@ public class PlanRiskController extends AbstractController {
 				return;
 			}
 			
+			
+			//verificar unidades
+			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(planRisk);
+
+			for(Unit unit:units.getList()) {
+				if(!new UnitController().deletableUnit(unit)) {	
+					return;
+				}
+			}
+			
+					
+			//deletar unidades
+			for(Unit unit:units.getList()) {
+				//deletar processos desta unidade
+				PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
+				for(Process process :processes.getList()) {
+					this.processBS.deleteProcess(process);
+				}
+				this.unitBS.delete(unit);
+			}
+			
+			
+			
+			//deletar itens
 			PaginatedList<PlanRiskItem> planRiskItem = this.planRiskItemBS.listItensByPlanRisk(planRisk);
 			
 			for(PlanRiskItem item : planRiskItem.getList()) {
@@ -207,6 +237,8 @@ public class PlanRiskController extends AbstractController {
 				this.planRiskItemBS.delete(item);
 			}
 			
+			
+			//deletar plano
 			this.planRiskBS.delete(planRisk);
 			this.success();
 			

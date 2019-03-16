@@ -453,7 +453,6 @@ export default React.createClass({
 								}
 							} else {
 								if (this.state.risklevelModel) {
-									console.log(k,this.state.risklevelModel,this.state.risklevelModel[k])
 									if (this.state.risklevelModel.data[k]) {
 										if (valor == this.state.risklevelModel.data[k]['level']) {
 											switch (this.state.risklevelModel.data[k]['color']) {
@@ -472,7 +471,6 @@ export default React.createClass({
 							}
 						}
 
-						//console.log(classe)
 
 						children.push(<td><div className={classe + " Quadro "}>{
 							<VerticalInput

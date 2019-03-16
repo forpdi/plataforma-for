@@ -149,17 +149,15 @@ public class RiskBS extends HibernateBusiness {
 			activity.setDeleted(false);
 			
 			Process process =this.dao.exists(activity.getProcess().getId(), Process.class);
-			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
-			
+
 			activity.setProcess(process);
 			
 			if(activity.getName() == null) {
 				activity.setName("");
 			}
 
-			
 			//pegar link correto da unidade que contem o processo
-			activity.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
+			activity.setLinkFPDI("#/forrisco/plan-risk/"+process.getUnitCreator().getPlan().getId()+"/unit/"+process.getUnitCreator().getId()+"/info");
 			this.dao.persist(activity);
 		}
 	}
@@ -182,15 +180,13 @@ public class RiskBS extends HibernateBusiness {
 			riskprocess.setRisk(risk);
 			riskprocess.setDeleted(false);
 			
-			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
-			
 			Process process =this.dao.exists(riskprocess.getProcess().getId(), Process.class);
 			
 			riskprocess.setName(process.getObjective()+ " - " + process.getName());
 			riskprocess.setProcess(process);
 			
 			//pegar link correto da unidade que contem o processo
-			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
+			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+process.getUnitCreator().getPlan().getId()+"/unit/"+process.getUnitCreator().getId()+"/info");
 			this.dao.persist(riskprocess);
 		}
 	}
