@@ -6,6 +6,7 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Router from "react-router";
 import UserSession from "@/core/store/UserSession";
 import StructureStore from "@/planning/store/Structure";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge";
 
 export default React.createClass({
 
@@ -28,15 +29,19 @@ export default React.createClass({
 				id: null,
 				label: ''
 			}],
+			loading:true,
 		};
 	},
 
 	componentDidMount() {
 		var policiData = [];
 		var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
-
 			if (response.status !== true) {
 				this.setState({domainError: true});
+			}
+
+			if(response.total ==0){
+				this.context.router.push("/forrisco/policy/new")
 			}
 
 			if (response.success === true) {
@@ -49,6 +54,7 @@ export default React.createClass({
 
 				this.setState({
 					policies: policiData, domainError: false,
+					loading:false
 				});
 			}
 
@@ -158,6 +164,10 @@ export default React.createClass({
 	},
 
 	render() {
+
+		if (this.state.loading === true) {
+			return <LoadingGauge />;
+		}
 		return (
 			<div>
 				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>

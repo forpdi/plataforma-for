@@ -111,6 +111,10 @@ export default React.createClass({
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 			this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
 
+			PlanRiskStore.dispatch({
+				action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+			});
+
 			}else{
 				var msg = model.msg ? "Erro ao duplicar Plano: "+model.msg.message : "Erro ao duplicar Plano"
 				this.context.toastr.addAlertError(msg);

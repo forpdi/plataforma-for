@@ -55,6 +55,8 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
 	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
 	ACTION_RETRIEVE_ACTIVITIES: "risk-retrieveActivities",
+	ACTION_LIST_RISKS_BY_PI: "risk-listRisksByPI",
+	ACTION_FIND_INCIDENTS_BY_UNIT: 'unit-findIncidentsByUnit',
 	url: URL,
 	model: RiskModel,
 
@@ -657,6 +659,38 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+	listRisksByPI(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/listByPI",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: data,
+			success(model) {
+				me.trigger("riskByPI", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("riskByPI", opts);
+			}
+		});
+	},
+
+	findIncidentsByUnit() {
+		var me = this;
+		$.ajax({
+			url: me.url + "/incidentByUnit",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
 
 	mainMenuState(data){
 		var me = this;

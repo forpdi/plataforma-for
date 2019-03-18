@@ -58,7 +58,6 @@ export default React.createClass({
 		});
 
 		UnitStore.on("unitRetrieved", (model) => {
-			console.log('foi')
 			if (model.data) {
 				const unit = model.data;
 				this.refreshTabinfo(this.props.location.pathname, `Nova Subunidade - ${unit.name}`);

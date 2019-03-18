@@ -68,7 +68,7 @@ public class ProcessController extends AbstractController{
 				return;
 			}
 			process.setCompany(this.domain.getCompany());
-					
+			process.setUnitCreator(unit);
 			this.processBS.save(process);
 
 			ProcessUnit processUnit = new ProcessUnit();

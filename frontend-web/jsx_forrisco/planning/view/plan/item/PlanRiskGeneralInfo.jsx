@@ -94,7 +94,6 @@ export default React.createClass({
 	},
 
 	renderDropdown() {
-		console.log(this.props);
 		return(
 			<ul id="level-menu" className="dropdown-menu">
 				<li>

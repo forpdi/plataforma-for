@@ -28,7 +28,6 @@ export default React.createClass({
 
 	componentDidMount() {
 		RiskStore.on('preventiveActionsListed', (response) => {
-			console.log('preventiveActionsListed', (response))
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
@@ -106,10 +105,17 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		});
+
+		this.refresh(this.props.risk.id)
+
+	},
+
+
+	refresh(riskId){
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 			data: {
-				riskId: this.props.risk.id,
+				riskId: riskId,
 			},
 		});
 		UserStore.dispatch({
@@ -119,7 +125,12 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
+	},
 
+	componentWillReceiveProps(newProps) {
+		if (this.props.risk.id !== newProps.risk.id) {
+			this.refresh(newProps.risk.id)
+		}
 	},
 
 	componentWillUnmount() {
@@ -130,7 +141,6 @@ export default React.createClass({
 	changeAccomplishmentData() {
 		this.setState({
 			data: _.map(this.state.data, (action, idx) => (
-				console.log(action),
 				_.assign(action, {
 					accomplished: this.renderAccomplishmentOnList(action.accomplished, action.id, idx),
 				})
@@ -253,8 +263,8 @@ export default React.createClass({
 							...this.state.action,
 							accomplished: this.state.action.accomplished.props.fieldDef.value,
 							tools: undefined,
-						}),
-					console.log(this.state.action)}}
+						})
+					}}
 				>
 					<span className="mdi mdi-check" />
 				</button>

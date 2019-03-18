@@ -41,15 +41,16 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+		var me =this
 		RiskStore.on("findRisk", (model) => {
-			if(model.success){
+			if(model.success && (this.state.riskModel == null || model.data.id !=this.state.riskModel.id )){
 				this.setState({
 					riskModel:model.data,
 					selected:0,
 					loading:false
 				})
 			}
-		},this)
+		},me)
 
 		RiskStore.on("riskDelete", (model) => {
 			if(model.success){
@@ -59,13 +60,15 @@ export default React.createClass({
 				Toastr.error(errorMsg.message);
 
 			}
-		},this)
+		},me)
 
 		this.refresh(this.props)
 	},
 
 	componentWillReceiveProps(newProps) {
-		this.refresh(newProps)
+		if (this.props.params.riskId !== newProps.params.riskId) {
+			this.refresh(newProps)
+		}
 	},
 
 	componentWillUnmount() {
@@ -77,10 +80,6 @@ export default React.createClass({
 			action:RiskStore.ACTION_FIND_RISK,
 			data: newProps.params.riskId
 		})
-
-		this.setState({
-			visualization:true
-		})
 	},
 
 	renderUnarchiveRisk(){
@@ -89,7 +88,8 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link
-						onClick={this.changeVizualization}>
+						//onClick={this.changeVizualization}>
+						onClick={this.onChange}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editInformation")}>
 						<span id="menu-levels"> {Messages.getEditable("label.title.editInformation","fpdi-nav-label")} </span>
 						</span>
@@ -118,11 +118,11 @@ export default React.createClass({
 
 	},
 
-	changeVizualization() {
+	/*changeVizualization() {
 		this.setState({
 			visualization: false,
 		});
-	},
+	},*/
 
 	deleteRisco() {
 		var me = this;
@@ -134,7 +134,7 @@ export default React.createClass({
 					action: RiskStore.ACTION_DELETE,
 					data: me.state.riskModel.id
 				});
-			},msg,me.refreshCancel);
+			},msg,()=>{Modal.hide()});
 		}
 	},
 
@@ -143,6 +143,14 @@ export default React.createClass({
 			visualization:!this.state.visualization
 		})
 	},
+
+	/*onUpdate(){
+		this.refresh(this.props)
+		this.onChange()
+
+		this.state.riskModel=null
+		//visualization
+	},*/
 
 	selectInfo(){
 		switch(this.state.selected){
@@ -154,6 +162,8 @@ export default React.createClass({
 							visualization={this.state.visualization}
 							risk={this.state.riskModel}
 							onChange={this.onChange}
+							//onUpdate={this.onUpdate}
+
 						/>
 						<PreventiveActions
 							visualization={this.state.visualization}
@@ -218,7 +228,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}

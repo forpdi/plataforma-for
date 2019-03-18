@@ -150,7 +150,7 @@ public class UnitController extends AbstractController {
 	@NoCache
 	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
 	// ManagePolicyPermission.class })
-	public void duplicate(@NotNull @Valid List<Unit> units, PlanRisk planRisk) {
+	public void duplicateUnit(@NotNull @Valid List<Unit> units, PlanRisk planRisk) {
 		try {
 		
 			PlanRisk plan = this.unitBS.exists(planRisk.getId(), PlanRisk.class);
@@ -275,7 +275,7 @@ public class UnitController extends AbstractController {
 			for( PreventiveAction action : actions.getList()) {
 				PreventiveAction act= new PreventiveAction(action);
 				act.setRisk(newRisk);
-				this.riskBS.saveAction(action);
+				this.riskBS.saveAction(act);
 			}
 			
 			for(Monitor monitor : monitors.getList()) {
@@ -328,87 +328,6 @@ public class UnitController extends AbstractController {
 			}
 		}
 	}
-	
-	/**
-	 * Duplica uma unidade
-	 *  
-	 *  @Param Unit uma unidade com o id da unidade ogirinal
-	 *  				 e o id no plano a ser salvo a unidade duplicado
-	 * @return void
-	 *
-	@Post(PATH + "/duplicate2")
-	@Consumes
-	@NoCache
-	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
-	// ManagePolicyPermission.class })
-	public void duplicate(@NotNull @Valid Unit unit) {
-		try {
-			
-			
-			unit = this.unitBS.exists(unit.getId(), Unit.class);
-			if (unit == null || unit.isDeleted()) {
-				this.fail("Unidade não possui Plano de Risco");
-			}
-			
-
-			PaginatedList<Risk> risks = this.riskBS.listRiskbyUnit(unit);
-			PaginatedList<Unit> units = this.unitBS.listSubunitByUnit(unit);			
-			PaginatedList<Process> processes = this.processBS.listProcessbyUnit(unit);
-			
-			Unit newUnit= new Unit();
-			newUnit.setAbbreviation(unit.getAbbreviation());
-			newUnit.setDescription(unit.getDescription());
-			newUnit.setName(unit.getName());
-			newUnit.setParent(unit.getParent());
-			newUnit.setPlanRisk(planRisk);
-			newUnit.setUser(unit.getUser());
-			this.unitBS.save(newUnit);
-			
-			duplicateUnitsId.put(unit.getId(), newUnit.getId());
-
-			for(Process process: processes.getList()) {
-				Process pr= new Process();
-				pr.setUnit(newUnit);
-				pr.setCompany(process.getCompany());
-				pr.setFile(process.getFile());
-				pr.setFileLink(process.getFileLink());
-				pr.setName(process.getName());
-				pr.setObjective(process.getObjective());
-				
-				//atualizar id dessas unidades relacionadas após salvar as outras unidades/subunidades
-				//pr.setRelatedUnits(process.getRelatedUnits());//transiente
-				this.processBS.save(pr);
-				
-				duplicateProcessosId.put(process.getId(), pr.getId());
-			}
-			
-
-			
-			
-			//atualizar  atividade,processo após salvar as outras unidades/subunidades
-			//atualizar id dessas unidades relacionadas após salvar as outras unidades/subunidades
-			
-			
-			//adicionar na tabela de processunit unidades relacionadas que já estão mapeadas
-			
-		
-			
-			
-			unit.setId(null);
-			unit.setPlanRisk(planRisk);
-			this.unitBS.save(unit);
-			this.success(unit);
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-		
-		
-		//unidade//processos da unidade
-		
-		//riscos //monitoramento//incidentes//contingenciamento
-		
-	}*/
 	
 	
 	
@@ -571,50 +490,68 @@ public class UnitController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
-
-			// verifica se possui subunidades vinculadas
-
-			if (unit.getParent() == null) {
-				PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
-				if (subunits.getTotal() > 0) {
-					this.fail("Unidade possui subunidade(s) vinculada(s).");
-					return;
+			
+			if (deletableUnit(unit)) {
+				//deletar processos desta unidade
+				PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
+				for(Process process :processes.getList()) {
+					this.processBS.deleteProcess(process);
 				}
-			}
-
-			// verifica se possui riscos vinculados
-			PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
-			if (risks.getTotal() > 0) {
-				this.fail("Unidade possui risco(s) vinculado(s).");
-				return;
+				this.unitBS.delete(unit);
+				this.success(unit);
 			}
 			
-			//verifica se possui processos vinculados com algum risco de outra unidade?
-			//um processo pode estar vinculado a um risco de outra unidade? parentemente sim
-			PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
-			for(Process process :processes.getList()) {
-				
-				if (this.riskBS.hasLinkedRiskProcess(process)) {
-					this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
-					return;
-				}
-				if (this.riskBS.hasLinkedRiskActivity(process)) {
-					this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
-					return;
-				}
-			}
-			
-			//deletar processos desta unidade
-			for(Process process :processes.getList()) {
-				this.processBS.deleteProcess(process);
-			}
-
-			this.unitBS.delete(unit);
-			this.success(unit);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
+	}
+
+	/**
+	 * Verifica se uma unidade é deletável.
+	 * 
+	 * @param Unit
+	 * 			unidade a ser verificada.
+	 */
+	public boolean deletableUnit(Unit unit) {
+
+		// verifica se possui subunidades vinculadas
+		if (unit.getParent() == null) {
+			PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
+			if (subunits.getTotal() > 0) {
+				this.fail("Unidade possui subunidade(s) vinculada(s).");
+				return false;
+			}
+		}
+
+		// verifica se possui riscos vinculados
+		PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
+		if (risks.getTotal() > 0) {
+			if(unit.getParent() != null) {
+				this.fail("Subunidade possui risco(s) vinculado(s).");
+			}else {
+				this.fail("Unidade possui risco(s) vinculado(s).");
+			}
+			
+			return false;
+		}
+		
+		//verifica se possui processos vinculados com algum risco de outra unidade?
+		//um processo pode estar vinculado a um risco de outra unidade? aparentemente sim
+		PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
+		for(Process process :processes.getList()) {
+			
+			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
+				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+				return false;
+			}
+			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
+				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	/**

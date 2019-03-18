@@ -225,7 +225,8 @@ public class UnitBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(Unit.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.isNull("parent"))
-				.add(Restrictions.eq("planRisk", planrisk));
+				.add(Restrictions.eq("planRisk", planrisk))
+				.addOrder(Order.asc("id"));
 
 		List<Unit> units = this.dao.findByCriteria(criteria, Unit.class);
 		results.setList(units);
@@ -553,6 +554,8 @@ public class UnitBS extends HibernateBusiness {
 		 //TODO Auto-generated method stub
 		return null;
 	}
+	
+	
 
 
 }

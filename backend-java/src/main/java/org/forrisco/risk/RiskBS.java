@@ -38,6 +38,7 @@ public class RiskBS extends HibernateBusiness {
 	
 	@Inject protected HibernateDAO dao;
 	@Inject protected HttpServletRequest request;
+	private static final int PAGESIZE = 10;
 	
 
 
@@ -148,20 +149,19 @@ public class RiskBS extends HibernateBusiness {
 			activity.setDeleted(false);
 			
 			Process process =this.dao.exists(activity.getProcess().getId(), Process.class);
-			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
-			
+
 			activity.setProcess(process);
 			
 			if(activity.getName() == null) {
 				activity.setName("");
 			}
 
-			
 			//pegar link correto da unidade que contem o processo
-			activity.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
+			activity.setLinkFPDI("#/forrisco/plan-risk/"+process.getUnitCreator().getPlan().getId()+"/unit/"+process.getUnitCreator().getId()+"/info");
 			this.dao.persist(activity);
 		}
 	}
+
 
 	/**
 	 * Salvar uma lista de objetivos de processos
@@ -180,15 +180,13 @@ public class RiskBS extends HibernateBusiness {
 			riskprocess.setRisk(risk);
 			riskprocess.setDeleted(false);
 			
-			Unit unit =this.dao.exists(risk.getUnit().getId(), Unit.class);
-			
 			Process process =this.dao.exists(riskprocess.getProcess().getId(), Process.class);
 			
 			riskprocess.setName(process.getObjective()+ " - " + process.getName());
 			riskprocess.setProcess(process);
 			
 			//pegar link correto da unidade que contem o processo
-			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+unit.getPlan().getId()+"/unit/"+unit.getId()+"/info");
+			riskprocess.setLinkFPDI("#/forrisco/plan-risk/"+process.getUnitCreator().getPlan().getId()+"/unit/"+process.getUnitCreator().getId()+"/info");
 			this.dao.persist(riskprocess);
 		}
 	}
@@ -479,6 +477,38 @@ public class RiskBS extends HibernateBusiness {
 		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
 		results.setList(risks);
 		results.setTotal((long) risks.size());
+		
+		return results;
+	}
+	
+	
+	public PaginatedList<Risk> listRiskByPI(String impact, String probability, Integer page, Integer pageSize) {
+		
+		if (page == null || page < 1) {
+			page = 1;
+		}
+		if (pageSize == null) {
+			pageSize = PAGESIZE;
+		}
+		
+		PaginatedList<Risk> results = new PaginatedList<Risk>();
+		
+		Criteria criteria = this.dao.newCriteria(Risk.class).setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize).addOrder(Order.asc("name"))
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("impact", impact))
+				.add(Restrictions.eq("probability", probability));
+		
+		Criteria counting = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("impact", impact))
+				.add(Restrictions.eq("probability", probability))
+				.setProjection(Projections.countDistinct("id"));
+				
+				
+		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
+		results.setList(risks);
+		results.setTotal((Long) counting.uniqueResult());
 		
 		return results;
 	}

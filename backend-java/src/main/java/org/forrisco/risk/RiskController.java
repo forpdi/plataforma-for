@@ -17,6 +17,8 @@ import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.objective.RiskActivity;
+import org.forrisco.risk.objective.RiskProcess;
+import org.forrisco.risk.objective.RiskStrategy;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -265,6 +267,7 @@ public class RiskController extends AbstractController {
 				
 				
 				this.success(risk);
+
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -352,6 +355,29 @@ public class RiskController extends AbstractController {
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+
+	/**
+	 * Retorna Risco a partir do impacto e probabilidade
+	 * 
+	 * @param impact
+	 * @param probability
+	 */
+	@Get(PATH + "/listByPI")
+	@NoCache
+	public void listRiskByPI(String impact, String probability, Integer page, Integer pageSize) {
+		if (page == null)
+			page = 0;
+		
+		try {
+		
+			PaginatedList<Risk> risks = this.riskBS.listRiskByPI(impact, probability, page, pageSize);
+			this.success(risks.getList(), risks.getTotal());
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
 	
@@ -539,6 +565,46 @@ public class RiskController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
+	}
+	
+	/**
+	 * Retorna riscos a partir de uma unidade
+	 * @param unitId
+	 */
+	
+	@Get( PATH + "/incidentByUnit")
+	@NoCache
+	public void listIncidentsByUnit(@NotNull Long unitId) {
+		
+		try {
+			Unit unit = this.riskBS.exists(unitId, Unit.class);
+			List<Risk> risks = new ArrayList<>();
+			List<Incident> incidents = new ArrayList<>();
+			
+			if (unit == null) {
+				this.fail("A unidade solicitada não foi encontrado.");
+				return;
+			}
+			
+			PaginatedList<Risk> listRisk = this.riskBS.listRiskByUnit(unit);
+			risks.addAll(listRisk.getList());
+			
+			for(Risk risk : risks) {
+				PaginatedList<Incident> list = this.riskBS.listIncidentsByRisk(risk);
+				incidents.addAll(list.getList());
+			}
+			
+			PaginatedList<Incident> incident = new  PaginatedList<Incident>();
+			
+			incident.setList(incidents);
+			incident.setTotal((long) incidents.size());
+			
+			this.success(incident);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+		
 	}
 	
 	
@@ -973,28 +1039,33 @@ public class RiskController extends AbstractController {
 				return;
 			} 
 			
+				this.riskBS.deleteAPS(risk);
+				
+				PaginatedList<Monitor> monitors = this.riskBS.listMonitorByRisk(risk);
+				PaginatedList<Incident> incidents = this.riskBS.listIncidentsByRisk(risk);
+				PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
+				PaginatedList<PreventiveAction> actions = this.riskBS.listPreventiveActionByRisk(risk);
 			
-			this.riskBS.deleteAPS(risk);
-			
-			PaginatedList<Monitor> monitors = this.riskBS.listMonitorByRisk(risk);
-			PaginatedList<Incident> incidents = this.riskBS.listIncidentsByRisk(risk);
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
-			
-			 for(Monitor monitor : monitors.getList()) {
-				 this.riskBS.delete(monitor);
-			 }
+				 for(Monitor monitor : monitors.getList()) {
+					 this.riskBS.delete(monitor);
+				 }
+				 
+				 for(Incident incident : incidents.getList()) {
+					 this.riskBS.delete(incident);
+				 }
+				 
+				 for(Contingency contingency : contingencies.getList()) {
+					 this.riskBS.delete(contingency);
+				 }
+				 
+				 for( PreventiveAction action : actions.getList()) {
+					 this.riskBS.delete(action);
+				 }
+				 
 			 
-			 for(Incident incident : incidents.getList()) {
-				 this.riskBS.delete(incident);
-			 }
-			 
-			 for(Contingency contingency : contingencies.getList()) {
-				 this.riskBS.delete(contingency);
-			 }
-			 
-			this.riskBS.delete(risk);
-			
-			this.success();
+				 this.riskBS.delete(risk);
+				 this.success();
+
 			
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -1002,6 +1073,27 @@ public class RiskController extends AbstractController {
 		}
 	}
 	
+	/*private boolean deletableRisk(Risk risk) {
+		
+		PaginatedList<RiskActivity> activity= this.riskBS.listRiskActivity(risk);
+		PaginatedList<RiskProcess> process= this.riskBS.listRiskProcess(risk);
+		
+		for(RiskActivity act : activity.getList()) {
+			if(act.getProcess().getUnit())
+			this.delete(act);
+		}
+		
+		for(RiskProcess pro : process.getList()) {
+			this.delete(pro);
+		}
+		
+		for(RiskStrategy str : strategy.getList()) {
+			this.delete(str);
+		}
+		
+		return false;
+	}*/
+
 	/**
 	 * Exclui ação preventiva.
 	 * 
@@ -1105,6 +1197,4 @@ public class RiskController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
 		}
 	}
-	
-	
 }
