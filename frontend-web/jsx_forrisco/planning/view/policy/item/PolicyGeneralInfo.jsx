@@ -225,7 +225,7 @@ export default React.createClass({
 			<br/>
 			<table style={{ width: "min-content" }}>
 				<th>
-					<td style={{top: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
+					<td style={{top: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "65px", position: "relative"}} >
 						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
 					</td>
 					{table}

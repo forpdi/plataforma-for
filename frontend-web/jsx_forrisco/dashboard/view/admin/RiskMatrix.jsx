@@ -132,7 +132,7 @@ export default React.createClass({
 	},
 
 	showRisk(probability,impact){
-		Modal.riskList(probability, impact);
+		Modal.riskList(this.state.threats,probability, impact);
 	},
 
 	countRisks(risks,impact, probability, color){
@@ -241,8 +241,8 @@ export default React.createClass({
 							</td>
 						</tr>
 						<tr>
-							<th style={{bottom: ((this.state.policyModel.nline-2)*20+80)+"px" , right: "50px", position: "relative"}} >
-								<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
+							<th>
+								<div style={{width: "115px" }} className="vertical-text dashboard">PROBABILIDADE</div>
 							</th>
 						</tr>
 						<tr>

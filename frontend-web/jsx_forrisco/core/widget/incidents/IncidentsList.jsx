@@ -13,6 +13,7 @@ export default React.createClass({
 		};
 	},
 
+
 	render () {
 		return (
 			<div>
@@ -27,7 +28,7 @@ export default React.createClass({
 							</div>
 
 							<div>
-								{this.props.incidents[0].type === 1 ? <span> Tipo: Oportunidade </span> : <span> Tipo: Ameaça </span> }
+								{this.props.threats? <span> Tipo: Ameaça </span> : <span> Tipo: Oportunidade </span> }
 							</div>
 						</div>
 

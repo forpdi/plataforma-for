@@ -93,7 +93,7 @@ export default React.createClass({
 
 			//Botão Novo SubItem
 			 _.forEach(response.data, subunit => {
-				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subunit.id}`;
+				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subunit.id}/info`;
 				fieldTree.push({
 					label: subunit.name,
 					expanded: false,
@@ -148,8 +148,8 @@ export default React.createClass({
 				fieldTree.push({
 					label: risk.name,
 					iconCls: 'mdi mdi-play pointer',
-					to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
-					key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
+					to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}/info`,
+					key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}/info`,
 					id: risk.id,
 				});
 			});

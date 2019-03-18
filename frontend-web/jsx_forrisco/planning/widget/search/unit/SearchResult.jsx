@@ -34,12 +34,19 @@ export default React.createClass({
 		var me = this;
 
 		UnitStore.on("findTerms", (model, data) => {
+			console.log("findTerms", model, data )
 			if (model.data != null){
 				for (var i = 0; i < model.data.length; i++) {
-					if(model.data[i].parent === undefined) {
-						model.data[i].level="Unidade"
-					}else{
+
+					if(model.data[i].riskSearchId !== undefined){
+						model.data[i].level="Risco"
+						model.data[i].link="/forrisco/plan-risk/"+this.props.planRiskId+"/unit/"+model.data[i].id+"/risk/"+model.data[i].riskSearchId+"/info"
+					}else if(model.data[i].parent !== undefined) {
 						model.data[i].level="Subunidade"
+						model.data[i].link="/forrisco/plan-risk/"+this.props.planRiskId+"/unit/"+ model.data[i].parent.id +"/subunit/"+model.data[i].id+"/info"
+					}else{
+						model.data[i].level="Unidade"
+						model.data[i].link="/forrisco/plan-risk/"+this.props.planRiskId+"/unit/"+model.data[i].id+"/info"
 					}
 				}
 
@@ -59,8 +66,6 @@ export default React.createClass({
 				this.setState({
 					resultSearchMore:this.state.resultSearchMore
 				});
-
-
 			}
 		},this);
 
@@ -95,7 +100,7 @@ export default React.createClass({
 
 
 	render() {
-
+		//console.log(this.props)
 		return (
 			<div className="fpdi-search">
 				<div className = "fpdi-search-view">
@@ -104,6 +109,7 @@ export default React.createClass({
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
 						{this.state.resultSearchMore.map((model, idx) => {
+							console.log("resultSearchMore",model.link)
 							return(
 								<div key={"levelInstance-"+idx}>
 									<div id="fpdi-result-search">
@@ -112,7 +118,7 @@ export default React.createClass({
 										</div>
 										&nbsp;
 										<Link
-											to={"/forrisco/policy/"+this.props.policyId+"/item/"+(model.subitemParentId? model.subitemParentId +"/subitem/":"")+model.id}
+											to={model.link}
 											activeClassName="active"
 											title={Messages.get("label.title.viewMore")}>
 											{model.name}

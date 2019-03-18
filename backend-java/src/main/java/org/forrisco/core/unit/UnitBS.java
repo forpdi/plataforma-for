@@ -506,9 +506,13 @@ public class UnitBS extends HibernateBusiness {
 			return new ArrayList<Unit>();
 		}
 		
+		ArrayList<Unit> result = new ArrayList<Unit>();
+		
 		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
 		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		Criterion abbreviation = Restrictions.like("abbreviation", "%" + terms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name, description);
+		LogicalExpression Exp= Restrictions.or(orExp, abbreviation);
 		
 		Criteria criteria = this.dao.newCriteria(Unit.class)
 				.add(Restrictions.eq("planRisk", planRisk))
@@ -523,39 +527,55 @@ public class UnitBS extends HibernateBusiness {
 		}
 		
 		Map<Long, Unit> unit = new HashMap<Long, Unit>(); //<SubUnit, Unit>
+		Map<Long, Risk> risk = new HashMap<Long, Risk>(); //<Risk>
 		List<Unit> list = this.dao.findByCriteria(criteria, Unit.class);
+		
 		
 		for(int i = 0; i < list.size(); i++) {
 			Criteria crit = this.dao.newCriteria(Unit.class)
 					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("parent", list.get(i)))
-			 		.add(orExp);
+					.add(Restrictions.eq("id", list.get(i).getId()))
+			 		.add(Exp);
 			 
 			List<Unit> subUnits =  this.dao.findByCriteria(crit, Unit.class);
 			
 			for(int j = 0; j < subUnits.size(); j++) {
-				list.get(j).setParent(list.get(j).getParent());
 				unit.put(subUnits.get(j).getId(), subUnits.get(j));
 			}
 		}
 		
-		criteria.add(orExp);
-		list = this.dao.findByCriteria(criteria, Unit.class);
+		result.addAll(unit.values());
 		
-		for(int i = 0; i< list.size(); i++) {
-			list.get(i).setParent(list.get(i).getParent());
-			unit.put(list.get(i).getId(), list.get(i));
+		for(int i = 0; i < list.size(); i++) {
+		
+			Criterion code = Restrictions.like("code", "%" + terms + "%").ignoreCase();
+			LogicalExpression orExp2 = Restrictions.or(name, code);
+			
+			
+			Criteria crit= this.dao.newCriteria(Risk.class)
+					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("unit", list.get(i)))
+					.add(orExp2);
+			
+			
+			List<Risk> risks = this.dao.findByCriteria(crit, Risk.class);
+			
+			for(int j = 0; j < risks.size(); j++) {
+				risk.put(risks.get(j).getId(), risks.get(j));
+			}
 		}
 		
-		return new ArrayList<Unit>(unit.values());
-	}
+		for(Risk r: risk.values()) {
+			Unit u= new Unit();
+			u.setName(r.getName());
+			u.setDescription(r.getCode());
+			u.setId(r.getUnit().getId());
+			u.setRiskSearchId(r.getId());
+			result.add(u);
+		}
 
-	public List<SubItem> listSubitemTerms(PlanRisk plan, String terms, Long[] subitensSelect, int ordResult) {
-		 //TODO Auto-generated method stub
-		return null;
+		
+		return result;
 	}
-	
-	
-
 
 }

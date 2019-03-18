@@ -24,8 +24,11 @@ export default React.createClass({
 		RiskStore.on("riskByPI", response => {
 			var listOfRisks = [];
 
+
 			response.data.map(risk => {
-				listOfRisks.push({risk})
+				if(risk.type=="Oportunidade" && !this.props.threats || risk.type=="Ameaça" && this.props.threats){
+					listOfRisks.push({risk})
+				}
 			});
 
 			if(listOfRisks.length !== 0) {
@@ -115,7 +118,7 @@ export default React.createClass({
 													</div>
 
 													<div className="col-sm-4 center paddingTop5">
-														<a href={"/#/forrisco/plan-risk/" + callback.risk.unit.planRisk.id + "/unit/" + this.state.unitId + "/risk/" + callback.risk.id}
+														<a href={"/#/forrisco/plan-risk/" + callback.risk.unit.planRisk.id + "/unit/" + this.state.unitId + "/risk/" + callback.risk.id+"/info"}
 														   className="btn btn-sm btn-primary center"
 														   onClick={this.onRedirect}>
 															Visualizar

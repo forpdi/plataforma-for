@@ -112,12 +112,24 @@ export default React.createClass({
 
 	onChartClick(Chart){
 		var me = this;
+		var threats=Chart.chart.getSelection().column==1
+		var incidents=[]
+
+		for(var i in this.state.incidents){
+			if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value){
+				if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row){
+					incidents.push(this.state.incidents[i])
+				}
+			}
+		}
+
+
 
 		if(Chart.chart.getSelection().length > 0){
 			var url = window.location.origin+window.location.pathname+"#/forrisco/risk/";
 			var msg = Messages.get("label.askGoToSelectedLevel");
 
-			Modal.incidentList(this.state.incidents, this.props.units, this.props.plan);
+			Modal.incidentList( threats, incidents, this.props.units, this.props.plan);
 		}
 	},
 
@@ -157,7 +169,7 @@ export default React.createClass({
 		for(i=0;i<incidents.length;i++){
 			var this_month=moment(incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth()
 
-			if(incidents[i].type==0){
+			if(incidents[i].type==1){
 				month_thr[this_month]+=1
 			}else{
 				month_opp[this_month]+=1

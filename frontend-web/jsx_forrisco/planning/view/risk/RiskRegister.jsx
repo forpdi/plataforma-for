@@ -80,7 +80,7 @@ export default React.createClass({
 			if (model.success) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.risk.update"));
 				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/info");
-				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id);
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id+"/info");
 			} else {
 				if (model.message != null) {
 					this.context.toastr.addAlertError(model.message);
@@ -90,7 +90,7 @@ export default React.createClass({
 
 		RiskStore.on("riskcreated", (model) => {
 			if (model.success) {
-				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id);
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id+"/info");
 			} else {
 				if (model.message != null) {
 					this.context.toastr.addAlertError(model.message);
