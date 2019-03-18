@@ -7,29 +7,28 @@ import Budget from "forpdi/jsx/dashboard/view/admin/Budget.jsx";
 
 
 export default React.createClass({
+  contextTypes: {
+    roles: React.PropTypes.object.isRequired
+  },
 
-    contextTypes: {
-        roles: React.PropTypes.object.isRequired
-    },
+  getInitialState() {
+    return {
+    	plan:this.props.plan,
+    	subPlan:this.props.subPlan,
+      profile: this.context.roles,
+    };
+  },
 
-    getInitialState() {
-        return {
-        	plan:this.props.plan,
-        	subPlan:this.props.subPlan,
-            profile: this.context.roles
-        };
-    },
+  componentWillReceiveProps(newProps){
+  	this.setState({
+  		plan:newProps.plan,
+  		subPlan: newProps.subPlan,
+  	});
+  },
 
-    componentWillReceiveProps(newProps){
-		this.setState({
-			plan:newProps.plan,
-			subPlan: newProps.subPlan
-		});
-    },
-
-    componentDidMount(){
-
-    },
+  // componentDidMount(){
+  //
+  // },
 
 	render() {
 		return (

@@ -10,8 +10,6 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import _ from "underscore";
 
-
-
 import Toastr from 'toastr';
 import $ from 'jquery';
 
@@ -269,6 +267,7 @@ export default React.createClass({
 		PolicyStore.off(null, null, this);
 		ItemStore.off(null, null, this);
 	},
+
 	submitWrapper(evt) {
 		if (evt)
 			evt.preventDefault();
@@ -472,8 +471,6 @@ export default React.createClass({
 							}
 						}
 
-						//console.log(classe)
-
 						children.push(<td><div className={classe + " Quadro "}>{
 							<VerticalInput
 								formId={this.props.id}
@@ -655,7 +652,7 @@ export default React.createClass({
 				</Link>
 			</span>)
 		}
-	return (<div><div style={{"display": "inline-flex"}}>{grau}</div><br/></div>)
+		return (<div><div style={{"display": "inline-flex"}}>{grau}</div><br/></div>)
 	},
 
 	changeColumn() {
