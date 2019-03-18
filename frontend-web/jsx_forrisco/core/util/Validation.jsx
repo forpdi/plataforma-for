@@ -185,9 +185,6 @@ var Validate = {
 							refs.policyEditForm['field-['+(i)+','+(j)+']'].className ="form-control matrixSelect frisco-impact"
 						}
 					}
-
-
-
 				}
 			}
 		}

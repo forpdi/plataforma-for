@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from "react-router";
+import { Link } from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
@@ -20,6 +20,7 @@ export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
 			loaded: !UserSession.get("loading"),
@@ -38,6 +39,7 @@ export default React.createClass({
 			}]
 		};
 	},
+
 	onSubmit(data) {
 		Validate.validationLogin(this.refs["login"]);
 
@@ -46,6 +48,7 @@ export default React.createClass({
 			data: data
 		});
 	},
+
 	componentWillMount() {
 		var me = this;
 		UserSession.on("login", model => {
@@ -55,42 +58,57 @@ export default React.createClass({
 				location.assign("#/forrisco/home");
 		}, me);
 		UserSession.on("loaded", () => {
-			me.setState({loaded: true});
+			me.setState({ loaded: true });
 		}, me);
 
 	},
+
 	componentDidMount() {
 		if (!!UserSession.get("logged")) {
 			location.assign("#/forrisco/home");
 		} else {
-			this.setState({loaded: true});
+			this.setState({ loaded: true });
 		}
 	},
+
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 	},
+
 	render() {
 		if (!this.state.loaded) {
 			return <LoadingGauge />;
 		}
+
 		return (
 			<div className="container-fluid">
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")} />
-							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titleRiskComplement")}<br/>
-							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
+							<img
+								className="fpdi-login-brand"
+								src={AppRiscoLogo}
+								alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")}
+							/>
+							<center>
+								<h3 className="frisco-login-subtitle">
+									{Messages.get("label.login.titleRiskComplement")}<br/>
+									{/* Messages.getEditable("label.login.title","fpdi-nav-label") */}
+								</h3>
+							</center>
 						</div>
 					</div>
 				</div>
 
-
 		    <div className="row">
-				<div className="col-md-4 col-md-offset-4">
-					<div className="fpdi-card-login">
-						<div className="panel panel-default">
-						  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.login","fpdi-nav-label")}</p></div>
+					<div className="col-md-4 col-md-offset-4">
+						<div className="fpdi-card-login">
+							<div className="panel panel-default">
+							  <div className="panel-heading">
+									<p className="fpdi-login-title">
+										{Messages.getEditable("label.login","fpdi-nav-label")}
+									</p>
+								</div>
 							  <div className="panel-body">
 									<div className="fpdi-login-body">
 										<VerticalForm
@@ -114,18 +132,15 @@ export default React.createClass({
 										</div>
 									</div>
 							  </div>
+							</div>
+						</div>
+
+						<div className="fpdi-browsers-info">
+							{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
+							<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
 						</div>
 					</div>
-
-					<div className="fpdi-browsers-info">
-						{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
-						<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
-					</div>
 				</div>
-			</div>
-
-
-
 			</div>
 		);
 	}

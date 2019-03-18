@@ -10,25 +10,24 @@ import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Toastr from 'toastr';
 
 export default React.createClass({
-    contextTypes: {
-        router: React.PropTypes.object,
-        accessLevel: React.PropTypes.number.isRequired,
-        accessLevels: React.PropTypes.object.isRequired,
-        permissions: React.PropTypes.array.isRequired,
-        roles: React.PropTypes.object.isRequired
-    },
+  contextTypes: {
+    router: React.PropTypes.object,
+    accessLevel: React.PropTypes.number.isRequired,
+    accessLevels: React.PropTypes.object.isRequired,
+    permissions: React.PropTypes.array.isRequired,
+    roles: React.PropTypes.object.isRequired
+  },
 
-    getInitialState() {
-        return {
+  getInitialState() {
+    return {
 			selectedPlan:0,
 			plans:[],
 			units:[],
 			risks:[],
 			itens:[],
 			risk_level:[]
-        };
+    };
 	},
-
 
 	// PlanRisco Model //se PlanRisco >1 selectbox de planoRisco
 	// Uinits Model
@@ -46,7 +45,7 @@ export default React.createClass({
 				risks:this.state.risks,
 				loading:false
 			})
-		},me);
+		}, me);
 
 		UnitStore.on("unitbyplan",(model) =>{
 			if(model.data.length ==0){
@@ -57,22 +56,30 @@ export default React.createClass({
 				units: model.data,
 				risks:[]
 			});
-		},me);
+		}, me);
 
 		PolicyStore.on("retrieverisklevel", (model) => {
 			PolicyStore.off(null, null, this);
-			me.setState({
-				risk_level: model.data,
-			});
-		}, me)
+      me.setState({ risk_level: model.data });
+		}, me);
 
+		PolicyStore.on("unarchivedpolicylisted", (model) => {
+			// PolicyStore.off(null, null, this);
+      if (model.data.length == 0) {
+        this.context.router.push("/forrisco/policy/new");
+      } else {
+    		PlanRiskStore.dispatch({
+    			action: PlanRiskStore.ACTION_FIND_UNARCHIVED
+    		});
+      }
+		}, me);
 
 		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
 			PlanRiskStore.off(null, null, this);
 			if (response.success === true) {
-				if(response.data.length ==0 ){
+				if (response.data.length == 0) {
 					this.context.router.push("/forrisco/plan-risk/new");
-				}else{
+				} else {
 					var listedPlans = [];
 					response.data.map(planRisk => {
 						listedPlans.push({
@@ -93,14 +100,12 @@ export default React.createClass({
 						action: RiskStore.ACTION_FIND_BY_PLAN,
 						data: response.data[0].id
 					});
-
-					PolicyStore.dispatch({
-						action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-						data: response.data[0].policy.id
-					});
-
+          PolicyStore.dispatch({
+            action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+            data: response.data[0].policy.id
+          });
 				}
-			}else{
+			} else {
 				this.context.router.push("/forrisco/policy/new");
 			}
 		}, me);
@@ -108,14 +113,13 @@ export default React.createClass({
 		this.refresh()
 	},
 
-
 	refresh(){
-		PlanRiskStore.dispatch({
-			action: PlanRiskStore.ACTION_FIND_UNARCHIVED
-		});
+    PolicyStore.dispatch({
+      action: PolicyStore.ACTION_FIND_UNARCHIVED,
+    });
 	},
 
-    planRiscoChange(){
+  planRiscoChange(){
 		this.state.risks=[]
 		this.state.units=[]
 
@@ -140,7 +144,7 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-        PlanRiskStore.off(null, null, this);
+    PlanRiskStore.off(null, null, this);
 		UnitStore.off(null, null, this);
 		RiskStore.off(null, null, this);
 		PolicyStore.off(null, null, this);
@@ -271,38 +275,65 @@ export default React.createClass({
 	},
 
 	render() {
-
-		if(this.state.plans[this.state.selectedPlan] == null){
-			return (<LoadingGauge/>)
+		if (this.state.plans[this.state.selectedPlan] == null) {
+      return (<LoadingGauge/>);
 		}
 
 		return (
 			<div className="dashboard-container">
-				<h1 className="marginLeft30">{Messages.getEditable("label.dashboard","forrisco-nav-label")}</h1>
-				{(
-                    <div className="marginLeft30">
-                        <span>
-							{(this.state.plans.length > 1) ?
-							<div>
-								<span className = "fpdi-nav-label">{Messages.getEditable("label.risk.Plans","fpdi-nav-label")}&nbsp;</span>
-								<select  onChange={this.planRiscoChange} ref="selectPlan" className={"form-control dashboard-select-box"}
-									disabled={(this.state.selectedPlan<0)?("disabled"):("")}>
-										{(this.state.plans)?(this.state.plans.map((attr, idx) =>{
-											return(
-												<option key={attr.id} value={idx} data-placement="right" title={attr.name}>
-													{(attr.name.length>20)?(attr.name).trim().substr(0, 20).concat("...").toString():(attr.name)}
-												</option>
-												);
-											}))
-										: ""}
-								</select>
-							</div> : ""}
-                        </span>
-						<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{margin: "0 10px"}}>
-								{Messages.getEditable("label.exportReport")}
-						</span>
-                    </div>)}
-				<DashboardAdminView plan={this.state.plans[this.state.selectedPlan]} units={this.state.units}  risks={this.state.risks}/>
+				<h1 className="marginLeft30">
+          {Messages.getEditable("label.dashboard","forrisco-nav-label")}
+        </h1>
+        <div className="marginLeft30">
+          <span>
+						{
+              (this.state.plans.length > 1)
+              ?
+                <div>
+    							<span className="fpdi-nav-label">
+                    {Messages.getEditable("label.risk.Plans","fpdi-nav-label")}&nbsp;
+                  </span>
+    							<select
+                    onChange={this.planRiscoChange}
+                    ref="selectPlan"
+                    className={"form-control dashboard-select-box"}
+    								disabled={
+                      (this.state.selectedPlan < 0)
+                      ? ("disabled")
+                      :("")
+                    }
+                  >
+                    {
+                      (this.state.plans)
+                      ?
+                      (this.state.plans.map((attr, idx) => {
+                        return (
+    											<option key={attr.id} value={idx} data-placement="right" title={attr.name}>
+    												{
+                              (attr.name.length > 20)
+                              ? (attr.name).trim().substr(0, 20).concat("...").toString()
+                              : (attr.name)
+                            }
+    											</option>
+  											);
+  										}))
+                      : ""
+                    }
+                  </select>
+                </div>
+                :
+                ""
+              }
+          </span>
+					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{margin: "0 10px"}}>
+            {Messages.getEditable("label.exportReport")}
+					</span>
+        </div>
+				<DashboardAdminView
+          plan={this.state.plans[this.state.selectedPlan]}
+          units={this.state.units}
+          risks={this.state.risks}
+        />
 			</div>
 		);
 	}
