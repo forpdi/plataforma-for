@@ -68,7 +68,7 @@ public class ProcessController extends AbstractController{
 				return;
 			}
 			process.setCompany(this.domain.getCompany());
-					
+			process.setUnitCreator(unit);
 			this.processBS.save(process);
 
 			ProcessUnit processUnit = new ProcessUnit();
@@ -129,7 +129,7 @@ public class ProcessController extends AbstractController{
 	public void listProcesses(Long id) {
 		try {
 			Unit unit = this.processBS.exists(id, Unit.class);
-			PaginatedList<Process> process= this.processBS.listProcessbyUnit(unit);
+			PaginatedList<Process> process= this.processBS.listProcessByUnit(unit);
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -249,7 +249,7 @@ public class ProcessController extends AbstractController{
 				this.fail("Instituição não definida");
 				return;
 			}
-			PaginatedList<Process> process= this.processBS.listProcessbyCompany(this.domain);
+			PaginatedList<Process> process= this.processBS.listProcessByCompany(this.domain.getCompany());
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

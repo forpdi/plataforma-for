@@ -117,18 +117,7 @@ export default React.createClass({
 			var url = window.location.origin+window.location.pathname+"#/forrisco/risk/";
 			var msg = Messages.get("label.askGoToSelectedLevel");
 
-			Modal.confirmCustom(() => {
-				Modal.hide();
-				location.assign(url+
-					"?ano="+this.refs['selectYear'].value+
-					"&mes="+this.state.data[Chart.chart.getSelection()[0].row+1][0]+
-					"&coluna="+Chart.chart.getSelection()[0].column+
-					"&quantidade="+this.state.data[Chart.chart.getSelection()[0].row+1][Chart.chart.getSelection()[0].column]);
-			},msg,
-			()=>{
-				Chart.chart.setSelection([]);
-				Modal.hide();
-			});
+			Modal.incidentList(this.state.incidents, this.props.units, this.props.plan);
 		}
 	},
 

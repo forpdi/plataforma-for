@@ -28,7 +28,7 @@ public class PlanRiskItemField extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false, length=255)
 	private String name;
 
-	@Column(nullable = true, length=4000)
+	@Column(nullable = true, columnDefinition="mediumtext")
 	private String description;
 
 	@Column(nullable = false)

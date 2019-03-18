@@ -1,5 +1,7 @@
 import React from "react";
 import { Link } from 'react-router';
+import _ from 'underscore';
+
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
 import ListForm from "forpdi/jsx/planning/widget/attributeForm/ListAttributeForm.jsx";
@@ -10,7 +12,6 @@ import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import _ from 'underscore';
 
 
 var VerticalForm = Form.VerticalForm;
@@ -43,7 +44,7 @@ export default React.createClass({
 			newRisk: false,
 			strategyList:[],
 			processList:[],
-
+			unit: null,
 		}
 	},
 
@@ -52,47 +53,33 @@ export default React.createClass({
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
-				//loading: false
-			})
-			if (document.getElementById("field-user") !=null) {
-				document.getElementById("field-user").value = ''
-			}
-		}, this)
+			});
+		}, this);
 
 		UnitStore.on("retrieveProcess", (model) => {
 			this.setState({
 				process:model.data,
+			});
+		}, this);
+
+		UnitStore.on("unitRetrieved", (model) => {
+			if (model.data) {
+				const unit = model.data;
+				this.refreshTabinfo(this.props.location.pathname, `Novo Risco - ${unit.name}`);
+			}
+		}, this);
+
+		StructureStore.on("companyobjectivesretrivied", (model) => {
+			this.setState({
+				strategy: model.data,
 				loading: false
 			})
 		}, this)
 
-
-
-
-
-		StructureStore.on("companyobjectivesretrivied", (model) => {
-			this.setState({
-				strategy: model.data
-			})
-		}, this)
-
-		RiskStore.on("retrieveRiskProcess", (model) => {
-			this.setState({
-				riskprocess:model.data
-			})
-		}, this)
-
-		RiskStore.on("retrieveActivities", (model) => {
-			this.setState({
-				activity:model.data,
-				activities: model.data.length>1 ?model.data.length :1
-			})
-		})
-
-
-
 		RiskStore.on("riskUpdated", (model) => {
 			if (model.success) {
+				this.context.toastr.addAlertSuccess(Messages.get("notification.risk.update"));
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/info");
 				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id);
 			} else {
 				if (model.message != null) {
@@ -111,35 +98,69 @@ export default React.createClass({
 			}
 		}, this)
 
-
-		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location, this.state.riskModel ? this.state.riskModel.name : "Novo Risco");
-		});
-
-		this.refresh()
+		this.refresh(this.props);
 	},
 	componentWillUnmount() {
-		UserStore.off(this, this, this)
-		StructureStore.off(this, this, this)
-		RiskStore.off(this, this, this)
-		UnitStore.off(this, this, this)
+		UserStore.off(null, null, this)
+		StructureStore.off(null, null, this)
+		RiskStore.off(null, null, this)
+		UnitStore.off(null, null, this)
 	},
 
 
 	componentWillReceiveProps(newProps, newContext) {
 
-		if (newProps, newProps.route.path != "new") {
-			if (this.state.riskModel == null || (newProps.riskId != this.state.riskModel.id || this.state.visualization != newProps.visualization)) {
-				this.setState({
-					loading: true,
-					fields: [],
-					visualization: newProps.visualization,
-					planRiskId: newProps.planRiskId,
-					unitId: newProps.risk.unit.id,
-					riskModel: newProps.risk,
-				});
+		if (newProps.route.path != "new") {
+			if (this.state.riskModel == null || (newProps.risk.id != this.props.risk.id || this.state.visualization != newProps.visualization)) {
+					this.setState({
+						loading:true,
+						visualization: newProps.visualization
+				})
+			this.refresh(newProps);
 			}
 		} else {
+
+		/*	this.setState({
+				loading: false,
+				visualization: false,
+				newRisk: true
+			})
+
+			if (document.getElementById("field-impact") != null) {
+				document.getElementById("field-impact").value = ''
+				document.getElementById("field-probability").value = ''
+				document.getElementById("field-periodicity").value = ''
+				document.getElementById("field-tipology").value = ''
+				document.getElementById("field-type").value = ''
+			}*/
+		}
+		if (newProps.location.pathname !== this.props.location.pathname) {
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_RETRIEVE_UNIT,
+				data: { unitId: newProps.params.unitId },
+			});
+		}
+
+
+	},
+
+
+	// users
+	// structure (objetivos estratégicos)
+	//processo (pendente)
+	refresh(Props) {
+		if (this.props.risk != null) {
+			this.setState({
+				fields: [],
+				planRiskId: this.context.planRisk.attributes.id,
+				unitId: Props.risk.unit.id,
+				riskModel: Props.risk,
+				activities: Props.risk.activities.list.length,
+				activity: Props.risk.activities.list,
+			});
+		}
+
+		if (Props.route.path == "new") {
 			this.setState({
 				loading: false,
 				visualization: false,
@@ -154,27 +175,11 @@ export default React.createClass({
 				document.getElementById("field-type").value = ''
 			}
 		}
-		this.refreshData()
+
+		this.refreshData(Props)
 	},
 
-
-	// users
-	// structure (objetivos estratégicos)
-	//processo (pendente)
-	refresh() {
-		if (this.props.risk != null) {
-			this.setState({
-				fields: [],
-				planRiskId: this.context.planRisk.attributes.id,
-				unitId: this.props.risk.unit.id,
-				riskModel: this.props.risk,
-			});
-		}
-
-		this.refreshData()
-	},
-
-	refreshData() {
+	refreshData(Props) {
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 		});
@@ -187,20 +192,41 @@ export default React.createClass({
 			action: UnitStore.ACTION_RETRIEVE_PROCESSES
 		});
 
-		if (this.props.risk) {
+		/*if (Props.risk) {
 			RiskStore.dispatch({
 				action: RiskStore.ACTION_RETRIEVE_ACTIVITIES,
-				data: this.props.risk.id
+				data: Props.risk.id
 			})
-		}
+		}*/
 
-		this.setState({ policyModel: this.context.planRisk.attributes.policy })
+		this.setState({
+			policyModel: this.context.planRisk.attributes.policy,
+			//loading: false,
+		})
 
 		if (this.props.risk) {
 			this.state.risk_pdi = this.props.risk.risk_pdi
 			this.state.risk_obj_process = this.props.risk.risk_obj_process
 			this.state.risk_act_process = this.props.risk.risk_act_process
 		}
+	},
+
+
+	componentDidUpdate(){
+		if(this.props.route.path == "new"){
+			if(document.getElementById("field-user") !=null){
+			document.getElementById("field-user").value = ''
+			}
+		}
+	},
+
+	refreshTabinfo(newPathname, tabName) {
+		_.defer(() =>
+			this.context.tabPanel.addTab(
+				newPathname,
+				this.state.riskModel ? this.state.riskModel.name : tabName,
+			)
+		);
 	},
 
 	getName() {
@@ -409,7 +435,7 @@ export default React.createClass({
 
 		var fields = []
 
-		this.state.activity.map((fielditem, index) => {
+		this.state.riskModel.activities.list.map((fielditem, index) => {
 			fields.push({
 				name: "activity-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
@@ -495,7 +521,7 @@ export default React.createClass({
 		if (this.state.newRisk) {
 			document.getElementById("field-nome").value = ''
 			document.getElementById("field-code").value = ''
-			document.getElementById("field-user").value = ''
+			//document.getElementById("field-user").value = ''
 			document.getElementById("field-impact").value = ''
 			document.getElementById("field-probability").value = ''
 			document.getElementById("field-periodicity").value = ''
@@ -514,9 +540,10 @@ export default React.createClass({
 				risk_act_process: false
 			})
 		} else {
-			this.setState({
+			this.props.onChange()
+			/*this.setState({
 				visualization: true
-			})
+			})*/
 		}
 
 	},
@@ -544,17 +571,19 @@ export default React.createClass({
 
 		var processes=[]
 
+		var activities=this.state.riskModel? this.state.riskModel.activities.list:[]
+
 		for(var i in this.state.process){
 			processes.push({ label: this.state.process[i].name,  value: this.state.process[i].id, name: this.state.process[i].name })
 		}
 
 			var process=null;
 
-			for(var j in this.state.activity){
+			for(var j in activities){
 				for(var k in this.state.process){
-					if(this.state.activity[j].process.id==this.state.process[k].id){
-						process=this.state.process[j]
-						j=this.state.activity.length
+					if(activities[j].process.id==this.state.process[k].id){
+						process=this.state.process[k]
+						j=activities.length
 						break;
 					}
 				}
@@ -580,7 +609,7 @@ export default React.createClass({
 				maxLength: 40,
 				placeholder: "Com quais atividades do processo o risco está associado?",
 				label: Messages.getEditable("label.policyConfig", "hide"),
-				value: this.state.activity[n] !=null ? this.state.activity[n].name : null,
+				value: activities[n] !=null ? activities[n].name : null,
 			})
 
 		return fields
@@ -589,7 +618,13 @@ export default React.createClass({
 	getProcessActivity() {
 		var grau = []
 
+
+		if(this.state.activities<1){
+			this.state.activities=1
+		}
+
 		for (var i = 0; i < this.state.activities; i++) {
+
 			grau.push(
 				this.getPA(i).map((field, idx) => {
 					return (<HorizontalInput
@@ -710,7 +745,6 @@ export default React.createClass({
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
-
 		if (me.props.params.riskId) {
 			data.id = me.props.params.riskId
 			RiskStore.dispatch({
@@ -768,10 +802,10 @@ export default React.createClass({
 				{!this.state.visualization ?
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
-						<form>
+						<div>
 							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
 							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
-						</form>
+						</div>
 						<br />
 					</div>
 					: ""}
@@ -796,10 +830,10 @@ export default React.createClass({
 
 				{!this.state.visualization ? <div>
 					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
-					<form>
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
-					</form>
+					<div>
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
+						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
+					</div>
 					<br />
 				</div>
 					: ""}
@@ -827,10 +861,10 @@ export default React.createClass({
 				{!this.state.visualization ?
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
-						<form>
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
-						</form>
+						<div>
+							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
+							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
+						</div>
 						<br />
 					</div>
 					: ""}

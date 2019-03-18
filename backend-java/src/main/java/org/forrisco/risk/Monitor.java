@@ -12,7 +12,6 @@ import javax.persistence.Transient;
 import org.forpdi.core.user.User;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
  * @author Matheus Nascimento
@@ -50,6 +49,17 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 	@Transient
 	private Long unitId;
 	
+	public Monitor() {
+	}
+
+	public Monitor(Monitor monit) {
+		this.begin= monit.getBegin();
+		this.impact= monit.getImpact();
+		this.probability= monit.getProbability();
+		this.report= monit.getReport();
+		this.user= monit.getUser();
+	}
+
 	public Date getBegin() {
 		return begin;
 	}
@@ -113,6 +123,4 @@ public class Monitor extends SimpleLogicalDeletableEntity {
 	public void setRiskId(Long riskId) {
 		this.riskId = riskId;
 	}
-
-	
 }

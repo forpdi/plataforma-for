@@ -30,6 +30,11 @@ import org.forrisco.core.policy.Policy;
 import org.forrisco.core.policy.PolicyBS;
 import org.forrisco.core.policy.permissions.ManagePlanRiskPermission;
 import org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.core.process.Process;
+import org.forrisco.core.process.ProcessBS;
+import org.forrisco.core.unit.Unit;
+import org.forrisco.core.unit.UnitBS;
+import org.forrisco.core.unit.UnitController;
 
 import com.itextpdf.text.DocumentException;
 
@@ -55,6 +60,8 @@ public class PlanRiskController extends AbstractController {
 	@Inject private PlanRiskBS planRiskBS;
 	@Inject private PlanRisk planRisk;
 	@Inject private PlanRiskItemBS planRiskItemBS;
+	@Inject private UnitBS unitBS;
+	@Inject private ProcessBS processBS;
 	@Inject private PDFgenerate pdf;
 	
 	protected static final String PATH = BASEPATH +"/planrisk";
@@ -72,13 +79,24 @@ public class PlanRiskController extends AbstractController {
 	
 	public void savePlan(@NotNull @Valid  PlanRisk planRisk) {
 		try {
+			
+			Policy policy = this.planRiskBS.exists(planRisk.getPolicy().getId(), Policy.class);
+			
+			if (policy == null || policy.isDeleted()) {
+				this.fail("O plano de risco solicitada não foi encontrado.");
+				return;
+			}
+			
+			
+			
 			planRisk.setId(null);
-			planRisk.setName(planRisk.getName());
-			planRisk.setDescription(planRisk.getDescription());
+			planRisk.setPolicy(policy);
+			//planRisk.setName(planRisk.getName());
+			//planRisk.setDescription(planRisk.getDescription());
 			
 			planRiskBS.save(planRisk);
 			
-			this.success(planRisk.getId());
+			this.success(planRisk);
 			
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -181,6 +199,30 @@ public class PlanRiskController extends AbstractController {
 				return;
 			}
 			
+			
+			//verificar unidades
+			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(planRisk);
+
+			for(Unit unit:units.getList()) {
+				if(!new UnitController().deletableUnit(unit)) {	
+					return;
+				}
+			}
+			
+					
+			//deletar unidades
+			for(Unit unit:units.getList()) {
+				//deletar processos desta unidade
+				PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
+				for(Process process :processes.getList()) {
+					this.processBS.deleteProcess(process);
+				}
+				this.unitBS.delete(unit);
+			}
+			
+			
+			
+			//deletar itens
 			PaginatedList<PlanRiskItem> planRiskItem = this.planRiskItemBS.listItensByPlanRisk(planRisk);
 			
 			for(PlanRiskItem item : planRiskItem.getList()) {
@@ -195,6 +237,8 @@ public class PlanRiskController extends AbstractController {
 				this.planRiskItemBS.delete(item);
 			}
 			
+			
+			//deletar plano
 			this.planRiskBS.delete(planRisk);
 			this.success();
 			
@@ -203,6 +247,7 @@ public class PlanRiskController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+
 	
 	/**
 	 * Cria arquivo pdf  para exportar relatório  

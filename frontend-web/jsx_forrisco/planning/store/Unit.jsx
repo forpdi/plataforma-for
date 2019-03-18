@@ -26,8 +26,9 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_FIND_ARCHIVED: 'unit-findArchived',
 	ACTION_FIND_UNARCHIVED: 'unit-findUnarchived',
 	ACTION_MAIN_MENU_STATE: "unit-mainMenuState",
-	ACTION_DELETE_UNIT: "unit-deleteUnit",
 	ACTION_NEW_UNIT: "unit-newUnit",
+	ACTION_DELETE_UNIT: "unit-deleteUnit",
+	ACTION_DUPLICATE: "unit-duplicateUnits",
 	ACTION_NEW_SUBUNIT: "unit-newSubunit",
 	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
@@ -104,6 +105,47 @@ var UnitStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("unitcreated", {msg: opts.responseJSON.message, data: {id: null}})
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	duplicateUnit(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/duplicate',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				unit: data
+			}),
+			success(model) {
+				me.trigger("duplicatedUnit", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("duplicatedUnit", {msg: opts.responseJSON.message, data: {id: null}})
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	duplicateUnits(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/duplicate',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				units: data.units,
+				planRisk: data.planRisk
+			}),
+			success(model) {
+				me.trigger("duplicatedUnits", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("duplicatedUnits", {msg: opts.responseJSON.message, data: {id: null}})
 				me.handleRequestErrors([], opts);
 			}
 		});

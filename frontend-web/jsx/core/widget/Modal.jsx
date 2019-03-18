@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 
 import FeedbackPost from "forpdi/jsx/core/widget/contact/FeedbackPost.jsx";
 import ReportProblem from "forpdi/jsx/core/widget/contact/ReportProblem.jsx";
+import RiskList from "forpdi/jsx_forrisco/core/widget/risk/RiskList.jsx";
+import IncidentsList from "forpdi/jsx_forrisco/core/widget/incidents/IncidentsList.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var EL = document.getElementById("main-global-modal");
@@ -689,6 +691,25 @@ var Modal = {
 		ReactDOM.render((
 			<GraphHistory title={title} text={text} /> //onConfirm={cb}/>
 		),this.$el);
+		this.show();
+	},
+
+	riskList(probability,impact) {
+		var me = this;
+		ReactDOM.render((
+			<RiskList
+				probability={probability}
+				impact={impact}
+				redirect={this.hide.bind(this)}/>
+		), this.$el);
+		this.show();
+	},
+
+	incidentList(incidents, units, planRisk) {
+		var me = this;
+		ReactDOM.render((
+			<IncidentsList incidents={incidents} units={units} planRisk={planRisk}/>
+		), this.$el);
 		this.show();
 	}
 };

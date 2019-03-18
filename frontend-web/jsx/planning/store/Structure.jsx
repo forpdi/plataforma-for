@@ -347,6 +347,7 @@ var StructureStore = Fluxbone.Store.extend({
 				me.trigger("companyobjectivesretrivied", model);
 			},
 			error(opts, status, errorMsg) {
+				me.trigger("companyobjectivesretrivied", model);
 				me.handleRequestErrors([], opts);
 			}
 		});

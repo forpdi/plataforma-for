@@ -19,7 +19,6 @@ export default React.createClass({
 		return {
 			data: [],
 			users: [],
-			accomplished: false,
 			action: null,
 			newRowDisplayed: false,
 			updateRowDisplayed: false,
@@ -32,9 +31,7 @@ export default React.createClass({
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
-						console.log(value),
-						_.assign(value, { 
-							accomplished: this.renderAccomplishmentOnList(value.accomplished, value.id, idx),
+						_.assign(value, {
 							tools: this.renderRowTools(value.id, idx),
 						})
 					)),
@@ -42,6 +39,7 @@ export default React.createClass({
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
 				});
+				this.changeAccomplishmentData();
 			}
 		}, this);
 		RiskStore.on('preventiveActionCreated', (response) => {
@@ -53,7 +51,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -69,7 +67,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -85,7 +83,7 @@ export default React.createClass({
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 					data: {
-						riskId: this.props.planRiskId,
+						riskId: this.props.risk.id,
 					},
 				});
 			} else {
@@ -107,10 +105,17 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		});
+
+		this.refresh(this.props.risk.id)
+
+	},
+
+
+	refresh(riskId){
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
 			data: {
-				riskId: this.props.planRiskId,
+				riskId: riskId,
 			},
 		});
 		UserStore.dispatch({
@@ -120,12 +125,27 @@ export default React.createClass({
 				pageSize: 500,
 			},
 		});
-		
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (this.props.risk.id !== newProps.risk.id) {
+			this.refresh(newProps.risk.id)
+		}
 	},
 
 	componentWillUnmount() {
 		RiskStore.off(null, null, this);
 		UserStore.off(null, null, this);
+	},
+
+	changeAccomplishmentData() {
+		this.setState({
+			data: _.map(this.state.data, (action, idx) => (
+				_.assign(action, {
+					accomplished: this.renderAccomplishmentOnList(action.accomplished, action.id, idx),
+				})
+			)),
+		});
 	},
 
 	insertNewRow() {
@@ -153,8 +173,8 @@ export default React.createClass({
 					}}
 				/>
 			},
-			accomplished: <VerticalInput 
-				className="padding7"
+			accomplished: <VerticalInput
+				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
 					type: "radio",
@@ -208,7 +228,7 @@ export default React.createClass({
 					type: "textarea",
 					rows: "3",
 					value: data[idx].action,
-					onChange: this.reportChangeHandler,
+					onChange: this.actionChangeHandler,
 				}}
 			/>,
 			user: {
@@ -223,8 +243,8 @@ export default React.createClass({
 					}}
 				/>
 			},
-			accomplished: <VerticalInput 
-				className="padding7"
+			accomplished: <VerticalInput
+				className="padding7 accomplishment-radio"
 				fieldDef={{
 					name: "new-preventive-action-accomplishment",
 					type: "radio",
@@ -236,7 +256,16 @@ export default React.createClass({
 				}}
 			/>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updatePreventiveAction}>
+				<button
+					className="row-button-icon"
+					onClick={() => {
+						this.updatePreventiveAction({
+							...this.state.action,
+							accomplished: this.state.action.accomplished.props.fieldDef.value,
+							tools: undefined,
+						})
+					}}
+				>
 					<span className="mdi mdi-check" />
 				</button>
 				<button
@@ -284,15 +313,11 @@ export default React.createClass({
 		});
 	},
 
-	updatePreventiveAction() {
-		console.log("action update");
+	updatePreventiveAction(action) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_UPDATE_PREVENTIVE_ACTION,
 			data: {
-				action: {
-					...this.state.action,
-					tools: undefined,
-				},
+				action,
 			},
 		});
 	},
@@ -318,7 +343,6 @@ export default React.createClass({
 	},
 
 	accomplishmentChangeHandler(e) {
-		console.log(e.target.value);
 		this.setState({
 			action: {
 				...this.state.action,
@@ -327,22 +351,27 @@ export default React.createClass({
 		});
 	},
 
-	renderAccomplishmentOnList(accomplishment, id, idx) {
+	updateOnAccomplishmentChange(e, idx) {
+		const { data } = this.state;
+		this.updatePreventiveAction({
+			...data[idx],
+			accomplished: e.target.value,
+		});
+
+	},
+
+	renderAccomplishmentOnList(accomplished, id, idx) {
 		return (
-			<VerticalInput 
-				className="padding7"
+			<VerticalInput
+				className="accomplishment-radio"
 				fieldDef={{
-					name: "new-preventive-action-accomplishment",
+					name: `new-preventive-action-accomplishment${idx}`,
 					type: "radio",
 					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
 					valueField: 'value',
-					value: accomplishment,
+					value: accomplished,
 					renderDisplay: value => value.label,
-					onClick: e => {
-						console.log("clicking"),
-						this.accomplishmentChangeHandler(e),
-						this.updatePreventiveAction()
-					}
+					onClick: e => {this.updateOnAccomplishmentChange(e, idx)},
 				}}
 			/>
 		);
@@ -368,17 +397,22 @@ export default React.createClass({
 	},
 
 	render() {
-		if (this.state.isLoading === true) {
+		/*if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
+		}*/
+
+		if(!this.props.visualization){
+			return <div></div>
 		}
+
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 350,
+			minWidth: 400,
 		},{
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 250,
+			minWidth: 300,
 		}, {
 			Header: 'Ação realizada?',
 			accessor: 'accomplished',

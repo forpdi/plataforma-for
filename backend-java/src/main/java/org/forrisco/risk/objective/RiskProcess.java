@@ -43,6 +43,16 @@ public class RiskProcess extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=400)
 	private String name;
 
+	
+	public RiskProcess() {}
+	
+	public RiskProcess(RiskProcess riskprocess) {
+		this.linkFPDI =riskprocess.getLinkFPDI();
+		this.name =riskprocess.getName();
+	}
+
+
+
 	public Risk getRisk() {
 		return risk;
 	}

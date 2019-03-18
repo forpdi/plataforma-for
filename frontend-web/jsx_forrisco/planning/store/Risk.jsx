@@ -25,6 +25,8 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_UNARCHIVE: "risk-unarchive",
 	ACTION_FIND_ARCHIVED: 'risk-findArchived',
 	ACTION_FIND_UNARCHIVED: 'risk-findUnarchived',
+	ACTION_FIND_BY_UNIT: 'risk-findByUnit',
+	ACTION_FIND_BY_SUBUNITS: 'risk-findBySubunits',
 	ACTION_MAIN_MENU_STATE: "risk-mainMenuState",
 	ACTION_DELETE: "risk-delete",
 	ACTION_NEWRISK: "risk-newRisk",
@@ -53,6 +55,8 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_DELETE_CONTINGENCY: "risk-deleteContingency",
 	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
 	ACTION_RETRIEVE_ACTIVITIES: "risk-retrieveActivities",
+	ACTION_LIST_RISKS_BY_PI: "risk-listRisksByPI",
+	ACTION_FIND_INCIDENTS_BY_UNIT: 'unit-findIncidentsByUnit',
 	url: URL,
 	model: RiskModel,
 
@@ -89,16 +93,15 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByUnit(data){
+	findByUnit(data, payload){
 		var me = this;
 		$.ajax({
-			url: me.url,
+			url: `${me.url}/listbyunit/${data.unitId}`,
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {unitId: data},
 			success(model) {
-				me.trigger("riskbyunit", model);
+				me.trigger("riskbyunit", model, payload);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskbyunit", opts);
@@ -106,6 +109,21 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+	findBySubunits(data, node) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/listbysubunits/${data.unit.id}`,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("riskbysubunits", model, node);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("riskbysubunits", opts);
+			}
+		});
+	},
 
 	findUnarchived(data){
 		var me = this;
@@ -230,41 +248,6 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
-	findIncdentsByPlan(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/incident",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {planId: data},
-			success(model) {
-				me.trigger("incidentbByPlan", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("incidentbByPlan", opts);
-			}
-		});
-	},
-
-	findMonitorsByPlan(data){
-		var me = this;
-		$.ajax({
-			url: me.url+"/monitor",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {planId: data},
-			success(model) {
-				me.trigger("monitorByPlan", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("monitorByPlan", opts);
-			}
-		});
-	},
-
 	findHistoryByUnit(data){
 		var me = this;
 		$.ajax({
@@ -281,6 +264,41 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+	findIncdentsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/incidents",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("incidentbByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("incidentbByPlan", opts);
+			}
+		});
+	},
+
+	findMonitorsByPlan(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/monitors",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("monitorByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("monitorByPlan", opts);
+			}
+		});
+	},
+
+
 
 	findMonitorHistoryByUnit(data){
 		var me = this;
@@ -299,90 +317,6 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-
-	listPreventiveActions(data) {
-		var me = this;
-		$.ajax({
-			url: me.url + "/action",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: {riskId: data.riskId},
-			success(model) {
-				me.trigger("preventiveActionsListed", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("preventiveActionsListed", opts);
-			}
-		});
-	},
-
-	newPreventiveAction(data) {
-		console.log(data);
-		var me = this;
-		$.ajax({
-			url: me.url + '/actionnew',
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				action: data.action,
-			}),
-			success(model) {
-				me.trigger("preventiveActionCreated", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("preventiveActionCreated", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
-	deletePreventiveAction(data) {
-		var me = this;
-		$.ajax({
-			url: `${me.url}/action/${data.actionId}`,
-			method: 'DELETE',
-			dataType: 'json',
-			contentType: 'application/json',
-			success(model) {
-				me.trigger("preventiveActionDeleted", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("preventiveActionDeleted", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
-	updatePreventiveAction(data) {
-		console.log(data);
-		var me = this;
-		$.ajax({
-			url: me.url + '/action/update',
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				action: data.action,
-			}),
-			success(model) {
-				me.trigger("preventiveActionUpdated", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("preventiveActionUpdated", {
-					msg: opts.responseJSON.message,
-				});
-				me.handleRequestErrors([], opts);
-			}
-		});
-	},
-
-
 	listMonitor(data) {
 		var me = this;
 		$.ajax({
@@ -390,7 +324,7 @@ var RiskStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {planId: data.planId},
+			data: {riskId: data},
 			success(model) {
 				me.trigger("monitorListed", model);
 			},
@@ -464,6 +398,90 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 
+	listPreventiveActions(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/action",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {riskId: data.riskId},
+			success(model) {
+				me.trigger("preventiveActionsListed", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionsListed", opts);
+			}
+		});
+	},
+
+	newPreventiveAction(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/actionnew',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				action: data.action,
+			}),
+			success(model) {
+				me.trigger("preventiveActionCreated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionCreated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	deletePreventiveAction(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/action/${data.actionId}`,
+			method: 'DELETE',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("preventiveActionDeleted", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionDeleted", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+	updatePreventiveAction(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/action/update',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				action: data.action,
+			}),
+			success(model) {
+				me.trigger("preventiveActionUpdated", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("preventiveActionUpdated", {
+					msg: opts.responseJSON.message,
+				});
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
+
+
+
+
 	listIncident(data) {
 		var me = this;
 		$.ajax({
@@ -471,7 +489,7 @@ var RiskStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {planId: data.planId},
+			data: {riskId: data},
 			success(model) {
 				me.trigger("incidentListed", model);
 			},
@@ -641,6 +659,38 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
+	listRisksByPI(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/listByPI",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: data,
+			success(model) {
+				me.trigger("riskByPI", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("riskByPI", opts);
+			}
+		});
+	},
+
+	findIncidentsByUnit() {
+		var me = this;
+		$.ajax({
+			url: me.url + "/incidentByUnit",
+			method: 'GET',
+			dataType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("findTerms", model, data);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("findTerms", opts);
+			}
+		});
+	},
 
 	mainMenuState(data){
 		var me = this;

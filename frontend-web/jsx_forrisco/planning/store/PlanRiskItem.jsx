@@ -14,6 +14,7 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_DETAIL_ITEM: 'planRiskItem-detailItem',
 	ACTION_DETAIL_SUBITEM: 'planRiskItem-detailSubItem',
 	ACTION_SAVE_ITENS: 'planRiskItem-saveNewItens',
+	ACTION_SAVE_ITENS_DUPLICATE: 'planRiskItem-duplicateItens',
 	ACTION_SAVE_SUBITENS: 'planRiskItem-saveNewSubItens',
 	ACTION_UPDATE_ITEM: 'planRiskItem-updateItens',
 	ACTION_UPDATE_SUBITEM: 'planRiskItem-updateSubitens',
@@ -101,6 +102,27 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("itemSaved", opts);
+			}
+		})
+	},
+
+
+	duplicateItens(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/duplicate",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				itens: data.itens,
+				planRisk: data.planRisk
+			}),
+			success(model) {
+				me.trigger("duplicatedItens", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("duplicatedItens", opts);
 			}
 		})
 	},
@@ -209,8 +231,8 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			success(model) {
-				me.trigger("detailSubItem", model);
+			success(model, status) {
+				me.trigger("detailSubItem", model, status);
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("detailSubItem", opts);

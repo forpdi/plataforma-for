@@ -924,7 +924,7 @@ export default React.createClass({
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
 						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}>
-							<span id="menu-levels">	{Messages.getEditable("label.delete"),"fpdi-nav-label"} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.delete","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>

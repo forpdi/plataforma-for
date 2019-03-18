@@ -7,6 +7,7 @@ import Modal from "forpdi/jsx/core/widget/Modal";
 import Messages from "forpdi/jsx/core/util/Messages";
 import $ from "jquery";
 import _ from "underscore";
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -20,6 +21,7 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
+			isLoading: false,
 			cancelLabel: "Cancelar",
 			submitLabel: "Salvar",
 			vizualization: false,
@@ -184,6 +186,7 @@ export default React.createClass({
 			return false;
 		}
 
+		this.setState({isLoading: true});
 		this.state.formFields.shift(); 		 //Remove o Título da lista de Campos
 
 		this.setState({
@@ -202,6 +205,7 @@ export default React.createClass({
 			})
 		});
 
+
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_UPDATE_SUBITEM,
 			data: {
@@ -218,26 +222,33 @@ export default React.createClass({
 			}
 		});
 
-		PlanRiskItemStore.on('subitemUpdated', () => {
-			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
-
+		PlanRiskItemStore.on('subitemUpdated', response => {
 			PlanRiskItemStore.dispatch({
 				action: PlanRiskItemStore.ACTION_DETAIL_SUBITEM,
 				data: {
-					id: this.props.subitemId
+					id: response.data.id
 				},
 			});
 
 			this.props.offEdit();
+			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
+
+			this.setState({isLoading: false});
 			PlanRiskItemStore.off('subitemUpdated');
 		});
 	},
 
 	onCancel() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.planRiskId + "/item/" +  this.props.planRiskId + '/info');
+		this.context.tabPanel.removeTabByPath(this.props.pathName);
+		this.context.router.push("/forrisco/plan-risk/" + this.props.planRiskId + "/item/overview");
 	},
 
 	render() {
+
+		if (this.state.isLoading === true) {
+			return <LoadingGauge/>;
+		}
+
 		return (
 			<div>
 				<form onSubmit={this.onSubmit} ref="editPlanRiskItemForm">

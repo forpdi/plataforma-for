@@ -37,6 +37,10 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	@ManyToOne(targetEntity=Archive.class,  fetch=FetchType.EAGER)
 	private Archive file;
 	
+	@ManyToOne(targetEntity=Unit.class,  fetch=FetchType.EAGER)
+	private Unit unitCreator;
+	
+	
 	@Column(nullable=false, length=255)
 	private String name;
 
@@ -46,12 +50,26 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	@Column(nullable=false, length=4000) 
 	private String fileLink;
 		
+	
+	
+	
 	@Transient
 	private Unit unit;
 	
 	@Transient
 	private List<Unit> relatedUnits;
 	
+	
+	public Process() {}
+	
+	public Process(Process process) {
+		this.file =process.getFile();
+		this.name =process.getName();
+		this.objective =process.getObjective();
+		this.fileLink =process.getFileLink();
+		this.company= process.getCompany();
+	}
+
 	public Unit getUnit() {
 		return unit;
 	}
@@ -107,5 +125,14 @@ public class Process extends SimpleLogicalDeletableEntity implements Serializabl
 	public void setFile(Archive file) {
 		this.file = file;
 	}
+
+	public Unit getUnitCreator() {
+		return unitCreator;
+	}
+
+	public void setUnitCreator(Unit unitCreator) {
+		this.unitCreator = unitCreator;
+	}
+	
 	
 }

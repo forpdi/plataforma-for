@@ -2,8 +2,8 @@ import React from "react";
 import _ from 'underscore';
 
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
@@ -69,7 +69,7 @@ export default React.createClass({
 				treeItensUnit.push({
 					label: item.name,
 					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitem
+					expandable: true,
 					to: linkToItem,
 					key: linkToItem,
 					model: item,
@@ -86,31 +86,102 @@ export default React.createClass({
 			this.forceUpdate();
 		}, me);
 
+		const subunitTree = [];
+
 		UnitStore.on('subunitsListed', (response, node) => {
 			const fieldTree = [];
-			const toNewSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`;
+
+			//Botão Novo SubItem
+			 _.forEach(response.data, subunit => {
+				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subunit.id}`;
+				fieldTree.push({
+					label: subunit.name,
+					expanded: false,
+					expandable: true,
+					to: toSubunit,
+					key: toSubunit,
+					model: subunit,
+					id: subunit.id,
+					children: [],
+					onExpand: this.expandRoot,
+					onShrink: this.shrinkRoot,
+				});
+			});
+
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_FIND_BY_UNIT,
+				data: {
+					unitId: node.node.id,
+				},
+				opts: {
+					payload: {
+						node,
+						subunitTree: fieldTree,
+					}
+				},
+			});
+
+			node.node.children = [];
+			// me.forceUpdate();
+		}, me);
+
+		RiskStore.on('riskbyunit', (response, { payload }) => {
+			const { node, subunitTree } = payload;
+			const fieldTree = subunitTree;
 			const newSubunit = {
 				label: "Nova Subunidade",
 				labelCls: 'fpdi-new-node-label',
 				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: toNewSubunit,
-				key: "newPlanRiskSubItem"
+				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`,
+				key: "newSubunit"
+			};
+			const newRisk = {
+				label: "Novo Risco",
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
+				key: "newRisk"
 			};
 
 			//Botão Novo SubItem
-			 response.data.map(subField => {
-				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subField.id}`;
+			 response.data.map(risk => {
 				fieldTree.push({
-					label: subField.name,
-					to: toSubunit,
-					key: toSubunit,
-					id: subField.id,
+					label: risk.name,
+					iconCls: 'mdi mdi-play pointer',
+					to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
+					key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
+					id: risk.id,
 				});
 			});
 
-			fieldTree.push(newSubunit);  //Adiciona o Botão de Novo SubItem
+			fieldTree.push(newSubunit);  //Adiciona o Botão de Novo Risco
+			fieldTree.push(newRisk);  //Adiciona o Botão de Novo Risco
 
-			node.node.children = fieldTree;
+			node.node.children = [...node.node.children, ...fieldTree];
+			me.forceUpdate();
+		}, me);
+
+		RiskStore.on('riskbysubunits', (response, node) => {
+			const fieldTree = [];
+			const newRisk = {
+				label: "Novo Risco",
+				labelCls: 'fpdi-new-node-label',
+				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
+				key: "newRisk"
+			};
+			const filteredRisks = _.filter(response.data, risk => risk.unit.id === node.node.id);
+			_.forEach(filteredRisks, risk => {
+				fieldTree.push({
+					label: risk.name,
+					iconCls: 'mdi mdi-play pointer',
+					to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
+					key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/${risk.id}`,
+					id: risk.id,
+				});
+			});
+			fieldTree.push(newRisk);  //Adiciona o Botão de Novo Risco
+			node.node.children = [...node.node.children, ...fieldTree];
 			me.forceUpdate();
 		}, me);
 
@@ -141,7 +212,7 @@ export default React.createClass({
 				const unit = response.data;
 				const { treeItensUnit } = this.state;
 				const linkToUnit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unit.id}/info`;
-				treeItensUnit.splice(treeItensUnit.length - 1, 0, {
+				treeItensUnit.splice(treeItensUnit.length - 2, 0, {
 					label: unit.name,
 					expanded: false,
 					expandable: true, //Mudar essa condição para: Se houver subitem
@@ -205,7 +276,7 @@ export default React.createClass({
 					if (unitItem.id && unitItem.id === subunit.parent.id) {
 						const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitItem.id}/subunit/${subunit.id}`;
 						const { children } = unitItem;
-						children.splice(children.length - 1, 0, {
+						children.splice(children.length - 2, 0, {
 							label: subunit.name,
 							to: toSubunit,
 							key: toSubunit,
@@ -221,12 +292,6 @@ export default React.createClass({
 		this.refresh();
 	},
 
-	componentWillReceiveProps(newProps) {
-		// if (newProps.location.pathname.includes('overview')) {
-		// 	this.refresh();
-		// }
-	},
-
 	componentWillUnmount() {
 		UnitStore.off('unitbyplan');
 		UnitStore.off('subunitsListed');
@@ -234,6 +299,8 @@ export default React.createClass({
 		UnitStore.off('unitCreated');
 		UnitStore.off('subunitCreated');
 		UnitStore.off('unitUpdated');
+		RiskStore.off('riskbyunit');
+		RiskStore.off('riskbysubunits');
 	},
 
 	refresh(){
@@ -248,7 +315,8 @@ export default React.createClass({
 
 
 	expandRoot(nodeProps, nodeLevel) {
-		if (nodeLevel === 0) {
+		switch (nodeLevel) {
+			case 0:
 			UnitStore.dispatch({
 				action: UnitStore.ACTION_LIST_SUBUNIT,
 				data: {
@@ -257,7 +325,20 @@ export default React.createClass({
 				opts: {
 					node: nodeProps
 				}
-			})
+			});
+			break;
+			case 1:
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_FIND_BY_SUBUNITS,
+				data: {
+					unit: nodeProps,
+				},
+				opts: {
+					node: nodeProps,
+				},
+			});
+			break;
+			default: return;
 		}
 		nodeProps.expanded = !nodeProps.expanded;
 		this.forceUpdate();

@@ -16,6 +16,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
 	ACTION_SEARCH_TERMS: 'planRisk-searchTerms',
 	ACTION_SEARCH_BY_KEY: 'planRisk-searchTermsByKey',
+	//ACTION_DUPLICATE_PLANRISK: 'planRisk-duplicatePlanRisk',
 	url: URL,
 	model: PlanRiskModel,
 
@@ -114,6 +115,24 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			}
 		})
 	},
+
+	/*duplicatePlanRisk(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/duplicate',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			success(model) {
+				me.trigger("duplicatePlanRisk", model);
+			},
+			error(model, response, options) {
+				me.handleRequestErrors([], options.xhr);
+				me.trigger("duplicatePlanRisk", model);
+			}
+		})
+	},*/
 
 	searchTerms(data) {
 		var me = this;

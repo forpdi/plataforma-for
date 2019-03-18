@@ -188,9 +188,9 @@ export default React.createClass({
 				</li>
 				<li>
 					<Link onClick={this.onDeleteItem}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanRisk")}>
-						<span id="menu-levels"> Deletar Item </span>
-					</span>
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePlanRisk")}>
+							<span id="menu-levels"> Deletar Item </span>
+						</span>
 					</Link>
 				</li>
 			</ul>
@@ -198,7 +198,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
@@ -269,6 +268,7 @@ export default React.createClass({
 								 offEdit={this.offEdit}
 								 itemId={this.props.params.itemId}
 								 planRiskId={this.props.params.planRiskId}
+								 pathName={this.props.location.pathname}
 							 />
 					}
 				</div>

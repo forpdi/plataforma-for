@@ -452,7 +452,6 @@ export default React.createClass({
 								}
 							} else {
 								if (this.state.risklevelModel) {
-									console.log(k,this.state.risklevelModel,this.state.risklevelModel[k])
 									if (this.state.risklevelModel.data[k]) {
 										if (valor == this.state.risklevelModel.data[k]['level']) {
 											switch (this.state.risklevelModel.data[k]['color']) {
@@ -763,6 +762,7 @@ export default React.createClass({
 		event.preventDefault();
 
 		if (this.state.policyModel) {
+			this.context.tabPanel.removeTabByPath(this.context.tabPanel.props.location.pathname);  //Fecha a aba de edição ao cancelar
 			this.context.router.push("/forrisco/policy/" + this.state.policyModel.data.id + "/item/overview");
 			return
 		}

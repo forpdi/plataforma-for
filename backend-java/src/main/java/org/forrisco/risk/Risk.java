@@ -93,6 +93,34 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	@Transient
 	private PaginatedList<RiskStrategy> strategies;
 
+	public Risk() {}
+	
+	public Risk(Risk risk) {
+		this.begin=risk.getBegin();
+		this.code=risk.getCode();
+		this.impact=risk.getImpact();
+		this.linkFPDI=risk.getLinkFPDI();
+		this.name=risk.getName();
+		this.periodicity=risk.getPeriodicity();
+		this.probability=risk.getProbability();
+		this.reason=risk.getReason();
+		this.result=risk.getResult();
+		this.riskLevel=risk.getRiskLevel();
+		this.risk_act_process=risk.isRisk_act_process();
+		this.risk_obj_process=risk.isRisk_obj_process();
+		this.risk_pdi=risk.isRisk_pdi();
+		this.tipology=risk.getTipology();
+		this.type=risk.getType();
+		this.user=risk.getUser();
+		
+		
+		//setar ainda ações de prevenção
+		
+		//this.activities=risk.getActivities();
+		//this.processes=risk.getProcess();
+		//this.strategies=risk.getStrategies();
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -214,5 +242,4 @@ public class Risk extends SimpleLogicalDeletableEntity {
 	public void setStrategies(PaginatedList<RiskStrategy> strategies) {
 		this.strategies = strategies;
 	}
-
 }

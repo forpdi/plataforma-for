@@ -58,9 +58,8 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: {
-						planId: this.props.planRiskId,
-					},
+					data: this.props.risk.id,
+
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao cadastrar incidente.");
@@ -74,9 +73,7 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: {
-						planId: this.props.planRiskId,
-					},
+					data: this.props.risk.id,
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao excluir incidente.");
@@ -90,9 +87,7 @@ export default React.createClass({
 				});
 				RiskStore.dispatch({
 					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: {
-						planId: this.props.planRiskId,
-					},
+					data: this.props.risk.id,
 				});
 			} else {
 				this.context.toastr.addAlertError("Erro ao atualizar incidente.");
@@ -115,9 +110,7 @@ export default React.createClass({
 		});
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_INCIDENT,
-			data: {
-				planId: this.props.planRiskId,
-			},
+			data: this.props.risk.id,
 		});
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,

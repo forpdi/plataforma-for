@@ -127,15 +127,17 @@ export default React.createClass({
 
 		PlanRiskStore.on('editPlanRisk', response => {
 			this.context.toastr.addAlertSuccess("Plano de Risco editado com sucesso");
-			this.context.router.push("/forrisco/plan-risk/" + response.data.id + "/item/" + this.props.params.itemId + '/info');
+			this.context.router.push("/forrisco/plan-risk/" + response.data.id + "/item/overview");
 			PlanRiskStore.dispatch({
 				action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 			});
+			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 			PlanRiskItemStore.off('editPlanRisk');
 		})
 	},
 
 	onCancel() {
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 		this.context.router.push(
 			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/overview"
 		);

@@ -117,7 +117,7 @@ export default React.createClass({
 						});
 					}
 				}
-				console.log("title",model.attributes.name)
+
 				me.setState({
 					itemModel: model,
 					title: model.attributes.name,
@@ -205,8 +205,6 @@ export default React.createClass({
 
 		me.refreshData(me.props, me.context);
 
-
-		console.log(this.context)
 	},
 
 	componentWillReceiveProps(newProps, newContext) {
@@ -321,7 +319,6 @@ export default React.createClass({
 				fielditem.edit=bool
 			}
 		})
-		// console.log(this.state.fields);
 		this.setState({
 			fields: this.state.fields
 		})
@@ -368,6 +365,8 @@ export default React.createClass({
 		} else {
 			hashHistory.goBack();
 		}
+
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname); //Fecha aba ao cancelar
 	},
 
 	renderArchivePolicy() {
@@ -495,7 +494,6 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 
-		console.log(this.state.title)
 		let showButtons = !this.state.vizualization;
 
 		if (this.state.vizualization) {
