@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.system.CriteriaCompanyFilter;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.item.PlanRiskItem;
@@ -248,97 +249,92 @@ public class UnitBS extends HibernateBusiness {
 	 * @return int estado atual do monitoramento
 	 */
 	public int riskState(String periodicity, Date date) {
-		int state = 0; // não iniciado
-
-		if (date == null) {
-			return state;
-		}
+		int state = 0; // em dia
 
 		Date now = new Date();
 
 		double diffInSec = (now.getTime() - date.getTime()) / 1000;
 		double diffDays = diffInSec / (60 * 60 * 24);
-
-		switch (periodicity) {
+		switch (periodicity.toLowerCase()) {
 		case "diária":
-			if (diffDays < 0.85) {
-				state = 1;
+			if (diffDays < 0.2916666666666666) {
+				state = 0;
 			} // em dia
 			else if (diffDays < 1) {
-				state = 2;
+				state = 1;
 			} // próximos a vencer
 			else {
-				state = 3;
+				state = 2;
 			} // atrasado
 			break;
 
 		case "semanal":
-			if (diffDays < 6) {
-				state = 1;
+			if (diffDays < 2) {
+				state = 0;
 			} else if (diffDays < 7) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "quinzenal":
-			if (diffDays < 12) {
-				state = 1;
+			if (diffDays < 7) {
+				state = 0;
 			} else if (diffDays < 15) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "mensal":
-			if (diffDays < 24) {
-				state = 1;
+			if (diffDays < 7) {
+				state = 0;
 			} else if (diffDays < 30) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "bimestral":
-			if (diffDays < 48) {
-				state = 1;
+			if (diffDays < 21) {
+				state = 0;
 			} else if (diffDays < 60) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "trimestral":
-			if (diffDays < 72) {
-				state = 1;
+			if (diffDays < 21) {
+				state = 0;
 			} else if (diffDays < 90) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "semestral":
-			if (diffDays < 144) {
-				state = 1;
+			if (diffDays < 30) {
+				state = 0;
 			} else if (diffDays < 180) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 
 		case "anual":
-			if (diffDays < 288) {
-				state = 1;
+			if (diffDays < 30) {
+				state = 0;
 			} else if (diffDays < 360) {
-				state = 2;
+				state = 1;
 			} else {
-				state = 3;
+				state = 2;
 			}
 			break;
 		}
@@ -392,7 +388,6 @@ public class UnitBS extends HibernateBusiness {
 					.add(Restrictions.eq("unit", unit));
 
 			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
-				//String level =  risk.getRiskLevel().getLevel();
 				RiskLevel level =  risk.getRiskLevel();
 				
 				if(!map.containsKey(level)) {
@@ -400,34 +395,29 @@ public class UnitBS extends HibernateBusiness {
 				}
 				map.put(level, map.get(level) + 1);
 			}
-				
+
 			for ( RiskLevel level : map.keySet() ) {
-			
-				//for (int j = month + 1; j <= 12; j++) {
-	
-					criteria = this.dao.newCriteria(RiskHistory.class)
-							.add(Restrictions.eq("deleted", false))
-							.add(Restrictions.eq("month", month))
-							.add(Restrictions.eq("year", year))
-							.add(Restrictions.eq("riskLevel", level))
-							.add(Restrictions.eq("unit", unit));
-	
-					criteria.setMaxResults(1);
-					RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
-	
-					if (riskhistory == null) {
-						riskhistory = new RiskHistory();
-					}
-	
-					riskhistory.setUnit(unit);
-					riskhistory.setMonth(month);
-					riskhistory.setYear(year);
-					riskhistory.setRiskLevel(level);
-					riskhistory.setQuantity(map.get(level));
-					
-					this.persist(riskhistory);
-	
-				//}
+				criteria = this.dao.newCriteria(RiskHistory.class)
+						.add(Restrictions.eq("deleted", false))
+						.add(Restrictions.eq("month", month))
+						.add(Restrictions.eq("year", year))
+						.add(Restrictions.eq("riskLevel", level))
+						.add(Restrictions.eq("unit", unit));
+
+				criteria.setMaxResults(1);
+				RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
+
+				if (riskhistory == null) {
+					riskhistory = new RiskHistory();
+				}
+
+				riskhistory.setUnit(unit);
+				riskhistory.setMonth(month);
+				riskhistory.setYear(year);
+				riskhistory.setRiskLevel(level);
+				riskhistory.setQuantity(map.get(level));
+				
+				this.persist(riskhistory);
 			}
 		}
 	}
@@ -449,7 +439,7 @@ public class UnitBS extends HibernateBusiness {
 		int month = new Date().getMonth();
 
 		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < 3; i++) {
 				map.put(i, 0);
 			}
 			Criteria criteria = this.dao.newCriteria(Risk.class)
@@ -458,8 +448,8 @@ public class UnitBS extends HibernateBusiness {
 
 			
 			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
-				Monitor monitor =this.lastMonitorbyRisk(risk);
-				int state = this.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin():null);
+				Monitor monitor = this.lastMonitorbyRisk(risk);
+				int state = this.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin() : risk.getBegin());
 				map.put(state, map.get(state) + 1);
 			}
 
@@ -468,43 +458,39 @@ public class UnitBS extends HibernateBusiness {
 				String state = null;
 
 				switch (i) {
-				case 0:
-					state = "não iniciado";
-					break;
-				case 1:
-					state = "em dia";
-					break;
-				case 2:
-					state = "próximo a vencer";
-					break;
-				case 3:
-					state = "atrasado";
-					break;
+					case 0:
+						state = "em dia";
+						break;
+					case 1:
+						state = "próximo a vencer";
+						break;
+					default:
+						state = "atrasado";
 				}
 
 				//for (int j = month + 1; j <= 12; j++) {
 
-					criteria = this.dao.newCriteria(MonitorHistory.class)
-							.add(Restrictions.eq("deleted", false))
-							.add(Restrictions.eq("month", month))
-							.add(Restrictions.eq("year", year))
-							.add(Restrictions.eq("estado", state))
-							.add(Restrictions.eq("unit", unit));
+				criteria = this.dao.newCriteria(MonitorHistory.class)
+						.add(Restrictions.eq("deleted", false))
+						.add(Restrictions.eq("month", month))
+						.add(Restrictions.eq("year", year))
+						.add(Restrictions.eq("estado", state))
+						.add(Restrictions.eq("unit", unit));
 
-					criteria.setMaxResults(1);
-					MonitorHistory hmonitor = (MonitorHistory) criteria.uniqueResult();
+				criteria.setMaxResults(1);
+				MonitorHistory hmonitor = (MonitorHistory) criteria.uniqueResult();
 
-					if (hmonitor == null) {
-						hmonitor = new MonitorHistory();
-					}
+				if (hmonitor == null) {
+					hmonitor = new MonitorHistory();
+				}
 
-					hmonitor.setUnit(unit);
-					hmonitor.setMonth(month);
-					hmonitor.setYear(year);
-					hmonitor.setQuantity(quantity);
-					hmonitor.setEstado(state);
+				hmonitor.setUnit(unit);
+				hmonitor.setMonth(month);
+				hmonitor.setYear(year);
+				hmonitor.setQuantity(quantity);
+				hmonitor.setEstado(state);
 
-					this.persist(hmonitor);
+				this.persist(hmonitor);
 
 				//}
 			}

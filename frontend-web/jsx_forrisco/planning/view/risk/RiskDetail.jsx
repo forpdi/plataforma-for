@@ -68,6 +68,10 @@ export default React.createClass({
 		this.refresh(newProps)
 	},
 
+	componentWillUnmount() {
+		RiskStore.off(null, null, this);
+	},
+
 	refresh(newProps){
 		RiskStore.dispatch({
 			action:RiskStore.ACTION_FIND_RISK,

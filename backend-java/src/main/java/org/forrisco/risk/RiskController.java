@@ -18,8 +18,6 @@ import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.objective.RiskActivity;
 
-import com.google.gson.GsonBuilder;
-
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Delete;
@@ -114,7 +112,6 @@ public class RiskController extends AbstractController {
 			}
 			
 			action.setId(null);
-			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(action)));
 			this.riskBS.saveAction(action);
 			this.success(action);
 		} catch (Throwable e) {
@@ -855,6 +852,7 @@ public class RiskController extends AbstractController {
 			oldmonitor.setProbability(monitor.getProbability());
 			oldmonitor.setReport(monitor.getReport());
 			oldmonitor.setUser(user);
+			oldmonitor.setBegin(monitor.getBegin());
 			this.riskBS.saveMonitor(oldmonitor);
 			
 			
