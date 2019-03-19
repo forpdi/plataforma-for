@@ -33,9 +33,9 @@ var UnitStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
+	ACTION_FIND_ALL_BY_PLAN: "unit-findAllByPlan",
 	ACTION_LIST_SUBUNIT: "unit-listSubunits",
 	ACTION_LIST_SUBUNIT_BY_PLAN: "unit-listSubunitsByPlan",
-	ACTION_RETRIEVE_PROCESSES: "unit-retrieveProcess",
 	ACTION_FIND_TERMS: 'unit-findTerms',
 	ACTION_FINDALL_TERMS: 'unit-findAllTerms',
 	url: URL,
@@ -73,6 +73,24 @@ var UnitStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+	findAllByPlan(data, info){
+		var me = this;
+		$.ajax({
+			url: me.url+"/allByPlan",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("allunitsbyplan", model, info);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("allunitsbyplan", opts);
+			}
+		});
+	},
+
 
 	findUnarchived(data) {
 		var me = this;
@@ -322,22 +340,6 @@ var UnitStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("allSubunitsListed", opts);
-			}
-		});
-	},
-
-	retrieveProcess() {
-		var me = this;
-		$.ajax({
-			url: me.url + "/process",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			success(model) {
-				me.trigger("retrieveProcess", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("retrieveProcess", opts);
 			}
 		});
 	},

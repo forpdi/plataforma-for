@@ -16,6 +16,8 @@ import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserRecoverRequest;
+import org.forpdi.core.user.authz.Permissioned;
+import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
 
@@ -44,6 +46,7 @@ public class ProcessController extends AbstractController{
 	protected static final String PATH =  BASEPATH +"/process";
 
 
+	
 	
 	
 	/**
@@ -136,6 +139,43 @@ public class ProcessController extends AbstractController{
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	
+	
+	
+	/**
+	 * Retorna processos do Plano de Risco.
+	 * 
+	 * 
+	 * @param Long 
+	 * 			id	do plano de risco
+	 * 
+	 * @return PaginatedList<RiskProcess>
+	 * 			Lista de Processos 
+	 */
+	@Get(PATH + "/allByPlan")
+	@NoCache
+	@Permissioned
+	public void listProcess(Long planId) {
+		try {
+			
+			PlanRisk planRisk = this.processBS.exists(planId, PlanRisk.class);
+			if (planRisk == null || planRisk.isDeleted()) {
+				this.fail("Plano de Risco não encotrado");
+				return;
+			}
+			
+			PaginatedList<Process> list= this.processBS.listProcessByPlan(planRisk);
+			
+			this.success(list);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	
 
 	/**
 	 * Deleta um processos

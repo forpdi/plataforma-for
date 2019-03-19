@@ -17,14 +17,15 @@ var processModel = Fluxbone.Model.extend({
 
 var ProcessStore = Fluxbone.Store.extend({
 	dispatchAcceptRegex: /^process-[a-zA-Z0-9]+$/,
-	ACTION_LIST: 'process-listProcess',
+	ACTION_LIST_BY_UNIT: 'process-listProcessByUnit',
+	ACTION_LIST_BY_PLAN: 'process-listProcessByPlan',
 	ACTION_CREATE: 'process-newProcess',
 	ACTION_DELETE: 'process-deleteProcess',
 	ACTION_UPDATE: 'process-updateProcess',
 	url: URL,
 	model: processModel,
 
-	listProcess(data) {
+	listProcessByUnit(data) {
 		var me = this;
 		$.ajax({
 			url: `${me.url}/${data.id}`,
@@ -32,10 +33,27 @@ var ProcessStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'application/json',
 			success(model) {
-				me.trigger("processListed", model);
+				me.trigger("processListedByUnit", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("processListed", opts);
+				me.trigger("processListedByUnit", opts);
+			}
+		});
+	},
+
+	listProcessByPlan(data) {
+		var me = this;
+		$.ajax({
+			url: `${me.url}/allByPlan`,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: {planId: data},
+			success(model) {
+				me.trigger("listProcessByPlan", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("listProcessByPlan", opts);
 			}
 		});
 	},

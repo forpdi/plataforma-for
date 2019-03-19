@@ -353,6 +353,8 @@ public class UnitController extends AbstractController {
 			}
 			
 			PaginatedList<Unit> units = this.unitBS.listOnlyUnitsbyPlanRisk(plan);
+			
+			//PaginatedList<Unit> units =this.unitBS.listUnitsbyPlanRisk(plan);
 			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -450,26 +452,34 @@ public class UnitController extends AbstractController {
 		}
 	}
 	
-	
 	/**
-	 * Retorna processos das unidades.
+	 * Retorna todas unidades e subunidades do plano.
 	 * 
-	 * @return PaginatedList<RiskProcess>
-	 * 			Lista de Processos 
+	 * @param planId
+	 *            Id do plano de risco
+	 * @return <PaginatedList>Unit
 	 */
-	@Get(PATH + "/process")
+	@Get(PATH + "/allByPlan")
 	@NoCache
-	@Permissioned
-	public void listProcess() {
+	@Consumes
+	public void listAllUnitsByPlan(@NotNull Long planId) {
 		try {
-			PaginatedList<Process> list= this.processBS.listProcessByCompany(this.domain.getCompany());			
-			this.success(list);
-
+			PlanRisk plan =this.unitBS.exists(planId, PlanRisk.class);
+			
+			if (plan == null || plan.isDeleted()) {
+				this.fail("O Plano de risco não foi encontrado");
+				return;
+			}
+			
+			PaginatedList<Unit> units = this.unitBS.listUnitsbyPlanRisk(plan);
+			
+			this.success(units);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
 	
 
 	/**

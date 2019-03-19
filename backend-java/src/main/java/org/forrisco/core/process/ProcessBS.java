@@ -133,6 +133,37 @@ public class ProcessBS extends HibernateBusiness {
 	 
 		return results;
 	}
+	
+	/**
+	 * Retorna todos os processo do plano de risco
+	 * 
+	 * @Param PlanRisk plano
+	 *
+	 * @return PaginatedList<Process>  lista de processos
+	 */
+	public PaginatedList<Process> listProcessByPlan(PlanRisk planRisk) {
+		
+		Criteria criteria = this.dao.newCriteria(Process.class)
+				.add(Restrictions.eq("deleted", false))
+				.createAlias("unitCreator","unit")
+				.add(Restrictions.eq("unit.planRisk",planRisk));
+
+		Criteria count = this.dao.newCriteria(Process.class)
+				.add(Restrictions.eq("deleted", false))
+				.createAlias("unitCreator","unit")
+				.add(Restrictions.eq("unit.planRisk",planRisk))
+				.setProjection(Projections.countDistinct("id"));
+		
+		PaginatedList<Process> results = new PaginatedList<Process>();
+		results.setList(this.dao.findByCriteria(criteria, Process.class));
+		results.setTotal((Long) count.uniqueResult());
+		
+		return results;
+	}
+
+
+	
+	
 
 	public void deleteProcess(Process process) {
 			
@@ -145,7 +176,6 @@ public class ProcessBS extends HibernateBusiness {
 		}
 
 	}
-
 
 
 

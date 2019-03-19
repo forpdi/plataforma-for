@@ -33,7 +33,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		ProcessStore.on('processListed', response => {
+		ProcessStore.on('processListedByUnit', response => {
 			const filteredProcesses = _.map(response.data, process => ({
 					...process,
 					relatedUnits: _.filter(process.relatedUnits, unit => (
@@ -45,7 +45,7 @@ export default React.createClass({
 			_.map(filteredProcesses, (value, idx) => {
 				_.assign(
 					value,
-					{ tools: this.getTools(idx) },
+					{ tools: value.unitCreator.id == this.props.unitId ? this.getTools(idx) : null},
 					{
 						fileData: {
 							fileName: value.file.name,
@@ -67,7 +67,7 @@ export default React.createClass({
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST,
+					action: ProcessStore.ACTION_LIST_BY_UNIT,
 					data: {
 						id: this.props.unitId,
 					},
@@ -79,7 +79,7 @@ export default React.createClass({
 		ProcessStore.on('processDeleted', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST,
+					action: ProcessStore.ACTION_LIST_BY_UNIT,
 					data: {
 						id: this.props.unitId,
 					},
@@ -91,7 +91,7 @@ export default React.createClass({
 		ProcessStore.on('processUpdated', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST,
+					action: ProcessStore.ACTION_LIST_BY_UNIT,
 					data: {
 						id: this.props.unitId,
 					},
@@ -100,7 +100,8 @@ export default React.createClass({
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		});
-		UnitStore.on('unitbyplan', response => {
+		UnitStore.on('allunitsbyplan', response => {
+
 			const filteredUnits = _.filter(response.data, unit => (
 				unit.id !== parseInt(this.props.unitId)
 			));
@@ -113,20 +114,20 @@ export default React.createClass({
 			});
 		});
 		ProcessStore.dispatch({
-			action: ProcessStore.ACTION_LIST,
+			action: ProcessStore.ACTION_LIST_BY_UNIT,
 			data: {
 				id: this.props.unitId,
 			},
 		});
 
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_BY_PLAN,
+			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
 			data: this.props.planRiskId,
 		});
 	},
 
 	componentWillUnmount() {
-		ProcessStore.off('processListed');
+		ProcessStore.off('processListedByUnit');
 		ProcessStore.off('processCreated');
 		ProcessStore.off('processDeleted');
 		ProcessStore.off('processUpdated');
@@ -384,6 +385,12 @@ export default React.createClass({
 
 	deleteProcess(idx) {
 		const process = this.state.processes[idx];
+
+		if(this.props.unitId !=process.unitCreator.id){
+			this.context.toastr.addAlertError(Messages.get("notification.process.deleteError"));
+			return
+		}
+
 		ProcessStore.dispatch({
 			action: ProcessStore.ACTION_DELETE,
 			data: {

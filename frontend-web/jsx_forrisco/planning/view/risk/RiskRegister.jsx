@@ -9,6 +9,7 @@ import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
+import ProcessStore from "forpdi/jsx_forrisco/planning/store/Process.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
@@ -56,7 +57,7 @@ export default React.createClass({
 			});
 		}, this);
 
-		UnitStore.on("retrieveProcess", (model) => {
+		ProcessStore.on("listProcessByPlan", (model) => {
 			this.setState({
 				process:model.data,
 			});
@@ -105,6 +106,7 @@ export default React.createClass({
 		StructureStore.off(null, null, this)
 		RiskStore.off(null, null, this)
 		UnitStore.off(null, null, this)
+		ProcessStore.off(null, null, this)
 	},
 
 
@@ -188,8 +190,10 @@ export default React.createClass({
 			action: StructureStore.ACTION_RETRIEVE_OBJECTIVES_BY_COMPANY
 		});
 
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_RETRIEVE_PROCESSES
+		console.log(Props)
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_LIST_BY_PLAN,
+			data:Props.params.planRiskId
 		});
 
 		/*if (Props.risk) {
@@ -400,6 +404,7 @@ export default React.createClass({
 
 
 		var fields = []
+		console.log("getProcesses", this.state.riskModel.processes)
 		this.state.riskModel.processes.list.map((fielditem, index) => {
 			fields.push({
 				name: "process-" + (index),
@@ -854,7 +859,6 @@ export default React.createClass({
 				:""}
 				<br />
 
-
 					{//Atividade
 					}
 
@@ -867,7 +871,7 @@ export default React.createClass({
 						</div>
 						<br />
 					</div>
-					: ""}
+				: ""}
 				{!this.state.visualization && this.state.risk_act_process ?
 					<div>
 						<div style={{ position: "relative", bottom: '5px' }}>
@@ -881,7 +885,7 @@ export default React.createClass({
 							<br />
 						</div>
 					</div>
-					: ""}
+				: ""}
 
 				{!this.state.visualization && this.state.risk_act_process ?
 					this.getProcessActivity() : ""}
