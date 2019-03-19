@@ -100,6 +100,8 @@ export default React.createClass({
 		this.state.formFields.map( (fieldItem, index) => {
 			if (id === index){
 				fieldItem.editInstance = bool
+			}else{
+				fieldItem.editInstance = false
 			}
 		});
 
@@ -139,6 +141,7 @@ export default React.createClass({
 	editImg(img, id) {
 		this.state.formFields.map( (fieldItem, index) => {
 			if (id === index) {
+
 				fieldItem.fieldName = img.fieldName;
 				fieldItem.fieldContent = img.fieldContent;
 				fieldItem.isText = false;
@@ -160,7 +163,6 @@ export default React.createClass({
 				fieldItem = field;
 				fieldItem.editInstance = false;
 			}
-
 			this.state.formFields[index] = fieldItem;
 		});
 
@@ -170,6 +172,9 @@ export default React.createClass({
 	},
 
 	toggleFields() {
+		this.state.formFields.map( (fieldItem, index) => {
+			fieldItem.editInstance = false
+		});
 		this.setState({
 			vizualization: true,
 		});
@@ -239,9 +244,10 @@ export default React.createClass({
 
 	},
 
-	onCancel() {
-		this.context.tabPanel.removeTabByPath(this.props.pathName);
-		this.context.router.push("/forrisco/plan-risk/" + this.props.planRiskId + "/item/overview");
+	onCancel(event) {
+		event.preventDefault();
+		this.props.offEdit();
+		this.context.router.push("/forrisco/plan-risk/" + this.props.planRiskId + "/item/"+this.props.itemId);
 	},
 
 	render() {
@@ -255,15 +261,35 @@ export default React.createClass({
 				<form onSubmit={this.onSubmit} ref="editPlanRiskItemForm">
 					{
 						this.state.formFields.map((field, index) => {
+
+							if(index == 0){
+								//Título do Item
+								return (
+									<div key={index}>
+										{<VerticalInput
+											key={index}
+											fieldDef={field}
+											/*fieldDef={{
+												name: "123",//field.fieldName,
+												value: field.fieldValue,
+												fileLink: field.fileLink,
+												isText: field.isText,
+												required: field.required}}*/
+										/>
+										}
+									</div>
+								)
+							}
+
 							// Se for um campo (Area de texto ou IMG) do Item
-							if (field.fieldContent) {
+							//if (field.fieldContent) {
 
 								// if(field.isText === true) {
 								// 	field.fieldContent = field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "");
 								// }
 
 								// Recupera todos os campos do Item
-								if(field.editInstance !== true) {
+								//if(field.editInstance !== true) {
 									return (
 										<div key={index}>
 											<PlanRiskItemField
@@ -281,10 +307,10 @@ export default React.createClass({
 											/>
 										</div>
 									)
-								}
+								//}
 
 								//Entra na Instancia de Edição dos campos de um item
-								if(field.editInstance === true) {
+							/*	if(field.editInstance === true) {
 									return (
 										<div key={index}>
 											<PlanRiskItemField
@@ -302,15 +328,10 @@ export default React.createClass({
 											/>
 										</div>
 									)
-								}
-							}
+								}*/
+							//}
 
-							//Título do Item
-							return (
-								<div key={index}>
-									<VerticalInput key={index} fieldDef={field}/>
-								</div>
-							)
+
 						})
 					}
 

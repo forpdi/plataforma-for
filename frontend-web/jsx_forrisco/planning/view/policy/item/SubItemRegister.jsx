@@ -281,6 +281,9 @@ export default React.createClass({
 		}
 	},
 	changeVizualization() {
+		this.state.fields.map( (fieldsubitem, i) => {
+			fieldsubitem.edit=false
+		})
 		this.setState({
 			vizualization: false,
 		});
@@ -299,6 +302,9 @@ export default React.createClass({
 		}
 	},
 	tweakNewField() {
+		this.state.fields.map( (fieldsubitem, i) => {
+			fieldsubitem.edit=false
+		})
 		this.setState({
 			newField: !this.state.newField,
 			newFieldType: null
@@ -319,10 +325,14 @@ export default React.createClass({
 		this.state.fields.map( (fieldsubitem, i) => {
 			if (id==i){
 				fieldsubitem.edit=bool
+			}else{
+				fieldsubitem.edit=false
 			}
 		})
+
 		this.setState({
-			fields: this.state.fields
+			fields: this.state.fields,
+			newField:false,
 		})
 	},
 	deleteFunc(id){
@@ -355,18 +365,14 @@ export default React.createClass({
 		})
 	},
 	cancelWrapper(evt) {
+		evt.preventDefault();
 		for (var i = 0; i < this.getField().length; i++) {
 			if (this.refs[this.getField().name])
 				this.refs[this.getField().name].refs.formAlertError.innerHTML = "";
 		}
-		evt.preventDefault();
-		if (typeof this.props.onCancel === 'function') {
-			this.props.onCancel();
-		} else {
-			hashHistory.goBack();
-		}
 
-		this.context.tabPanel.removeTabByPath(this.props.location.pathname);  //Fecha aba ao cancelar
+		this.onCancel()
+		this.context.router.push("/forrisco/policy/" + this.props.params.policyId + "/item/"+this.props.params.itemId+"/subitem/"+this.props.params.subitemId);
 	},
 	backWrapper() {
 		hashHistory.goBack();

@@ -26,14 +26,10 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-		console.log("component will receive props");
 		this.state.description=newProps.field.description;
-		console.log(this.state.fileLink);
-		console.log(newProps.field.isText);
-		console.log(newProps.field.fileLink);
 		newProps.field.isText ? null : this.state.fileLink = newProps.field.fileLink;
-		console.log(this.state.fileLink);
 	},
+
 	changeRichText(value){
 		this.setState({
 			description: value
@@ -172,14 +168,15 @@ export default React.createClass({
 	},
 
 	tweakNewField() {
-		this.props.editFunc(this.props.index,false)
+		if(this.props.index != null){
+			this.props.editFunc(this.props.index,false)
+		}
 		this.props.reset()
 	},
 	delete(){
 		this.props.deleteFunc(this.props.index)
 	},
 	edit(){
-		console.log();
 		this.props.editFunc(this.props.index,true)
 	},
 
@@ -198,10 +195,9 @@ export default React.createClass({
 							title={Messages.get("label.title.changeField")} onClick={this.edit}/>
 						}
 					</div>
-					{console.log(this.props.field)}
 					<span className="pdi-normal-text">
 						<div className="card-field-content" id={this.props.field.name}>
-							{this.props.field.isText ? 
+							{this.props.field.isText ?
 								$(this.props.field.description).text()
 								:
 								<a target="_blank" rel="noopener noreferrer" href={this.props.field.fileLink}>

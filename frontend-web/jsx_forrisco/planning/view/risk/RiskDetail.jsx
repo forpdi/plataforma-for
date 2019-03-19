@@ -76,7 +76,6 @@ export default React.createClass({
 	},
 
 	refresh(newProps){
-		console.log(this.props, this.state.selected)
 		RiskStore.dispatch({
 			action:RiskStore.ACTION_FIND_RISK,
 			data: newProps.params.riskId
@@ -223,7 +222,7 @@ export default React.createClass({
 			</div>
 
 			<div className={"frisco-link icon-link " + (this.state.selected ==3 ? "selecionado" :"")} onClick={() => this.setInfo(3)}>
-			Contigenciamento
+			Contingenciamento
 			</div>
 		</div>
 		)

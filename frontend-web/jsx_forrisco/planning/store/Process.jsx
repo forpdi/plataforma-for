@@ -65,10 +65,10 @@ var ProcessStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'application/json',
 			success(model) {
-				me.trigger("processDelete", model);
+				me.trigger("processDeleted", model);
 			},
 			error(opts, status, errorMsg) {
-				me.trigger("processDelete", opts);
+				me.trigger("processDeleted", opts);
 			}
 		});
 	},

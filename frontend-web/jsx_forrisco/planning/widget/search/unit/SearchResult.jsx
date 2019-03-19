@@ -34,7 +34,6 @@ export default React.createClass({
 		var me = this;
 
 		UnitStore.on("findTerms", (model, data) => {
-			console.log("findTerms", model, data )
 			if (model.data != null){
 				for (var i = 0; i < model.data.length; i++) {
 
@@ -100,7 +99,6 @@ export default React.createClass({
 
 
 	render() {
-		//console.log(this.props)
 		return (
 			<div className="fpdi-search">
 				<div className = "fpdi-search-view">
@@ -109,7 +107,6 @@ export default React.createClass({
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
 						{this.state.resultSearchMore.map((model, idx) => {
-							console.log("resultSearchMore",model.link)
 							return(
 								<div key={"levelInstance-"+idx}>
 									<div id="fpdi-result-search">

@@ -40,6 +40,10 @@ export default React.createClass({
 		}
 	},
 
+	componentWillReceiveProps(newProps){
+		this.state.fieldContent=newProps.field.fieldContent;
+	},
+
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
 
 	changeFieldTypeOnEdit() {
@@ -100,11 +104,12 @@ export default React.createClass({
 	addField() {
 		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
 
-		console.log(validation);
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
 			return false;
 		}
+
+
 
 		if (!validation.errorField) {
 			if (validation.type.s === this.state.types[0].id) {
@@ -143,6 +148,7 @@ export default React.createClass({
 
 		if(!validation.errorField) {
 			this.props.editRichTextField(this.state.fieldContent, this.props.index)
+			this.props.editFieldTitle(validation.name.s, this.props.index)
 			this.props.setFieldValue(this.props.field, this.props.index);
 		}
 	},
@@ -153,11 +159,6 @@ export default React.createClass({
 
 	editField() {
 		this.props.editFields(this.props.index, true)
-	},
-
-	changeTitle() {
-		var value = $('#itemTitle').val();
-		this.props.editFieldTitle(value, this.props.index)
 	},
 
 	setRichTextValueOnEdit(value) {
@@ -173,7 +174,7 @@ export default React.createClass({
 	},
 
 	resetTypes() {
-		this.props.editFields(this.props.index);
+		this.props.editFields(this.props.index,false);
 	},
 
 	setImgValue(fieldImg) {
@@ -271,6 +272,7 @@ export default React.createClass({
 	},
 
 	render() {
+
 		return (
 			<div>
 				{this.props.field ?
@@ -333,10 +335,11 @@ export default React.createClass({
 														}
 													</div>
 													<span className="pdi-normal-text">
-														{console.log("ediçao1")}
 														<div
 															id={this.props.field.fieldName}> {
+																this.props.field.fieldContent?
 																this.props.field.fieldContent.replace(/(?:<style.+?>.+?<\/style>|<script.+?>.+?<\/script>|<(?:!|\/?[a-zA-Z]+).*?\/?>)/g, "")
+																:""
 															}
 														</div>
 													</span>
@@ -355,10 +358,7 @@ export default React.createClass({
 															  title={Messages.get("label.title.changeField")}/>
 													</div>
 													<span className="card-field-content pdi-normal-text">
-														{console.log("ediçao2")}
 														<div id={this.props.field.fieldName}>
-															{console.log(this.props.field)}
-															
 															{this.props.field.fileLink ?
 																<a target="_blank" rel="noopener noreferrer" href={this.props.field.fileLink}>
 																	{this.props.field.fieldContent}
@@ -366,7 +366,6 @@ export default React.createClass({
 																:
 																$(this.props.field.fieldContent).text()
 															}
-															
 															{/* {this.props.field.fieldContent} */}
 														</div>
 													</span>
