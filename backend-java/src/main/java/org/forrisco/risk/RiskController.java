@@ -367,13 +367,18 @@ public class RiskController extends AbstractController {
 	 */
 	@Get(PATH + "/listByPI")
 	@NoCache
-	public void listRiskByPI(String impact, String probability, Integer page, Integer pageSize) {
+	public void listRiskByPI(Long planId, String impact, String probability, Integer page, Integer pageSize) {
 		if (page == null)
 			page = 0;
 		
+		PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
+		if (plan == null || plan.isDeleted()) {
+			this.fail("O Plano não foi encontrado.");
+		}
+		
 		try {
 		
-			PaginatedList<Risk> risks = this.riskBS.listRiskByPI(impact, probability, page, pageSize);
+			PaginatedList<Risk> risks = this.riskBS.listRiskByPI(plan, impact, probability, page, pageSize);
 			this.success(risks.getList(), risks.getTotal());
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

@@ -24,10 +24,11 @@ export default React.createClass({
 		RiskStore.on("riskByPI", response => {
 			var listOfRisks = [];
 
-
 			response.data.map(risk => {
-				if(risk.type=="Oportunidade" && !this.props.threats || risk.type=="Ameaça" && this.props.threats){
-					listOfRisks.push({risk})
+				if(this.props.unit == -1  || this.props.unit == risk.unit.id){
+					if(risk.type=="Oportunidade" && !this.props.threats || risk.type=="Ameaça" && this.props.threats){
+						listOfRisks.push({risk})
+					}
 				}
 			});
 
@@ -66,9 +67,11 @@ export default React.createClass({
 	},
 
 	refreshComponent(probability, impact, page, pageSize) {
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_RISKS_BY_PI,
 			data: {
+				planId: this.props.plan.id,
 				probability: probability,
 				impact: impact,
 				page: page,

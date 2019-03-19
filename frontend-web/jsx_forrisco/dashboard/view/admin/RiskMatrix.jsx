@@ -131,8 +131,8 @@ export default React.createClass({
 		return risks;
 	},
 
-	showRisk(probability,impact){
-		Modal.riskList(this.state.threats,probability, impact);
+	showRisk(probability, impact){
+		Modal.riskList(this.state.plan, this.state.unit, this.state.threats,probability, impact);
 	},
 
 	countRisks(risks,impact, probability, color){

@@ -482,7 +482,7 @@ public class RiskBS extends HibernateBusiness {
 	}
 	
 	
-	public PaginatedList<Risk> listRiskByPI(String impact, String probability, Integer page, Integer pageSize) {
+	public PaginatedList<Risk> listRiskByPI(PlanRisk planRisk, String impact, String probability, Integer page, Integer pageSize) {
 		
 		if (page == null || page < 1) {
 			page = 1;
@@ -495,11 +495,15 @@ public class RiskBS extends HibernateBusiness {
 		
 		Criteria criteria = this.dao.newCriteria(Risk.class).setFirstResult((page - 1) * pageSize)
 				.setMaxResults(pageSize).addOrder(Order.asc("name"))
+				.createAlias("unit","unit")
+				.add(Restrictions.eq("unit.planRisk",planRisk))
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("impact", impact))
 				.add(Restrictions.eq("probability", probability));
 		
 		Criteria counting = this.dao.newCriteria(Risk.class)
+				.createAlias("unit","unit")
+				.add(Restrictions.eq("unit.planRisk",planRisk))
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("impact", impact))
 				.add(Restrictions.eq("probability", probability))

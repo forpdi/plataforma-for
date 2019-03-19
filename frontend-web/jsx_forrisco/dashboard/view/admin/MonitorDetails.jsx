@@ -268,7 +268,7 @@ export default React.createClass({
 		})
 	},
 
-	setLoading(bool) {
+	displayGraph(bool) {
 		this.state.displayGraph = bool
 	},
 
@@ -325,8 +325,7 @@ export default React.createClass({
 				</div>
 			</div>
 
-			{
-				this.state.displayGraph &&
+			{this.state.displayGraph ?
 				<Graphic
 					title={Messages.get("label.monitor.history").toUpperCase()}
 					planId={this.props.plan.id}
@@ -334,8 +333,9 @@ export default React.createClass({
 					units={this.state.units}
 					level={this.state.level}
 					history={this.state.monitor_history}
-					displayGraph={this.switchGraph}
+					displayGraph={this.displayGraph}
 				/>
+				:""}
 			}
 		</div>
 		);

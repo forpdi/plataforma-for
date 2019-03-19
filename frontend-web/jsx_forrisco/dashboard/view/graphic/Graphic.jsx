@@ -278,7 +278,7 @@ export default React.createClass({
 							this.props.units.map((attr) => {
 								return (
 									<option key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
-										{(attr.name.length > 20) ? (string(attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
+										{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
 									</option>
 								);
 							})
@@ -322,14 +322,13 @@ export default React.createClass({
 	},
 
 	render() {
+		this.props.displayGraph(false)
 		return (
 			<div>
 				{
-					!this.state.loadingGraph &&
 					Modal.GraphHistory(this.props.title, this.Graph())
 				}
 			</div>
 		);
 	}
-
 });

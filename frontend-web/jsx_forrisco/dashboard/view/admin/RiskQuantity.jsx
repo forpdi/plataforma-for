@@ -23,7 +23,7 @@ export default React.createClass({
 			year: null,
 			years: [],
 			loading: true,
-			loadingGraph: true,
+			displayGraph: false,
 			data:[],
 			risk_history:[]
 		}
@@ -91,7 +91,7 @@ export default React.createClass({
 		this.state.risk_level_active.push(risk_level)
 		this.setState({
 			risk_level_active:this.state.risk_level_active,
-			loadingGraph:false
+			displayGraph:true
 		})
 	},
 
@@ -170,8 +170,8 @@ export default React.createClass({
 		}
 	},
 
-	setLoading(bool){
-		this.state.loadingGraph=bool
+	setdisplayGraph(bool){
+		this.state.displayGraph=bool
 	},
 
 	render() {
@@ -181,16 +181,15 @@ export default React.createClass({
 		return (<div>
 			{this.getPanel()}
 
-			{!this.state.loadingGraph ?
+			{this.state.displayGraph ?
 			<Graphic
-			title={Messages.get("label.risk.history").toUpperCase()}
-			unit={this.state.unit}
-			units={this.state.units}
-			level={this.state.riskLevelModel.data}
-			levelActive={this.state.risk_level_active}
-			history={this.state.risk_history}
-			loading={this.setLoading}
-			unmount={this.unmount}
+				title={Messages.get("label.risk.history").toUpperCase()}
+				unit={this.state.unit}
+				units={this.state.units}
+				level={this.state.riskLevelModel.data}
+				levelActive={this.state.risk_level_active}
+				history={this.state.risk_history}
+				displayGraph={this.setdisplayGraph}
 			 />
 			 :""}
 		</div>);

@@ -686,18 +686,20 @@ var Modal = {
 		this.show();
 	},
 
-	GraphHistory(title,text){
+	GraphHistory(title, text){
 		var me = this;
 		ReactDOM.render((
-			<GraphHistory title={title} text={text} /> //onConfirm={cb}/>
+			<GraphHistory title={title} text={text}/>
 		),this.$el);
 		this.show();
 	},
 
-	riskList(threats,probability,impact) {
+	riskList(plan, unit, threats, probability, impact) {
 		var me = this;
 		ReactDOM.render((
 			<RiskList
+				plan={plan}
+				unit={unit}
 				threats={threats}
 				probability={probability}
 				impact={impact}
