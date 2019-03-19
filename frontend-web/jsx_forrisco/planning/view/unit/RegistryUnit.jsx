@@ -10,7 +10,6 @@ import UserSession from "@/core/store/UserSession";
 import StructureStore from "@/planning/store/Structure";
 
 export default React.createClass({
-
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object,
@@ -193,13 +192,17 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		if (this.state.plansLength > 0 || this.state.policies.length === 0) {
-			this.context.router.push("/forrisco/home/");
-		}
+		// if (this.state.plansLength > 0 || this.state.policies.length === 0) {
+		// 	this.context.router.push("/forrisco/home/");
+		// }
+		//
+		// if (this.state.policies.length && this.state.policies.length === 1) {
+		// 	this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
+		// }
 
-		if (this.state.policies.length && this.state.policies.length === 1) {
-			this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
-		}
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+		const { id } = this.state.unit.planRisk;
+		this.context.router.push(`/forrisco/plan-risk/${id}/unit/`);
 	},
 
 	render() {
@@ -208,17 +211,16 @@ export default React.createClass({
 				<h1 className="marginLeft115">Nova Unidade</h1>
 				<div className="fpdi-card padding40">
 					<form onSubmit={this.handleSubmit}>
-						{
-							this.getFields().map((field, index) => {
-								return (
-									<VerticalInput key={index} fieldDef={field}/>
-								);
-							})
-						}
+						{this.getFields().map((field, index) => (
+							<VerticalInput key={index} fieldDef={field} />
+						))}
 						<div className="fpdi-editable-data-input-group">
-							<button type="submit" className="btn btn-success">{this.state.submitLabel}</button>
-							<button type="button" className="btn btn-default"
-									onClick={this.onCancel}>{this.state.cancelLabel}</button>
+							<button type="submit" className="btn btn-success">
+								{this.state.submitLabel}
+							</button>
+							<button type="button" className="btn btn-default" onClick={this.onCancel}>
+								{this.state.cancelLabel}
+							</button>
 						</div>
 					</form>
 				</div>
