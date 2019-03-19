@@ -110,24 +110,22 @@ export default React.createClass({
 	},
 
 	onChartClick(Chart){
-		var me = this;
-		var threats=Chart.chart.getSelection().column==1
-		var incidents=[]
+		var incidents = [];
 
-		for(var i in this.state.incidents){
-			if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value){
+		for(var i in this.state.incidents) {
+			if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
 				if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row){
-					incidents.push(this.state.incidents[i])
+					if(this.state.incidents[i].type == Chart.chart.getSelection()[0].column) {
+						incidents.push(this.state.incidents[i])
+					}
 				}
 			}
 		}
 
-		if(Chart.chart.getSelection().length > 0){
-			var url = window.location.origin+window.location.pathname+"#/forrisco/risk/";
-			var msg = Messages.get("label.askGoToSelectedLevel");
-
-			Modal.incidentList( threats, incidents, this.props.units, this.props.plan);
+		if(Chart.chart.getSelection().length > 0) {
+			Modal.incidentList(incidents);
 		}
+		Chart.chart.setSelection(false);
 	},
 
 	getInfo(page, pageSize, opt){
@@ -168,7 +166,6 @@ export default React.createClass({
 		this.LoadIncidents(this.refs['selectYear'].value,this.state.unit)
 	},
 
-
 	onYearChange(){
 		this.onUnitChange();
 	},
@@ -202,11 +199,6 @@ export default React.createClass({
 				month_opp[this_month]+=1
 			}
 		}
-
-		for(i=0;i<incidents.length;i++){
-
-		}
-
 
 		var month
 		if(year==(new Date).getFullYear()){
@@ -261,7 +253,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		return (<div>
 			<div className="panel panel-default">
 				<div className="panel-heading dashboard-panel-title">

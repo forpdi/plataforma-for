@@ -24,9 +24,8 @@ export default React.createClass({
 		RiskStore.on("riskByPI", response => {
 			var listOfRisks = [];
 
-
 			response.data.map(risk => {
-				if(risk.type=="Oportunidade" && !this.props.threats || risk.type=="Ameaça" && this.props.threats){
+				if(risk.type == "Oportunidade" && !this.props.threats || risk.type == "Ameaça" && this.props.threats){
 					listOfRisks.push({risk})
 				}
 			});
@@ -47,6 +46,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+		this.refreshComponent(this.props.probability, this.props.impact, this.state.page, this.state.pageSize);
 	},
 
 	pageChange(page, pageSize) {
@@ -54,15 +54,15 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newPorps) {
-		this.refreshComponent(newPorps.probability, newPorps.impact, newPorps.page, newPorps.pageSize)
+		this.refreshComponent(newPorps.probability, newPorps.impact, newPorps.page, newPorps.pageSize);
 	},
 
 	componentWillMount() {
-		this.refreshComponent(this.props.probability, this.props.impact, this.state.page, this.state.pageSize)
+		this.refreshComponent(this.props.probability, this.props.impact, this.state.page, this.state.pageSize);
 	},
 
 	componentWillUnmount() {
-		RiskStore.off(null, null, this)
+		RiskStore.off(null, null, this);
 	},
 
 	refreshComponent(probability, impact, page, pageSize) {
@@ -80,6 +80,12 @@ export default React.createClass({
 
 	onRedirect() {
 		this.props.redirect(this);
+		RiskStore.off("paginatedIncidents");
+	},
+
+	onDismiss() {
+		this.props.redirect(this);
+		RiskStore.off("paginatedIncidents");
 	},
 
 	render() {
@@ -91,7 +97,7 @@ export default React.createClass({
 							<div className="modal-content">
 								<div className="modal-header fpdi-modal-header">
 									<div>
-										<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+										<button type="button" className="close" onClick={this.onDismiss} aria-label="Close">
 											<span aria-hidden="true">&times;</span>
 										</button>
 										<span> <h1 className="modal-title"> {"Risco " + this.state.riskTitle} </h1> </span>
@@ -129,7 +135,10 @@ export default React.createClass({
 										})
 									}
 								</div>
-								<Paginator ref = "pagination" onChangePage={this.pageChange} totalOfRisks={this.state.totalOfRisks}/>
+
+								<div className="text-align-center">
+									<Paginator ref = "pagination" onChangePage={this.pageChange} totalOfRisks={this.state.totalOfRisks}/>
+								</div>
 							</div>
 						</div>
 						:

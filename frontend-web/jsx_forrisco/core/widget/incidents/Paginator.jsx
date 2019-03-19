@@ -15,26 +15,26 @@ export default React.createClass({
 
 	componentDidMount(){
 		this.setState({
-			pages: Math.ceil(this.props.totalofIncidents/this.state.pageSize)
+			pages: Math.ceil(this.props.totalOfIncidents/this.state.pageSize)
 		});
 	},
 
 	componentWillReceiveProps(newProps){
 		this.setState({
-			pages: Math.ceil(newProps.totalofIncidents/this.state.pageSize),
-			page: (this.props.page !== undefined ? this.props.page : (this.state.page > Math.ceil(newProps.totalofIncidents/this.state.pageSize) ? 1 : this.state.page))
+			pages: Math.ceil(newProps.totalOfIncidents/this.state.pageSize),
+			page: (this.props.page !== undefined ? this.props.page : (this.state.page > Math.ceil(newProps.totalOfIncidents/this.state.pageSize) ? 1 : this.state.page))
 		});
 	},
 
 	loadPage(page, size){
 		size = (isNaN(size) ? this.state.pageSize : size);
-		page = (page > Math.ceil(this.props.totalofIncidents/size) ? Math.ceil(this.props.totalofIncidents/size) : page);
+		page = (page > Math.ceil(this.props.totalOfIncidents/size) ? Math.ceil(this.props.totalOfIncidents/size) : page);
 		this.props.onChangePage(page, size);
 		this.state.page = page;
 	},
 
 	renderPages(){
-		var max = Math.ceil(this.props.totalofIncidents/this.state.pageSize);
+		var max = Math.ceil(this.props.totalOfIncidents/this.state.pageSize);
 		var pages = [];
 		if(max <= 5){
 			for (var i = 1; i <= max; i++) {
@@ -91,7 +91,7 @@ export default React.createClass({
 	},
 
 	render() {
-		if(this.props.totalofIncidents > 0){
+		if(this.props.totalOfIncidents > 0) {
 			return(
 				<div className="pagination-ctn">
 					<nav aria-label="Page navigation" className="center">

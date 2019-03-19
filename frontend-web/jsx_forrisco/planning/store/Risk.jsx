@@ -56,6 +56,7 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_UPDATE_CONTINGENCY: "risk-updateContingency",
 	ACTION_RETRIEVE_ACTIVITIES: "risk-retrieveActivities",
 	ACTION_LIST_RISKS_BY_PI: "risk-listRisksByPI",
+	ACTION_PAGINATE_INCIDENTS: 'risk-paginateIncidents',
 	ACTION_FIND_INCIDENTS_BY_UNIT: 'unit-findIncidentsByUnit',
 	url: URL,
 	model: RiskModel,
@@ -672,6 +673,23 @@ var RiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("riskByPI", opts);
+			}
+		});
+	},
+
+	paginateIncidents(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + "/incidentsPaginated",
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify(data),
+			success(response) {
+				me.trigger("paginatedIncidents", response);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("paginatedIncidents", opts);
 			}
 		});
 	},

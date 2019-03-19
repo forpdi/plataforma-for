@@ -29,7 +29,7 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
 	private User user;
 
-	@SkipSerialization
+	//@SkipSerialization
 	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
 	private Risk risk;
 
