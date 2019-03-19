@@ -708,14 +708,10 @@ var Modal = {
 		this.show();
 	},
 
-	incidentList(threats, incidents, units, planRisk) {
+	incidentList(incidents) {
 		var me = this;
 		ReactDOM.render((
-			<IncidentsList
-				threats={threats}
-				incidents={incidents}
-				units={units}
-				planRisk={planRisk}/>
+			<IncidentsList incidents={incidents} redirect={this.hide.bind(this)}/>
 		), this.$el);
 		this.show();
 	}

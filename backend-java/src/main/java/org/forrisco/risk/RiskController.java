@@ -573,6 +573,27 @@ public class RiskController extends AbstractController {
 	}
 	
 	/**
+	 * Retorna incidentes em uma lista paginada.
+	 * 
+	 * @param planId
+	 *			Id do plano.
+	 * @return <PaginedList> Incident
+	 * 			 Retorna lista de incidentes do risco.
+	 */
+	@Post( PATH + "/incidentsPaginated")
+	@Consumes
+	@NoCache
+	//@Permissioned
+	public void listIncidentsPaginated(List<Long> incidentsId, Integer page, Integer pageSize) {
+		try {
+			this.success(this.riskBS.pagitaneIncidents(incidentsId, page, pageSize));
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	/**
 	 * Retorna riscos a partir de uma unidade
 	 * @param unitId
 	 */
