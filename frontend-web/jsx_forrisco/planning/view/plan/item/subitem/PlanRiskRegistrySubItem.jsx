@@ -136,7 +136,9 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + '/info');
+		this.context.router.push(
+			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + '/info'
+		);
 	},
 
 	render() {
@@ -192,9 +194,12 @@ export default React.createClass({
 
 						<br/><br/><br/>
 						<div className="form-group">
-							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
-							<button className="btn btn-sm btn-default"
-									onClick={this.onCancel}>{this.state.cancelLabel}</button>
+							<button type="submit" className="btn btn-sm btn-success">
+								{this.state.submitLabel}
+							</button>
+							<button className="btn btn-sm btn-default" onClick={this.onCancel}>
+								{this.state.cancelLabel}
+							</button>
 						</div>
 					</div>
 				</form>
@@ -203,4 +208,3 @@ export default React.createClass({
 	}
 })
 //
-

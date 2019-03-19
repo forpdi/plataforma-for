@@ -135,7 +135,9 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" +  this.props.params.planRiskId + '/info');
+		this.context.router.push(
+			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + '/info'
+		);
 	},
 
 	render() {
@@ -201,4 +203,3 @@ export default React.createClass({
 	}
 })
 //
-

@@ -152,6 +152,7 @@ export default React.createClass({
 		// 	this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/");
 		// }
 
+		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 		const { id } = this.state.unit.planRisk;
 		this.context.router.push(`/forrisco/plan-risk/${id}/unit/`);
 	},
