@@ -140,8 +140,12 @@ ReactDOM.render((
 
 						<Route path=":unitId">
 							<Route path="risk">
-								<Route path="new" component={Forrisco_RiskRegister} /> /* Novo risco */
-								<Route path=":riskId" component={Forrisco_RiskDetail}/>
+								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
+								<Route path=":riskId">
+									<Route path="info" component={Forrisco_RiskDetail}/>
+									<Route path="incident" component={
+										props => (<Forrisco_RiskDetail {...props} selected={1} />)}/>
+								</Route>
 							</Route>
 							<Route
 								path="info"
@@ -154,7 +158,7 @@ ReactDOM.render((
 						<Route path=":unitId">
 							<Route path="subunit/new" component={Forrisco_RegistrySubunit} /> /* Nova subunidade */
 							<Route
-								path="subunit/:subunitId"
+								path="subunit/:subunitId/info"
 								component={props =>
 									<Forrisco_UnitGeneralInfo {...props} isSubunit={true} />
 								}

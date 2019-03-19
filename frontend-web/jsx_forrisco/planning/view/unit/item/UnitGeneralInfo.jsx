@@ -320,11 +320,12 @@ export default React.createClass({
 						: this.renderInfo()
 					}
 
+					{!this.state.showUpdateMode ?
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
 						unitId={unit.id}
 					/>
-
+						:""}
 				</div>
 			</div>
 		)

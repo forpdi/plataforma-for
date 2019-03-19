@@ -694,10 +694,11 @@ var Modal = {
 		this.show();
 	},
 
-	riskList(probability,impact) {
+	riskList(threats,probability,impact) {
 		var me = this;
 		ReactDOM.render((
 			<RiskList
+				threats={threats}
 				probability={probability}
 				impact={impact}
 				redirect={this.hide.bind(this)}/>
@@ -705,10 +706,14 @@ var Modal = {
 		this.show();
 	},
 
-	incidentList(incidents, units, planRisk) {
+	incidentList(threats, incidents, units, planRisk) {
 		var me = this;
 		ReactDOM.render((
-			<IncidentsList incidents={incidents} units={units} planRisk={planRisk}/>
+			<IncidentsList
+				threats={threats}
+				incidents={incidents}
+				units={units}
+				planRisk={planRisk}/>
 		), this.$el);
 		this.show();
 	}

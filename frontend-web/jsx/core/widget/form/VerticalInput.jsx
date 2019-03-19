@@ -33,6 +33,11 @@ export default React.createClass({
 				fieldId: this.props.fieldDef.id
 			};
 		}
+
+		if(this.props.fieldDef.fieldName){
+			this.props.fieldDef.name=this.props.fieldDef.fieldName
+		}
+
 		return {
 			fieldId: "field-"+this.props.fieldDef.name.replace(/\./g, "-")
 		};

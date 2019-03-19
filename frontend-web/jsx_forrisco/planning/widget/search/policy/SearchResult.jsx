@@ -126,8 +126,6 @@ export default React.createClass({
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
 						{this.state.resultSearchMore.map((model, idx) => {
-
-							console.log(model);
 							return(
 								<div key={"levelInstance-"+idx}>
 									<div id="fpdi-result-search">

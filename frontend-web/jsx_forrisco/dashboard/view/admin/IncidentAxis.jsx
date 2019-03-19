@@ -15,24 +15,21 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			plan: null,
-			//risks:[],
 			units:[],
 			incidents:[],
 			unit:-1,
 			loading: true,
 			year: [],
 			data: [],
-			options:{
-				//title: 'incidentAxis',
-				hAxis: {title: "Tempo", minValue: 0, maxValue: 15, },
-				vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
-				legend: true,
-				explorer: {axis: 'horizontal'},
-				bar: {groupWidth: '50%'},
-				colors:["red","blue"],
-			},
 			thematicAxes:[],
 			selectedThematicAxes: -1,
+			options:{
+				hAxis: {title: "Tempo", minValue: 0, maxValue: 12, },
+				vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
+				legend: {position: 'none'},
+				explorer: {axis: 'horizontal'},
+				bar: {groupWidth: '50%'},
+			},
 			chartEvents: [
 				{
 					eventName : 'select',
@@ -40,6 +37,8 @@ export default React.createClass({
 				},
 			],
 			pageSize: 10,
+			opportunities: true,
+			threats: true,
 		};
 	},
 	uniques(array){
@@ -112,12 +111,22 @@ export default React.createClass({
 
 	onChartClick(Chart){
 		var me = this;
+		var threats=Chart.chart.getSelection().column==1
+		var incidents=[]
+
+		for(var i in this.state.incidents){
+			if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value){
+				if(moment(this.state.incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row){
+					incidents.push(this.state.incidents[i])
+				}
+			}
+		}
 
 		if(Chart.chart.getSelection().length > 0){
 			var url = window.location.origin+window.location.pathname+"#/forrisco/risk/";
 			var msg = Messages.get("label.askGoToSelectedLevel");
 
-			Modal.incidentList(this.state.incidents, this.props.units, this.props.plan);
+			Modal.incidentList( threats, incidents, this.props.units, this.props.plan);
 		}
 	},
 
@@ -125,10 +134,40 @@ export default React.createClass({
 
 	},
 
+	onOpportunitiesChange(){
+		if(!this.state.threats && this.state.opportunities){
+			return
+		}
+
+		this.state.opportunities = !this.state.opportunities
+
+		this.setState({
+			opportunities: this.state.opportunities
+		})
+
+		this.onUnitChange(null)
+	},
+
+	onThreatsChange(){
+
+		if(this.state.threats && !this.state.opportunities){
+				return
+		}
+
+		this.state.threats = !this.state.threats
+
+		this.setState({
+			threats: this.state.threats
+		})
+
+		this.onUnitChange(null)
+	},
+
 	onUnitChange(evnt){
 		this.state.unit=this.refs['selectUnits'].value
 		this.LoadIncidents(this.refs['selectYear'].value,this.state.unit)
 	},
+
 
 	onYearChange(){
 		this.onUnitChange();
@@ -157,12 +196,17 @@ export default React.createClass({
 		for(i=0;i<incidents.length;i++){
 			var this_month=moment(incidents[i].begin,'DD/MM/YYYY hh:mm:ss').toDate().getMonth()
 
-			if(incidents[i].type==0){
+			if(incidents[i].type==1){
 				month_thr[this_month]+=1
 			}else{
 				month_opp[this_month]+=1
 			}
 		}
+
+		for(i=0;i<incidents.length;i++){
+
+		}
+
 
 		var month
 		if(year==(new Date).getFullYear()){
@@ -171,18 +215,53 @@ export default React.createClass({
 			month=12
 		}
 
-		data.push(['mes', 'ameaças', 'oportunidades'])
-		for(var i=0;i<month+1;i++){
-			data.push([mes[i], month_thr[i], month_opp[i]])
+
+		var max=0
+		var axis=[]
+		if(this.state.opportunities && this.state.threats){
+			axis.push(['mes', 'ameaças', 'oportunidades'])
+			for(var i=0;i<month;i++){
+				axis.push([mes[i], month_thr[i], month_opp[i]])
+
+				max=max<month_thr[i]? month_thr[i]: max
+				max=max<month_opp[i]? month_opp[i]: max
+
+			}
+		}else if(this.state.opportunities){
+			axis.push(['mes', 'oportunidades'])
+			for(var i=0;i<month;i++){
+				axis.push([mes[i], month_opp[i]])
+				max=max<month_opp[i]? month_opp[i]: max
+			}
+		}else{
+			axis.push(['mes', 'ameaças'])
+			for(var i=0;i<month;i++){
+				axis.push([mes[i], month_thr[i]])
+				max=max<month_thr[i]? month_thr[i]: max
+			}
 		}
 
+		var colors;
+		if(this.state.opportunities && this.state.threats){
+			colors=["red","blue"]
+		}else if(this.state.opportunities){
+			colors=["blue"]
+		}else{
+			colors=["red"]
+		}
+		this.state.options.colors=colors
+		this.state.options.vAxis.maxValue=max
+
 		this.setState({
-			data:data,
-			loading:false
+			data:axis,
+			loading:false,
+			options:this.state.options,
+
 		})
 	},
 
 	render() {
+
 		return (<div>
 			<div className="panel panel-default">
 				<div className="panel-heading dashboard-panel-title">
@@ -223,8 +302,12 @@ export default React.createClass({
 							onChangePage={this.getInfo}
 							chartEvents={this.state.chartEvents} />
 						<div className="colaborator-goal-performance-legend">
-							<span className="legend-item"><input type="text"  className="legend-risk-threats marginLeft10" disabled/> {Messages.getEditable("label.risk.threats","fpdi-nav-label")}</span>
-							<span className="legend-item"><input type="text"  className="legend-risk-opportunities marginLeft10" disabled/> {Messages.getEditable("label.risk.opportunities","fpdi-nav-label")}</span>
+							<span onClick={this.onThreatsChange}>
+								<span className="legend-item icon-link"  ><input type="text" className={"icon-link marginLeft10 legend-risk "+(this.state.threats ? "threat" :"") } disabled/> {Messages.getEditable("label.risk.threats","fpdi-nav-label")}</span>
+							</span>
+							<span onClick={this.onOpportunitiesChange}>
+								<span className="legend-item icon-link" ><input type="text"  className={"icon-link marginLeft10 legend-risk "+(this.state.opportunities ? "opportunities" :"") } disabled/> {Messages.getEditable("label.risk.opportunities","fpdi-nav-label")}</span>
+							</span>
 						</div>
 					</div>
 				}

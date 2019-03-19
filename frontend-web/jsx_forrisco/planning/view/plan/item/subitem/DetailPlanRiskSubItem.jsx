@@ -38,7 +38,7 @@ export default React.createClass({
 			}],
 			tabPath: "",
 			isLoading: true,
-			onEdit: false,
+			edit: false,
 			itemModel: null
 		};
 	},
@@ -63,7 +63,7 @@ export default React.createClass({
 					field: content,
 					isLoading: this.state.itemModel == null,
 					tabPath: this.props.location.pathname,
-					onEdit: false
+					edit: false
 				});
 
 			} else {
@@ -73,7 +73,7 @@ export default React.createClass({
 					field: [],
 					isLoading: false,
 					tabPath: this.props.location.pathname,
-					onEdit: false
+					edit: false
 				});
 			}
 
@@ -148,13 +148,13 @@ export default React.createClass({
 
 	onEdit() {
 		this.setState({
-			onEdit: true
+			edit: true
 		})
 	},
 
 	offEdit() {
 		this.setState({
-			onEdit: false
+			edit: false
 		})
 	},
 
@@ -162,9 +162,9 @@ export default React.createClass({
 		return (
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
-					<Link>
+					<Link onClick={this.onEdit}>
 						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels" onClick={this.onEdit}> Editar Informações </span>
+							<span id="menu-levels" > Editar Informações </span>
 						</span>
 					</Link>
 				</li>
@@ -241,7 +241,7 @@ export default React.createClass({
 						</span>
 					</h1>
 					{
-						this.state.onEdit === false ?
+						this.state.edit === false ?
 
 							this.state.field.map((field, key) => {
 

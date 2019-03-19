@@ -6,8 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-
+import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 import org.forrisco.core.plan.PlanRisk;
@@ -44,8 +43,10 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	//@SkipSerialization
 	@ManyToOne(targetEntity=PlanRisk.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRisk planRisk;
-	
 
+	@Transient
+	private Long riskSearchId;
+	
 	public Unit() {}
 	
 	public Unit(Unit unit) {
@@ -102,5 +103,18 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	public void setPlanRisk(PlanRisk plan) {
 		this.planRisk = plan;
 	}
+
+	public Long getRiskSearchId() {
+		return riskSearchId;
+	}
+
+	public void setRiskSearchId(Long riskSearchId) {
+		this.riskSearchId = riskSearchId;
+	}
+
+	public PlanRisk getPlanRisk() {
+		return planRisk;
+	}
+	
 
 }

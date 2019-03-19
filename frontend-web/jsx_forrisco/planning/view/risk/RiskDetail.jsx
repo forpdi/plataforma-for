@@ -33,7 +33,7 @@ export default React.createClass({
 			tabsHash: '',
 			tabsHidden: [],
 			showTabsHidden: false,
-			selected:0,
+			selected: this.props.selected? this.props.selected: 0,
 			riskModel:null,
 			visualization:true,
 			loading:true,
@@ -46,7 +46,7 @@ export default React.createClass({
 			if(model.success && (this.state.riskModel == null || model.data.id !=this.state.riskModel.id )){
 				this.setState({
 					riskModel:model.data,
-					selected:0,
+					//selected:0,
 					loading:false
 				})
 			}
@@ -153,6 +153,7 @@ export default React.createClass({
 	},*/
 
 	selectInfo(){
+
 		switch(this.state.selected){
 			case 0:
 				return(
@@ -221,7 +222,7 @@ export default React.createClass({
 			</div>
 
 			<div className={"frisco-link icon-link " + (this.state.selected ==3 ? "selecionado" :"")} onClick={() => this.setInfo(3)}>
-			Contigenciamento
+			Contingenciamento
 			</div>
 		</div>
 		)

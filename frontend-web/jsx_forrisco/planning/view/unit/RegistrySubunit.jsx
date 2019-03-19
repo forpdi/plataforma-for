@@ -51,7 +51,7 @@ export default React.createClass({
 		UnitStore.on("subunitCreated", (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess(Messages.get("notification.subunit.save"));
-				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${this.props.params.unitId}/subunit/${response.data.id}`);
+				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${this.props.params.unitId}/subunit/${response.data.id}/info`);
 			} else {
 				this.context.toastr.addAlertError("Erro ao criar Unidade");
 			}

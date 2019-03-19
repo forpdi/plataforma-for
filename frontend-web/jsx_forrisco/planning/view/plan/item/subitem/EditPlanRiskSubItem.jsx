@@ -100,6 +100,8 @@ export default React.createClass({
 		this.state.formFields.map( (fieldItem, index) => {
 			if (id === index){
 				fieldItem.editInstance = bool
+			}else{
+				fieldItem.editInstance = false
 			}
 		});
 
@@ -170,6 +172,9 @@ export default React.createClass({
 	},
 
 	toggleFields() {
+		this.state.formFields.map( (fieldsubitem, i) => {
+			fieldsubitem.editInstance=false
+		})
 		this.setState({
 			vizualization: true,
 		});

@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
@@ -633,8 +634,9 @@ public class UnitController extends AbstractController {
 				this.fail("plano não foi encontrado");
 			}
 			
-			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, itensSelect, ordResult);
-
+			Long[] itens=  (Long[]) ArrayUtils.addAll(itensSelect, subitensSelect); ;
+		
+			List<Unit> units = this.unitBS.listUnitTerms(planRisk, terms, itens, ordResult);
 			PaginatedList<Unit> result = TermResult(units, page, limit);
 			
 			this.success(result);

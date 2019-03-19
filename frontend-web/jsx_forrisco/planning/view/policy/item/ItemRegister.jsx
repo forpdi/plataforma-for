@@ -271,7 +271,6 @@ export default React.createClass({
 		if (this.state.itemModel) {
 			this.setState({
 				vizualization: true,
-				//fields: this.getFields()
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -279,9 +278,11 @@ export default React.createClass({
 	},
 
 	changeVizualization() {
+		this.state.fields.map( (fielditem, i) => {
+			fielditem.edit=false
+		})
 		this.setState({
 			vizualization: false,
-			//fields: this.getFields()
 		});
 	},
 
@@ -297,6 +298,9 @@ export default React.createClass({
 			},msg,me.refreshCancel);
 	},
 	tweakNewField() {
+		this.state.fields.map( (fielditem, i) => {
+			fielditem.edit=false
+		})
 		this.setState({
 			newField: !this.state.newField,
 			newFieldType: null
@@ -313,14 +317,18 @@ export default React.createClass({
 	getLength(){
 		return this.state.length++
 	},
+
 	editFunc(id,bool){
 		this.state.fields.map( (fielditem, i) => {
 			if (id==i){
 				fielditem.edit=bool
+			}else{
+				fielditem.edit=false
 			}
 		})
 		this.setState({
-			fields: this.state.fields
+			fields: this.state.fields,
+			newField:false,
 		})
 		return this.state.fields[id].isText ? null : this.state.fields[id].fileLink;
 	},
@@ -355,18 +363,16 @@ export default React.createClass({
 		})
 	},
 	cancelWrapper(evt) {
+		evt.preventDefault();
+
 		for (var i = 0; i < this.getField().length; i++) {
 			if (this.refs[this.getField().name])
 				this.refs[this.getField().name].refs.formAlertError.innerHTML = "";
 		}
-		evt.preventDefault();
-		if (typeof this.props.onCancel === 'function') {
-			this.props.onCancel();
-		} else {
-			hashHistory.goBack();
-		}
 
-		this.context.tabPanel.removeTabByPath(this.props.location.pathname); //Fecha aba ao cancelar
+
+		this.onCancel();
+		this.context.router.push("/forrisco/policy/" + this.props.params.policyId + "/item/"+this.props.params.itemId);
 	},
 
 	renderArchivePolicy() {
