@@ -406,6 +406,8 @@ export default React.createClass({
 		var fields = []
 		console.log("getProcesses", this.state.riskModel.processes)
 		this.state.riskModel.processes.list.map((fielditem, index) => {
+			var name= fielditem.process.objective +" - "+fielditem.process.name
+			console.log( fielditem.process.objective +" - "+fielditem.process.name)
 			fields.push({
 				name: "process-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
@@ -414,7 +416,7 @@ export default React.createClass({
 				linkName: "(Visualizar objetivo do processo)",
 				link: fielditem.linkFPDI,
 				maxLength: 100,
-				value: {name: fielditem.process.name, id:fielditem.process.id},
+				value: {name: name, id:fielditem.process.id},
 				optionsField: index == 0 ? this.getAllProcessesObjective() : null,
 				isvalue:true,
 			})
@@ -441,13 +443,14 @@ export default React.createClass({
 		var fields = []
 
 		this.state.riskModel.activities.list.map((fielditem, index) => {
+			var name=fielditem.name+" - "+fielditem.process.name
 			fields.push({
 				name: "activity-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
 				placeholder: "*",
 				maxLength: 100,
 				label: index == 0 ? (this.state.visualization ? "Atividade(s) do(s) processo(s) vinculado(s)" : "") : null,
-				value: {name: fielditem.name, id:fielditem.id},
+				value: {name: name, id:fielditem.id},
 				link: fielditem.linkFPDI,
 				linkName: "(Visualizar processo)",
 			})

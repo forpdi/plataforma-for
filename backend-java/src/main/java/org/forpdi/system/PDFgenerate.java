@@ -2981,7 +2981,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				"</body>\n" +
 				"</html>";
 		
-		Paragraph attTitleInfo = new Paragraph("Matrix De Risco", titulo);
+		Paragraph attTitleInfo = new Paragraph("Matriz De Risco", titulo);
 		attTitle.setLeading(interLineSpacing);
 		attTitle.setSpacingBefore(paragraphSpacing);
 		attTitle.setSpacingAfter(paragraphSpacing);
@@ -3052,6 +3052,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		}
 	}
 
+	
 	/*riscos*/
 	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws DocumentException, IOException {
 		
@@ -3375,7 +3376,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	}
 
 	
-	
 	/*unidade*/
 	private void generateUnitContent(File contentFile, String units, String subunits, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
 		
@@ -3411,6 +3411,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		if(sections !=null) {
 			for (int i = 0; i < sections.length; i++) {
 				Unit unit = this.unitBS.retrieveUnitById( Long.parseLong(sections[i]));
+				
+				if(unit ==null) {
+					 continue;
+				 }
 				//PaginatedList<FieldItem> fielditens;// = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<Unit> subs = this.unitBS.listSubunitByUnit(unit);
 				List <Unit> actualsubunits= new ArrayList<Unit>();	//lista de subitens selecionados
@@ -3609,7 +3613,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						cell = new PdfPCell(new Phrase(processes.get(k).getRelatedUnits().get(0).getName()));
 						table.addCell(cell);
 						
-						Chunk c = new Chunk(processes.get(k).getFile().getName(), 
+						Chunk c = new Chunk(processes.get(k).getFile() != null ? processes.get(k).getFile().getName() : "(link)", 
 								new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, WebColors.getRGBColor("#0085D9")));
 						c.setAnchor(processes.get(k).getFileLink());
 						//c.setAction(PdfAction.gotoRemotePage("http://mydomain/mypage","page1",false,true)); 
@@ -3790,80 +3794,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
-	private void generatePlanRiskContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
-		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
-		
-		writer.setPageEvent(event);
-		
-		File outputDir;
-
-		outputDir = contentFile.getParentFile();
-
-		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
-		
-		
-		String[] sections = null;
-		if (itens != null)
-			sections = itens.split(",");
-		
-		String[] subsections= null;
-		if (subitens != null)
-			subsections = subitens.split(",");
-		
-		int secIndex = 0;
-		int subSecIndex = 0;
-		boolean lastAttWasPlan = false;
-		boolean haveContent = false;
-
-		document.open();
-		document.add(new Chunk(""));
-		
-		//para cada item selecionado
-		if(sections !=null) {
-			for (int i = 0; i < sections.length; i++) {
-				PlanRiskItem planRiskItem = this.planriskItemkBS.retrievePlanRiskItembyId(Long.parseLong(sections[i]));
-				PaginatedList<PlanRiskItemField> planRiskItemField; //Lista de Campos dos Item
-				PaginatedList<PlanRiskSubItem> planRiskSubItem = this.planriskItemkBS.listSubItemByItem(planRiskItem);
-				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
-
-				//lista subitens selecionados
-				for(PlanRiskSubItem sub : planRiskSubItem.getList()) {
-					if(subsections != null) {
-						for (int j = 0; j < subsections.length; j++) {
-							if(sub.getId() == Long.parseLong(subsections[j])) {
-								actualsubitens.add(sub);
-							}
-						}
-					}
-				}
-
-				boolean secTitlePrinted = false;
-				subSecIndex = 0;
-				String secName = planRiskItem.getName();
-
-					
-				subSecIndex = 0;
-				secTitlePrinted=false;
 	
-				for (PlanRiskSubItem sub: actualsubitens) {
-						
-					haveContent = true;
-					subSecIndex++;
-					
-					String subSecName =sub.getName();
-				
-				}
-			
-			}
-
-		}
-
-		if (haveContent) {
-			document.close();
-		}
-		outputDir.delete();
-	}
 	
 	/*plano de risco*/
 	private void generatePlanRiskContent(File contentFile, Long planId, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
@@ -3943,6 +3874,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			for (int i = 0; i < sections.length; i++) {
 				
 				PlanRiskItem item = this.planRiskItemBS.exists(Long.parseLong(sections[i]), PlanRiskItem.class);//item altual
+				
+				if(item ==null) {
+					 continue;
+				 }
+				
 				PaginatedList<PlanRiskItemField> fielditens = this.planRiskItemBS.listFieldsByPlanRiskItem(item);//fields atual
 				PaginatedList<PlanRiskSubItem> subs = this.planRiskItemBS.listSubItemByItem(item);	//lista todos subitens
 				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
@@ -3957,7 +3893,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 					}
 				}
-					
+				
+				
 				//haveContent = true;
 				boolean secTitlePrinted = false;
 				subSecIndex = 0;
@@ -3969,6 +3906,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				
 				
 				for (PlanRiskItemField fielditem: fielditens.getList()) {
+					
+					
 					
 					haveContent = true;
 					
@@ -4221,9 +4160,84 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
+	/*private void generatePlanRiskContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
+		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
+		
+		writer.setPageEvent(event);
+		
+		File outputDir;
+
+		outputDir = contentFile.getParentFile();
+
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+		
+		
+		String[] sections = null;
+		if (itens != null)
+			sections = itens.split(",");
+		
+		String[] subsections= null;
+		if (subitens != null)
+			subsections = subitens.split(",");
+		
+		int secIndex = 0;
+		int subSecIndex = 0;
+		boolean lastAttWasPlan = false;
+		boolean haveContent = false;
+
+		document.open();
+		document.add(new Chunk(""));
+		
+		//para cada item selecionado
+		if(sections !=null) {
+			for (int i = 0; i < sections.length; i++) {
+				PlanRiskItem planRiskItem = this.planriskItemkBS.retrievePlanRiskItembyId(Long.parseLong(sections[i]));
+				PaginatedList<PlanRiskItemField> planRiskItemField; //Lista de Campos dos Item
+				PaginatedList<PlanRiskSubItem> planRiskSubItem = this.planriskItemkBS.listSubItemByItem(planRiskItem);
+				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
+
+				//lista subitens selecionados
+				for(PlanRiskSubItem sub : planRiskSubItem.getList()) {
+					if(subsections != null) {
+						for (int j = 0; j < subsections.length; j++) {
+							if(sub.getId() == Long.parseLong(subsections[j])) {
+								actualsubitens.add(sub);
+							}
+						}
+					}
+				}
+
+				boolean secTitlePrinted = false;
+				subSecIndex = 0;
+				String secName = planRiskItem.getName();
+
+					
+				subSecIndex = 0;
+				secTitlePrinted=false;
+	
+				for (PlanRiskSubItem sub: actualsubitens) {
+						
+					haveContent = true;
+					subSecIndex++;
+					
+					String subSecName =sub.getName();
+				
+				}
+			
+			}
+
+		}
+
+		if (haveContent) {
+			document.close();
+		}
+		outputDir.delete();
+	}
+	*/
 	
 	
-	
+
 	
 	/**
 	 * Cria arquivo pdf  para exportar relatório  

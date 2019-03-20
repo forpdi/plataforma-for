@@ -39,18 +39,12 @@ public class RiskProcess extends SimpleLogicalDeletableEntity {
 	
 	@Column(nullable=false, length=1000)
 	private String linkFPDI;
-
-	@Column(nullable=false, length=400)
-	private String name;
-
 	
 	public RiskProcess() {}
 	
 	public RiskProcess(RiskProcess riskprocess) {
 		this.linkFPDI =riskprocess.getLinkFPDI();
-		this.name =riskprocess.getName();
 	}
-
 
 
 	public Risk getRisk() {
@@ -77,13 +71,5 @@ public class RiskProcess extends SimpleLogicalDeletableEntity {
 		this.linkFPDI = linkFPDI;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	
 }
