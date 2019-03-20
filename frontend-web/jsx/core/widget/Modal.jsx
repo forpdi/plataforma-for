@@ -708,7 +708,7 @@ var Modal = {
 		this.show();
 	},
 
-	incidentList(incidents) {
+	incidentModal(incidents) {
 		var me = this;
 		ReactDOM.render((
 			<IncidentsList incidents={incidents} redirect={this.hide.bind(this)}/>

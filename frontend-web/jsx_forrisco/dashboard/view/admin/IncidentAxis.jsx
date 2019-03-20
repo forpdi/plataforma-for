@@ -110,20 +110,35 @@ export default React.createClass({
 	},
 
 	onChartClick(Chart) {
-		var incidents = [];
+		const incidents = [];
 
-		for (var i in this.state.incidents) {
-			if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
-				if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row) {
-					if (this.state.incidents[i].type == Chart.chart.getSelection()[0].column) {
-						incidents.push(this.state.incidents[i])
+		if(this.refs['selectUnits'].value == -1) {
+			for (var i in this.state.incidents) {
+				if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
+					if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row) {
+						if (this.state.incidents[i].type == Chart.chart.getSelection()[0].column) {
+							incidents.push(this.state.incidents[i])
+						}
+					}
+				}
+			}
+		} else {
+			for (var i in this.state.incidents) {
+				if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
+					if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row) {
+						if (this.state.incidents[i].type == Chart.chart.getSelection()[0].column) {
+							if(this.state.incidents[i].unitId == this.refs['selectUnits'].value) {
+								incidents.push(this.state.incidents[i])
+							}
+						}
 					}
 				}
 			}
 		}
 
+		console.log(incidents);
 		if (Chart.chart.getSelection().length > 0) {
-			Modal.incidentList(incidents);
+			Modal.incidentModal(incidents)
 		}
 		Chart.chart.setSelection(false);
 	},
@@ -137,11 +152,11 @@ export default React.createClass({
 			return
 		}
 
-		this.state.opportunities = !this.state.opportunities
+		this.state.opportunities = !this.state.opportunities;
 
 		this.setState({
 			opportunities: this.state.opportunities
-		})
+		});
 
 		this.onUnitChange(null)
 	},
@@ -216,15 +231,9 @@ export default React.createClass({
 		}
 
 		var month;
-		if (year == (new Date).getFullYear()) {
-			month = (new Date).getMonth()
-		} else {
-			month = 12
-		}
+		if (year == (new Date).getFullYear()) { month = (new Date).getMonth()} else {month = 12}
 
-
-		var max = 0;
-		var axis = [];
+		var max = 0; var axis = [];
 		if (this.state.opportunities && this.state.threats) {
 			axis.push(['mes', 'ameaças', 'oportunidades'])
 			for (var i = 0; i <= month; i++) {
@@ -264,10 +273,7 @@ export default React.createClass({
 			loading: false,
 			options: this.state.options,
 
-		})
-
-		console.log(this.state.incidents);
-		console.log(this.state.data);
+		});
 	},
 
 	render() {
