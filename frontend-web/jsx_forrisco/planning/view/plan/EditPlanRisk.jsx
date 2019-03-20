@@ -2,10 +2,13 @@ import React from "react";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import Messages from "@/core/util/Messages";
+import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import _ from "underscore";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem";
+
+var Validate = Validation.validate;
 
 export default React.createClass({
 	contextTypes: {
@@ -46,13 +49,11 @@ export default React.createClass({
 		PlanRiskStore.on('retrivedplanrisk', response => {
 			var fields = [];
 
-			console.log(this.state.policyOptions.length);
-
-
 			fields.push({
 				name: "name",
 				type: "text",
-				//required: true,
+				ref: "newfield-name",
+				required: true,
 				maxLength: 240,
 				placeholder: "Nome do Plano de Gestão de Riscos",
 				label: Messages.getEditable("label.name", "fpdi-nav-label"),
@@ -82,7 +83,6 @@ export default React.createClass({
 				isLoading: false
 			});
 
-
 			_.defer(() => {
 				this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);
 			});
@@ -110,6 +110,11 @@ export default React.createClass({
 	handleSubmit(event) {
 		event.preventDefault();
 		const formData = new FormData(event.target);
+
+		if (formData.get('name') === '') {
+			this.context.toastr.addAlertError(Messages.get("label.error.form"));
+			return false;
+		}
 
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_EDIT_PLANRISK,
