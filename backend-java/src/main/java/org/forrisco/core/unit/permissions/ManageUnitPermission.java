@@ -1,13 +1,13 @@
-package org.forrisco.core.policy.permissions;
+package org.forrisco.core.unit.permissions;
 
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permission;
 
-public class ManagePlanRiskPermission extends Permission {
+public class ManageUnitPermission extends Permission {
 
 	@Override
 	public String getDisplayName() {
-		return "Gerenciar Plano de Risco";
+		return "Gerenciar Unidades";
 	}
 
 	@Override
@@ -17,6 +17,6 @@ public class ManagePlanRiskPermission extends Permission {
 
 	@Override
 	public String getDescription() {		
-		return "Criar plano de risco, Editar informações do plano de risco, Duplicar plano de risco, Arquivar plano de risco";
+		return "Criar unidade e subunidade, Editar informações de unidade e subunidade, Excluir unidade e subunidade";
 	}
 }
