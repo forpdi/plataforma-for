@@ -249,15 +249,6 @@ var Validate = {
 			}
 		}
 
-
-		/*if(description.trim() == "") {
-			//newfield['formAlertErrorDescription'].innerHTML = Messages.get("label.alert.fieldEmpty");
-			errorField = true;
-		} else {
-			//newfield['formAlertErrorDescription'].innerHTML = "";
-		}*/
-
-
 		var aux = {
 			errorField: errorField,
 			name: name,
@@ -290,6 +281,110 @@ var Validate = {
 		}
 		return aux;
 
+	},
+
+
+	validationRiskRegister: function(data, refs) {
+		var msg=""
+
+		var name = refs["field-name"].refs.name
+		var code = refs["field-0"].refs.code
+		var user = refs["field-1"].refs.user
+		var probability = refs["field-4"].refs.probability
+		var impact = refs["field-5"].refs.impact
+		var periodicity = refs["field-7"].refs.periodicity
+		var tipology = refs["field-8"].refs.tipology
+		var type = refs["field-9"].refs.type
+
+		if(name.refs["field-name"].value != null){
+			if(name.refs["field-name"].value==""){
+				name.refs["field-name"].className +=" borderError"
+				name.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				name.refs["field-name"].className	="form-control"
+				name.refs["formAlertError"].innerHTML=""
+			}
+		}
+
+		if(code.refs["field-code"].value != null){
+			if(code.refs["field-code"].value==""){
+				code.refs["field-code"].className +=" borderError"
+				code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				code.refs["field-code"].className="form-control"
+				code.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(user.refs["field-user"].value != null){
+			if(user.refs["field-user"].value==""){
+				user.refs["field-user"].className +=" borderError"
+				user.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				user.refs["field-user"].className="form-control"
+				user.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(probability.refs["field-probability"] != null){
+			if(probability.refs["field-probability"].value==""){
+				probability.refs["field-probability"].className +=" borderError"
+				probability.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				probability.refs["field-probability"].className="form-control"
+				probability.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(impact.refs["field-impact"] != null){
+			if(impact.refs["field-impact"].value==""){
+				impact.refs["field-impact"].className +=" borderError"
+				impact.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				impact.refs["field-impact"].className="form-control"
+				impact.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(periodicity.refs["field-periodicity"] != null){
+			if(periodicity.refs["field-periodicity"].value==""){
+				periodicity.refs["field-periodicity"].className +=" borderError"
+				periodicity.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				periodicity.refs["field-periodicity"].className="form-control"
+				periodicity.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(tipology.refs["field-tipology"] != null){
+			if(tipology.refs["field-tipology"].value==""){
+				tipology.refs["field-tipology"].className +=" borderError"
+				tipology.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				tipology.refs["field-tipology"].className="form-control"
+				tipology.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		if(type.refs["field-type"] != null){
+			if(type.refs["field-type"] .value==""){
+				type.refs["field-type"] .className +=" borderError"
+				type.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				if(msg==""){msg="Nome precisa estar preenchido."}
+			}else{
+				type.refs["field-type"] .className="form-control"
+				type.refs["formAlertError"].innerHTML = ""
+			}
+		}
+
+		return msg
 	}
 }
 

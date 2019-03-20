@@ -175,7 +175,6 @@ public class RiskBS extends HibernateBusiness {
 
 			Process process = this.dao.exists(riskprocess.getProcess().getId(), Process.class);
 
-			//riskprocess.setName(process.getObjective() + " - " + process.getName());
 			riskprocess.setProcess(process);
 
 			// pegar link correto da unidade que contem o processo
