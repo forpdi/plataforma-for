@@ -41,7 +41,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-		this.state.fieldContent=newProps.field.fieldContent;
+		this.state.fieldContent = newProps.field.fieldContent;
 	},
 
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
@@ -109,8 +109,6 @@ export default React.createClass({
 			return false;
 		}
 
-
-
 		if (!validation.errorField) {
 			if (validation.type.s === this.state.types[0].id) {
 				this.props.fields.push({
@@ -147,8 +145,8 @@ export default React.createClass({
 		}
 
 		if(!validation.errorField) {
-			this.props.editRichTextField(this.state.fieldContent, this.props.index)
-			this.props.editFieldTitle(validation.name.s, this.props.index)
+			this.props.editRichTextField(this.state.fieldContent, this.props.index);
+			this.props.editFieldTitle(validation.name.s, this.props.index);
 			this.props.setFieldValue(this.props.field, this.props.index);
 		}
 	},
@@ -174,7 +172,7 @@ export default React.createClass({
 	},
 
 	resetTypes() {
-		this.props.editFields(this.props.index,false);
+		this.props.editFields(this.props.index, false);
 	},
 
 	setImgValue(fieldImg) {
@@ -272,10 +270,11 @@ export default React.createClass({
 	},
 
 	render() {
-
+		console.log(this.props.fields, this.props.index);
 		return (
 			<div>
-				{this.props.field ?
+				{
+					this.props.field ?
 
 					<div>
 						{
@@ -480,7 +479,7 @@ export default React.createClass({
 
 					</div>
 
-					//CADASTRAMENTO
+					//CADASTRAMENTO - Quando não á nenhum campo adicionado
 					:
 
 					<div className="form-group form-group-sm marginTop20">
