@@ -134,9 +134,8 @@ export default React.createClass({
 		PlanRiskItemStore.on('deletePlanRiskSubItem', response => {
 			if(response.success === true) {
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
-				this.context.router.push(
-					"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.planRiskId + "/info"
-				);
+				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.itemId);
+				this.forceUpdate()
 			}
 			PlanRiskItemStore.off('deletePlanRiskSubItem');
 		})

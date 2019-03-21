@@ -711,8 +711,7 @@ export default React.createClass({
 		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
 
-
-		data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex].id }
+		data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
 		data['unit'] = { id: this.props.params.unitId }
 
 		data["risk_pdi"] = this.state.risk_pdi
