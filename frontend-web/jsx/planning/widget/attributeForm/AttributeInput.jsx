@@ -327,11 +327,15 @@ export default React.createClass({
 					onChange={this.props.fieldDef.onChange || _.noop}
 					defaultValue={this.props.fieldDef.value}
 					>
-						{this.props.fieldDef.optionsField ? this.props.fieldDef.optionsField.map((opt,idx) => {
-							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} defaultValue={opt.get ? opt.label : ""}
-								data-placement="right" title={opt.label}>
-									{opt.label}</option>);
-						}):''}
+					{this.props.fieldDef.value ==null ?
+						<option value="" disabled selected>{this.props.fieldDef.placeholder}</option >
+						: <option value="" disabled>{this.props.fieldDef.placeholder}</option >
+					}
+					{this.props.fieldDef.optionsField ? this.props.fieldDef.optionsField.map((opt,idx) => {
+						return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} defaultValue={opt.label ? opt.label : null}
+							data-placement="right" title={opt.label}>
+								{opt.label}</option>);
+					}):''}
 				</select>
 			);
 		} else if (this.props.fieldDef.type == AttributeTypes.RESPONSIBLE_FIELD) {

@@ -68,21 +68,6 @@ export default React.createClass({
 				id: this.props.planRisk.id,
 			};
 
-			//Botão Novo Item Geral
-			var newItem = {
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
-				key: "newPlanRiskItem"
-			};
-
-			/* Redireciona para as Informações gerais ao carregar a Tree*/
-			//if (!this.props.location.pathname.includes("unit")) {
-		//		this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");this.context.router.push("/forrisco/plan-risk/" + this.props.planRisk.id + "/item/overview");// + this.props.planRisk.id + "/info");
-		//	}
-			/* ____________________  */
-
 			response.data.map(itens => {
 				var linkToItem = '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + itens.id;
 
@@ -101,7 +86,17 @@ export default React.createClass({
 			});
 
 			treeItens.unshift(info);
-			treeItens.push(newItem);
+			if (this.context.roles.ADMIN ||
+					_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION)) {
+				var newItem = {
+					label: Messages.get("label.newItem"),
+					labelCls: 'fpdi-new-node-label',
+					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+					to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/new',
+					key: "newPlanRiskItem"
+				};
+				treeItens.push(newItem);
+			}
 
 			this.setState({treeItens: treeItens, hiddenResultSearch: false});
 			this.forceUpdate();
@@ -112,15 +107,6 @@ export default React.createClass({
 
 			var fieldTree = [];
 			var toNewSubItem = '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + node.node.id + "/subitem/new";
-
-			//Botão Novo SubItem
-			var newItemSubItem = {
-				label: "Novo Subitem",
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: toNewSubItem,
-				key: "newPlanRiskSubItem"
-			};
 
 			response.data.map(subField => {
 				var toSubItem = '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/' + node.node.id + "/subitem/" + subField.id;
@@ -133,7 +119,18 @@ export default React.createClass({
 				})
 			});
 
-			fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+			if (this.context.roles.ADMIN ||
+					_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION)) {
+				//Botão Novo SubItem
+				var newItemSubItem = {
+					label: "Novo Subitem",
+					labelCls: 'fpdi-new-node-label',
+					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+					to: toNewSubItem,
+					key: "newPlanRiskSubItem"
+				};
+				fieldTree.push(newItemSubItem);  //Adiciona o Botão de Novo SubItem
+			}
 
 			node.node.children = fieldTree;
 			this.setState({treeSubitens: fieldTree});

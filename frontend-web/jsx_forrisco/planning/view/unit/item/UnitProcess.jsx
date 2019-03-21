@@ -12,11 +12,14 @@ import Messages from "@/core/util/Messages";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
+		roles: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState() {
@@ -45,7 +48,7 @@ export default React.createClass({
 			_.map(filteredProcesses, (value, idx) => {
 				_.assign(
 					value,
-					{ tools: value.unitCreator.id == this.props.unitId ? this.getTools(idx) : null},
+					{ tools: value.unitCreator.id == this.props.unitId && this.isPermissionedUser() ? this.getTools(idx) : null},
 					{
 						fileData: {
 							fileName: value.file.name,
@@ -53,7 +56,7 @@ export default React.createClass({
 						}
 					}
 				)
-			})
+			});
 
 			this.setState({
 				processes:filteredProcesses,
@@ -63,7 +66,7 @@ export default React.createClass({
 			});
 
 
-		});
+		}, this);
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
@@ -75,7 +78,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		ProcessStore.on('processDeleted', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
@@ -87,7 +90,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		ProcessStore.on('processUpdated', response => {
 			if (response.success) {
 				ProcessStore.dispatch({
@@ -99,7 +102,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		});
+		}, this);
 		UnitStore.on('allunitsbyplan', response => {
 
 			const filteredUnits = _.filter(response.data, unit => (
@@ -112,26 +115,44 @@ export default React.createClass({
 					data: unit,
 				})),
 			});
-		});
+		}, this);
+		this.refreshComponent(this.props.unitId, this.props.planRiskId);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if(newProps.unitId !== this.props.unitId) {
+			this.refreshComponent(newProps.unitId, newProps.planRiskId)
+		}
+	},
+
+	refreshComponent(unitId, planRiskId) {
 		ProcessStore.dispatch({
 			action: ProcessStore.ACTION_LIST_BY_UNIT,
 			data: {
-				id: this.props.unitId,
+				id: unitId,
 			},
 		});
 
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
-			data: this.props.planRiskId,
+			data: planRiskId,
 		});
 	},
 
 	componentWillUnmount() {
-		ProcessStore.off('processListedByUnit');
-		ProcessStore.off('processCreated');
-		ProcessStore.off('processDeleted');
-		ProcessStore.off('processUpdated');
-		UnitStore.off('unitbyplan');
+		// ProcessStore.off('processListedByUnit');
+		// ProcessStore.off('processCreated');
+		// ProcessStore.off('processDeleted');
+		// ProcessStore.off('processUpdated');
+		// UnitStore.off('unitbyplan');
+		ProcessStore.off(null, null, this);
+		UnitStore.off(null, null, this);
+	},
+
+	isPermissionedUser() {
+		return (this.context.roles.MANAGER ||
+			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PROCESS_PERMISSION)
+		);
 	},
 
 	insertNewRow() {
@@ -469,9 +490,11 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-          PROCESSOS DA UNIDADE
-          <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
-        </div>
+          			PROCESSOS DA UNIDADE
+					{
+						this.isPermissionedUser() && <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
+					}
+        		</div>
 				<ReactTable
 					data={this.state.processes}
 					columns={columns}

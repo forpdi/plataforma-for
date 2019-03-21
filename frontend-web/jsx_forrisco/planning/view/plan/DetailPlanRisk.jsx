@@ -37,6 +37,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+
 		UnitStore.on('retrivedunit', (response) => {
 			if (response !== null) {
 				this.setState({

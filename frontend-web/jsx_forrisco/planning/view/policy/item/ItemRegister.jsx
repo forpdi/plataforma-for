@@ -1,6 +1,7 @@
 import _ from 'underscore';
 import React from "react";
-import {Link, hashHistory} from "react-router";
+import { Link } from "react-router";
+
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
@@ -514,8 +515,9 @@ export default React.createClass({
 								: this.state.itemModel.attributes.name
 							}
 							{
-								this.state.model && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true
-								?
+								(this.context.roles.ADMIN ||
+									_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION))
+								&&
 								<span className="dropdown">
 									<a
 										className="dropdown-toggle"
@@ -529,8 +531,6 @@ export default React.createClass({
 									</a>
 									{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
 								</span>
-								:
-								""
 							}
 						</h1>
 

@@ -7,11 +7,12 @@ import { Button } from 'react-bootstrap';
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
+		roles: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
 		toastr: React.PropTypes.object.isRequired,
 	},
 
@@ -32,7 +33,7 @@ export default React.createClass({
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
 						_.assign(value, {
-							tools: this.renderRowTools(value.id, idx),
+							tools: this.isPermissionedUser() ? this.renderRowTools(value.id, idx) : null,
 						})
 					)),
 					isLoading: false,
@@ -42,6 +43,7 @@ export default React.createClass({
 				this.changeAccomplishmentData();
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção cadastrada com sucesso.");
@@ -58,6 +60,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar ação de prevenção.");
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção excluída com sucesso.");
@@ -74,6 +77,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir ação de prevenção.");
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção atualizada com sucesso.");
@@ -90,6 +94,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar ação de prevenção.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -104,12 +109,9 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-
+		}, this);
 		this.refresh(this.props.risk.id)
-
 	},
-
 
 	refresh(riskId){
 		RiskStore.dispatch({
@@ -136,6 +138,12 @@ export default React.createClass({
 	componentWillUnmount() {
 		RiskStore.off(null, null, this);
 		UserStore.off(null, null, this);
+	},
+
+	isPermissionedUser() {
+		return (this.context.roles.MANAGER ||
+			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION)
+		);
 	},
 
 	changeAccomplishmentData() {
@@ -362,18 +370,20 @@ export default React.createClass({
 
 	renderAccomplishmentOnList(accomplished, id, idx) {
 		return (
-			<VerticalInput
-				className="accomplishment-radio"
-				fieldDef={{
-					name: `new-preventive-action-accomplishment${idx}`,
-					type: "radio",
-					options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
-					valueField: 'value',
-					value: accomplished,
-					renderDisplay: value => value.label,
-					onClick: e => {this.updateOnAccomplishmentChange(e, idx)},
-				}}
-			/>
+			this.isPermissionedUser()
+				? <VerticalInput
+					className="accomplishment-radio"
+					fieldDef={{
+						name: `new-preventive-action-accomplishment${idx}`,
+						type: "radio",
+						options: [{ label: "Sim", value: true }, { label: "Não", value: false }],
+						valueField: 'value',
+						value: accomplished,
+						renderDisplay: value => value.label,
+						onClick: e => {this.updateOnAccomplishmentChange(e, idx)},
+					}}
+				/>
+				: <span>{accomplished ? 'Sim' : 'Não'}</span>
 		);
 	},
 
@@ -426,7 +436,10 @@ export default React.createClass({
 			<div className="general-table">
 				<div className='table-outter-header'>
 					AÇÕES DE PREVENÇÃO
-                    <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					{
+						this.isPermissionedUser() &&
+						<Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					}
                 </div>
 				<ReactTable
 					data={this.state.data}

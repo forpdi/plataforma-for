@@ -1,16 +1,13 @@
 import React from "react";
-import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import {Link} from "react-router";
-import Form from "@/planning/widget/attributeForm/AttributeForm";
-import Validation from "forpdi/jsx_forrisco/core/util/Validation";
+import _ from "underscore";
+
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import EditPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/EditPlanRiskItem.jsx";
 import Messages from "forpdi/jsx/core/util/Messages";
 import Modal from "@/core/widget/Modal";
-import _ from "underscore";
-
-var VerticalForm = Form.VerticalForm;
-var Validate = Validation.validate;
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
@@ -109,10 +106,7 @@ export default React.createClass({
 
 		Modal.confirmCustom(() => {
 			Modal.hide();
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DELETE_ITEM,
-				data: this.props.params.itemId
-			});
+			this.dispatchDelete(this.props.params.itemId);
 		}, msg, me.refreshCancel);
 
 		PlanRiskItemStore.on('deletePlanRiskItem', response => {
@@ -125,7 +119,15 @@ export default React.createClass({
 
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
 			}
+			PlanRiskItemStore.off('deletePlanRiskItem');
 		})
+	},
+
+	dispatchDelete(itemId) {
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DELETE_ITEM,
+			data: itemId
+		});
 	},
 
 	refreshCancel () {
@@ -209,19 +211,23 @@ export default React.createClass({
 				<div className="fpdi-card fpdi-card-full floatLeft">
 					<h1>
 						{this.state.itemTitle}
+						{
+							(this.context.roles.ADMIN ||
+								_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION))
+							&&
+							<span className="dropdown">
+								<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="true"
+								title={Messages.get("label.actions")}>
 
-						<span className="dropdown">
-							<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-							   aria-expanded="true"
-							   title={Messages.get("label.actions")}>
+									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+									<span className="mdi mdi-chevron-down" />
 
-								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down" />
+								</a>
 
-							</a>
-
-							{this.renderDropdown()}
-						</span>
+								{this.renderDropdown()}
+							</span>
+						}
 					</h1>
 					{
 						this.state.onEdit === false ?
