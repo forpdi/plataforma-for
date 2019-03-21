@@ -312,7 +312,8 @@ public class CompanyController extends AbstractController {
 	@Post("/api/company/messages")
 	@NoCache
 	@Consumes
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {EditMessagesPermission.class})
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { EditMessagesPermission.class,
+			org.forrisco.core.authz.permissions.EditMessagesPermission.class })
 	public void updateMessageOverlay(@NotEmpty String key, @NotEmpty String value) {
 		try {
 			CompanyDomain domain = this.bs.currentDomain();

@@ -14,9 +14,7 @@ import org.forpdi.dashboard.manager.IndicatorHistory;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.attribute.AttributeHelper;
 import org.forpdi.planning.attribute.AttributeInstance;
-import org.forpdi.planning.fields.FieldsBS;
 import org.forpdi.planning.fields.budget.Budget;
-import org.forpdi.planning.fields.budget.BudgetDTO;
 import org.forpdi.planning.filters.PeformanceFilterType;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanBS;
@@ -39,8 +37,6 @@ public class DashboardController extends AbstractController {
 	private PlanBS planBS;
 	@Inject
 	private DashboardBS bs;
-	@Inject
-	private FieldsBS fbs;
 	@Inject
 	private AttributeHelper attrHelper;
 	@Inject
