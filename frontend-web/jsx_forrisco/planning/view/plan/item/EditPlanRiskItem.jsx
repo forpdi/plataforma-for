@@ -251,7 +251,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}

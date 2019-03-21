@@ -233,26 +233,28 @@ export default React.createClass({
 			return <LoadingGauge />;
 		}
 
-		return (<div className="fpdi-card fpdi-card-full floatLeft">
-			<h1>
-				{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}
-				<span className="dropdown">
+		return (
+			<div className="fpdi-card fpdi-card-full floatLeft">
+				<h1>
+					{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}
+					<span className="dropdown">
 						<a	className="dropdown-toggle"
 							data-toggle="dropdown"
 							aria-haspopup="true"
 							aria-expanded="true"
 							title={Messages.get("label.actions")}
-							>
+						>
 							<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
 							<span className="mdi mdi-chevron-down" />
 						</a>
-							{this.renderUnarchiveRisk()}
-				</span>
-			</h1>
+						{this.renderUnarchiveRisk()}
+					</span>
+				</h1>
 				<div>
-				{this.header()}
-			</div>
+					{this.header()}
+				</div>
 				{this.selectInfo()}
-		</div>);
-	  }
+			</div>
+		);
+  }
 });
