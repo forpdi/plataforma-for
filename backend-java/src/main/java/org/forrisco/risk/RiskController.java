@@ -1090,9 +1090,7 @@ public class RiskController extends AbstractController {
 				 
 			 
 				 this.riskBS.delete(risk);
-				 this.success();
-
-			
+				 this.success(risk);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());

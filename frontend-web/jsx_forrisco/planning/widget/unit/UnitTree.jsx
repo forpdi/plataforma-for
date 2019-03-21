@@ -62,6 +62,7 @@ export default React.createClass({
 					label: item.name,
 					expanded: false,
 					expandable: true,
+					startExpanded: false,
 					to: linkToItem,
 					key: linkToItem,
 					model: item,
@@ -90,12 +91,13 @@ export default React.createClass({
 			const fieldTree = [];
 
 			//Botão Novo SubItem
-			 _.forEach(response.data, subunit => {
+			_.forEach(response.data, subunit => {
 				const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/${subunit.id}/info`;
 				fieldTree.push({
 					label: subunit.name,
 					expanded: false,
 					expandable: true,
+					startExpanded: false,
 					to: toSubunit,
 					key: toSubunit,
 					model: subunit,
@@ -128,7 +130,7 @@ export default React.createClass({
 			const fieldTree = subunitTree;
 
 			//Botão Novo SubItem
-			 response.data.map(risk => {
+			response.data.map(risk => {
 				fieldTree.push({
 					label: risk.name,
 					iconCls: 'mdi mdi-play pointer',
@@ -188,17 +190,81 @@ export default React.createClass({
 				'newRisk',
 			);
 
-			node.node.children = [...node.node.children, ...fieldTree];
+			node.node.children = fieldTree
 			me.forceUpdate();
 		}, me);
 
-		RiskStore.on("riskcreated", () => {
-			this.refresh(this.props.planRisk.id);
-		}, this);
+		RiskStore.on("riskDelete", (reponse) => {
+			const risk = reponse.data
+			const unitId = reponse.data.unit.id
 
-		RiskStore.on("riskDelete", () => {
-			this.refresh(this.props.planRisk.id);
-		}, this);
+			//unidades
+			for (var i = 0; i < this.state.treeItensUnit.length - 1; i++) {
+				if (this.state.treeItensUnit[i].id == unitId) {
+					//riscos
+					for (var k = 0; k < this.state.treeItensUnit[i].children.length; k++) {
+						if (this.state.treeItensUnit[i].children[k].id == risk.id) {
+
+							if (!this.state.treeItensUnit[i].expanded) { this.state.treeItensUnit[i].startExpanded = true }
+
+							this.state.treeItensUnit[i].children.splice(k, 1)
+							this.setState({ treeItensUnit: this.state.treeItensUnit });
+							return;
+						}
+					}
+
+				} else {
+					//subunidades
+					for (var j = 0; j < this.state.treeItensUnit[i].children.length - 2; j++) {
+						if (this.state.treeItensUnit[i].children[j].id == unitId) {
+							//riscos
+							for (var k = 0; k < this.state.treeItensUnit[i].children[j].children.length; k++) {
+								if (this.state.treeItensUnit[i].children[j].children[k].id == risk.id) {
+
+									if (!this.state.treeItensUnit[i].expanded) { this.state.treeItensUnit[i].startExpanded = true }
+									if (!this.state.treeItensUnit[i].children[j].expanded) { this.state.treeItensUnit[i].children[j].startExpanded = true }
+
+									this.state.treeItensUnit[i].children[j].children.splice(k, 1)
+									this.setState({ treeItensUnit: this.state.treeItensUnit });
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}, me)
+
+		RiskStore.on("riskcreated", (reponse) => {
+			const risk = reponse.data
+			const unitId = reponse.data.unit.id
+
+			const risknode={
+				label: risk.name,
+				iconCls: 'mdi mdi-play pointer',
+				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
+				key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
+				id: risk.id,
+			}
+
+			//unidades
+			for (var i = 0; i < this.state.treeItensUnit.length - 1; i++) {
+				if (this.state.treeItensUnit[i].id == unitId) {
+					this.state.treeItensUnit[i].children.splice( this.state.treeItensUnit[i].children.length-2, 0, risknode);
+					this.setState({ treeItensUnit: this.state.treeItensUnit });
+					return;
+				}else{
+					//subunidades
+					for (var j = 0; j < this.state.treeItensUnit[i].children.length - 2; j++) {
+						if (this.state.treeItensUnit[i].children[j].id == unitId) {
+							this.state.treeItensUnit[i].children[j].children.splice( this.state.treeItensUnit[i].children[j].children.length-1, 0, risknode);
+							this.setState({ treeItensUnit: this.state.treeItensUnit });
+							return;
+						}
+					}
+				}
+			}
+		}, me)
 
 		UnitStore.on('unitDeleted', response => {
 			if (response.data) {
@@ -227,10 +293,11 @@ export default React.createClass({
 				const unit = response.data;
 				const { treeItensUnit } = this.state;
 				const linkToUnit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unit.id}/info`;
-				treeItensUnit.splice(treeItensUnit.length - 2, 0, {
+				treeItensUnit.splice(treeItensUnit.length - 1, 0, {
 					label: unit.name,
 					expanded: false,
-					expandable: true, //Mudar essa condição para: Se houver subitem
+					expandable: true,
+					startExpanded: true,
 					to: linkToUnit,
 					key: linkToUnit,
 					model: unit,
@@ -289,13 +356,18 @@ export default React.createClass({
 				const subunit = response.data;
 				const treeItensUnit = _.map(this.state.treeItensUnit, unitItem => {
 					if (unitItem.id && unitItem.id === subunit.parent.id) {
-						const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitItem.id}/subunit/${subunit.id}`;
+						const toSubunit = `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitItem.id}/subunit/${subunit.id}/info`;
 						const { children } = unitItem;
 						children.splice(children.length - 2, 0, {
+							expanded: false,
+							expandable: true,
+							startExpanded: true,
 							label: subunit.name,
 							to: toSubunit,
 							key: toSubunit,
 							id: subunit.id,
+							onExpand: this.expandRoot,
+							onShrink: this.shrinkRoot
 						});
 					}
 					return unitItem;
@@ -320,7 +392,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if(newProps.planRisk.id !== this.props.planRisk.id) {
+		if (newProps.planRisk.id !== this.props.planRisk.id) {
 			this.refresh(newProps.planRisk.id)
 		}
 	},
@@ -330,14 +402,14 @@ export default React.createClass({
 			treeItensUnit.push({
 				label,
 				labelCls: 'fpdi-new-node-label',
-				iconCls,
+				iconCls: 'mdi mdi-plus',
 				to,
 				key,
 			});
 		}
 	},
 
-	refresh(planRiskId){
+	refresh(planRiskId) {
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
 			data: planRiskId,
@@ -349,29 +421,31 @@ export default React.createClass({
 	},
 
 	expandRoot(nodeProps, nodeLevel) {
+		nodeProps.startExpanded = false
+
 		switch (nodeLevel) {
 			case 0:
-			UnitStore.dispatch({
-				action: UnitStore.ACTION_LIST_SUBUNIT,
-				data: {
-					unitId: nodeProps.id
-				},
-				opts: {
-					node: nodeProps
-				}
-			});
-			break;
+				UnitStore.dispatch({
+					action: UnitStore.ACTION_LIST_SUBUNIT,
+					data: {
+						unitId: nodeProps.id
+					},
+					opts: {
+						node: nodeProps
+					}
+				});
+				break;
 			case 1:
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_FIND_BY_SUBUNITS,
-				data: {
-					unit: nodeProps,
-				},
-				opts: {
-					node: nodeProps,
-				},
-			});
-			break;
+				RiskStore.dispatch({
+					action: RiskStore.ACTION_FIND_BY_SUBUNITS,
+					data: {
+						unit: nodeProps,
+					},
+					opts: {
+						node: nodeProps,
+					},
+				});
+				break;
 			default: return;
 		}
 		nodeProps.expanded = !nodeProps.expanded;
@@ -596,7 +670,7 @@ export default React.createClass({
 
 	exportPlanRiskReport(evt) {
 		evt.preventDefault();
-		this.setState({exportPlanRisk: true})
+		this.setState({ exportPlanRisk: true })
 	},
 
 	onKeyDown(event) {

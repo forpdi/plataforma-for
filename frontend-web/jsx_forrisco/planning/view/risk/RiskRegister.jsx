@@ -105,6 +105,11 @@ export default React.createClass({
 			}
 		}, this)
 
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_RETRIEVE_UNIT,
+			data: { unitId: this.props.params.unitId },
+		});
+
 		this.refresh(this.props);
 	},
 	componentWillUnmount() {
@@ -134,8 +139,6 @@ export default React.createClass({
 				data: { unitId: newProps.params.unitId },
 			});
 		}
-
-
 	},
 
 
@@ -211,6 +214,7 @@ export default React.createClass({
 		}
 	},
 
+	//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, response.attributes.policy.name);});
 	refreshTabinfo(newPathname, tabName) {
 		_.defer(() =>
 			this.context.tabPanel.addTab(
@@ -767,9 +771,6 @@ export default React.createClass({
 				: ""}
 
 			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
-			{// ref="riskEditForm"  >{/*onSubmit={this.submitWrapper}*/
-			}
-
 				{!this.state.visualization ?
 					<VerticalForm
 						vizualization={this.state.visualization}
@@ -807,13 +808,10 @@ export default React.createClass({
 						/>
 					</span>)
 
-
-
 				})}
 
-					{//Plano Estratégico
-					}
-
+				{//Plano Estratégico
+				}
 
 				{!this.state.visualization ?
 					<div>
@@ -841,8 +839,8 @@ export default React.createClass({
 				: ""}
 				<br />
 
-					{//Processo
-					}
+				{//Processo
+				}
 
 				{!this.state.visualization ? <div>
 					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
@@ -870,8 +868,8 @@ export default React.createClass({
 				:""}
 				<br />
 
-					{//Atividade
-					}
+				{//Atividade
+				}
 
 				{!this.state.visualization ?
 					<div>

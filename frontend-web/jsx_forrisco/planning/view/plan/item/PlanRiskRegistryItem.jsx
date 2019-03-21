@@ -24,6 +24,7 @@ export default React.createClass({
 			vizualization: false,
 			formFields: [],
 			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
+			globalEditInstance: false
 		}
 	},
 
@@ -55,7 +56,8 @@ export default React.createClass({
 
 	toggleFields() {
 		this.setState({
-			vizualization: !this.state.vizualization,
+			globalEditInstance: true,
+			vizualization: true,
 		});
 	},
 
@@ -68,7 +70,8 @@ export default React.createClass({
 
 		this.setState({
 			formFields: this.state.formFields,
-			vizualization: !this.state.vizualization
+			globalEditInstance: false,
+			vizualization: false
 		})
 	},
 
@@ -175,20 +178,23 @@ export default React.createClass({
 						}
 
 						{
-							this.state.vizualization ?
+								this.state.vizualization ?
 
-								<PlanRiskItemField
-									fields={this.state.formFields}
-									vizualization={this.state.vizualization}
-									getFields={this.getFields}
-									editFields={this.editFields}
-									toggle={this.toggleFields}/>
-								:
+									<PlanRiskItemField
+										fields={this.state.formFields}
+										vizualization={this.state.vizualization}
+										getFields={this.getFields}
+										editFields={this.editFields}
+										toggle={this.toggleFields}/>
+									:
 
-								/* Botão de dicionar Novo Campo */
-								<button onClick={this.toggleFields} className="btn btn-sm btn-neutral marginTop20">
-									<span className="mdi mdi-plus"/> {Messages.get("label.addNewField")}
-								</button>
+									/* Botão de dicionar Novo Campo */
+
+									this.state.globalEditInstance === true ? ""
+										:
+									<button onClick={this.toggleFields} className="btn btn-sm btn-neutral marginTop20">
+										<span className="mdi mdi-plus"/> {Messages.get("label.addNewField")}
+									</button>
 						}
 
 						<br/><br/><br/>
