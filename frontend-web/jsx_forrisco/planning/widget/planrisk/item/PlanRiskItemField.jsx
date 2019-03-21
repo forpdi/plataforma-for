@@ -111,15 +111,17 @@ export default React.createClass({
 
 		if (!validation.errorField) {
 			if (validation.type.s === this.state.types[0].id) {
-				this.props.fields.push({
-					fieldName: validation.name.s,
-					type: validation.type.s,
-					value: validation.name.s,
-					fieldContent: validation.description,
-					editInstance: false,
-					fileLink: "",
-					isText: true
-				});
+				if(validation.description !== null) {
+					this.props.fields.push({
+						fieldName: validation.name.s,
+						type: validation.type.s,
+						value: validation.name.s,
+						fieldContent: validation.description,
+						editInstance: false,
+						fileLink: "",
+						isText: true
+					});
+				}
 			}
 
 			if (validation.type.s === this.state.types[1].id) {
@@ -137,6 +139,7 @@ export default React.createClass({
 	},
 
 	confirmEdit() {
+		console.log('q1');
 		var validation = Validate.validationNewFieldItem(this.refs, this.props.field.fieldName, this.props.field.fieldContent);
 
 		if (validation.errorField) {
@@ -421,7 +424,7 @@ export default React.createClass({
 													{/*Botões Laterais*/}
 													<div className="col-sm-12 col-md-4">
 														<span className="mdi mdi-check btn btn-sm btn-success"
-															  onClick={this.props.fields ? this.addField : this.confirmEdit}
+															  onClick={this.confirmEdit}
 															  title={Messages.get("label.submitLabel")}/>
 														<span>&nbsp;</span>
 														<span className="mdi mdi-close btn btn-sm btn-danger"

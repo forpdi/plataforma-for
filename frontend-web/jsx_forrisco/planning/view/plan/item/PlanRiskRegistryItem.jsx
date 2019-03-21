@@ -75,6 +75,79 @@ export default React.createClass({
 		})
 	},
 
+	//Edita o Título de um Item
+	editFieldTitle(newTitle, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldName = newTitle
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		})
+	},
+
+	//Confirma as edições no campo
+	setFieldValue(field, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem = field;
+				fieldItem.editInstance = false;
+			}
+			this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Muda o Tipo do item
+	editType(bool, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem.isText = bool;
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Edita a TextArea de um item
+	editRichTextField(contenteValue, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldContent = contenteValue
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		})
+	},
+
+	//Edita a img selecionada no campo
+	editImg(img, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+
+				fieldItem.fieldName = img.fieldName;
+				fieldItem.fieldContent = img.fieldContent;
+				fieldItem.isText = false;
+				fieldItem.fileLink = img.fileLink
+			}
+
+			//this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
 	deleteFields(id) {
 		Modal.confirmCustom( () => {
 			Modal.hide();
@@ -157,11 +230,16 @@ export default React.createClass({
 									return (
 										<div key={index}>
 											<PlanRiskItemField
+												toggle={this.toggleFields}
 												vizualization={this.state.vizualization}
 												getFields={this.getFields}
-												toggle={this.toggleFields}
 												deleteFields={this.deleteFields}
 												editFields={this.editFields}
+												editRichTextField={this.editRichTextField}
+												setFieldValue={this.setFieldValue}
+												editFieldTitle={this.editFieldTitle}
+												editType={this.editType}
+												editImg={this.editImg}
 												index={index}
 												fields={this.state.formFields}
 												field={field}/>
