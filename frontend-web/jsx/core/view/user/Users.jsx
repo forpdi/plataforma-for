@@ -1,18 +1,18 @@
 import S from 'string';
 import React from "react";
 import {Link} from 'react-router';
-//import Toastr from 'toastr';
+import _ from "underscore";
+
 import AccessLevels from "forpdi/jsx/core/store/AccessLevels.json";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Pagination from "forpdi/jsx/core/widget/Pagination.jsx";
-import _ from "underscore";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import permissionTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 //import Toastr from 'toastr';
 
@@ -422,16 +422,25 @@ export default React.createClass({
 					<a onClick={this.resendInvitation.bind(this, model.id)}>
 						{Messages.getEditable("label.resendInvitation","fpdi-nav-label")}</a>
 				</li> : ""}
-				{model.active && (this.context.roles.MANAGER  || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ViewUsersPermission"))?
-				<li>
-					<Link to={"/users/"+model.id+"/edit"}>
-						{Messages.getEditable("label.viewUser","fpdi-nav-label")}
-					</Link>
-				</li>:""}
-				{(this.context.roles.ADMIN  || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
+				{
+					model.active &&
+					(this.context.roles.MANAGER ||
+						_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
+						_.contains(this.context.permissions, permissionTypes.VIEW_USERS_PERMISSION) ||
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION) ||
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_VIEW_USERS_PERMISSION))
+					&&
+					<li>
+						<Link to={"/users/"+model.id+"/edit"}>
+							{Messages.getEditable("label.viewUser","fpdi-nav-label")}
+						</Link>
+					</li>
+				}
+				{
+					this.context.roles.ADMIN ||
+						_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION)
+					&&
 					<li>
 						{model.blocked ?
 							<a onClick={this.unblockUser.bind(this, model.id,model.name)}>
@@ -442,16 +451,19 @@ export default React.createClass({
 								{Messages.getEditable("label.blockUser","fpdi-nav-label")}
 							</a>
 						}
-					</li> : ""
-				)}
-				{(this.context.roles.ADMIN  || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ManageUsersPermission") ?
+					</li>
+				}
+				{
+					this.context.roles.ADMIN  ||
+						_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION)
+					&&
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
 							{Messages.getEditable("label.removeUser","fpdi-nav-label")}
 						</a>
-					</li> : ""
-				)}
+					</li>
+				}
 			</ul>
 		);
 	},

@@ -167,13 +167,16 @@ export default React.createClass({
 				<div className="panel panel-default panel-default-user">
 					<div className="panel-heading"> {Messages.getEditable("label.userPermissions", "fpdi-nav-label")}
 						{
-							!this.state.editingPermission && (editForpdiUserPermissioned || editForriscoUserPermissioned) &&
+							!this.state.editingPermission &&
 							<span className="floatRight">
-								<span
-									className="mdi mdi-pencil cursorPointer"
-									onClick={this.editPermissions}
-									title={Messages.get("label.title.editPermissions")}
-								/>
+								{
+									(editForpdiUserPermissioned || editForriscoUserPermissioned) &&
+									<span
+										className="mdi mdi-pencil cursorPointer"
+										onClick={this.editPermissions}
+										title={Messages.get("label.title.editPermissions")}
+									/>
+								}
 								{
 									editForpdiUserPermissioned &&
 									<span
