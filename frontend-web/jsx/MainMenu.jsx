@@ -284,7 +284,7 @@ export default React.createClass({
             <div className="fpdi-tabs-nav">
     			<Link to="/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
-                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
+                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label", PermissionsTypes.EDIT_MESSAGES_PERMISSION)}
                 </Link>
     		</div>
             <div style={{height: "10px"}} />

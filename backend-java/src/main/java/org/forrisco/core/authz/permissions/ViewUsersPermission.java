@@ -12,7 +12,7 @@ public class ViewUsersPermission extends Permission {
 
 	@Override
 	public int getRequiredAccessLevel() {
-		return AccessLevels.COLABORATOR.getLevel();
+		return AccessLevels.MANAGER.getLevel();
 	}
 
 	@Override
