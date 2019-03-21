@@ -54,15 +54,24 @@ export default React.createClass({
 					loading: false
 				})
 			}
+
+			_.defer(() => {
+				this.context.tabPanel.addTab(this.props.location.pathname, this.state.riskModel.name);
+			});
 		}, me);
 
 		RiskStore.on("riskDelete", (model) => {
 			if (model.success) {
-				this.context.router.push("forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/info")
-			} else {
-				var errorMsg = JSON.parse(model.responseText)
-				Toastr.error(errorMsg.message);
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 
+				if (hasMinTabsLength) {
+					this.context.router.push("forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/info");
+				}
+				
+			} else {
+				var errorMsg = JSON.parse(model.responseText);
+				Toastr.error(errorMsg.message);
 			}
 		}, me);
 		this.refresh(this.props)

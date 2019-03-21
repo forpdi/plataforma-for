@@ -348,7 +348,6 @@ export default React.createClass({
 		this.forceUpdate();
 	},
 
-
 	expandRoot(nodeProps, nodeLevel) {
 		switch (nodeLevel) {
 			case 0:

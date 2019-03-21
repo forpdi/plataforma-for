@@ -121,20 +121,29 @@ export default React.createClass({
 
 		Modal.confirmCustom(() => {
 			Modal.hide();
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DELETE_SUBITEM,
-				data: this.props.params.subItemId
-			});
+			this.dispatchDelete(this.props.params.subItemId);
 		}, msg, me.refreshCancel);
 
 		PlanRiskItemStore.on('deletePlanRiskSubItem', response => {
 			if(response.success === true) {
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
+
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+				if (hasMinTabsLength) {
+					this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.itemId);
+				}
+
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
-				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/"  + this.props.params.itemId);
-				this.forceUpdate()
 			}
 			PlanRiskItemStore.off('deletePlanRiskSubItem');
 		})
+	},
+
+	dispatchDelete(subItemId) {
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DELETE_SUBITEM,
+			data: subItemId
+		});
 	},
 
 	refreshCancel () {
