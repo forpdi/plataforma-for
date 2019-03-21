@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from "react";
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import Toastr from 'toastr';
 
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
@@ -50,7 +50,6 @@ export default React.createClass({
 			if (model.success && (this.state.riskModel == null || model.data.id != this.state.riskModel.id)) {
 				this.setState({
 					riskModel: model.data,
-					//selected:0,
 					loading: false
 				})
 			}
@@ -58,11 +57,10 @@ export default React.createClass({
 
 		RiskStore.on("riskDelete", (model) => {
 			if (model.success) {
-				this.context.router.push("forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/info")
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 			} else {
 				var errorMsg = JSON.parse(model.responseText)
 				Toastr.error(errorMsg.message);
-
 			}
 		}, me);
 		this.refresh(this.props)
@@ -93,41 +91,34 @@ export default React.createClass({
 					<Link
 						onClick={this.onChange}>
 						<span className="mdi mdi-pencil cursorPointer"
-							  title={Messages.get("label.title.editInformation")}>
-						<span
-							id="menu-levels"> {Messages.getEditable("label.title.editInformation", "fpdi-nav-label")} </span>
+							title={Messages.get("label.title.editInformation")}>
+							<span
+								id="menu-levels"> {Messages.getEditable("label.title.editInformation", "fpdi-nav-label")} </span>
 						</span>
 					</Link>
 				</li>
 				{this.state.undeletable ?
 					<li>
 						<Link>
-						<span className="mdi mdi-delete disabledIcon cursorPointer"
-							  title={Messages.get("label.notDeletedHasChild")}>
-							<span id="menu-levels"> {Messages.getEditable("label.deleteRisk", "fpdi-nav-label")}</span>
-						</span>
+							<span className="mdi mdi-delete disabledIcon cursorPointer"
+								title={Messages.get("label.notDeletedHasChild")}>
+								<span id="menu-levels"> {Messages.getEditable("label.deleteRisk", "fpdi-nav-label")}</span>
+							</span>
 						</Link>
 					</li>
 					:
 					<li>
 						<Link
 							onClick={this.deleteRisco}>
-						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRisk")}>
-							<span id="menu-levels"> {Messages.getEditable("label.deleteRisk", "fpdi-nav-label")} </span>
-						</span>
+							<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRisk")}>
+								<span id="menu-levels"> {Messages.getEditable("label.deleteRisk", "fpdi-nav-label")} </span>
+							</span>
 						</Link>
 					</li>
 				}
 			</ul>
 		);
-
 	},
-
-	/*changeVizualization() {
-		this.setState({
-			visualization: false,
-		});
-	},*/
 
 	deleteRisco() {
 		var me = this;
@@ -151,14 +142,6 @@ export default React.createClass({
 		})
 	},
 
-	/*onUpdate(){
-		this.refresh(this.props)
-		this.onChange()
-
-		this.state.riskModel=null
-		//visualization
-	},*/
-
 	selectInfo() {
 
 		switch (this.state.selected) {
@@ -170,8 +153,6 @@ export default React.createClass({
 							visualization={this.state.visualization}
 							risk={this.state.riskModel}
 							onChange={this.onChange}
-							//onUpdate={this.onUpdate}
-
 						/>
 						<PreventiveActions
 							visualization={this.state.visualization}
@@ -215,33 +196,33 @@ export default React.createClass({
 
 	header() {
 
-		return (<div style={{"display": "flex"}}>
-				<div className={"frisco-link icon-link " + (this.state.selected == 0 ? "selecionado" : "")}
-					 onClick={() => this.setInfo(0)}>
-					Informações
+		return (<div style={{ "display": "flex" }}>
+			<div className={"frisco-link icon-link " + (this.state.selected == 0 ? "selecionado" : "")}
+				onClick={() => this.setInfo(0)}>
+				Informações
 				</div>
 
-				<div className={"frisco-link icon-link " + (this.state.selected == 1 ? "selecionado" : "")}
-					 onClick={() => this.setInfo(1)}>
-					Monitoramento
+			<div className={"frisco-link icon-link " + (this.state.selected == 1 ? "selecionado" : "")}
+				onClick={() => this.setInfo(1)}>
+				Monitoramento
 				</div>
 
-				<div className={"frisco-link icon-link " + (this.state.selected == 2 ? "selecionado" : "")}
-					 onClick={() => this.setInfo(2)}>
-					Incidente
+			<div className={"frisco-link icon-link " + (this.state.selected == 2 ? "selecionado" : "")}
+				onClick={() => this.setInfo(2)}>
+				Incidente
 				</div>
 
-				<div className={"frisco-link icon-link " + (this.state.selected == 3 ? "selecionado" : "")}
-					 onClick={() => this.setInfo(3)}>
-					Contingenciamento
+			<div className={"frisco-link icon-link " + (this.state.selected == 3 ? "selecionado" : "")}
+				onClick={() => this.setInfo(3)}>
+				Contingenciamento
 				</div>
-			</div>
+		</div>
 		)
 	},
 
 	render() {
 		if (this.state.loading) {
-			return <LoadingGauge/>;
+			return <LoadingGauge />;
 		}
 
 		return (<div className="fpdi-card fpdi-card-full floatLeft">
@@ -252,15 +233,15 @@ export default React.createClass({
 						_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION))
 					&&
 					<span className="dropdown">
-							<a className="dropdown-toggle"
+						<a className="dropdown-toggle"
 							data-toggle="dropdown"
 							aria-haspopup="true"
 							aria-expanded="true"
 							title={Messages.get("label.actions")}
-							>
-								<span className="sr-only">{Messages.getEditable("label.actions", "fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down"/>
-							</a>
+						>
+							<span className="sr-only">{Messages.getEditable("label.actions", "fpdi-nav-label")}</span>
+							<span className="mdi mdi-chevron-down" />
+						</a>
 						{this.renderUnarchiveRisk()}
 					</span>
 				}

@@ -38,7 +38,7 @@ export default React.createClass({
 		};
 	},
 	addTab(path, title) {
-		var tab, tabIndex = -1, hash = "", findPlan = -1;
+		var tab, tabIndex = -1, hash = ""
 
 		for (var t = 0; t < this.state.tabs.length; t++) {
 
@@ -47,11 +47,6 @@ export default React.createClass({
 				hash += path + "|||" + title + "|||";
 			} else {
 				hash += this.state.tabs[t].props.to + "|||" + this.state.tabs[t].props.title + "|||";
-
-				if(this.state.tabs[t].props.to == "/plan/1/details") {
-					console.log('yo');
-					findPlan = t;
-				}
 			}
 		}
 
@@ -116,7 +111,7 @@ export default React.createClass({
 		}
 		if (this.context.router.isActive(this.state.tabs[index].props.to, false)) {
 			if(tabs.length == 0){
-				newPath = "/plan/"+ this.props.params.id+"/details";
+				newPath = "forrisco/policy/"+ this.props.params.policyId+"/item/overview";
 			}
 			else{
 				newPath = tabs[(index >= tabs.length) ? (tabs.length-1) : index].props.to;

@@ -144,6 +144,7 @@ var RiskStore = Fluxbone.Store.extend({
 
 	newRisk(data){
 		var me = this;
+
 		$.ajax({
 			url: me.url+'/new',
 			method: 'POST',
