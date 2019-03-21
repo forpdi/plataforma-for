@@ -1,7 +1,5 @@
 package org.forpdi.core.notification;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -12,9 +10,6 @@ import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
-import org.forpdi.core.user.authz.Permissioned;
-import org.forpdi.planning.structure.FavoriteLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstance;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
