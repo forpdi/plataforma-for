@@ -106,10 +106,7 @@ export default React.createClass({
 
 		Modal.confirmCustom(() => {
 			Modal.hide();
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DELETE_ITEM,
-				data: this.props.params.itemId
-			});
+			this.dispatchDelete(this.props.params.itemId);
 		}, msg, me.refreshCancel);
 
 		PlanRiskItemStore.on('deletePlanRiskItem', response => {
@@ -122,7 +119,15 @@ export default React.createClass({
 
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
 			}
+			PlanRiskItemStore.off('deletePlanRiskItem');
 		})
+	},
+
+	dispatchDelete(itemId) {
+		PlanRiskItemStore.dispatch({
+			action: PlanRiskItemStore.ACTION_DELETE_ITEM,
+			data: itemId
+		});
 	},
 
 	refreshCancel () {

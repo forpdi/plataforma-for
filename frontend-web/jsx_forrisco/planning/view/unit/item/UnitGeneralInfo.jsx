@@ -31,6 +31,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		UnitStore.on('unitRetrieved', response => {
 			this.setState({
 				unit: response.data,
@@ -41,6 +42,7 @@ export default React.createClass({
 				this.context.tabPanel.addTab(this.props.location.pathname, this.state.unit.name);
 			});
 		}, this);
+
 		UnitStore.on('unitUpdated', response => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("A unidade foi alterada com sucesso.");
@@ -52,6 +54,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
+
 		UnitStore.on('unitDeleted', response => {
 			if (response.success) {
 				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
@@ -64,6 +67,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			if (response.data) {
 				this.setState({

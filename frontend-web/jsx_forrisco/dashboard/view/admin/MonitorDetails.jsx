@@ -335,7 +335,7 @@ export default React.createClass({
 					history={this.state.monitor_history}
 					displayGraph={this.displayGraph}
 				/>
-				:""}
+				:""
 			}
 		</div>
 		);

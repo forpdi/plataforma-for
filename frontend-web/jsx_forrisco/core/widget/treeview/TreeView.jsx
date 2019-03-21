@@ -1,4 +1,5 @@
 import React from "react";
+import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import TreeViewNode from "forpdi/jsx_forrisco/core/widget/treeview/TreeViewNode.jsx";
 
 export default React.createClass({
@@ -18,17 +19,6 @@ export default React.createClass({
 		};
 	},
 
-	componentDidMount() {
-		var me = this;
-	},
-
-	// componentWillUnmount() {
-	//
-	// },
-	// componentWillReceiveProps() {
-	//
-	// },
-
 	onExpand(nodeProps) {
 		if (typeof nodeProps.node.onExpand == 'function') {
 			nodeProps.node.onExpand(nodeProps.node, nodeProps.nodeLevel);
@@ -37,6 +27,7 @@ export default React.createClass({
 			this.forceUpdate();
 		}
 	},
+
 	onShrink(nodeProps) {
 		if (typeof nodeProps.node.onShrink == 'function') {
 			nodeProps.node.onShrink(nodeProps.node, nodeProps.nodeLevel);
@@ -49,6 +40,7 @@ export default React.createClass({
 	renderNode(node, index, loop) {
 		var me = this;
 		loop = typeof loop == 'number' ? loop:0;
+
 		return (
 			<TreeViewNode
 				{...node}

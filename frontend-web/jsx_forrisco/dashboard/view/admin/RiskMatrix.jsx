@@ -230,10 +230,10 @@ export default React.createClass({
 			table.push(<tr key={i} >{children}</tr>)
 		}
 		return (
-			<div>
+			<div style={{ overflowX: "scroll", overflowY: "hidden", whiteSpace: "nowrap" }}>
 				<br/>
 				<br/>
-				<table style={{width: "min-content"}}>
+				<table style={{ width: "max-content", display: "inline-block"}}>
 					<th>
 						<tr>
 							<td style={{position: "relative", left: "30px"}}>
@@ -261,7 +261,7 @@ export default React.createClass({
 	},
 
 	render() {
-		return (<div>
+		return (<div style={{ overflow: "hidden" }}>
 		<div className={"col-md-7"}>
 			<div> {// className={this.props.className}>
 			}
