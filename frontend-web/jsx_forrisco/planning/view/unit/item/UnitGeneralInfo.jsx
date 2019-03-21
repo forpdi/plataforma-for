@@ -9,12 +9,15 @@ import UnitProcess from "forpdi/jsx_forrisco/planning/view/unit/item/UnitProcess
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import Modal from "@/core/widget/Modal";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
+		roles: React.PropTypes.object.isRequired,
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object,
+		permissions: React.PropTypes.array.isRequired,
 	},
 
 	getInitialState() {
@@ -303,17 +306,23 @@ export default React.createClass({
 				<div className="fpdi-card fpdi-card-full floatLeft">
 					<h1>
 						{unit.name}
-						<span className="dropdown">
-							<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-							   aria-expanded="true"
-							   title={Messages.get("label.actions")}>
+						{
+							(this.context.roles.MANAGER ||
+								_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_UNIT_PERMISSION) ||
+								_.contains(this.context.permissions, PermissionsTypes.FORRISCO_EDIT_UNIT_PERMISSION))
+							&&
+							<span className="dropdown">
+								<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="true"
+								title={Messages.get("label.actions")}>
 
-								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-								<span className="mdi mdi-chevron-down" />
+									<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+									<span className="mdi mdi-chevron-down" />
 
-							</a>
-							{this.renderDropdown()}
-						</span>
+								</a>
+								{this.renderDropdown()}
+							</span>
+						}
 					</h1>
 
 					{

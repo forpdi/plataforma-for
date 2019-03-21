@@ -1,8 +1,8 @@
 import _ from 'underscore';
 import React from "react";
 import {Link, hashHistory} from "react-router";
+
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
-//import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -504,8 +504,11 @@ export default React.createClass({
 
 				<h1>
 					{this.state.subitemModel.data.name}
-					{this.state.subitemModel && (this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)) || true ?
-						(<span className="dropdown">
+					{
+						(this.context.roles.ADMIN ||
+							_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION))
+						&&
+						<span className="dropdown">
 							<a
 								className="dropdown-toggle"
 								data-toggle="dropdown"
@@ -518,7 +521,7 @@ export default React.createClass({
 							</a>
 							{this.context.policy.archived ? this.renderArchivePolicy() : this.renderUnarchivePolicy()}
 						</span>
-						):""}
+					}
 				</h1>
 
 				{this.state.fields && (this.state.fields.length > 0) ?

@@ -1,6 +1,8 @@
 import _ from 'underscore';
 import React from "react";
 import {Link} from 'react-router';
+import Toastr from 'toastr';
+
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import RiskRegister from 'forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx';
 import PreventiveActions from 'forpdi/jsx_forrisco/planning/view/risk/PreventiveActions';
@@ -10,13 +12,15 @@ import Contingency from 'forpdi/jsx_forrisco/planning/view/risk/Contingency';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-import Toastr from 'toastr';
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 
 	contextTypes: {
 		router: React.PropTypes.object.isRequired,
+		roles: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object,
+		permissions: React.PropTypes.array.isRequired,
 	},
 	childContextTypes: {
 		policy: React.PropTypes.object,
@@ -87,7 +91,6 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link
-						//onClick={this.changeVizualization}>
 						onClick={this.onChange}>
 						<span className="mdi mdi-pencil cursorPointer"
 							  title={Messages.get("label.title.editInformation")}>
@@ -244,18 +247,23 @@ export default React.createClass({
 		return (<div className="fpdi-card fpdi-card-full floatLeft">
 			<h1>
 				{this.state.riskModel ? this.state.riskModel.name : "Risco não encontrado"}
-				<span className="dropdown">
-						<a className="dropdown-toggle"
-						   data-toggle="dropdown"
-						   aria-haspopup="true"
-						   aria-expanded="true"
-						   title={Messages.get("label.actions")}
-						>
-							<span className="sr-only">{Messages.getEditable("label.actions", "fpdi-nav-label")}</span>
-							<span className="mdi mdi-chevron-down"/>
-						</a>
-					{this.renderUnarchiveRisk()}
-				</span>
+				{
+					(this.context.roles.MANAGER ||
+						_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION))
+					&&
+					<span className="dropdown">
+							<a className="dropdown-toggle"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="true"
+							title={Messages.get("label.actions")}
+							>
+								<span className="sr-only">{Messages.getEditable("label.actions", "fpdi-nav-label")}</span>
+								<span className="mdi mdi-chevron-down"/>
+							</a>
+						{this.renderUnarchiveRisk()}
+					</span>
+				}
 			</h1>
 			<div>
 				{this.header()}

@@ -8,9 +8,12 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
+		roles: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
 		toastr: React.PropTypes.object.isRequired,
 		planRisk: React.PropTypes.object.isRequired,
 	},
@@ -36,7 +39,11 @@ export default React.createClass({
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => (
-						_.assign(value, { tools: this.renderRowTools(value.id, idx) })
+						_.assign(value, {
+							tools: this.isPermissionedUser()
+								? this.renderRowTools(value.id, idx)
+								: null,
+						})
 					)),
 					isLoading: false,
 					newRowDisplayed: false,
@@ -117,6 +124,12 @@ export default React.createClass({
 		if (newProps.risk.id !== this.props.risk.id) {
 			this.refreshComponent(newProps.risk.id,1, 500)
 		}
+	},
+
+	isPermissionedUser() {
+		return (this.context.roles.COLABORATOR ||
+			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_ITEMS_PERMISSION)
+		);
 	},
 
 	refreshComponent(riskId, page, pageSize) {
@@ -485,7 +498,10 @@ export default React.createClass({
 			<div className="general-table">
 				<div className='table-outter-header'>
                     HISTÓRICO DE MONITORAMENTOS
-                    <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					{
+						this.isPermissionedUser() &&
+                    	<Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					}
                 </div>
 				<ReactTable
 					data={this.state.data}
