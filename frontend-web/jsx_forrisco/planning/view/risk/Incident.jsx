@@ -3,11 +3,13 @@ import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import _ from 'underscore';
 import { Button } from 'react-bootstrap';
+import moment from 'moment'
 
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 const incidentTypes = {
 	values: [
@@ -20,6 +22,8 @@ const incidentTypes = {
 
 export default React.createClass({
 	contextTypes: {
+		roles: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
 		toastr: React.PropTypes.object.isRequired,
 	},
 
@@ -37,11 +41,16 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		RiskStore.on('incidentListed', (response) => {
 			if (response !== null) {
 				this.setState({
 					data: _.map(response.data, (value, idx) => ({
-						..._.assign(value, { tools: this.renderRowTools(value.id, idx) }),
+						..._.assign(value, {
+							tools: this.isPermissionedUser()
+								? this.renderRowTools(value.id, idx)
+								: null,
+						}),
 						type: incidentTypes.getById(value.type).label,
 					})),
 					isLoading: false,
@@ -50,6 +59,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+
 		RiskStore.on('incidentCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Incidente cadastrado com sucesso.");
@@ -65,6 +75,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar incidente.");
 			}
 		}, this);
+
 		RiskStore.on('incidentDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Incidente excluído com sucesso.");
@@ -79,6 +90,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir incidente.");
 			}
 		}, this);
+
 		RiskStore.on('incidentUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Incidente atualizado com sucesso.");
@@ -93,6 +105,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar incidente.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -107,23 +120,40 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_INCIDENT,
-			data: this.props.risk.id,
-		});
-		UserStore.dispatch({
-			action: UserStore.ACTION_RETRIEVE_USER,
-			data: {
-				page: 1,
-				pageSize: 500,
-			},
-		});
+		}, this);
+		this.refreshComponent(this.props.risk.id, 1, 500);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.risk.id !== this.props.risk.id) {
+			this.refreshComponent(newProps.risk.id, 1, 500)
+		}
 	},
 
 	componentWillUnmount() {
 		RiskStore.off(null, null, this);
 		UserStore.off(null, null, this);
+	},
+
+	isPermissionedUser() {
+		return (this.context.roles.COLABORATOR ||
+			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_ITEMS_PERMISSION)
+		);
+	},
+
+	refreshComponent(riskId, page, pageSize) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_INCIDENT,
+			data: riskId,
+		});
+
+		UserStore.dispatch({
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: page,
+				pageSize: pageSize,
+			},
+		});
 	},
 
 	insertNewRow() {
@@ -202,7 +232,7 @@ export default React.createClass({
 					<span className="mdi mdi-close" />
 				</button>
 			</div>,
-		}
+		};
 		const { data } = this.state;
 		data.unshift(newRow);
         this.setState({
@@ -303,7 +333,7 @@ export default React.createClass({
 					<span className="mdi mdi-close" />
 				</button>
 			</div>,
-		}
+		};
 		this.setState({
 			data,
 			beginDate: incident.begin.split(' ')[0],
@@ -314,10 +344,18 @@ export default React.createClass({
 	},
 
 	newIncident() {
+		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
+
 		if (!this.state.incident.user) {
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
+
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+			return;
+		}
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_INCIDENT,
 			data: {
@@ -453,7 +491,10 @@ export default React.createClass({
 			<div className="general-table">
 				<div className='table-outter-header'>
                     HISTÓRICO DE INCIDENTES
-                    <Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					{
+                    	this.isPermissionedUser() &&
+						<Button bsStyle="info" onClick={this.insertNewRow} >Novo</Button>
+					}
                 </div>
 				<ReactTable
 					data={this.state.data}

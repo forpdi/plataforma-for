@@ -1,7 +1,5 @@
 import _ from 'underscore';
 import React from "react";
-import { Link } from "react-router";
-import FavoriteTree from "forpdi/jsx/planning/widget/plan/FavoriteTree.jsx";
 import TreeView from "forpdi/jsx_forrisco/core/widget/treeview/TreeView.jsx";
 import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/policy/LevelSearch.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/policy/SearchResult.jsx";
@@ -10,9 +8,7 @@ import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-//import Toastr from 'toastr';
 
-var actualNode;
 export default React.createClass({
 	contextTypes: {
 		roles: React.PropTypes.object.isRequired,
@@ -70,17 +66,6 @@ export default React.createClass({
 				id: this.props.policy.id,
 			};
 
-			var newItem = {
-				hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
-					PermissionsTypes.MANAGE_PLAN_PERMISSION)),
-				label: Messages.get("label.newItem"),
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				//expandable: false,
-				to: '/forrisco/policy/' + this.props.policy.id + '/item/new',
-				key: "newPolicy"
-			}
-
 			var tree = raw.data.map((policy, index) => {
 				var to = '/forrisco/policy/' + this.props.policy.id + '/item/' + policy.id;
 				return {
@@ -98,7 +83,20 @@ export default React.createClass({
 			});
 
 			tree.unshift(info);
-			tree.push(newItem);
+			if (this.context.roles.ADMIN ||
+				_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION)) {
+				var newItem = {
+					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
+						PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION)),
+					label: Messages.get("label.newItem"),
+					labelCls: 'fpdi-new-node-label',
+					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
+					//expandable: false,
+					to: '/forrisco/policy/' + this.props.policy.id + '/item/new',
+					key: "newPolicy"
+				}
+				tree.push(newItem);
+			}
 
 			me.setState({
 				itensSelect: raw.data,
@@ -107,7 +105,6 @@ export default React.createClass({
 				hiddenResultSearch:false
 			});
 		}, me);
-
 
 		ItemStore.on("retrieveSubitens", (models, opts) => {
 			var children = [];
@@ -131,12 +128,12 @@ export default React.createClass({
 				});
 			}
 
-
-
-			if (!this.props.policy.archived) {
+			const isPermissionedUser = (this.context.roles.ADMIN ||
+				_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION));
+			if (!this.props.policy.archived && isPermissionedUser) {
 				children.push({
-					hidden: !(this.context.roles.MANAGER || _.contains(this.context.permissions,
-						PermissionsTypes.MANAGE_PLAN_PERMISSION)),
+					hidden: !(this.context.roles.ADMIN || _.contains(this.context.permissions,
+						PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION)),
 					label: "Novo Subitem",
 					iconCls: 'mdi mdi-plus fpdi-new-node-icon',
 					labelCls: 'fpdi-new-node-label',
@@ -561,13 +558,14 @@ export default React.createClass({
 						<div>
 							<TreeView tree={this.state.tree}/>
 								<hr className="divider" />
-							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-								<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
-									<span/>
-									{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-								</a>
-							: ""}
+							{
+								(this.context.roles.COLABORATOR ||
+									_.contains(this.context.permissions, PermissionsTypes.FORRISCO_EXPORT_DATA_PERMISSION))
+									&&
+									<a className="btn btn-sm btn-primary center" onClick={this.exportReport}>
+										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+									</a>
+							}
 						</div>
 					}
 					{this.state.hiddenSearch ?

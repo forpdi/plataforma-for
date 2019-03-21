@@ -238,36 +238,38 @@ export default React.createClass({
 					)
 				})
 				: ""}
-
-			{((this.context.roles.ADMIN || _.contains(this.context.permissions,
-				PermissionsTypes.MANAGE_FORRISCO_POLICY_PERMISSION))) ? // && !this.state.domainError
-				<div>
-					<div className="frisco-tabs-nav">
-						<Link to="/forrisco/policy/new" activeClassName="active">
-							<span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
-							<span className="fpdi-nav-label">
-						{Messages.getEditable("label.newPolicy", "fpdi-nav-label")}
-					</span>
-						</Link>
-					</div>
-				</div>
-				: ""
+			{
+				(this.context.roles.ADMIN ||
+					_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION))
+					?
+						<div>
+							<div className="frisco-tabs-nav">
+								<Link to="/forrisco/policy/new" activeClassName="active">
+									<span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
+									<span className="fpdi-nav-label">
+								{Messages.getEditable("label.newPolicy", "fpdi-nav-label")}
+							</span>
+								</Link>
+							</div>
+						</div>
+					: ""
 			}
 
-			{(this.context.roles.ADMIN) ? // && !this.state.domainError this.state.policies && (this.state.policies.length === 0)
-
+			{
+				(this.context.roles.ADMIN ||
+					_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION))
+				&&
 				<div>
 					<div className="fpdi-tabs-nav">
 						<Link to="/forrisco/plan-risk/new" activeClassName="active"
-							  onClick={this.disableRegisterNewPlan}>
+							onClick={this.disableRegisterNewPlan}>
 							<span className="fpdi-nav-icon mdi mdi-plus icon-link"/>
 							<span className="fpdi-nav-label">
 								{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}
-                                </span>
+								</span>
 						</Link>
 					</div>
 				</div>
-				: ""
 			}
 
 			<hr className="divider"/>

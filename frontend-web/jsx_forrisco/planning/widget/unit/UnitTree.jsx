@@ -8,6 +8,7 @@ import Messages from "@/core/util/Messages";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import SearchResult from "forpdi/jsx_forrisco/planning/widget/search/unit/SearchResult.jsx";
 import LevelSearch from "forpdi/jsx_forrisco/planning/widget/search/unit/LevelSearch.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
@@ -48,15 +49,6 @@ export default React.createClass({
 	componentDidMount() {
 		const me = this;
 
-		//Botão Novo Item Geral
-		var newItem = {
-			label: Messages.get("label.newUnity"),
-			labelCls: 'fpdi-new-node-label',
-			iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-			to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/unit/new',
-			key: "newUnitItem"
-		};
-
 		/*Unidades*/
 		UnitStore.on('unitbyplan', (response, opt) => {
 			if (!opt || !opt.refreshUnitTree) {
@@ -80,13 +72,19 @@ export default React.createClass({
 				});
 			});
 
-			treeItensUnit.push(newItem);
+			this.addLinkOfNewNode(
+				this.context.roles.ADMIN,
+				PermissionsTypes.FORRISCO_MANAGE_UNIT_PERMISSION,
+				treeItensUnit,
+				Messages.get("label.newUnity"),
+				'fpdi-new-node-label',
+				`/forrisco/plan-risk/${this.props.planRisk.id}/unit/new`,
+				'newUnitItem',
+			);
 
 			this.setState({treeItensUnit: treeItensUnit});
 			this.forceUpdate();
 		}, me);
-
-		const subunitTree = [];
 
 		UnitStore.on('subunitsListed', (response, node) => {
 			const fieldTree = [];
@@ -128,20 +126,6 @@ export default React.createClass({
 		RiskStore.on('riskbyunit', (response, { payload }) => {
 			const { node, subunitTree } = payload;
 			const fieldTree = subunitTree;
-			const newSubunit = {
-				label: "Nova Subunidade",
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`,
-				key: "newSubunit"
-			};
-			const newRisk = {
-				label: "Novo Risco",
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
-				key: "newRisk"
-			};
 
 			//Botão Novo SubItem
 			 response.data.map(risk => {
@@ -154,8 +138,27 @@ export default React.createClass({
 				});
 			});
 
-			fieldTree.push(newSubunit);  //Adiciona o Botão de Novo Risco
-			fieldTree.push(newRisk);  //Adiciona o Botão de Novo Risco
+			// Adiciona o Botão de Novo Risco
+			this.addLinkOfNewNode(
+				this.context.roles.ADMIN,
+				PermissionsTypes.FORRISCO_MANAGE_UNIT_PERMISSION,
+				fieldTree,
+				'Nova Subunidade',
+				'fpdi-new-node-label',
+				`/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/subunit/new`,
+				'newSubunit',
+			);
+
+			// Adiciona o Botão de Novo Risco
+			this.addLinkOfNewNode(
+				this.context.roles.MANAGER,
+				PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION,
+				fieldTree,
+				'Novo Risco',
+				'fpdi-new-node-label',
+				`/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
+				'newRisk',
+			);
 
 			node.node.children = [...node.node.children, ...fieldTree];
 			me.forceUpdate();
@@ -163,13 +166,6 @@ export default React.createClass({
 
 		RiskStore.on('riskbysubunits', (response, node) => {
 			const fieldTree = [];
-			const newRisk = {
-				label: "Novo Risco",
-				labelCls: 'fpdi-new-node-label',
-				iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
-				key: "newRisk"
-			};
 			const filteredRisks = _.filter(response.data, risk => risk.unit.id === node.node.id);
 			_.forEach(filteredRisks, risk => {
 				fieldTree.push({
@@ -180,10 +176,29 @@ export default React.createClass({
 					id: risk.id,
 				});
 			});
-			fieldTree.push(newRisk);  //Adiciona o Botão de Novo Risco
+
+			// Adiciona o Botão de Novo Risco
+			this.addLinkOfNewNode(
+				this.context.roles.MANAGER,
+				PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION,
+				fieldTree,
+				'Novo Risco',
+				'fpdi-new-node-label',
+				`/forrisco/plan-risk/${this.props.planRisk.id}/unit/${node.node.id}/risk/new`,
+				'newRisk',
+			);
+
 			node.node.children = [...node.node.children, ...fieldTree];
 			me.forceUpdate();
 		}, me);
+
+		RiskStore.on("riskcreated", () => {
+			this.refresh(this.props.planRisk.id);
+		}, this);
+
+		RiskStore.on("riskDelete", () => {
+			this.refresh(this.props.planRisk.id);
+		}, this);
 
 		UnitStore.on('unitDeleted', response => {
 			if (response.data) {
@@ -288,29 +303,49 @@ export default React.createClass({
 				this.setState({ treeItensUnit });
 			}
 		}, me);
-
-		this.refresh();
+		this.refresh(this.props.planRisk.id);
 	},
 
 	componentWillUnmount() {
-		UnitStore.off('unitbyplan');
-		UnitStore.off('subunitsListed');
-		UnitStore.off('unitDeleted');
-		UnitStore.off('unitCreated');
-		UnitStore.off('subunitCreated');
-		UnitStore.off('unitUpdated');
-		RiskStore.off('riskbyunit');
-		RiskStore.off('riskbysubunits');
+		// UnitStore.off('unitbyplan');
+		// UnitStore.off('subunitsListed');
+		// UnitStore.off('unitDeleted');
+		// UnitStore.off('unitCreated');
+		// UnitStore.off('subunitCreated');
+		// UnitStore.off('unitUpdated');
+		// RiskStore.off('riskbyunit');
+		// RiskStore.off('riskbysubunits');
+		RiskStore.off(null, null, this);
+		UnitStore.off(null, null, this);
 	},
 
-	refresh(){
+	componentWillReceiveProps(newProps) {
+		if(newProps.planRisk.id !== this.props.planRisk.id) {
+			this.refresh(newProps.planRisk.id)
+		}
+	},
+
+	addLinkOfNewNode(role, permissionType, treeItensUnit, label, iconCls, to, key) {
+		if (role || _.contains(this.context.permissions, permissionType)) {
+			treeItensUnit.push({
+				label,
+				labelCls: 'fpdi-new-node-label',
+				iconCls,
+				to,
+				key,
+			});
+		}
+	},
+
+	refresh(planRiskId){
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: this.props.planRisk.id,
+			data: planRiskId,
 			opts: {
 				refreshUnitTree: true,
 			},
 		});
+		this.forceUpdate();
 	},
 
 
