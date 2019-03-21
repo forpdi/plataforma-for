@@ -8,6 +8,7 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
+import moment from 'moment'
 
 const incidentTypes = {
 	values: [
@@ -37,6 +38,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		RiskStore.on('incidentListed', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -50,6 +52,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+
 		RiskStore.on('incidentCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Incidente cadastrado com sucesso.");
@@ -65,6 +68,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar incidente.");
 			}
 		}, this);
+
 		RiskStore.on('incidentDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Incidente excluído com sucesso.");
@@ -79,6 +83,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir incidente.");
 			}
 		}, this);
+
 		RiskStore.on('incidentUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Incidente atualizado com sucesso.");
@@ -93,6 +98,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar incidente.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -107,23 +113,34 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_INCIDENT,
-			data: this.props.risk.id,
-		});
-		UserStore.dispatch({
-			action: UserStore.ACTION_RETRIEVE_USER,
-			data: {
-				page: 1,
-				pageSize: 500,
-			},
-		});
+		}, this);
+		this.refreshComponent(this.props.risk.id, 1, 500);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.risk.id !== this.props.risk.id) {
+			this.refreshComponent(newProps.risk.id, 1, 500)
+		}
 	},
 
 	componentWillUnmount() {
 		RiskStore.off(null, null, this);
 		UserStore.off(null, null, this);
+	},
+
+	refreshComponent(riskId, page, pageSize) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_INCIDENT,
+			data: riskId,
+		});
+
+		UserStore.dispatch({
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: page,
+				pageSize: pageSize,
+			},
+		});
 	},
 
 	insertNewRow() {
@@ -202,7 +219,7 @@ export default React.createClass({
 					<span className="mdi mdi-close" />
 				</button>
 			</div>,
-		}
+		};
 		const { data } = this.state;
 		data.unshift(newRow);
         this.setState({
@@ -303,7 +320,7 @@ export default React.createClass({
 					<span className="mdi mdi-close" />
 				</button>
 			</div>,
-		}
+		};
 		this.setState({
 			data,
 			beginDate: incident.begin.split(' ')[0],
@@ -314,10 +331,18 @@ export default React.createClass({
 	},
 
 	newIncident() {
+		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
+
 		if (!this.state.incident.user) {
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
+
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+			return;
+		}
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_INCIDENT,
 			data: {

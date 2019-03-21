@@ -31,6 +31,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		RiskStore.on('monitorListed', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -43,6 +44,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+
 		RiskStore.on('monitorCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Monitoramento cadastrado com sucesso.");
@@ -57,6 +59,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar monitoramento.");
 			}
 		}, this);
+
 		RiskStore.on('monitorDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Monitoramento excluído com sucesso.");
@@ -71,6 +74,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir monitoramento.");
 			}
 		}, this);
+
 		RiskStore.on('monitorUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("monitoramento atualizado com sucesso.");
@@ -85,6 +89,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar monitoramento.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -99,24 +104,34 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_MONITOR,
-			data: this.props.risk.id,
-		});
-		UserStore.dispatch({
-			action: UserStore.ACTION_RETRIEVE_USER,
-			data: {
-				page: 1,
-				pageSize: 500,
-			},
-		});
+		}, this);
 
 		this.setState({
 			impacts: this.getSelectOptions(this.context.planRisk.attributes.policy.impact),
 			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability),
-		})
+		});
+		this.refreshComponent(this.props.risk.id, 1, 500);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.risk.id !== this.props.risk.id) {
+			this.refreshComponent(newProps.risk.id,1, 500)
+		}
+	},
+
+	refreshComponent(riskId, page, pageSize) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_MONITOR,
+			data: riskId,
+		});
+
+		UserStore.dispatch({
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: page,
+				pageSize: pageSize,
+			},
+		});
 	},
 
 	getSelectOptions(originalArray) {

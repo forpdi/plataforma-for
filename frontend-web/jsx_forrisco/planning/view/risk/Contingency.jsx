@@ -26,6 +26,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		RiskStore.on('contingencyListed', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -38,6 +39,7 @@ export default React.createClass({
 				});
 			}
 		}, this);
+
 		RiskStore.on('contingencyCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Ação de contingenciamento cadastrada com sucesso.");
@@ -54,6 +56,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar a ação de contingenciamento.");
 			}
 		}, this);
+
 		RiskStore.on('contingencyDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de contingenciamento excluída com sucesso.");
@@ -70,6 +73,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir a ação de contingenciamento.");
 			}
 		}, this);
+
 		RiskStore.on('contingencyUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de contingenciamento atualizada com sucesso.");
@@ -86,6 +90,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar a ação de contingenciamento.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -100,18 +105,28 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
+		}, this);
+		this.refreshComponent(this.props.risk.id, 1, 500);
+	},
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.risk.id !== this.props.risk.id) {
+			this.refreshComponent(newProps.risk.id, 1, 500)
+		}
+	},
+
+	refreshComponent(riskId, page, pageSize) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_CONTINGENCY,
 			data: {
-				riskId: this.props.risk.id,
+				riskId: riskId,
 			},
 		});
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
-				page: 1,
-				pageSize: 500,
+				page: page,
+				pageSize: pageSize,
 			},
 		});
 	},

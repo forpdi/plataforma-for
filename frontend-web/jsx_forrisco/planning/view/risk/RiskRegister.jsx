@@ -13,9 +13,14 @@ import ProcessStore from "forpdi/jsx_forrisco/planning/store/Process.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-
+import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 
 var VerticalForm = Form.VerticalForm;
+
+var HorizontalForm = Form.HorizontalForm;
+
+
+var Validate = Validation.validate;
 
 export default React.createClass({
 	contextTypes: {
@@ -46,6 +51,7 @@ export default React.createClass({
 			strategyList:[],
 			processList:[],
 			unit: null,
+			update:false,
 		}
 	},
 
@@ -120,22 +126,8 @@ export default React.createClass({
 				})
 			this.refresh(newProps);
 			}
-		} else {
-
-		/*	this.setState({
-				loading: false,
-				visualization: false,
-				newRisk: true
-			})
-
-			if (document.getElementById("field-impact") != null) {
-				document.getElementById("field-impact").value = ''
-				document.getElementById("field-probability").value = ''
-				document.getElementById("field-periodicity").value = ''
-				document.getElementById("field-tipology").value = ''
-				document.getElementById("field-type").value = ''
-			}*/
 		}
+
 		if (newProps.location.pathname !== this.props.location.pathname) {
 			UnitStore.dispatch({
 				action: UnitStore.ACTION_RETRIEVE_UNIT,
@@ -168,14 +160,6 @@ export default React.createClass({
 				visualization: false,
 				newRisk: true
 			})
-
-			if (document.getElementById("field-impact") != null) {
-				document.getElementById("field-impact").value = ''
-				document.getElementById("field-probability").value = ''
-				document.getElementById("field-periodicity").value = ''
-				document.getElementById("field-tipology").value = ''
-				document.getElementById("field-type").value = ''
-			}
 		}
 
 		this.refreshData(Props)
@@ -190,18 +174,10 @@ export default React.createClass({
 			action: StructureStore.ACTION_RETRIEVE_OBJECTIVES_BY_COMPANY
 		});
 
-		console.log(Props)
 		ProcessStore.dispatch({
 			action: ProcessStore.ACTION_LIST_BY_PLAN,
 			data:Props.params.planRiskId
 		});
-
-		/*if (Props.risk) {
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_RETRIEVE_ACTIVITIES,
-				data: Props.risk.id
-			})
-		}*/
 
 		this.setState({
 			policyModel: this.context.planRisk.attributes.policy,
@@ -217,9 +193,20 @@ export default React.createClass({
 
 
 	componentDidUpdate(){
-		if(this.props.route.path == "new"){
+		if (this.props.route.path == "new" && !this.state.update) {
+			this.state.update=true
+
 			if(document.getElementById("field-user") !=null){
-			document.getElementById("field-user").value = ''
+				document.getElementById("field-user").value = ''
+			}
+
+			if (document.getElementById("field-impact") != null) {
+				document.getElementById("field-impact").value = ''
+				document.getElementById("field-probability").value = ''
+				document.getElementById("field-periodicity").value = ''
+				document.getElementById("field-tipology").value = ''
+				document.getElementById("field-type").value = ''
+				document.getElementById("field-user").value = ''
 			}
 		}
 	},
@@ -235,7 +222,7 @@ export default React.createClass({
 
 	getName() {
 		return [{
-			name: "nome",
+			name: "name",
 			type: AttributeTypes.TEXT_AREA,
 			placeholder: "Nome do Risco",
 			maxLength: 100,
@@ -263,14 +250,8 @@ export default React.createClass({
 				placeholder: "Selecione um responsável",
 				maxLength: 100,
 				label: "Responsável",
+				displayField: 'label',
 				value: risk != null ? risk.user.name : null,
-			}, {
-				name: "date",
-				type: AttributeTypes.DATE,
-				placeholder: "",
-				maxLength: 100,
-				label: "Data e hora de criação do risco",
-				value: risk != null ? risk.begin : null,
 			}, {
 				name: "reason",
 				type: AttributeTypes.TEXT_AREA_FIELD,
@@ -323,7 +304,7 @@ export default React.createClass({
 				{ label: 'Semestral' },
 				{ label: 'Anual' }],
 				displayField: 'label',
-				placeholder: "Selecione a periodicidade",
+				placeholder: "Selecione",
 				maxLength: 100,
 				value: risk != null ? risk.periodicity : null,
 			}, {
@@ -346,7 +327,14 @@ export default React.createClass({
 				maxLength: 100,
 				label: "Tipo",
 				value: risk != null ? risk.type : null,
-			});
+			},{
+				name: "date",
+				type: AttributeTypes.DATE,
+				placeholder: "",
+				maxLength: 100,
+				label: "Data e hora de criação do risco",
+				value: risk != null ? risk.begin : null,
+			},);
 
 
 		return fields;
@@ -404,10 +392,8 @@ export default React.createClass({
 
 
 		var fields = []
-		console.log("getProcesses", this.state.riskModel.processes)
 		this.state.riskModel.processes.list.map((fielditem, index) => {
 			var name= fielditem.process.objective +" - "+fielditem.process.name
-			console.log( fielditem.process.objective +" - "+fielditem.process.name)
 			fields.push({
 				name: "process-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
@@ -487,11 +473,14 @@ export default React.createClass({
 
 	getUsers() {
 		var fields = []
+		//fields.push({label:"", id:0})
+
 		for (var i = 0; i < this.state.users.length; i++) {
 			fields.push(
 				{ label: this.state.users[i].name, id: this.state.users[i].id }
 			)
 		}
+
 		return fields
 	},
 
@@ -527,7 +516,7 @@ export default React.createClass({
 
 
 		if (this.state.newRisk) {
-			document.getElementById("field-nome").value = ''
+			document.getElementById("field-name").value = ''
 			document.getElementById("field-code").value = ''
 			//document.getElementById("field-user").value = ''
 			document.getElementById("field-impact").value = ''
@@ -712,7 +701,7 @@ export default React.createClass({
 		}
 
 
-		data['name'] = document.getElementById("field-nome").value
+		data['name'] = document.getElementById("field-name").value
 		data['code'] = document.getElementById("field-code").value
 		data['impact'] = document.getElementById("field-impact").value
 		data['probability'] = document.getElementById("field-probability").value
@@ -721,6 +710,7 @@ export default React.createClass({
 		data['result'] = document.getElementById("field-result").value
 		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
+
 
 		data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex].id }
 		data['unit'] = { id: this.props.params.unitId }
@@ -747,7 +737,7 @@ export default React.createClass({
 		var me = this;
 		var msg = "";
 
-		//var msg = Validate.validationPolicyEdit(data, this.refs);
+		var msg = Validate.validationRiskRegister(data, this.refs);
 
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
@@ -777,7 +767,9 @@ export default React.createClass({
 				<h1>Novo Risco</h1>
 				: ""}
 
-			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} ref="riskEditForm"  >{/*onSubmit={this.submitWrapper}*/}
+			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
+			{// ref="riskEditForm"  >{/*onSubmit={this.submitWrapper}*/
+			}
 
 				{!this.state.visualization ?
 					<VerticalForm
@@ -785,22 +777,39 @@ export default React.createClass({
 						fields={this.getName()}
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
-						ref={'field-name'} />
+						ref={'field-name'}
+						/>
 					: ""}
 
 				{this.getFields().map((fielditem, index) => {
+
 					if ((fielditem.name == "riskLevel" || fielditem.name == "date") && !this.state.visualization) {
 						return
 					}
 
-					return (<div><VerticalForm
-						vizualization={this.state.visualization}
-						fields={[fielditem]}
-						submitLabel={Messages.get("label.submitLabel")}
-						showButtons={false}
-						ref={'field-' + index}
-					/>
-					</div>)
+					if(index== 2 || index==3 || this.state.visualization){
+
+						return (<VerticalForm
+							vizualization={this.state.visualization}
+							fields={[fielditem]}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+							ref={'field-' + index}
+						/>)
+					}
+
+					return (<span className="form-horizontal">
+						<VerticalForm
+							vizualization={this.state.visualization}
+							fields={[fielditem]}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+							ref={'field-' + index}
+						/>
+					</span>)
+
+
+
 				})}
 
 					{//Plano Estratégico

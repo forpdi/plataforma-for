@@ -185,6 +185,14 @@ export default React.createClass({
 			me.forceUpdate();
 		}, me);
 
+		RiskStore.on("riskcreated", () => {
+			this.refresh(this.props.planRisk.id);
+		}, this);
+
+		RiskStore.on("riskDelete", () => {
+			this.refresh(this.props.planRisk.id);
+		}, this);
+
 		UnitStore.on('unitDeleted', response => {
 			if (response.data) {
 				const unitToDelete = response.data;
@@ -288,29 +296,37 @@ export default React.createClass({
 				this.setState({ treeItensUnit });
 			}
 		}, me);
-
-		this.refresh();
+		this.refresh(this.props.planRisk.id);
 	},
 
 	componentWillUnmount() {
-		UnitStore.off('unitbyplan');
-		UnitStore.off('subunitsListed');
-		UnitStore.off('unitDeleted');
-		UnitStore.off('unitCreated');
-		UnitStore.off('subunitCreated');
-		UnitStore.off('unitUpdated');
-		RiskStore.off('riskbyunit');
-		RiskStore.off('riskbysubunits');
+		// UnitStore.off('unitbyplan');
+		// UnitStore.off('subunitsListed');
+		// UnitStore.off('unitDeleted');
+		// UnitStore.off('unitCreated');
+		// UnitStore.off('subunitCreated');
+		// UnitStore.off('unitUpdated');
+		// RiskStore.off('riskbyunit');
+		// RiskStore.off('riskbysubunits');
+		RiskStore.off(null, null, this);
+		UnitStore.off(null, null, this);
 	},
 
-	refresh(){
+	componentWillReceiveProps(newProps) {
+		if(newProps.planRisk.id !== this.props.planRisk.id) {
+			this.refresh(newProps.planRisk.id)
+		}
+	},
+
+	refresh(planRiskId){
 		UnitStore.dispatch({
 			action: UnitStore.ACTION_FIND_BY_PLAN,
-			data: this.props.planRisk.id,
+			data: planRiskId,
 			opts: {
 				refreshUnitTree: true,
 			},
 		});
+		this.forceUpdate();
 	},
 
 

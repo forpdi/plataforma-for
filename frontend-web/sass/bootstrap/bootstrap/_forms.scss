@@ -162,6 +162,10 @@ textarea.form-control {
   height: auto;
 }
 
+.form-horizontal {
+	margin: 0px 55px 0px 15px;
+	width: 40%;
+}
 
 // Search inputs in iOS
 //
@@ -363,7 +367,7 @@ input[type="checkbox"] {
     border-radius: $input-border-radius-large;
   }
   select.form-control {
-    height: $input-height-large;
+    height: $input-height-large +2;
     line-height: $input-height-large;
   }
   textarea.form-control,

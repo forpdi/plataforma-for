@@ -27,6 +27,7 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+
 		RiskStore.on('preventiveActionsListed', (response) => {
 			if (response !== null) {
 				this.setState({
@@ -42,6 +43,7 @@ export default React.createClass({
 				this.changeAccomplishmentData();
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionCreated', (response) => {
 			if (response.data) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção cadastrada com sucesso.");
@@ -58,6 +60,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao cadastrar ação de prevenção.");
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionDeleted', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção excluída com sucesso.");
@@ -74,6 +77,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao excluir ação de prevenção.");
 			}
 		}, this);
+
 		RiskStore.on('preventiveActionUpdated', (response) => {
 			if (response.success) {
 				this.context.toastr.addAlertSuccess("Ação de prevenção atualizada com sucesso.");
@@ -90,6 +94,7 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao atualizar ação de prevenção.");
 			}
 		}, this);
+
 		UserStore.on('retrieve-user', (response) => {
 			const users = response.data;
 			if (response.data) {
@@ -104,12 +109,9 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
-		});
-
+		}, this);
 		this.refresh(this.props.risk.id)
-
 	},
-
 
 	refresh(riskId){
 		RiskStore.dispatch({
