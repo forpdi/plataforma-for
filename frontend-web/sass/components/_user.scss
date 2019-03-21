@@ -33,12 +33,12 @@
 }
 
 #lineUser {
-	height:1px; 
-	border:none; 
-	color:#000; 
-	background-color:#ddd; 
-	margin-top: 0px; 
-	margin-bottom: 0px;	
+	height:1px;
+	border:none;
+	color:#000;
+	background-color:#ddd;
+	margin-top: 0px;
+	margin-bottom: 0px;
 
 }
 
@@ -65,6 +65,17 @@
 .user-permission-checkbox {
 	margin-top: -2px !important;
     margin-right: 7px !important;
+}
+
+.system-switcher {
+	cursor: pointer;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.system-switcher-selected {
+	border-bottom: 2px solid #0085D8;
+	color: #0085D8;
 }
 
 .user-permission-detail {
@@ -120,7 +131,7 @@
 	left: auto;
     right: 0;
 }
-.dropdown-menu-notification {	
+.dropdown-menu-notification {
     width: 600px;
     padding:10px;
 }

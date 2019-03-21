@@ -12,11 +12,14 @@ import Messages from "@/core/util/Messages";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired,
+		permissions: React.PropTypes.array.isRequired,
+		roles: React.PropTypes.object.isRequired,
 	},
 
 	getInitialState() {
@@ -45,7 +48,7 @@ export default React.createClass({
 			_.map(filteredProcesses, (value, idx) => {
 				_.assign(
 					value,
-					{ tools: value.unitCreator.id == this.props.unitId ? this.getTools(idx) : null},
+					{ tools: value.unitCreator.id == this.props.unitId && this.isPermissionedUser() ? this.getTools(idx) : null},
 					{
 						fileData: {
 							fileName: value.file.name,
@@ -144,6 +147,12 @@ export default React.createClass({
 		// UnitStore.off('unitbyplan');
 		ProcessStore.off(null, null, this);
 		UnitStore.off(null, null, this);
+	},
+
+	isPermissionedUser() {
+		return (this.context.roles.MANAGER ||
+			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PROCESS_PERMISSION)
+		);
 	},
 
 	insertNewRow() {
@@ -481,9 +490,11 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-          PROCESSOS DA UNIDADE
-          <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
-        </div>
+          			PROCESSOS DA UNIDADE
+					{
+						this.isPermissionedUser() && <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
+					}
+        		</div>
 				<ReactTable
 					data={this.state.processes}
 					columns={columns}

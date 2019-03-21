@@ -11,25 +11,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.persistence.Column;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
-import org.forrisco.core.item.Item;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
-import org.forrisco.core.item.SubItem;
 import org.forrisco.core.item.PlanRiskItemBS;
 import org.forrisco.core.policy.Policy;
-import org.forrisco.core.policy.PolicyBS;
-import org.forrisco.core.policy.permissions.ManagePlanRiskPermission;
-import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;

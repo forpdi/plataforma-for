@@ -1,13 +1,12 @@
 import React from "react";
-import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
-import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import _ from "underscore";
 import {Link} from "react-router";
+
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import PlanRiskTabPanel from "forpdi/jsx_forrisco/planning/widget/planrisk/PlanRiskTabPanel.jsx";
-import Toastr from 'toastr';
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -291,15 +290,20 @@ export default React.createClass({
 			<div className="fpdi-card fpdi-card-full floatLeft">
 				<h1>
 					{this.state.policyModel.data.name}
-					<span className="dropdown">
-						<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-						   aria-expanded="true"
-						   title={Messages.get("label.actions")}>
-							<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
-							<span className="mdi mdi-chevron-down" />
-						</a>
-						{this.renderDropdown()}
-					</span>
+					{
+						(this.context.roles.ADMIN ||
+							_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION))
+						&&
+						<span className="dropdown">
+							<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="true"
+							title={Messages.get("label.actions")}>
+								<span className="sr-only">{Messages.getEditable("label.actions","fpdi-nav-label")}</span>
+								<span className="mdi mdi-chevron-down" />
+							</a>
+							{this.renderDropdown()}
+						</span>
+					}
 				</h1>
 
 				<div>

@@ -17,6 +17,7 @@ public class ManagePolicyPermission extends Permission {
 
 	@Override
 	public String getDescription() {		
-		return "Criar política, Editar informações da política, Duplicar política, Arquivar política";
+		return "Criar política, Editar informações da política, Excluir política, Cadastrar itens e subitens de uma política, "
+				+ "Editar itens e subitens de uma política, Excluir itens e subitens de uma política";
 	}
 }
