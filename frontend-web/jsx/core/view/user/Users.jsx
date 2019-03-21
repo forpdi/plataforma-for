@@ -437,9 +437,9 @@ export default React.createClass({
 					</li>
 				}
 				{
-					this.context.roles.ADMIN ||
+					(this.context.roles.ADMIN ||
 						_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
-						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION)
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION))
 					&&
 					<li>
 						{model.blocked ?
@@ -454,9 +454,9 @@ export default React.createClass({
 					</li>
 				}
 				{
-					this.context.roles.ADMIN  ||
+					(this.context.roles.ADMIN  ||
 						_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
-						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION)
+						_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION))
 					&&
 					<li>
 						<a onClick={this.removeUser.bind(this, model.id)}>
