@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from "react";
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 import string from 'string';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
@@ -146,7 +146,6 @@ export default React.createClass({
 	},
 
 	render() {
-
 		var iconCls = this.props.iconCls;
 		var me = this;
 		/*if(this.props.model && this.props.model.level && this.props.model.level.name == "Objetivo") {
@@ -158,88 +157,109 @@ export default React.createClass({
 		}
 
 		return (
-			(this.state.newNode ?
-				<div className={"fpdi-treeview-node"+(this.props.hidden ? " hidden":"")}>
+			this.state.newNode
+			?
+			<div className={"fpdi-treeview-node"+(this.props.hidden ? " hidden":"")}>
 				<span className="mdi mdi-plus fpdi-new-node-icon pointer" />
-					<Link
-						activeClassName="active"
-						className={this.props.labelCls}
-						to={this.props.to}
-						onClick={this.onLabelClick}
-						title={this.props.label}
-					>
+				<Link
+					activeClassName="active"
+					className={this.props.labelCls}
+					to={this.props.to}
+					onClick={this.onLabelClick}
+					title={this.props.label}
+				>
 					{
-						this.props.label.length > 30 ?
+						this.props.label.length > 30
+						?
 						string(this.props.label).trim().substr(0, 30).concat("...").toString()
-					:
+						:
 						this.props.label
 					}
 					{
-						(this.props.model && this.props.model.haveBudget)?
-						<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")}></i>
-					:""
+						(this.props.model && this.props.model.haveBudget)
+						?
+						<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")} />
+						:
+						""
 					}
 					{
 					//(this.props.model && this.props.model.aggregate)?
 					//<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
 					//:""
 					}
-					</Link>
-				</div>
-				//this.renderNewNode()
-				:
-				(
-				<div className={"fpdi-treeview-node"+(this.props.hidden ? " hidden":"")}>
+				</Link>
+			</div>
+			//this.renderNewNode()
+			:
+			<div className={"fpdi-treeview-node"+(this.props.hidden ? " hidden":"")}>
 				{
-						this.props.expandable ?
-							<a className={this.props.expanded ? this.props.expandedIconCls : iconCls}
-							onClick={this.onIconClick} />
+					this.props.expandable
+					?
+					<a
+						className={this.props.expanded ? this.props.expandedIconCls : iconCls}
+						onClick={this.onIconClick}
+					/>
+					:
+					(
+						this.props.model && this.props.model.aggregate
+						?
+						<a
+							className={this.props.iconCls}
+							onClick={me.onLabelClick}
+							title={Messages.get("label.indicatorAggregate")}
+						/>
 						:
-							(this.props.model && this.props.model.aggregate ?
-								<a className={this.props.iconCls}  onClick={me.onLabelClick} title={Messages.get("label.indicatorAggregate")}/>
-							:
-								<a className={this.props.iconCls}  onClick={me.onLabelClick} />)
-							}
+						<a className={this.props.iconCls}  onClick={me.onLabelClick} />
+					)
+				}
 				{
-						this.props.to ?
-						(
-							this.props.root ?
-							<a onClick={this.onLabelClick} key={this.props.node.index}>{this.props.label}</a>
-							:
-							<Link
-								activeClassName="active"
-								className={this.props.labelCls}
-								to={this.props.to}
-								onClick={this.onLabelClick}
-								title={this.props.label}
-							>
+					this.props.to
+					?
+					(
+						this.props.root
+						?
+						<a onClick={this.onLabelClick} key={this.props.node.index}>
+							{this.props.label}
+						</a>
+						:
+						<Link
+							activeClassName="active"
+							className={this.props.labelCls}
+							to={this.props.to}
+							onClick={this.onLabelClick}
+							title={this.props.label}
+						>
 							{
-							this.props.label.length > 30 ?
+								this.props.label.length > 30
+								?
 								string(this.props.label).trim().substr(0, 30).concat("...").toString()
-							:
+								:
 								this.props.label
 							}
 							{
-								(this.props.model && this.props.model.haveBudget)?
-								<i className="mdi mdi-cash-usd budgetCoinIcon" title={Messages.get("label.title.levelHasBudget")}></i>
-								:""
+								(this.props.model && this.props.model.haveBudget)
+								?
+								<i
+									className="mdi mdi-cash-usd budgetCoinIcon"
+									title={Messages.get("label.title.levelHasBudget")}
+								/>
+								: ""
 							}
 							{
 							//	(this.props.model && this.props.model.aggregate)?
 							//	<span className="label label-primary aggregate-icon" title="Esse nível é um indicador agregado">A</span>
 							//	:""
 							}
-							</Link>
-							)
-						:
-						<a className={this.props.labelCls} onClick={this.onNewNodeClick}>{this.props.label}</a>
+						</Link>
+					)
+					:
+					<a className={this.props.labelCls} onClick={this.onNewNodeClick}>
+						{this.props.label}
+					</a>
 				}
 
-				{this.props.expanded ? this.props.children:""}
-
-				</div>
-				)
-			)
+				{this.props.expanded ? this.props.children: ""}
+			</div>
 		);
 	}
 });

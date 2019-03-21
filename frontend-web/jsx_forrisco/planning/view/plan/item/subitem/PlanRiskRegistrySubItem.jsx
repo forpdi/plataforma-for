@@ -137,7 +137,7 @@ export default React.createClass({
 
 	onCancel() {
 		this.context.router.push(
-			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/" + this.props.params.planRiskId + '/info'
+			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item//item/overview"
 		);
 	},
 

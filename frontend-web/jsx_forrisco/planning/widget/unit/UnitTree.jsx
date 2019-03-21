@@ -420,7 +420,6 @@ export default React.createClass({
 		this.forceUpdate();
 	},
 
-
 	expandRoot(nodeProps, nodeLevel) {
 		nodeProps.startExpanded = false
 
@@ -513,58 +512,66 @@ export default React.createClass({
 
 
 	renderRecords() {
-		return (<div>
-			<div className="row">Unidades
-				<div key="rootSection-selectall">
-					<div className="checkbox marginLeft5 col-md-10">
-						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall"
-								onChange={this.selectAllUnits} />
-							Selecionar todos
-						</label>
+		return (
+			<div>
+				<div className="row">Unidades
+					<div key="rootSection-selectall">
+						<div className="checkbox marginLeft5 col-md-10">
+							<label name="labelSection-selectall" id="labelSection-selectall">
+								<input
+									type="checkbox"
+									value="selectall"
+									id="selectall"
+									onChange={this.selectAllUnits}
+								/>
+								Selecionar todos
+							</label>
+						</div>
 					</div>
-				</div>
-				{this.state.treeItensUnit.map((rootSection, idx) => {
-					if (this.state.treeItensUnit.length - 1 != idx) {
-						return (
-							<div key={"rootSection-filled" + idx}>
-								<div className="checkbox marginLeft5 col-md-10">
-									<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
-										<input type="checkbox" value={rootSection.id} id={"checkbox-unit-" + idx}
-											onClick={this.verifySelectAllUnits} />
-										{rootSection.label}
-									</label>
+					{this.state.treeItensUnit.map((rootSection, idx) => {
+						if (this.state.treeItensUnit.length - 1 != idx) {
+							return (
+								<div key={"rootSection-filled" + idx}>
+									<div className="checkbox marginLeft5 col-md-10">
+										<label name={"labelSection-filled" + idx} id={"labelSection-filled" + idx}>
+											<input type="checkbox" value={rootSection.id} id={"checkbox-unit-" + idx}
+												   onClick={this.verifySelectAllUnits}/>
+											{rootSection.label}
+										</label>
+									</div>
+
 								</div>
-
-							</div>)
-					}
-				})}
-			</div>
-			<div className="row">Subunidades
-				<div key="rootSection-selectall">
-					<div className="checkbox marginLeft5 col-md-10">
-						<label name="labelSection-selectall" id="labelSection-selectall">
-							<input type="checkbox" value="selectall" id="selectall"
-								onChange={this.selectAllSubunits} />
-							Selecionar todos
-						</label>
-					</div>
+							)
+						}
+					})}
 				</div>
-
-				{/*this.state.subunits.map((rootSection, idx) => {
-				return (
-				<div key={"rootSection-filled"+idx}>
-					<div className="checkbox marginLeft5 col-md-10" >
-						<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
-							<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
-							{rootSection.label}
-						</label>
+				<div className="row">Subunidades
+					<div key="rootSection-selectall">
+						<div className="checkbox marginLeft5 col-md-10">
+							<label name="labelSection-selectall" id="labelSection-selectall">
+								<input type="checkbox" value="selectall" id="selectall"
+									   onChange={this.selectAllSubunits}/>
+								Selecionar todos
+							</label>
+						</div>
 					</div>
-				</div>);
-			})*/}
-				<br /><br />
+
+					{/*this.state.subunits.map((rootSection, idx) => {
+					return (
+					<div key={"rootSection-filled"+idx}>
+						<div className="checkbox marginLeft5 col-md-10" >
+							<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
+								<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
+								{rootSection.label}
+							</label>
+						</div>
+
+					</div>);
+				})*/}
+					<br/><br/>
+				</div>
 			</div>
-		</div>);
+		);
 	},
 
 	retrieveFilledSections() {
@@ -715,47 +722,61 @@ export default React.createClass({
 				<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
 					<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch} title={Messages.get("label.clean")} />
 					<input type="text" className="form-control-busca" ref="term" onKeyDown={this.onKeyDown} />
-					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter} title={Messages.get("label.advancedSearch")} />
-					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer" onClick={this.treeSearch} title={Messages.get("label.search")} />
+					<i
+						className="mdiBsc mdi mdi-chevron-down pointer"
+						onClick={this.searchFilter}
+						title={Messages.get("label.advancedSearch")}
+					/>
+					<i
+						id="searchIcon"
+						className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
+						onClick={this.treeSearch}
+						title={Messages.get("label.search")}
+					/>
 				</div>
 
 				{
-					this.state.hiddenResultSearch === true ?
-						<SearchResult
-							planRiskId={this.props.planRisk.id}
-							terms={this.state.termsSearch}
-							itensSelect={this.state.itensSelect}
-							subitensSelect={this.state.subitensSelect}
-							ordResult={this.state.ordResultSearch}
-						/>
-						:
-						<div>
-							<TreeView tree={this.state.treeItensUnit} />
-							<hr className="divider" />
+					this.state.hiddenResultSearch === true
+					?
+					<SearchResult
+						planRiskId={this.props.planRisk.id}
+						terms={this.state.termsSearch}
+						itensSelect={this.state.itensSelect}
+						subitensSelect={this.state.subitensSelect}
+						ordResult={this.state.ordResultSearch}
+					/>
+					:
+					<div>
+						<TreeView tree={this.state.treeItensUnit} />
+						<hr className="divider"/>
 
-							{
-								(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-									<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
-										{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
-									</a>
-
-									: ""
-							}
-						</div>
-
+						{
+							(this.context.roles.MANAGER || _.contains(this.context.permissions, PermissionsTypes.MANAGE_DOCUMENT_PERMISSION))
+							?
+							<a className="btn btn-sm btn-primary center" onClick={this.exportUnitReport}>
+								{Messages.getEditable("label.exportReport", "fpdi-nav-label")}
+							</a>
+							:
+							""
+						}
+					</div>
 				}
 				{
-					this.state.hiddenSearch === true ?
-						<div className="container Pesquisa-Avancada">
-							<LevelSearch
-								searchText={this.refs.term.value}
-								planRisk={this.props.planRisk.id}
-								subplans={this.state.treeItensUnit}
-								hiddenSearch={this.searchFilter}
-								displayResult={this.displayResult}
-							/>
-						</div> : ""
+					this.state.hiddenSearch === true
+					?
+					<div className="container Pesquisa-Avancada">
+						<LevelSearch
+							searchText={this.refs.term.value}
+							planRisk={this.props.planRisk.id}
+							subplans={this.state.treeItensUnit}
+							hiddenSearch={this.searchFilter}
+							displayResult={this.displayResult}
+						/>
+					</div>
+					:
+					""
 				}
-			</div>)
+			</div>
+		);
 	},
 })

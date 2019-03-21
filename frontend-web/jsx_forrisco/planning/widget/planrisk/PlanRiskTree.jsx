@@ -185,6 +185,11 @@ export default React.createClass({
 			this.refresh(this.props.planRisk.id);
 		}, this);
 
+		// Atualiza a Tree quando um item é atualizado
+		PlanRiskItemStore.on('itemUpdated', (response) => {
+			this.refresh(this.props.planRisk.id);
+		}, this);
+
 		//Atualiza a Tree quando un novo subitem é cadastrado
 		PlanRiskItemStore.on("subItemSaved", () => {
 			this.refresh(this.props.planRisk.id);

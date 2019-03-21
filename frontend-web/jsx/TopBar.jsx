@@ -1,16 +1,17 @@
 import React from "react";
 import {Link} from "react-router";
+import _ from 'underscore';
+import string from 'string';
+
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import NotificationUser from "forpdi/jsx/core/view/user/NotificationUser.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import NotificationTopBar from "forpdi/jsx/core/view/user/NotificationTopBar.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import Logo from 'forpdi/img/logo.png';
 import forRiscoLogo from 'forpdi/img/forrisco-logo.png';
-import _ from 'underscore';
-import string from 'string';
 import LinkInformation from "forpdi/jsx/LinkInformation.jsx";
+import permissionTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
 	contextTypes: {
@@ -247,14 +248,21 @@ export default React.createClass({
 						</Link>
 					</li>
 
-					{(this.context.roles.MANAGER  || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions,
-					"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company ? <li>
-						<Link to="/users">
-		                	<span className="mdi mdi-account-multiple icon-link"
-		                    	/> {Messages.getEditable("label.users","fpdi-nav-label")}
-		            	</Link>
-		            </li>:""}
+					{
+						(this.context.roles.MANAGER ||
+								_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
+								_.contains(this.context.permissions, permissionTypes.VIEW_USERS_PERMISSION) ||
+								_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION) ||
+								_.contains(this.context.permissions, permissionTypes.FORRISCO_VIEW_USERS_PERMISSION)) &&
+								EnvInfo.company
+							? <li>
+								<Link to="/users">
+									<span className="mdi mdi-account-multiple icon-link"
+										/> {Messages.getEditable("label.users","fpdi-nav-label")}
+								</Link>
+							</li>
+							: ''
+					}
 
 					{/* Aba CONFIGURAÇOES COMENTADA
 					<li>
