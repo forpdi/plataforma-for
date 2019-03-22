@@ -200,8 +200,17 @@ export default React.createClass({
 		}, me);
 
 
-		ItemStore.on("itemDeleted", (model) => {
-			this.context.router.push("forrisco/policy/"+this.context.policy.id+"/item/overview");
+		ItemStore.on("itemDeleted", (response) => {
+			if (response.success) {
+				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+				if (hasMinTabsLength) {
+					this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/overview`);
+				}
+				this.context.toastr.addAlertSuccess("A unidade foi excluída com sucesso.");
+			} else {
+				this.context.toastr.addAlertError(response.responseJSON.message);
+			}
 		})
 
 		me.refreshData(me.props, me.context);
