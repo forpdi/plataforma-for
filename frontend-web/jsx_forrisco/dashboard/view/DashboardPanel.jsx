@@ -47,7 +47,8 @@ export default React.createClass({
 			})
 		}, me);
 
-		UnitStore.on("unitbyplan", (model) => {
+		UnitStore.on("allunitsbyplan", (model) => {
+
 			if (model.data.length == 0) {
 				//Toastr.error(Messages.get("label.noUnit"))
 			}
@@ -92,7 +93,7 @@ export default React.createClass({
 					})
 
 					UnitStore.dispatch({
-						action: UnitStore.ACTION_FIND_BY_PLAN,
+						action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
 						data: response.data[0].id
 					});
 					RiskStore.dispatch({
@@ -127,7 +128,7 @@ export default React.createClass({
 		})
 
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_BY_PLAN,
+			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
 			data: this.state.plans[this.refs.selectPlan.selectedIndex].id
 		});
 

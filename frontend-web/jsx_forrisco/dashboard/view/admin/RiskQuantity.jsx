@@ -31,7 +31,6 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps){
 		var me = this;
-
 		this.state.risks=newProps.risks;
 		this.state.unit=newProps.unit;
 		this.state.plan= newProps.plan;
@@ -178,10 +177,12 @@ export default React.createClass({
 		if(this.state.risks==null){
 			return (<LoadingGauge/>)
 		}
+
 		return (<div>
 			{this.getPanel()}
 
 			{this.state.displayGraph ?
+
 			<Graphic
 				title={Messages.get("label.risk.history").toUpperCase()}
 				unit={this.state.unit}

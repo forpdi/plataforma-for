@@ -46,7 +46,6 @@ export default React.createClass({
 
 		PlanRiskStore.on('deletePlanRisk', response => {
 			if(response.success === true) {
-				console.log(response);
 				this.context.toastr.addAlertSuccess('Plano de Risco removido com sucesso');
 				this.context.router.push("forrisco/home/");
 				PlanRiskStore.dispatch({
@@ -77,7 +76,6 @@ export default React.createClass({
 	},
 
 	deletePlanRisk() {
-		console.log("eh aqui");
 		var me = this;
 		var msg = "Você tem certeza que deseja excluir esse plano de risco?";
 

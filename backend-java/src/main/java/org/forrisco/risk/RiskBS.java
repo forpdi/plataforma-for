@@ -799,8 +799,10 @@ public class RiskBS extends HibernateBusiness {
 		List<RiskHistory> list = new ArrayList<>();
 
 		for (Unit unit : units.getList()) {
-			Criteria criteria = this.dao.newCriteria(RiskHistory.class).add(Restrictions.eq("unit", unit))
-					.add(Restrictions.eq("deleted", false)).addOrder(Order.asc("id"));
+			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
+					.add(Restrictions.eq("unit", unit))
+					.add(Restrictions.eq("deleted", false))
+					.addOrder(Order.asc("id"));
 
 			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
 		}
