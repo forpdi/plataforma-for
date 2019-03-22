@@ -24,6 +24,7 @@ export default React.createClass({
 			vizualization: false,
 			formFields: [],
 			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
+			globalEditInstance: false
 		}
 	},
 
@@ -55,7 +56,8 @@ export default React.createClass({
 
 	toggleFields() {
 		this.setState({
-			vizualization: !this.state.vizualization,
+			globalEditInstance: true,
+			vizualization: true,
 		});
 	},
 
@@ -68,8 +70,82 @@ export default React.createClass({
 
 		this.setState({
 			formFields: this.state.formFields,
-			vizualization: !this.state.vizualization
+			globalEditInstance: false,
+			vizualization: false
 		})
+	},
+
+	//Edita o Título de um Item
+	editFieldTitle(newTitle, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldName = newTitle
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		})
+	},
+
+	//Confirma as edições no campo
+	setFieldValue(field, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem = field;
+				fieldItem.editInstance = false;
+			}
+			this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Muda o Tipo do item
+	editType(bool, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem.isText = bool;
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Edita a TextArea de um item
+	editRichTextField(contenteValue, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldContent = contenteValue
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		})
+	},
+
+	//Edita a img selecionada no campo
+	editImg(img, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+
+				fieldItem.fieldName = img.fieldName;
+				fieldItem.fieldContent = img.fieldContent;
+				fieldItem.isText = false;
+				fieldItem.fileLink = img.fileLink
+			}
+
+			//this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
 	},
 
 	deleteFields(id) {
@@ -154,11 +230,16 @@ export default React.createClass({
 									return (
 										<div key={index}>
 											<PlanRiskItemField
+												toggle={this.toggleFields}
 												vizualization={this.state.vizualization}
 												getFields={this.getFields}
-												toggle={this.toggleFields}
 												deleteFields={this.deleteFields}
 												editFields={this.editFields}
+												editRichTextField={this.editRichTextField}
+												setFieldValue={this.setFieldValue}
+												editFieldTitle={this.editFieldTitle}
+												editType={this.editType}
+												editImg={this.editImg}
 												index={index}
 												fields={this.state.formFields}
 												field={field}/>
@@ -175,20 +256,23 @@ export default React.createClass({
 						}
 
 						{
-							this.state.vizualization ?
+								this.state.vizualization ?
 
-								<PlanRiskItemField
-									fields={this.state.formFields}
-									vizualization={this.state.vizualization}
-									getFields={this.getFields}
-									editFields={this.editFields}
-									toggle={this.toggleFields}/>
-								:
+									<PlanRiskItemField
+										fields={this.state.formFields}
+										vizualization={this.state.vizualization}
+										getFields={this.getFields}
+										editFields={this.editFields}
+										toggle={this.toggleFields}/>
+									:
 
-								/* Botão de dicionar Novo Campo */
-								<button onClick={this.toggleFields} className="btn btn-sm btn-neutral marginTop20">
-									<span className="mdi mdi-plus"/> {Messages.get("label.addNewField")}
-								</button>
+									/* Botão de dicionar Novo Campo */
+
+									this.state.globalEditInstance === true ? ""
+										:
+									<button onClick={this.toggleFields} className="btn btn-sm btn-neutral marginTop20">
+										<span className="mdi mdi-plus"/> {Messages.get("label.addNewField")}
+									</button>
 						}
 
 						<br/><br/><br/>

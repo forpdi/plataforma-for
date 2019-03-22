@@ -4,16 +4,13 @@ package org.forrisco.core.policy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.servlet.ServletOutputStream;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -21,17 +18,8 @@ import org.apache.commons.io.IOUtils;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.properties.SystemConfigs;
-import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
-import org.forpdi.planning.attribute.AttributeInstance;
-import org.forpdi.planning.document.Document;
-import org.forpdi.planning.document.DocumentBS;
-import org.forpdi.planning.document.DocumentSection;
-import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.StructureLevelInstance;
-import org.forpdi.system.Archive;
 import org.forpdi.system.PDFgenerate;
 import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 import org.forrisco.core.unit.Unit;
@@ -68,7 +56,6 @@ public class PolicyController extends AbstractController {
 	@Inject private ItemBS itemBS;
 	@Inject private RiskBS riskBS;
 	@Inject private UnitBS unitBS;
-	@Inject private DocumentBS documentBS;
 	@Inject private PDFgenerate pdf;
 	
 	protected static final String PATH =  BASEPATH +"/policy";
@@ -82,7 +69,7 @@ public class PolicyController extends AbstractController {
 	@Post( PATH + "/new")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void savePolicy(@NotNull @Valid  Policy policy){
 		
 		try {
@@ -113,6 +100,7 @@ public class PolicyController extends AbstractController {
 	 */
 	@Get( PATH + "/archivedpolicy")
 	@NoCache
+	@Permissioned
 	public void listMacrosArchived(Integer page) {
 		if (page == null)
 			page = 0;
@@ -132,6 +120,7 @@ public class PolicyController extends AbstractController {
 	
 	@Get( PATH + "/unarchivedpolicy")
 	@NoCache
+	@Permissioned
 	public void listPolicyUnarchived(Integer page) {
 		if (page == null)
 			page = 0;
@@ -209,7 +198,7 @@ public class PolicyController extends AbstractController {
 	 */
 	@Delete( PATH + "/{id}")
 	@NoCache
-	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void deletePolicy(@NotNull Long id) {
 		try {
 			Policy policy = this.policyBS.exists(id, Policy.class);
@@ -439,6 +428,7 @@ public class PolicyController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+
 	private PaginatedList<SubItem> TermResult(List<Item> itens, List<SubItem> subitens,  Integer page,  Long limit){
 		int firstResult = 0;
 		int maxResult = 0;
@@ -496,7 +486,7 @@ public class PolicyController extends AbstractController {
 	 */
 	@Get(PATH + "/exportReport")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void exportreport(Long policyId, String title, String author, boolean pre, String itens, String subitens){
 		try {
 		

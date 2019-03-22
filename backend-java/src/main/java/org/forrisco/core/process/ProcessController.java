@@ -10,14 +10,14 @@ import javax.inject.Inject;
 import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
-import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
-import org.forpdi.core.user.UserRecoverRequest;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
+import org.forrisco.core.process.permissions.ManageProcessPermission;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
 
@@ -44,9 +44,6 @@ public class ProcessController extends AbstractController{
 	@Inject private NotificationBS notificationBS;
 	
 	protected static final String PATH =  BASEPATH +"/process";
-
-
-	
 	
 	
 	/**
@@ -59,6 +56,7 @@ public class ProcessController extends AbstractController{
 	@Post( PATH + "/new")
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageProcessPermission.class})
 	public void saveProcess(Process process) {
 		try {
  			Unit unit = this.processBS.exists(process.getUnit().getId(), Unit.class);
@@ -129,6 +127,7 @@ public class ProcessController extends AbstractController{
 	 */
 	@Get( PATH + "/{id}")
 	@NoCache
+	@Permissioned
 	public void listProcesses(Long id) {
 		try {
 			Unit unit = this.processBS.exists(id, Unit.class);
@@ -185,6 +184,7 @@ public class ProcessController extends AbstractController{
 	 */
 	@Delete( PATH + "/{id}")
 	@NoCache
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageProcessPermission.class})
 	public void deleteProcesses(Long id) {
 		try {
 			Process process = this.processBS.exists(id, Process.class);
@@ -221,6 +221,7 @@ public class ProcessController extends AbstractController{
 	@Put(PATH)
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageProcessPermission.class})
 	public void updateProcess(Process process) {
 		try {
 			Process existent = this.processBS.exists(process.getId(), Process.class);
@@ -283,6 +284,7 @@ public class ProcessController extends AbstractController{
 	 */
 	@Get( PATH + "")
 	@NoCache
+	@Permissioned
 	public void listAllProcesses() {
 		try {
 			if(this.domain == null) {

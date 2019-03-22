@@ -12,7 +12,7 @@ import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
 import org.forrisco.core.plan.permissions.ManagePlanRiskPermission;
 import org.forrisco.core.policy.permissions.ManagePolicyPermission;
-import org.forrisco.core.process.ManageProcessPermission;
+import org.forrisco.core.process.permissions.ManageProcessPermission;
 import org.forrisco.core.unit.permissions.EditUnitPermission;
 import org.forrisco.core.unit.permissions.ManageUnitPermission;
 import org.forrisco.risk.permissions.ManageRiskItemsPermission;

@@ -954,9 +954,7 @@ public class UserController extends AbstractController {
 	 */
 	@Get("/api/user")
 	@NoCache
-	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManageUsersPermission.class, ViewUsersPermission.class,
-			org.forrisco.core.authz.permissions.ManageUsersPermission.class,
-			org.forrisco.core.authz.permissions.ViewUsersPermission.class })
+	@Permissioned
 	public void listUsers(Integer page, Integer pageSize) {
 		if (page == null)
 			page = 0;

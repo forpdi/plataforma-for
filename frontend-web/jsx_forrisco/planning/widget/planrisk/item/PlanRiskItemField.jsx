@@ -41,7 +41,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps){
-		this.state.fieldContent=newProps.field.fieldContent;
+		this.state.fieldContent = newProps.field.fieldContent;
 	},
 
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
@@ -109,19 +109,19 @@ export default React.createClass({
 			return false;
 		}
 
-
-
 		if (!validation.errorField) {
 			if (validation.type.s === this.state.types[0].id) {
-				this.props.fields.push({
-					fieldName: validation.name.s,
-					type: validation.type.s,
-					value: validation.name.s,
-					fieldContent: validation.description,
-					editInstance: false,
-					fileLink: "",
-					isText: true
-				});
+				if(validation.description !== null) {
+					this.props.fields.push({
+						fieldName: validation.name.s,
+						type: validation.type.s,
+						value: validation.name.s,
+						fieldContent: validation.description,
+						editInstance: false,
+						fileLink: "",
+						isText: true
+					});
+				}
 			}
 
 			if (validation.type.s === this.state.types[1].id) {
@@ -139,6 +139,7 @@ export default React.createClass({
 	},
 
 	confirmEdit() {
+		console.log('q1');
 		var validation = Validate.validationNewFieldItem(this.refs, this.props.field.fieldName, this.props.field.fieldContent);
 
 		if (validation.errorField) {
@@ -147,8 +148,8 @@ export default React.createClass({
 		}
 
 		if(!validation.errorField) {
-			this.props.editRichTextField(this.state.fieldContent, this.props.index)
-			this.props.editFieldTitle(validation.name.s, this.props.index)
+			this.props.editRichTextField(this.state.fieldContent, this.props.index);
+			this.props.editFieldTitle(validation.name.s, this.props.index);
 			this.props.setFieldValue(this.props.field, this.props.index);
 		}
 	},
@@ -174,7 +175,7 @@ export default React.createClass({
 	},
 
 	resetTypes() {
-		this.props.editFields(this.props.index,false);
+		this.props.editFields(this.props.index, false);
 	},
 
 	setImgValue(fieldImg) {
@@ -272,10 +273,11 @@ export default React.createClass({
 	},
 
 	render() {
-
+		console.log(this.props.fields, this.props.index);
 		return (
 			<div>
-				{this.props.field ?
+				{
+					this.props.field ?
 
 					<div>
 						{
@@ -422,7 +424,7 @@ export default React.createClass({
 													{/*Botões Laterais*/}
 													<div className="col-sm-12 col-md-4">
 														<span className="mdi mdi-check btn btn-sm btn-success"
-															  onClick={this.props.fields ? this.addField : this.confirmEdit}
+															  onClick={this.confirmEdit}
 															  title={Messages.get("label.submitLabel")}/>
 														<span>&nbsp;</span>
 														<span className="mdi mdi-close btn btn-sm btn-danger"
@@ -480,7 +482,7 @@ export default React.createClass({
 
 					</div>
 
-					//CADASTRAMENTO
+					//CADASTRAMENTO - Quando não á nenhum campo adicionado
 					:
 
 					<div className="form-group form-group-sm marginTop20">
