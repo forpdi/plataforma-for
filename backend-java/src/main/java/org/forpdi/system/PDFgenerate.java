@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -2562,6 +2563,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return null;
 	}
 	
+
 	private void generatePolicyContent(File contentFile, Long policyId, String itens, String subitens, TOCEvent event) 
 			throws DocumentException, IOException, MalformedURLException {
 			
@@ -2705,8 +2707,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									if (att.getContent().contains("||IMAGE||")) {
 										String img = allMatches.poll();
 										if (img != null 
-												&& !img.substring(0, 100).contains("data:image/png;base64")
-												&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+												&& !img.substring(0, 32).contains("data:image/png;base64")
+												&& !img.substring(0, 32).contains("data:image/gif;base64")
+												&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 	
 											// LOGGER.info("IMG------->"+img);
 											Image image = Image.getInstance(
@@ -2855,8 +2858,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 										if (att.getContent().contains("||IMAGE||")) {
 											String img = allMatches.poll();
 											if (img != null 
-													&& !img.substring(0, 100).contains("data:image/png;base64")
-													&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+													&& !img.substring(0, 32).contains("data:image/png;base64")
+													&& !img.substring(0, 32).contains("data:image/gif;base64")
+													&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 	
 												// LOGGER.info("IMG------->"+img);
 												Image image = Image.getInstance(
@@ -3377,6 +3381,70 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 	
 	/*unidade*/
+	
+	private void generateProcesses(Document document, Unit unit) throws DocumentException {
+		//exportar processos da unidade
+		List<Process> processes =  this.processBS.listProcessByUnit(unit).getList();
+		Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+		
+		if(!processes.isEmpty()) {
+			PdfPTable table = new PdfPTable(4);
+			table.setHeaderRows(1);
+			PdfPCell cell = new PdfPCell(new Phrase("Processos da Unidade",boldFont));
+	        cell.setColspan(4);
+	        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+	        table.addCell(cell);
+	        
+	        cell = new PdfPCell(new Phrase("Processo",boldFont));
+			table.addCell(cell);
+			cell = new PdfPCell(new Phrase("Objetivo",boldFont));
+			table.addCell(cell);
+			cell = new PdfPCell(new Phrase("Unidades relacionadas",boldFont));
+			table.addCell(cell);
+			cell = new PdfPCell(new Phrase("Anexo",boldFont));
+			table.addCell(cell);
+	        
+	        Paragraph attTitle = new Paragraph("Processo da Unidade", titulo);
+			attTitle.setLeading(interLineSpacing);
+			attTitle.setSpacingAfter(paragraphSpacing);
+			attTitle.setSpacingBefore(paragraphSpacing);
+			document.add(attTitle);
+			
+			String related = null;
+			
+			for (int k = 0; k < processes.size(); ++k) {
+				
+				List<Unit> relatedunits = processes.get(k).getRelatedUnits();
+				related = "";
+				
+				for(Unit relatedunit: relatedunits){
+					related+=relatedunit.getName();
+					if(relatedunits.indexOf(relatedunit)+1!=relatedunits.size()) {
+						related+=",\n";
+					}
+				}
+				
+				cell = new PdfPCell(new Phrase(processes.get(k).getName()));
+				table.addCell(cell);
+				cell = new PdfPCell(new Phrase(processes.get(k).getObjective()));
+				table.addCell(cell);
+				cell = new PdfPCell(new Phrase(related));
+				table.addCell(cell);
+				
+				Chunk c = new Chunk(processes.get(k).getFile() != null ? processes.get(k).getFile().getName() : "(link)", 
+						new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, WebColors.getRGBColor("#0085D9")));
+				c.setAnchor(processes.get(k).getFileLink());
+				//c.setAction(PdfAction.gotoRemotePage("http://mydomain/mypage","page1",false,true)); 
+				cell = new PdfPCell();
+				cell.addElement(c);
+				table.addCell(cell);
+			        
+			}
+			 document.add(table);
+		}
+	}
+	
+	
 	private void generateUnitContent(File contentFile, String units, String subunits, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
 		
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
@@ -3533,8 +3601,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								if (att.getContent().contains("||IMAGE||")) {
 									String img = allMatches.poll();
 									if (img != null 
-											&& !img.substring(0, 100).contains("data:image/png;base64")
-											&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+											&& !img.substring(0, 32).contains("data:image/png;base64")
+											&& !img.substring(0, 32).contains("data:image/gif;base64")
+											&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 
 										// LOGGER.info("IMG------->"+img);
 										Image image = Image.getInstance(
@@ -3578,53 +3647,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				}
 							
 					
-				//exportar processos da unidade
-				List<Process> processes =  this.processBS.listProcessByUnit(unit).getList();
-				Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-				
-				if(!processes.isEmpty()) {
-					PdfPTable table = new PdfPTable(4);
-					table.setHeaderRows(1);
-					PdfPCell cell = new PdfPCell(new Phrase("Processos da Unidade",boldFont));
-			        cell.setColspan(4);
-			        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-			        table.addCell(cell);
-			        
-			        cell = new PdfPCell(new Phrase("Processo",boldFont));
-					table.addCell(cell);
-					cell = new PdfPCell(new Phrase("Objetivo",boldFont));
-					table.addCell(cell);
-					cell = new PdfPCell(new Phrase("Unidades relacionadas",boldFont));
-					table.addCell(cell);
-					cell = new PdfPCell(new Phrase("Anexo",boldFont));
-					table.addCell(cell);
-			        
-			        Paragraph attTitle = new Paragraph("Processo da Unidade", titulo);
-					attTitle.setLeading(interLineSpacing);
-					attTitle.setSpacingAfter(paragraphSpacing);
-					attTitle.setSpacingBefore(paragraphSpacing);
-					document.add(attTitle);
-					
-					for (int k = 0; k < processes.size(); ++k) {
-						cell = new PdfPCell(new Phrase(processes.get(k).getName()));
-						table.addCell(cell);
-						cell = new PdfPCell(new Phrase(processes.get(k).getObjective()));
-						table.addCell(cell);
-						cell = new PdfPCell(new Phrase(processes.get(k).getRelatedUnits().get(0).getName()));
-						table.addCell(cell);
-						
-						Chunk c = new Chunk(processes.get(k).getFile() != null ? processes.get(k).getFile().getName() : "(link)", 
-								new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL, WebColors.getRGBColor("#0085D9")));
-						c.setAnchor(processes.get(k).getFileLink());
-						//c.setAction(PdfAction.gotoRemotePage("http://mydomain/mypage","page1",false,true)); 
-						cell = new PdfPCell();
-						cell.addElement(c);
-						table.addCell(cell);
-					        
-					}
-					 document.add(table);
-				}
-				
+				generateProcesses(document, unit);
 				
 					
 				subSecIndex = 0;
@@ -3717,14 +3740,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							
 							
 							File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
-							/*FileWriter fw = new FileWriter(htmlFile, true);
-							BufferedWriter conexao = new BufferedWriter(fw);
-							conexao.write(str);
-							conexao.newLine();
-							conexao.close();
-							// LOGGER.info(htmlFile.getPath());
-							List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
-							*/
+							
 							FileOutputStream out = new FileOutputStream(htmlFile);
 							out.write(str.getBytes());
 							out.close();
@@ -3739,8 +3755,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									if (att.getContent().contains("||IMAGE||")) {
 										String img = allMatches.poll();
 										if (img != null 
-												&& !img.substring(0, 100).contains("data:image/png;base64")
-												&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+												&& !img.substring(0, 32).contains("data:image/png;base64")
+												&& !img.substring(0, 32).contains("data:image/gif;base64")
+												&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 
 											// LOGGER.info("IMG------->"+img);
 											Image image = Image.getInstance(
@@ -3782,6 +3799,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							htmlFile.delete();
 						}
 					}
+					generateProcesses(document, subunit);
 				}
 			
 			}
@@ -3794,8 +3812,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
-	
-	
+
 	/*plano de risco*/
 	private void generatePlanRiskContent(File contentFile, Long planId, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
 		
@@ -3811,11 +3828,12 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		
 		
-		String[] sections = null;
+		String[] sections = {};
 		if (itens != null)
 			sections = itens.split(",");
 		
-		String[] subsections= null;
+		
+		String[] subsections= {};
 		if (subitens != null)
 			subsections = subitens.split(",");
 		
@@ -3829,45 +3847,45 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		
 		PlanRisk plan=this.planriskBS.exists(planId,PlanRisk.class);
-		//this.planriskBS.
-		String secName2 =plan.getName();
-		haveContent = true;
-		secIndex++;
-		Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
-		c2.setGenericTag(secIndex + ". " + secName2);
-		Paragraph secTitle2 = new Paragraph(c2);
-		secTitle2.setLeading(interLineSpacing);
-		secTitle2.setSpacingAfter(paragraphSpacing);
-		//secTitle.setSpacingBefore(paragraphSpacing);
-		document.add(secTitle2);
-		
 
-		Paragraph attTitle;
-		Paragraph description;
-		
-
-		c2 = new Chunk("descrição", titulo);
-		attTitle = new Paragraph(c2);
-		attTitle.setLeading(interLineSpacing);
-		attTitle.setSpacingAfter(paragraphSpacing);
-		//secTitle.setSpacingBefore(paragraphSpacing);
-		document.add(attTitle);
-		description = new Paragraph(plan.getDescription());
-		description.setIndentationLeft(firstLineIndent);
-		description.setSpacingAfter(paragraphSpacing);
-		document.add(description);
-
-		c2 = new Chunk("politica vinculada", titulo);
-		attTitle = new Paragraph(c2 );
-		attTitle.setLeading(interLineSpacing);
-		attTitle.setSpacingAfter(paragraphSpacing);
-		//secTitle.setSpacingBefore(paragraphSpacing);
-		document.add(attTitle);
-		description = new Paragraph(plan.getPolicy().getName());
-		description.setIndentationLeft(firstLineIndent);
-		description.setSpacingAfter(paragraphSpacing);
-		document.add(description);
-		
+		if(Arrays.stream(sections).anyMatch("0"::equals)) {
+	
+			String secName2 =plan.getName();
+			haveContent = true;
+			secIndex++;
+			Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
+			c2.setGenericTag(secIndex + ". " + secName2);
+			Paragraph secTitle2 = new Paragraph(c2);
+			secTitle2.setLeading(interLineSpacing);
+			secTitle2.setSpacingAfter(paragraphSpacing);
+			//secTitle.setSpacingBefore(paragraphSpacing);
+			document.add(secTitle2);
+			
+			Paragraph attTitle;
+			Paragraph description;
+	
+			c2 = new Chunk("descrição", titulo);
+			attTitle = new Paragraph(c2);
+			attTitle.setLeading(interLineSpacing);
+			attTitle.setSpacingAfter(paragraphSpacing);
+			//secTitle.setSpacingBefore(paragraphSpacing);
+			document.add(attTitle);
+			description = new Paragraph(plan.getDescription());
+			description.setIndentationLeft(firstLineIndent);
+			description.setSpacingAfter(paragraphSpacing);
+			document.add(description);
+	
+			c2 = new Chunk("politica vinculada", titulo);
+			attTitle = new Paragraph(c2 );
+			attTitle.setLeading(interLineSpacing);
+			attTitle.setSpacingAfter(paragraphSpacing);
+			//secTitle.setSpacingBefore(paragraphSpacing);
+			document.add(attTitle);
+			description = new Paragraph(plan.getPolicy().getName());
+			description.setIndentationLeft(firstLineIndent);
+			description.setSpacingAfter(paragraphSpacing);
+			document.add(description);
+		}
 		
 		//para cada item selecionado
 		if(sections !=null) {
@@ -3907,11 +3925,12 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				
 				for (PlanRiskItemField fielditem: fielditens.getList()) {
 					
-					
+					Paragraph attTitle;
+					Paragraph description;
 					
 					haveContent = true;
 					
-					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
+					//if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
 						
 						if (lastAttWasPlan) {
 							document.setPageSize(PageSize.A4);
@@ -3938,6 +3957,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							document.add(attTitle);
 						}
 						
+					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
 						Map<String, String> pc2 = new HashMap<String, String>();
 						pc2.put("line-height", "115%");
 						pc2.put("margin-bottom", "6.0pt");
@@ -3981,8 +4001,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								if (att.getContent().contains("||IMAGE||")) {
 									String img = allMatches.poll();
 									if (img != null 
-											&& !img.substring(0, 100).contains("data:image/png;base64")
-											&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+											&& !img.substring(0, 32).contains("data:image/png;base64")
+											&& !img.substring(0, 32).contains("data:image/gif;base64")
+											&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 
 										// LOGGER.info("IMG------->"+img);
 										Image image = Image.getInstance(
@@ -4022,6 +4043,21 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 						lastAttWasPlan = false;
 						htmlFile.delete();
+					}else {
+						
+						//melhorar isso e adicionar subitem na url de exportacao
+						//
+						Chunk linkToImg = new Chunk(fielditem.getDescription());
+						Font fontBlue = new Font(linkToImg.getFont().getBaseFont(), linkToImg.getFont().getSize(), Font.NORMAL, BaseColor.BLUE);
+						linkToImg.setFont(fontBlue);
+						linkToImg.setAnchor(fielditem.getFileLink());
+						linkToImg.setUnderline(0.1F, -2F);
+						Paragraph attLinkField = new Paragraph();
+						attLinkField.add(linkToImg);
+						attLinkField.setFirstLineIndent(38f);
+						document.add(attLinkField);
+						
+						
 					}
 				}
 					
@@ -4030,6 +4066,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	
 				for (PlanRiskSubItem sub: actualsubitens) {
 						
+					Paragraph attTitle;
+					Paragraph description;
 					haveContent = true;
 					subSecIndex++;
 					
@@ -4038,8 +4076,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					PaginatedList<PlanRiskSubItemField> fieldsubs = this.planRiskItemBS.listSubFieldsBySubItem(sub);
 						
 					for(PlanRiskSubItemField fieldsub : fieldsubs.getList()) {
-							
-						if( fieldsub.isText() && fieldsub.getDescription() != null && !fieldsub.getDescription().equals("")) {
 						
 							if (lastAttWasPlan) {
 								document.setPageSize(PageSize.A4);
@@ -4053,7 +4089,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								secTitle.setSpacingAfter(paragraphSpacing);
 								secTitle.setSpacingBefore(paragraphSpacing);
 								document.add(secTitle);
-								//secTitlePrinted = true;
+								secTitlePrinted = true;
 							}
 							
 							String attName = fieldsub.getName();
@@ -4066,6 +4102,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								document.add(attTitle);
 							}
 							
+							if( fieldsub.isText() && fieldsub.getDescription() != null && !fieldsub.getDescription().equals("")) {
+								
 							Map<String, String> pc2 = new HashMap<String, String>();
 							pc2.put("line-height", "115%");
 							pc2.put("margin-bottom", "6.0pt");
@@ -4090,14 +4128,20 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								}
 							}
 							str += value + "</p></body></html>";
+							
+													
 							File htmlFile = new File(outputDir, String.format("%s-2.html", prefix));
-							FileWriter fw = new FileWriter(htmlFile, true);
-							BufferedWriter conexao = new BufferedWriter(fw);
-							conexao.write(str);
-							conexao.newLine();
-							conexao.close();
-							// LOGGER.info(htmlFile.getPath());
-							List<Element> p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
+							FileOutputStream out = new FileOutputStream(htmlFile);
+							out.write(str.getBytes());
+							out.close();
+		
+							FileReader fr = new FileReader(htmlFile.getPath());
+							
+							List<Element> p = HTMLWorker.parseToList(fr, styles);
+							
+							fr.close();
+							
+							p = HTMLWorker.parseToList(new FileReader(htmlFile.getPath()), styles);
 							for (int k = 0; k < p.size(); ++k) {
 								if (p.get(k) instanceof Paragraph) {
 									Paragraph att = (Paragraph) p.get(k);
@@ -4105,8 +4149,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									if (att.getContent().contains("||IMAGE||")) {
 										String img = allMatches.poll();
 										if (img != null 
-												&& !img.substring(0, 100).contains("data:image/png;base64")
-												&& !img.substring(0, 100).contains("data:image/jpg;base64")) {
+												&& !img.substring(0, 32).contains("data:image/png;base64")
+												&& !img.substring(0, 32).contains("data:image/gif;base64")
+												&& !img.substring(0, 32).contains("data:image/jpg;base64")) {
 
 											// LOGGER.info("IMG------->"+img);
 											Image image = Image.getInstance(
@@ -4146,6 +4191,18 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							}
 							lastAttWasPlan = false;
 							htmlFile.delete();
+						}else {
+							
+							Chunk linkToImg = new Chunk(fieldsub.getDescription());
+							Font fontBlue = new Font(linkToImg.getFont().getBaseFont(), linkToImg.getFont().getSize(), Font.NORMAL, BaseColor.BLUE);
+							linkToImg.setFont(fontBlue);
+							linkToImg.setAnchor(fieldsub.getFileLink());
+							linkToImg.setUnderline(0.1F, -2F);
+							Paragraph attLinkField = new Paragraph();
+							attLinkField.add(linkToImg);
+							attLinkField.setFirstLineIndent(38f);
+							
+							document.add(attLinkField);
 						}
 					}
 				}

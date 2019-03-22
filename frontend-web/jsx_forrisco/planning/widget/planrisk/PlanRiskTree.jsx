@@ -30,9 +30,9 @@ export default React.createClass({
 			treeItens: [],
 			treeSubitens: [],
 			treeItemFields: [],
-			treeSubItens: [],
-			rootSections: [],
-			rootSubsections: [],
+			allSubItens: [],
+			//rootSections: [],
+			//rootSubsections: [],
 			newProps: null,
 			actualType: this.props.treeType,
 			prevProps: {},
@@ -45,7 +45,7 @@ export default React.createClass({
 			termsSearch: '',
 			itensSelect: [],
 			subitensSelect: [],
-			subitens: [],
+			//subitens: [],
 			ordResultSearch: null,
 			planRiskId: null,
 			export:false
@@ -65,7 +65,7 @@ export default React.createClass({
 				to: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
 				key: '/forrisco/plan-risk/' + this.props.planRisk.id + '/item/overview',
 				model: this.props.planRisk,
-				id: this.props.planRisk.id,
+				id: 0//this.props.planRisk.id,
 			};
 
 			response.data.map(itens => {
@@ -147,37 +147,14 @@ export default React.createClass({
 			}
 		}, this);
 
-		PlanRiskItemStore.on("retrieveAllSubitens",(model) => {
-			this.setState({
-				subitens:model.data,
-			});
-
+		PlanRiskItemStore.on('allSubItensByPlan', response => {
 			if(this.state.export){
-				this.retrieveFilledSections();
 				this.setState({
-					subitens:model.data,
+					allSubItens: response.data,
 					export:false,
 				})
-			}
-		}, this);
-
-		PlanRiskItemStore.on('allSubItensByPlan', response => {
-			this.setState({
-				treeSubItens: response.data,
-				rootSections: this.state.treeItens,
-				rootSubsections: response.data,
-			});
-
-
-			if(this.state.exportPlanRisk) {
 				this.retrieveFilledSections();
-
-				this.setState({
-					treeSubItens: response.data,
-					exportPlanRisk: false,
-				})
 			}
-
 		}, this);
 
 		//Atualiza a Tree quando un novo item é cadastrado
@@ -326,7 +303,7 @@ export default React.createClass({
 	verifySelectAllsubitens() {
 		var i;
 		var selectedAll = true;
-		for (i = 0; i < this.state.subitens.length; i++) {
+		for (i = 0; i < this.state.allSubItens.length; i++) {
 			if (document.getElementById("checkbox-subitem-" + i).disabled == false && !document.getElementById("checkbox-subitem-" + i).checked) {
 				selectedAll = false;
 			}
@@ -336,7 +313,7 @@ export default React.createClass({
 
 	selectAllSubitens() {
 		var i;
-		for (i = 0; i < this.state.subitens.length; i++) {
+		for (i = 0; i < this.state.allSubItens.length; i++) {
 			if (document.getElementById("checkbox-subitem-" + i).disabled == false) {
 				document.getElementById("checkbox-subitem-" + i).checked = document.getElementById("selectallsub").checked;
 			}
@@ -381,7 +358,7 @@ export default React.createClass({
 					</div>
 				</div>
 
-				{this.state.subitens.map((rootSection, idx) => {
+				{this.state.allSubItens.map((rootSection, idx) => {
 						return (
 							<div key={"rootSection-filled"+idx}>
 								<div className="checkbox marginLeft5 col-md-10" >
@@ -425,14 +402,15 @@ export default React.createClass({
 		var subsections = "";
 		var author = document.getElementById("documentAuthor").value;
 		var title = document.getElementById("documentTitle").value;
+
 		for (i = 0; i < this.state.treeItens.length-1; i++) {
 			if (document.getElementById("checkbox-item-" + i).checked == true) {
 				sections = sections.concat(this.state.treeItens[i].id + "%2C");
 			}
 		}
-		for (i = 0; i < this.state.subitens.length-1; i++) {
+		for (i = 0; i < this.state.allSubItens.length; i++) {
 			if (document.getElementById("checkbox-subitem-" + i).checked == true) {
-				subsections = subsections.concat(this.state.subitens[i].id + "%2C");
+				subsections = subsections.concat(this.state.allSubItens[i].id + "%2C");
 			}
 		}
 
@@ -471,10 +449,9 @@ export default React.createClass({
 
 	exportPlanRiskReport(evt) {
 		evt.preventDefault();
-
 		if(this.props.planRisk){
 			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_GET_ALL_SUBITENS,
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS_BY_PLANRISK, //ACTION_GET_ALL_SUBITENS,
 				data: {
 					id: this.props.planRisk.id
 				},

@@ -37,8 +37,6 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'item-update',
 	ACTION_CUSTOM_UPDATE: 'item-customUpdate',
 	ACTION_DELETE_PLAN: 'item-deleteItem',
-	//ACTION_CREATE_INFO: 'item-createInfo',
-	//ACTION_RETRIEVE_INFO: 'item-retrieveInfo',
 	dispatchAcceptRegex: /^item-[a-zA-Z0-9]+$/,
 	ACTION_DELETE: "item-delete",
 	ACTION_RETRIEVE_SUBITEM: "item-retrieveSubitem",
@@ -91,7 +89,6 @@ var ItemStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
 
 	retrieveItem(id) {
 		var me = this;
@@ -160,45 +157,10 @@ var ItemStore = Fluxbone.Store.extend({
 			},
 			error(model, response, options) {
 				me.handleRequestErrors([], options.xhr);
+				me.trigger("retrieveAllSubitens", model,pigback);
 			}
 		});
 	},
-
-	/*createInfo(data) {
-		var me = this;
-		$.ajax({
-			url: me.url+"/info",
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify({
-				policy: data
-			}),
-			success(model) {
-				me.trigger("itemInfo", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("itemInfo", opts);
-			}
-		});
-	},
-
-	retrieveInfo(data) {
-		var me = this;
-		$.ajax({
-			url: me.url+"/info",
-			method: 'GET',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: data,
-			success(model) {
-				me.trigger("retrieveInfo", model);
-			},
-			error(opts, status, errorMsg) {
-				me.trigger("retrieveInfo", null);
-			}
-		});
-	},*/
 
 	createField(data) {
 		var me = this;
@@ -219,7 +181,6 @@ var ItemStore = Fluxbone.Store.extend({
 		});
 	},
 
-
 	createSubfield(data) {
 		var me = this;
 		$.ajax({
@@ -238,8 +199,6 @@ var ItemStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-
-
 
 	retrieveField(id) {
 		var me = this;

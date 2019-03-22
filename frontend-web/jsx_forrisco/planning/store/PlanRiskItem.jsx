@@ -9,7 +9,6 @@ var ItemModel = Fluxbone.Model.extend({
 var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_GET_ALL_ITENS: 'planRiskItem-getAllItens',
 	ACTION_GET_SUBITENS: 'planRiskItem-getSubItens',
-	ACTION_GET_ALL_SUBITENS: 'planRiskItem-getAllSubItens',
 	ACTION_GET_SUB_ITENS_BY_PLANRISK: 'planRiskItem-getSubItensByPlanRisk',
 	ACTION_DETAIL_ITEM: 'planRiskItem-detailItem',
 	ACTION_DETAIL_SUBITEM: 'planRiskItem-detailSubItem',
@@ -57,34 +56,18 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 		})
 	},
 
-	getAllSubItens(data, node) {
+	getSubItensByPlanRisk(planRiskId, node) {
 		var me = this;
 		$.ajax({
 			method: "GET",
-			url: me.url + "/allsub-itens/" + data.id,
+			url: me.url + "/allsubitens/" + planRiskId.id,
 			dataType: 'json',
 			success(data, status, opts) {
-				me.trigger("retrieveAllSubitens", data, node)
+				me.trigger("allSubItensByPlan", data, node)
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
-				me.trigger("retrieveAllSubitens", opts, errorMsg)
-			}
-		})
-	},
-
-
-	getSubItensByPlanRisk(planRiskId) {
-		var me = this;
-		$.ajax({
-			method: "GET",
-			url: me.url + "/allsubitens/" + planRiskId,
-			dataType: 'json',
-			success(data, status, opts) {
-				me.trigger("allSubItensByPlan", data)
-			},
-			error(opts, status, errorMsg) {
-				me.handleRequestErrors([], opts);
+				me.trigger("allSubItensByPlan", opts, errorMsg)
 			}
 		})
 	},
