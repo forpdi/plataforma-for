@@ -24,7 +24,6 @@ export default React.createClass({
 			vizualization: false,
 			formFields: [],
 			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
-			globalEditInstance: false
 		}
 	},
 
@@ -55,6 +54,9 @@ export default React.createClass({
 	},
 
 	toggleFields() {
+		this.state.formFields.map( (fieldItem, index) => {
+			fieldItem.editInstance = false
+		});
 		this.setState({
 			globalEditInstance: true,
 			vizualization: true,
@@ -68,11 +70,17 @@ export default React.createClass({
 			}
 		});
 
-		this.setState({
-			formFields: this.state.formFields,
-			globalEditInstance: false,
-			vizualization: false
-		})
+		if(this.state.globalEditInstance === true) { //Se já estiver editando
+			this.setState({
+				formFields: this.state.formFields,
+				vizualization: false
+			})
+		} else {
+			this.setState({
+				formFields: this.state.formFields,
+				vizualization: false
+			})
+		}
 	},
 
 	//Edita o Título de um Item
@@ -256,7 +264,7 @@ export default React.createClass({
 						}
 
 						{
-								this.state.vizualization ?
+								this.state.vizualization === true ?
 
 									<PlanRiskItemField
 										fields={this.state.formFields}
@@ -267,9 +275,6 @@ export default React.createClass({
 									:
 
 									/* Botão de dicionar Novo Campo */
-
-									this.state.globalEditInstance === true ? ""
-										:
 									<button onClick={this.toggleFields} className="btn btn-sm btn-neutral marginTop20">
 										<span className="mdi mdi-plus"/> {Messages.get("label.addNewField")}
 									</button>

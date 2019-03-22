@@ -139,7 +139,6 @@ export default React.createClass({
 	},
 
 	confirmEdit() {
-		console.log('q1');
 		var validation = Validate.validationNewFieldItem(this.refs, this.props.field.fieldName, this.props.field.fieldContent);
 
 		if (validation.errorField) {
@@ -273,7 +272,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.props.fields, this.props.index);
 		return (
 			<div>
 				{

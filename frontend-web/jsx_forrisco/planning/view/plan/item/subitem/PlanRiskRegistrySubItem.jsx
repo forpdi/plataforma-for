@@ -4,8 +4,9 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import PlanRiskItemStore from "forpdi/jsx_forrisco/planning/store/PlanRiskItem.jsx"
 import PlanRiskItemField from "forpdi/jsx_forrisco/planning/widget/planrisk/item/PlanRiskItemField.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import _ from "underscore";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
+import _ from "underscore";
+
 
 export default React.createClass({
 	contextTypes: {
@@ -22,27 +23,29 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			vizualization: false,
 			formFields: [],
-			title: "Novo Subitem",
+			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 		}
 	},
 
 	componentDidMount() {
 		this.getFields();
+
 		_.defer(() => {
-			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Subitem');
+			this.context.tabPanel.addTab(this.props.location.pathname, 'Novo Item');
 		});
 	},
 
 	getFields() {
 
-		/*Título do SubItem*/
+		/*Título do Item*/
 		var formFields = [{
 			name: 'description',
 			type: AttributeTypes.TEXT_FIELD,
-			placeholder: "Título do Subitem",
+			placeholder: "Título do Item",
 			maxLength: 100,
 			label: "Título",
 			required: true,
+			edit: false
 		}];
 
 		this.setState({
@@ -51,8 +54,12 @@ export default React.createClass({
 	},
 
 	toggleFields() {
+		this.state.formFields.map( (fieldItem, index) => {
+			fieldItem.editInstance = false
+		});
 		this.setState({
-			vizualization: !this.state.vizualization,
+			globalEditInstance: true,
+			vizualization: true,
 		});
 	},
 
@@ -63,16 +70,96 @@ export default React.createClass({
 			}
 		});
 
+		if(this.state.globalEditInstance === true) { //Se já estiver editando
+			this.setState({
+				formFields: this.state.formFields,
+				vizualization: false
+			})
+		} else {
+			this.setState({
+				formFields: this.state.formFields,
+				vizualization: false
+			})
+		}
+	},
+
+	//Edita o Título de um Item
+	editFieldTitle(newTitle, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldName = newTitle
+			}
+		});
+
 		this.setState({
-			formFields: this.state.formFields,
-			vizualization: !this.state.vizualization
+			formFields: this.state.formFields
 		})
 	},
 
+	//Confirma as edições no campo
+	setFieldValue(field, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem = field;
+				fieldItem.editInstance = false;
+			}
+			this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Muda o Tipo do item
+	editType(bool, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+				fieldItem.isText = bool;
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
+	//Edita a TextArea de um item
+	editRichTextField(contenteValue, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index){
+				fieldItem.fieldContent = contenteValue
+			}
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		})
+	},
+
+	//Edita a img selecionada no campo
+	editImg(img, id) {
+		this.state.formFields.map( (fieldItem, index) => {
+			if (id === index) {
+
+				fieldItem.fieldName = img.fieldName;
+				fieldItem.fieldContent = img.fieldContent;
+				fieldItem.isText = false;
+				fieldItem.fileLink = img.fileLink
+			}
+
+			//this.state.formFields[index] = fieldItem;
+		});
+
+		this.setState({
+			formFields: this.state.formFields
+		});
+	},
+
 	deleteFields(id) {
-		Modal.confirmCustom(() => {
+		Modal.confirmCustom( () => {
 			Modal.hide();
-			this.state.formFields.map((fieldItem, index) => {
+			this.state.formFields.map( (fieldItem, index) => {
 				if (id === index) {
 					this.state.formFields.splice(index, 1)
 				}
@@ -81,9 +168,7 @@ export default React.createClass({
 			this.setState({
 				formFields: this.state.formFields
 			})
-		}, Messages.get("label.msg.deleteField"), () => {
-			Modal.hide()
-		});
+		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
 
 	onSubmit(event) {
@@ -137,7 +222,7 @@ export default React.createClass({
 
 	onCancel() {
 		this.context.router.push(
-			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item//item/overview"
+			"/forrisco/plan-risk/" + this.props.params.planRiskId + "/item/overview"
 		);
 	},
 
@@ -151,16 +236,22 @@ export default React.createClass({
 						</h1>
 						{
 							this.state.formFields.map((field, index) => {
-								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type === AttributeTypes.ATTACHMENT_FIELD) {
+								if (field.type === AttributeTypes.TEXT_AREA_FIELD || field.type ===  AttributeTypes.ATTACHMENT_FIELD) {
 									return (
 										<div key={index}>
 											<PlanRiskItemField
+												toggle={this.toggleFields}
 												vizualization={this.state.vizualization}
 												getFields={this.getFields}
-												toggle={this.toggleFields}
 												deleteFields={this.deleteFields}
 												editFields={this.editFields}
+												editRichTextField={this.editRichTextField}
+												setFieldValue={this.setFieldValue}
+												editFieldTitle={this.editFieldTitle}
+												editType={this.editType}
+												editImg={this.editImg}
 												index={index}
+												fields={this.state.formFields}
 												field={field}/>
 										</div>
 									)
@@ -175,8 +266,7 @@ export default React.createClass({
 						}
 
 						{
-							/*<FieldItemInput/>*/
-							this.state.vizualization ?
+							this.state.vizualization === true ?
 
 								<PlanRiskItemField
 									fields={this.state.formFields}
@@ -194,12 +284,8 @@ export default React.createClass({
 
 						<br/><br/><br/>
 						<div className="form-group">
-							<button type="submit" className="btn btn-sm btn-success">
-								{this.state.submitLabel}
-							</button>
-							<button className="btn btn-sm btn-default" onClick={this.onCancel}>
-								{this.state.cancelLabel}
-							</button>
+							<button type="submit" className="btn btn-sm btn-success">{this.state.submitLabel}</button>
+							<button className="btn btn-sm btn-default" onClick={this.onCancel}>{this.state.cancelLabel}</button>
 						</div>
 					</div>
 				</form>
