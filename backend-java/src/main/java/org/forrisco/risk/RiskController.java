@@ -133,8 +133,12 @@ public class RiskController extends AbstractController {
 	@NoCache
 	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void save(@NotNull @Valid Monitor monitor){
-//		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(monitor)));
 		try {
+			if (monitor.getBegin().after(new Date())) {
+				this.fail("A data do monitor não deve ser maior que a data atual.");
+				return;				
+			}
+			
 			Risk risk = this.riskBS.exists(monitor.getRisk().getId(), Risk.class);
 			if (risk == null) {
 				this.fail("Risco solicitado não foi encontrado.");
@@ -176,6 +180,11 @@ public class RiskController extends AbstractController {
 	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void save(@NotNull @Valid Incident incident){
 		try {
+			if (incident.getBegin().after(new Date())) {
+				this.fail("A data do incidente não deve ser maior que a data atual.");
+				return;				
+			}
+
 			Risk risk = this.riskBS.exists(incident.getRisk().getId(), Risk.class);
 			if (risk == null) {
 				this.fail("Risco solicitado não foi encontrado.");
@@ -929,6 +938,11 @@ public class RiskController extends AbstractController {
 	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void updateMonitor(@NotNull Monitor monitor) {
 		try {
+			if (monitor.getBegin().after(new Date())) {
+				this.fail("A data do monitor não deve ser maior que a data atual.");
+				return;				
+			}
+
 			Monitor oldmonitor = this.riskBS.exists(monitor.getId(), Monitor.class);
 			if (oldmonitor == null) {
 				this.fail("O monitoramento solicitado não foi encontrado.");
@@ -979,6 +993,10 @@ public class RiskController extends AbstractController {
 	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void updateIncident(@NotNull Incident incident) {
 		try {
+			if (incident.getBegin().after(new Date())) {
+				this.fail("A data do incidente não deve ser maior que a data atual.");
+				return;				
+			}
 			Incident oldincident = this.riskBS.exists(incident.getId(), Incident.class);
 			if (oldincident == null) {
 				this.fail("A ação solicitado não foi encontrada.");

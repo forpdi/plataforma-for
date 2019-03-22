@@ -3,6 +3,7 @@ import ReactTable from 'react-table';
 import "react-table/react-table.css";
 import _ from 'underscore';
 import { Button } from 'react-bootstrap';
+import moment from 'moment'
 
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
@@ -63,7 +64,7 @@ export default React.createClass({
 					data:  this.props.risk.id,
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao cadastrar monitoramento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -78,7 +79,7 @@ export default React.createClass({
 					data:  this.props.planRiskId,
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao excluir monitoramento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -93,7 +94,7 @@ export default React.createClass({
 					data: this.props.risk.id,
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao atualizar monitoramento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -361,6 +362,11 @@ export default React.createClass({
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
+		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+			return;
+		}
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_MONITOR,
 			data: {
@@ -382,6 +388,11 @@ export default React.createClass({
 	},
 
 	updateMonitor() {
+		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+			return;
+		}
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_UPDATE_MONITOR,
 			data: {
