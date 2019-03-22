@@ -152,12 +152,18 @@ export default React.createClass({
 
 	updateUnit(e) {
 		e.preventDefault();
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_UPDATE_UNIT,
-			data: {
-				unit: this.state.unitToUpdate,
-			},
-		});
+		const unit = this.state.unitToUpdate;
+
+		if (unit.name === '' || unit.user === null || unit.abbreviation === '') {
+			this.context.toastr.addAlertError(Messages.get("label.error.form"));
+		} else {
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_UPDATE_UNIT,
+				data: {
+					unit: this.state.unit,
+				},
+			});
+		}
 	},
 
 	deleteUnit() {
@@ -236,49 +242,49 @@ export default React.createClass({
 		return (
 			<form onSubmit={this.updateUnit}>
 				<div className="form-group form-group-sm">
-					<label className="fpdi-text-label">
-						Nome
-					</label>
+					{/*<label className="fpdi-text-label" for>
+						<span>NOME</span>
+					</label>*/}
 					<VerticalInput
 						fieldDef={{
 							name: "name",
 							type: "text",
 							value: unit.name,
+							required: true,
 							onChange: this.fieldChangeHandler,
+							label: 'NOME'
 						}}
 					/>
 				</div>
 				<div className="form-group form-group-sm">
-					<label className="fpdi-text-label">
-						SIGLA
-					</label>
 					<VerticalInput
 						fieldDef={{
 							name: "abbreviation",
 							type: "text",
 							value: unit.abbreviation,
+							required: true,
 							onChange: this.fieldChangeHandler,
+							label: 'SIGLA'
 						}}
 					/>
 				</div>
 				<div className="form-group form-group-sm">
-					<label className="fpdi-text-label">
-						RESPONSÁVEL
-					</label>
 					<VerticalInput
 						fieldDef={{
 							name: "unit-user",
 							type: "select",
 							options: _.map(this.state.users, user => user.name),
 							value: unit.user.name,
+							required: true,
 							renderDisplay: value => value,
 							onChange: this.selectChangeHandler,
+							label: 'RESPONSÁVEL'
 						}}
 					/>
 				</div>
 				<div className="form-group form-group-sm">
 					<label className="fpdi-text-label">
-						DESCRIÇÃO
+						<span>DESCRIÇÃO</span>
 					</label>
 					<VerticalInput
 						fieldDef={{
@@ -287,6 +293,7 @@ export default React.createClass({
 							rows: 4,
 							value: unit.description,
 							onChange: this.fieldChangeHandler,
+							label: 'DESCRIÇÃO'
 						}}
 					/>
 				</div>
