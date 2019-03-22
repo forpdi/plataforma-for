@@ -10,8 +10,11 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.policy.Policy;
+import org.forrisco.core.policy.permissions.ManagePolicyPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -42,6 +45,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/new")
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void saveItem(@NotNull @Valid Item item){
 		try {	
 			
@@ -66,6 +70,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/subnew")
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void saveSubitem(@NotNull @Valid SubItem subitem){
 		try {
 			
@@ -91,7 +96,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/field")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void saveFieldItem(@NotNull @Valid FieldItem fieldItem){
 		try {
 
@@ -114,7 +119,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/subfield")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void saveFieldSubItem(@NotNull @Valid FieldSubItem fieldSubItem){
 		try {
 			this.itemBS.save(fieldSubItem);
@@ -136,6 +141,7 @@ public class ItemController extends AbstractController {
 	 */
 	@Get( PATH + "")
 	@NoCache
+	@Permissioned
 	public void listItens(@NotNull Long policyId) {
 		try {
 			Policy policy = this.itemBS.exists(policyId, Policy.class);
@@ -155,10 +161,9 @@ public class ItemController extends AbstractController {
 	 *			Id do item a ser retornado.
 	 * @return Item Retorna o item de acordo com o id passado.
 	 */
-
 	@Get( PATH + "/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveItem(@NotNull Long id) {
 		try {
 			Item item = this.itemBS.exists(id, Item.class);
@@ -188,7 +193,7 @@ public class ItemController extends AbstractController {
 
 	@Get( PATH + "/subitem/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveSubItem(@NotNull Long id) {
 		try {
 			SubItem subitem = this.itemBS.exists(id, SubItem.class);
@@ -214,10 +219,9 @@ public class ItemController extends AbstractController {
 	 * @return Subitem Retorna os subitens de acordo com o id passado.
 	 * 
 	 */
-
 	@Get( PATH + "/subitens/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveSubitem(@NotNull Long id) {
 		try {
 			Item item = this.itemBS.exists(id, Item.class);
@@ -243,7 +247,7 @@ public class ItemController extends AbstractController {
 
 	@Get( PATH + "/field/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveField(@NotNull Long id) {
 		
 		try {
@@ -273,7 +277,7 @@ public class ItemController extends AbstractController {
 
 	@Get( PATH + "/subfield/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveSubField(@NotNull Long id) {
 		
 		try {
@@ -306,7 +310,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/update")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void updateItem(@NotNull @Valid Item item) {
 		try {
 			Item existent = this.itemBS.exists(item.getId(), Item.class);
@@ -358,7 +362,7 @@ public class ItemController extends AbstractController {
 	@Post( PATH + "/subitem/update")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void updateSubitem(@NotNull @Valid SubItem subitem) {
 		try {
 			SubItem existent = this.itemBS.exists(subitem.getId(), SubItem.class);
@@ -406,7 +410,7 @@ public class ItemController extends AbstractController {
 	 */
 	@Delete( PATH + "/{id}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void deleteItem(@NotNull Long id) {
 		try {
 			Item item = this.itemBS.exists(id, Item.class);
@@ -440,7 +444,7 @@ public class ItemController extends AbstractController {
 	 */
 	@Delete( PATH + "/subitem/{id}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void deleteSubitem(@NotNull Long id) {
 		try {
 			SubItem subitem = this.itemBS.exists(id, SubItem.class);
@@ -473,7 +477,7 @@ public class ItemController extends AbstractController {
 
 	@Get( PATH + "/allsubitens/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveAllSubitem(@NotNull Long id) {
 		try {
 			Policy policy = this.itemBS.exists(id, Policy.class);

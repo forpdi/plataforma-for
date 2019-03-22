@@ -43,6 +43,7 @@ export default React.createClass({
 			termsSearch: '',
 			itensSelect: [],
 			subitensSelect: [],
+			export:false,
 		};
 	},
 
@@ -375,18 +376,21 @@ export default React.createClass({
 				this.setState({ treeItensUnit });
 			}
 		}, me);
+
+		UnitStore.on("allSubunitsListed",(model) => {
+			if(this.state.export){
+				this.setState({
+					treeItensSubunit:model.data,
+					export:false,
+				})
+				this.retrieveFilledSections();
+			}
+		},this);
+
 		this.refresh(this.props.planRisk.id);
 	},
 
 	componentWillUnmount() {
-		// UnitStore.off('unitbyplan');
-		// UnitStore.off('subunitsListed');
-		// UnitStore.off('unitDeleted');
-		// UnitStore.off('unitCreated');
-		// UnitStore.off('subunitCreated');
-		// UnitStore.off('unitUpdated');
-		// RiskStore.off('riskbyunit');
-		// RiskStore.off('riskbysubunits');
 		RiskStore.off(null, null, this);
 		UnitStore.off(null, null, this);
 	},
@@ -493,19 +497,19 @@ export default React.createClass({
 	verifySelectAllsubitens() {
 		var i;
 		var selectedAll = true;
-		for (i = 0; i < this.state.treeItensSubunit.length - 1; i++) {
+		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
 			if (document.getElementById("checkbox-subunit-" + i).disabled == false && !document.getElementById("checkbox-subunit-" + i).checked) {
 				selectedAll = false;
 			}
 		}
-		document.getElementById("selectall").checked = selectedAll;
+		document.getElementById("selectall-sub").checked = selectedAll;
 	},
 
 	selectAllSubunits() {
 		var i;
-		for (i = 0; i < this.state.treeItensSubunit.length - 1; i++) {
+		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
 			if (document.getElementById("checkbox-subunit-" + i).disabled == false) {
-				document.getElementById("checkbox-subunit-" + i).checked = document.getElementById("selectall").checked;
+				document.getElementById("checkbox-subunit-" + i).checked = document.getElementById("selectall-sub").checked;
 			}
 		}
 	},
@@ -549,25 +553,26 @@ export default React.createClass({
 					<div key="rootSection-selectall">
 						<div className="checkbox marginLeft5 col-md-10">
 							<label name="labelSection-selectall" id="labelSection-selectall">
-								<input type="checkbox" value="selectall" id="selectall"
+								<input type="checkbox" value="selectall" id="selectall-sub"
 									   onChange={this.selectAllSubunits}/>
 								Selecionar todos
 							</label>
 						</div>
 					</div>
 
-					{/*this.state.subunits.map((rootSection, idx) => {
+					{this.state.treeItensSubunit.map((rootSection, idx) => {
+						console.log(rootSection, idx)
 					return (
 					<div key={"rootSection-filled"+idx}>
 						<div className="checkbox marginLeft5 col-md-10" >
 							<label name={"labelSection-filled"+idx} id={"labelSection-filled"+idx}>
-								<input type="checkbox" value={rootSection.id} id={"checkbox-subitem-"+idx} onClick={this.verifySelectAllsubitens}></input>
-								{rootSection.label}
+								<input type="checkbox" value={rootSection.id} id={"checkbox-subunit-"+idx} onClick={this.verifySelectAllsubitens}></input>
+								{rootSection.name}
 							</label>
 						</div>
 
 					</div>);
-				})*/}
+				})}
 					<br/><br/>
 				</div>
 			</div>
@@ -575,13 +580,6 @@ export default React.createClass({
 	},
 
 	retrieveFilledSections() {
-		//var me = this;
-		//me.setState({
-		//rootSections: this.state.itens,
-		//rootSubsections: this.state.subitens,
-		//loadingexport:true,
-		//	});
-
 		//	$('#container') heigth 150px
 		Modal.exportDocument(
 			Messages.get("label.exportConfirmation"),
@@ -616,7 +614,7 @@ export default React.createClass({
 				sections = sections.concat(this.state.treeItensUnit[i].id + "%2C");
 			}
 		}
-		for (i = 0; i < this.state.treeItensSubunit.length - 1; i++) {
+		for (i = 0; i < this.state.treeItensSubunit.length; i++) {
 			if (document.getElementById("checkbox-subunit-" + i).checked == true) {
 				subsections = subsections.concat(this.state.treeItensSubunit[i].id + "%2C");
 			}
@@ -655,22 +653,36 @@ export default React.createClass({
 		}
 	},
 
-	exportUnitReport(evt) {
-		evt.preventDefault();
-		//this.setState({exportUnit:true})
-
-		//	if(this.state.export){
-		this.retrieveFilledSections();
-		this.setState({
-			//subitens:model.data,
-			//export:false,
-		})
-		//	}
-	},
-
 	exportPlanRiskReport(evt) {
 		evt.preventDefault();
-		this.setState({ exportPlanRisk: true })
+
+		if(this.props.planRisk){
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_GET_SUB_ITENS_BY_PLANRISK,
+				data: {
+					id: this.props.planRisk.id
+				},
+				opts: {
+					node:{id:null}
+				}
+			});
+			this.setState({export:true})
+		}
+	},
+
+	exportUnitReport(evt) {
+		evt.preventDefault();
+
+		if(this.props.planRisk){
+			UnitStore.dispatch({
+				action: UnitStore.ACTION_LIST_SUBUNIT_BY_PLAN,
+				data:  this.props.planRisk.id,
+				opts: {
+					node:{id:null}
+				}
+			});
+			this.setState({export:true})
+		}
 	},
 
 	onKeyDown(event) {

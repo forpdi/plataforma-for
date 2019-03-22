@@ -17,18 +17,19 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.jobs.EmailSenderTask;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
-import org.forrisco.core.item.PlanRiskItemBS;
+import org.forrisco.core.plan.permissions.ManagePlanRiskPermission;
 import org.forrisco.core.policy.Policy;
+import org.forrisco.core.item.PlanRiskItemBS;
 import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
-import org.forrisco.core.unit.UnitController;
 
 import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
@@ -51,9 +52,7 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 public class PlanRiskController extends AbstractController {
 	
 	@Inject @Current private CompanyDomain domain;
-	@Inject private Policy policy;
 	@Inject private PlanRiskBS planRiskBS;
-	@Inject private PlanRisk planRisk;
 	@Inject private PlanRiskItemBS planRiskItemBS;
 	@Inject private UnitBS unitBS;
 	@Inject private ProcessBS processBS;
@@ -70,8 +69,7 @@ public class PlanRiskController extends AbstractController {
 	@Post( PATH + "/new")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
-	
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void savePlan(@NotNull @Valid  PlanRisk planRisk) {
 		try {
 			
@@ -106,6 +104,7 @@ public class PlanRiskController extends AbstractController {
 	 */
 	@Get( PATH + "/unarchivedplanrisk")
 	@NoCache
+	@Permissioned
 	public void listPlanRiskUnarchived(Integer page) {
 		if (page == null) page = 0;
 		try {
@@ -156,7 +155,7 @@ public class PlanRiskController extends AbstractController {
 	@Post(PATH + "/update")
 	@Consumes
 	@NoCache
-	@Permissioned
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void editPlanRisk(@NotNull @Valid PlanRisk planRisk) {
 		try {
 			PlanRisk existent = this.planRiskBS.exists(planRisk.getId(), PlanRisk.class);
@@ -184,7 +183,7 @@ public class PlanRiskController extends AbstractController {
 	
 	@Delete(PATH + "/{id}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePlanRiskPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void deletePlanRisk(Long id) {
 		try {
 			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(id)));
@@ -264,7 +263,7 @@ public class PlanRiskController extends AbstractController {
 	 */
 	@Get(PATH + "/exportReport")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void exportreport(String title, String author, boolean pre,Long planId, String itens, String subitens) throws IOException, DocumentException{
 		try {
 		
@@ -386,6 +385,4 @@ public class PlanRiskController extends AbstractController {
 		result.setTotal((long)count);
 		return result;
 	}
-
-	
 }

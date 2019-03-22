@@ -19,15 +19,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
-import org.forrisco.core.item.Item;
-import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.plan.PlanRiskBS;
-import org.forrisco.core.policy.Policy;
 import org.forrisco.risk.Contingency;
 import org.forrisco.risk.Incident;
 import org.forrisco.risk.Monitor;
@@ -40,8 +36,9 @@ import org.forrisco.risk.objective.RiskStrategy;
 import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.process.ProcessUnit;
+import org.forrisco.core.unit.permissions.EditUnitPermission;
+import org.forrisco.core.unit.permissions.ManageUnitPermission;
 
-import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
@@ -60,8 +57,6 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 @Controller
 public class UnitController extends AbstractController {
 
-	@Inject
-	private PlanRiskBS planBS;
 	@Inject
 	private UnitBS unitBS;
 	@Inject
@@ -87,8 +82,7 @@ public class UnitController extends AbstractController {
 	@Post(PATH + "/new")
 	@Consumes
 	@NoCache
-	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
-	// ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {ManageUnitPermission.class})
 	public void save(@NotNull @Valid Unit unit) {
 		try {
 			PlanRisk planRisk = this.unitBS.exists(unit.getPlan().getId(), PlanRisk.class);
@@ -114,8 +108,7 @@ public class UnitController extends AbstractController {
 	@Post(PATH + "/subnew")
 	@Consumes
 	@NoCache
-	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
-	// ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {ManageUnitPermission.class})
 	public void saveSub(@NotNull @Valid Unit unit) {
 		try {
 
@@ -149,8 +142,7 @@ public class UnitController extends AbstractController {
 	@Post(PATH + "/duplicate")
 	@Consumes
 	@NoCache
-	// @Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {
-	// ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {ManageUnitPermission.class})
 	public void duplicateUnit(@NotNull @Valid List<Unit> units, PlanRisk planRisk) {
 		try {
 		
@@ -343,6 +335,7 @@ public class UnitController extends AbstractController {
 	@Get(PATH + "")
 	@NoCache
 	@Consumes
+	@Permissioned
 	public void listUnits(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.unitBS.exists(planId, PlanRisk.class);
@@ -396,6 +389,7 @@ public class UnitController extends AbstractController {
 	@Get(PATH + "/listsub/{unitId}")
 	@NoCache
 	@Consumes
+	@Permissioned
 	public void listSubunits(@NotNull Long unitId) {
 		try {
 			Unit unit = this.unitBS.exists(unitId, Unit.class);
@@ -424,6 +418,7 @@ public class UnitController extends AbstractController {
 	@Get(PATH + "/listsub")
 	@NoCache
 	@Consumes
+	@Permissioned
 	public void listSubunitsByPlan(@NotNull Long planId) {
 		try {
 			PlanRisk plan =this.unitBS.exists(planId, PlanRisk.class);
@@ -462,6 +457,7 @@ public class UnitController extends AbstractController {
 	@Get(PATH + "/allByPlan")
 	@NoCache
 	@Consumes
+	@Permissioned
 	public void listAllUnitsByPlan(@NotNull Long planId) {
 		try {
 			PlanRisk plan =this.unitBS.exists(planId, PlanRisk.class);
@@ -491,8 +487,7 @@ public class UnitController extends AbstractController {
 	 */
 	@Delete(PATH + "/{id}")
 	@NoCache
-	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
-	// ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {ManageUnitPermission.class})
 	public void deleteUnit(@NotNull Long id) {
 		try {
 
@@ -529,9 +524,8 @@ public class UnitController extends AbstractController {
 	 */
 	@Put(PATH)
 	@NoCache
-	// @Permissioned(value = AccessLevels.MANAGER, permissions = {
-	// ManagePolicyPermission.class })
 	@Consumes
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageUnitPermission.class, EditUnitPermission.class})
 	public void updateUnit(@NotNull Unit unit) {
 		try {
 			Unit existent = this.unitBS.exists(unit.getId(), Unit.class);
@@ -683,7 +677,7 @@ public class UnitController extends AbstractController {
 	 */
 	@Get(PATH + "/exportUnitReport")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void exportreport(String title, String author, boolean pre, String units,String subunits){
 		try {
 		
