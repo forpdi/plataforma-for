@@ -142,9 +142,11 @@ ReactDOM.render((
 							<Route path="risk">
 								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
 								<Route path=":riskId">
-									<Route path="info" component={Forrisco_RiskDetail}/>
-									<Route path="incident" component={
-										props => (<Forrisco_RiskDetail {...props} selected={2} />)}/>
+									<Route path="info" component={Forrisco_RiskDetail} />
+									<Route
+										path="incident"
+										component={props => (<Forrisco_RiskDetail {...props} selected={2} />)}
+									/>
 								</Route>
 							</Route>
 							<Route

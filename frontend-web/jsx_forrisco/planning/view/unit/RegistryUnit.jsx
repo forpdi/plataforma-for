@@ -180,7 +180,7 @@ export default React.createClass({
 		event.preventDefault();
 		const { unit } = this.state;
 
-		if (unit.name === '' || unit.user === null) {
+		if (unit.name === '' || unit.user === null || unit.abbreviation === '') {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
 			return false;
 		}

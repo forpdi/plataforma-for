@@ -159,61 +159,74 @@ export default React.createClass({
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
-        const newRow = {
-			name: <VerticalInput
-				className="padding7"
-				fieldDef={{
-					name: "new-process-name",
-					type: "text",
-					placeholder: "Nome do processo",
-					onChange: this.nameChangeHandler
-				}}
-			/>,
-			objective: <VerticalInput
-				className="padding7"
-				fieldDef={{
-					name: "new-process-objective",
-					type: "text",
-					placeholder: "Nome do objetivo",
-					onChange: this.objectiveChangeHandler
-				}}
-			/>,
+    const newRow = {
+			name: (
+				<VerticalInput
+					className="padding7"
+					fieldDef={{
+						name: "new-process-name",
+						type: "text",
+						placeholder: "Nome do processo",
+						onChange: this.nameChangeHandler,
+						required: true,
+					}}
+				/>
+			),
+			objective: (
+				<VerticalInput
+					className="padding7"
+					fieldDef={{
+						name: "new-process-objective",
+						type: "text",
+						placeholder: "Nome do objetivo",
+						onChange: this.objectiveChangeHandler,
+						required: true,
+					}}
+				/>
+			),
 			relatedUnits: [
 				{
-					name: <div className="unit-multi-select">
-						<ReactMultiSelectCheckboxes
-							className="unit-mult-select"
-							placeholderButtonLabel="Selecione uma ou mais"
-							options={this.state.units}
-							onChange={this.unitChangeHandler}
-						/>
-					</div>
+					name: (
+						<div className="unit-multi-select">
+							<ReactMultiSelectCheckboxes
+								className="unit-mult-select"
+								placeholderButtonLabel="Selecione uma ou mais"
+								options={this.state.units}
+								onChange={this.unitChangeHandler}
+							/>
+						</div>
+					),
 				}
 			],
-			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
-				<a onClick={this.fileLinkChangeHandler}>
-					<span className="fpdi-nav-label" id="process-file-upload">
-						{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
-					</span>
-				</a>
-			</div>,
-			tools: <div className="row-tools-box" style={{ "marginLeft": "-10px" }}>
-				<span
-					className="mdi mdi-check btn btn-sm btn-success"
-					title="Salvar"
-					onClick={this.newProcess}
-				/>
-				<span
-					className="mdi mdi-close btn btn-sm btn-danger"
-					title="Cancelar"
-					onClick={() =>
-						this.setState({
-							processes: this.state.processes.slice(1),
-							newRowDisplayed: false,
-						})
-					}
-				/>
-			</div>,
+			fileData: (
+				<div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+					<a onClick={this.fileLinkChangeHandler}>
+						<span className="fpdi-nav-label" id="process-file-upload">
+							{/* <span style={{ 'display': 'inline', 'color': 'red' }}>*</span> */}
+							{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+						</span>
+					</a>
+				</div>
+			),
+			tools: (
+				<div className="row-tools-box" style={{ "marginLeft": "-10px" }}>
+					<span
+						className="mdi mdi-check btn btn-sm btn-success"
+						title="Salvar"
+						onClick={this.newProcess}
+					/>
+					<span
+						className="mdi mdi-close btn btn-sm btn-danger"
+						title="Cancelar"
+						onClick={() =>
+							this.setState({
+								processes: this.state.processes.slice(1),
+								newRowDisplayed: false,
+							})
+						}
+					/>
+				</div>
+			),
 		}
 		const { processes } = this.state;
 		processes.unshift(newRow);
@@ -230,14 +243,12 @@ export default React.createClass({
 		}
 		const { processes } = this.state;
 		const process = processes[idx];
-		const selectedUnits = _.map(process.relatedUnits, unit => (
-			{
-				value: unit.id,
-				label: unit.name,
-				data: unit
-			}
-		));
-        processes[idx] = {
+		const selectedUnits = _.map(process.relatedUnits, unit => ({
+			value: unit.id,
+			label: unit.name,
+			data: unit
+		}));
+    processes[idx] = {
 			name: <VerticalInput
 				className="padding7"
 				fieldDef={{
@@ -245,7 +256,8 @@ export default React.createClass({
 					type: "text",
 					placeholder: "Nome do processo",
 					value: process.name,
-					onChange: this.nameChangeHandler
+					onChange: this.nameChangeHandler,
+					required: true,
 				}}
 			/>,
 			objective: <VerticalInput
@@ -256,7 +268,8 @@ export default React.createClass({
 					placeholder: "Nome do objetivo",
 					objective: process.objective,
 					value: process.objective,
-					onChange: this.objectiveChangeHandler
+					onChange: this.objectiveChangeHandler,
+					required: true,
 				}}
 			/>,
 			relatedUnits: [
@@ -390,18 +403,24 @@ export default React.createClass({
 	},
 
 	newProcess() {
-		ProcessStore.dispatch({
-			action: ProcessStore.ACTION_CREATE,
-			data: {
-				process: _.assign(
-					this.state.process,
-					{
-						relatedUnits: _.map(this.state.selectedUnits, value => value.data),
-						unit: { id: this.props.unitId }
-					}
-				),
-			},
-		});
+		const { process } = this.state;
+
+		if (!process.name || !process.objective || !process.file) {
+			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
+		} else {
+			ProcessStore.dispatch({
+				action: ProcessStore.ACTION_CREATE,
+				data: {
+					process: _.assign(
+						process,
+						{
+							relatedUnits: _.map(this.state.selectedUnits, value => value.data),
+							unit: { id: this.props.unitId }
+						}
+					),
+				},
+			});
+		}
 	},
 
 	deleteProcess(idx) {
@@ -421,18 +440,24 @@ export default React.createClass({
 	},
 
 	updateProcess() {
-		ProcessStore.dispatch({
-			action: ProcessStore.ACTION_UPDATE,
-			data: {
-				process: {
-					...this.state.process,
-					relatedUnits: _.map(this.state.selectedUnits, value => value.data),
-					unit: { id: this.props.unitId },
-					tools: undefined,
-					fileData: undefined,
+		const { process } = this.state;
+
+		if (!process.name || !process.objective || !process.file) {
+			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
+		} else {
+			ProcessStore.dispatch({
+				action: ProcessStore.ACTION_UPDATE,
+				data: {
+					process: {
+						...this.state.process,
+						relatedUnits: _.map(this.state.selectedUnits, value => value.data),
+						unit: { id: this.props.unitId },
+						tools: undefined,
+						fileData: undefined,
+					},
 				},
-			},
-		});
+			});
+		}
 	},
 
 	getTools(idx) {
