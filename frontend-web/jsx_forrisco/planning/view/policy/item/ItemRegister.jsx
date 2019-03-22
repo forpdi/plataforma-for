@@ -192,8 +192,9 @@ export default React.createClass({
 						}
 					})
 				})
+
 				me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-				this.context.router.push("/forrisco/policy/"+this.context.policy.id+"/item/"+model.data.id);
+				this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${model.data.id}`);
 			}else{
 				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
 			}
@@ -211,7 +212,7 @@ export default React.createClass({
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
-		})
+		}, me);
 
 		me.refreshData(me.props, me.context);
 
