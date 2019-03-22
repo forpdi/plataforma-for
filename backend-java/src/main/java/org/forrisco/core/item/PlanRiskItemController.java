@@ -257,7 +257,7 @@ public class PlanRiskItemController extends AbstractController {
 	 *  
 	 * @return void
 	 */
-	@Get(PATH + "/allsub-itens/{id}")
+	@Get(PATH + "/allsubitens/{id}")
 	@NoCache
 	public void listAllSubitens(Long id) {
 		try {
@@ -286,7 +286,7 @@ public class PlanRiskItemController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
+
 	
 	/**
 	 * Retorna as informaçõesde um Item
@@ -487,34 +487,5 @@ public class PlanRiskItemController extends AbstractController {
 		}
 	}
 	
-	@Get( PATH + "/allsubitens/{id}")
-	@NoCache
-	//@Permissioned
-	public void retrieveAllSubitem(@NotNull Long id) {
-		try {
-			PlanRisk planRisk = this.planRiskItemBS.exists(id, PlanRisk.class);
-			
-			if (planRisk == null) {
-				this.fail("O plano de risco solicitado não foi encontrado.");
-				return;
-			}
-
-			PaginatedList<PlanRiskItem> itens = this.planRiskItemBS.listItensByPlanRisk(planRisk);
-			PaginatedList<PlanRiskSubItem> subitens = new PaginatedList<>();
-			List<PlanRiskSubItem> list= new ArrayList<>();
-			
-			for(PlanRiskItem item :itens.getList()) {
-				PaginatedList<PlanRiskSubItem> subitem = this.planRiskItemBS.listSubItemByItem(item);
-				list.addAll(subitem.getList());
-			}
-		
-			subitens.setList(list);
-			subitens.setTotal((long) list.size());
-			this.success(subitens);
-
-		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
-			this.fail("Erro inesperado: " + ex.getMessage());
-		}
-	}
+	
 }
