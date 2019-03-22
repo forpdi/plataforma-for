@@ -72,7 +72,7 @@ export default React.createClass({
 
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao cadastrar incidente.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -87,7 +87,7 @@ export default React.createClass({
 					data: this.props.risk.id,
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao excluir incidente.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -102,7 +102,7 @@ export default React.createClass({
 					data: this.props.risk.id,
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao atualizar incidente.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -377,6 +377,11 @@ export default React.createClass({
 	},
 
 	updateIncident() {
+		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+			return;
+		}
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_UPDATE_INCIDENT,
 			data: {

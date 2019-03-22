@@ -272,7 +272,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.props.fields, this.props.index);
 		return (
 			<div>
 				{

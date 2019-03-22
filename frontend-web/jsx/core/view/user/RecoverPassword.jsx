@@ -55,9 +55,6 @@ export default React.createClass({
 				location.assign("#/");
 			});
 		}, this);
-		UserSession.on("fail", msg => {
-			this.addAlertError(msg);
-		}, this);
 	},
 	componentWillUnmount() {
 		UserSession.off(null, null, this);

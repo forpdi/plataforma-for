@@ -60,7 +60,7 @@ export default React.createClass({
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao cadastrar a ação de contingenciamento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -77,7 +77,7 @@ export default React.createClass({
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao excluir a ação de contingenciamento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
@@ -94,7 +94,7 @@ export default React.createClass({
 					},
 				});
 			} else {
-				this.context.toastr.addAlertError("Erro ao atualizar a ação de contingenciamento.");
+				this.context.toastr.addAlertError(response.msg);
 			}
 		}, this);
 
