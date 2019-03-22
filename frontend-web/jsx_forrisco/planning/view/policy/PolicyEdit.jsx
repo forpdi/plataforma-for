@@ -11,7 +11,6 @@ import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import _ from "underscore";
 
 import Toastr from 'toastr';
-import $ from 'jquery';
 
 var Validate = Validation.validate;
 
@@ -815,15 +814,13 @@ export default React.createClass({
 	},
 
 	render() {
-		var edit = this.context.router.isActive("forrisco/policy/" + this.props.params.policyId + "/edit")
-
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
 
 		return (
 			<div>
-				<div className="fpdi-card padding40" style={{ "width": "100%" }}>
+				<div className="fpdi-card padding40" style={{ width: 'max-content', minWidth: '100%' }}>
 					<h1>{this.props.params.policyId ? Messages.getEditable("label.editPolicy", "fpdi-nav-label") : Messages.getEditable("label.newPolicy", "fpdi-nav-label")}</h1>
 					<form onSubmit={this.submitWrapper} id={this.props.id} ref="policyEditForm">
 
