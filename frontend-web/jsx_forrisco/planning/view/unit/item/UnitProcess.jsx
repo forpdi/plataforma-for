@@ -140,11 +140,6 @@ export default React.createClass({
 	},
 
 	componentWillUnmount() {
-		// ProcessStore.off('processListedByUnit');
-		// ProcessStore.off('processCreated');
-		// ProcessStore.off('processDeleted');
-		// ProcessStore.off('processUpdated');
-		// UnitStore.off('unitbyplan');
 		ProcessStore.off(null, null, this);
 		UnitStore.off(null, null, this);
 	},
@@ -209,7 +204,7 @@ export default React.createClass({
 				</div>
 			),
 			tools: (
-				<div className="row-tools-box" style={{ "marginLeft": "-10px" }}>
+				<div className="row-tools-box">
 					<span
 						className="mdi mdi-check btn btn-sm btn-success"
 						title="Salvar"
@@ -248,7 +243,7 @@ export default React.createClass({
 			label: unit.name,
 			data: unit
 		}));
-    processes[idx] = {
+	    processes[idx] = {
 			name: <VerticalInput
 				className="padding7"
 				fieldDef={{

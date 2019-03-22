@@ -218,19 +218,21 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.newIncident}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.newIncident}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() =>
 						this.setState({
 							data: this.state.data.slice(1),
 							newRowDisplayed: false,
 						})
-					}>
-					<span className="mdi mdi-close" />
-				</button>
+					}
+				/>
 			</div>,
 		};
 		const { data } = this.state;
@@ -317,11 +319,14 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updateIncident}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.updateIncident}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() => {
 						const { data } = this.state;
 						data[idx] = incident;
@@ -329,9 +334,8 @@ export default React.createClass({
 							data,
 							updateRowDisplayed: false,
 						})
-					}}>
-					<span className="mdi mdi-close" />
-				</button>
+					}}
+				/>
 			</div>,
 		};
 		this.setState({
@@ -491,6 +495,7 @@ export default React.createClass({
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
+			width: 100,
 		}];
 		return (
 			<div className="general-table">
