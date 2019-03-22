@@ -11,14 +11,15 @@ import javax.validation.constraints.NotNull;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.User;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 import org.forrisco.risk.objective.RiskActivity;
-import org.forrisco.risk.objective.RiskProcess;
-import org.forrisco.risk.objective.RiskStrategy;
+import org.forrisco.risk.permissions.ManageRiskItemsPermission;
+import org.forrisco.risk.permissions.ManageRiskPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -27,7 +28,6 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
-import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Matheus Nascimento
@@ -51,7 +51,7 @@ public class RiskController extends AbstractController {
 	@Post(PATH + "/new")
 	@Consumes
 	@NoCache
-	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void save(@NotNull @Valid Risk risk){
 		try {			
 			Unit unit = this.riskBS.exists(risk.getUnit().getId(), Unit.class);
@@ -98,7 +98,7 @@ public class RiskController extends AbstractController {
 	@Post(PATH + "/actionnew")
 	@Consumes
 	@NoCache
-	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void save(@NotNull @Valid PreventiveAction action){
 		try {
 			Risk risk = this.riskBS.exists(action.getRisk().getId(), Risk.class);
@@ -131,7 +131,7 @@ public class RiskController extends AbstractController {
 	@Post(PATH + "/monitornew")
 	@Consumes
 	@NoCache
-	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void save(@NotNull @Valid Monitor monitor){
 //		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(monitor)));
 		try {
@@ -173,7 +173,7 @@ public class RiskController extends AbstractController {
 	@Post(PATH + "/incidentnew")
 	@Consumes
 	@NoCache
-	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void save(@NotNull @Valid Incident incident){
 		try {
 			Risk risk = this.riskBS.exists(incident.getRisk().getId(), Risk.class);
@@ -213,7 +213,7 @@ public class RiskController extends AbstractController {
 	@Post(PATH + "/contingencynew")
 	@Consumes
 	@NoCache
-	//@Permissioned(AccessLevels.SYSTEM_ADMIN)
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void save(@NotNull @Valid Contingency contingency){
 		try {
 			Risk risk = this.riskBS.exists(contingency.getRisk().getId(), Risk.class);
@@ -252,7 +252,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listUnit(Long id) {
 		try {
 			Risk risk = this.riskBS.listRiskById(id);
@@ -285,6 +285,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "")
 	@NoCache
+	@Permissioned
 	public void listRisksbyPlan(@NotNull Long planId) {
 		try {			
 			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
@@ -320,6 +321,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/listbyunit/{unitId}")
 	@NoCache
+	@Permissioned
 	public void listRisksByUnit(@NotNull Long unitId) {
 		try {			
 			Unit unit = this.riskBS.exists(unitId, Unit.class);
@@ -340,6 +342,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/listbysubunits/{unitId}")
 	@NoCache
+	@Permissioned
 	public void listSubunitsRisksByUnit(@NotNull Long unitId) {
 		try {			
 			Unit subunit = this.riskBS.exists(unitId, Unit.class);
@@ -367,6 +370,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get(PATH + "/listByPI")
 	@NoCache
+	@Permissioned
 	public void listRiskByPI(Long planId, String impact, String probability, Integer page, Integer pageSize) {
 		if (page == null)
 			page = 0;
@@ -397,7 +401,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/action")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listActions(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -425,6 +429,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/monitor")
 	@NoCache
+	@Permissioned
 	public void listMonitor(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -453,7 +458,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/monitors")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listMonitors(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
@@ -504,6 +509,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/incident")
 	@NoCache
+	@Permissioned
 	public void listIncident(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -531,7 +537,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/incidents")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listIncidents(@NotNull Long planId) {
 		try {
 			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
@@ -583,7 +589,7 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/incidentsPaginated")
 	@Consumes
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listIncidentsPaginated(List<Long> incidentsId, Integer page, Integer pageSize) {
 		try {
 			this.success(this.riskBS.pagitaneIncidents(incidentsId, page, pageSize));
@@ -600,6 +606,7 @@ public class RiskController extends AbstractController {
 	
 	@Get( PATH + "/incidentByUnit")
 	@NoCache
+	@Permissioned
 	public void listIncidentsByUnit(@NotNull Long unitId) {
 		
 		try {
@@ -645,7 +652,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/contingency")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listContingencies(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -678,7 +685,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/history")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listHistory(@NotNull Long planId, Long unitId) {
 		try {
 			PaginatedList<Unit> units= new PaginatedList<Unit>();
@@ -728,7 +735,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/activity")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void lisActivity(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -762,7 +769,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Get( PATH + "/monitorHistory")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void listMonitorHistory(@NotNull Long planId, Long unitId) {
 		try {
 			PaginatedList<Unit> units= new PaginatedList<Unit>();
@@ -812,7 +819,7 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/update")
 	@NoCache
 	@Consumes
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void updateRisk(@NotNull Risk risk) throws Exception {
 		try {
 			Risk oldrisk = this.riskBS.exists(risk.getId(), Risk.class);
@@ -883,7 +890,7 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/action/update")
 	@NoCache
 	@Consumes
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void updateAction(@NotNull PreventiveAction action) {
 		try {
 			PreventiveAction oldaction = this.riskBS.exists(action.getId(), PreventiveAction.class);
@@ -919,8 +926,8 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/monitor/update")
 	@NoCache
 	@Consumes
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
-	public void updateAction(@NotNull Monitor monitor) {
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
+	public void updateMonitor(@NotNull Monitor monitor) {
 		try {
 			Monitor oldmonitor = this.riskBS.exists(monitor.getId(), Monitor.class);
 			if (oldmonitor == null) {
@@ -969,7 +976,7 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/incident/update")
 	@NoCache
 	@Consumes
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void updateIncident(@NotNull Incident incident) {
 		try {
 			Incident oldincident = this.riskBS.exists(incident.getId(), Incident.class);
@@ -1012,7 +1019,7 @@ public class RiskController extends AbstractController {
 	@Post( PATH + "/contingency/update")
 	@NoCache
 	@Consumes
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void updateContingency(@NotNull Contingency contingency) {
 		try {
 			Contingency oldcontingency = this.riskBS.exists(contingency.getId(), Contingency.class);
@@ -1056,7 +1063,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Delete( PATH + "/{riskId}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void deleteRisk(@NotNull Long riskId) {
 		try {
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
@@ -1090,9 +1097,7 @@ public class RiskController extends AbstractController {
 				 
 			 
 				 this.riskBS.delete(risk);
-				 this.success();
-
-			
+				 this.success(risk);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Ocorreu um erro inesperado: " + ex.getMessage());
@@ -1128,7 +1133,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Delete( PATH + "/action/{actionId}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = {ManageRiskPermission.class})
 	public void deleteAction(@NotNull Long actionId) {
 		try {
 			PreventiveAction action = this.riskBS.exists(actionId, PreventiveAction.class);
@@ -1154,7 +1159,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Delete( PATH + "/monitor/{monitorId}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void deleteMonitor(@NotNull Long monitorId) {
 		try {
 			Monitor monitor = this.riskBS.exists(monitorId, Monitor.class);
@@ -1180,7 +1185,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Delete( PATH + "/incident/{incidentId}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void deleteIncident(@NotNull Long incidentId) {
 		try {
 			Incident incident = this.riskBS.exists(incidentId, Incident.class);
@@ -1206,7 +1211,7 @@ public class RiskController extends AbstractController {
 	 */
 	@Delete( PATH + "/contingency/{contingencyId}")
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COLABORATOR, permissions = {ManageRiskItemsPermission.class})
 	public void deleteContigency(@NotNull Long contingencyId) {
 		try {
 			Contingency contingency = this.riskBS.exists(contingencyId, Contingency.class);

@@ -27,7 +27,7 @@ export default React.createClass({
 	},
 	getInitialState() {
 		return {
-			newNode: false
+			newNode: false,
 		};
 	},
 	getDefaultProps() {
@@ -37,7 +37,8 @@ export default React.createClass({
 			iconCls: 'mdi mdi-chevron-right',
 			expanded: false,
 			expandable: false,
-			newNodePlaceholder: Messages.get("label.nameLevel")
+			newNodePlaceholder: Messages.get("label.nameLevel"),
+			//startExpanded:false,
 		};
 	},
 	componentDidMount() {
@@ -137,12 +138,24 @@ export default React.createClass({
 		);
 	},
 
+
+	clickExpand() {
+		if (typeof this.props.onExpand == 'function') {
+			this.props.onExpand(this.props);
+		}
+	},
+
 	render() {
 		var iconCls = this.props.iconCls;
 		var me = this;
 		/*if(this.props.model && this.props.model.level && this.props.model.level.name == "Objetivo") {
 			this.props.model.haveBudget = true;
 		}*/
+
+		if(this.props.startExpanded == true){
+			this.clickExpand()
+		}
+
 		return (
 			this.state.newNode
 			?

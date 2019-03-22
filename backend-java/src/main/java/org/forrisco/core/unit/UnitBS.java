@@ -21,9 +21,11 @@ import org.forrisco.risk.Incident;
 import org.forrisco.risk.Monitor;
 import org.forrisco.risk.MonitorHistory;
 import org.forrisco.risk.Risk;
+import org.forrisco.risk.RiskBS;
 import org.forrisco.risk.RiskHistory;
 import org.forrisco.risk.RiskLevel;
 import org.forrisco.core.process.Process;
+import org.forrisco.core.process.ProcessBS;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
@@ -31,6 +33,8 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
+import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -46,6 +50,10 @@ public class UnitBS extends HibernateBusiness {
 	
 	@Inject
 	private CriteriaCompanyFilter filter;
+	@Inject
+	private RiskBS riskBS;
+	@Inject 
+	private ProcessBS processBS;
 	
 	
 	/**
@@ -61,6 +69,7 @@ public class UnitBS extends HibernateBusiness {
 	}
 
 	public PaginatedList<Unit> listSubunitByUnit(Unit unit) {
+		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson("ola1")));
 
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 
@@ -576,6 +585,55 @@ public class UnitBS extends HibernateBusiness {
 
 		
 		return result;
+	}
+	
+	/**
+	 * Verifica se uma unidade é deletável.
+	 * 
+	 * @param Unit
+	 * 			unidade a ser verificada.
+	 */
+	public boolean deletableUnit(Unit unit) {
+
+		// verifica se possui subunidades vinculadas
+		if (unit.getParent() == null) {
+//			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson("ola")));
+			PaginatedList<Unit> subunits = this.listSubunitByUnit(unit);
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(subunits)));
+			if (subunits.getTotal() > 0) {
+//				this.fail("Unidade possui subunidade(s) vinculada(s).");
+				return false;
+			}
+		}
+
+		// verifica se possui riscos vinculados
+		PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
+		if (risks.getTotal() > 0) {
+			if(unit.getParent() != null) {
+//				this.fail("Subunidade possui risco(s) vinculado(s).");
+			}else {
+//				this.fail("Unidade possui risco(s) vinculado(s).");
+			}
+			
+			return false;
+		}
+		
+		//verifica se possui processos vinculados com algum risco de outra unidade?
+		//um processo pode estar vinculado a um risco de outra unidade? aparentemente sim
+		PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
+		for(Process process :processes.getList()) {
+			
+			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
+//				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+				return false;
+			}
+			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
+//				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

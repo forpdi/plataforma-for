@@ -1,22 +1,19 @@
 import React from "react";
-import {Link} from "react-router";
+import string from 'string';
+import _ from "underscore";
+
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
-import UserEdit from "forpdi/jsx/core/view/user/UserEdit.jsx";
 import FileStore from "forpdi/jsx/core/store/File.jsx"
-import _ from "underscore";
 import AccessLevels from "forpdi/jsx/core/store/AccessLevels.json";
 import NotificationUser from "forpdi/jsx/core/view/user/NotificationUser.jsx";
-import string from 'string';
 import Logo from 'forpdi/img/foto_padrao.png';
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-
-
-//import Toastr from 'toastr';
+import permissionTypesByApp from "forpdi/jsx/planning/enum/PermissionTypesByApp.js";
 
 var Validate = Validation.validate;
 
@@ -43,6 +40,7 @@ export default React.createClass({
 			url: null,
 			passwordChange: false,
 			permissions: [],
+			selectedForpdiPermissions: true,
 			detailed: [],
 			page: 1,
 			hideShowMore: false,
@@ -111,7 +109,12 @@ export default React.createClass({
 		}, me);
 
 		if (EnvInfo.company != null) {
-			this.getPermissionsList();
+			UserStore.dispatch({
+				action: UserStore.ACTION_LIST_PERMISSIONS,
+				data: {
+					userId: this.state.modelId
+				}
+			});
 			UserSession.dispatch({
             	action: UserSession.ACTION_LIST_NOTIFICATIONS,
             	data: {
@@ -150,15 +153,6 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		UserStore.off(null, null, this);
-	},
-
-	getPermissionsList(){
-		UserStore.dispatch({
-			action: UserStore.ACTION_LIST_PERMISSIONS,
-			data: {
-				userId: this.state.modelId
-			}
-		})
 	},
 
 	getFields(model) {
@@ -494,6 +488,17 @@ export default React.createClass({
 		notificationSettingOption.checked = true;
 	},
 
+	getCurrentPermissions() {
+		if (this.state.selectedForpdiPermissions) {
+			return _.filter(this.state.permissions, permission =>
+				permissionTypesByApp.forpdi.includes(permission.type)
+			);
+		}
+		return _.filter(this.state.permissions, permission =>
+			permissionTypesByApp.forrisco.includes(permission.type)
+		);
+	},
+
 	render() {
 
 		if (this.state.loading) {
@@ -582,27 +587,43 @@ export default React.createClass({
 
 					</div>
 
-					<div className="col-sm-3">
+					<div className="col-sm-4">
 						<div className="panel panel-default panel-default-user">
 							<div className="panel-heading">
 								{Messages.getEditable("label.userPermissions","fpdi-nav-label")}
+								<span className="floatRight">
+									<span
+										className={`system-switcher ${this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
+										onClick={() => this.setState({ selectedForpdiPermissions: true })}
+									>
+										ForPdi
+									</span>
+									<span
+										className={`system-switcher ${!this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
+										onClick={() => this.setState({ selectedForpdiPermissions: false })}
+									>
+										{Messages.get("label.forRiscoLogo")}
+									</span>
+								</span>
 							</div>
-							{this.state.permissions.map((item, idx) => {
-								if(item.granted || this.context.accessLevel >= item.accessLevel){
-									return(
-										<div key={"perm-"+idx} className="user-permission-list-item">
-											{item.permission}
-											<span className={"mdi cursorPointer floatRight "+(_.contains(this.state.detailed, idx) ?
-										 	"mdi-chevron-down" : "mdi-chevron-right")} onClick={this.details.bind(this, idx)}/>
-											{(_.contains(this.state.detailed, idx) ? this.showDescription(item.description) : "")}
-										</div>
-									);
-								}
-							})}
+							<div className="padding5">
+								{this.getCurrentPermissions().map((item, idx) => {
+									if(item.granted || this.context.accessLevel >= item.accessLevel){
+										return(
+											<div key={"perm-"+idx} className="user-permission-list-item">
+												{item.permission}
+												<span className={"mdi cursorPointer floatRight "+(_.contains(this.state.detailed, idx) ?
+												"mdi-chevron-down" : "mdi-chevron-right")} onClick={this.details.bind(this, idx)}/>
+												{(_.contains(this.state.detailed, idx) ? this.showDescription(item.description) : "")}
+											</div>
+										);
+									}
+								})}
+							</div>
 						</div>
 					</div>
 
-					<div className="col-sm-6">
+					<div className="col-sm-5">
 						{/*<NotificationUser/>*/}
 						<div className="panel panel-default panel-default-user">
 							<div className="panel-heading"> {Messages.getEditable("label.notification","fpdi-nav-label")}

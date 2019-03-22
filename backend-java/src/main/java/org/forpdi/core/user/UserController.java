@@ -72,7 +72,8 @@ public class UserController extends AbstractController {
 	@Post("/api/user")
 	@Consumes
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void save(@NotEmpty String name, @NotEmpty String email, Integer accessLevel) {
 		try {
 			/* int actualAccess = this.bs.retrieveAccessLevel(this.userSession.getUser());
@@ -106,7 +107,8 @@ public class UserController extends AbstractController {
 	@Post("/api/user/register")
 	@Consumes
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void register(@NotEmpty String name, @NotEmpty String email, @NotEmpty String password, Integer accessLevel) {
 		try {
 			User user = this.bs.existsByEmail(email);
@@ -150,7 +152,8 @@ public class UserController extends AbstractController {
 	@Post("/api/user/{id}/update/field")
 	@Consumes
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void updateUserField(@NotNull Long id, String field, String value) {
 		try {
 			User user = this.bs.exists(id, User.class);
@@ -198,7 +201,8 @@ public class UserController extends AbstractController {
 	@Post("/api/user/{id}/reinvite")
 	@Consumes
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void resendInvitation(@NotNull Long id) {
 		try {
 			User user = this.bs.exists(id, User.class);
@@ -916,8 +920,9 @@ public class UserController extends AbstractController {
 	 */
 	@Get("/api/user/{id}")
 	@NoCache
-	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManageUsersPermission.class,
-			ViewUsersPermission.class })
+	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManageUsersPermission.class, ViewUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ViewUsersPermission.class })
 	public void retrieveUsers(@NotNull Long id) {
 		try {
 			User user = this.bs.exists(id, User.class);
@@ -949,8 +954,7 @@ public class UserController extends AbstractController {
 	 */
 	@Get("/api/user")
 	@NoCache
-	@Permissioned(value = AccessLevels.MANAGER, permissions = { ManageUsersPermission.class,
-			ViewUsersPermission.class })
+	@Permissioned
 	public void listUsers(Integer page, Integer pageSize) {
 		if (page == null)
 			page = 0;
@@ -973,7 +977,8 @@ public class UserController extends AbstractController {
 	 */
 	@Delete("/api/user/{id}")
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void removeUser(Long id) {
 
 		try {
@@ -1011,7 +1016,8 @@ public class UserController extends AbstractController {
 	 */
 	@Post("/api/user/{id}/block")
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void blockUser(Long id) {
 		if (id == null) {
 			this.result.notFound();
@@ -1049,7 +1055,8 @@ public class UserController extends AbstractController {
 	 */
 	@Post("/api/user/{id}/unblock")
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void unblockUser(Long id) {
 		if (id == null) {
 			this.result.notFound();
@@ -1240,7 +1247,8 @@ public class UserController extends AbstractController {
 	@Post("/api/user/importUsers")
 	@Consumes
 	@NoCache
-	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManageUsersPermission.class,
+			org.forrisco.core.authz.permissions.ManageUsersPermission.class })
 	public void importUsers(String nameList[], String emailList[], Integer accessList[]) {
 		try {
 			for (int i = 0; i < nameList.length; i++) {

@@ -1,4 +1,4 @@
-package org.forrisco.core.process;
+package org.forrisco.core.process.permissions;
 
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permission;

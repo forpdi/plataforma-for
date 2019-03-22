@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "underscore";
 
+import permissionTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import permissionTypesByApp from "forpdi/jsx/planning/enum/PermissionTypesByApp.js";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
@@ -17,7 +18,9 @@ export default React.createClass({
 			forpdiPermissions: [],
 			forriscoPermissions: [],
 			permissionsToUpdate: [],
-			selectedForpdiPermissions: true,
+			selectedForpdiPermissions: !this.editForpdiUserPermissioned() && this.editForriscoUserPermissioned()
+				? false
+				: true,
 			selectedPermissions: [],
 			editingPermission: false,
 			detailed: [],
@@ -42,7 +45,6 @@ export default React.createClass({
 				[this.state.selectedForpdiPermissions ? 'forpdiPermissions' : 'forriscoPermissions']: this.state.permissionsToUpdate,
 			});
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.editedSuccessfully"));
-			me.updateLoadingState();
 		}, me);
 		UserStore.dispatch({
 			action: UserStore.ACTION_LIST_PERMISSIONS,
@@ -54,13 +56,6 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		UserStore.off(null, null, this);
-	},
-
-	updateLoadingState() {
-		this.setState({
-			fields: this.getFields(this.state.model),
-			loading: (this.props.params.modelId && !this.state.model)
-		});
 	},
 
 	editPermissions() {
@@ -153,38 +148,54 @@ export default React.createClass({
 		});
 	},
 
+	editForpdiUserPermissioned() {
+		return this.context.roles.ADMIN ||
+			_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION);
+	},
+
+	editForriscoUserPermissioned() {
+		return this.context.roles.ADMIN ||
+			_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION);
+	},
+
 	render() {
 		const permissions = this.getCurrentPermissions();
-
+		const editForpdiUserPermissioned = this.editForpdiUserPermissioned();
+		const editForriscoUserPermissioned = this.editForriscoUserPermissioned();
 		return (
 			<div className="col-sm-4">
 				<div className="panel panel-default panel-default-user">
 					<div className="panel-heading"> {Messages.getEditable("label.userPermissions", "fpdi-nav-label")}
 						{
-							this.state.editingPermission || !(this.context.roles.ADMIN || _.contains(this.context.permissions,
-								"org.forpdi.core.user.authz.permission.ManageUsersPermission"))
-								? ""
-								: (
-									<span className="floatRight">
-										<span
-											className="mdi mdi-pencil cursorPointer"
-											onClick={this.editPermissions}
-											title={Messages.get("label.title.editPermissions")}
-										/>
-										<span
-											className={`system-switcher ${this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
-											onClick={() => this.switchPermissionsApp(true)}
-										>
-											ForPdi
-										</span>
-										<span
-											className={`system-switcher ${!this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
-											onClick={() => this.switchPermissionsApp(false)}
-										>
-											{Messages.get("label.forRiscoLogo")}
-										</span>
+							!this.state.editingPermission &&
+							<span className="floatRight">
+								{
+									(editForpdiUserPermissioned || editForriscoUserPermissioned) &&
+									<span
+										className="mdi mdi-pencil cursorPointer"
+										onClick={this.editPermissions}
+										title={Messages.get("label.title.editPermissions")}
+									/>
+								}
+								{
+									editForpdiUserPermissioned &&
+									<span
+										className={`system-switcher ${this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
+										onClick={() => this.switchPermissionsApp(true)}
+									>
+										ForPdi
 									</span>
-								)
+								}
+								{
+									editForriscoUserPermissioned &&
+									<span
+										className={`system-switcher ${!this.state.selectedForpdiPermissions ? 'system-switcher-selected' : ''}`}
+										onClick={() => this.switchPermissionsApp(false)}
+									>
+										{Messages.get("label.forRiscoLogo")}
+									</span>
+								}
+							</span>
 						}
 					</div>
 					<div className="padding5">
