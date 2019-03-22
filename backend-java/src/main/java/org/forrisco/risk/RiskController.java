@@ -672,7 +672,7 @@ public class RiskController extends AbstractController {
 	}
 	
 	/**
-	 * Retorna historico.
+	 * Retorna histórico.
 	 * 
 	 * @param planId
 	 *			Id do plano de risco.

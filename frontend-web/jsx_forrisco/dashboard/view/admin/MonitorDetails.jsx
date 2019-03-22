@@ -4,7 +4,7 @@ import _ from 'underscore';
 import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/Graphic.jsx";
+import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/GraphicMonitor.jsx";
 import moment from 'moment'
 var numeral = require('numeral');
 
@@ -324,7 +324,6 @@ export default React.createClass({
 					</div>
 				</div>
 			</div>
-
 			{this.state.displayGraph ?
 				<Graphic
 					title={Messages.get("label.monitor.history").toUpperCase()}

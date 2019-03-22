@@ -388,16 +388,20 @@ public class UnitBS extends HibernateBusiness {
 
 		Map<RiskLevel, Integer> map = new HashMap<RiskLevel, Integer>();
 		int year = new Date().getYear() + 1900;
-		int month = new Date().getMonth();
-
-		for (Unit unit : this.listUnitsbyPlanRisk(plan).getList()) {
+		int month = new Date().getMonth()+1;
+		
+		
+		PaginatedList<Unit> units = this.listUnitsbyPlanRisk(plan);
+		for (Unit unit : units.getList()) {
 			map.clear();
 			
 			Criteria criteria = this.dao.newCriteria(Risk.class)
 					.add(Restrictions.eq("deleted", false))
 					.add(Restrictions.eq("unit", unit));
 
-			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
+			List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
+			
+			for (Risk risk : risks) {
 				RiskLevel level =  risk.getRiskLevel();
 				
 				if(!map.containsKey(level)) {
@@ -419,12 +423,12 @@ public class UnitBS extends HibernateBusiness {
 
 				if (riskhistory == null) {
 					riskhistory = new RiskHistory();
+					riskhistory.setUnit(unit);
+					riskhistory.setMonth(month);
+					riskhistory.setYear(year);
+					riskhistory.setRiskLevel(level);
 				}
 
-				riskhistory.setUnit(unit);
-				riskhistory.setMonth(month);
-				riskhistory.setYear(year);
-				riskhistory.setRiskLevel(level);
 				riskhistory.setQuantity(map.get(level));
 				
 				this.persist(riskhistory);

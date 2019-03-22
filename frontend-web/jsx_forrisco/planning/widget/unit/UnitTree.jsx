@@ -561,7 +561,6 @@ export default React.createClass({
 					</div>
 
 					{this.state.treeItensSubunit.map((rootSection, idx) => {
-						console.log(rootSection, idx)
 					return (
 					<div key={"rootSection-filled"+idx}>
 						<div className="checkbox marginLeft5 col-md-10" >
