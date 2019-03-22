@@ -497,7 +497,7 @@ public class UnitController extends AbstractController {
 				return;
 			}
 			
-			if (deletableUnit(unit)) {
+			if (this.unitBS.deletableUnit(unit)) {
 				//deletar processos desta unidade
 				PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
 				for(Process process :processes.getList()) {
@@ -513,52 +513,7 @@ public class UnitController extends AbstractController {
 		}
 	}
 
-	/**
-	 * Verifica se uma unidade é deletável.
-	 * 
-	 * @param Unit
-	 * 			unidade a ser verificada.
-	 */
-	public boolean deletableUnit(Unit unit) {
 
-		// verifica se possui subunidades vinculadas
-		if (unit.getParent() == null) {
-			PaginatedList<Unit> subunits = this.unitBS.listSubunitByUnit(unit);
-			if (subunits.getTotal() > 0) {
-				this.fail("Unidade possui subunidade(s) vinculada(s).");
-				return false;
-			}
-		}
-
-		// verifica se possui riscos vinculados
-		PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
-		if (risks.getTotal() > 0) {
-			if(unit.getParent() != null) {
-				this.fail("Subunidade possui risco(s) vinculado(s).");
-			}else {
-				this.fail("Unidade possui risco(s) vinculado(s).");
-			}
-			
-			return false;
-		}
-		
-		//verifica se possui processos vinculados com algum risco de outra unidade?
-		//um processo pode estar vinculado a um risco de outra unidade? aparentemente sim
-		PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
-		for(Process process :processes.getList()) {
-			
-			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
-				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
-				return false;
-			}
-			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
-				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
-				return false;
-			}
-		}
-		
-		return true;
-	}
 
 	/**
 	 * Atualiza unidade.

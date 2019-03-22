@@ -16,6 +16,7 @@ import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
@@ -29,8 +30,8 @@ import org.forrisco.core.process.Process;
 import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
-import org.forrisco.core.unit.UnitController;
 
+import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
@@ -185,22 +186,27 @@ public class PlanRiskController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void deletePlanRisk(Long id) {
 		try {
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(id)));
 			PlanRisk planRisk = this.planRiskBS.exists(id, PlanRisk.class);
 			
 			if (GeneralUtils.isInvalid(planRisk)) {
 				this.result.notFound();
-				return;
+				this.fail("Plano de risco inválido.");
 			}
 			
 			
 			//verificar unidades
 			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(planRisk);
+			
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(units)));
 
 			for(Unit unit:units.getList()) {
-				if(!new UnitController().deletableUnit(unit)) {	
-					return;
+				if(!this.unitBS.deletableUnit(unit)) {	
+					this.fail("O plano possui unidades que não podem ser deletadas." );
 				}
 			}
+			
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(units)));
 			
 					
 			//deletar unidades
@@ -230,13 +236,13 @@ public class PlanRiskController extends AbstractController {
 				this.planRiskItemBS.delete(item);
 			}
 			
-			
+			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(planRisk)));	
 			//deletar plano
 			this.planRiskBS.delete(planRisk);
 			this.success();
 			
 		} catch (Throwable ex) {
-			LOGGER.error("Unexpected runtime error", ex);
+			EmailSenderTask.LOG.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}

@@ -85,7 +85,10 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	},
 
 	deletePlanRisk(data) {
+		console.log(data);
 		var me = this;
+		console.log(me);
+		console.log(me.url);
 		$.ajax({
 			url: me.url + "/" + data,
 			method: 'DELETE',
@@ -93,6 +96,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 				me.trigger("deletePlanRisk", model);
 			},
 			error(opts, status, errorMsg) {
+				console.log(opts);
 				var resp = JSON.parse(opts.responseText);
 				me.trigger("deletePlanRisk", resp);
 			}
@@ -100,7 +104,10 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	},
 
 	editPlanRisk(data) {
+		console.log("edit plan risk");
 		var me = this;
+		console.log(me);
+		console.log(me.url);
 		$.ajax({
 			url: me.url + '/update',
 			method: 'POST',
