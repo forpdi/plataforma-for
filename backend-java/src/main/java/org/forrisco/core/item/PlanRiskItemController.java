@@ -8,10 +8,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
-import org.forpdi.core.company.CompanyDomain;
-import org.forpdi.core.event.Current;
+import org.forpdi.core.user.authz.AccessLevels;
+import org.forpdi.core.user.authz.Permissioned;
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
+import org.forrisco.core.plan.permissions.ManagePlanRiskPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -30,7 +30,6 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 public class PlanRiskItemController extends AbstractController {
 
 	@Inject private PlanRiskItemBS planRiskItemBS;
-	@Inject private PlanRisk planRisk;
 	
 	protected static final String PATH = BASEPATH +"/planrisk/item";
 	
@@ -42,6 +41,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Get(PATH + "")
 	@NoCache
+	@Permissioned
 	public void listItens(@NotNull Long planRiskId) {
 		try {
 			PlanRisk planRisk = this.planRiskItemBS.exists(planRiskId, PlanRisk.class);
@@ -66,7 +66,7 @@ public class PlanRiskItemController extends AbstractController {
 	@Post(PATH + "/new")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void saveItem(@NotNull @Valid PlanRiskItem planRiskItem) {
 		try {
 			
@@ -98,7 +98,7 @@ public class PlanRiskItemController extends AbstractController {
 	@Post(PATH + "/new/subitem")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void saveSubItem(@NotNull @Valid PlanRiskSubItem planRiskSubItem) {
 		try {
 			
@@ -133,7 +133,7 @@ public class PlanRiskItemController extends AbstractController {
 	@Post(PATH + "/duplicate")
 	@Consumes
 	@NoCache
-	//@Permissioned(value = AccessLevels.MANAGER, permissions = { ManagePolicyPermission.class })
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void duplicateItem(@NotNull @Valid List<PlanRiskItem> itens, PlanRisk planRisk) {
 		try {
 			
@@ -233,6 +233,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Get(PATH + "/sub-itens/{id}")
 	@NoCache
+	@Permissioned
 	public void listSubitens(Long id) {
 		try {
 			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
@@ -259,6 +260,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Get(PATH + "/allsub-itens/{id}")
 	@NoCache
+	@Permissioned
 	public void listAllSubitens(Long id) {
 		try {
 			PlanRisk planRisk = this.planRiskItemBS.exists(id, PlanRisk.class);
@@ -296,6 +298,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Get(PATH + "/{id}")
 	@NoCache
+	@Permissioned
 	public void detailItem(Long id) {
 		try {
 			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
@@ -320,6 +323,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Get(PATH + "/subitem/{id}")
 	@NoCache
+	@Permissioned
 	public void detailSubItem(@NotNull Long id) {
 		try {
 			PlanRiskSubItem planRiskSubItem = this.planRiskItemBS.exists(id, PlanRiskSubItem.class);
@@ -343,6 +347,7 @@ public class PlanRiskItemController extends AbstractController {
 	@Post( PATH + "/update")
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void updatePlanRiskItem(@NotNull @Valid PlanRiskItem planRiskItem) {
 		try {
 			PlanRiskItem existent = planRiskItemBS.exists(planRiskItem.getId(), PlanRiskItem.class);
@@ -387,6 +392,7 @@ public class PlanRiskItemController extends AbstractController {
 	@Post( PATH + "/update-subitem")
 	@Consumes
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void updatePlanRiskSubItem(@NotNull @Valid PlanRiskSubItem planRiskSubItem) {
 		try {
 			PlanRiskSubItem existent = planRiskItemBS.exists(planRiskSubItem.getId(), PlanRiskSubItem.class);
@@ -430,6 +436,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Delete(PATH + "/{id}")
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void deletePlanRiskItem(@NotNull Long id) {
 		try {
 			PlanRiskItem planRiskItem = this.planRiskItemBS.exists(id, PlanRiskItem.class);
@@ -463,6 +470,7 @@ public class PlanRiskItemController extends AbstractController {
 	 */
 	@Delete(PATH + "/delete-subitem/{id}")
 	@NoCache
+	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void deletePlanRiskSubItem(@NotNull Long id) {
 		try {
 			PlanRiskSubItem planRiskSubItem = this.planRiskItemBS.exists(id, PlanRiskSubItem.class);
@@ -489,7 +497,7 @@ public class PlanRiskItemController extends AbstractController {
 	
 	@Get( PATH + "/allsubitens/{id}")
 	@NoCache
-	//@Permissioned
+	@Permissioned
 	public void retrieveAllSubitem(@NotNull Long id) {
 		try {
 			PlanRisk planRisk = this.planRiskItemBS.exists(id, PlanRisk.class);

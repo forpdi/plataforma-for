@@ -17,7 +17,7 @@
 	"FORRISCO_MANAGE_PLAN_RISK_PERMISSION":"org.forrisco.core.plan.permissions.ManagePlanRiskPermission",
 	"FORRISCO_MANAGE_UNIT_PERMISSION":"org.forrisco.core.unit.permissions.ManageUnitPermission",
 	"FORRISCO_EDIT_UNIT_PERMISSION":"org.forrisco.core.unit.permissions.EditUnitPermission",
-	"FORRISCO_MANAGE_PROCESS_PERMISSION":"org.forrisco.core.process.ManageProcessPermission",
+	"FORRISCO_MANAGE_PROCESS_PERMISSION":"org.forrisco.core.process.permissions.ManageProcessPermission",
 	"FORRISCO_MANAGE_RISK_PERMISSION":"org.forrisco.risk.permissions.ManageRiskPermission",
 	"FORRISCO_MANAGE_RISK_ITEMS_PERMISSION":"org.forrisco.risk.permissions.ManageRiskItemsPermission"
 }
