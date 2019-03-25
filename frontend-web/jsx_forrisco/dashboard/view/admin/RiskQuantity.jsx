@@ -39,6 +39,7 @@ export default React.createClass({
 		this.state.allRisks= newProps.allRisks;
 		this.state.loading=false;
 		this.state.year=(new Date).getFullYear()
+		this.state.displayGraph=false
 
 		if(newProps.units.length>0 && this.state.units != newProps.units){
 			this.state.units= newProps.units;
