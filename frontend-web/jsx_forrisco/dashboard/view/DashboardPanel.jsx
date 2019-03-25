@@ -224,7 +224,7 @@ export default React.createClass({
 			document.getElementById("documentAuthor").className = "";
 			document.getElementById("documentTitle").className = "";
 
-			var url = PlanRiskStore.url + "/exportReport" + "?planId=" + this.state.plans[this.state.selectedPlan].id + "&title=" + title + "&author=" + author + "&pre=" + pre + "&selecao=" + selecao
+			var url = PlanRiskStore.url + "/exportBoardReport" + "?planId=" + this.state.plans[this.state.selectedPlan].id + "&title=" + title + "&author=" + author + "&pre=" + pre + "&selecao=" + selecao
 			url = url.replace(" ", "+");
 
 			if (pre) {

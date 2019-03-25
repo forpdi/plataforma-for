@@ -3058,7 +3058,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 	
 	/*riscos*/
-	private void generateContent(File contentFile, String selecao, Long planId, TOCEvent event) throws DocumentException, IOException {
+	private void exportBoardReport(File contentFile, Long planId, String selecao, TOCEvent event) throws DocumentException, IOException {
 		
 		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
@@ -3066,16 +3066,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		writer.setPageEvent(event);
 		
 		File outputDir;
-		/*final String storagePath =SystemConfigs.getConfig("store.pdfs");
-		
-		if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {*/
-			//outputDir = File.createTempFile("fprisco-document-export", ".pdf").getParentFile();
 		outputDir=tempFile();
-		/*}else {
-			 outputDir = new File(storagePath);
-		}*/
-		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
 		
 		
 		String[] sections = null;
@@ -3136,23 +3129,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				Paragraph secTitle = new Paragraph(c);
 				document.add(secTitle);
 				
-				
 				switch(sections[i]) {
 					case "Incidentes - Ameaças": 
-						for(Incident incident: incidents.getList()) {
-							if(incident.getType() == 0) {
-								Paragraph attTitle = new Paragraph(incident.getDescription(), titulo);
-								attTitle.setLeading(interLineSpacing);
-								attTitle.setSpacingAfter(paragraphSpacing);
-								attTitle.setSpacingBefore(paragraphSpacing);
-								document.add(attTitle);
-							}
-							Paragraph attText = new Paragraph(incident.getAction(), texto);
-							document.add(attText);
-						}
-						break;
-						
-					case "Incidentes - Oportunidades": 
 						for(Incident incident: incidents.getList()) {
 							if(incident.getType() == 1) {
 								Paragraph attTitle = new Paragraph(incident.getDescription(), titulo);
@@ -3160,32 +3138,82 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								attTitle.setSpacingAfter(paragraphSpacing);
 								attTitle.setSpacingBefore(paragraphSpacing);
 								document.add(attTitle);
+								Paragraph attText = new Paragraph(incident.getAction(), texto);
+								document.add(attText);
 							}
-							Paragraph attText = new Paragraph(incident.getAction(), texto);
-							document.add(attText);
+
 						}
 						break;
 						
-					case "Riscos próximos a vencer": 
-						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
-							
-							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
-							if(state == 1) {
-								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
+					case "Incidentes - Oportunidades": 
+						for(Incident incident: incidents.getList()) {
+							if(incident.getType() == 2) {
+								Paragraph attTitle = new Paragraph(incident.getDescription(), titulo);
 								attTitle.setLeading(interLineSpacing);
 								attTitle.setSpacingAfter(paragraphSpacing);
 								attTitle.setSpacingBefore(paragraphSpacing);
 								document.add(attTitle);
+								Paragraph attText = new Paragraph(incident.getAction(), texto);
+								document.add(attText);
+							}
+
+						}
+						break;
+						
+					case "Riscos próximos a vencer":
+						for(Risk risk : risks.getList()) {
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Date date = risk.getBegin();
+
+ 							if(monitor != null) {
+ 								date = monitor.getBegin();
+ 							}
+
+							if(monitor != null) {
+								int state=this.unitBS.riskState(risk.getPeriodicity(), date);
+								if(state == 1) {
+									Paragraph attTitle = new Paragraph(risk.getName(), titulo);
+									attTitle.setLeading(interLineSpacing);
+									attTitle.setSpacingAfter(paragraphSpacing);
+									attTitle.setSpacingBefore(paragraphSpacing);
+									document.add(attTitle);
+								}
 							}
 						}
-						
 						break;
+						
 					case "Riscos em dia" : 
 						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Date date = risk.getBegin();
 							
-							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
+ 							if(monitor != null) {
+ 								date = monitor.getBegin();
+ 							}
+ 							
+							if(monitor != null) {
+								int state=this.unitBS.riskState(risk.getPeriodicity(), date);
+								if(state == 2) {
+									Paragraph attTitle = new Paragraph(risk.getName(), titulo);
+									attTitle.setLeading(interLineSpacing);
+									attTitle.setSpacingAfter(paragraphSpacing);
+									attTitle.setSpacingBefore(paragraphSpacing);
+									document.add(attTitle);
+								}
+							}
+						}
+						break;
+						
+					case "Riscos atrasados" : 
+						for(Risk risk : risks.getList()) {
+							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Date date = risk.getBegin();
+							
+ 							if(monitor != null) {
+ 								date = monitor.getBegin();
+ 							}
+							
+ 							int state=this.unitBS.riskState(risk.getPeriodicity(),date);
 							if(state == 2) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -3196,25 +3224,15 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 						break;
 						
-					case "Riscos atrasados" : 
-						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
-							
-							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
-							if(state == 3) {
-								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
-								attTitle.setLeading(interLineSpacing);
-								attTitle.setSpacingAfter(paragraphSpacing);
-								attTitle.setSpacingBefore(paragraphSpacing);
-								document.add(attTitle);
-							}
-						}
-						break;
-						
 					case "Riscos não iniciados"	:
-						for(Risk risk : risks.getList()) {
+						/*for(Risk risk : risks.getList()) {
 							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Date date= risk.getBegin();
 							
+ 							if(monitor != null) {
+ 								date= monitor.getBegin();
+ 							}
+ 							
 							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 0) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
@@ -3223,7 +3241,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								attTitle.setSpacingBefore(paragraphSpacing);
 								document.add(attTitle);
 							}
-						}
+						}*/
 						break;
 					
 					default:
@@ -3256,121 +3274,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							}
 						}
 				}
-
-		
-				/*
-				Item item = this.itemBS.retrieveItembyId(Long.parseLong(sections[i]));//item altual
-				PaginatedList<FieldItem> fielditens = this.itemBS.listFieldsByItem(item);//fields atual
-				PaginatedList<SubItem> subs = this.itemBS.listSubItensByItem(item);	//lista todos subitens
-				List <SubItem> actualsubitens= new ArrayList<SubItem>();	//lista de subitens selecionados
-	
-				
-				haveContent = true;
-				boolean secTitlePrinted = false;
-				subSecIndex = 0;
-				String secName =item.getName();
-	
-				if(fielditens.getTotal()>0){
-					secIndex++;
-				}
-				
-				for (FieldItem fielditem: fielditens.getList()) {
-					
-					if( fielditem.isText() && fielditem.getDescription() != null && !fielditem.getDescription().equals("")) {
-						
-						if (lastAttWasPlan) {
-							document.setPageSize(PageSize.A4);
-							document.newPage();
-						}
-						if (!secTitlePrinted) {
-							Chunk c = new Chunk(secIndex + ". " + secName, titulo);
-							c.setGenericTag(secIndex + ". " + secName);
-							Paragraph secTitle = new Paragraph(c);
-							secTitle.setLeading(interLineSpacing);
-							secTitle.setSpacingAfter(paragraphSpacing);
-							secTitle.setSpacingBefore(paragraphSpacing);
-							document.add(secTitle);
-							secTitlePrinted = true;
-						}
-						
-						String attName = fielditem.getName();
-						
-						if (!attName.equals(secName)) {
-							Paragraph attTitle = new Paragraph(attName, titulo);
-							attTitle.setLeading(interLineSpacing);
-							attTitle.setSpacingAfter(paragraphSpacing);
-							attTitle.setSpacingBefore(paragraphSpacing);
-							document.add(attTitle);
-						}
-						
-						Map<String, String> pc2 = new HashMap<String, String>();
-						pc2.put("line-height", "115%");
-						pc2.put("margin-bottom", "6.0pt");
-						pc2.put("text-align", "center");
-						HashMap<String, String> spanc1 = new HashMap<String, String>();
-						spanc1.put("text-justify", "inter-word");
-	
-						StyleSheet styles = new StyleSheet();
-						styles.loadTagStyle("p", "text-indent", "1.25cm");
-	
-						String str = "<html>" + "<head>" + "</head><body style=\"text-indent: 1.25cm; \">"
-								+ "<p style=\"text-indent: 1.25cm; \">";
-							
-						Queue<String> allMatches = new LinkedList<>();
-						String value = fielditem.getDescription();
-						if (fielditem.getDescription().contains("<img")) {
-							Matcher m = Pattern.compile("<img [^>]*>").matcher(fielditem.getDescription());
-							while (m.find()) {
-								String match = m.group();
-								allMatches.add(match);
-								value = value.replace(match, "<p>||IMAGE||</p>");
-							}
-						}
-						str += value + "</p></body></html>";
-						
-						File htmlFile = new File(outputDir, String.format("%s-1.html", prefix));
-						FileOutputStream out = new FileOutputStream(htmlFile);
-						out.write(str.getBytes());
-						out.close();
-	
-						FileReader fr = new FileReader(htmlFile.getPath());
-						
-						List<Element> p = HTMLWorker.parseToList(fr, styles);
-						
-						fr.close();
-						
-						for (int k = 0; k < p.size(); ++k) {
-							if (p.get(k) instanceof Paragraph) {
-								Paragraph att = (Paragraph) p.get(k);
-								// LOGGER.info("------->"+att.getContent());
-								if (att.getContent().contains("||IMAGE||")) {
-									String img = allMatches.poll();
-									if (img != null) {
-										// LOGGER.info("IMG------->"+img);
-										Image image = Image.getInstance(
-												new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "").split("\"")[0]));
-										float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
-												- document.rightMargin()) / image.getWidth()) * 100;
-										image.scalePercent(scaler * 0.4f);
-										image.setAlignment(Element.ALIGN_CENTER);
-										document.add(image);
-									}
-								} else {
-									att.setFirstLineIndent(firstLineIndent);
-									document.add(att);
-								}
-							} else if (p.get(k).getClass().getName().equals("com.itextpdf.text.List")) {
-								com.itextpdf.text.List att = (com.itextpdf.text.List) p.get(k);
-								att.setIndentationLeft(firstLineIndent);
-								document.add(att);
-							}
-						}
-						lastAttWasPlan = false;
-						htmlFile.delete();
-					}
-				}*/
-				
-
 			}
 		}
 			
@@ -3443,7 +3346,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			 document.add(table);
 		}
 	}
-	
 	
 	private void generateUnitContent(File contentFile, String units, String subunits, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
 		
@@ -3864,7 +3766,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			Paragraph attTitle;
 			Paragraph description;
 	
-			c2 = new Chunk("descrição", titulo);
+			c2 = new Chunk("Descrição", titulo);
 			attTitle = new Paragraph(c2);
 			attTitle.setLeading(interLineSpacing);
 			attTitle.setSpacingAfter(paragraphSpacing);
@@ -3875,7 +3777,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			description.setSpacingAfter(paragraphSpacing);
 			document.add(description);
 	
-			c2 = new Chunk("politica vinculada", titulo);
+			c2 = new Chunk("Política Vinculada", titulo);
 			attTitle = new Paragraph(c2 );
 			attTitle.setLeading(interLineSpacing);
 			attTitle.setSpacingAfter(paragraphSpacing);
@@ -4217,84 +4119,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	}
 	
-	/*private void generatePlanRiskContent(File contentFile, String itens, String subitens, TOCEvent event) throws DocumentException, IOException, MalformedURLException {
-		com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(contentFile));
-		
-		writer.setPageEvent(event);
-		
-		File outputDir;
-
-		outputDir = contentFile.getParentFile();
-
-		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
-		
-		
-		String[] sections = null;
-		if (itens != null)
-			sections = itens.split(",");
-		
-		String[] subsections= null;
-		if (subitens != null)
-			subsections = subitens.split(",");
-		
-		int secIndex = 0;
-		int subSecIndex = 0;
-		boolean lastAttWasPlan = false;
-		boolean haveContent = false;
-
-		document.open();
-		document.add(new Chunk(""));
-		
-		//para cada item selecionado
-		if(sections !=null) {
-			for (int i = 0; i < sections.length; i++) {
-				PlanRiskItem planRiskItem = this.planriskItemkBS.retrievePlanRiskItembyId(Long.parseLong(sections[i]));
-				PaginatedList<PlanRiskItemField> planRiskItemField; //Lista de Campos dos Item
-				PaginatedList<PlanRiskSubItem> planRiskSubItem = this.planriskItemkBS.listSubItemByItem(planRiskItem);
-				List <PlanRiskSubItem> actualsubitens= new ArrayList<PlanRiskSubItem>();	//lista de subitens selecionados
-
-				//lista subitens selecionados
-				for(PlanRiskSubItem sub : planRiskSubItem.getList()) {
-					if(subsections != null) {
-						for (int j = 0; j < subsections.length; j++) {
-							if(sub.getId() == Long.parseLong(subsections[j])) {
-								actualsubitens.add(sub);
-							}
-						}
-					}
-				}
-
-				boolean secTitlePrinted = false;
-				subSecIndex = 0;
-				String secName = planRiskItem.getName();
-
-					
-				subSecIndex = 0;
-				secTitlePrinted=false;
-	
-				for (PlanRiskSubItem sub: actualsubitens) {
-						
-					haveContent = true;
-					subSecIndex++;
-					
-					String subSecName =sub.getName();
-				
-				}
-			
-			}
-
-		}
-
-		if (haveContent) {
-			document.close();
-		}
-		outputDir.delete();
-	}
-	*/
-	
-	
-
 	
 	/**
 	 * Cria arquivo pdf  para exportar relatório  
@@ -4308,7 +4132,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	public File exportReport(Long policyId, String title, String author,String itens, String subitens) throws IOException, DocumentException {
+	public File exportPolicyReport(Long policyId, String title, String author,String itens, String subitens) throws IOException, DocumentException {
 
 		File outputDir=tempFile();
 
@@ -4386,7 +4210,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 	}
 
-	public File exportPolicyReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
+	/*public File exportPolicyReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
 		
 		File outputDir=tempFile();
 		
@@ -4403,6 +4227,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		TOCEvent event = new TOCEvent();
 		PdfReader cover = new PdfReader(coverPdfFile.getPath());
 
+		generate
+		
 		generateContent(contentFile, selecao, planId, event);
 		
 		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
@@ -4457,7 +4283,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		outputDir.delete();
 	
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
-	}
+	}*/
 
 	public File exportUnitReport(String title, String author, String units, String subunits) throws IOException, DocumentException {
 		
@@ -4605,5 +4431,79 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
+	
+	public File exportBoardReport(String title, String author, Long planId, String selecao) throws IOException, DocumentException {
+
+		File outputDir=tempFile();
+		
+		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
+
+		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
+		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
+		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
+		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
+		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
+
+		generateCover(coverPdfFile, title, author);
+
+		TOCEvent event = new TOCEvent();
+		PdfReader cover = new PdfReader(coverPdfFile.getPath());
+
+		exportBoardReport(contentFile, planId, selecao, event);
+		
+		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
+		
+
+		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
+
+		PdfImportedPage page;
+		int n;
+		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
+		newDocument.open();
+
+		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
+		PdfReader content;
+
+		// CAPA
+		n = cover.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(cover, ++i);
+			copy.addPage(page);
+		}
+
+		// SUMÁRIO
+		n = summary.getNumberOfPages();
+		for (int i = 0; i < n;) {
+			page = copy.getImportedPage(summary, ++i);
+			copy.addPage(page);
+		}
+		
+		if(contentFile.length()>0) {
+			content = new PdfReader(contentFile.getPath());
+			// CONTEÚDO
+			n = content.getNumberOfPages();
+			for (int i = 0; i < n;) {
+				page = copy.getImportedPage(content, ++i);
+				copy.addPage(page);
+			}
+			content.close();
+		}
+			
+		cover.close();
+		summary.close();		
+		newDocument.close();
+
+		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
+		
+		destinationFile.delete();
+		coverPdfFile.delete();
+		finalSummaryPdfFile.delete();
+		contentFile.delete();	
+		
+		outputDir.delete();
+	
+		return finalPdfFile;  //capa+sumario+conteudo+paginação
+	}
+	
 
 }
