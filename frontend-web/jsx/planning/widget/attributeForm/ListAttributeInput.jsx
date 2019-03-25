@@ -244,10 +244,15 @@ export default React.createClass({
 			} else if (this.props.fieldDef[0].type == AttributeTypes.SELECT_MULTI_FIELD) {
 				fieldEl=[]
 				for(var i in this.props.fieldDef){
-					fieldEl.push(<div>
-							<span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef[i].value.name}} style={{"display": "unset"}}/>
-							{this.props.fieldDef[i].link? <a href={this.props.fieldDef[i].link}  >{this.props.fieldDef[i].linkName}</a>:""}
-						</div>)
+					console.log(this.props.fieldDef);
+					fieldEl.push(
+						<div>
+							<span className="pdi-normal-text"
+								  dangerouslySetInnerHTML={{__html: this.props.fieldDef[i].value.name ? this.props.fieldDef[i].value.name : this.props.fieldDef[i].value}}
+								  style={{"display": "unset"}}/>
+							{this.props.fieldDef[i].link? <a href={this.props.fieldDef[i].link}>{this.props.fieldDef[i].linkName}</a> : ""}
+						</div>
+					)
 				}
 			} else {
 
