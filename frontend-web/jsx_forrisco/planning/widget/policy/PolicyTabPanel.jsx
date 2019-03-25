@@ -77,7 +77,7 @@ export default React.createClass({
 			if (tabIndex >= 0)
 				this.removeTabHidden(tabIndex);
 
-			if (this.state.tabs.length >= 3) {
+			if (this.state.tabs.length >= 5) {
 				this.state.tabsHidden.push(this.state.tabs[0]);
 				this.removeTab(0, 'newTab');
 			}

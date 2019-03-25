@@ -38,7 +38,7 @@ export default React.createClass({
 					<div className="col-md-7">
 						<IncidentAxis plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
 					</div>
-					<div className="col-md-4">
+					<div className="col-md-5">
 						<MonitorDetails plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
 					</div>
 				</div>
