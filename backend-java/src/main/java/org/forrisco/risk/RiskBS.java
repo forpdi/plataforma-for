@@ -10,6 +10,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.mail.EmailException;
+import org.forpdi.core.notification.NotificationBS;
+import org.forpdi.core.notification.NotificationType;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forrisco.core.plan.PlanRisk;
@@ -38,6 +41,9 @@ public class RiskBS extends HibernateBusiness {
 	protected HibernateDAO dao;
 	@Inject
 	protected HttpServletRequest request;
+	@Inject
+	protected NotificationBS notificationBS;
+
 	private static final int PAGESIZE = 10;
 
 	/**
@@ -936,4 +942,15 @@ public class RiskBS extends HibernateBusiness {
 
 	}
 
+	public void sendUserLinkedToRiskNoktification(Risk risk, Unit unit, String baseUrl) throws EmailException {
+		String url = baseUrl + "/#/forrisco/plan-risk/" + unit.getPlan().getId() + "/unit/" +
+				unit.getId() + "/risk/" + risk.getId() + "/info";
+
+		String text = String.format("Você foi vinculado como responsável pelo risco %s no ForRisco", risk.getName());
+
+		this.notificationBS.sendNotification(NotificationType.FORRISCO_USER_LINKED_TO_RISK,
+				text, null, risk.getUser().getId(), url);
+		this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_USER_LINKED_TO_RISK,
+				text, "", risk.getUser(), url);
+	}
 }
