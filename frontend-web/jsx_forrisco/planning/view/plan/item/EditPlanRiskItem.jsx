@@ -181,9 +181,20 @@ export default React.createClass({
 	},
 
 	onSubmit(event) {
-		var submitFields = [];
-
 		event.preventDefault();
+
+		// confirma se ha algum campo de edição ou cadastro de novo item aberto
+		const editingFields = _.filter(this.state.formFields, field => field.editInstance);
+		if (this.state.vizualization || editingFields.length > 0) {
+			const msg = this.state.newField
+				? 'As alterações inseridas no novo campo ainda não foram confirmadas. Confirme-as primeiro para salvar a edição'
+				: 'As alterações feitas ainda não foram confirmadas. Confirme-as primeiro para salvar a edição';
+			Modal.alert(() => {
+				Modal.hide();
+			}, msg);
+			return;
+		}
+
 		const formData = new FormData(event.target);
 
 		if (formData.get('description') === '') {
@@ -198,6 +209,7 @@ export default React.createClass({
 			formFields: this.state.formFields
 		});
 
+		var submitFields = [];
 		this.state.formFields.map( (field, index) => {
 			delete field.editInstance;
 

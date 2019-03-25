@@ -459,6 +459,18 @@ export default React.createClass({
 	onSubmit(event) {
 		event && event.preventDefault();
 
+		// confirma se ha algum campo de edição ou cadastro de novo item aberto
+		const editingFields = _.filter(this.state.fields, field => field.edit);
+		if (this.state.newField || editingFields.length > 0) {
+			const msg = this.state.newField
+				? 'As alterações inseridas no novo campo ainda não foram confirmadas. Confirme-as primeiro para salvar a edição'
+				: 'As alterações feitas ainda não foram confirmadas. Confirme-as primeiro para salvar a edição';
+			Modal.alert(() => {
+				Modal.hide();
+			}, msg);
+			return;
+		}
+
 		if(this.state.subitemModel){
 			ItemStore.dispatch({
 				action: ItemStore.ACTION_CUSTOM_UPDATE_SUB,
