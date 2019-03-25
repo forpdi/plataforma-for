@@ -33,6 +33,23 @@ export default React.createClass({
 
 	componentDidMount() {
 		this.getFields();
+
+		PlanRiskItemStore.on('itemUpdated', response => {
+			PlanRiskItemStore.dispatch({
+				action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
+				data: {
+					id: response.data.id
+				},
+			});
+
+			this.props.offEdit();
+			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
+			this.setState({isLoading: false});
+		}, this);
+	},
+
+	componentWillUnmount() {
+		PlanRiskItemStore.off(null, null, this)
 	},
 
 	getFields() {
@@ -222,38 +239,24 @@ export default React.createClass({
 			})
 		});
 
+		this.dispatchSubmit(this.state.itemTitle, this.state.itemDescription, this.props.itemId, submitFields,);
+	},
+
+	dispatchSubmit(itemTitle, itemDescription, itemId, submitFields) {
 		PlanRiskItemStore.dispatch({
 			action: PlanRiskItemStore.ACTION_UPDATE_ITEM,
 			data: {
 				planRiskItem: {
-					name: this.state.itemTitle,
-					description: this.state.itemDescription,
-					id: this.props.itemId,
+					name: itemTitle,
+					description: itemDescription,
+					id: itemId,
 					planRisk: {
 						id: this.props.planRiskId
 					},
 					planRiskItemField: submitFields
 				},
-
 			}
 		});
-
-		PlanRiskItemStore.on('itemUpdated', response => {
-			PlanRiskItemStore.dispatch({
-				action: PlanRiskItemStore.ACTION_DETAIL_ITEM,
-				data: {
-					id: response.data.id
-				},
-			});
-
-
-			this.props.offEdit();
-			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
-
-			this.setState({isLoading: false});
-			PlanRiskItemStore.off('itemUpdated');
-		});
-
 	},
 
 	onCancel(event) {

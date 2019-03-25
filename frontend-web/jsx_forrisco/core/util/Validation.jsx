@@ -258,6 +258,33 @@ var Validate = {
 		return aux;
 	},
 
+	validationNewFieldType: function(newfield, description) {
+		var type, name;
+
+		name =  S(newfield['newfield-name'].value);
+		type =  S(newfield['newfield-type'].value);
+
+		var errorField = false;
+
+		newfield['newfield-type'].className = "form-control";
+		newfield['formAlertErrorType'].innerHTML = "";
+
+		if (type.isEmpty()) {
+			if(newfield['newfield-type'].value.trim() == "") {
+				newfield['newfield-type'].className += " borderError";
+				newfield['formAlertErrorType'].innerHTML = Messages.get("label.alert.fieldEmpty");
+				errorField = true;
+			}
+		}
+
+		return {
+			errorField: errorField,
+			type: type,
+			name: name,
+			description: description
+		};
+	},
+
 	validationNewItem(newfield){
 
 		var titulo =  S(newfield['field-description'].value);
