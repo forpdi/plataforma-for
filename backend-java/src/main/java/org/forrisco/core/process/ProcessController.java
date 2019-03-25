@@ -128,10 +128,16 @@ public class ProcessController extends AbstractController{
 	@Get( PATH + "/{id}")
 	@NoCache
 	@Permissioned
-	public void listProcesses(Long id) {
+	public void listProcesses(Long id, Integer page, Integer pageSize) {
 		try {
 			Unit unit = this.processBS.exists(id, Unit.class);
-			PaginatedList<Process> process= this.processBS.listProcessByUnit(unit);
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = 5;
+			}
+			PaginatedList<Process> process = this.processBS.listProcessByUnit(unit, page, pageSize);
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
