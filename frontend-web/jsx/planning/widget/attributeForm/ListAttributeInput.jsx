@@ -14,9 +14,6 @@ import IndicatorType from "forpdi/jsx/planning/view/field/IndicatorTypeField.jsx
 import SelectPlan from "forpdi/jsx/planning/view/field/SelectPlanField.jsx";
 import Responsible from "forpdi/jsx/planning/view/field/ResponsibleField.jsx";
 import StrategicObjective from "forpdi/jsx/planning/view/field/StrategicObjectiveField.jsx";
-import TextArea from "forpdi/jsx/planning/view/field/TextAreaField.jsx";
-import SelectField from "forpdi/jsx/planning/view/field/SelectField.jsx";
-import SelectStructure from "forpdi/jsx/planning/view/field/SelectStructureField.jsx";
 import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
@@ -244,7 +241,6 @@ export default React.createClass({
 			} else if (this.props.fieldDef[0].type == AttributeTypes.SELECT_MULTI_FIELD) {
 				fieldEl=[]
 				for(var i in this.props.fieldDef){
-					console.log(this.props.fieldDef);
 					fieldEl.push(
 						<div>
 							<span className="pdi-normal-text"
