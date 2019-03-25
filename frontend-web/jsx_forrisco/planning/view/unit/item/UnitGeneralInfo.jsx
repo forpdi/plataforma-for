@@ -183,15 +183,15 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu">
 				<li>
 					<Link onClick={this.switchUpdateMode}>
-						<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editUnit")}>
-							<span id="menu-levels">{Messages.get("label.editUnit")}</span>
+						<span className="mdi mdi-pencil cursorPointer" title={this.props.isSubunit ? Messages.get("label.editSubunit") : Messages.get("label.editUnit")}>
+							<span id="menu-levels">{this.props.isSubunit ? Messages.get("label.editSubunit") : Messages.get("label.editUnit")}</span>
 						</span>
 					</Link>
 				</li>
 				<li>
 					<Link onClick={this.deleteUnit}>
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteUnit")}>
-						<span id="menu-levels">{Messages.get("label.deleteUnit")}</span>
+					<span className="mdi mdi-delete cursorPointer" title={this.props.isSubunit ? Messages.get("label.deleteSubunit") : Messages.get("label.deleteUnit")}>
+						<span id="menu-levels">{this.props.isSubunit ? Messages.get("label.deleteSubunit") : Messages.get("label.deleteUnit")}</span>
 					</span>
 					</Link>
 				</li>
@@ -311,6 +311,7 @@ export default React.createClass({
 		}
 
 		const { unit } = this.state;
+		console.log(this.props);
 
 		return (
 			<div>

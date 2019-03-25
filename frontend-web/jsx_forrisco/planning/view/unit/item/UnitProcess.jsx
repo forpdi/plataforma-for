@@ -401,7 +401,7 @@ export default React.createClass({
 		const { process } = this.state;
 
 		if (!process.name || !process.objective || !process.file) {
-			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
+			this.context.toastr.addAlertError("Para confirmar a ação preencha todos os campos obrigatórios.");
 		} else {
 			ProcessStore.dispatch({
 				action: ProcessStore.ACTION_CREATE,
