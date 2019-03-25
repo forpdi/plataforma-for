@@ -359,7 +359,7 @@ export default React.createClass({
 			}]
 		}
 
-		var fields = []
+		var fields = [];
 		this.state.riskModel.strategies.list.map((fielditem, index) => {
 			fields.push({
 				name: "strategy-" + (index),
@@ -396,7 +396,7 @@ export default React.createClass({
 		}
 
 
-		var fields = []
+		var fields = [];
 		this.state.riskModel.processes.list.map((fielditem, index) => {
 			var name= fielditem.process.objective +" - "+fielditem.process.name
 			fields.push({
