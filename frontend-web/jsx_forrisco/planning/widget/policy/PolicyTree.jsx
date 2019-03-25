@@ -539,8 +539,12 @@ export default React.createClass({
 				<div className="marginBottom10 inner-addon right-addon right-addonPesquisa plan-search-border">
 					<i className="mdiClose mdi mdi-close pointer" onClick={this.resultSearch}
 					   title={Messages.get("label.clean")} />
-					<input type="text" className="form-control-busca" ref="term"
-						   onKeyDown={this.onKeyDown} />
+					<input
+						type="text"
+						placeholder="Pesquisar"
+						className="form-control-busca placeholder-italic"
+						ref="term"
+						onKeyDown={this.onKeyDown} />
 					<i className="mdiBsc mdi mdi-chevron-down pointer" onClick={this.searchFilter}
 					   title={Messages.get("label.advancedSearch")} />
 					<i id="searchIcon" className="mdiIconPesquisa mdiBsc  mdi mdi-magnify pointer"
