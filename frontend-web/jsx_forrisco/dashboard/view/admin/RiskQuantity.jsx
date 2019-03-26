@@ -126,12 +126,18 @@ export default React.createClass({
 				}
 			}
 
-			if(i<4){
-				if(i%2 ==0 && i !=0 ){
-					panel1.push(<br/>)
-				}
+			let className = `dashboard-risk-board ${color}`;
 
-				panel1.push( <span className={"dashboard-risk-board "+color}>
+			if(i < 4){
+				if (i % 2 === 0 && i !== 0){
+					panel1.push(<br/>)
+				} else if (i % 2 === 1) {
+					className += ' dashboard-risk-panel-right';
+				}
+				if (i >= 2) {
+					className += ' dashboard-risk-panel-bottom';
+				}
+				panel1.push( <span className={className}>
 
 						<GraphicFilter
 							level={level}
@@ -144,7 +150,7 @@ export default React.createClass({
 					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}else{
-				panel2.push( <span className={"dashboard-risk-board  "+color}>
+				panel2.push( <span className={className}>
 					<a>
 					<GraphicFilter
 							level={level}
@@ -179,22 +185,24 @@ export default React.createClass({
 			return (<LoadingGauge/>)
 		}
 
-		return (<div>
-			{this.getPanel()}
-
-			{this.state.displayGraph ?
-
-			<Graphic
-				title={Messages.get("label.risk.history").toUpperCase()}
-				unit={this.state.unit}
-				units={this.state.units}
-				level={this.state.riskLevelModel.data}
-				levelActive={this.state.risk_level_active}
-				history={this.state.risk_history}
-				displayGraph={this.setdisplayGraph}
-			 />
-			 :""}
-		</div>);
+		return (
+			<div className="frisco-dashboard frisco-dashboard-right" style={{ position: 'relative' }}>
+				{this.getPanel()}
+				{
+					this.state.displayGraph
+					&&
+					<Graphic
+						title={Messages.get("label.risk.history").toUpperCase()}
+						unit={this.state.unit}
+						units={this.state.units}
+						level={this.state.riskLevelModel.data}
+						levelActive={this.state.risk_level_active}
+						history={this.state.risk_history}
+						displayGraph={this.setdisplayGraph}
+					/>
+				}
+			</div>
+		);
 	}
 
 });

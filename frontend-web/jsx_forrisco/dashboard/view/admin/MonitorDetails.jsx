@@ -274,69 +274,67 @@ export default React.createClass({
 
 	render() {
 		var title = Messages.get("label.risk.monitor");
-		return (<div>
-			<div className={this.props.className}>
-				<div className="panel">
-					<div className="dashboard-plan-details-header">
-						<span title={title}>{title.toUpperCase()}
-						</span>
-						<span className="frisco-containerSelect"> {Messages.get("label.units")}
-							<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectUnits">
-								<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
-								{this.state.units.map((attr, idy) => {
-									return (
-										<option key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
-											{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
-										</option>
-									);
-								})
-								}
-							</select>
-						</span>
-					</div>
-					<div className="dashboard-risk-details-body" >
-						<div className="mdi mdi-chart-line icon-link" style={{ float: "right", padding: "10px" }} onClick={() => this.switchGraph(true)} />
-						{
-							this.state.loading ? <LoadingGauge /> :
+		return (
+			<div className="frisco-dashboard frisco-dashboard-right dashboard-risk-details panel">
+				<div className="dashboard-plan-details-header">
+					<span title={title}>{title.toUpperCase()}
+					</span>
+					<span className="frisco-containerSelect"> {Messages.get("label.units")}
+						<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectUnits">
+							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
+							{this.state.units.map((attr, idy) => {
+								return (
+									<option key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
+										{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
+									</option>
+								);
+							})
+							}
+						</select>
+					</span>
+				</div>
+				<div className="dashboard-risk-details-body" >
+					<div className="mdi mdi-chart-line icon-link" style={{ float: "right", padding: "10px" }} onClick={() => this.switchGraph(true)} />
+					{
+						this.state.loading ? <LoadingGauge /> :
 
-							<div style={{ padding: "20px 50px" }}>
-								<div className="row">
-									<div className="dashboard-risk-goal-info col-sm-4">
-										<h1>{this.state.monitor.inDay}</h1>
-										<h4>{"(" + numeral(this.state.monitor.Percentage.inDay).format('0,0.00') + "%)"}</h4>
-										<p>{Messages.getEditable("label.goals.inDay", "fpdi-nav-label")}</p>
-									</div>
-									<div className="dashboard-risk-goal-info col-sm-4">
-										<h1>{this.state.monitor.closeToMaturity}</h1>
-										<h4>{"(" + numeral(this.state.monitor.Percentage.closeToMaturity).format('0,0.00') + "%)"}</h4>
-										<p>{Messages.getEditable("label.goals.closeToMaturity_", "fpdi-nav-label")}</p>
-									</div>
+						<div style={{ padding: "20px 50px" }}>
+							<div className="row">
+								<div className="dashboard-risk-goal-info col-sm-4">
+									<h1>{this.state.monitor.inDay}</h1>
+									<h4>{"(" + numeral(this.state.monitor.Percentage.inDay).format('0,0.00') + "%)"}</h4>
+									<p>{Messages.getEditable("label.goals.inDay", "fpdi-nav-label")}</p>
 								</div>
-								<div className="row">
-									<div className="dashboard-risk-goal-info col-sm-4">
-										<h1>{this.state.monitor.late}</h1>
-										<h4>{"(" + numeral(this.state.monitor.Percentage.late).format('0,0.00') + "%)"}</h4>
-										<p>{Messages.getEditable("label.goals.late_", "fpdi-nav-label")}</p>
-									</div>
+								<div className="dashboard-risk-goal-info col-sm-4">
+									<h1>{this.state.monitor.closeToMaturity}</h1>
+									<h4>{"(" + numeral(this.state.monitor.Percentage.closeToMaturity).format('0,0.00') + "%)"}</h4>
+									<p>{Messages.getEditable("label.goals.closeToMaturity_", "fpdi-nav-label")}</p>
 								</div>
 							</div>
-						}
-					</div>
+							<div className="row">
+								<div className="dashboard-risk-goal-info col-sm-4">
+									<h1>{this.state.monitor.late}</h1>
+									<h4>{"(" + numeral(this.state.monitor.Percentage.late).format('0,0.00') + "%)"}</h4>
+									<p>{Messages.getEditable("label.goals.late_", "fpdi-nav-label")}</p>
+								</div>
+							</div>
+						</div>
+					}
 				</div>
+				{
+					this.state.displayGraph
+					&&
+					<Graphic
+						title={Messages.get("label.monitor.history").toUpperCase()}
+						planId={this.props.plan.id}
+						unit={this.state.unit}
+						units={this.state.units}
+						level={this.state.level}
+						history={this.state.monitor_history}
+						displayGraph={this.displayGraph}
+					/>
+				}
 			</div>
-			{this.state.displayGraph ?
-				<Graphic
-					title={Messages.get("label.monitor.history").toUpperCase()}
-					planId={this.props.plan.id}
-					unit={this.state.unit}
-					units={this.state.units}
-					level={this.state.level}
-					history={this.state.monitor_history}
-					displayGraph={this.displayGraph}
-				/>
-				:""
-			}
-		</div>
 		);
 	}
 });

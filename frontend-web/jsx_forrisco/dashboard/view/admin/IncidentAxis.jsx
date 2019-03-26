@@ -273,8 +273,8 @@ export default React.createClass({
 	},
 
 	render() {
-		return (<div>
-			<div className="panel panel-default">
+		return (
+			<div className="frisco-dashboard panel panel-default">
 				<div className="panel-heading dashboard-panel-title">
 					<b className="budget-graphic-title"
 					   title={Messages.get("label.incidents")}>{Messages.get("label.incidents").toUpperCase()}</b>
@@ -333,7 +333,7 @@ export default React.createClass({
 					</div>
 				}
 			</div>
-		</div>);
+		);
 	}
 
 });
