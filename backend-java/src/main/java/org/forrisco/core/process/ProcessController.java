@@ -16,6 +16,7 @@ import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.utils.Consts;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.process.permissions.ManageProcessPermission;
 import org.forrisco.core.unit.Unit;
@@ -135,7 +136,7 @@ public class ProcessController extends AbstractController{
 				page = 1;
 			}
 			if (pageSize == null) {
-				pageSize = 5;
+				pageSize = Consts.MIN_PAGE_SIZE;
 			}
 			PaginatedList<Process> process = this.processBS.listProcessByUnit(unit, page, pageSize);
 			this.success(process);

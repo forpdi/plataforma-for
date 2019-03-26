@@ -541,7 +541,7 @@ export default React.createClass({
 				<TablePagination
 					total={this.state.dataTotal}
 					onChangePage={this.pageChange}
-					tableName={"users-table"}
+					tableName={"monitor-table"}
 				/>
 			</div>
 		)

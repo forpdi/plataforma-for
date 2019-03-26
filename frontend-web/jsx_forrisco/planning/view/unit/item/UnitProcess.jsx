@@ -14,6 +14,7 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
+import { MIN_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
 
 export default React.createClass({
 	contextTypes: {
@@ -72,36 +73,21 @@ export default React.createClass({
 		}, this);
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
 		ProcessStore.on('processDeleted', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
 		ProcessStore.on('processUpdated', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
@@ -147,7 +133,7 @@ export default React.createClass({
 		});
 	},
 
-	getProcesses(unitId, page = 1, pageSize = 5) {
+	getProcesses(unitId, page = 1, pageSize = MIN_PAGE_SIZE) {
 		ProcessStore.dispatch({
 			action: ProcessStore.ACTION_LIST_BY_UNIT,
 			data: {
@@ -156,10 +142,15 @@ export default React.createClass({
 				pageSize,
 			},
 		});
+		this.refs['unit-pagination'] && this.refs['unit-pagination'].setState({
+			page: 1,
+		});
 	},
 
 	pageChange(page, pageSize) {
 		this.getProcesses(this.props.unitId, page, pageSize);
+		console.log('foo')
+
 	},
 
 	insertNewRow() {
@@ -538,10 +529,10 @@ export default React.createClass({
 					}
 				/>
 				<TablePagination
-					// ref = "pagination"
+					ref="unit-pagination"
 					total={this.state.processesTotal}
 					onChangePage={this.pageChange}
-					tableName={"users-table"}
+					tableName={"unit-process-table"}
 				/>
 			</div>
 		)
