@@ -119,7 +119,7 @@ export default React.createClass({
 			required: true,
 			displayField: 'label',
 			valueField: 'id',
-			placeholder: "Selecone a Política",
+			placeholder: "Selecione a Política",
 			label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
 		});

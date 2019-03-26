@@ -161,7 +161,7 @@ export default React.createClass({
 			className: "form-control-h",
 			required: true,
 			displayField: 'label',
-			placeholder: "Selecone o Responsável pela Unidade",
+			placeholder: "Selecione o Responsável pela Unidade",
 			label: Messages.getEditable("label.responsible", "fpdi-nav-label"),
 			onChange: this.selectChangeHandler,
 		}, {

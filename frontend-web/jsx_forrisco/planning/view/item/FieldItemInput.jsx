@@ -80,10 +80,12 @@ export default React.createClass({
 				data: file
 			});*/
 			//me.context.toastr.addAlertSuccess("Anexo salvo com sucesso! Talvez seja necessário atualizar a página para que os arquivos apareçam na lista.");
+			me.context.toastr.addAlertSuccess("Arquivo enviado com sucesso");
 		};
 		var onFailure = function (resp) {
 			Modal.hide();
 			me.setState({error: resp.message});
+			me.context.toastr.addAlertError("Falha no envio do arquivo");
 		};
 
 		var formatsBlocked = "(exe*)";
@@ -123,16 +125,18 @@ export default React.createClass({
 						value: validation.name.s,
 						description: validation.description,
 						isText: istext ,
-						fileLink:  istext ?
-							null
-							:
-							(this.state.fileData || this.state.fileLink) ?
-								// this.state.fileData.file.fileLink != null ? this.state.fileData.file.fileLink
-								// :
-								// this.state.fileLink
-								this.state.fileLink ? this.state.fileLink : this.state.fileData.file.fileLink
-							:
-							null,
+						fileLink:  
+							istext ?
+								null
+								:
+								((this.state.fileData || this.state.fileLink) ?
+									this.state.fileData ? 
+										this.state.fileData.file.fileLink
+										:
+										this.state.fileLink
+									:
+									null
+								),
 						edit:false
 					})
 
@@ -298,12 +302,12 @@ export default React.createClass({
 							/>
 							:
 							<div className="fpdi-tabs-nav fpdi-nav-hide-btn">
-							<a onClick={this.attachFile}>
-								<span className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
-								 <span className="fpdi-nav-label">
-										{Messages.getEditable("label.attachFiles","fpdi-nav-label")}
-								</span>
-							</a>
+								<a onClick={this.attachFile}>
+									<span className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
+									<span className="fpdi-nav-label">
+										{ this.state.description ? this.state.description : (console.log(this.state), Messages.getEditable("label.attachFiles","fpdi-nav-label")) }
+									</span>
+								</a>
 							</div>
 						}
 					</div>
