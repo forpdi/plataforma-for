@@ -528,7 +528,7 @@ export default React.createClass({
 					defaultPageSize={MED_PAGE_SIZE}
 					total={this.state.incidentsTotal}
 					onChangePage={this.pageChange}
-					tableName={"monitor-table"}
+					tableName={"incident-table"}
 				/>
 			</div>
 		)

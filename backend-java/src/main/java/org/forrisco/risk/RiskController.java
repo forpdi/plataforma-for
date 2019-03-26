@@ -680,15 +680,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/contingency")
 	@NoCache
 	@Permissioned
-	public void listContingencies(@NotNull Long riskId) {
+	public void listContingencies(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
 			
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk, page, pageSize);
 			
 			this.success(contingencies);
 			

@@ -568,12 +568,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listContingency(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/contingency",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data.riskId},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("contingencyListed", model);
 			},

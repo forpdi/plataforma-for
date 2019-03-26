@@ -790,8 +790,33 @@ public class RiskBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(Contingency.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("risk", risk));
 
-		Criteria count = this.dao.newCriteria(Contingency.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
+		List<Contingency> list = this.dao.findByCriteria(criteria, Contingency.class);
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+	}
+
+	/**
+	 * Retorna os contingenciamentos a partir de um risco com paginacao
+	 * 
+	 * @param Risk instância de um risco
+	 * 
+	 * @return PaginatedList<Contingency>
+	 */
+	public PaginatedList<Contingency> listContingenciesByRisk(Risk risk, Integer page, Integer pageSize) {
+
+		PaginatedList<Contingency> results = new PaginatedList<Contingency>();
+
+		Criteria criteria = this.dao.newCriteria(Contingency.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize);
+
+		Criteria count = this.dao.newCriteria(Contingency.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Contingency.class));
 		results.setTotal((Long) count.uniqueResult());
