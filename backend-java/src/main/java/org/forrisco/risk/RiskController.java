@@ -451,7 +451,7 @@ public class RiskController extends AbstractController {
 				page = 1;
 			}
 			if (pageSize == null) {
-				pageSize = Consts.MIN_PAGE_SIZE;
+				pageSize = Consts.MED_PAGE_SIZE;
 			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null || risk.isDeleted()) {
@@ -531,14 +531,20 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/incident")
 	@NoCache
 	@Permissioned
-	public void listIncident(@NotNull Long riskId) {
+	public void listIncident(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				 page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null || risk.isDeleted()) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
-			 PaginatedList<Incident> incident = this.riskBS.listIncidentsByRisk(risk);
+			 PaginatedList<Incident> incident = this.riskBS.listIncidentsByRisk(risk, page, pageSize);
 			 
 			this.success(incident);
 		} catch (Throwable ex) {

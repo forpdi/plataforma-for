@@ -133,7 +133,7 @@ public class ProcessController extends AbstractController{
 				page = 1;
 			}
 			if (pageSize == null) {
-				pageSize = Consts.MIN_PAGE_SIZE;
+				pageSize = Consts.MED_PAGE_SIZE;
 			}
 			PaginatedList<Process> process = this.processBS.listProcessByUnit(unit, page, pageSize);
 			this.success(process);

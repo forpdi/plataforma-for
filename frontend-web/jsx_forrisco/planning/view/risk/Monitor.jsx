@@ -10,8 +10,8 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
-import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
-import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 export default React.createClass({
 	contextTypes: {

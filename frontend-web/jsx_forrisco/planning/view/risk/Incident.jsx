@@ -10,6 +10,8 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 const incidentTypes = {
 	values: [
@@ -32,6 +34,7 @@ export default React.createClass({
 			data: [],
 			users: [],
 			incident: null,
+			incidentsTotal: null,
 			beginDate: null,
 			beginHour: null,
 			newRowDisplayed: false,
@@ -53,6 +56,7 @@ export default React.createClass({
 						}),
 						type: incidentTypes.getById(value.type).label,
 					})),
+					incidentsTotal: response.total,
 					isLoading: false,
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
@@ -66,11 +70,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -82,10 +82,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -97,10 +94,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -121,12 +115,12 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		}, this);
-		this.refreshComponent(this.props.risk.id, 1, 500);
+		this.refreshComponent(this.props.risk.id);
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.risk.id !== this.props.risk.id) {
-			this.refreshComponent(newProps.risk.id, 1, 500)
+			this.refreshComponent(newProps.risk.id)
 		}
 	},
 
@@ -141,17 +135,28 @@ export default React.createClass({
 		);
 	},
 
-	refreshComponent(riskId, page, pageSize) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_INCIDENT,
-			data: riskId,
-		});
-
+	refreshComponent(riskId) {
+		this.getIncidents(riskId);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
-				page: page,
-				pageSize: pageSize,
+				page: 1,
+				pageSize: 500,
+			},
+		});
+	},
+
+	pageChange(page, pageSize) {
+ 		this.getIncidents(this.props.risk.id, page, pageSize);
+	},
+
+	getIncidents(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_INCIDENT,
+			data: {
+				riskId,
+				page,
+				pageSize,
 			},
 		});
 	},
@@ -518,6 +523,12 @@ export default React.createClass({
 							Nenhum incidente cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.incidentsTotal}
+					onChangePage={this.pageChange}
+					tableName={"monitor-table"}
 				/>
 			</div>
 		)

@@ -487,12 +487,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listIncident(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/incident",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("incidentListed", model);
 			},

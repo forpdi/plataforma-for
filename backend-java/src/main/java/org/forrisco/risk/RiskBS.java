@@ -707,8 +707,39 @@ public class RiskBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(Incident.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("risk", risk));
 
-		Criteria count = this.dao.newCriteria(Incident.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
+		List<Incident> list = this.dao.findByCriteria(criteria, Incident.class);
+		results.setList(list);
+		results.setTotal((long) list.size());
+
+		for (Incident incident : results.getList()) {
+
+			incident.setUnitId(incident.getRisk().getUnit().getId());
+		}
+
+		return results;
+	}
+
+	/**
+	 * Retorna os incidentes a partir de um risco com paginacao
+	 * 
+	 * @param Risk instância de um risco
+	 * 
+	 * @return PaginatedList<Incident>
+	 */
+	public PaginatedList<Incident> listIncidentsByRisk(Risk risk, Integer page, Integer pageSize) {
+
+		PaginatedList<Incident> results = new PaginatedList<Incident>();
+
+		Criteria criteria = this.dao.newCriteria(Incident.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize);
+
+		Criteria count = this.dao.newCriteria(Incident.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Incident.class));
 		results.setTotal((Long) count.uniqueResult());
