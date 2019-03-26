@@ -14,6 +14,7 @@ import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.utils.Consts;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
@@ -383,8 +384,11 @@ public class RiskController extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void listRiskByPI(Long planId, String impact, String probability, Integer page, Integer pageSize) {
-		if (page == null)
+		if (page == null || page < 0)
 			page = 0;
+		if (pageSize == null) {
+			pageSize = Consts.MIN_PAGE_SIZE;
+		}
 		
 		PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
 		if (plan == null || plan.isDeleted()) {
@@ -441,15 +445,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/monitor")
 	@NoCache
 	@Permissioned
-	public void listMonitor(@NotNull Long riskId) {
+	public void listMonitor(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MIN_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null || risk.isDeleted()) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
-			} 
+			}
 			
-			PaginatedList<Monitor> monitor = this.riskBS.listMonitorByRisk(risk);
+			PaginatedList<Monitor> monitor = this.riskBS.listMonitorByRisk(risk, page, pageSize);
 			 
 			this.success(monitor);
 		} catch (Throwable ex) {

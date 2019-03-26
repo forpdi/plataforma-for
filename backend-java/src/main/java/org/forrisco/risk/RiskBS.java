@@ -657,14 +657,38 @@ public class RiskBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("risk", risk));
 
-		Criteria count = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
+		List<Monitor> list = this.dao.findByCriteria(criteria, Monitor.class);
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+	}
+
+	/**
+	 * Retorna os monitoramentos a partir de um risco com paginacao
+	 * 
+	 * @param Risk instância de um risco
+	 * 
+	 * @return PaginatedList<Monitor>
+	 */
+	public PaginatedList<Monitor> listMonitorByRisk(Risk risk, Integer page, Integer pageSize) {
+
+		PaginatedList<Monitor> results = new PaginatedList<Monitor>();
+
+		Criteria criteria = this.dao.newCriteria(Monitor.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize);
+
+		Criteria count = this.dao.newCriteria(Monitor.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Monitor.class));
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
-
 	/**
 	 * Retorna os incidentes a partir de um risco
 	 * 

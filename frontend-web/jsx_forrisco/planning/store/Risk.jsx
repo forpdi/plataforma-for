@@ -321,12 +321,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listMonitor(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/monitor",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("monitorListed", model);
 			},
