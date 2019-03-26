@@ -60,7 +60,7 @@ export default React.createClass({
 		}, this);
 
 		UnitStore.on('unitDeleted', response => {
-			if (response.success) {
+			if (response.success === true) {
 				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
 				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 				if (hasMinTabsLength) {
