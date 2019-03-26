@@ -465,7 +465,7 @@ export default React.createClass({
 																			<span
 																				className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
 																			<span className="fpdi-nav-label">
-																				{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+																				{ this.state.fieldContent ? (console.log(this.state), this.state.fieldContent) : (console.log(this.state), (console.log(this.state), Messages.getEditable("label.attachFiles","fpdi-nav-label"))) }
 																			</span>
 																		</a>
 																	</div>
@@ -559,7 +559,7 @@ export default React.createClass({
 												<a onClick={this.attachFile}>
 													<span className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
 													<span className="fpdi-nav-label">
-														{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+														{ this.state.description ? (console.log(this.state), this.state.description) : (console.log(this.state), Messages.getEditable("label.attachFiles","fpdi-nav-label")) }
 													</span>
 												</a>
 											</div>

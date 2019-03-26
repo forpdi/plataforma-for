@@ -25,9 +25,6 @@ import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
-import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.FavoriteLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.Archive;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -355,6 +352,8 @@ public class NotificationBS extends HibernateBusiness {
 		} else if (type == NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY) {
 			notification.setDescription("<b>O monitoramento do risco</b>\"" + text 
 					+ "\"<b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
+		} else if (type == NotificationType.FORRISCO_USER_LINKED_TO_RISK) {
+			notification.setDescription("<b>"+ text +"</b>");
 		} else {
 			notification.setDescription("");
 		}

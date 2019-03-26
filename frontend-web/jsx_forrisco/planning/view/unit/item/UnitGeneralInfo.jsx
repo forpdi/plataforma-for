@@ -45,7 +45,11 @@ export default React.createClass({
 
 		UnitStore.on('unitUpdated', response => {
 			if (response.success) {
-				this.context.toastr.addAlertSuccess("A unidade foi alterada com sucesso.");
+				this.context.toastr.addAlertSuccess(
+					this.props.isSubunit
+						? "A subunidade foi alterada com sucesso."
+						: "A unidade foi alterada com sucesso."
+					);
 				this.setState({
 					unit: this.state.unitToUpdate,
 					showUpdateMode: false,
@@ -56,13 +60,17 @@ export default React.createClass({
 		}, this);
 
 		UnitStore.on('unitDeleted', response => {
-			if (response.success) {
+			if (response.success === true) {
 				const hasMinTabsLength = this.context.tabPanel.state.tabs.length <= 1 ? true : false;
 				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
 				if (hasMinTabsLength) {
 					this.context.router.push(`/forrisco/plan-risk/${this.props.params.planRiskId}/unit/overview`);
 				}
-				this.context.toastr.addAlertSuccess("A unidade foi excluída com sucesso.");
+				this.context.toastr.addAlertSuccess(
+					this.props.isSubunit
+						? "A subunidade foi excluída com sucesso."
+						: "A unidade foi excluída com sucesso."
+				);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
@@ -167,6 +175,9 @@ export default React.createClass({
 	},
 
 	deleteUnit() {
+		const msg = this.props.isSubunit
+			? 'Você tem certeza que deseja excluir essa subunidade?'
+			: 'Você tem certeza que deseja excluir essa unidade?';
 		Modal.confirmCustom(() => {
 			Modal.hide();
 			UnitStore.dispatch({
@@ -175,7 +186,7 @@ export default React.createClass({
 					id: this.getUnitId(),
 				},
 			});
-		}, 'Você tem certeza que deseja excluir essa Unidade?', () => Modal.hide());
+		}, msg, () => Modal.hide());
 	},
 
 	renderDropdown() {
@@ -283,9 +294,6 @@ export default React.createClass({
 					/>
 				</div>
 				<div className="form-group form-group-sm">
-					<label className="fpdi-text-label">
-						<span>DESCRIÇÃO</span>
-					</label>
 					<VerticalInput
 						fieldDef={{
 							name: "description",
@@ -311,7 +319,6 @@ export default React.createClass({
 		}
 
 		const { unit } = this.state;
-		console.log(this.props);
 
 		return (
 			<div>

@@ -581,7 +581,7 @@
 
 .frisco-containerOptions {
 	font-size: 13px;
-	padding: 15px 10px;
+	padding: 15px 10px 0 10px;
 }
 
 .frisco-containerOptions span {
@@ -596,16 +596,14 @@
 
 
 .frisco-link {
-	margin: 50px;
-	font-size: 18px;
+	margin: 40px 50px 40px 0;
+	font-size: 16px;
 	color: #9E9E9F;
 	font-weight: 600;
 	text-decoration: none;
 	font-weight: bold;
-
+	&.selecionado {
+		border-bottom: solid 2px #7d45d8;
+		color: #7d45d8;
 	}
-.frisco-link.selecionado {
-	border-bottom: solid 2px #7d45d8;
-	  color: #7d45d8;
-	}
-
+}

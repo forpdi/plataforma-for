@@ -203,6 +203,7 @@ public class PlanRiskController extends AbstractController {
 			for(Unit unit:units.getList()) {
 				if(!this.unitBS.deletableUnit(unit)) {	
 					this.fail("O plano possui unidades que não podem ser deletadas." );
+					return;
 				}
 			}
 			

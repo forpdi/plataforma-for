@@ -505,6 +505,9 @@ public class UnitController extends AbstractController {
 				}
 				this.unitBS.delete(unit);
 				this.success(unit);
+			} else {
+				this.fail("A unidade possuiu riscos ou subunidades, portanto não pode ser excluida." );
+				return;
 			}
 			
 		} catch (Throwable ex) {

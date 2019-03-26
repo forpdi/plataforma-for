@@ -286,6 +286,13 @@ export default React.createClass({
 				<h1 className="marginLeft30">
 					{Messages.getEditable("label.dashboard", "forrisco-nav-label")}
 				</h1>
+
+				<div className="marginLeft30">
+					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
+						{Messages.getEditable("label.exportReport")}
+					</span>
+				</div>
+				<br/>
 				<div className="marginLeft30">
 					<span>
 						{
@@ -294,7 +301,7 @@ export default React.createClass({
 								<div>
 									<span className="fpdi-nav-label">
 										{Messages.getEditable("label.risk.Plans", "fpdi-nav-label")}&nbsp;
-                  </span>
+									</span>
 									<select
 										onChange={this.planRiscoChange}
 										ref="selectPlan"
@@ -326,9 +333,6 @@ export default React.createClass({
 								:
 								""
 						}
-					</span>
-					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
-						{Messages.getEditable("label.exportReport")}
 					</span>
 				</div>
 				<DashboardAdminView

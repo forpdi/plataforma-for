@@ -1,6 +1,7 @@
 .mdi {
 	cursor: default;
 	&:before {
+		cursor: pointer;
 		vertical-align: middle;
 	}
 	& + .mdi:not(:first-child) {
@@ -220,7 +221,7 @@ span.cursorDefault {
 .right-addon .mdiBsc {
 	position: absolute;
 	background-color:#D3D3D3;
-	width: 25px;
+	width: 29px;
 	height: 30px;
 	padding-left:5px;
 	color:#666666;
@@ -245,9 +246,9 @@ span.cursorDefault {
 }
 
 
-.fpdi-app-body .fpdi-app-content{
-	padding-left: 0px;
-}
+// .fpdi-app-body .fpdi-app-content{
+// 	padding-left: 0px;
+// }
 
 .marginLeft0{
 	margin-left: 0px !important;
@@ -1212,7 +1213,7 @@ label{
 .right-addonPesquisa .mdiIconPesquisa {
 	position: absolute;
 	right: -1px;
-	width: 36px;
+	width: 31px;
 	height: 32px;
 	padding: 8px 0px 0px 10px;
 	background-color: #0085D9;
@@ -1262,7 +1263,7 @@ label{
 *******************************************************************************************/
 
 .dashboard-plan-details-header {
-	background-color: #2980B9;
+	background-color: #5064d8;
 	color: white;
 	padding: 16px; //Atributo principal
 	font-size: 12px;
@@ -1412,4 +1413,19 @@ label{
 
 .white-space {
 	white-space: nowrap;
+}
+
+.placeholder-italic {
+	&::-webkit-input-placeholder {
+		font-style: italic;
+	}
+	&:-moz-placeholder {
+		font-style: italic;
+	}
+	&::-moz-placeholder {
+		font-style: italic;
+	}
+	&:-ms-input-placeholder {
+		font-style: italic;
+	}
 }
