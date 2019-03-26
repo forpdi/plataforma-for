@@ -11,7 +11,7 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
-import { MIN_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
 
 export default React.createClass({
 	contextTypes: {
@@ -128,7 +128,7 @@ export default React.createClass({
 		);
 	},
 
-	getData(riskId, page = 1, pageSize = MIN_PAGE_SIZE) {
+	getData(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_MONITOR,
 			data: {
@@ -539,6 +539,7 @@ export default React.createClass({
 					}
 				/>
 				<TablePagination
+					defaultPageSize={MED_PAGE_SIZE}
 					total={this.state.dataTotal}
 					onChangePage={this.pageChange}
 					tableName={"monitor-table"}

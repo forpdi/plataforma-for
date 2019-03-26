@@ -11,7 +11,6 @@ import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
@@ -21,8 +20,6 @@ import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.process.permissions.ManageProcessPermission;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
-
-import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -264,7 +261,6 @@ public class ProcessController extends AbstractController{
 				this.processBS.persist(processUnit);
 			}
 			for (ProcessUnit processUnit : processUnitsExistentMap.values()) {
-				EmailSenderTask.LOG.info(new GsonBuilder().setPrettyPrinting().create().toJson(processUnit));
 				if (processUnit.getUnit().getId() != process.getUnit().getId()) {
 					processUnit.setDeleted(true);
 					this.processBS.persist(processUnit);

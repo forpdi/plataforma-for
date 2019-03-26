@@ -14,7 +14,7 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
-import { MIN_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
 
 export default React.createClass({
 	contextTypes: {
@@ -133,7 +133,7 @@ export default React.createClass({
 		});
 	},
 
-	getProcesses(unitId, page = 1, pageSize = MIN_PAGE_SIZE) {
+	getProcesses(unitId, page = 1, pageSize = MED_PAGE_SIZE) {
 		ProcessStore.dispatch({
 			action: ProcessStore.ACTION_LIST_BY_UNIT,
 			data: {
@@ -143,14 +143,12 @@ export default React.createClass({
 			},
 		});
 		this.refs['unit-pagination'] && this.refs['unit-pagination'].setState({
-			page: 1,
+			page,
 		});
 	},
 
 	pageChange(page, pageSize) {
 		this.getProcesses(this.props.unitId, page, pageSize);
-		console.log('foo')
-
 	},
 
 	insertNewRow() {
@@ -530,6 +528,7 @@ export default React.createClass({
 				/>
 				<TablePagination
 					ref="unit-pagination"
+					defaultPageSize={MED_PAGE_SIZE}
 					total={this.state.processesTotal}
 					onChangePage={this.pageChange}
 					tableName={"unit-process-table"}
