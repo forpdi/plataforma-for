@@ -10,11 +10,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.forpdi.core.jobs.EmailSenderTask;
-import org.forpdi.system.CriteriaCompanyFilter;
-import org.forrisco.core.item.Item;
-import org.forrisco.core.item.PlanRiskItem;
-import org.forrisco.core.item.PlanRiskItemField;
-import org.forrisco.core.item.SubItem;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.Incident;
@@ -38,7 +33,6 @@ import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
-import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * @author Matheus Nascimento
@@ -48,8 +42,6 @@ public class UnitBS extends HibernateBusiness {
 
 	
 	
-	@Inject
-	private CriteriaCompanyFilter filter;
 	@Inject
 	private RiskBS riskBS;
 	@Inject 
@@ -69,8 +61,6 @@ public class UnitBS extends HibernateBusiness {
 	}
 
 	public PaginatedList<Unit> listSubunitByUnit(Unit unit) {
-		EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson("ola1")));
-
 		PaginatedList<Unit> results = new PaginatedList<Unit>();
 
 		Criteria criteria = this.dao.newCriteria(Unit.class)
@@ -601,11 +591,9 @@ public class UnitBS extends HibernateBusiness {
 
 		// verifica se possui subunidades vinculadas
 		if (unit.getParent() == null) {
-//			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson("ola")));
 			PaginatedList<Unit> subunits = this.listSubunitByUnit(unit);
 			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(subunits)));
 			if (subunits.getTotal() > 0) {
-//				this.fail("Unidade possui subunidade(s) vinculada(s).");
 				return false;
 			}
 		}
@@ -613,12 +601,6 @@ public class UnitBS extends HibernateBusiness {
 		// verifica se possui riscos vinculados
 		PaginatedList<Risk> risks = this.riskBS.listRiskByUnit(unit);
 		if (risks.getTotal() > 0) {
-			if(unit.getParent() != null) {
-//				this.fail("Subunidade possui risco(s) vinculado(s).");
-			}else {
-//				this.fail("Unidade possui risco(s) vinculado(s).");
-			}
-			
 			return false;
 		}
 		
@@ -628,11 +610,9 @@ public class UnitBS extends HibernateBusiness {
 		for(Process process :processes.getList()) {
 			
 			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
-//				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
 				return false;
 			}
 			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
-//				this.fail("Processo vinculado a um Risco. É necessário deletar a vinculação no Risco para depois excluir a unidade.");
 				return false;
 			}
 		}

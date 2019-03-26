@@ -27,11 +27,13 @@ var ProcessStore = Fluxbone.Store.extend({
 
 	listProcessByUnit(data) {
 		var me = this;
+		var { id, page, pageSize } = data;
 		$.ajax({
-			url: `${me.url}/${data.id}`,
+			url: `${me.url}/${id}`,
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
+			data: { page, pageSize },
 			success(model) {
 				me.trigger("processListedByUnit", model);
 			},

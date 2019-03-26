@@ -13,6 +13,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
 
 export default React.createClass({
 	contextTypes: {
@@ -25,6 +26,7 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			processes: [],
+			processesTotal: null,
 			units: [],
 			process: null,
 			selectedUnits: [],
@@ -60,6 +62,7 @@ export default React.createClass({
 
 			this.setState({
 				processes:filteredProcesses,
+				processesTotal: response.total,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
 				loading: false,
@@ -125,20 +128,6 @@ export default React.createClass({
 		}
 	},
 
-	refreshComponent(unitId, planRiskId) {
-		ProcessStore.dispatch({
-			action: ProcessStore.ACTION_LIST_BY_UNIT,
-			data: {
-				id: unitId,
-			},
-		});
-
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
-			data: planRiskId,
-		});
-	},
-
 	componentWillUnmount() {
 		ProcessStore.off(null, null, this);
 		UnitStore.off(null, null, this);
@@ -150,11 +139,34 @@ export default React.createClass({
 		);
 	},
 
+	refreshComponent(unitId, planRiskId) {
+		this.getProcesses(unitId);
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
+			data: planRiskId,
+		});
+	},
+
+	getProcesses(unitId, page = 1, pageSize = 5) {
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_LIST_BY_UNIT,
+			data: {
+				id: unitId,
+				page,
+				pageSize,
+			},
+		});
+	},
+
+	pageChange(page, pageSize) {
+		this.getProcesses(this.props.unitId, page, pageSize);
+	},
+
 	insertNewRow() {
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
-    const newRow = {
+	    const newRow = {
 			name: (
 				<VerticalInput
 					className="padding7"
@@ -401,7 +413,7 @@ export default React.createClass({
 		const { process } = this.state;
 
 		if (!process.name || !process.objective || !process.file) {
-			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
+			this.context.toastr.addAlertError("Para confirmar a ação preencha todos os campos obrigatórios.");
 		} else {
 			ProcessStore.dispatch({
 				action: ProcessStore.ACTION_CREATE,
@@ -527,6 +539,12 @@ export default React.createClass({
 							Nenhum processo cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					// ref = "pagination"
+					total={this.state.processesTotal}
+					onChangePage={this.pageChange}
+					tableName={"users-table"}
 				/>
 			</div>
 		)

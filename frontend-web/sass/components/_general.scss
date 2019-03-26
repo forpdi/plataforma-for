@@ -245,9 +245,9 @@ span.cursorDefault {
 }
 
 
-.fpdi-app-body .fpdi-app-content{
-	padding-left: 0px;
-}
+// .fpdi-app-body .fpdi-app-content{
+// 	padding-left: 0px;
+// }
 
 .marginLeft0{
 	margin-left: 0px !important;
@@ -1412,4 +1412,19 @@ label{
 
 .white-space {
 	white-space: nowrap;
+}
+
+.placeholder-italic {
+	&::-webkit-input-placeholder {
+		font-style: italic;
+	}
+	&:-moz-placeholder {
+		font-style: italic;
+	}
+	&::-moz-placeholder {
+		font-style: italic;
+	}
+	&:-ms-input-placeholder {
+		font-style: italic;
+	}
 }

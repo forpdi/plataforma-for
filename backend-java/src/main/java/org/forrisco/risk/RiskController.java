@@ -82,6 +82,8 @@ public class RiskController extends AbstractController {
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
 			
+			this.riskBS.sendUserLinkedToRiskNoktification(risk, unit, this.domain.getBaseUrl());
+			
 			this.success(risk);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);

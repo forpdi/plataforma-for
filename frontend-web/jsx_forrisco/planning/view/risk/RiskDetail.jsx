@@ -201,7 +201,6 @@ export default React.createClass({
 		this.setState({
 			selected: select
 		})
-
 	},
 
 	header() {

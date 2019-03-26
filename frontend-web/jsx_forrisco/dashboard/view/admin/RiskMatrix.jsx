@@ -178,7 +178,7 @@ export default React.createClass({
 						var probability=matrix[(line)*(this.state.policyModel.ncolumn+1)][0];
 
 						return (
-							<div  className={"icon-link Cor "+color} onClick={() => this.showRisk(probability,impact)}>
+							<div className={"icon-link Cor "+color} onClick={() => this.showRisk(probability,impact)}>
 								{this.countRisks(risks, impact, probability, color)}
 							</div>
 						)
@@ -229,8 +229,7 @@ export default React.createClass({
 			}
 			table.push(<tr key={i} >{children}</tr>)
 		}
-		return (
-			<div style={{ overflowX: "scroll", overflowY: "hidden", whiteSpace: "nowrap" }}>
+		return (<div>
 				<br/>
 				<br/>
 				<table style={{ width: "max-content", display: "inline-block"}}>
@@ -242,7 +241,7 @@ export default React.createClass({
 						</tr>
 						<tr>
 							<th>
-								<div style={{width: "115px" }} className="vertical-text dashboard">PROBABILIDADE</div>
+								<div style={{width: "115px", bottom: 95+30*(this.state.policyModel.nline-2)+"px" }} className="vertical-text dashboard">PROBABILIDADE</div>
 							</th>
 						</tr>
 						<tr>

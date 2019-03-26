@@ -24,9 +24,6 @@ import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
-import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.FavoriteLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.Archive;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -305,6 +302,8 @@ public class NotificationBS extends HibernateBusiness {
 		} else if (type == NotificationType.FORRISCO_PROCESS_CREATED) {
 			notification.setDescription(
 					"<b>"+ text +"</b>");
+		} else if (type == NotificationType.FORRISCO_USER_LINKED_TO_RISK) {
+			notification.setDescription("<b>"+ text +"</b>");
 		} else {
 			notification.setDescription("");
 		}

@@ -258,6 +258,33 @@ var Validate = {
 		return aux;
 	},
 
+	validationNewFieldType: function(newfield, description) {
+		var type, name;
+
+		name =  S(newfield['newfield-name'].value);
+		type =  S(newfield['newfield-type'].value);
+
+		var errorField = false;
+
+		newfield['newfield-type'].className = "form-control";
+		newfield['formAlertErrorType'].innerHTML = "";
+
+		if (type.isEmpty()) {
+			if(newfield['newfield-type'].value.trim() == "") {
+				newfield['newfield-type'].className += " borderError";
+				newfield['formAlertErrorType'].innerHTML = Messages.get("label.alert.fieldEmpty");
+				errorField = true;
+			}
+		}
+
+		return {
+			errorField: errorField,
+			type: type,
+			name: name,
+			description: description
+		};
+	},
+
 	validationNewItem(newfield){
 
 		var titulo =  S(newfield['field-description'].value);
@@ -311,7 +338,7 @@ var Validate = {
 			if(code.refs["field-code"].value==""){
 				code.refs["field-code"].className +=" borderError"
 				code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				if(msg==""){msg="Código precisa estar preenchido."}
 			}else{
 				code.refs["field-code"].className="form-control"
 				code.refs["formAlertError"].innerHTML = ""
@@ -321,8 +348,8 @@ var Validate = {
 		if(user.refs["field-user"].value != null){
 			if(user.refs["field-user"].value==""){
 				user.refs["field-user"].className +=" borderError"
-				user.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				user.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="Usuário precisa estar preenchido."}
 			}else{
 				user.refs["field-user"].className="form-control"
 				user.refs["formAlertError"].innerHTML = ""
@@ -333,7 +360,7 @@ var Validate = {
 			if(probability.refs["field-probability"].value==""){
 				probability.refs["field-probability"].className +=" borderError"
 				probability.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				if(msg==""){msg="A probabilidade precisa estar selecionada."}
 			}else{
 				probability.refs["field-probability"].className="form-control"
 				probability.refs["formAlertError"].innerHTML = ""
@@ -343,8 +370,8 @@ var Validate = {
 		if(impact.refs["field-impact"] != null){
 			if(impact.refs["field-impact"].value==""){
 				impact.refs["field-impact"].className +=" borderError"
-				impact.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				impact.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="O impacto precisa estar selecionado."}
 			}else{
 				impact.refs["field-impact"].className="form-control"
 				impact.refs["formAlertError"].innerHTML = ""
@@ -354,8 +381,8 @@ var Validate = {
 		if(periodicity.refs["field-periodicity"] != null){
 			if(periodicity.refs["field-periodicity"].value==""){
 				periodicity.refs["field-periodicity"].className +=" borderError"
-				periodicity.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				periodicity.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="A periodicidade precisa estar selecionada."}
 			}else{
 				periodicity.refs["field-periodicity"].className="form-control"
 				periodicity.refs["formAlertError"].innerHTML = ""
@@ -365,8 +392,8 @@ var Validate = {
 		if(tipology.refs["field-tipology"] != null){
 			if(tipology.refs["field-tipology"].value==""){
 				tipology.refs["field-tipology"].className +=" borderError"
-				tipology.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+				tipology.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="A tipologia precisa estar selecionada."}
 			}else{
 				tipology.refs["field-tipology"].className="form-control"
 				tipology.refs["formAlertError"].innerHTML = ""
@@ -374,15 +401,57 @@ var Validate = {
 		}
 
 		if(type.refs["field-type"] != null){
-			if(type.refs["field-type"] .value==""){
-				type.refs["field-type"] .className +=" borderError"
-				type.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Nome precisa estar preenchido."}
+			if(type.refs["field-type"].value==""){
+				type.refs["field-type"].className +=" borderError"
+				type.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="O tipo precisa estar selecionado."}
 			}else{
-				type.refs["field-type"] .className="form-control"
+				type.refs["field-type"].className="form-control"
 				type.refs["formAlertError"].innerHTML = ""
 			}
 		}
+
+
+		var i=0
+		while(refs["pa-"+(i)+"-0"] != null){
+			var process= refs["pa-"+(i)+"-0"]
+			var activity = refs["pa-"+(i)+"-1"]
+
+			if(process != null){
+				if(process.refs["field-process_"+(i)].value==""){
+					process.refs["field-process_"+(i)].className +=" borderError"
+					process.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+					if(msg==""){msg="O processo precisa estar selecionado."}
+				}else{
+					process.refs["field-process_"+(i)].className="form-control-h"
+
+					if(activity.refs["field-activity_"+(i)].value==""){
+						process.refs["formAlertError"].innerHTML = "</br>"
+					}else{
+						process.refs["formAlertError"].innerHTML = ""
+					}
+				}
+			}
+			if(activity != null){
+				if(activity.refs["field-activity_"+(i)].value==""){
+					activity.refs["field-activity_"+(i)].className +=" borderError"
+					activity.refs["formAlertError"].innerHTML = Messages.get("label.error.fieldEmpty");
+					if(msg==""){msg="Aa tividade precisa estar preenchida."}
+				}else{
+					activity.refs["field-activity_"+(i)].className="form-control-h"
+					activity.refs["formAlertError"].innerHTML = ""
+
+					if(process.refs["field-process_"+(i)].value==""){
+						activity.refs["formAlertError"].innerHTML = "</br>"
+					}else{
+						activity.refs["formAlertError"].innerHTML = ""
+					}
+				}
+			}
+			i++;
+		}
+
+
 
 		return msg
 	}

@@ -490,7 +490,7 @@ public class PolicyController extends AbstractController {
 	public void exportreport(Long policyId, String title, String author, boolean pre, String itens, String subitens){
 		try {
 		
-			File pdf = this.pdf.exportReport(policyId, title, author, itens, subitens);
+			File pdf = this.pdf.exportPolicyReport(policyId, title, author, itens, subitens);
 
 			OutputStream out;
 			FileInputStream fis= new FileInputStream(pdf);
