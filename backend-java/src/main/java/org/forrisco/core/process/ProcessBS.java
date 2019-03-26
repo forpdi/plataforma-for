@@ -71,7 +71,7 @@ public class ProcessBS extends HibernateBusiness {
 
 		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
 			Process process = processUnit.getProcess();
-			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlan());
+			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlanRisk());
 			process.setRelatedUnits(relatedUnits);
 			list.add(process);
 		}
@@ -98,7 +98,7 @@ public class ProcessBS extends HibernateBusiness {
 		
 		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
 			Process process = processUnit.getProcess();
-			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlan());
+			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlanRisk());
 			process.setRelatedUnits(relatedUnits);
 			list.add(process);
 		}

@@ -99,7 +99,7 @@ public class ProcessController extends AbstractController{
 								" por essa unidade é o(a) "+unit.getUser().getName()+
 								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";						
 						
-						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlan().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
+						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlanRisk().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
 		
 						try {
 								this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());

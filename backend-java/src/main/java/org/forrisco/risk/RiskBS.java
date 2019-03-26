@@ -1,6 +1,7 @@
 package org.forrisco.risk;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -10,6 +11,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+
+import org.forpdi.core.company.Company;
+import org.forpdi.core.company.CompanyDomain;
 import org.apache.commons.mail.EmailException;
 import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationType;
@@ -155,7 +159,7 @@ public class RiskBS extends HibernateBusiness {
 
 			// pegar link correto da unidade que contem o processo
 			if(process !=null && !process.isDeleted() && process.getUnitCreator() != null) {
-				activity.setLinkFPDI("#/forrisco/plan-risk/" + process.getUnitCreator().getPlan().getId() + "/unit/"
+				activity.setLinkFPDI("#/forrisco/plan-risk/" + process.getUnitCreator().getPlanRisk().getId() + "/unit/"
 						+ process.getUnitCreator().getId() + "/info");
 			}
 			this.dao.persist(activity);
@@ -184,7 +188,7 @@ public class RiskBS extends HibernateBusiness {
 			riskprocess.setProcess(process);
 
 			// pegar link correto da unidade que contem o processo
-			riskprocess.setLinkFPDI("#/forrisco/plan-risk/" + process.getUnitCreator().getPlan().getId() + "/unit/"
+			riskprocess.setLinkFPDI("#/forrisco/plan-risk/" + process.getUnitCreator().getPlanRisk().getId() + "/unit/"
 					+ process.getUnitCreator().getId() + "/info");
 			this.dao.persist(riskprocess);
 		}
@@ -548,7 +552,7 @@ public class RiskBS extends HibernateBusiness {
 				return null;
 			}
 
-			PlanRisk planRisk = this.exists(unit.getPlan().getId(), PlanRisk.class);
+			PlanRisk planRisk = this.exists(unit.getPlanRisk().getId(), PlanRisk.class);
 
 			if (planRisk == null) {
 				return null;
@@ -965,9 +969,225 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 
 	}
+	
+	
+	/**
+	 * Retorna o estado de cada risco a partir da data 
+	 * 
+	 * @param String
+	 *            periodicidade
+	 * 
+	 * @param Data
+	 *            Data para comparação da peridicidade
+	 * 
+	 * @return int estado atual do monitoramento
+	 */
+	public int riskState(String periodicity, Date date) {
+		int state = 0; // em dia
+
+		Date now = new Date();
+
+		double diffInSec = (now.getTime() - date.getTime()) / 1000;
+		double diffDays = diffInSec / (60 * 60 * 24);
+		switch (periodicity.toLowerCase()) {
+		case "diária":
+			if (diffDays < 0.2916666666666666) {
+				state = 0;
+			} // em dia
+			else if (diffDays < 1) {
+				state = 1;
+			} // próximos a vencer
+			else {
+				state = 2;
+			} // atrasado
+			break;
+
+		case "semanal":
+			if (diffDays < 2) {
+				state = 0;
+			} else if (diffDays < 7) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "quinzenal":
+			if (diffDays < 7) {
+				state = 0;
+			} else if (diffDays < 15) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "mensal":
+			if (diffDays < 7) {
+				state = 0;
+			} else if (diffDays < 30) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "bimestral":
+			if (diffDays < 21) {
+				state = 0;
+			} else if (diffDays < 60) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "trimestral":
+			if (diffDays < 21) {
+				state = 0;
+			} else if (diffDays < 90) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "semestral":
+			if (diffDays < 30) {
+				state = 0;
+			} else if (diffDays < 180) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+
+		case "anual":
+			if (diffDays < 30) {
+				state = 0;
+			} else if (diffDays < 360) {
+				state = 1;
+			} else {
+				state = 2;
+			}
+			break;
+		}
+
+		return state;
+	}
+
+
+	/**
+	 * Retorna o ultimo monitoramento de um risco
+	 * 
+	 * @param Risk
+	 *            instância de um risco
+	 *
+	 * @return Monitor instância de um monitoramento
+	 */
+	public Monitor lastMonitorbyRisk(Risk risk) {
+
+		Criteria criteria = this.dao.newCriteria(Monitor.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.addOrder(Order.desc("begin"));
+
+		criteria.setMaxResults(1);
+		Monitor monitor = (Monitor) criteria.uniqueResult();
+
+		return monitor;
+	}
+
+	
+	
+	public PaginatedList<Risk> listRiskState(int state) {
+		
+		PaginatedList<Risk> results = new PaginatedList<Risk>();
+		
+		
+		Criteria criteria = this.dao.newCriteria(Risk.class)
+				.add(Restrictions.eq("deleted", false));
+		
+		List<Risk> risks= this.dao.findByCriteria(criteria, Risk.class);
+		List<Risk> list= new ArrayList<>();
+		
+				 for(Risk risk : risks) {
+					 Monitor monitor = lastMonitorbyRisk(risk);
+						Date date = risk.getBegin();
+
+						if(monitor != null) {
+							date = monitor.getBegin();
+						}
+
+					 if(new RiskBS().riskState(risk.getPeriodicity(),date)==state){
+						 list.add(risk);
+					 }
+				 }
+		
+		results.setList(list);
+		results.setTotal( (long) list.size());
+		return results;
+	}
+
+	public Date CloseToMaturityDate(Risk risk) {
+		
+		Monitor lastMonitor=this.lastMonitorbyRisk(risk);
+		
+		long time= lastMonitor!=null?lastMonitor.getBegin().getTime() : risk.getBegin().getTime();
+		long day = 1000*60*60*24;
+		
+		switch (risk.getPeriodicity().toLowerCase()) {
+			case "diária":
+				time+=day*.75*1;
+				break;
+
+			case "semanal":
+				time+=day*.75*7;
+				break;
+
+			case "quinzenal":
+				time+=day*.75*15;
+				break;
+
+			case "mensal":
+				time+=day*.75*30;
+				break;
+
+			case "bimestral":
+				time+=day*.75*60;
+				break;
+
+			case "trimestral":
+				time+=day*.75*91;
+				break;
+
+			case "semestral":
+				time+=day*.75*182;
+				break;
+
+			case "anual":
+				time+=day*.75*365;
+				break;
+		}
+		
+		return new Date (time);
+	}
+
+	public CompanyDomain companyDomainByRisk(Risk risk) {
+		
+		PlanRisk  planRisk= this.dao.exists(risk.getUnit().getPlanRisk().getId(), PlanRisk.class);
+		
+		Company copmany = this.dao.exists(planRisk.getPolicy().getCompany().getId(), Company.class);
+		
+		Criteria criteria = this.dao.newCriteria(CompanyDomain.class)
+				.add(Restrictions.eq("company", copmany));
+		
+		return (CompanyDomain) criteria.list().get(0);
+	}
+	
 
 	public void sendUserLinkedToRiskNoktification(Risk risk, Unit unit, String baseUrl) throws EmailException {
-		String url = baseUrl + "/#/forrisco/plan-risk/" + unit.getPlan().getId() + "/unit/" +
+		String url = baseUrl + "/#/forrisco/plan-risk/" + unit.getPlanRisk().getId() + "/unit/" +
 				unit.getId() + "/risk/" + risk.getId() + "/info";
 
 		String text = String.format("Você foi vinculado como responsável pelo risco %s no ForRisco", risk.getName());
