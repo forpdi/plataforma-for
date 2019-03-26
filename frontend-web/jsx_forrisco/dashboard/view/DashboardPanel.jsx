@@ -295,6 +295,7 @@ export default React.createClass({
 										{Messages.getEditable("label.risk.Plans", "fpdi-nav-label")}&nbsp;
                   </span>
 									<select
+										style={{ 'width': '200px' }}
 										onChange={this.planRiscoChange}
 										ref="selectPlan"
 										className={"form-control dashboard-select-box"}
