@@ -8,6 +8,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.mail.EmailException;
+import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
@@ -184,6 +185,52 @@ public class NotificationBS extends HibernateBusiness {
 	
 
 	/**
+	 * Enviar notificação do sistema para o email do usuário.
+	 * 
+	 * @param type
+	 *            Tipo da notificação.
+	 * @param text
+	 *            Texto da notificação.
+	 * @param aux
+	 *            Nome do Plano de metas onde ocorreu a notificação.
+	 * @param user
+	 *            Id do usuário para receber a notificação.
+	 * @throws EmailException
+	 */
+	public void sendNotificationEmail(NotificationType type, String text, String aux, User user, String url, CompanyDomain companyDomain)
+			throws EmailException {
+		if (url == null) {
+			url = companyDomain.getBaseUrl();
+		}
+		url = url.replaceAll("//#", "/#");
+		EmailBuilder builder;
+		Notification notification = new Notification();
+		notification.setUser(user);
+		notification.setCompany(companyDomain.getCompany());
+		notification.setCreation(new Date());
+		notification.setOnlyEmail(false);
+		notification.setPicture(type.getImageUrl());
+		notification.setVizualized(false);
+		notification.setType(type.getValue());
+		notification.setUrl(url);
+		this.setDescriptionForNotification(notification, type, text, aux);
+		if (type == NotificationType.WELCOME) {
+			builder = new EmailBuilder(NotificationType.WELCOME);
+		} else if (type == NotificationType.INVITE_USER) {
+			builder = new EmailBuilder(NotificationType.INVITE_USER, user.getName(), text);
+		} else if (type == NotificationType.RECOVER_PASSWORD) {
+			builder = new EmailBuilder(NotificationType.RECOVER_PASSWORD, user.getName(), text);
+		} else {
+			builder = new EmailBuilder(type, notification.getDescription(), url);
+		}
+		this.persist(notification);
+		this.emailTask
+				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
+	}
+	
+	
+	
+	/**
 	 * Listar as permissões do usuário em uma instituição.
 	 * 
 	 * @param user
@@ -303,8 +350,11 @@ public class NotificationBS extends HibernateBusiness {
 			notification.setDescription(
 					"<b>A data de </b>\"" + aux + "\" - \"" + text + "\"<b> foi alterada. Verifique o novo prazo.</b>");
 		} else if (type == NotificationType.FORRISCO_PROCESS_CREATED) {
-			notification.setDescription(
-					"<b>"+ text +"</b>");
+			notification.setDescription("<b>"+ text +"</b>");
+			
+		} else if (type == NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY) {
+			notification.setDescription("<b>O monitoramento do risco</b>\"" + text 
+					+ "\"<b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
 		} else {
 			notification.setDescription("");
 		}
@@ -445,6 +495,8 @@ public class NotificationBS extends HibernateBusiness {
 				return "Ocorreu uma alteração de data";
 			case FORRISCO_PROCESS_CREATED:
 				return "ForRisco - A sua unidade foi relacionada a um processo";
+			case FORRISCO_RISK_CLOSE_TO_MATURITY:
+				return "ForRisco - O risco está com monitoramento vencido";
 			default:
 				return "";
 			}

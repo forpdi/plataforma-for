@@ -85,7 +85,7 @@ public class UnitController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = {ManageUnitPermission.class})
 	public void save(@NotNull @Valid Unit unit) {
 		try {
-			PlanRisk planRisk = this.unitBS.exists(unit.getPlan().getId(), PlanRisk.class);
+			PlanRisk planRisk = this.unitBS.exists(unit.getPlanRisk().getId(), PlanRisk.class);
 			if (planRisk == null) {
 				this.fail("Unidade não possui Plano de Risco");
 			}
@@ -112,7 +112,7 @@ public class UnitController extends AbstractController {
 	public void saveSub(@NotNull @Valid Unit unit) {
 		try {
 
-			if (unit.getPlan() == null) {
+			if (unit.getPlanRisk() == null) {
 				this.fail("Unidade não possui Plano de Risco");
 				return;
 			}
