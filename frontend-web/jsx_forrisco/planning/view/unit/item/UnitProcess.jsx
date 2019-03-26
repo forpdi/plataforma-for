@@ -217,13 +217,10 @@ export default React.createClass({
 			),
 			tools: (
 				<div className="row-tools-box">
-					<span
-						className="mdi mdi-check btn btn-sm btn-success"
-						title="Salvar"
-						onClick={this.newProcess}
-					/>
-					<span
-						className="mdi mdi-close btn btn-sm btn-danger"
+					<button className="btn btn-sm btn-success mdi mdi-check" title="Salvar" onClick={this.newProcess}>
+					</button>
+					<button
+						className="btn btn-sm btn-danger mdi mdi-close "
 						title="Cancelar"
 						onClick={() =>
 							this.setState({
