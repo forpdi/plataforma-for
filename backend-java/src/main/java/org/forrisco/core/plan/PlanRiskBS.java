@@ -25,6 +25,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.tartarus.snowball.SnowballStemmer;
+import org.tartarus.snowball.ext.portugueseStemmer;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -115,8 +117,13 @@ public class PlanRiskBS extends HibernateBusiness {
 			return new ArrayList<PlanRiskItem>();
 		}
 		
-		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
-		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms);
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+		
+		Criterion name = Restrictions.like("name", "%" + stemTerms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + stemTerms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name, description);
 		
 		Criteria criteria = this.dao.newCriteria(PlanRiskItem.class)
@@ -153,7 +160,7 @@ public class PlanRiskBS extends HibernateBusiness {
 		for(int i=0; i< list.size(); i++) {
 			itens.put(list.get(i).getId(),list.get(i));
 		}
-			
+		
 		return new ArrayList<PlanRiskItem>(itens.values());
 	}
 	

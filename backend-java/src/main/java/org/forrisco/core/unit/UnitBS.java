@@ -28,6 +28,8 @@ import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.tartarus.snowball.SnowballStemmer;
+import org.tartarus.snowball.ext.portugueseStemmer;
 
 import com.google.gson.GsonBuilder;
 
@@ -383,9 +385,14 @@ public class UnitBS extends HibernateBusiness {
 		
 		ArrayList<Unit> result = new ArrayList<Unit>();
 		
-		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
-		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
-		Criterion abbreviation = Restrictions.like("abbreviation", "%" + terms + "%").ignoreCase();
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms);
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+		
+		Criterion name = Restrictions.like("name", "%" + stemTerms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + stemTerms + "%").ignoreCase();
+		Criterion abbreviation = Restrictions.like("abbreviation", "%" + stemTerms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name, description);
 		LogicalExpression Exp= Restrictions.or(orExp, abbreviation);
 		

@@ -350,8 +350,8 @@ public class NotificationBS extends HibernateBusiness {
 			notification.setDescription("<b>"+ text +"</b>");
 			
 		} else if (type == NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY) {
-			notification.setDescription("<b>O monitoramento do risco</b>\"" + text 
-					+ "\"<b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
+			notification.setDescription("<b>O monitoramento do risco</b> \"" + text 
+					+ "\" <b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
 		} else if (type == NotificationType.FORRISCO_USER_LINKED_TO_RISK) {
 			notification.setDescription("<b>"+ text +"</b>");
 		} else {
