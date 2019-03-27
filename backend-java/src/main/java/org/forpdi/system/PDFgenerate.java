@@ -2563,7 +2563,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return null;
 	}
 	
-
 	private void generatePolicyContent(File contentFile, Long policyId, String itens, String subitens, TOCEvent event) 
 			throws DocumentException, IOException, MalformedURLException {
 			
@@ -2590,7 +2589,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		int secIndex = 0;
 		int subSecIndex = 0;
 		boolean lastAttWasPlan = false;
-		boolean haveContent = false;
+		boolean haveContent = true;
 
 		document.open();
 		document.add(new Chunk(""));
@@ -2598,11 +2597,15 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		//para cada item selecionado
 		if(sections !=null) {
 
-			//informações gerais matrix
-			generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
-			
-			// demais itens
 			for (int i = 0; i < sections.length; i++) {
+				
+				if(Long.parseLong(sections[i])==0) {
+					//informações gerais matrix
+					generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
+					continue;
+				}
+				
+				
 				Item item = this.itemBS.retrieveItembyId(Long.parseLong(sections[i]));//item altual
 				PaginatedList<FieldItem> fielditens = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<SubItem> subs = this.itemBS.listSubItensByItem(item);	//lista todos subitens
@@ -2617,6 +2620,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 							}
 						}
 					}
+				}
+				
+				if(item == null) {
+					continue;
 				}
 					
 				//haveContent = true;
@@ -2991,6 +2998,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		attTitle.setSpacingAfter(paragraphSpacing);
 		document.add(attTitleInfo);
 		
+		attTitleInfo = new Paragraph(" ", titulo);
+		attTitle.setSpacingBefore(paragraphSpacing);
+		attTitle.setSpacingAfter(paragraphSpacing);
+		document.add(attTitleInfo);
+		
 		StyleSheet styles = new StyleSheet();
 		
 		File htmlFile = new File(outputDir, String.format("%s-0.html", prefix));
@@ -3030,11 +3042,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								cells[x].setPaddingLeft(10);
 								cells[x].setPaddingRight(10);
 							}else {
-								//if(x==policy.getNline()*policy.getNcolumn()) {
 								if(x == 0 && y == policy.getNline() + 1) {
 									cells[x].setRotation(90);
-									//cells[x].setBottom(100);
-									//cells[x].setLeft(20);
 								}
 								
 								if(y == policy.getNline() + 1) {
@@ -3219,8 +3228,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 						break;
 						
-					case "Riscos não iniciados"	:
-						/*for(Risk risk : risks.getList()) {
+					/*case "Riscos não iniciados":
+						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							Date date= risk.getBegin();
 							
@@ -3236,8 +3245,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								attTitle.setSpacingBefore(paragraphSpacing);
 								document.add(attTitle);
 							}
-						}*/
-						break;
+						}
+						break;*/
 					
 					default:
 						
@@ -4205,81 +4214,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 	}
 
-	/*public File exportPolicyReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
-		
-		File outputDir=tempFile();
-		
-		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
-
-		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
-		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
-		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
-		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
-		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
-
-		generateCover(coverPdfFile, title, author);
-
-		TOCEvent event = new TOCEvent();
-		PdfReader cover = new PdfReader(coverPdfFile.getPath());
-
-		generate
-		
-		generateContent(contentFile, selecao, planId, event);
-		
-		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
-		
-
-		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
-
-		PdfImportedPage page;
-		int n;
-		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
-		newDocument.open();
-
-		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
-		PdfReader content;
-
-		// CAPA
-		n = cover.getNumberOfPages();
-		for (int i = 0; i < n;) {
-			page = copy.getImportedPage(cover, ++i);
-			copy.addPage(page);
-		}
-
-		// SUMÁRIO
-		n = summary.getNumberOfPages();
-		for (int i = 0; i < n;) {
-			page = copy.getImportedPage(summary, ++i);
-			copy.addPage(page);
-		}
-		
-		if(contentFile.length()>0) {
-			content = new PdfReader(contentFile.getPath());
-			// CONTEÚDO
-			n = content.getNumberOfPages();
-			for (int i = 0; i < n;) {
-				page = copy.getImportedPage(content, ++i);
-				copy.addPage(page);
-			}
-			content.close();
-		}
-			
-		cover.close();
-		summary.close();		
-		newDocument.close();
-
-		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
-		
-		destinationFile.delete();
-		coverPdfFile.delete();
-		finalSummaryPdfFile.delete();
-		contentFile.delete();	
-		
-		outputDir.delete();
-	
-		return finalPdfFile;  //capa+sumario+conteudo+paginação
-	}*/
-
 	public File exportUnitReport(String title, String author, String units, String subunits) throws IOException, DocumentException {
 		
 		File outputDir=tempFile();
@@ -4426,7 +4360,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
-	
 	public File exportBoardReport(String title, String author, Long planId, String selecao) throws IOException, DocumentException {
 
 		File outputDir=tempFile();
