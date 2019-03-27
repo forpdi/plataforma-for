@@ -60,7 +60,6 @@ export default React.createClass({
 		}, me);
 
 		PolicyStore.on("retrieverisklevel", (model) => {
-			PolicyStore.off(null, null, this);
 			me.setState({ risk_level: model.data });
 		}, me);
 
@@ -75,7 +74,6 @@ export default React.createClass({
 		}, me);
 
 		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
-			PlanRiskStore.off(null, null, this);
 			if (response.success === true) {
 				if (response.data.length == 0) {
 					this.context.router.push("/forrisco/plan-risk/new");

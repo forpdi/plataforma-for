@@ -89,7 +89,7 @@ public class RiskTask  implements Task {
 				&& new Date().getTime()- maturity.getTime()>0) {//intervalo de uma hora
 		
 				//enviar email de notificação de monitoramento vencido
-				String texto="["+risk.getName()+"]";
+				String texto=risk.getName();
 				CompanyDomain companyDomain = riskBS.companyDomainByRisk(risk);
 				String url=companyDomain.getBaseUrl()+"/#/forrisco/plan-risk/"+risk.getUnit().getPlanRisk().getId()+"/unit/"+risk.getUnit().getId()+"/risk/"+risk.getId()+"/monitor";
 				
