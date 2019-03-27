@@ -291,7 +291,7 @@ export default React.createClass({
 					{this.props.units.map((attr, idy) =>{
 						return(
 						<option  key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
-							{(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
+							{(attr.name.length>20)?(attr.name).trim().substr(0, 20).concat("...").toString():(attr.name)}
 						</option>);})
 					}
 				</select>

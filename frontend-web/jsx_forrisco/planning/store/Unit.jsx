@@ -160,9 +160,11 @@ var UnitStore = Fluxbone.Store.extend({
 				planRisk: data.planRisk
 			}),
 			success(model) {
+				console.log("success duplicatedUnits",model)
 				me.trigger("duplicatedUnits", model);
 			},
 			error(opts, status, errorMsg) {
+				console.log("duplicatedUnits erro",opts)
 				me.trigger("duplicatedUnits", {msg: opts.responseJSON.message, data: {id: null}})
 				me.handleRequestErrors([], opts);
 			}

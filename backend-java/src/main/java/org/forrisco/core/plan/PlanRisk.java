@@ -28,10 +28,10 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_plan_risk";
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 
-	@Column(nullable = true, length=10000)
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 	
 	//@SkipSerialization
@@ -39,13 +39,7 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	private Policy policy;
 
 	private boolean archived = false;
-	
-	/*@Transient
-	private PaginatedList<PlanRiskItem> duplicateItens;
-	
-	@Transient
-	private PaginatedList<Unit> duplicateUnits;
-	*/
+
 	public boolean isArchived() {
 		return archived;
 	}
@@ -77,22 +71,5 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
-
-/*	public PaginatedList<PlanRiskItem> getDuplicateItens() {
-		return duplicateItens;
-	}
-
-	public void setDuplicateItens(PaginatedList<PlanRiskItem> duplicateItens) {
-		this.duplicateItens = duplicateItens;
-	}
-
-	public PaginatedList<Unit> getDuplicateUnits() {
-		return duplicateUnits;
-	}
-
-	public void setDuplicateUnits(PaginatedList<Unit> duplicateUnits) {
-		this.duplicateUnits = duplicateUnits;
-	}*/
-	
 
 }

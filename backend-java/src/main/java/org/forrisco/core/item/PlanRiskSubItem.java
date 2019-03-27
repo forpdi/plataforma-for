@@ -27,10 +27,10 @@ public class PlanRiskSubItem extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=PlanRiskItem.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRiskItem planRiskItem;
 	
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 	
-	@Column(nullable = true, length=4000)
+	@Column(nullable = true, length=10000)
 	private String description;
 	
 	@Transient

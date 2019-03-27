@@ -28,16 +28,16 @@ public class FieldSubItem extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=SubItem.class, optional=false, fetch=FetchType.EAGER)
 	private SubItem subitem;
 	
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 
-	@Column(nullable = true, columnDefinition="mediumtext")
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 
 	@Column(nullable = false)
 	private boolean isText;
 	
-	@Column(length=255)
+	@Column(length=400)
 	private String fileLink;
 	
 	@Transient
