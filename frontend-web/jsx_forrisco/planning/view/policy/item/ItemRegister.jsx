@@ -42,6 +42,7 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			newField: false,
 			newFieldType: null,
+			hasPendindField: false,
 			length: 0,
 			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
 		};
@@ -283,6 +284,8 @@ export default React.createClass({
 		if (this.state.itemModel) {
 			this.setState({
 				vizualization: true,
+				newField: false,
+				hasPendindField: false,
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -323,7 +326,8 @@ export default React.createClass({
 			newField: false,
 			newFieldType: null,
 			description: null,
-			fileData: null
+			fileData: null,
+			hasPendindField:false,
 		});
 	},
 	getLength(){
@@ -341,6 +345,7 @@ export default React.createClass({
 		this.setState({
 			fields: this.state.fields,
 			newField:false,
+			hasPendindField: false,
 		})
 		return this.state.fields[id].isText ? null : this.state.fields[id].fileLink;
 	},
@@ -351,10 +356,11 @@ export default React.createClass({
 				if (id==index){
 					this.state.fields.splice(index,1)
 				}
-			})
+			});
 			this.setState({
-				fields: this.state.fields
-			})
+				fields: this.state.fields,
+				hasPendindField: false,
+			});
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
 	setItem(index,item){
@@ -386,7 +392,6 @@ export default React.createClass({
 		this.onCancel();
 		this.context.router.push("/forrisco/policy/" + this.props.params.policyId + "/item/"+this.props.params.itemId);
 	},
-
 	renderArchivePolicy() {
 		return (
 			<ul className="dropdown-menu">
@@ -489,6 +494,9 @@ export default React.createClass({
 			Modal.alert(() => {
 				Modal.hide();
 			}, msg);
+			this.setState({
+				hasPendindField: true,
+			});
 			return;
 		}
 
@@ -641,6 +649,7 @@ export default React.createClass({
 													field={fielditem}
 													index={index}
 													getLength={this.getLength}
+													buttonsErrorMark={this.state.hasPendindField}
 												/>
 											</div>
 										)
@@ -658,6 +667,7 @@ export default React.createClass({
 													field={fielditem}
 													index={index}
 													getLength={this.getLength}
+													buttonsErrorMark={this.state.hasPendindField}
 												/>
 											</div>
 										);
@@ -680,6 +690,7 @@ export default React.createClass({
 									fields={this.state.fields}
 									reset={this.reset}
 									getLength={this.getLength}
+									buttonsErrorMark={this.state.hasPendindField}
 								/>
 								:
 								(

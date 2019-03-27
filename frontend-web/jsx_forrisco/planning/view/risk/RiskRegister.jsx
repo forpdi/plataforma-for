@@ -17,9 +17,6 @@ import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 
 var VerticalForm = Form.VerticalForm;
 
-var HorizontalForm = Form.HorizontalForm;
-
-
 var Validate = Validation.validate;
 
 export default React.createClass({

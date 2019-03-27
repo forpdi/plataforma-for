@@ -21,13 +21,17 @@ export default React.createClass({
 			description: null,
 			fileLink: null,
 			newFieldType: null,
+			buttonsErrorMark: false,
 			types:[{label:"Área de Texto", id:AttributeTypes.TEXT_AREA_FIELD},{ label:"Upload de Arquivo(PDF ou imagem)", id:AttributeTypes.ATTACHMENT_FIELD}]
 		}
 	},
 
 	componentWillReceiveProps(newProps){
-		this.state.description=newProps.field.description;
-		newProps.field.isText ? null : this.state.fileLink = newProps.field.fileLink;
+		if (newProps.field) {
+			this.state.description=newProps.field.description;
+			newProps.field.isText ? null : this.state.fileLink = newProps.field.fileLink;
+		}
+		this.state.buttonsErrorMark = newProps.buttonsErrorMark;
 	},
 
 	changeRichText(value){
@@ -125,12 +129,12 @@ export default React.createClass({
 						value: validation.name.s,
 						description: validation.description,
 						isText: istext ,
-						fileLink:  
+						fileLink:
 							istext ?
 								null
 								:
 								((this.state.fileData || this.state.fileLink) ?
-									this.state.fileData ? 
+									this.state.fileData ?
 										this.state.fileData.file.fileLink
 										:
 										this.state.fileLink
@@ -175,6 +179,9 @@ export default React.createClass({
 		if(this.props.index != null){
 			this.props.editFunc(this.props.index,false)
 		}
+		this.setState({
+			buttonsErrorMark: false,
+		})
 		this.props.reset()
 	},
 	delete(){
@@ -269,9 +276,11 @@ export default React.createClass({
 					</div>
 					{this.state.buttonsHide?"":
 						<div className="col-sm-12 col-md-4" >
-							<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.addNewField} title={Messages.get("label.submitLabel")}/>
-							<span>&nbsp;</span>
-							<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.tweakNewField} title={Messages.get("label.cancel")}/>
+							<span className={this.state.buttonsErrorMark ? 'buttons-check-and-close-error' : ''}>
+								<span className="mdi mdi-check btn btn-sm btn-success" onClick={this.addNewField} title={Messages.get("label.submitLabel")}/>
+								&nbsp;
+								<span className="mdi mdi-close btn btn-sm btn-danger" onClick={this.tweakNewField} title={Messages.get("label.cancel")}/>
+							</span>
 						</div>
 					}
 				</div>
