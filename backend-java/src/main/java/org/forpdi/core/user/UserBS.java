@@ -17,6 +17,7 @@ import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationSetting;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permission;
 import org.forpdi.core.user.authz.PermissionFactory;
 import org.forpdi.core.user.authz.UserPermission;
@@ -608,6 +609,20 @@ public class UserBS extends HibernateBusiness {
 			user = null;
 		}
 		return user;
+	}
+
+	public PaginatedList<User> listByPermissionLevel(AccessLevels accessLevel) {
+		PaginatedList<User> results = new PaginatedList<User>();
+		
+		Criteria criteria = this.dao.newCriteria(User.class);
+		criteria.add(Restrictions.eq("accessLevel", accessLevel.getLevel()));
+		criteria.add(Restrictions.eq("deleted",false));
+		
+		List<User> list = this.dao.findByCriteria(criteria, User.class);
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
 	}
 
 }

@@ -19,6 +19,8 @@ import org.forpdi.core.jobs.NotificationEmail;
 import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
+import org.forpdi.core.user.UserBS;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forrisco.risk.Monitor;
 import org.forrisco.risk.Risk;
 import org.forrisco.risk.RiskBS;
@@ -56,6 +58,8 @@ public class RiskTask  implements Task {
 	@Inject @Unbound RequestContext requestContext;
 	@Inject private NotificationBS notificationBS;
 	@Inject private RiskBS riskBS;
+	@Inject private UserBS userBS;
+
 	
 	    
 	/**
@@ -75,7 +79,8 @@ public class RiskTask  implements Task {
 	/**
 	 *
 	 *  verificando se algum risco mudou de "Em dia" para "Próximo a vencer"
-	 * 
+	 *  na ultima hora
+	 *  
 	 */
 	private void ExpiredRisks() {
 		Logger LOG = Logger.getLogger(EmailSenderTask.class);
@@ -93,12 +98,28 @@ public class RiskTask  implements Task {
 				CompanyDomain companyDomain = riskBS.companyDomainByRisk(risk);
 				String url=companyDomain.getBaseUrl()+"/#/forrisco/plan-risk/"+risk.getUnit().getPlanRisk().getId()+"/unit/"+risk.getUnit().getId()+"/risk/"+risk.getId()+"/monitor";
 				
-				try {				
-					//falta adicionar notificacao p/ os gerentes e administradores do sistema
-					//calcular corretamente o valor de próximo a vencer
+				try {
+					
+					//responsável pelo risco
 					this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", risk.getUser(), url, companyDomain);
+				
+					//responsável pela unidade
+					if(risk.getUser().getId() != risk.getUnit().getUser().getId()) {
+						this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", risk.getUnit().getUser(), url, companyDomain);
+					}
+					
+					PaginatedList<User> admins=	userBS.listByPermissionLevel(AccessLevels.COMPANY_ADMIN);
+					
+					for(User admin : admins.getList()) {
+						//administradores
+						if(admin.getId() != risk.getUser().getId()
+						&& admin.getId() != risk.getUnit().getUser().getId()) {
+							this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", admin, url, companyDomain);
+						}
+					}
+					
 				} catch (Throwable ex) {
-					LOG.errorf(ex, "Unexpected error occurred.");
+					LOG.errorf(ex, "Unexpected error occurred while verifying monitors.");
 				}
 			}
 		}

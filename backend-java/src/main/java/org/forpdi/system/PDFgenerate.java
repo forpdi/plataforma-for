@@ -3103,20 +3103,15 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		risks.setTotal((long) list.size());
 	
 		PaginatedList<Incident> incidents= this.riskBS.listIncidentsByRisk(risks);
-		//PaginatedList<Monitor>
-
 		
 		/*
-		Riscos - Crítico ameaças,
-		Riscos - Muito Alto ameaças,
-		Riscos - Crítico oportunidades,
-		Riscos - Muito Alto oportunidades,
-		*Incidentes - Ameaças,
-		*Incidentes - Oportunidades,
+		Riscos - [grau de risco] ameaças,
+		Riscos - [grau de risco] oportunidades,
+		Incidentes - Ameaças,
+		Incidentes - Oportunidades,
 		Riscos próximos a vencer,
 		Riscos  em dia,
 		Riscos atrasados,
-		Riscos não iniciados
 		*/
 		
 

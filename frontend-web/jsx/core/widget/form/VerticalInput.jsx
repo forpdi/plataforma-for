@@ -377,7 +377,7 @@ export default React.createClass({
 				/>);
 			} else {
 				fieldEl = (<input
-					className="form-control"
+					className={"form-control "+ this.props.className}
 					type={this.props.fieldDef.type}
 					name={this.props.fieldDef.name}
 					maxLength={this.props.fieldDef.maxLength}
