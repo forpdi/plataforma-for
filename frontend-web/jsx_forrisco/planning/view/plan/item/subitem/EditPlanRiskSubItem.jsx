@@ -176,7 +176,7 @@ export default React.createClass({
 	toggleFields() {
 		this.state.formFields.map( (fieldsubitem, i) => {
 			fieldsubitem.editInstance=false
-		})
+		});
 		this.setState({
 			vizualization: true,
 		});
@@ -256,8 +256,7 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess('Informações Atualizadas com Sucesso');
 
 			this.setState({isLoading: false});
-			PlanRiskItemStore.off('subitemUpdated');
-		});
+		}, this);
 	},
 
 	onCancel() {

@@ -281,26 +281,21 @@ export default React.createClass({
 
 		return (
 			<div className="dashboard-container">
-				<h1 className="marginLeft30">
-					{Messages.getEditable("label.dashboard", "forrisco-nav-label")}
-				</h1>
-
-				<div className="marginLeft30">
-					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
-						{Messages.getEditable("label.exportReport")}
-					</span>
-				</div>
-				<br/>
-				<div className="marginLeft30">
-					<span>
-						{
-							(this.state.plans.length > 1)
-								?
+				{
+					(this.state.plans.length > 1)
+					?
+					<div>
+						<h1  className="marginLeft30">
+							{Messages.getEditable("label.dashboard", "forrisco-nav-label")}
+						</h1>
+						<div className="marginLeft30">
+							<span>
 								<div>
 									<span className="fpdi-nav-label">
 										{Messages.getEditable("label.risk.Plans", "fpdi-nav-label")}&nbsp;
 									</span>
 									<select
+										style={{ 'width': '200px' }}
 										onChange={this.planRiscoChange}
 										ref="selectPlan"
 										className={"form-control dashboard-select-box"}
@@ -328,11 +323,20 @@ export default React.createClass({
 										}
 									</select>
 								</div>
-								:
-								""
-						}
-					</span>
-				</div>
+							</span>
+							<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
+								{Messages.getEditable("label.exportReport")}
+							</span>
+						</div>
+					</div>
+					:
+					<h1  className="marginLeft30" style={{ "display": "flex", "justifyContent": "space-between" }}>
+						{Messages.getEditable("label.dashboard", "forrisco-nav-label")}
+						<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
+							{Messages.getEditable("label.exportReport")}
+						</span>
+					</h1>
+				}
 				<DashboardAdminView
 					plan={this.state.plans[this.state.selectedPlan]}
 					units={this.state.units}

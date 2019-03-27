@@ -168,7 +168,7 @@ export default React.createClass({
 			UnitStore.dispatch({
 				action: UnitStore.ACTION_UPDATE_UNIT,
 				data: {
-					unit: this.state.unit,
+					unit: this.state.unitToUpdate,
 				},
 			});
 		}

@@ -41,7 +41,7 @@ export default React.createClass({
 			ordResultSearch: null,
 			parentIdSearch: null,
 			termsSearch: '',
-			itens:[],
+			//itens:[],
 			subitens:[],
 			itensSelect: [],
 			subitensSelect: [],
@@ -63,7 +63,7 @@ export default React.createClass({
 				to: overview,
 				key: overview,
 				model: this.props.policy,
-				id: this.props.policy.id,
+				id: 0,
 			};
 
 			var tree = raw.data.map((policy, index) => {
@@ -83,6 +83,7 @@ export default React.createClass({
 			});
 
 			tree.unshift(info);
+
 			if (this.context.roles.ADMIN ||
 				_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_POLICY_PERMISSION)) {
 				var newItem = {
@@ -91,7 +92,6 @@ export default React.createClass({
 					label: Messages.get("label.newItem"),
 					labelCls: 'fpdi-new-node-label',
 					iconCls: 'mdi mdi-plus fpdi-new-node-icon pointer',
-					//expandable: false,
 					to: '/forrisco/policy/' + this.props.policy.id + '/item/new',
 					key: "newPolicy"
 				}
@@ -99,8 +99,7 @@ export default React.createClass({
 			}
 
 			me.setState({
-				itensSelect: raw.data,
-				itens:raw.data,
+				rootSections:tree,
 				tree: tree,
 				hiddenResultSearch:false
 			});
@@ -165,7 +164,6 @@ export default React.createClass({
 		ItemStore.on("retrieveAllSubitens",(model) => {
 			this.setState({
 				subitens:model.data,
-				rootSections: this.state.itens,
 				rootSubsections: model.data,
 			})
 
@@ -231,39 +229,6 @@ export default React.createClass({
 				data:newProps.policy.id,
 			});
 		}
-
-	/* this.state.policyId=newProps.policyId
-
-		if (document.URL.indexOf('details/overview') >= 0) {
-			this.refreshPlans(newProps.policy.id);
-		}
-
-		if(newProps.subitemId != null){
-			ItemStore.dispatch({
-				action: ItemStore.ACTION_RETRIEVE_SUBITENS,
-				data: newProps.itemId,
-				opts: {
-					node: {id:newProps.itemId, children:null},
-				}
-			});
-		}
-
-		var exists=false
-
-		for(var i=0; i<this.state.itens.length;i++){
-			if(this.state.itens[i].id == newProps.itemId){
-				exists=true;
-			}
-		}
-
-		if (newProps.itemId !== this.props.itemId) {
-			//this.refresh(newProps.planRisk.id);
-		}
-
-
-		if (newProps.treeType == this.state.actualType && (exists || newProps.itemId == null)) {
-			return;
-		}*/
 	},
 
 	refresh(policyId) {
@@ -324,7 +289,7 @@ export default React.createClass({
 
 	selectAllitens(){
 		var i;
-		for (i=0; i<this.state.rootSections.length; i++) {
+		for (i=0; i<this.state.rootSections.length-1; i++) {
 			if (document.getElementById("checkbox-item-"+i).disabled == false) {
 				document.getElementById("checkbox-item-"+i).checked = document.getElementById("selectall").checked;
 			}
@@ -343,7 +308,7 @@ export default React.createClass({
 	verifySelectAllitens() {
 		var i;
 		var selectedAll = true;
-		for (i=0; i<this.state.rootSections.length; i++) {
+		for (i=0; i<this.state.rootSections.length-1; i++) {
 			if (document.getElementById("checkbox-item-"+i).disabled == false && !document.getElementById("checkbox-item-"+i).checked) {
 				selectedAll = false;
 			}
@@ -375,8 +340,8 @@ export default React.createClass({
 							</div>
 					</div>
 
-					{
-						this.state.itens.map((rootSection, idx) => {
+					{this.state.rootSections.map((rootSection, idx) => {
+							if (idx != this.state.rootSections.length-1){
 							return (
 								<div key={"rootSection-filled"+idx}>
 									<div className="checkbox marginLeft5 col-md-10" >
@@ -387,11 +352,12 @@ export default React.createClass({
 												id={"checkbox-item-"+idx}
 												onClick={this.verifySelectAllitens}
 											/>
-											{rootSection.name}
+											{rootSection.label}
 										</label>
 									</div>
 								</div>
-							);
+								);
+							}
 						})
 					}
 				</div>
@@ -437,7 +403,7 @@ export default React.createClass({
 		var subsections = "";
 		var author = document.getElementById("documentAuthor").value;
 		var title = document.getElementById("documentTitle").value;
-		for(i=0; i<this.state.rootSections.length; i++){
+		for(i=0; i<this.state.rootSections.length-1; i++){
 			if(document.getElementById("checkbox-item-"+i).checked == true){
 				sections = sections.concat(this.state.rootSections[i].id+"%2C");
 			}
@@ -485,14 +451,6 @@ export default React.createClass({
 	},
 
 	retrieveFilledSections(){
-		//var me = this;
-		//me.setState({
-			//rootSections: this.state.itens,
-			//rootSubsections: this.state.subitens,
-			//loadingexport:true,
-		//	});
-
-		//	$('#container') heigth 150px
 		Modal.exportDocument(
 			Messages.get("label.exportConfirmation"),
 			this.renderRecords(),

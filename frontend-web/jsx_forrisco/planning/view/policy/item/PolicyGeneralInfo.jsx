@@ -39,11 +39,6 @@ export default React.createClass({
 					ncolumn: model.data.ncolumn,
 					nline: model.data.nline,
 					isLoading: false,
-					//matrix_c: model.data.ncolumn,
-					//matrix_l: model.data.nline,
-					//validPI: true,
-
-					//title:model.data.name
 				});
 
 				//Construção da Aba Superior
@@ -52,7 +47,6 @@ export default React.createClass({
 				});
 
 			}, this);
-
 
 			PolicyStore.on("policyDeleted", (model) => {
 				if (model.success) {
@@ -72,30 +66,27 @@ export default React.createClass({
 					risklevelModel: model
 				});
 				this.forceUpdate();
-				//_.defer(() => {this.context.tabPanel.addTab(this.props.location.pathname, model.get("name"));});
 			}, this);
 		}
-
-		this.refresh();
+		this.refresh(this.props.params.policyId);
 	},
 
 	componentWillReceiveProps(newProps) {
-		//this.refresh();
+		if(newProps.params.policyId !== this.props.params.policyId ) {
+			this.refresh(newProps.params.policyId);
+		}
 	},
 
-
-	refresh() {
+	refresh(policyId) {
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_POLICY,
-			data: this.props.params.policyId
+			data: policyId
 		});
-			PolicyStore.dispatch({
+		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
-			data: this.props.params.policyId
+			data: policyId
 		});
 	},
-
-
 
 	componentWillUnmount() {
 		PolicyStore.off(null, null, this);

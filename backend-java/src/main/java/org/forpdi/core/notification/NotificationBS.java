@@ -443,6 +443,11 @@ public class NotificationBS extends HibernateBusiness {
 			case RECOVER_PASSWORD:
 				this.body = this.mountRecoverEmail(extras[0], extras[1]);
 				break;
+			case FORRISCO_PROCESS_CREATED:
+			case FORRISCO_RISK_CLOSE_TO_MATURITY:
+			case FORRISCO_USER_LINKED_TO_RISK:
+				this.body = this.mountForriscoNotificationEmail(extras[0], extras[1]);
+				break;
 			default:
 				this.body = this.mountNotificationEmail(extras[0], extras[1]);
 				break;
@@ -527,6 +532,38 @@ public class NotificationBS extends HibernateBusiness {
 					+ "<center style='margin-top: 30px;font-family: sans-serif; font-size: 12px;'>"
 					+ "<p style='color: #1C486D;font-weight: 600;'>ForPDI - Todos os direitos reservados</p>"
 					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forpdi.org</a>"
+					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
+		}
+		
+		
+		/**
+		 * Mensagem base do email para os vários tipos de notificação.
+		 * 
+		 * Pela plataforma ForRisco
+		 * 
+		 * @param msg
+		 *            Mensagem da notificação.
+		 * @return Mensagem do e-mail para os vários tipos de notificação.
+		 */
+		private String mountForriscoNotificationEmail(String msg, String url) {
+			return ("<meta charset='utf-8'>" + "<div>" + "<div>"
+					+ "<div><p style='margin-bottom: 30px'>Se não for possível ver esse email, acesse o link: " + url
+					+ " </p>	" + "<center style='margin-top: 50px'>"
+					+ "<img src='http://cloud.progolden.com.br/file/11265' alt='ForRisco Logo' width='405' height='119'>"
+					+ "<h3 style='font-family:sans-serif;font-size:1rem;color:#293a59;margin-top: 25px;'>"
+					+ "Plataforma Aberta para Gestão e Acompanhamento de Riscos <br>Advindos dos Processos Desenvolvidos pelas Instituições"
+					+ "</h3>"
+					+ "<center style='margin: 25px;width: 600px;height: 350px;border-top: 4px solid #0383D9;border-right: 1px solid #CCC;"
+					+ "border-bottom: 1px solid #CCC;border-left: 1px solid #CCC;'>"
+					+ "<h1 style='color: #0A4068;font-family: sans-serif;'>Notifica&ccedil;&atilde;o</h1>"
+					+ "<p style='margin-bottom: 80px;margin-top: 90px;font-family: sans-serif;color: #9C9C9C;width: 90%;'>"
+					+ msg + "</p>"
+					+ "<p><a style='text-decoration: none;background-color: #7d7acc;color: #FFF;padding-top: 8px;padding-bottom: 8px;"
+					+ "padding-left: 20px;padding-right: 20px;border-radius: 7px;font-family: sans-serif;' href='" + url
+					+ "'>" + "Acesse o ForRisco" + "</a></p>" + "</center>"
+					+ "<center style='margin-top: 30px;font-family: sans-serif; font-size: 12px;'>"
+					+ "<p style='color: #1C486D;font-weight: 600;'>ForRisco - Todos os direitos reservados</p>"
+					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forrisco.org/</a>"
 					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
 		}
 

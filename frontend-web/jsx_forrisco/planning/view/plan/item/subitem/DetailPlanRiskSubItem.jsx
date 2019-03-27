@@ -135,7 +135,6 @@ export default React.createClass({
 
 				this.context.toastr.addAlertSuccess('Item removido com sucesso');
 			}
-			PlanRiskItemStore.off('deletePlanRiskSubItem');
 		})
 	},
 

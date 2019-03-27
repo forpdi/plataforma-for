@@ -40,8 +40,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		var me = this;
-
 		this.context.tabPanel.addTab(this.props.location.pathname, this.context.policy.name);
 	},
 

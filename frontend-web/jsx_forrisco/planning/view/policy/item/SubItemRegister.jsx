@@ -200,9 +200,11 @@ export default React.createClass({
 					}
 				})
 			})
-			this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+model.data.id);
-
 		}, me);
+
+		ItemStore.on("itemField", model => {
+			this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+model.data.id);
+		});
 
 		ItemStore.on("subitemDeleted", (model) => {
 			this.context.router.push("forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id);
