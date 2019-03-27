@@ -56,8 +56,6 @@ export default React.createClass({
 			if(response.success === false) {
 				this.context.toastr.addAlertError('O plano possui unidades e riscos que não podem ser deletados.');
 			}
-
-			PlanRiskStore.off('deletePlanRisk');
 		});
 
 		this.refreshData(this.props.params.planRiskId);

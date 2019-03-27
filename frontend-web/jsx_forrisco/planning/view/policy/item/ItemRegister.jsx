@@ -191,15 +191,16 @@ export default React.createClass({
 							fileLink:  fielditem.fileLink
 						}
 					})
-				})
-
-				me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-				this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${model.data.id}`);
-			}else{
+				});
+			} else {
 				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
 			}
 		}, me);
 
+		ItemStore.on("itemField", model => {
+			me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
+			this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${model.data.id}`);
+		});
 
 		ItemStore.on("itemDeleted", (response) => {
 			if (response.success) {
