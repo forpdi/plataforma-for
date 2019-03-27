@@ -1047,92 +1047,75 @@ public class RiskBS extends HibernateBusiness {
 		double diffDays = diffInSec / (60 * 60 * 24);
 		switch (periodicity.toLowerCase()) {
 		case "diária":
-			if (diffDays < 0.2916666666666666) {
-				state = 0;
-			} // em dia
-			else if (diffDays < 1) {
-				state = 1;
-			} // próximos a vencer
-			else {
+			if(diffDays > 1) {
 				state = 2;
-			} // atrasado
-			break;
-
-		case "semanal":
-			if (diffDays < 2) {
-				state = 0;
-			} else if (diffDays < 7) {
-				state = 1;
-			} else {
-				state = 2;
+			}else if(diffDays*24 > CloseToMaturityPeriod.DIARIO.getValue()) {
+				state=1;
 			}
+			break;
+			
+		case "semanal":
+			if(diffDays > 7){	
+				state = 2;
+			}else if (diffDays >7-CloseToMaturityPeriod.SEMANAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "quinzenal":
-			if (diffDays < 7) {
-				state = 0;
-			} else if (diffDays < 15) {
-				state = 1;
-			} else {
+			if(diffDays > 15){	
 				state = 2;
-			}
+			}else if (diffDays >15-CloseToMaturityPeriod.QUINZENAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "mensal":
-			if (diffDays < 7) {
-				state = 0;
-			} else if (diffDays < 30) {
-				state = 1;
-			} else {
+			if(diffDays > 30){	
 				state = 2;
-			}
+			}else if (diffDays >30-CloseToMaturityPeriod.MENSAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "bimestral":
-			if (diffDays < 21) {
-				state = 0;
-			} else if (diffDays < 60) {
-				state = 1;
-			} else {
+			if(diffDays > 60){
 				state = 2;
-			}
+			}else if (diffDays >60-CloseToMaturityPeriod.BIMESTRAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "trimestral":
-			if (diffDays < 21) {
-				state = 0;
-			} else if (diffDays < 90) {
-				state = 1;
-			} else {
+			if(diffDays > 90){
 				state = 2;
-			}
+			}else if (diffDays >90-CloseToMaturityPeriod.TRIMESTRAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "semestral":
-			if (diffDays < 30) {
-				state = 0;
-			} else if (diffDays < 180) {
-				state = 1;
-			} else {
+			if(diffDays > 180){
 				state = 2;
-			}
+			}else if (diffDays >180-CloseToMaturityPeriod.SEMESTRAL.getValue()) {
+				state = 1;
+			} 
 			break;
 
 		case "anual":
-			if (diffDays < 30) {
-				state = 0;
-			} else if (diffDays < 360) {
-				state = 1;
-			} else {
+			if(diffDays > 360){
 				state = 2;
-			}
+			}else if (diffDays >CloseToMaturityPeriod.ANUAL.getValue()) {
+				state = 1;
+			} 
 			break;
 		}
 
 		return state;
 	}
-
-
+	
+	
+	
 	/**
 	 * Retorna o ultimo monitoramento de um risco
 	 * 
@@ -1186,43 +1169,45 @@ public class RiskBS extends HibernateBusiness {
 	}
 
 	public Date CloseToMaturityDate(Risk risk) {
+		//calcular corretamente o valor de próximo a vencer
 		
 		Monitor lastMonitor=this.lastMonitorbyRisk(risk);
 		
 		long time= lastMonitor!=null?lastMonitor.getBegin().getTime() : risk.getBegin().getTime();
-		long day = 1000*60*60*24;
+		long hour = 1000*60*60;
+		long day = hour*24;
 		
 		switch (risk.getPeriodicity().toLowerCase()) {
 			case "diária":
-				time+=day*.75*1;
+				time+=hour*(24 - CloseToMaturityPeriod.DIARIO.getValue());
 				break;
 
 			case "semanal":
-				time+=day*.75*7;
+				time+=day*(7 - CloseToMaturityPeriod.SEMANAL.getValue());
 				break;
 
 			case "quinzenal":
-				time+=day*.75*15;
+				time+=day*(15 - CloseToMaturityPeriod.QUINZENAL.getValue());
 				break;
 
 			case "mensal":
-				time+=day*.75*30;
+				time+=day*(30 - CloseToMaturityPeriod.MENSAL.getValue());
 				break;
 
 			case "bimestral":
-				time+=day*.75*60;
+				time+=day*(60 - CloseToMaturityPeriod.BIMESTRAL.getValue());
 				break;
 
 			case "trimestral":
-				time+=day*.75*91;
+				time+=day*(90 - CloseToMaturityPeriod.TRIMESTRAL.getValue());
 				break;
 
 			case "semestral":
-				time+=day*.75*182;
+				time+=day*(180 - CloseToMaturityPeriod.SEMESTRAL.getValue());
 				break;
 
 			case "anual":
-				time+=day*.75*365;
+				time+=day*(360 - CloseToMaturityPeriod.ANUAL.getValue());
 				break;
 		}
 		
