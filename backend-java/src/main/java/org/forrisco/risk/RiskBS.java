@@ -639,8 +639,33 @@ public class RiskBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(PreventiveAction.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("risk", risk));
 
-		Criteria count = this.dao.newCriteria(PreventiveAction.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
+		List<PreventiveAction> list = this.dao.findByCriteria(criteria, PreventiveAction.class);
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
+	}
+
+	/**
+	 * Retorna as ações preventivas a partir de um risco com paginacao
+	 * 
+	 * @param Risk instância de um risco
+	 * 
+	 * @return PaginatedList<PreventiveAction>
+	 */
+	public PaginatedList<PreventiveAction> listActionByRisk(Risk risk, Integer page, Integer pageSize) {
+
+		PaginatedList<PreventiveAction> results = new PaginatedList<PreventiveAction>();
+
+		Criteria criteria = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize);
+
+		Criteria count = this.dao.newCriteria(PreventiveAction.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk))
+				.setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, PreventiveAction.class));
 		results.setTotal((Long) count.uniqueResult());
