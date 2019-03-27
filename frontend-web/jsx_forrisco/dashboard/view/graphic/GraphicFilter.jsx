@@ -12,12 +12,12 @@ export default React.createClass({
 		if(this.props.quantity){
 			return (<div>
 				<div>
-					<a>
+
 					<div title="Visualizar histórico"
 						className="mdi mdi-chart-line"
 						style={ this.props.color=="Amarelo" ? {"left":"75px","position": "relative", "color":"black"} : {"left":"75px", "position": "relative", "color":"white"}}
 						onClick={() => this.props.onClick(this.props.level)}/>
-					</a>
+
 				</div>
 			</div>);
 		}else{

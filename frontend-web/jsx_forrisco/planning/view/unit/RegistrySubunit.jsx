@@ -183,7 +183,7 @@ export default React.createClass({
 			className: "form-control-h",
 			required: true,
 			displayField: 'label',
-			placeholder: "Selecone o Responsável pela Subnidade",
+			placeholder: "Selecione o Responsável pela Subnidade",
 			label: Messages.getEditable("label.responsible", "fpdi-nav-label"),
 			onChange: this.selectChangeHandler,
 		}, {

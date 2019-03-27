@@ -31,7 +31,6 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps){
 		var me = this;
-
 		this.state.risks=newProps.risks;
 		this.state.unit=newProps.unit;
 		this.state.plan= newProps.plan;
@@ -40,6 +39,7 @@ export default React.createClass({
 		this.state.allRisks= newProps.allRisks;
 		this.state.loading=false;
 		this.state.year=(new Date).getFullYear()
+		this.state.displayGraph=false
 
 		if(newProps.units.length>0 && this.state.units != newProps.units){
 			this.state.units= newProps.units;
@@ -79,9 +79,15 @@ export default React.createClass({
 		StructureStore.off(null, null, this);
 	},
 
-  	changePage(){
+  	changePageTo1(){
 		this.setState({
-			page2:!this.state.page2
+			page2:false
+		})
+	},
+
+	changePageTo2(){
+		this.setState({
+			page2:true
 		})
 	},
 
@@ -126,12 +132,18 @@ export default React.createClass({
 				}
 			}
 
-			if(i<4){
-				if(i%2 ==0 && i !=0 ){
-					panel1.push(<br/>)
-				}
+			let className = `dashboard-risk-board ${color}`;
 
-				panel1.push( <span className={"dashboard-risk-board "+color}>
+			if(i < 4){
+				if (i % 2 === 0 && i !== 0){
+					panel1.push(<br/>)
+				} else if (i % 2 === 1) {
+					className += ' dashboard-risk-panel-right';
+				}
+				if (i >= 2) {
+					className += ' dashboard-risk-panel-bottom';
+				}
+				panel1.push( <span className={className}>
 
 						<GraphicFilter
 							level={level}
@@ -144,7 +156,14 @@ export default React.createClass({
 					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}else{
-				panel2.push( <span className={"dashboard-risk-board  "+color}>
+
+				if ( i % 2 === 0 && i !== 0){
+					panel2.push(<br/>)
+				} else if (i % 2 === 1) {
+					className += ' dashboard-risk-panel-right';
+				}
+
+				panel2.push( <span className={className}>
 					<a>
 					<GraphicFilter
 							level={level}
@@ -160,13 +179,31 @@ export default React.createClass({
 		}
 
 		if(this.state.riskLevelModel.data.length>4){
-			panel1.push(<div><br/><div className={"mdi mdi-arrow-right-bold-circle icon-link"} onClick={this.changePage}/></div>)
-			panel2.push(<div><br/><div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePage}/></div>)
+			var arrow = <div><br/>
+							<div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePageTo1}/>
+							<div className={"mdi mdi-arrow-right-bold-circle icon-link"}  style={{float: "right"}} onClick={this.changePageTo2}/>
+						</div>
+			//panel1.push(arrow)
+			//panel2.push(arrow)
 		}
 		if(!this.state.page2){
-			return panel1
+			return <div>
+					<div>
+						{panel1}
+					</div>
+					<div     style={{position: "relative", top: "200px"}}>
+						{arrow}
+					</div>
+				</div>
 		}else{
-			return panel2
+			return <div>
+					<div>
+						{panel2}
+					</div>
+					<div     style={{position: "relative", top: "200px"}}>
+						{arrow}
+					</div>
+				</div>
 		}
 	},
 
@@ -178,21 +215,25 @@ export default React.createClass({
 		if(this.state.risks==null){
 			return (<LoadingGauge/>)
 		}
-		return (<div>
-			{this.getPanel()}
 
-			{this.state.displayGraph ?
-			<Graphic
-				title={Messages.get("label.risk.history").toUpperCase()}
-				unit={this.state.unit}
-				units={this.state.units}
-				level={this.state.riskLevelModel.data}
-				levelActive={this.state.risk_level_active}
-				history={this.state.risk_history}
-				displayGraph={this.setdisplayGraph}
-			 />
-			 :""}
-		</div>);
+		return (
+			<div className="frisco-dashboard frisco-dashboard-right" style={{ position: 'relative' }}>
+				{this.getPanel()}
+				{
+					this.state.displayGraph
+					&&
+					<Graphic
+						title={Messages.get("label.risk.history").toUpperCase()}
+						unit={this.state.unit}
+						units={this.state.units}
+						level={this.state.riskLevelModel.data}
+						levelActive={this.state.risk_level_active}
+						history={this.state.risk_history}
+						displayGraph={this.setdisplayGraph}
+					/>
+				}
+			</div>
+		);
 	}
 
 });

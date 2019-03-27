@@ -207,7 +207,6 @@ export default React.createClass({
                     /> {Messages.getEditable("label.dashboard","fpdi-nav-label", PermissionsTypes.FORRISCO_EDIT_MESSAGES_PERMISSION)}
                 </Link>
     		</div> : ""}
-			<div style={{height: "10px"}} />
 			{this.state.policies && (this.state.policies.length > 0) ?
 				this.state.policies.map((policy, index) => {
 					return <div className="frisco-tabs-nav" key={"open-plan-" + index}>

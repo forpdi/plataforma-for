@@ -47,7 +47,8 @@ export default React.createClass({
 			})
 		}, me);
 
-		UnitStore.on("unitbyplan", (model) => {
+		UnitStore.on("allunitsbyplan", (model) => {
+
 			if (model.data.length == 0) {
 				//Toastr.error(Messages.get("label.noUnit"))
 			}
@@ -59,7 +60,6 @@ export default React.createClass({
 		}, me);
 
 		PolicyStore.on("retrieverisklevel", (model) => {
-			PolicyStore.off(null, null, this);
 			me.setState({ risk_level: model.data });
 		}, me);
 
@@ -74,7 +74,6 @@ export default React.createClass({
 		}, me);
 
 		PlanRiskStore.on("listedunarchivedplanrisk", (response) => {
-			PlanRiskStore.off(null, null, this);
 			if (response.success === true) {
 				if (response.data.length == 0) {
 					this.context.router.push("/forrisco/plan-risk/new");
@@ -92,7 +91,7 @@ export default React.createClass({
 					})
 
 					UnitStore.dispatch({
-						action: UnitStore.ACTION_FIND_BY_PLAN,
+						action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
 						data: response.data[0].id
 					});
 					RiskStore.dispatch({
@@ -127,7 +126,7 @@ export default React.createClass({
 		})
 
 		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_BY_PLAN,
+			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
 			data: this.state.plans[this.refs.selectPlan.selectedIndex].id
 		});
 
@@ -223,7 +222,7 @@ export default React.createClass({
 			document.getElementById("documentAuthor").className = "";
 			document.getElementById("documentTitle").className = "";
 
-			var url = PlanRiskStore.url + "/exportReport" + "?planId=" + this.state.plans[this.state.selectedPlan].id + "&title=" + title + "&author=" + author + "&pre=" + pre + "&selecao=" + selecao
+			var url = PlanRiskStore.url + "/exportBoardReport" + "?planId=" + this.state.plans[this.state.selectedPlan].id + "&title=" + title + "&author=" + author + "&pre=" + pre + "&selecao=" + selecao
 			url = url.replace(" ", "+");
 
 			if (pre) {
@@ -285,6 +284,13 @@ export default React.createClass({
 				<h1 className="marginLeft30">
 					{Messages.getEditable("label.dashboard", "forrisco-nav-label")}
 				</h1>
+
+				<div className="marginLeft30">
+					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
+						{Messages.getEditable("label.exportReport")}
+					</span>
+				</div>
+				<br/>
 				<div className="marginLeft30">
 					<span>
 						{
@@ -293,7 +299,7 @@ export default React.createClass({
 								<div>
 									<span className="fpdi-nav-label">
 										{Messages.getEditable("label.risk.Plans", "fpdi-nav-label")}&nbsp;
-                  </span>
+									</span>
 									<select
 										style={{ 'width': '200px' }}
 										onChange={this.planRiscoChange}
@@ -326,9 +332,6 @@ export default React.createClass({
 								:
 								""
 						}
-					</span>
-					<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
-						{Messages.getEditable("label.exportReport")}
 					</span>
 				</div>
 				<DashboardAdminView

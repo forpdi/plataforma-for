@@ -10,6 +10,8 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 const incidentTypes = {
 	values: [
@@ -32,6 +34,7 @@ export default React.createClass({
 			data: [],
 			users: [],
 			incident: null,
+			incidentsTotal: null,
 			beginDate: null,
 			beginHour: null,
 			newRowDisplayed: false,
@@ -53,6 +56,7 @@ export default React.createClass({
 						}),
 						type: incidentTypes.getById(value.type).label,
 					})),
+					incidentsTotal: response.total,
 					isLoading: false,
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
@@ -66,11 +70,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -82,10 +82,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -97,10 +94,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_INCIDENT,
-					data: this.props.risk.id,
-				});
+				this.getIncidents(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -121,12 +115,12 @@ export default React.createClass({
 				this.context.toastr.addAlertError("Erro ao recuperar os usuários da companhia");
 			}
 		}, this);
-		this.refreshComponent(this.props.risk.id, 1, 500);
+		this.refreshComponent(this.props.risk.id);
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.risk.id !== this.props.risk.id) {
-			this.refreshComponent(newProps.risk.id, 1, 500)
+			this.refreshComponent(newProps.risk.id)
 		}
 	},
 
@@ -141,17 +135,28 @@ export default React.createClass({
 		);
 	},
 
-	refreshComponent(riskId, page, pageSize) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_INCIDENT,
-			data: riskId,
-		});
-
+	refreshComponent(riskId) {
+		this.getIncidents(riskId);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
-				page: page,
-				pageSize: pageSize,
+				page: 1,
+				pageSize: 500,
+			},
+		});
+	},
+
+	pageChange(page, pageSize) {
+ 		this.getIncidents(this.props.risk.id, page, pageSize);
+	},
+
+	getIncidents(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_INCIDENT,
+			data: {
+				riskId,
+				page,
+				pageSize,
 			},
 		});
 	},
@@ -218,19 +223,21 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.newIncident}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.newIncident}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() =>
 						this.setState({
 							data: this.state.data.slice(1),
 							newRowDisplayed: false,
 						})
-					}>
-					<span className="mdi mdi-close" />
-				</button>
+					}
+				/>
 			</div>,
 		};
 		const { data } = this.state;
@@ -317,11 +324,14 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updateIncident}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.updateIncident}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() => {
 						const { data } = this.state;
 						data[idx] = incident;
@@ -329,9 +339,8 @@ export default React.createClass({
 							data,
 							updateRowDisplayed: false,
 						})
-					}}>
-					<span className="mdi mdi-close" />
-				</button>
+					}}
+				/>
 			</div>,
 		};
 		this.setState({
@@ -344,15 +353,12 @@ export default React.createClass({
 	},
 
 	newIncident() {
-		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-
 		if (!this.state.incident.user) {
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
 
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 
@@ -377,9 +383,7 @@ export default React.createClass({
 	},
 
 	updateIncident() {
-		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 		RiskStore.dispatch({
@@ -394,6 +398,22 @@ export default React.createClass({
 		});
 	},
 
+	validBeginDate() {
+		if (!this.state.beginDate) {
+			this.context.toastr.addAlertError("A data do incidente deve ser preenchida");
+			return false;
+		}
+		if (!this.state.beginHour) {
+			this.context.toastr.addAlertError("A hora do incidente deve ser preenchida");
+			return false;
+		}
+		var beginDate = moment(`${this.state.beginDate} ${this.state.beginHour}`, 'DD/MM/YYYY HH:mm').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data e hora do incidente não deve ser maior que a data e hora atual");
+			return false;
+		}
+		return true
+	},
 
 	descriptionChangeHandler(e) {
 		this.setState({
@@ -491,6 +511,7 @@ export default React.createClass({
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
+			width: 100,
 		}];
 		return (
 			<div className="general-table">
@@ -513,6 +534,12 @@ export default React.createClass({
 							Nenhum incidente cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.incidentsTotal}
+					onChangePage={this.pageChange}
+					tableName={"incident-table"}
 				/>
 			</div>
 		)

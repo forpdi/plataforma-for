@@ -11,17 +11,15 @@ import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.utils.Consts;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.process.permissions.ManageProcessPermission;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.risk.RiskBS;
-
-import com.google.gson.GsonBuilder;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
@@ -98,7 +96,7 @@ public class ProcessController extends AbstractController{
 								" por essa unidade é o(a) "+unit.getUser().getName()+
 								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";						
 						
-						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlan().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
+						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlanRisk().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
 		
 						try {
 								this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());
@@ -128,10 +126,16 @@ public class ProcessController extends AbstractController{
 	@Get( PATH + "/{id}")
 	@NoCache
 	@Permissioned
-	public void listProcesses(Long id) {
+	public void listProcesses(Long id, Integer page, Integer pageSize) {
 		try {
 			Unit unit = this.processBS.exists(id, Unit.class);
-			PaginatedList<Process> process= this.processBS.listProcessByUnit(unit);
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
+			PaginatedList<Process> process = this.processBS.listProcessByUnit(unit, page, pageSize);
 			this.success(process);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -257,7 +261,6 @@ public class ProcessController extends AbstractController{
 				this.processBS.persist(processUnit);
 			}
 			for (ProcessUnit processUnit : processUnitsExistentMap.values()) {
-				EmailSenderTask.LOG.info(new GsonBuilder().setPrettyPrinting().create().toJson(processUnit));
 				if (processUnit.getUnit().getId() != process.getUnit().getId()) {
 					processUnit.setDeleted(true);
 					this.processBS.persist(processUnit);

@@ -24,8 +24,8 @@ export default React.createClass({
 			thematicAxes: [],
 			selectedThematicAxes: -1,
 			options: {
-				hAxis: {title: "Tempo", minValue: 0, maxValue: 12,},
-				vAxis: {title: 'Quantidade', minValue: 0, maxValue: 15},
+				hAxis: {title: "Tempo", minValue: 1, maxValue: 12,},
+				vAxis: {title: 'Quantidade', minValue: 1, maxValue: 15},
 				legend: {position: 'none'},
 				explorer: {axis: 'horizontal'},
 				bar: {groupWidth: '50%'},
@@ -136,7 +136,6 @@ export default React.createClass({
 			}
 		}
 
-		console.log(incidents);
 		if (Chart.chart.getSelection().length > 0) {
 			Modal.incidentModal(incidents)
 		}
@@ -237,11 +236,9 @@ export default React.createClass({
 		if (this.state.opportunities && this.state.threats) {
 			axis.push(['mes', 'ameaças', 'oportunidades'])
 			for (var i = 0; i <= month; i++) {
-
 				axis.push([mes[i], month_thr[i], month_opp[i]]);
 				max = max < month_thr[i] ? month_thr[i] : max;
 				max = max < month_opp[i] ? month_opp[i] : max;
-
 			}
 		} else if (this.state.opportunities) {
 			axis.push(['mes', 'oportunidades'])
@@ -272,13 +269,12 @@ export default React.createClass({
 			data: axis,
 			loading: false,
 			options: this.state.options,
-
 		});
 	},
 
 	render() {
-		return (<div>
-			<div className="panel panel-default">
+		return (
+			<div className="frisco-dashboard panel panel-default">
 				<div className="panel-heading dashboard-panel-title">
 					<b className="budget-graphic-title"
 					   title={Messages.get("label.incidents")}>{Messages.get("label.incidents").toUpperCase()}</b>
@@ -337,7 +333,7 @@ export default React.createClass({
 					</div>
 				}
 			</div>
-		</div>);
+		);
 	}
 
 });

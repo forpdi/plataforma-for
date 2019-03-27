@@ -32,6 +32,7 @@ var PolicyStore = Fluxbone.Store.extend({
 	ACTION_NEWPOLICY: "policy-newPolicy",
 	ACTION_CUSTOM_UPDATE: "policy-customUpdate",
 	ACTION_RETRIEVE_RISK_LEVEL: "policy-retrieveRiskLevel",
+	ACTION_RETRIEVE_RISK_LEVEL_: "policy-retrieveLevel",
 	ACTION_FIND_TERMS:'policy-findTerms',
 	ACTION_FINDALL_TERMS:'policy-findAllTerms',
 	ACTION_RETRIEVE_FILLED_SECTIONS: 'policy-retrieveFilledSections',
@@ -120,6 +121,24 @@ var PolicyStore = Fluxbone.Store.extend({
 			}
 		});
 	},
+
+
+	retrieveLevel(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/risklevel/"+data,
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'application/json',
+			success(model) {
+				me.trigger("retrieverisklevel_", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("retrieverisklevel_", null);
+			}
+		});
+	},
+
 
 	newPolicy(data){
 		var me = this;

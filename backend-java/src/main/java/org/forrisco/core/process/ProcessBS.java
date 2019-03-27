@@ -69,19 +69,41 @@ public class ProcessBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
 
-//		Criteria count = this.dao.newCriteria(ProcessUnit.class)
-//				.add(Restrictions.eq("deleted", false))
-//				.add(Restrictions.eq("unit", unit))
-//				.setProjection(Projections.countDistinct("id"));
-		
 		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
 			Process process = processUnit.getProcess();
-			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlan());
+			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlanRisk());
 			process.setRelatedUnits(relatedUnits);
 			list.add(process);
 		}
 		results.setList(list);
 		results.setTotal((long) list.size());
+	 
+		return results;
+	}
+
+	public PaginatedList<Process> listProcessByUnit(Unit unit, Integer page, Integer pageSize) {
+		PaginatedList<Process> results = new PaginatedList<Process>();
+		List<Process> list = new LinkedList<Process>();
+		
+		Criteria criteria = this.dao.newCriteria(ProcessUnit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("unit", unit))
+				.setFirstResult((page - 1) * pageSize)
+				.setMaxResults(pageSize);
+
+		Criteria count = this.dao.newCriteria(ProcessUnit.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("unit", unit))
+				.setProjection(Projections.countDistinct("id"));
+		
+		for(ProcessUnit processUnit : this.dao.findByCriteria(criteria, ProcessUnit.class)){
+			Process process = processUnit.getProcess();
+			List<Unit> relatedUnits = this.listRelatedUnits(process,unit.getPlanRisk());
+			process.setRelatedUnits(relatedUnits);
+			list.add(process);
+		}
+		results.setList(list);
+		results.setTotal((Long) count.uniqueResult());
 	 
 		return results;
 	}

@@ -317,7 +317,8 @@ export default React.createClass({
 				optionsField: [{ label: 'Risco operacional' },
 				{ label: 'Risco de imagem/reputação do órgão' },
 				{ label: 'Risco legal' },
-				{ label: 'Risco financeiro/orçamentário' }],
+				{ label: 'Risco financeiro/orçamentário' },
+				{ label: 'Risco de Integridade'}],
 				placeholder: "Selecione",
 				maxLength: 100,
 				label: "Tipologia",
@@ -358,7 +359,7 @@ export default React.createClass({
 			}]
 		}
 
-		var fields = []
+		var fields = [];
 		this.state.riskModel.strategies.list.map((fielditem, index) => {
 			fields.push({
 				name: "strategy-" + (index),
@@ -395,7 +396,7 @@ export default React.createClass({
 		}
 
 
-		var fields = []
+		var fields = [];
 		this.state.riskModel.processes.list.map((fielditem, index) => {
 			var name= fielditem.process.objective +" - "+fielditem.process.name
 			fields.push({
@@ -625,8 +626,8 @@ export default React.createClass({
 		}
 
 		for (var i = 0; i < this.state.activities; i++) {
-
-			grau.push(
+			var pa=[]
+			pa.push(
 				this.getPA(i).map((field, idx) => {
 					return (<HorizontalInput
 						name={field.name}
@@ -638,14 +639,14 @@ export default React.createClass({
 			)
 
 			if (i > 0) {
-				grau.push(<Link onClick={this.deleteActivity.bind(this, i)}>
+				pa.push(<span><Link onClick={this.deleteActivity.bind(this, i)}>
 					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteActicity")}></span>
-				</Link>)
+				</Link></span>)
 			}
-			grau.push(<br />)
+			grau.push(<div style={{"display": "inline-flex"}}>{pa} <br/></div>)
 		}
 
-		return (<div>{grau}<br /></div>)
+		return (<div>{grau}<br/></div>)
 	},
 
 	deleteActivity(x, y) {
@@ -715,7 +716,9 @@ export default React.createClass({
 		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
 
-		data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
+		if(this.refs["field-1"].refs.user.refs["field-user"].selectedIndex != 0){
+			data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
+		}
 		data['unit'] = { id: this.props.params.unitId }
 
 		data["risk_pdi"] = this.state.risk_pdi

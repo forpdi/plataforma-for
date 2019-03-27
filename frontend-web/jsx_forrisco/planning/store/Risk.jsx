@@ -321,12 +321,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listMonitor(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/monitor",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("monitorListed", model);
 			},
@@ -402,12 +403,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listPreventiveActions(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/action",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data.riskId},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("preventiveActionsListed", model);
 			},
@@ -486,12 +488,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listIncident(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/incident",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("incidentListed", model);
 			},
@@ -566,12 +569,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listContingency(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/contingency",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data.riskId},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("contingencyListed", model);
 			},

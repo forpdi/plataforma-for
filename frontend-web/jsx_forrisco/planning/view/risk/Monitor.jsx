@@ -10,6 +10,8 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 export default React.createClass({
 	contextTypes: {
@@ -22,6 +24,7 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			data: [],
+			dataTotal: 7,
 			users: [],
 			impacts: [],
 			probabilities: [],
@@ -46,6 +49,7 @@ export default React.createClass({
 								: null,
 						})
 					)),
+					dataTotal: response.total,
 					isLoading: false,
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
@@ -59,10 +63,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data:  this.props.risk.id,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -74,10 +75,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data:  this.props.planRiskId,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -89,10 +87,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data: this.props.risk.id,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -118,12 +113,12 @@ export default React.createClass({
 			impacts: this.getSelectOptions(this.context.planRisk.attributes.policy.impact),
 			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability),
 		});
-		this.refreshComponent(this.props.risk.id, 1, 500);
+		this.refreshComponent(this.props.risk.id);
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.risk.id !== this.props.risk.id) {
-			this.refreshComponent(newProps.risk.id,1, 500)
+			this.refreshComponent(newProps.risk.id)
 		}
 	},
 
@@ -133,17 +128,28 @@ export default React.createClass({
 		);
 	},
 
-	refreshComponent(riskId, page, pageSize) {
+	getData(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_MONITOR,
-			data: riskId,
+			data: {
+				riskId,
+				page,
+				pageSize,
+			},
 		});
+	},
 
+	pageChange(page, pageSize) {
+		this.getData(this.props.risk.id, page, pageSize);
+	},
+
+	refreshComponent(riskId) {
+		this.getData(riskId);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
-				page: page,
-				pageSize: pageSize,
+				page: 1,
+				pageSize: 500,
 			},
 		});
 	},
@@ -231,19 +237,21 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.newMonitor}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.newMonitor}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() =>
 						this.setState({
 							data: this.state.data.slice(1),
 							newRowDisplayed: false,
 						})
-					}>
-					<span className="mdi mdi-close" />
-				</button>
+					}
+				/>
 			</div>,
 		}
 		const { data } = this.state;
@@ -331,11 +339,14 @@ export default React.createClass({
 				/>
 			</div>,
 			tools: <div className="row-tools-box">
-				<button className="row-button-icon" onClick={this.updateMonitor}>
-					<span className="mdi mdi-check" />
-				</button>
-				<button
-					className="row-button-icon"
+				<span
+					className="mdi mdi-check btn btn-sm btn-success"
+					title="Salvar"
+					onClick={this.updateMonitor}
+				/>
+				<span
+					className="mdi mdi-close btn btn-sm btn-danger"
+					title="Cancelar"
 					onClick={() => {
 						const { data } = this.state;
 						data[idx] = monitor;
@@ -343,9 +354,8 @@ export default React.createClass({
 							data,
 							updateRowDisplayed: false,
 						})
-					}}>
-					<span className="mdi mdi-close" />
-				</button>
+					}}
+				/>
 			</div>,
 		}
 		this.setState({
@@ -362,11 +372,11 @@ export default React.createClass({
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
-		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+
+		if (!this.validBeginDate()) {
 			return;
 		}
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_MONITOR,
 			data: {
@@ -388,9 +398,7 @@ export default React.createClass({
 	},
 
 	updateMonitor() {
-		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 		RiskStore.dispatch({
@@ -405,6 +413,22 @@ export default React.createClass({
 		});
 	},
 
+	validBeginDate() {
+		if (!this.state.beginDate) {
+			this.context.toastr.addAlertError("A data do monitoramento deve ser preenchida");
+			return false;
+		}
+		if (!this.state.beginHour) {
+			this.context.toastr.addAlertError("A hora do monitoramento deve ser preenchida");
+			return false;
+		}
+		var beginDate = moment(`${this.state.beginDate} ${this.state.beginHour}`, 'DD/MM/YYYY HH:mm').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data e hora do monitoramento não deve ser maior que a data e hora atual");
+			return false;
+		}
+		return true
+	},
 
 	reportChangeHandler(e) {
 		this.setState({
@@ -504,6 +528,7 @@ export default React.createClass({
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
+			width: 100,
 		}];
 		return (
 			<div className="general-table">
@@ -526,6 +551,12 @@ export default React.createClass({
 							Nenhum monitoramento cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.dataTotal}
+					onChangePage={this.pageChange}
+					tableName={"monitor-table"}
 				/>
 			</div>
 		)

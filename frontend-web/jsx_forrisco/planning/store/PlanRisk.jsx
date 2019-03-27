@@ -16,7 +16,6 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
 	ACTION_SEARCH_TERMS: 'planRisk-searchTerms',
 	ACTION_SEARCH_BY_KEY: 'planRisk-searchTermsByKey',
-	//ACTION_DUPLICATE_PLANRISK: 'planRisk-duplicatePlanRisk',
 	url: URL,
 	model: PlanRiskModel,
 
@@ -85,10 +84,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	},
 
 	deletePlanRisk(data) {
-		console.log(data);
 		var me = this;
-		console.log(me);
-		console.log(me.url);
 		$.ajax({
 			url: me.url + "/" + data,
 			method: 'DELETE',
@@ -96,7 +92,6 @@ var PlanRiskStore = Fluxbone.Store.extend({
 				me.trigger("deletePlanRisk", model);
 			},
 			error(opts, status, errorMsg) {
-				console.log(opts);
 				var resp = JSON.parse(opts.responseText);
 				me.trigger("deletePlanRisk", resp);
 			}
@@ -104,10 +99,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	},
 
 	editPlanRisk(data) {
-		console.log("edit plan risk");
 		var me = this;
-		console.log(me);
-		console.log(me.url);
 		$.ajax({
 			url: me.url + '/update',
 			method: 'POST',
@@ -122,24 +114,6 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			}
 		})
 	},
-
-	/*duplicatePlanRisk(data) {
-		var me = this;
-		$.ajax({
-			url: me.url + '/duplicate',
-			method: 'POST',
-			dataType: 'json',
-			contentType: 'application/json',
-			data: JSON.stringify(data),
-			success(model) {
-				me.trigger("duplicatePlanRisk", model);
-			},
-			error(model, response, options) {
-				me.handleRequestErrors([], options.xhr);
-				me.trigger("duplicatePlanRisk", model);
-			}
-		})
-	},*/
 
 	searchTerms(data) {
 		var me = this;

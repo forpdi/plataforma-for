@@ -13,6 +13,8 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx"
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
 
 export default React.createClass({
 	contextTypes: {
@@ -25,6 +27,7 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			processes: [],
+			processesTotal: null,
 			units: [],
 			process: null,
 			selectedUnits: [],
@@ -60,6 +63,7 @@ export default React.createClass({
 
 			this.setState({
 				processes:filteredProcesses,
+				processesTotal: response.total,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
 				loading: false,
@@ -69,36 +73,21 @@ export default React.createClass({
 		}, this);
 		ProcessStore.on('processCreated', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
 		ProcessStore.on('processDeleted', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
 		}, this);
 		ProcessStore.on('processUpdated', response => {
 			if (response.success) {
-				ProcessStore.dispatch({
-					action: ProcessStore.ACTION_LIST_BY_UNIT,
-					data: {
-						id: this.props.unitId,
-					},
-				});
+				this.getProcesses(this.props.unitId);
 			} else {
 				this.context.toastr.addAlertError(response.responseJSON.message);
 			}
@@ -125,26 +114,7 @@ export default React.createClass({
 		}
 	},
 
-	refreshComponent(unitId, planRiskId) {
-		ProcessStore.dispatch({
-			action: ProcessStore.ACTION_LIST_BY_UNIT,
-			data: {
-				id: unitId,
-			},
-		});
-
-		UnitStore.dispatch({
-			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
-			data: planRiskId,
-		});
-	},
-
 	componentWillUnmount() {
-		// ProcessStore.off('processListedByUnit');
-		// ProcessStore.off('processCreated');
-		// ProcessStore.off('processDeleted');
-		// ProcessStore.off('processUpdated');
-		// UnitStore.off('unitbyplan');
 		ProcessStore.off(null, null, this);
 		UnitStore.off(null, null, this);
 	},
@@ -155,11 +125,38 @@ export default React.createClass({
 		);
 	},
 
+	refreshComponent(unitId, planRiskId) {
+		this.getProcesses(unitId);
+		UnitStore.dispatch({
+			action: UnitStore.ACTION_FIND_ALL_BY_PLAN,
+			data: planRiskId,
+		});
+	},
+
+	getProcesses(unitId, page = 1, pageSize = MED_PAGE_SIZE) {
+		ProcessStore.dispatch({
+			action: ProcessStore.ACTION_LIST_BY_UNIT,
+			data: {
+				id: unitId,
+				page,
+				pageSize,
+			},
+		});
+		this.refs['unit-pagination'] && this.refs['unit-pagination'].setState({
+			page,
+			pageSize,
+		});
+	},
+
+	pageChange(page, pageSize) {
+		this.getProcesses(this.props.unitId, page, pageSize);
+	},
+
 	insertNewRow() {
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
-    const newRow = {
+	    const newRow = {
 			name: (
 				<VerticalInput
 					className="padding7"
@@ -209,14 +206,11 @@ export default React.createClass({
 				</div>
 			),
 			tools: (
-				<div className="row-tools-box" style={{ "marginLeft": "-10px" }}>
-					<span
-						className="mdi mdi-check btn btn-sm btn-success"
-						title="Salvar"
-						onClick={this.newProcess}
-					/>
-					<span
-						className="mdi mdi-close btn btn-sm btn-danger"
+				<div className="row-tools-box">
+					<button className="btn btn-sm btn-success mdi mdi-check" title="Salvar" onClick={this.newProcess}>
+					</button>
+					<button
+						className="btn btn-sm btn-danger mdi mdi-close "
 						title="Cancelar"
 						onClick={() =>
 							this.setState({
@@ -248,7 +242,7 @@ export default React.createClass({
 			label: unit.name,
 			data: unit
 		}));
-    processes[idx] = {
+	    processes[idx] = {
 			name: <VerticalInput
 				className="padding7"
 				fieldDef={{
@@ -406,7 +400,7 @@ export default React.createClass({
 		const { process } = this.state;
 
 		if (!process.name || !process.objective || !process.file) {
-			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
+			this.context.toastr.addAlertError("Para confirmar a ação preencha todos os campos obrigatórios.");
 		} else {
 			ProcessStore.dispatch({
 				action: ProcessStore.ACTION_CREATE,
@@ -532,6 +526,13 @@ export default React.createClass({
 							Nenhum processo cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					ref="unit-pagination"
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.processesTotal}
+					onChangePage={this.pageChange}
+					tableName={"unit-process-table"}
 				/>
 			</div>
 		)

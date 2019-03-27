@@ -102,18 +102,19 @@ export default React.createClass({
 	},
 
 	addField() {
-		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
+		var validation = Validate.validationNewFieldType(this.refs, this.state.description);
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
 			return false;
 		}
 
+		console.log(validation);
 		if (!validation.errorField) {
 			if (validation.type.s === this.state.types[0].id) {
 				if(validation.description !== null) {
 					this.props.fields.push({
-						fieldName: validation.name.s,
+						fieldName: validation.name.s !== undefined ? validation.name.s : "",
 						type: validation.type.s,
 						value: validation.name.s,
 						fieldContent: validation.description,
@@ -139,7 +140,7 @@ export default React.createClass({
 	},
 
 	confirmEdit() {
-		var validation = Validate.validationNewFieldItem(this.refs, this.props.field.fieldName, this.props.field.fieldContent);
+		var validation = Validate.validationNewFieldType(this.refs, this.props.field.fieldName, this.props.field.fieldContent);
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
@@ -464,7 +465,7 @@ export default React.createClass({
 																			<span
 																				className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
 																			<span className="fpdi-nav-label">
-																				{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+																				{ this.state.fieldContent ? (console.log(this.state), this.state.fieldContent) : (console.log(this.state), (console.log(this.state), Messages.getEditable("label.attachFiles","fpdi-nav-label"))) }
 																			</span>
 																		</a>
 																	</div>
@@ -558,7 +559,7 @@ export default React.createClass({
 												<a onClick={this.attachFile}>
 													<span className="fpdi-nav-icon mdi mdi-file-import icon-link"/>
 													<span className="fpdi-nav-label">
-														{Messages.getEditable("label.attachFiles", "fpdi-nav-label")}
+														{ this.state.description ? (console.log(this.state), this.state.description) : (console.log(this.state), Messages.getEditable("label.attachFiles","fpdi-nav-label")) }
 													</span>
 												</a>
 											</div>

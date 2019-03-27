@@ -203,6 +203,7 @@ public class PlanRiskController extends AbstractController {
 			for(Unit unit:units.getList()) {
 				if(!this.unitBS.deletableUnit(unit)) {	
 					this.fail("O plano possui unidades que não podem ser deletadas." );
+					return;
 				}
 			}
 			
@@ -287,6 +288,48 @@ public class PlanRiskController extends AbstractController {
 			this.fail(ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Cria arquivo pdf  para exportar relatório  
+	 * 
+	 * 
+	 * @param title
+	 * @param author
+	 * @param pre
+	 * @param item
+	 * @param subitem
+	 * @throws DocumentException 
+	 * @throws IOException 
+	 * 
+	 */
+	@Get(PATH + "/exportBoardReport")
+	@NoCache
+	@Permissioned
+	public void exportBoardReport(String title, String author, boolean pre,Long planId, String selecao) throws IOException, DocumentException{
+		try {
+		
+			File pdf = this.pdf.exportBoardReport(title, author,planId, selecao);
+
+			OutputStream out;
+			FileInputStream fis= new FileInputStream(pdf);
+			this.response.reset();
+			this.response.setHeader("Content-Type", "application/pdf");
+			this.response.setHeader("Content-Disposition", "inline; filename=\"" + title + ".pdf\"");
+			out = this.response.getOutputStream();
+			
+			IOUtils.copy(fis, out);
+			out.close();
+			fis.close();
+			pdf.delete();
+			this.result.nothing();
+			
+		} catch (Throwable ex) {
+			LOGGER.error("Error while proxying the file upload.", ex);
+			this.fail(ex.getMessage());
+		}
+	}
+	
+	
 	
 	@Get(PATH + "/search")
 	@NoCache

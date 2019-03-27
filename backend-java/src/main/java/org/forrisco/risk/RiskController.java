@@ -14,6 +14,7 @@ import org.forpdi.core.event.Current;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.core.utils.Consts;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
@@ -82,6 +83,8 @@ public class RiskController extends AbstractController {
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
 			
+			this.riskBS.sendUserLinkedToRiskNoktification(risk, unit, this.domain.getBaseUrl());
+			
 			this.success(risk);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -135,7 +138,7 @@ public class RiskController extends AbstractController {
 	public void save(@NotNull @Valid Monitor monitor){
 		try {
 			if (monitor.getBegin().after(new Date())) {
-				this.fail("A data do monitor não deve ser maior que a data atual.");
+				this.fail("A data e hora do monitoramento não deve ser maior que a data e hora atual.");
 				return;				
 			}
 			
@@ -181,7 +184,7 @@ public class RiskController extends AbstractController {
 	public void save(@NotNull @Valid Incident incident){
 		try {
 			if (incident.getBegin().after(new Date())) {
-				this.fail("A data do incidente não deve ser maior que a data atual.");
+				this.fail("A data e hora do incidente não deve ser maior que a data e hora atual.");
 				return;				
 			}
 
@@ -381,8 +384,11 @@ public class RiskController extends AbstractController {
 	@NoCache
 	@Permissioned
 	public void listRiskByPI(Long planId, String impact, String probability, Integer page, Integer pageSize) {
-		if (page == null)
+		if (page == null || page < 0)
 			page = 0;
+		if (pageSize == null) {
+			pageSize = Consts.MIN_PAGE_SIZE;
+		}
 		
 		PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
 		if (plan == null || plan.isDeleted()) {
@@ -411,15 +417,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/action")
 	@NoCache
 	@Permissioned
-	public void listActions(@NotNull Long riskId) {
+	public void listActions(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
 			
-			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk);
+			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk, page, pageSize);
 			
 			this.success(actions);
 
@@ -439,15 +451,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/monitor")
 	@NoCache
 	@Permissioned
-	public void listMonitor(@NotNull Long riskId) {
+	public void listMonitor(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null || risk.isDeleted()) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
-			} 
+			}
 			
-			PaginatedList<Monitor> monitor = this.riskBS.listMonitorByRisk(risk);
+			PaginatedList<Monitor> monitor = this.riskBS.listMonitorByRisk(risk, page, pageSize);
 			 
 			this.success(monitor);
 		} catch (Throwable ex) {
@@ -519,14 +537,20 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/incident")
 	@NoCache
 	@Permissioned
-	public void listIncident(@NotNull Long riskId) {
+	public void listIncident(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				 page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null || risk.isDeleted()) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
-			 PaginatedList<Incident> incident = this.riskBS.listIncidentsByRisk(risk);
+			 PaginatedList<Incident> incident = this.riskBS.listIncidentsByRisk(risk, page, pageSize);
 			 
 			this.success(incident);
 		} catch (Throwable ex) {
@@ -662,15 +686,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/contingency")
 	@NoCache
 	@Permissioned
-	public void listContingencies(@NotNull Long riskId) {
+	public void listContingencies(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
 			
-			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk);
+			PaginatedList<Contingency> contingencies = this.riskBS.listContingenciesByRisk(risk, page, pageSize);
 			
 			this.success(contingencies);
 			
@@ -681,7 +711,7 @@ public class RiskController extends AbstractController {
 	}
 	
 	/**
-	 * Retorna historico.
+	 * Retorna histórico.
 	 * 
 	 * @param planId
 	 *			Id do plano de risco.

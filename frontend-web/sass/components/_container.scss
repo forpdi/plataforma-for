@@ -413,10 +413,7 @@
 	width: 250px;
 	height: 25px;
 }
-/*	height: auto;
-	width: 100%;
-	display: inline-block;
-}*/
+
 
 .form-control-h::-webkit-input-placeholder {
 	color: #ccc;
@@ -424,12 +421,89 @@
 
 
 
+
+/* Medium devices (landscape tablets, 768px and up)*/
+@media only screen and (min-width: 0px) {
+	.Cor{
+		width: 4vmax;
+    	height: 3vh;
+	}
+}
+/* Medium devices (landscape tablets, 768px and up)*/
+@media only screen and (min-width: 600px) {
+	.Cor{
+		width: 6vmax;
+    	height: 5vh;
+	}
+}
+
+/* Medium devices (landscape tablets, 768px and up)*/
+@media only screen and (min-width: 750px) {
+	.Cor{
+		width: 7vmax;
+    	height: 5vh;
+	}
+}
+
+/* Medium devices (landscape tablets, 768px and up)*/
+@media only screen and (min-width: 820px) {
+	.Cor{
+		width: 8vmax;
+    	height: 5vh;
+	}
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 991px) {
+	.Cor{
+		width: 9vmax;
+    	height: 5vh;
+	}
+}
+
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+	.Cor{
+		width: 4vmax;
+		height: 5vh;
+		//padding: 10px;
+	}
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 1150px) {
+	.Cor{
+		width: 4vmax;
+		height: 5vh;
+		padding: 10px;
+	}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1350px) {
+	.Cor{
+		width: 5vmax;
+    	height: 5vh;
+	}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1700px) {
+	.Cor{
+		width: 6vmax;
+    	height: 5vh;
+	}
+}
+
+
+
 .Cor{
-	//padding: 12px 40px;
-	padding: 20px 50px;
 	white-space: nowrap;
 	border: .5px solid #ddd;
 	text-align: -webkit-center;
+	display: table-cell;
+	vertical-align: middle;
 }
 
 .Cinza {
@@ -501,35 +575,38 @@
 
 .frisco-containerSelect {
 	float: right;
+	bottom: 7px;
+    position: relative
 }
 
 .frisco-containerOptions {
 	font-size: 13px;
-	padding: 15px 10px;
+	padding: 15px 10px 0 10px;
 }
 
 .frisco-containerOptions span {
-	color: darken($brand-secondary, 20%);
-	margin: 0 10px;
-	cursor: pointer;
+	//color: darken($brand-secondary, 20%);
+	color: #7d45d8;
+    margin: 0 10px;
+    cursor: pointer;
+	font-weight: 700;
+	font-size: 16px;
 }
 
 .frisco-containerOptions span.active {
-	text-decoration: underline;
+	border-bottom: solid 2px #7d45d8;
 }
 
 
 .frisco-link {
-	margin: 50px;
-	font-size: 18px;
+	margin: 40px 50px 40px 0;
+	font-size: 16px;
 	color: #9E9E9F;
 	font-weight: 600;
 	text-decoration: none;
 	font-weight: bold;
-
+	&.selecionado {
+		border-bottom: solid 2px #7d45d8;
+		color: #7d45d8;
 	}
-.frisco-link.selecionado {
-	border-bottom: solid 2px #7d45d8;
-	  color: #7d45d8;
-	}
-
+}

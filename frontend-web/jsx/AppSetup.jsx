@@ -144,9 +144,14 @@ ReactDOM.render((
 								<Route path=":riskId">
 									<Route path="info" component={Forrisco_RiskDetail} />
 									<Route
+										path="monitor"
+										component={props => (<Forrisco_RiskDetail {...props} selected={1} />)}
+									/>
+									<Route
 										path="incident"
 										component={props => (<Forrisco_RiskDetail {...props} selected={2} />)}
 									/>
+
 								</Route>
 							</Route>
 							<Route
