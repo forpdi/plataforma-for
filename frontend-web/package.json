@@ -51,6 +51,7 @@
     "react-datepicker": "^0.29.0",
     "react-dom": "15.x.x",
     "react-google-charts": "^1.6.6",
+    "react-helmet": "^5.2.0",
     "react-maskedinput": "^4.0.1",
     "react-multiselect-checkboxes": "^0.1.1",
     "react-onclickoutside": "^5.11.1",

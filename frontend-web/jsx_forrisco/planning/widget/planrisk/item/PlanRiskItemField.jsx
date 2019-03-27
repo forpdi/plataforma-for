@@ -36,12 +36,16 @@ export default React.createClass({
 			fieldType: null,															//Tipo do campo (TextArea, ExportDocument)
 			vizualization: this.props.vizualization,    								//Habilita a visualização do field
 			description: null,															//Valor do TextArea
-			fileData: null																//Informações do DOC/IMG anexados
+			fileData: null,																//Informações do DOC/IMG anexados
+			buttonsErrorMark: false,													//Marca para sinalizar campo em aberto sem salvar
 		}
 	},
 
 	componentWillReceiveProps(newProps){
-		this.state.fieldContent = newProps.field.fieldContent;
+		if (newProps.field) {
+			this.state.fieldContent = newProps.field.fieldContent;
+		}
+		this.state.buttonsErrorMark = newProps.buttonsErrorMark;
 	},
 
 	//MUDA A SELEÇÃO DO TIPO DO CAMPO ENQUANTO INSTACIA DE EDIÇÃO
@@ -350,13 +354,14 @@ export default React.createClass({
 													<div className="panel-heading attribute-input-opts">
 														<b className="budget-title"> {this.props.field.fieldName} </b>
 														<span type="submit"
-															  className="mdi mdi-delete attribute-input-edit inner"
-															  onClick={this.removeField}
-															  title={Messages.get("label.title.deleteField")}/>
-
+															className="mdi mdi-delete attribute-input-edit inner"
+															onClick={this.removeField}
+															title={Messages.get("label.title.deleteField")}
+														/>
 														<span className="mdi mdi-pencil attribute-input-edit inner"
-															  onClick={this.editField}
-															  title={Messages.get("label.title.changeField")}/>
+															onClick={this.editField}
+															title={Messages.get("label.title.changeField")}
+														/>
 													</div>
 													<span className="card-field-content pdi-normal-text">
 														<div id={this.props.field.fieldName}>
@@ -422,14 +427,16 @@ export default React.createClass({
 
 													{/*Botões Laterais*/}
 													<div className="col-sm-12 col-md-4">
-														<span className="mdi mdi-check btn btn-sm btn-success"
-															  onClick={this.confirmEdit}
-															  title={Messages.get("label.submitLabel")}/>
-														<span>&nbsp;</span>
-														<span className="mdi mdi-close btn btn-sm btn-danger"
-															  title={Messages.get("label.cancel")}
-															  onClick={this.resetTypes}
-														/>
+														<span className={this.state.buttonsErrorMark ? 'buttons-check-and-close-error' : ''}>
+															<span className="mdi mdi-check btn btn-sm btn-success"
+																onClick={this.confirmEdit}
+																title={Messages.get("label.submitLabel")}/>
+															<span>&nbsp;</span>
+															<span className="mdi mdi-close btn btn-sm btn-danger"
+																title={Messages.get("label.cancel")}
+																onClick={this.resetTypes}
+															/>
+														</span>
 													</div>
 												</div>
 
@@ -519,14 +526,16 @@ export default React.createClass({
 
 							{/*Botões Laterais*/}
 							<div className="col-sm-12 col-md-4">
-								<span className="mdi mdi-check btn btn-sm btn-success"
-									  onClick={this.props.fields ? this.addField : this.confirmEdit}
-									  title={Messages.get("label.submitLabel")}/>
-								<span>&nbsp;</span>
-								<span className="mdi mdi-close btn btn-sm btn-danger"
-									  title={Messages.get("label.cancel")}
-									  onClick={this.resetTypes}
-								/>
+								<span className={this.state.buttonsErrorMark ? 'buttons-check-and-close-error' : ''}>
+									<span className="mdi mdi-check btn btn-sm btn-success"
+										onClick={this.props.fields ? this.addField : this.confirmEdit}
+										title={Messages.get("label.submitLabel")}/>
+									<span>&nbsp;</span>
+									<span className="mdi mdi-close btn btn-sm btn-danger"
+										title={Messages.get("label.cancel")}
+										onClick={this.resetTypes}
+									/>
+								</span>
 							</div>
 						</div>
 

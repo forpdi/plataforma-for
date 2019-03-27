@@ -43,6 +43,7 @@ export default React.createClass({
 			newFieldType: null,
 			cancelLabel: "Cancelar",
 			submitLabel: "Salvar",
+			hasPendindField: false,
 			fields: [],
 			length: 0
 		};
@@ -275,6 +276,7 @@ export default React.createClass({
 		if (this.state.subitemModel) {
 			this.setState({
 				vizualization: true,
+				hasPendindField:false,
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -315,7 +317,8 @@ export default React.createClass({
 			newField: false,
 			newFieldType: null,
 			description: null,
-			fileData: null
+			fileData: null,
+			hasPendindField:false,
 		});
 	},
 	getLength(){
@@ -333,6 +336,7 @@ export default React.createClass({
 		this.setState({
 			fields: this.state.fields,
 			newField:false,
+			hasPendindField: false,
 		})
 	},
 	deleteFunc(id){
@@ -344,7 +348,8 @@ export default React.createClass({
 				}
 			})
 			this.setState({
-				fields: this.state.fields
+				fields: this.state.fields,
+				hasPendindField: false,
 			})
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
@@ -468,6 +473,9 @@ export default React.createClass({
 			Modal.alert(() => {
 				Modal.hide();
 			}, msg);
+			this.setState({
+				hasPendindField: true,
+			});
 			return;
 		}
 
@@ -630,7 +638,8 @@ export default React.createClass({
 										field={fieldsubitem}
 										index={index}
 										getLength={this.getLength}
-										/>
+										buttonsErrorMark={this.state.hasPendindField}
+									/>
 									</div>
 								)
 						}else if (fieldsubitem.type ==  AttributeTypes.ATTACHMENT_FIELD){
@@ -647,7 +656,8 @@ export default React.createClass({
 									field={fieldsubitem}
 									index={index}
 									getLength={this.getLength}
-									/>
+									buttonsErrorMark={this.state.hasPendindField}
+								/>
 								</div>)
 						}
 					}):""}
@@ -659,7 +669,6 @@ export default React.createClass({
 
 					{this.state.newField ?
 						<FieldItemInput
-							key={this.getLength()}
 							vizualization={this.props.vizualization}
 							deleteFunc={this.deleteFunc}
 							editFunc={this.editFunc}
@@ -667,6 +676,7 @@ export default React.createClass({
 							fields={this.state.fields}
 							reset={this.reset}
 							getLength={this.getLength}
+							buttonsErrorMark={this.state.hasPendindField}
 						/>
 					:
 					(((this.context.roles.MANAGER || _.contains(this.context.permissions,

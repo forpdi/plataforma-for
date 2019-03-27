@@ -25,6 +25,7 @@ export default React.createClass({
 			cancelLabel: "Cancelar",
 			submitLabel: "Salvar",
 			vizualization: false,
+			hasPendindField: false,
 			formFields: [],
 			itemTitle: '',
 			itemDescription: ''
@@ -107,7 +108,8 @@ export default React.createClass({
 
 		this.setState({
 			formFields: this.state.formFields,
-			vizualization: false
+			vizualization: false,
+			hasPendindField: false,
 		})
 	},
 
@@ -193,6 +195,9 @@ export default React.createClass({
 			Modal.alert(() => {
 				Modal.hide();
 			}, msg);
+			this.setState({
+				hasPendindField: true,
+			});
 			return;
 		}
 
@@ -290,6 +295,7 @@ export default React.createClass({
 												index={index}
 												field={field}
 												isEditable={false}
+												buttonsErrorMark={this.state.hasPendindField}
 											/>
 										</div>
 									)
@@ -313,6 +319,7 @@ export default React.createClass({
 												index={index}
 												field={field}
 												isEditable={false}
+												buttonsErrorMark={this.state.hasPendindField}
 											/>
 										</div>
 									)
@@ -338,7 +345,9 @@ export default React.createClass({
 									setFieldValue={this.setFieldValue}
 									editFields={this.editFields}
 									getFields={this.getFields}
-									toggle={this.toggleFields}/>
+									toggle={this.toggleFields}
+									buttonsErrorMark={this.state.hasPendindField}
+								/>
 							</div>
 
 							:
