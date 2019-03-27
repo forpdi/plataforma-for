@@ -138,7 +138,7 @@ public class RiskController extends AbstractController {
 	public void save(@NotNull @Valid Monitor monitor){
 		try {
 			if (monitor.getBegin().after(new Date())) {
-				this.fail("A data do monitor não deve ser maior que a data atual.");
+				this.fail("A data e hora do monitoramento não deve ser maior que a data e hora atual.");
 				return;				
 			}
 			
@@ -184,7 +184,7 @@ public class RiskController extends AbstractController {
 	public void save(@NotNull @Valid Incident incident){
 		try {
 			if (incident.getBegin().after(new Date())) {
-				this.fail("A data do incidente não deve ser maior que a data atual.");
+				this.fail("A data e hora do incidente não deve ser maior que a data e hora atual.");
 				return;				
 			}
 
@@ -417,15 +417,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/action")
 	@NoCache
 	@Permissioned
-	public void listActions(@NotNull Long riskId) {
+	public void listActions(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
 			
-			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk);
+			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk, page, pageSize);
 			
 			this.success(actions);
 

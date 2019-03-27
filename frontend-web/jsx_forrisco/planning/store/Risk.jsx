@@ -403,12 +403,13 @@ var RiskStore = Fluxbone.Store.extend({
 
 	listPreventiveActions(data) {
 		var me = this;
+		const { riskId, page, pageSize } = data;
 		$.ajax({
 			url: me.url + "/action",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {riskId: data.riskId},
+			data: { riskId, page, pageSize },
 			success(model) {
 				me.trigger("preventiveActionsListed", model);
 			},

@@ -8,6 +8,8 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 export default React.createClass({
 	contextTypes: {
@@ -19,6 +21,7 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			data: [],
+			dataTotal: null,
 			users: [],
 			action: null,
 			newRowDisplayed: false,
@@ -36,6 +39,7 @@ export default React.createClass({
 							tools: this.isPermissionedUser() ? this.renderRowTools(value.id, idx) : null,
 						})
 					)),
+					dataTotal: response.total,
 					isLoading: false,
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
@@ -50,12 +54,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
-					data: {
-						riskId: this.props.risk.id,
-					},
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError("Erro ao cadastrar ação de prevenção.");
 			}
@@ -67,12 +66,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
-					data: {
-						riskId: this.props.risk.id,
-					},
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError("Erro ao excluir ação de prevenção.");
 			}
@@ -84,12 +78,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
-					data: {
-						riskId: this.props.risk.id,
-					},
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError("Erro ao atualizar ação de prevenção.");
 			}
@@ -113,22 +102,6 @@ export default React.createClass({
 		this.refresh(this.props.risk.id)
 	},
 
-	refresh(riskId){
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
-			data: {
-				riskId: riskId,
-			},
-		});
-		UserStore.dispatch({
-			action: UserStore.ACTION_RETRIEVE_USER,
-			data: {
-				page: 1,
-				pageSize: 500,
-			},
-		});
-	},
-
 	componentWillReceiveProps(newProps) {
 		if (this.props.risk.id !== newProps.risk.id) {
 			this.refresh(newProps.risk.id)
@@ -144,6 +117,36 @@ export default React.createClass({
 		return (this.context.roles.MANAGER ||
 			_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_RISK_PERMISSION)
 		);
+	},
+
+	refresh(riskId){
+		this.getData(riskId);
+		UserStore.dispatch({
+			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: 1,
+				pageSize: 500,
+			},
+		});
+	},
+
+	getData(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_LIST_PREVENTIVE_ACTIONS,
+			data: {
+				riskId,
+				page,
+				pageSize,
+			},
+		});
+		this.refs['preventive-actions-pagination'] && this.refs['preventive-actions-pagination'].setState({
+			page,
+			pageSize,
+		});
+	},
+
+	pageChange(page, pageSize) {
+		this.getData(this.props.risk.id, page, pageSize);
 	},
 
 	changeAccomplishmentData() {
@@ -408,10 +411,6 @@ export default React.createClass({
 	},
 
 	render() {
-		/*if (this.state.isLoading === true) {
-			return <LoadingGauge/>;
-		}*/
-
 		if(!this.props.visualization){
 			return <div></div>
 		}
@@ -455,6 +454,13 @@ export default React.createClass({
 							Nenhuma ação de prevenção cadastrada
 						</div>
 					}
+				/>
+				<TablePagination
+					ref='preventive-actions-pagination'
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.dataTotal}
+					onChangePage={this.pageChange}
+					tableName={"preventive-actions-table"}
 				/>
 			</div>
 		)
