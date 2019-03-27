@@ -31,8 +31,7 @@ export default React.createClass({
 				model: model.data,
 				policyId: model.data.id
 			});
-		}, me);
-
+		}, this);
 		this.refreshData(this.props.params.policyId)
 	},
 
@@ -41,7 +40,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.policyId != this.state.policyId) {
+		if (newProps.params.policyId !== this.state.policyId) {
 			this.refreshData(newProps.params.policyId)
 		}
 	},

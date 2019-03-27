@@ -137,7 +137,6 @@ export default React.createClass({
 				action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 			});
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-			PlanRiskItemStore.off('editPlanRisk');
 		})
 	},
 
