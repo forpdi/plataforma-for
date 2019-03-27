@@ -33,8 +33,10 @@ export default React.createClass({
 	render() {
 		return (
             <div className='marginLeft30'>
-                <div className = "row">
+                <div className="row">
 					<RiskMatrix plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
+				</div>
+				<div className="row">
 					<div className="col-md-7">
 						<IncidentAxis plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
 					</div>

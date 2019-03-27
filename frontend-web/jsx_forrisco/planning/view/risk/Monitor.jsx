@@ -10,6 +10,8 @@ import UserStore from 'forpdi/jsx/core/store/User.jsx';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
+import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
+import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
 
 export default React.createClass({
 	contextTypes: {
@@ -22,6 +24,7 @@ export default React.createClass({
 	getInitialState() {
 		return {
 			data: [],
+			dataTotal: 7,
 			users: [],
 			impacts: [],
 			probabilities: [],
@@ -46,6 +49,7 @@ export default React.createClass({
 								: null,
 						})
 					)),
+					dataTotal: response.total,
 					isLoading: false,
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
@@ -59,10 +63,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data:  this.props.risk.id,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -74,10 +75,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data:  this.props.planRiskId,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -89,10 +87,7 @@ export default React.createClass({
 				this.setState({
 					isLoading: true,
 				});
-				RiskStore.dispatch({
-					action: RiskStore.ACTION_LIST_MONITOR,
-					data: this.props.risk.id,
-				});
+				this.getData(this.props.risk.id);
 			} else {
 				this.context.toastr.addAlertError(response.msg);
 			}
@@ -118,12 +113,12 @@ export default React.createClass({
 			impacts: this.getSelectOptions(this.context.planRisk.attributes.policy.impact),
 			probabilities: this.getSelectOptions(this.context.planRisk.attributes.policy.probability),
 		});
-		this.refreshComponent(this.props.risk.id, 1, 500);
+		this.refreshComponent(this.props.risk.id);
 	},
 
 	componentWillReceiveProps(newProps) {
 		if (newProps.risk.id !== this.props.risk.id) {
-			this.refreshComponent(newProps.risk.id,1, 500)
+			this.refreshComponent(newProps.risk.id)
 		}
 	},
 
@@ -133,17 +128,28 @@ export default React.createClass({
 		);
 	},
 
-	refreshComponent(riskId, page, pageSize) {
+	getData(riskId, page = 1, pageSize = MED_PAGE_SIZE) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_LIST_MONITOR,
-			data: riskId,
+			data: {
+				riskId,
+				page,
+				pageSize,
+			},
 		});
+	},
 
+	pageChange(page, pageSize) {
+		this.getData(this.props.risk.id, page, pageSize);
+	},
+
+	refreshComponent(riskId) {
+		this.getData(riskId);
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
 			data: {
-				page: page,
-				pageSize: pageSize,
+				page: 1,
+				pageSize: 500,
 			},
 		});
 	},
@@ -531,6 +537,12 @@ export default React.createClass({
 							Nenhum monitoramento cadastrado
 						</div>
 					}
+				/>
+				<TablePagination
+					defaultPageSize={MED_PAGE_SIZE}
+					total={this.state.dataTotal}
+					onChangePage={this.pageChange}
+					tableName={"monitor-table"}
 				/>
 			</div>
 		)

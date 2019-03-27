@@ -20,6 +20,7 @@ import org.forpdi.core.user.auth.UserAccessToken;
 import org.forpdi.core.user.authz.Permission;
 import org.forpdi.core.user.authz.PermissionFactory;
 import org.forpdi.core.user.authz.UserPermission;
+import org.forpdi.core.utils.Consts;
 import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.ResponsibleField;
 import org.forpdi.planning.permissions.PermissionDTO;
@@ -47,7 +48,6 @@ public class UserBS extends HibernateBusiness {
 	private CompanyDomain domain;
 	@Inject
 	private NotificationBS notificationBS;
-	private static final int PAGESIZE = 5;
 
 	/**
 	 * Salvar o usuário no banco de dados.
@@ -324,7 +324,7 @@ public class UserBS extends HibernateBusiness {
 			page = 1;
 		}
 		if (pageSize == null) {
-			pageSize = PAGESIZE;
+			pageSize = Consts.MIN_PAGE_SIZE;
 		}
 		PaginatedList<User> results = new PaginatedList<User>();
 		if (this.domain == null) {

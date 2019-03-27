@@ -236,134 +236,6 @@ public class UnitBS extends HibernateBusiness {
 	
 	
 	
-
-	/**
-	 * Retorna o estado de cada risco a partir da data 
-	 * 
-	 * @param String
-	 *            periodicidade
-	 * 
-	 * @param Data
-	 *            Data para comparação da peridicidade
-	 * 
-	 * @return int estado atual do monitoramento
-	 */
-	public int riskState(String periodicity, Date date) {
-		int state = 0; // em dia
-
-		Date now = new Date();
-
-		double diffInSec = (now.getTime() - date.getTime()) / 1000;
-		double diffDays = diffInSec / (60 * 60 * 24);
-		switch (periodicity.toLowerCase()) {
-		case "diária":
-			if (diffDays < 0.2916666666666666) {
-				state = 0;
-			} // em dia
-			else if (diffDays < 1) {
-				state = 1;
-			} // próximos a vencer
-			else {
-				state = 2;
-			} // atrasado
-			break;
-
-		case "semanal":
-			if (diffDays < 2) {
-				state = 0;
-			} else if (diffDays < 7) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "quinzenal":
-			if (diffDays < 7) {
-				state = 0;
-			} else if (diffDays < 15) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "mensal":
-			if (diffDays < 7) {
-				state = 0;
-			} else if (diffDays < 30) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "bimestral":
-			if (diffDays < 21) {
-				state = 0;
-			} else if (diffDays < 60) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "trimestral":
-			if (diffDays < 21) {
-				state = 0;
-			} else if (diffDays < 90) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "semestral":
-			if (diffDays < 30) {
-				state = 0;
-			} else if (diffDays < 180) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-
-		case "anual":
-			if (diffDays < 30) {
-				state = 0;
-			} else if (diffDays < 360) {
-				state = 1;
-			} else {
-				state = 2;
-			}
-			break;
-		}
-
-		return state;
-	}
-
-	/**
-	 * Retorna o ultimo monitoramento de um risco
-	 * 
-	 * @param Risk
-	 *            instância de um risco
-	 *
-	 * @return Monitor instância de um monitoramento
-	 */
-	public Monitor lastMonitorbyRisk(Risk risk) {
-
-		Criteria criteria = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.addOrder(Order.desc("begin"));
-
-		criteria.setMaxResults(1);
-		Monitor monitor = (Monitor) criteria.uniqueResult();
-
-		return monitor;
-	}
-
-	
 	/**
 	 * Atualiza o historico de riscos
 	 * 
@@ -452,8 +324,8 @@ public class UnitBS extends HibernateBusiness {
 
 			
 			for (Risk risk : this.dao.findByCriteria(criteria, Risk.class)) {
-				Monitor monitor = this.lastMonitorbyRisk(risk);
-				int state = this.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin() : risk.getBegin());
+				Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
+				int state = this.riskBS.riskState(risk.getPeriodicity(), monitor != null ? monitor.getBegin() : risk.getBegin());
 				map.put(state, map.get(state) + 1);
 			}
 

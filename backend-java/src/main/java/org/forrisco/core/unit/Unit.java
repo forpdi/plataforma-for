@@ -96,7 +96,10 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		this.user = user;
 	}
 
-	public PlanRisk getPlan() {
+	//public PlanRisk getPlan() {
+		//return planRisk;
+	//}
+	public PlanRisk getPlanRisk() {
 		return planRisk;
 	}
 
@@ -112,9 +115,6 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		this.riskSearchId = riskSearchId;
 	}
 
-	public PlanRisk getPlanRisk() {
-		return planRisk;
-	}
 	
 
 }

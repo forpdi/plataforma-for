@@ -3162,7 +3162,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos próximos a vencer":
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							Date date = risk.getBegin();
 
  							if(monitor != null) {
@@ -3170,7 +3170,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
  							}
 
 							if(monitor != null) {
-								int state=this.unitBS.riskState(risk.getPeriodicity(), date);
+								int state=this.riskBS.riskState(risk.getPeriodicity(), date);
 								if(state == 1) {
 									Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 									attTitle.setLeading(interLineSpacing);
@@ -3184,7 +3184,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos em dia" : 
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							Date date = risk.getBegin();
 							
  							if(monitor != null) {
@@ -3192,7 +3192,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
  							}
  							
 							if(monitor != null) {
-								int state=this.unitBS.riskState(risk.getPeriodicity(), date);
+								int state=this.riskBS.riskState(risk.getPeriodicity(), date);
 								if(state == 2) {
 									Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 									attTitle.setLeading(interLineSpacing);
@@ -3206,14 +3206,14 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					case "Riscos atrasados" : 
 						for(Risk risk : risks.getList()) {
-							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
+							Monitor monitor = this.riskBS.lastMonitorbyRisk(risk);
 							Date date = risk.getBegin();
 							
  							if(monitor != null) {
  								date = monitor.getBegin();
  							}
 							
- 							int state=this.unitBS.riskState(risk.getPeriodicity(),date);
+ 							int state=this.riskBS.riskState(risk.getPeriodicity(),date);
 							if(state == 2) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);
@@ -3233,7 +3233,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
  								date= monitor.getBegin();
  							}
  							
-							int state=this.unitBS.riskState(risk.getPeriodicity(),monitor.getBegin());
+							int state=this.riskBS.riskState(risk.getPeriodicity(),monitor.getBegin());
 							if(state == 0) {
 								Paragraph attTitle = new Paragraph(risk.getName(), titulo);
 								attTitle.setLeading(interLineSpacing);

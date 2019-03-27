@@ -301,7 +301,7 @@ export default React.createClass({
 								<div>
 									<span className="fpdi-nav-label">
 										{Messages.getEditable("label.risk.Plans", "fpdi-nav-label")}&nbsp;
-                  </span>
+									</span>
 									<select
 										onChange={this.planRiscoChange}
 										ref="selectPlan"
