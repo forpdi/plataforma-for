@@ -245,7 +245,7 @@ export default React.createClass({
 			type: AttributeTypes.TEXT_AREA,
 			placeholder: "Código",
 			maxLength: 100,
-			label: "Código de indentificação do risco",
+			label: "Código de identificação do risco",
 			value: risk != null ? risk.code : null,
 		}, {
 				name: "user",
