@@ -372,11 +372,11 @@ export default React.createClass({
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
-		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+
+		if (!this.validBeginDate()) {
 			return;
 		}
+
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_NEW_MONITOR,
 			data: {
@@ -398,9 +398,7 @@ export default React.createClass({
 	},
 
 	updateMonitor() {
-		const beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do monitor não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 		RiskStore.dispatch({
@@ -415,6 +413,22 @@ export default React.createClass({
 		});
 	},
 
+	validBeginDate() {
+		if (!this.state.beginDate) {
+			this.context.toastr.addAlertError("A data do monitoramento deve ser preenchida");
+			return false;
+		}
+		if (!this.state.beginHour) {
+			this.context.toastr.addAlertError("A hora do monitoramento deve ser preenchida");
+			return false;
+		}
+		var beginDate = moment(`${this.state.beginDate} ${this.state.beginHour}`, 'DD/MM/YYYY HH:mm').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data e hora do monitoramento não deve ser maior que a data e hora atual");
+			return false;
+		}
+		return true
+	},
 
 	reportChangeHandler(e) {
 		this.setState({

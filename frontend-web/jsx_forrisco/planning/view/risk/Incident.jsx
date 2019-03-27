@@ -353,15 +353,12 @@ export default React.createClass({
 	},
 
 	newIncident() {
-		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-
 		if (!this.state.incident.user) {
 			this.context.toastr.addAlertError("É necessário que seja selecionado um usuário responsável");
 			return;
 		}
 
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 
@@ -386,9 +383,7 @@ export default React.createClass({
 	},
 
 	updateIncident() {
-		var beginDate = moment(this.state.beginDate, 'DD/MM/YYYY').toDate();
-		if(moment() < beginDate) {
-			this.context.toastr.addAlertError("A data do incidente não deve ser maior que a data atual");
+		if (!this.validBeginDate()) {
 			return;
 		}
 		RiskStore.dispatch({
@@ -403,6 +398,22 @@ export default React.createClass({
 		});
 	},
 
+	validBeginDate() {
+		if (!this.state.beginDate) {
+			this.context.toastr.addAlertError("A data do incidente deve ser preenchida");
+			return false;
+		}
+		if (!this.state.beginHour) {
+			this.context.toastr.addAlertError("A hora do incidente deve ser preenchida");
+			return false;
+		}
+		var beginDate = moment(`${this.state.beginDate} ${this.state.beginHour}`, 'DD/MM/YYYY HH:mm').toDate();
+		if(moment() < beginDate) {
+			this.context.toastr.addAlertError("A data e hora do incidente não deve ser maior que a data e hora atual");
+			return false;
+		}
+		return true
+	},
 
 	descriptionChangeHandler(e) {
 		this.setState({

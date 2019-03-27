@@ -44,7 +44,6 @@ export default React.createClass({
 					newRowDisplayed: false,
 					updateRowDisplayed: false,
 				});
-				console.log(response)
 				this.changeAccomplishmentData();
 			}
 		}, this);
