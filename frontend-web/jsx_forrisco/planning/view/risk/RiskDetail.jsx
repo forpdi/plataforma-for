@@ -14,6 +14,13 @@ import RiskStore from 'forpdi/jsx_forrisco/planning/store/Risk.jsx';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
+const tabs = {
+	RISK_REGISTER: 0,
+	MONITOR: 1,
+	INCIDENT: 2,
+	CONTINGENCY: 3,
+};
+
 export default React.createClass({
 
 	contextTypes: {
@@ -37,7 +44,7 @@ export default React.createClass({
 			tabsHash: '',
 			tabsHidden: [],
 			showTabsHidden: false,
-			selected: this.props.selected ? this.props.selected : 0,
+			selected: this.props.selected ? this.props.selected : tabs.RISK_REGISTER,
 			riskModel: null,
 			visualization: true,
 			loading: true,
@@ -147,15 +154,22 @@ export default React.createClass({
 	},
 
 	onChange() {
-		this.setState({
-			visualization: !this.state.visualization
-		})
+		if (this.state.selected === tabs.RISK_REGISTER) {
+			this.setState({
+				visualization: !this.state.visualization,
+			});
+		} else {
+			this.setState({
+				selected: tabs.RISK_REGISTER,
+				visualization: false,
+			});
+		}
 	},
 
 	selectInfo() {
 
 		switch (this.state.selected) {
-			case 0:
+			case tabs.RISK_REGISTER:
 				return (
 					<div>
 						<RiskRegister
@@ -172,7 +186,7 @@ export default React.createClass({
 					</div>
 				)
 
-			case 1:
+			case tabs.MONITOR:
 				return (
 					<Monitor
 						visualization={this.state.visualization}
@@ -180,7 +194,7 @@ export default React.createClass({
 						planRiskId={this.props.params.planRiskId}
 					/>)
 
-			case 2:
+			case tabs.INCIDENT:
 				return (
 					<Incident
 						visualization={this.state.visualization}
@@ -188,7 +202,7 @@ export default React.createClass({
 						planRiskId={this.props.params.planRiskId}
 					/>)
 
-			case 3:
+			case tabs.CONTINGENCY:
 				return (
 					<Contingency
 						visualization={this.state.visualization}
