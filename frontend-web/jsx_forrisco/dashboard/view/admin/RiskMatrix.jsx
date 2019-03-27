@@ -37,7 +37,7 @@ export default React.createClass({
 			});
 		}
 
-		PolicyStore.on("retrieverisklevel", (model) => {
+		PolicyStore.on("retrieverisklevel_", (model) => {
 			me.setState({
 				risklevelModel: model,
 				loading: false
@@ -46,12 +46,12 @@ export default React.createClass({
 		}, me);
 
 		PolicyStore.on("findpolicy", (model) => {
-			me.setState({
-				policyModel: model.data
-			});
-			if (model != null) {
+			if (model.success) {
+				me.setState({
+					policyModel: model.data,
+				});
 				PolicyStore.dispatch({
-					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL,
+					action: PolicyStore.ACTION_RETRIEVE_RISK_LEVEL_,
 					data: model.data.id
 				});
 			}
@@ -80,6 +80,7 @@ export default React.createClass({
 	},
 
 	refresh() {
+
 		PolicyStore.dispatch({
 			action: PolicyStore.ACTION_FIND_POLICY,
 			data: this.state.plan.policyId
@@ -237,15 +238,21 @@ export default React.createClass({
 						<tr>
 							<td style={{ position: "relative", left: "30px" }}>
 								{table}
+								<tr>
+									<td></td>
+									<td colSpan={this.state.policyModel.ncolumn}>
+										<div style={{ "text-align": "-webkit-center",    position: "relative",  top: "10px"}}>IMPACTO</div>
+									</td>
+								</tr>
 							</td>
+
+
 						</tr>
+
 						<tr>
 							<th>
 								<div style={{ width: "115px", bottom: 95 + 30 * (this.state.policyModel.nline - 2) + "px" }} className="vertical-text dashboard">PROBABILIDADE</div>
 							</th>
-						</tr>
-						<tr>
-							<div style={{ "text-align": "-webkit-center", position: "relative", left: "75px" }}>IMPACTO</div>
 						</tr>
 					</th>
 				</table>
@@ -289,7 +296,8 @@ export default React.createClass({
 							<span className={this.state.threats ? "active" : ""} onClick={this.selectThreats}>{Messages.get("label.risk.threats")}</span>
 							<span className={this.state.opportunities ? "active" : ""} onClick={this.selectOpportunities}>{Messages.get("label.risk.opportunities")}</span>
 						</div>
-						<div style={{ padding: "0px 20px" }}>
+						<br/>
+						<div style={{ padding: "0px 0px 0px 20px" }}>
 							{this.state.loading ? <LoadingGauge /> :
 								this.getMatrix()}
 						</div>

@@ -417,15 +417,21 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/action")
 	@NoCache
 	@Permissioned
-	public void listActions(@NotNull Long riskId) {
+	public void listActions(@NotNull Long riskId, Integer page, Integer pageSize) {
 		try {
+			if (page == null || page < 1) {
+				page = 1;
+			}
+			if (pageSize == null) {
+				pageSize = Consts.MED_PAGE_SIZE;
+			}
 			Risk risk = this.riskBS.exists(riskId, Risk.class);
 			if (risk == null) {
 				this.fail("O risco solicitado não foi encontrado.");
 				return;
 			} 
 			
-			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk);
+			PaginatedList<PreventiveAction> actions = this.riskBS.listActionByRisk(risk, page, pageSize);
 			
 			this.success(actions);
 

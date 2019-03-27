@@ -79,9 +79,15 @@ export default React.createClass({
 		StructureStore.off(null, null, this);
 	},
 
-  	changePage(){
+  	changePageTo1(){
 		this.setState({
-			page2:!this.state.page2
+			page2:false
+		})
+	},
+
+	changePageTo2(){
+		this.setState({
+			page2:true
 		})
 	},
 
@@ -150,6 +156,13 @@ export default React.createClass({
 					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}else{
+
+				if ( i % 2 === 0 && i !== 0){
+					panel2.push(<br/>)
+				} else if (i % 2 === 1) {
+					className += ' dashboard-risk-panel-right';
+				}
+
 				panel2.push( <span className={className}>
 					<a>
 					<GraphicFilter
@@ -166,13 +179,31 @@ export default React.createClass({
 		}
 
 		if(this.state.riskLevelModel.data.length>4){
-			panel1.push(<div><br/><div className={"mdi mdi-arrow-right-bold-circle icon-link"} onClick={this.changePage}/></div>)
-			panel2.push(<div><br/><div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePage}/></div>)
+			var arrow = <div><br/>
+							<div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePageTo1}/>
+							<div className={"mdi mdi-arrow-right-bold-circle icon-link"}  style={{float: "right"}} onClick={this.changePageTo2}/>
+						</div>
+			//panel1.push(arrow)
+			//panel2.push(arrow)
 		}
 		if(!this.state.page2){
-			return panel1
+			return <div>
+					<div>
+						{panel1}
+					</div>
+					<div     style={{position: "relative", top: "200px"}}>
+						{arrow}
+					</div>
+				</div>
 		}else{
-			return panel2
+			return <div>
+					<div>
+						{panel2}
+					</div>
+					<div     style={{position: "relative", top: "200px"}}>
+						{arrow}
+					</div>
+				</div>
 		}
 	},
 

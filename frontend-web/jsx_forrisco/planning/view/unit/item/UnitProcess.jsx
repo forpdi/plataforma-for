@@ -144,6 +144,7 @@ export default React.createClass({
 		});
 		this.refs['unit-pagination'] && this.refs['unit-pagination'].setState({
 			page,
+			pageSize,
 		});
 	},
 
