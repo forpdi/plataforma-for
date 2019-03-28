@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from "react";
-import {Link, hashHistory} from "react-router";
+import { Link, hashHistory } from "react-router";
 
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
@@ -187,24 +187,28 @@ export default React.createClass({
 		}, me);
 
 
-		ItemStore.on("newSubItem", (model) => {
-			this.state.fields.map((fieldsubitem, index) => {
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_CREATE_SUBFIELD,
-					data:{
-						subitem: model.data,
-						name: fieldsubitem.value,
-						isText: fieldsubitem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
-						description: fieldsubitem.description,
-						fileLink: fieldsubitem.fileLink
-					}
-				})
-			})
-		}, me);
+		ItemStore.on("newSubItem", (itemModel) => {
+			if (this.state.fields.length === 0) {
+				this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+itemModel.data.id);
+			} else {
+				this.state.fields.map((fieldsubitem, index) => {
+					ItemStore.dispatch({
+						action: ItemStore.ACTION_CREATE_SUBFIELD,
+						data:{
+							subitem: itemModel.data,
+							name: fieldsubitem.value,
+							isText: fieldsubitem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
+							description: fieldsubitem.description,
+							fileLink: fieldsubitem.fileLink
+						}
+					})
+				});
 
-		ItemStore.on("itemField", model => {
-			this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+model.data.id);
-		});
+				ItemStore.on("itemField", fieldModel => {
+					this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+itemModel.data.id);
+				});
+			}
+		}, me);
 
 		ItemStore.on("subitemDeleted", (model) => {
 			this.context.router.push("forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id);

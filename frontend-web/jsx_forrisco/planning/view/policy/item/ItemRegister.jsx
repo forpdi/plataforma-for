@@ -179,29 +179,34 @@ export default React.createClass({
 			}
 		}, me);
 
-		ItemStore.on("newItem", (model) => {
-			if(model !=null){
-				this.state.fields.map((fielditem, index) => {
-					ItemStore.dispatch({
-						action: ItemStore.ACTION_CREATE_FIELD,
-						data:{
-							item: model.data,
-							name: fielditem.value,
-							isText: fielditem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
-							description: fielditem.description,
-							fileLink:  fielditem.fileLink
-						}
-					})
-				});
+		ItemStore.on("newItem", (itemModel) => {
+			if (itemModel != null) {
+				if (this.state.fields.length === 0) {
+					me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
+					this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${itemModel.data.id}`);
+				} else {
+					this.state.fields.map((fielditem, index) => {
+						ItemStore.dispatch({
+							action: ItemStore.ACTION_CREATE_FIELD,
+							data:{
+								item: itemModel.data,
+								name: fielditem.value,
+								isText: fielditem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
+								description: fielditem.description,
+								fileLink:  fielditem.fileLink
+							}
+						})
+					});
+
+					ItemStore.on("itemField", fieldModel => {
+						me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
+						this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${itemModel.data.id}`);
+					});
+				}
 			} else {
 				me.context.toastr.addAlertError(Messages.get("label.errorNewItem"));
 			}
 		}, me);
-
-		ItemStore.on("itemField", model => {
-			me.context.toastr.addAlertSuccess(Messages.get("label.successNewItem"));
-			this.context.router.push(`/forrisco/policy/${this.context.policy.id}/item/${model.data.id}`);
-		});
 
 		ItemStore.on("itemDeleted", (response) => {
 			if (response.success) {
@@ -312,6 +317,7 @@ export default React.createClass({
 				});
 			},msg,me.refreshCancel);
 	},
+
 	tweakNewField() {
 		this.state.fields.map( (fielditem, i) => {
 			fielditem.edit=false
@@ -321,6 +327,7 @@ export default React.createClass({
 			newFieldType: null
 		});
 	},
+
 	reset(){
 		this.setState({
 			newField: false,
@@ -330,6 +337,7 @@ export default React.createClass({
 			hasPendindField:false,
 		});
 	},
+
 	getLength(){
 		return this.state.length++
 	},
@@ -349,6 +357,7 @@ export default React.createClass({
 		})
 		return this.state.fields[id].isText ? null : this.state.fields[id].fileLink;
 	},
+
 	deleteFunc(id){
 		Modal.confirmCustom(() => {
 			Modal.hide();
@@ -363,6 +372,7 @@ export default React.createClass({
 			});
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
+
 	setItem(index,item){
 		this.state.fields.map( (fielditem, i) => {
 			if (index==i){
@@ -380,6 +390,7 @@ export default React.createClass({
 			fields: this.state.fields
 		})
 	},
+
 	cancelWrapper(evt) {
 		evt.preventDefault();
 
@@ -392,6 +403,7 @@ export default React.createClass({
 		this.onCancel();
 		this.context.router.push("/forrisco/policy/" + this.props.params.policyId + "/item/"+this.props.params.itemId);
 	},
+
 	renderArchivePolicy() {
 		return (
 			<ul className="dropdown-menu">
@@ -406,6 +418,7 @@ export default React.createClass({
 		);
 
 	},
+
 	renderUnarchivePolicy() {
 		if(this.state.info){
 			return (<ul id="level-menu" className="dropdown-menu">
@@ -464,6 +477,7 @@ export default React.createClass({
 			);
 		}
 	},
+
 	renderBreadcrumb() {
 		return
 		return(
@@ -517,9 +531,10 @@ export default React.createClass({
 			} else {
 				ItemStore.dispatch({
 					action: ItemStore.ACTION_NEW_ITEM,
-					data: { name: validation.titulo.s,
-							description: "",
-							policy: this.context.policy
+					data: {
+						name: validation.titulo.s,
+						description: "",
+						policy: this.context.policy
 					}
 				});
 			}
