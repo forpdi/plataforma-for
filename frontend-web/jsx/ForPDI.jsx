@@ -12,7 +12,6 @@ export default React.createClass({
 
 			{!this.props.location.pathname.includes("/users")
 			&& !this.props.location.pathname.includes("/system")
-			&& !this.props.location.pathname.includes("/structures")
 			?
 				<MainMenu {...this.props} />
 			: ""}

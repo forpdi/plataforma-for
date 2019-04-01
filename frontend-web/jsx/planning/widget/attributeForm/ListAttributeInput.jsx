@@ -388,8 +388,8 @@ export default React.createClass({
 				this.handleSelect(fields)
 			}
 
-			fieldEl=(<ReactMultiSelectCheckboxes
-				className={"multiselect"}
+			fieldEl=(<div className={this.props.className} style={{"width": "fit-content"}}>
+				<ReactMultiSelectCheckboxes
 				options={this.state.optionsField}
 				value={this.state.selectedOption}
 				onChange={this.handleSelect}
@@ -399,8 +399,8 @@ export default React.createClass({
 										if(value==null){ return placeholderButtonLabel	}
 										else if(value.length == 0){return placeholderButtonLabel}
 										else if(value.length == 1){return value.length+" item selecionado"}
-										else{return value.length+" item selecionados"}}}
-				/>)
+										else{return value.length+" itens selecionados"}}}
+				/></div>)
 
 
 		} else if (this.props.fieldDef.type == AttributeTypes.RESPONSIBLE_FIELD) {

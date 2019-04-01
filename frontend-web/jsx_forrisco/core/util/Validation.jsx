@@ -314,6 +314,7 @@ var Validate = {
 	validationRiskRegister: function(data, refs) {
 		var msg=""
 
+
 		var name = refs["field-name"].refs.name
 		var code = refs["field-0"].refs.code
 		var user = refs["field-1"].refs.user
@@ -363,7 +364,7 @@ var Validate = {
 				if(msg==""){msg="A probabilidade precisa estar selecionada."}
 			}else{
 				probability.refs["field-probability"].className="form-control"
-				probability.refs["formAlertError"].innerHTML = ""
+				probability.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -374,7 +375,7 @@ var Validate = {
 				if(msg==""){msg="O impacto precisa estar selecionado."}
 			}else{
 				impact.refs["field-impact"].className="form-control"
-				impact.refs["formAlertError"].innerHTML = ""
+				impact.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -385,7 +386,7 @@ var Validate = {
 				if(msg==""){msg="A periodicidade precisa estar selecionada."}
 			}else{
 				periodicity.refs["field-periodicity"].className="form-control"
-				periodicity.refs["formAlertError"].innerHTML = ""
+				periodicity.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -396,7 +397,7 @@ var Validate = {
 				if(msg==""){msg="A tipologia precisa estar selecionada."}
 			}else{
 				tipology.refs["field-tipology"].className="form-control"
-				tipology.refs["formAlertError"].innerHTML = ""
+				tipology.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -407,7 +408,7 @@ var Validate = {
 				if(msg==""){msg="O tipo precisa estar selecionado."}
 			}else{
 				type.refs["field-type"].className="form-control"
-				type.refs["formAlertError"].innerHTML = ""
+				type.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
