@@ -1,6 +1,4 @@
-#### Construindo o frontend
-
-#####Construindo com o Docker
+#### Construindo o frontend com o Docker
 Para construir o projeto com o Docker, se faz necessário ter no mínimo a versão 17.05 ou superior. A partir dessa versão é permitido a construição em modo multstage.
 
 Execute os seguintes comandos na pasta onde fica o projeto:
