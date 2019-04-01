@@ -2602,6 +2602,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				if(Long.parseLong(sections[i])==0) {
 					//informações gerais matrix
 					generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
+					secIndex++;
 					continue;
 				}
 				
@@ -2626,18 +2627,20 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					continue;
 				}
 					
-				//haveContent = true;
 				boolean secTitlePrinted = false;
+				boolean hasfields=false;
 				subSecIndex = 0;
 				String secName = item.getName();
 	
 				if(fielditens.getTotal() > 0){
 					secIndex++;
+					hasfields=true;
 				}
 				
+				/*
 				// print do titulo
-				Chunk c = new Chunk(String.format("%d. %s", secIndex + 1, secName));
-				c.setGenericTag(String.format("%d. %s", secIndex + 1, secName));
+				Chunk c = new Chunk(String.format("%d. %s", secIndex , secName));
+				c.setGenericTag(String.format("%d. %s", secIndex, secName));
 				Paragraph secTitle = new Paragraph(c);
 				secTitle.setLeading(interLineSpacing);
 				secTitle.setSpacingAfter(paragraphSpacing);
@@ -2647,12 +2650,27 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				if (item.getDescription() != null) {
 					haveContent = true;
 				}
-				secIndex++;
 				
+				//secIndex++;
+				*/
 				
 				for (FieldItem fielditem: fielditens.getList()) {
 					
 					haveContent = true;
+					
+					if (!secTitlePrinted) {
+						Chunk c = new Chunk(String.format("%d. %s", secIndex , secName));
+						c.setGenericTag(String.format("%d. %s", secIndex, secName));
+						Paragraph secTitle = new Paragraph(c);
+						secTitle.setLeading(interLineSpacing);
+						secTitle.setSpacingAfter(paragraphSpacing);
+						secTitle.setSpacingBefore(paragraphSpacing);
+						document.add(secTitle);
+						/*if (item.getDescription() != null) {
+							haveContent = true;
+						}*/
+						secTitlePrinted = true;
+					}
 					
 					if(fielditem.isText()) { // campo de texto
 						if (!GeneralUtils.isEmpty(fielditem.getDescription())) {
@@ -2797,6 +2815,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					
 					PaginatedList<FieldSubItem> fieldsubs = this.itemBS.listFieldsBySubItem(sub);
 						
+					
+					if(fieldsubs.getTotal()>0 && !hasfields){
+						secIndex++;
+					}
+					
 					for(FieldSubItem fieldsub : fieldsubs.getList()) {
 							
 						if( fieldsub.isText()) { // campo de texto
@@ -2806,9 +2829,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									document.newPage();
 								}
 								if (!secTitlePrinted) {
-									c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+									Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
 									c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
-									secTitle = new Paragraph(c);
+									Paragraph secTitle = new Paragraph(c);
 									secTitle.setLeading(interLineSpacing);
 									secTitle.setSpacingAfter(paragraphSpacing);
 									secTitle.setSpacingBefore(paragraphSpacing);
@@ -3288,7 +3311,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 	
 	/*unidade*/
-	
 	private void generateProcesses(Document document, Unit unit) throws DocumentException {
 		//exportar processos da unidade
 		List<Process> processes =  this.processBS.listProcessByUnit(unit).getList();
@@ -3756,11 +3778,12 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		if(Arrays.stream(sections).anyMatch("0"::equals)) {
 	
-			String secName2 =plan.getName();
+			//String secName2 ="Informações Gerais";//plan.getName();
 			haveContent = true;
 			secIndex++;
-			Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
-			c2.setGenericTag(secIndex + ". " + secName2);
+			//Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
+			Chunk c2 = new Chunk(secIndex + ". " + "Informações Gerais", titulo);
+			c2.setGenericTag(secIndex + ". " + "Informações Gerais");
 			Paragraph secTitle2 = new Paragraph(c2);
 			secTitle2.setLeading(interLineSpacing);
 			secTitle2.setSpacingAfter(paragraphSpacing);
@@ -3821,13 +3844,14 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				
 				//haveContent = true;
 				boolean secTitlePrinted = false;
+				boolean hasfields =false;
 				subSecIndex = 0;
 				String secName =item.getName();
 	
 				if(fielditens.getTotal()>0){
 					secIndex++;
+					hasfields=true;
 				}
-				
 				
 				for (PlanRiskItemField fielditem: fielditens.getList()) {
 					
@@ -3966,7 +3990,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					}
 				}
-					
+				
 				subSecIndex = 0;
 				secTitlePrinted=false;
 	
@@ -3981,6 +4005,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					
 					PaginatedList<PlanRiskSubItemField> fieldsubs = this.planRiskItemBS.listSubFieldsBySubItem(sub);
 						
+					if(fieldsubs.getTotal()>0 && !hasfields){
+						secIndex++;
+					}
+					
 					for(PlanRiskSubItemField fieldsub : fieldsubs.getList()) {
 						
 							if (lastAttWasPlan) {
