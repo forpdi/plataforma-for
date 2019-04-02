@@ -32,9 +32,13 @@ export default React.createClass({
 
 	render() {
 		return (
-            <div className='marginLeft30'>
-                <div className="row">
-					<RiskMatrix plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
+      <div className='marginLeft30'>
+        <div className="row">
+					<RiskMatrix
+            plan={this.props.plan}
+            units={this.props.units}
+            risks={this.props.risks}
+          />
 				</div>
 				<div className="row">
 					<div className="col-md-7">
@@ -44,8 +48,7 @@ export default React.createClass({
 						<MonitorDetails plan={this.props.plan} units={this.props.units}  risks={this.props.risks}/>
 					</div>
 				</div>
-            </div>
-
+      </div>
 		);
 	}
 });
