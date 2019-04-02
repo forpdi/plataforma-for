@@ -240,7 +240,7 @@ export default React.createClass({
 					</label>
 					<div>
 						<span className="pdi-normal-text">
-							{unit.description}
+							<pre className="pre-info">{unit.description}</pre>
 						</span>
 					</div>
 				</div>
