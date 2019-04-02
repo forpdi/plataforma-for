@@ -17,7 +17,7 @@ export default React.createClass({
 			//Incidente
 				incidentType: null,
 				incidentList: [],
-				totalOfIncidents: null
+				totalOfIncidents: null,
 		};
 	},
 
@@ -34,7 +34,6 @@ export default React.createClass({
 					isLoading: false
 				});
 			} else {
-				console.log(response);
 				this.setState({ isLoading: null });
 			}
 		}, this);
@@ -77,7 +76,7 @@ export default React.createClass({
 	},
 
 	renderContent() {
-		console.log(this.state);
+		console.log(this.props.incidents);
 		if (this.state.isLoading === true) {
 			return (<LoadingGauge/>);
 		} else if (this.state.isLoading === null) {
@@ -107,6 +106,14 @@ export default React.createClass({
 		}
 	},
 
+	renderTitle() {
+		if (this.state.incidentType === 1) {
+			return (<span>Tipo: Ameaça</span>);
+		} else if (this.state.incidentType === 2) {
+			return (<span>Tipo: Oportunidade</span>);
+		}
+	},
+
 	render() {
 		return (
 			<div>
@@ -121,7 +128,7 @@ export default React.createClass({
 							</div>
 
 							<div>
-								{this.state.incidentType === 1 ? <span> Tipo: Ameaça </span> : <span> Tipo: Oportunidade </span>}
+								{this.renderTitle()}
 							</div>
 						</div>
 
