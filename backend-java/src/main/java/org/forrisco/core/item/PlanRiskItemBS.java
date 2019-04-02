@@ -112,7 +112,13 @@ public class PlanRiskItemBS extends HibernateBusiness {
 				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem))
 				.addOrder(Order.asc("id"));
 		
+		Criteria count = this.dao.newCriteria(PlanRiskSubItemField.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("planRiskSubItem", planRiskSubItem))
+				.setProjection(Projections.countDistinct("id"));
+		
 		results.setList(this.dao.findByCriteria(criteria, PlanRiskSubItemField.class));
+		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
 	

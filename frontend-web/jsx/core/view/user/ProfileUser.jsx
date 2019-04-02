@@ -83,18 +83,14 @@ export default React.createClass({
 				this.setState({
 					model: model.data,
 				});
-				//Toastr.remove();
-				//Toastr.success("Dados editados com sucesso.");
 				this.context.toastr.addAlertSuccess(Messages.get("notification.dataEditedSuccessfully"));
-				me.context.router.push("/users/profilerUser/"+(model.data.id));
 				this.setState({
-					editUser: formatsBlocked
+					editUser: false,
 				});
 
 				UserStore.dispatch({
 					action: UserStore.ACTION_USER_PROFILE,
 					data: this.state.modelId
-
 				});
 			} else {
 				var errorMsg = JSON.parse(model.responseText)
@@ -386,14 +382,14 @@ export default React.createClass({
 			Modal.confirmCustom(() => {
 				Modal.hide();
 				UserStore.dispatch({
-				action: UserStore.ACTION_UPDATE,
-				data: {
-					user:data,
-					currentPassword: data.currentPassword != undefined ? data.currentPassword : null,
-					newPassword: data.newPassword != undefined ? data.newPassword : null,
-					newPasswordTwo: data.newPasswordTwo != undefined ? data.newPasswordTwo : null
-				}
-			});
+					action: UserStore.ACTION_UPDATE,
+					data: {
+						user:data,
+						currentPassword: data.currentPassword != undefined ? data.currentPassword : null,
+						newPassword: data.newPassword != undefined ? data.newPassword : null,
+						newPasswordTwo: data.newPasswordTwo != undefined ? data.newPasswordTwo : null
+					}
+				});
 			},msg,this.refreshCancel);
 			 errorField = false
 		}

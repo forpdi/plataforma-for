@@ -212,6 +212,7 @@ export default React.createClass({
 					isDocument={this.props.isDocument}
 					onClick={this.props.onClick}
 					onChange={this.props.onChange}
+					className={this.props.className}
 					/>
 					</div>
 				:

@@ -49,6 +49,8 @@ export default React.createClass({
 			processList:[],
 			unit: null,
 			update:false,
+			StrategyError:false,
+			ObjectiveError:false,
 		}
 	},
 
@@ -311,11 +313,14 @@ export default React.createClass({
 			}, {
 				name: "tipology",
 				type: AttributeTypes.SELECT_FIELD,
-				optionsField: [{ label: 'Risco operacional' },
-				{ label: 'Risco de imagem/reputação do órgão' },
-				{ label: 'Risco legal' },
-				{ label: 'Risco financeiro/orçamentário' },
-				{ label: 'Risco de Integridade'}],
+				optionsField: [
+					{ label: 'Risco operacional' },
+					{ label: 'Risco de imagem/reputação do órgão' },
+					{ label: 'Risco legal' },
+					{ label: 'Risco financeiro/orçamentário' },
+					{ label: 'Risco de Integridade'},
+					{ label: 'Risco estratégico'},
+				],
 				placeholder: "Selecione",
 				maxLength: 100,
 				label: "Tipologia",
@@ -516,11 +521,9 @@ export default React.createClass({
 
 	onCancel() {
 
-
 		if (this.state.newRisk) {
 			document.getElementById("field-name").value = ''
 			document.getElementById("field-code").value = ''
-			//document.getElementById("field-user").value = ''
 			document.getElementById("field-impact").value = ''
 			document.getElementById("field-probability").value = ''
 			document.getElementById("field-periodicity").value = ''
@@ -529,20 +532,13 @@ export default React.createClass({
 			document.getElementById("field-tipology").value = ''
 			document.getElementById("field-type").value = ''
 
-			//var index=this.refs["field-1"].refs.user.refs["field-user"].selectedIndex
-
-			//data['user']={id:this.state.users[index].id}
-			//data['unit']={id:this.state.unitId}
 			this.setState({
 				risk_pdi: false,
 				risk_obj_process: false,
 				risk_act_process: false
 			})
-		} else {
+		} else{
 			this.props.onChange()
-			/*this.setState({
-				visualization: true
-			})*/
 		}
 
 	},
@@ -742,6 +738,32 @@ export default React.createClass({
 
 		var msg = Validate.validationRiskRegister(data, this.refs);
 
+		var objectivePDI= this.refs["objectivePDI"]
+		var objectiveProcess= this.refs["objectiveProcess"]
+
+		if(data.processes.total == 0 && objectivePDI.checked){
+			if(msg==""){msg=Messages.get("notification.risk.objectivePDI")}
+			this.setState({
+				StrategyError:true
+			})
+		}else{
+			this.setState({
+				StrategyError:false
+			})
+		}
+
+		if(data.processes.total == 0 && objectiveProcess.checked){
+			if(msg==""){msg=Messages.get("notification.risk.objectiveProcess")}
+
+			this.setState({
+				ObjectiveError:true
+			})
+		}else{
+			this.setState({
+				ObjectiveError:false
+			})
+		}
+
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
 			return;
@@ -758,13 +780,13 @@ export default React.createClass({
 				data: data
 			});
 		}
+
 	},
 
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
-
 		return (<div>
 			{this.state.newRisk ?
 				<h1>Novo Risco</h1>
@@ -817,7 +839,7 @@ export default React.createClass({
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
 						<div>
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
+							<input  ref="objectivePDI" style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
 							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
 						</div>
 						<br />
@@ -835,6 +857,7 @@ export default React.createClass({
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
 						onChange={this.onChangeStrategies}
+						className= {this.state.StrategyError  ? " borderError":""}
 					/>
 				: ""}
 				<br />
@@ -843,9 +866,9 @@ export default React.createClass({
 				}
 
 				{!this.state.visualization ? <div>
-					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
+					<div id="objectiveProcess" style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
 					<div>
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
+						<input  ref="objectiveProcess" style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
 						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
 					</div>
 					<br />
@@ -864,6 +887,7 @@ export default React.createClass({
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
 						onChange={this.onChangeProcesses}
+						className= {this.state.ObjectiveError  ? " borderError":""}
 					/>
 				:""}
 				<br />
@@ -905,7 +929,6 @@ export default React.createClass({
 						fields={this.getActivities()}
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
-
 					/>
 				: ""}
 

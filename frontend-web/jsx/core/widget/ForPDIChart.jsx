@@ -19,14 +19,9 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        /*newProps.options.animation = {
-            duration: 600,
-            easing: 'out',
-            startup: true
-        }*/
         newProps.options.chartArea = {
             width: '65%'
-        }
+        };
         newProps.options.vAxis.format = '#,##0';
     },
 
@@ -59,17 +54,19 @@ export default React.createClass({
                     <i onClick={this.changePage.bind(this, Number(this.state.page + 1))}
                     className="dashboard-next-icon mdi mdi-arrow-right-bold" />
                 </div> : undefined}
-        		<Chart
-                 chartType= {this.props.chartType}
-                 data={this.props.data}
-                 options={this.props.options}
-                 graph_id={this.props.graph_id}
-                 width={this.props.width}
-                 height={this.props.height}
-				 legend_toggle={this.props.legend_toggle}
-                 chartEvents={this.props.chartEvents || []}
-				loader={<div><LoadingGauge/></div>}
-				/>
+                <div className="width658">
+					<Chart
+					 chartType= {this.props.chartType}
+					 data={this.props.data}
+					 options={this.props.options}
+					 graph_id={this.props.graph_id}
+					 width={this.props.width}
+					 height={this.props.height}
+					 legend_toggle={this.props.legend_toggle}
+					 chartEvents={this.props.chartEvents || []}
+					 loader={<div><LoadingGauge/></div>}
+					/>
+				</div>
             </div>
     	);
     }

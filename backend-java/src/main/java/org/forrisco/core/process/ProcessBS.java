@@ -33,10 +33,16 @@ public class ProcessBS extends HibernateBusiness {
 	 * 
 	 * @param Process,
 	 *			instância do processo
+	 * @throws Exception 
 	 *            
 	 */
-	public void save(Process process) {
+	public void save(Process process) throws Exception {
 		process.setDeleted(false);
+		
+		if(process.getFileLink() != null && process.getFile()==null||
+				process.getFileLink() ==null && process.getFile() !=null) {
+			throw new Exception("Link do arquivo inconsistente");
+		}
 		this.persist(process);	
 	}
 	

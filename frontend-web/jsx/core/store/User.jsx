@@ -9,7 +9,7 @@ var UserModel = Fluxbone.Model.extend({
 	url: URL,
 	validate(attrs, options) {
 		var errors = [];
-		
+
 		if (attrs.name == undefined || attrs.name == "") {
 			errors.push("O nome é obrigatório.");
 		}
@@ -30,7 +30,7 @@ var UserStore = Fluxbone.Store.extend({
 	ACTION_REMOVE: 'user-removeFromCompany',
 	ACTION_BLOCK: 'user-block',
 	ACTION_UNBLOCK: 'user-unblock',
-	ACTION_UPDATE: 'user-update',
+	ACTION_UPDATE: 'user-updateUser',
 	ACTION_UPDATE_USER:'user-updateEdit',
 	ACTION_UPDATE_PICTURE: 'user-updatePicture',
 	ACTION_UPDATE_PICTURE_EDIT_USER: 'user-updatePictureEditUser',
@@ -55,8 +55,8 @@ var UserStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			success(data) {
 				if(data.data){
-					me.remove(id);	
-				}				
+					me.remove(id);
+				}
 				me.trigger("remove", data);
 			},
 			error: (model,response,opts) => {
@@ -110,7 +110,7 @@ var UserStore = Fluxbone.Store.extend({
 		});
 	},
 
-	update(data){
+	updateUser(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/profile",
@@ -152,7 +152,7 @@ var UserStore = Fluxbone.Store.extend({
 		});
 	},
 
-	updatePicture(data){	
+	updatePicture(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/picture",
@@ -194,7 +194,7 @@ var UserStore = Fluxbone.Store.extend({
 
 	retrieveUserProfile(data) {
 		var me = this;
-		
+
 		$.ajax({
 			url: me.url+"/profileUser/"+data,
 			method: 'GET',
@@ -208,7 +208,7 @@ var UserStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-	
+
 	retrieveUser (data) {
 		var me = this;
 		$.ajax({
@@ -228,7 +228,7 @@ var UserStore = Fluxbone.Store.extend({
 
 
 	listPermissions(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
 			url: me.url+"/permissions",
 			method: 'GET',
