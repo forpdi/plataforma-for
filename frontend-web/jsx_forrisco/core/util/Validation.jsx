@@ -316,7 +316,7 @@ var Validate = {
 
 
 		var name = refs["field-name"].refs.name
-		var code = refs["field-0"].refs.code
+		// var code = refs["field-0"].refs.code
 		var user = refs["field-1"].refs.user
 		var probability = refs["field-4"].refs.probability
 		var impact = refs["field-5"].refs.impact
@@ -335,16 +335,16 @@ var Validate = {
 			}
 		}
 
-		if(code.refs["field-code"].value != null){
-			if(code.refs["field-code"].value==""){
-				code.refs["field-code"].className +=" borderError"
-				code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Código precisa estar preenchido."}
-			}else{
-				code.refs["field-code"].className="form-control"
-				code.refs["formAlertError"].innerHTML = ""
-			}
-		}
+		// if(code.refs["field-code"].value != null){
+		// 	if(code.refs["field-code"].value==""){
+		// 		code.refs["field-code"].className +=" borderError"
+		// 		code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+		// 		if(msg==""){msg="Código precisa estar preenchido."}
+		// 	}else{
+		// 		code.refs["field-code"].className="form-control"
+		// 		code.refs["formAlertError"].innerHTML = ""
+		// 	}
+		// }
 
 		if(user.refs["field-user"].value != null){
 			if(user.refs["field-user"].value==""){
