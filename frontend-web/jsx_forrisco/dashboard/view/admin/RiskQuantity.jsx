@@ -74,7 +74,6 @@ export default React.createClass({
 	},
 
  	componentWillUnmount() {
-
 		RiskStore.off(null, null, this);
 		StructureStore.off(null, null, this);
 	},
