@@ -53,8 +53,12 @@ export default React.createClass({
 	getValue() {
 		var el = this.refs[this.state.fieldId];
 
-		if (el == undefined)
+		if (!el)
 			return el;
+		if (!el.type) {
+			// para o campo de text area o type esta undefined
+			return el.state.value;
+		}
 		if (el.type == AttributeTypes.DATE_FIELD ||
 				el.type ==  AttributeTypes.DATE_TIME_FIELD)
 			return el.valueAsDate;
