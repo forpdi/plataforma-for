@@ -28,6 +28,7 @@ export default React.createClass({
 		return {
 			processes: [],
 			processesTotal: null,
+			unit: null,
 			units: [],
 			process: null,
 			selectedUnits: [],
@@ -40,15 +41,8 @@ export default React.createClass({
 
 	componentDidMount() {
 		ProcessStore.on('processListedByUnit', response => {
-			const filteredProcesses = _.map(response.data, process => ({
-					...process,
-					relatedUnits: _.filter(process.relatedUnits, unit => (
-						unit.id !== parseInt(this.props.unitId)
-					)),
-				}
-			));
-
-			_.map(filteredProcesses, (value, idx) => {
+			const processes = response.data;
+			_.forEach(processes, (value, idx) => {
 				_.assign(
 					value,
 					{ tools: value.unitCreator.id == this.props.unitId && this.isPermissionedUser() ? this.getTools(idx) : null},
@@ -62,7 +56,7 @@ export default React.createClass({
 			});
 
 			this.setState({
-				processes:filteredProcesses,
+				processes,
 				processesTotal: response.total,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
@@ -93,16 +87,16 @@ export default React.createClass({
 			}
 		}, this);
 		UnitStore.on('allunitsbyplan', response => {
-
-			const filteredUnits = _.filter(response.data, unit => (
-				unit.id !== parseInt(this.props.unitId)
+			const unit = _.find(response.data, unit => (
+				unit.id === parseInt(this.props.unitId)
 			));
 			this.setState({
-				units: _.map(filteredUnits, unit => ({
+				units: _.map(response.data, unit => ({
 					label: unit.name,
 					value: unit.id,
 					data: unit,
 				})),
+				unit,
 			});
 		}, this);
 		this.refreshComponent(this.props.unitId, this.props.planRiskId);
@@ -181,6 +175,9 @@ export default React.createClass({
 					}}
 				/>
 			),
+			unitCreator: {
+				name: this.state.unit.name,
+			},
 			relatedUnits: [
 				{
 					name: (
@@ -279,6 +276,9 @@ export default React.createClass({
 					</div>
 				}
 			],
+			unitCreator: {
+				name: process.unitCreator.name,
+			},
 			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 				<a onClick={this.fileLinkChangeHandler}>
 					<span className="fpdi-nav-label" id="process-file-upload">
@@ -480,10 +480,16 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Processo',
 			accessor: 'name',
-		}, {
+		},
+		{
 			Header: 'Objetivo',
 			accessor: 'objective',
-		}, {
+		},
+		{
+			Header: 'Unidade responsável',
+			accessor: 'unitCreator.name',
+		},
+		{
 			Header: 'Unidade relacionada',
 			accessor: 'relatedUnits[0].name',
 		},
