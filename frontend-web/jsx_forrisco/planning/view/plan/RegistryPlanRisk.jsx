@@ -170,8 +170,8 @@ export default React.createClass({
 		}
 		return (
 			<div>
-				<h1 className="marginLeft115">{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
-				<div className="fpdi-card padding40">
+				<div className="fpdi-card fpdi-card-full">
+					<h1>{Messages.getEditable("label.newPlanRisco", "fpdi-nav-label")}</h1>
 					<form onSubmit={this.handleSubmit}>
 
 						{

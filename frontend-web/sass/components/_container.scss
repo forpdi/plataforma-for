@@ -1,6 +1,7 @@
 #main-body {
 	margin: 0;
-	padding: 0;
+  padding: 0;
+  width: 100%;
 }
 
 /*
@@ -29,9 +30,12 @@
   @include flexbox;
   @include flex-dir(row);
   @include flex(1);
-	height: 100%;
+  height: 100%;
+  width: 100%;
   background-color: $brand-background;
   .fpdi-app-content {
+    width: 100%;
+    max-width: 100%;
     @extend .container-fluid;
     overflow-y: auto;
     @include flex(7);
@@ -499,11 +503,13 @@
 
 
 .Cor{
+	width: 100%;
 	white-space: nowrap;
-	border: .5px solid #ddd;
-	text-align: -webkit-center;
-	display: table-cell;
-	vertical-align: middle;
+	border: .12px solid #ddd;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .Cinza {
