@@ -159,7 +159,7 @@ export default React.createClass({
 							default: cor="Cinza";
 						}
 
-						return <div  className={"Cor "+cor} >{matrix[i][0]}</div>
+						return <div  className={"Cor " + cor}>{matrix[i][0]}</div>
 
 					}
 				}
@@ -207,7 +207,8 @@ export default React.createClass({
 			table.push(<tr key={i} >{children}</tr>)
 		}
 
-		return (<div>
+	return (
+		<div>
 			<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 				{"MATRIZ DE RISCO"}
 			</label>
@@ -215,7 +216,7 @@ export default React.createClass({
 			<br/>
 			<table style={{ width: "min-content" }}>
 				<th>
-					<td style={{top: ((this.state.policyModel.data.nline-2)*20+80)+"px" , right: "65px", position: "relative"}} >
+					<td style={{top: ((this.state.policyModel.data.nline-2)*20+40)+"px" , right: "50px", position: "relative"}} >
 						<div style={{width: "115px" }} className="vertical-text">PROBABILIDADE</div>
 					</td>
 					{table}

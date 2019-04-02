@@ -503,11 +503,13 @@
 
 
 .Cor{
+	width: 100%;
 	white-space: nowrap;
-	border: .5px solid #ddd;
-	text-align: -webkit-center;
-	display: table-cell;
-	vertical-align: middle;
+	border: .12px solid #ddd;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .Cinza {
