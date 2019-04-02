@@ -488,10 +488,10 @@ public class UnitBS extends HibernateBusiness {
 		PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
 		for(Process process :processes.getList()) {
 			
-			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
+			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId().equals(unit.getId())) {
 				return false;
 			}
-			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
+			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId().equals(unit.getId())) {
 				return false;
 			}
 		}

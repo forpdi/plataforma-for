@@ -104,7 +104,7 @@ public class RiskTask  implements Task {
 					this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", risk.getUser(), url, companyDomain);
 				
 					//responsável pela unidade
-					if(risk.getUser().getId() != risk.getUnit().getUser().getId()) {
+					if(!risk.getUser().getId().equals(risk.getUnit().getUser().getId())) {
 						this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", risk.getUnit().getUser(), url, companyDomain);
 					}
 					
@@ -112,8 +112,8 @@ public class RiskTask  implements Task {
 					
 					for(User admin : admins.getList()) {
 						//administradores
-						if(admin.getId() != risk.getUser().getId()
-						&& admin.getId() != risk.getUnit().getUser().getId()) {
+						if(!admin.getId().equals(risk.getUser().getId())
+						&& !admin.getId().equals(risk.getUnit().getUser().getId())) {
 							this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY, texto, "aux", admin, url, companyDomain);
 						}
 					}

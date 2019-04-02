@@ -381,9 +381,6 @@ export default React.createClass({
 	},
 
 	getProcesses() {
-
-
-		console.log(this.state.riskModel)
 		if (this.state.riskModel == null
 			|| this.state.riskModel.processes == null
 			|| !this.state.riskModel.risk_obj_process
@@ -768,7 +765,6 @@ export default React.createClass({
 		}
 
 		if (msg != "") {
-			console.log(this.state.StrategyError,this.state.ObjectiveError)
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
@@ -791,9 +787,6 @@ export default React.createClass({
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
-
-		console.log(this.state.StrategyError,this.state.ObjectiveError)
-
 		return (<div>
 			{this.state.newRisk ?
 				<h1>Novo Risco</h1>

@@ -48,8 +48,8 @@ export default React.createClass({
 					{ tools: value.unitCreator.id == this.props.unitId && this.isPermissionedUser() ? this.getTools(idx) : null},
 					{
 						fileData: {
-							fileName: value.file.name,
-							fileLink: value.fileLink,
+							fileName: value.file? value.file.name : null,
+							fileLink: value.file? value.fileLink : null,
 						}
 					}
 				)
@@ -282,7 +282,7 @@ export default React.createClass({
 			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 				<a onClick={this.fileLinkChangeHandler}>
 					<span className="fpdi-nav-label" id="process-file-upload">
-						{process.fileData.fileName}
+						{process.fileData.fileName ? process.fileData.fileName : Messages.get("label.attachFiles")}
 					</span>
 				</a>
 			</div>,
@@ -399,7 +399,7 @@ export default React.createClass({
 	newProcess() {
 		const { process } = this.state;
 
-		if (!process.name || !process.objective || !process.file) {
+		if (!process.name || !process.objective){ // || !process.file) {
 			this.context.toastr.addAlertError("Para confirmar a ação preencha todos os campos obrigatórios.");
 		} else {
 			ProcessStore.dispatch({
@@ -436,7 +436,7 @@ export default React.createClass({
 	updateProcess() {
 		const { process } = this.state;
 
-		if (!process.name || !process.objective || !process.file) {
+		if (!process.name || !process.objective){ // || !process.file) {
 			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
 		} else {
 			ProcessStore.dispatch({
@@ -474,9 +474,11 @@ export default React.createClass({
 	},
 
 	render() {
+
 		if (this.state.loading === true) {
 			return <LoadingGauge/>;
 		}
+
 		const columns = [{
 			Header: 'Processo',
 			accessor: 'name',
@@ -490,8 +492,13 @@ export default React.createClass({
 			accessor: 'unitCreator.name',
 		},
 		{
-			Header: 'Unidade relacionada',
-			accessor: 'relatedUnits[0].name',
+			Header: 'Unidade(s) relacionada(s)',
+			accessor: "relatedUnits[0].name",
+			Cell: props => <span className=''>{
+				props.original.relatedUnits.map( (unit, idx)=>{
+					return <p>{unit.name}</p>
+				})
+			}</span>
 		},
 		{
 			Header: 'Anexo',
@@ -511,6 +518,10 @@ export default React.createClass({
 			sortable: false,
 			width: 100
 		}];
+
+		if(this.state.updateRowDisplayed){
+			columns[2].Cell=null
+		}
 
 		return (
 			<div className="general-table">
