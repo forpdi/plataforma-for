@@ -312,10 +312,10 @@ export default React.createClass({
 					data={this.state.data}
 					options={options}
 					graph_id={"LineChart-"+this.props.title}
-					width="100%"
+					width="658px"
 					height="250px"
 					legend_toggle={true}
-					/>
+				/>
 				<div className="colaborator-goal-performance-legend" key={this.props.title}>
 					{levels}
 				</div>

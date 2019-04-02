@@ -50,6 +50,7 @@ export default React.createClass({
     },
 
     render(){
+		console.log(this.props);
     	return(
             <div>
                 {this.props.total > this.props.pageSize ?
@@ -68,7 +69,7 @@ export default React.createClass({
                  height={this.props.height}
 				 legend_toggle={this.props.legend_toggle}
                  chartEvents={this.props.chartEvents || []}
-				loader={<div><LoadingGauge/></div>}
+				 loader={<div><LoadingGauge/></div>}
 				/>
             </div>
     	);
