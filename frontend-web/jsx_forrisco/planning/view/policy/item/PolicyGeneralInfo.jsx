@@ -303,7 +303,7 @@ export default React.createClass({
 					<label  className="fpdi-text-label">{"DESCRIÇÃO"}</label>
 					<br/>
 					<span className="pdi-normal-text">
-						<p>{this.state.policyModel.data.description}</p>
+						<pre className="pre-info">{this.state.policyModel.data.description}</pre>
 					</span>
 
 					<br/><br/>

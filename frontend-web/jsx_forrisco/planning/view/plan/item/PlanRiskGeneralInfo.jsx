@@ -157,7 +157,9 @@ export default React.createClass({
 							<div >
 								<h3 className="fpdi-text-label">{"DESCRIÇÃO"}</h3>
 								<br/>
-								<span className="pdi-normal-text"><p>{this.state.description}</p></span>
+								<span className="pdi-normal-text">
+									<pre className="pre-info">{this.state.description}</pre>
+								</span>
 								<br/>
 								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
 								<br/>
