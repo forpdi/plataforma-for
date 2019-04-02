@@ -93,72 +93,77 @@ export default React.createClass({
 	},
 
 	render() {
+		console.log('aqui');
 		return (
 			<div>
 				{
-					this.state.unitId !== null ?
-						<div className="modal-dialog modal-md">
-							<div className="modal-content">
-								<div className="modal-header fpdi-modal-header">
-									<div>
-										<button type="button" className="close" onClick={this.onDismiss} aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-										<span> <h1 className="modal-title"> {"Risco " + this.state.riskTitle} </h1> </span>
-									</div>
+					this.state.unitId !== null
+					?
+					<div className="modal-dialog modal-md">
+						<div className="modal-content">
+							<div className="modal-header fpdi-modal-header">
+								<div>
+									<button type="button" className="close" onClick={this.onDismiss} aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									<span>
+										<h1 className="modal-title">{"Risco " + this.state.riskTitle}</h1>
+									</span>
+								</div>
 
-									<div>
+								<div>
 									<span>
 										{"Tipo: " + this.state.riskType} |
 										{"Probabilidade: " + this.state.riskProbability} |
 										{"Impacto: " + this.state.riskImpact}
 									</span>
-									</div>
-								</div>
-
-								<hr className="divider"/>
-
-								<div className="modal-body fpdi-modal-body">
-									{
-										this.state.listOfRisks.map((callback, index) => {
-											return (
-												<div className="row" key={index}>
-													<div className="col-sm-8 center">
-														<label className="paddingTop5"> {callback.risk.name} </label>
-													</div>
-
-													<div className="col-sm-4 center paddingTop5">
-														<a href={"/#/forrisco/plan-risk/" + callback.risk.unit.planRisk.id + "/unit/" + this.state.unitId + "/risk/" + callback.risk.id+"/info"}
-														   className="btn btn-sm btn-primary center"
-														   onClick={this.onRedirect}>
-															Visualizar
-														</a>
-													</div>
-												</div>
-											)
-										})
-									}
-								</div>
-
-								<div className="text-align-center">
-									<Paginator ref = "pagination" onChangePage={this.pageChange} totalOfRisks={this.state.totalOfRisks}/>
 								</div>
 							</div>
-						</div>
-						:
-						<div className="modal-dialog modal-md">
-							<div className="modal-content">
-								<div className="modal-header fpdi-modal-header">
-									<div>
-										<button type="button" className="close" data-dismiss="modal" aria-label="Close">
-											<span aria-hidden="true">&times;</span>
-										</button>
-										<span> <h1
-											className="modal-title"> Não existem riscos nesse quadrante </h1> </span>
-									</div>
-								</div>
+
+							<hr className="divider"/>
+
+							<div className="modal-body fpdi-modal-body">
+								{
+									this.state.listOfRisks.map((callback, index) => (
+										<div className="row" key={index}>
+											<div className="col-sm-8 center">
+												<label className="paddingTop5"> {callback.risk.name} </label>
+											</div>
+
+											<div className="col-sm-4 center paddingTop5">
+												<a href={"/#/forrisco/plan-risk/" + callback.risk.unit.planRisk.id + "/unit/" + this.state.unitId + "/risk/" + callback.risk.id+"/info"}
+												   className="btn btn-sm btn-primary center"
+												   onClick={this.onRedirect}>
+													Visualizar
+												</a>
+											</div>
+										</div>
+									))
+								}
+							</div>
+
+							<div className="text-align-center">
+								<Paginator
+									ref="pagination"
+									onChangePage={this.pageChange}
+									totalOfRisks={this.state.totalOfRisks}
+								/>
 							</div>
 						</div>
+					</div>
+					:
+					<div className="modal-dialog modal-md">
+						<div className="modal-content">
+							<div className="modal-header fpdi-modal-header">
+								<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<span>
+									<h1 className="modal-title">Não existem riscos nesse quadrante</h1>
+								</span>
+							</div>
+						</div>
+					</div>
 				}
 			</div>
 		)

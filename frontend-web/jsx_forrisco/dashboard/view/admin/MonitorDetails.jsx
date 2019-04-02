@@ -268,18 +268,23 @@ export default React.createClass({
 		return (
 			<div className="frisco-dashboard frisco-dashboard-right dashboard-risk-details panel">
 				<div className="dashboard-plan-details-header">
-					<span title={title}>{title.toUpperCase()}
-					</span>
-					<span className="frisco-containerSelect"> {Messages.get("label.units")}
-						<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectUnits">
-							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
-							{this.state.units.map((attr, idy) => {
-								return (
+					<span title={title}>{title.toUpperCase()}</span>
+					<span className="frisco-containerSelect">
+						{Messages.get("label.units")}
+						<select
+							onChange={this.onUnitChange}
+							className="form-control dashboard-select-box-graphs marginLeft10"
+							ref="selectUnits"
+						>
+							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}>
+								{Messages.get("label.viewAll_")}
+							</option>
+							{
+								this.state.units.map((attr, idy) => (
 									<option key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
 										{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
 									</option>
-								);
-							})
+								))
 							}
 						</select>
 					</span>
