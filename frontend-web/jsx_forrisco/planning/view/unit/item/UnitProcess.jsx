@@ -162,8 +162,8 @@ export default React.createClass({
 					className="padding7"
 					fieldDef={{
 						name: "new-process-name",
-						type: "text",
-						placeholder: "Nome do processo",
+						type: "textarea",
+						rows: 3,
 						onChange: this.nameChangeHandler,
 						required: true,
 					}}
@@ -174,8 +174,8 @@ export default React.createClass({
 					className="padding7"
 					fieldDef={{
 						name: "new-process-objective",
-						type: "text",
-						placeholder: "Nome do objetivo",
+						type: "textarea",
+						rows: 3,
 						onChange: this.objectiveChangeHandler,
 						required: true,
 					}}
@@ -247,8 +247,8 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-process-name",
-					type: "text",
-					placeholder: "Nome do processo",
+					type: "textarea",
+					rows: 3,
 					value: process.name,
 					onChange: this.nameChangeHandler,
 					required: true,
@@ -258,8 +258,8 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-process-objective",
-					type: "text",
-					placeholder: "Nome do objetivo",
+					type: "textarea",
+					rows: 3,
 					objective: process.objective,
 					value: process.objective,
 					onChange: this.objectiveChangeHandler,

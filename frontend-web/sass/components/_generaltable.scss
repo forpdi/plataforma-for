@@ -83,7 +83,6 @@
 	.unit-multi-select {
 		width: 100%;
 		& > div {
-			margin-top: 15px;
 			width: 100%;
 			button {
 				width: 100%;
@@ -92,7 +91,7 @@
 	}
 
 	.fpdi-nav-hide-btn {
-		margin: 20px 0 0 0;
+		margin: 0;
 		padding: 0;
 	}
 }
