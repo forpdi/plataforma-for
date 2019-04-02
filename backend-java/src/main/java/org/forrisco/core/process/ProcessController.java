@@ -99,7 +99,13 @@ public class ProcessController extends AbstractController{
 						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlanRisk().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
 		
 						try {
+							
+							if( process.getFile() !=null) {
 								this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());
+							}else {
+								this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url);
+							}
+							
 						} catch (Throwable ex) {
 							LOGGER.errorf(ex, "Unexpected error occurred.");
 							this.fail(ex.getMessage());
@@ -234,46 +240,58 @@ public class ProcessController extends AbstractController{
 				return;
 			}
 			List<ProcessUnit> processUnitsExistent = this.processBS.getProcessUnitsByProcess(process);
-			// mapeia todas as processUnits
+			List<Unit> relatedUnits = process.getRelatedUnits();
+			List<ProcessUnit> newProcessUnits = new LinkedList<>();
+			
+			// mapeia todos os processUnits
 			Map<Long, ProcessUnit> processUnitsExistentMap = new HashMap<>();
 			for (ProcessUnit processUnit : processUnitsExistent) {
 				processUnitsExistentMap.put(processUnit.getUnit().getId(), processUnit);
 			}
-			List<Unit> relatedUnits = process.getRelatedUnits();
-			List<ProcessUnit> newProcessUnits = new LinkedList<>();
-			// verifica as unidades que foram vinculadas e as que foram desvinculadas 
+			
+			// verifica as unidades que foram/continuam vinculadas
 			for (Unit unit : relatedUnits) {
 				ProcessUnit processUnit = processUnitsExistentMap.get(unit.getId());
 				if (processUnit == null) {
+					processUnitsExistentMap.remove(unit.getId());
 					processUnit = new ProcessUnit();
 					processUnit.setProcess(process);
 					processUnit.setUnit(unit);
 					newProcessUnits.add(processUnit);
+					
+					//nova unidade relacionada
+					//envia email de notificação
+					
 				} else if (processUnit.isDeleted()) {
+					processUnitsExistentMap.remove(unit.getId());
 					processUnit.setDeleted(false);
 					newProcessUnits.add(processUnit);
 				} else {
 					processUnitsExistentMap.remove(unit.getId());
 				}
 			}
+			
 			// persiste as processUnits
 			for (ProcessUnit processUnit : newProcessUnits) {
 				this.processBS.persist(processUnit);
 			}
+			
+			//processUnits que foram desvinculadas 
 			for (ProcessUnit processUnit : processUnitsExistentMap.values()) {
-				if (processUnit.getUnit().getId() != process.getUnit().getId()) {
+				if (!processUnit.getUnit().getId().equals(process.getUnit().getId())) {
 					processUnit.setDeleted(true);
 					this.processBS.persist(processUnit);
 				}
 			}
+			
 			// atualiza e persiste o processo
 			existent.setFileLink(process.getFileLink());
-			//existent.setFileName(process.getFileName());
 			existent.setFile(process.getFile());
 			existent.setName(process.getName());
 			existent.setObjective(process.getObjective());
 			this.processBS.persist(existent);
-			this.success();
+			
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
