@@ -1,7 +1,14 @@
 import _ from "underscore";
 import React from "react";
+import Toastr from "toastr";
+import Messages from "@/core/util/Messages";
 
 export default React.createClass({
+
+	contextTypes: {
+		toastr: React.PropTypes.object.isRequired
+	},
+
 	getDefaultProps() {
 		return {
 			fieldDef: {
@@ -28,20 +35,57 @@ export default React.createClass({
 	getInputNode() {
 		return this.refs[this.state.fieldId];
 	},
+
+	onKeyUp(evt){
+		this.maxLengthMask();
+		var key = evt.which;
+		if(key === 13 && key !== this.props.confirmKey) {
+			evt.preventDefault();
+		}
+	},
+
+	maxLengthMask(){
+		if(this.refs[this.state.fieldId].value.length >= this.props.fieldDef.maxLength){
+			if(this.context.toastr == 'undefined'){
+				Toastr.remove();
+				Toastr.error(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength+" " + Messages.get("label.error.limitCaracteres"));
+			}else{
+				this.context.toastr.addAlertError(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
+			}
+		}
+	},
+
 	render() {
 		var fieldEl;
 		if (this.props.fieldDef.type == 'checkbox') {
-			fieldEl = (<div className="checkbox"><label>
+			fieldEl = (
+				<div className="checkbox">
+					<label>
+						<input
+							type={this.props.fieldDef.type}
+							name={this.props.fieldDef.name}
+							defaultValue={true}
+							defaultChecked={this.props.fieldDef.value}
+							id={this.state.fieldId}
+							ref={this.state.fieldId}
+							onChange={this.props.fieldDef.onChange || _.noop}
+						/> {this.props.fieldDef.placeholder}
+					</label>
+				</div>);
+		} else if (this.props.fieldDef.type == 'text') {
+			fieldEl = (
 				<input
-					type={this.props.fieldDef.type}
+					className="form-control-h"
+					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
-					defaultValue={true}
-					defaultChecked={this.props.fieldDef.value}
+					maxLength={this.props.fieldDef.maxLength}
+					defaultValue={this.props.fieldDef.value}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
+					onPaste={this.onKeyUp}
 					onChange={this.props.fieldDef.onChange || _.noop}
-				/> {this.props.fieldDef.placeholder}
-			</label></div>);
+				/>
+			);
 		} else if (this.props.fieldDef.type == 'textarea') {
 			fieldEl = (
 				<textarea

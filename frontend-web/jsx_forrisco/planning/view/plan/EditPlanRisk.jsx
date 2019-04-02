@@ -155,7 +155,7 @@ export default React.createClass({
 		return (
 			<div>
 				<h1 className="marginLeft115">Editar Plano de Risco</h1>
-				<div className="fpdi-card padding40">
+				<div className="fpdi-card">
 					<form onSubmit={this.handleSubmit} ref={"planRiskEditForm"}>
 
 						{

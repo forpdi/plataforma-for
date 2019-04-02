@@ -53,31 +53,31 @@ export default React.createClass({
 
 	getFields() {
 		var fields = [];
-		fields.push({
-			name: "name",
-			type: "text",
-			required: true,
-			maxLength: 240,
-			placeholder: "Nome da Política",
-			label: Messages.getEditable("label.name", "fpdi-nav-label"),
-			value: this.state.policyModel ? this.state.policyModel.data.name : null,
-		}, {
+		fields.push(
+			{
+				name: "name",
+				type: "text",
+				required: true,
+				maxLength: 240,
+				placeholder: "Nome da Política",
+				label: Messages.getEditable("label.name", "fpdi-nav-label"),
+				value: this.state.policyModel ? this.state.policyModel.data.name : null,
+			}, {
 				name: "description",
 				type: "textarea",
 				placeholder: "Descrição da Política",
 				maxLength: 9900,
 				label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
 				value: this.state.policyModel ? this.state.policyModel.data.description : null,
-			})
+			});
 
 		return fields;
-
 	},
 
 	getRisco(n) {
 		var fields = [];
-		var cor = null
-		var risk = null
+		var cor = null;
+		var risk = null;
 		if (this.state.risklevelModel) {
 			if (this.state.risklevelModel.data[n - 1]) {
 				switch (this.state.risklevelModel.data[n - 1]['color']) {
@@ -93,28 +93,30 @@ export default React.createClass({
 			}
 		}
 
-		fields.push({
-			name: "risk_level_" + n,
-			type: "text",
-			required: true,
-			maxLength: 40,
-			placeholder: " Ex: Crítico",
-			label: Messages.getEditable("label.policyConfig", "hide"),
-			value: risk,
-			onChange: this.onChange
-		},
+		fields.push(
+			{
+				name: "risk_level_" + n,
+				type: "text",
+				required: true,
+				maxLength: 30,
+				placeholder: "Ex: Crítico",
+				label: Messages.getEditable("label.policyConfig", "hide"),
+				value: risk,
+				onChange: this.onChange
+			},
+
 			{
 				name: "risk_cor_" + n,
 				type: "select",
 				required: true,
-				maxLength: 40,
+				maxLength: 30,
 				placeholder: "Selecione a cor representativa",
 				label: Messages.getEditable("label.policySelect", "hide"),
 				value: cor,
 				valueField: 'label',
 				displayField: 'label',
 				onChange: this.onChange
-			})
+			});
 
 		return fields
 	},
@@ -148,7 +150,7 @@ export default React.createClass({
 			name: "probability_" + n,
 			type: "text",
 			required: true,
-			maxLength: 1,
+			maxLength: 30,
 			hidden: true,
 			placeholder: " Tipo de probabilidade (Ex.: Alto, Médio ou Baixo)",
 			label: "",
@@ -162,7 +164,7 @@ export default React.createClass({
 			name: "impact_" + n,
 			type: "text",
 			required: true,
-			maxLength: 1,
+			maxLength: 30,
 			hidden: true,
 			placeholder: " Tipo de Impacto (Ex.: Alto, Médio ou Baixo)",
 			label: "",
@@ -540,17 +542,19 @@ export default React.createClass({
 		}
 
 		return (
-			<table style={{ width: "min-content" }}>
-				<th style={{ top: (this.state.matrix_l * 33 + 30) + "px", right: "10px", position: "relative" }} >
-					<div style={{ width: "30px" }} className="vertical-text">PROBABILIDADE</div>
-				</th>
+			<div style={{ overflowX: "scroll" }}>
+				<table style={{ width: "min-content" }}>
+					<th style={{ top: (this.state.matrix_l * 33 + 30) + "px", right: "10px", position: "relative" }} >
+						<div style={{ width: "30px" }} className="vertical-text">PROBABILIDADE</div>
+					</th>
 
-				<th>
-					{table}
-					<td></td>
-					<td colSpan={this.state.matrix_c} style={{"text-align":"-webkit-center"}}>IMPACTO</td>
-				</th>
-			</table>
+					<th>
+						{table}
+						<td></td>
+						<td colSpan={this.state.matrix_c} style={{"text-align":"-webkit-center"}}>IMPACTO</td>
+					</th>
+				</table>
+			</div>
 		);
 	},
 
@@ -820,7 +824,7 @@ export default React.createClass({
 
 		return (
 			<div>
-				<div className="fpdi-card padding40" style={{ width: 'max-content', minWidth: '100%' }}>
+				<div className="fpdi-card" style={{ minWidth: '100%' }}>
 					<h1>{this.props.params.policyId ? Messages.getEditable("label.editPolicy", "fpdi-nav-label") : Messages.getEditable("label.newPolicy", "fpdi-nav-label")}</h1>
 					<form onSubmit={this.submitWrapper} id={this.props.id} ref="policyEditForm">
 

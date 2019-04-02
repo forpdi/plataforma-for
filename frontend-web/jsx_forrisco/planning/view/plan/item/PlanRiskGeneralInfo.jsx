@@ -125,6 +125,7 @@ export default React.createClass({
 	},
 
 	render() {
+		console.log(this.context.permissions);
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
@@ -135,9 +136,7 @@ export default React.createClass({
 					<h1>
 						{this.state.title}
 						{
-							(this.context.roles.ADMIN ||
-								_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION))
-							&&
+							(this.context.roles.ADMIN || _.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION)) &&
 							<span className="dropdown">
 								<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
 								aria-expanded="true"
@@ -157,7 +156,9 @@ export default React.createClass({
 							<div >
 								<h3 className="fpdi-text-label">{"DESCRIÇÃO"}</h3>
 								<br/>
-								<span className="pdi-normal-text"><p>{this.state.description}</p></span>
+								<span className="pdi-normal-text">
+									<pre className="pre-info">{this.state.description}</pre>
+								</span>
 								<br/>
 								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
 								<br/>

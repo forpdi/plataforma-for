@@ -391,8 +391,9 @@ span.inner{
 }
 
 .fpdi-plan-details{
-   position: relative;
-   min-height: 100%;
+	width: 100%;
+  position: relative;
+  min-height: 100%;
 }
 
 .fpdi-tabs .fpdi-tabs-content {
@@ -1429,4 +1430,13 @@ label{
 	&:-ms-input-placeholder {
 		font-style: italic;
 	}
+}
+
+pre.pre-info {
+	background-color: transparent;
+	border: none;
+	color: #575858;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	padding: 0;
 }
