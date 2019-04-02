@@ -55,10 +55,14 @@ export default React.createClass({
 
 		if (el == undefined)
 			return el;
-		if (el.type == AttributeTypes.DATE_FIELD || 
+		if (!el.type) {
+			// para o campo de text area o type esta undefined
+			return el.state.value;
+		}
+		if (el.type == AttributeTypes.DATE_FIELD ||
 				el.type ==  AttributeTypes.DATE_TIME_FIELD)
 			return el.valueAsDate;
-		if (el.type == AttributeTypes.CURRENCY_FIELD || 
+		if (el.type == AttributeTypes.CURRENCY_FIELD ||
 				el.type == AttributeTypes.NUMBER_FIELD ||
 				el.type == AttributeTypes.PERCENTAGE_FIELD ||
 				el.type == AttributeTypes.TOTAL_FIELD)
@@ -85,7 +89,7 @@ export default React.createClass({
 	onKeyUp(evt){
 		this.maxLengthMask();
 		var key = evt.which;
-		if(key == 13) {			
+		if(key == 13) {
 			evt.preventDefault();
 			return;
 		}
@@ -105,7 +109,7 @@ export default React.createClass({
  			return;
  		}
  	},
-	
+
 	onlyNumberPaste(evt){
 		var value = evt.clipboardData.getData('Text');
 		if (!(!isNaN(parseFloat(value)) && isFinite(value)) || parseFloat(value) < 0) {
@@ -114,8 +118,8 @@ export default React.createClass({
 		}
 	},
 
-	componentDidMount() {		
-		if (this.props.fieldDef.type == AttributeTypes.DATE_FIELD || 
+	componentDidMount() {
+		if (this.props.fieldDef.type == AttributeTypes.DATE_FIELD ||
 				this.props.fieldDef.type == AttributeTypes.DATE_TIME_FIELD) {
 			$(this.getInputNode()).daterangepicker({
 				autoApply: true,
@@ -130,18 +134,18 @@ export default React.createClass({
 			});
 		}
 
-		PlanMacroStore.on("getmainmenustate", (data) => {	
+		PlanMacroStore.on("getmainmenustate", (data) => {
             this.setState({
                 menuHidden: data
             });
-        }, this);	
+        }, this);
 	},
 
 	onStrategicObjectivesSelectPlanChange(){
       this.setState({
         strategicObjectivesPlansParam: this.refs.strategicObjectivesSelectPlan.value
       })
-      
+
     },
 
 	delete(){
@@ -171,7 +175,7 @@ export default React.createClass({
 
 	renderEditing(){
 		return(
-			<div className="edit-section-attribute"> 
+			<div className="edit-section-attribute">
 				<input defaultValue={this.props.fieldDef.label} className="edit-section-attribute-input" maxLength="255" ref="edit-input"/>
 				<div className='displayFlex'>
                    	<span className='mdi mdi-check accepted-budget' onClick={this.confirmEdit} title={Messages.get("label.submitLabel")}></span>
@@ -186,14 +190,14 @@ export default React.createClass({
 			<div>
 				<b className="budget-title">{this.props.fieldDef.label}</b>
 				{param}
-				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 					(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
 				 		title={Messages.get("label.title.deleteField")} onClick={this.delete}/> : "")
 				: ""}
-				{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+				{(this.context.roles.MANAGER || _.contains(this.context.permissions,
          				PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
-					(!!this.props.alterable ? <span className="mdi mdi-pencil attribute-input-edit inner" 
+					(!!this.props.alterable ? <span className="mdi mdi-pencil attribute-input-edit inner"
 							title={Messages.get("label.title.changeField")} onClick={this.edit}/> : "")
 				:""}
 			</div>
@@ -201,9 +205,9 @@ export default React.createClass({
 	},
 
 	render() {
-		var fieldEl;		
+		var fieldEl;
 		if (this.props.vizualization) {
-			if (this.props.fieldDef.type == AttributeTypes.INDICATOR_TYPE){	
+			if (this.props.fieldDef.type == AttributeTypes.INDICATOR_TYPE){
 				fieldEl = (
 					<IndicatorType fieldDef={this.props.fieldDef} vizualization={this.props.vizualization} />
 				);
@@ -219,7 +223,7 @@ export default React.createClass({
 				fieldEl = (
 					<SelectPlan fieldDef={this.props.fieldDef} vizualization={this.props.vizualization} />
 				);
-			} else if ((this.props.fieldDef.type == AttributeTypes.NUMBER_FIELD || 
+			} else if ((this.props.fieldDef.type == AttributeTypes.NUMBER_FIELD ||
 				this.props.fieldDef.type == AttributeTypes.CURRENCY_FIELD ||
 				this.props.fieldDef.type == AttributeTypes.PERCENTAGE_FIELD) && this.props.fieldDef.formattedValue){
 				fieldEl = (
@@ -228,7 +232,7 @@ export default React.createClass({
 			} else if (this.props.fieldDef.type == AttributeTypes.STRATEGIC_OBJECTIVE_FIELD) {
 				fieldEl = (
 					<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
-				);		
+				);
 			} else {
  				fieldEl = (
  					<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{__html: this.props.fieldDef.value}}/></div>
@@ -259,7 +263,7 @@ export default React.createClass({
 							<span>{Messages.getEditable("label.maxTenThousandCaracteres","fpdi-nav-label")}</span>
 						</div>
 					</div>
-				);			
+				);
 			} else {
 				if (this.props.fieldDef.disabled) {
 					fieldEl = (
@@ -327,7 +331,7 @@ export default React.createClass({
 									{opt.label}</option>);
 						}):''}
 				</select>
-			);	
+			);
 		} else if (this.props.fieldDef.type == AttributeTypes.RESPONSIBLE_FIELD) {
 			if (!this.props.fieldDef.users || this.props.fieldDef.users.length <= 0) {
 				fieldEl = (
@@ -364,7 +368,7 @@ export default React.createClass({
 							}):''}
 					</select>
 				);
-			} else {				
+			} else {
 				fieldEl = (
 					<select
 						className="form-control"
@@ -421,12 +425,12 @@ export default React.createClass({
 					</select>
 				);
 			}
-		} else if (this.props.fieldDef.type == AttributeTypes.RADIO || this.props.fieldDef.type == AttributeTypes.INDICATOR_TYPE) {			
+		} else if (this.props.fieldDef.type == AttributeTypes.RADIO || this.props.fieldDef.type == AttributeTypes.INDICATOR_TYPE) {
 			fieldEl = (
 				<div>
 					<div className="row">
-						{this.props.fieldDef.options.map((option, idx) => {		
-							return (															
+						{this.props.fieldDef.options.map((option, idx) => {
+							return (
 								<div className="fpdi-indicator-type-ctn col-sm-2" key={this.props.fieldDef.name+"-option-"+idx}>
 									<label onClick={this.props.fieldDef.onClick}>
 										<input
@@ -434,7 +438,7 @@ export default React.createClass({
 											type="radio"
 											name={this.props.fieldDef.name+idx}
 											defaultValue={option[this.props.fieldDef.valueField]}
-											defaultChecked={option[this.props.fieldDef.valueField]}	
+											defaultChecked={option[this.props.fieldDef.valueField]}
 											ref={this.props.fieldDef.name+"-option-"+idx}
 											onChange={this.props.fieldDef.onChange || _.noop}
 											onKeyPress={this.onKeyUp}
@@ -442,14 +446,14 @@ export default React.createClass({
 											onClick={this.props.fieldDef.onClick}/>
 										<label className="fpdi-indicator-type-label col-sm-6" id={"label-"+idx}>{option[this.props.fieldDef.displayField]}</label>
 									</label>
-								</div>							
+								</div>
 							);
-						})}						
+						})}
 					</div>
 					{this.props.fieldDef.extraRender ? this.props.fieldDef.extraRender() : ""}
 				</div>
 			);
-		} else if (this.props.fieldDef.type == AttributeTypes.SELECT_STRUCTURE) {		
+		} else if (this.props.fieldDef.type == AttributeTypes.SELECT_STRUCTURE) {
 			fieldEl = (
 				<select
 					className="form-control"
@@ -476,7 +480,7 @@ export default React.createClass({
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
 					ref={this.state.fieldId}
-					placeholderText="DD/MM/AAAA" 
+					placeholderText="DD/MM/AAAA"
 					dateFormat="DD/MM/YYYY"
 					id={this.state.fieldId}
 					selected={(this.props.fieldDef.value)?(moment(this.props.fieldDef.value, "DD/MM/YYYY")):(null)}
@@ -484,7 +488,7 @@ export default React.createClass({
 					onKeyPress={this.onKeyUp}
 					onPaste={this.onKeyUp}
 					maxLength='255'
-					showYearDropdown  
+					showYearDropdown
 					disabled
 					title={Messages.get("label.haveNoPermissionToEdit")}
 				/></div>);
@@ -495,7 +499,7 @@ export default React.createClass({
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
 					ref={this.state.fieldId}
-					placeholderText="DD/MM/AAAA" 
+					placeholderText="DD/MM/AAAA"
 					dateFormat="DD/MM/YYYY"
 					id={this.state.fieldId}
 					selected={(this.props.fieldDef.value)?(moment(this.props.fieldDef.value, "DD/MM/YYYY")):(null)}
@@ -506,13 +510,13 @@ export default React.createClass({
 					showYearDropdown
 				/></div>);
 			}
-		} else if (this.props.fieldDef.type == AttributeTypes.NUMBER_FIELD || 
+		} else if (this.props.fieldDef.type == AttributeTypes.NUMBER_FIELD ||
 			this.props.fieldDef.type == AttributeTypes.PERCENTAGE_FIELD ||
-			this.props.fieldDef.type == AttributeTypes.CURRENCY_FIELD) {		
-			if (this.props.fieldDef.disabled) {	
+			this.props.fieldDef.type == AttributeTypes.CURRENCY_FIELD) {
+			if (this.props.fieldDef.disabled) {
 	 		 	fieldEl = (<input
 	 				onKeyPress={this.onlyNumber}
-					onPaste={this.onlyNumberPaste}	
+					onPaste={this.onlyNumberPaste}
 					className="budget-field-table"
 	 			//	type='number'
 	 				step='any'
@@ -554,7 +558,7 @@ export default React.createClass({
  				id={this.state.fieldId}
  				ref={this.state.fieldId}
  				placeholder={this.props.fieldDef.placeholder}
- 				onChange={this.props.fieldDef.onChange || _.noop} 				
+ 				onChange={this.props.fieldDef.onChange || _.noop}
 				disabled={true}
  			/>);
 		} else {
@@ -577,7 +581,7 @@ export default React.createClass({
 				title={this.props.fieldDef.disabled ? Messages.get("label.haveNoPermissionToEdit") : ""}
 			/>);
 		}
-			
+
 		var strategicObjectivesPlans = "";
 		if (this.props.fieldDef.type == AttributeTypes.STRATEGIC_OBJECTIVE_FIELD) {
 			if (this.props.fieldDef.selectPlans.length > 0) {
@@ -599,7 +603,7 @@ export default React.createClass({
 								</option>);
 							})}
 					</select>
-				) 
+				)
 			} else {
 				strategicObjectivesPlans = (
 					<select
@@ -620,8 +624,8 @@ export default React.createClass({
 		return (!!this.props.undeletable || !!this.props.alterable ? (
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading attribute-input-opts">
-					{!this.props.vizualization ? 
-						<div className="edit-section-attribute"> 
+					{!this.props.vizualization ?
+						<div className="edit-section-attribute">
 							<input defaultValue={this.props.fieldDef.label} className="edit-section-attribute-input" maxLength="255" ref="edit-input"/> <br/>
 							<div className="formAlertError" ref="formAlertError-edit-input"></div>
 						</div>
@@ -631,7 +635,7 @@ export default React.createClass({
 								<b className="budget-title">{this.props.fieldDef.label}</b>
 							</div>
 							{strategicObjectivesPlans}
-							{(this.context.roles.MANAGER || _.contains(this.context.permissions, 
+							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && !this.context.planMacro.get("archived")?
 								(!!this.props.undeletable ? <span type="submit" className="mdi mdi-delete attribute-input-edit inner"
 									title={Messages.get("label.deleteField")} onClick={this.delete}/> : "")
@@ -639,7 +643,7 @@ export default React.createClass({
 							<div className="clearfix"/>
 						</div>
 					}
-					
+
 				</div>
 				<div>
 					{fieldEl}
@@ -648,7 +652,7 @@ export default React.createClass({
 			</div>
 		) : (
 			<div className={"form-group form-group-sm" + (this.props.fieldDef.type == 'hidden' ? " hidden":"")}>
-				{this.props.vizualization && this.props.fieldDef.name == "indicator-type" ? "" : 
+				{this.props.vizualization && this.props.fieldDef.name == "indicator-type" ? "" :
 				<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 					{this.props.fieldDef.label}
 					{this.props.fieldDef.required && !this.props.vizualization ? <span className="fpdi-required">&nbsp;</span>:""}
