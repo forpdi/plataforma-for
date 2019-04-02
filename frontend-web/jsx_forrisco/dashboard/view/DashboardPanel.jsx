@@ -324,9 +324,9 @@ export default React.createClass({
 									</select>
 								</div>
 							</span>
-							<span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
+							{/* <span onClick={this.exportReport} className="btn btn-sm btn-primary" style={{ margin: "0 10px" }}>
 								{Messages.getEditable("label.exportReport")}
-							</span>
+							</span> */}
 						</div>
 					</div>
 					:
