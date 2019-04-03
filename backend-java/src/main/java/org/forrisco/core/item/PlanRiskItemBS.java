@@ -3,7 +3,6 @@ package org.forrisco.core.item;
 import javax.enterprise.context.RequestScoped;
 
 import org.forrisco.core.plan.PlanRisk;
-import org.forrisco.core.policy.Policy;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;

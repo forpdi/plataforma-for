@@ -121,10 +121,8 @@ export default React.createClass({
 		return fields
 	},
 
-	getNumero() {
-		var fields = [];
-
-		fields.push({
+	getLine() {
+		return [{
 			name: "nline",
 			type: "number",
 			required: true,
@@ -132,20 +130,23 @@ export default React.createClass({
 			placeholder: " Nº de linhas",
 			value: this.state.policyModel ? this.state.policyModel.data.nline : null,
 			onChange: this.changeLine
-		}, {
-				name: "ncolumn",
-				type: "number",
-				required: true,
-				maxLength: 5,
-				placeholder: " Nº de colunas",
-				value: this.state.policyModel ? this.state.policyModel.data.ncolumn : null,
-				onChange: this.changeColumn
-			})
-
-		return fields
+		}]
 	},
 
-	getProbabilidade(value, n) {
+
+	getColumn() {
+		return [{
+			name: "ncolumn",
+			type: "number",
+			required: true,
+			maxLength: 5,
+			placeholder: " Nº de colunas",
+			value: this.state.policyModel ? this.state.policyModel.data.ncolumn : null,
+			onChange: this.changeColumn
+		}]
+	},
+
+	getProbabilidade(value, n,  desc) {
 		return [{
 			name: "probability_" + n,
 			type: "text",
@@ -156,10 +157,20 @@ export default React.createClass({
 			label: "",
 			value: value,
 			onChange: this.onChange
+		}, {
+			name: "probability_description_" + n,
+			type: "text",
+			required: true,
+			maxLength: 30,
+			hidden: true,
+			placeholder: " Descrição do tipo de Probabilidade",
+			label: "",
+			value: desc,
+			//onChange: this.onChange
 		}]
 	},
 
-	getImpacto(value, n) {
+	getImpacto( value, n, desc) {
 		return [{
 			name: "impact_" + n,
 			type: "text",
@@ -170,6 +181,16 @@ export default React.createClass({
 			label: "",
 			value: value,
 			onChange: this.onChange
+		},{
+			name: "impact_description_" + n,
+			type: "text",
+			required: true,
+			maxLength: 999,
+			hidden: true,
+			placeholder: " Descrição do tipo de Impacto",
+			label: "",
+			value: desc,
+			//onChange: this.onChange
 		}]
 	},
 
@@ -227,7 +248,7 @@ export default React.createClass({
 			PolicyStore.on("retrieverisklevel", (model) => {
 				if (model != null) {
 					me.setState({
-						loading:false,
+						loading: false,
 						risklevelModel: model,
 						color: model.data.length
 					});
@@ -236,21 +257,6 @@ export default React.createClass({
 				this.generateMatrix()
 
 			}, me);
-
-			/*ItemStore.on("retrieveInfo", (model) => {
-				if (model != null) {
-					me.setState({
-						itemModel: model
-					});
-				}
-			}, me);
-
-
-
-			ItemStore.dispatch({
-				action: ItemStore.ACTION_RETRIEVE_INFO,
-				data: { policyId: this.props.params.policyId }
-			});*/
 
 			PolicyStore.dispatch({
 				action: PolicyStore.ACTION_FIND_POLICY,
@@ -314,10 +320,9 @@ export default React.createClass({
 			risk_level[1][i] = cor[i]
 		}
 
+		data[this.getLine()[0].name] = this.refs.policyEditForm["field-" + this.getLine()[0].name].value;
 
-		for (var i = 0; i < this.getNumero().length; i++) {
-			data[this.getNumero()[i].name] = this.refs.policyEditForm["field-" + this.getNumero()[i].name].value;
-		}
+		data[this.getColumn()[0].name] = this.refs.policyEditForm["field-" + this.getColumn()[0].name].value;
 
 		var probabilidade = ""
 		var impacto = ""
@@ -336,7 +341,7 @@ export default React.createClass({
 
 		var matrix = ""
 
-		if(this.refs.policyEditForm["field-[0,0]"] !=null){
+		if (this.refs.policyEditForm["field-[0,0]"] != null) {
 			for (var i = 0; i <= this.state.matrix_l; i++) {
 				for (var j = 0; j <= this.state.matrix_c; j++) {
 					if (i != this.state.matrix_l || j != 0) {
@@ -346,10 +351,25 @@ export default React.createClass({
 			}
 		}
 
+		var pdescriptions=[]
+		var idescriptions=[]
+		for (var i = 0; i < this.state.nline; i++) {
+			console.log(this.getProbLabel(i))
+			pdescriptions.push({description: this.refs.policyEditForm['field-probability_description_'+(i+1)].value, value: this.getProbLabel(i)})
+		}
+
+		for (var i = 0; i < this.state.ncolumn; i++) {
+			console.log(this.getImpactLabel(i))
+			idescriptions.push({description: this.refs.policyEditForm['field-impact_description_'+(i+1)].value, value: this.getImpactLabel(i)})
+		}
+
 		data["risk_level"] = risk_level
 		data["probability"] = probabilidade
 		data["impact"] = impacto
 		data["matrix"] = matrix.substring(0, matrix.length - 1)
+		data["PIDescriptions"]=JSON.stringify({PIDescriptions:
+												{idescriptions: idescriptions,
+												pdescriptions: pdescriptions}})
 		return data;
 	},
 
@@ -372,7 +392,7 @@ export default React.createClass({
 
 	createTable() {
 
-		if(this.refs.policyEditForm ==null){
+		if (this.refs.policyEditForm == null) {
 			return
 		}
 
@@ -405,19 +425,19 @@ export default React.createClass({
 		var impacto = []
 
 		for (var i = 0; i < cor.length; i++) {
-			if(level[i].length>0 && cor[i].length>0){
+			if (level[i].length > 0 && cor[i].length > 0) {
 				risk_level.push({ 'label': level[i], 'cor': cor[i] })
 			}
 		}
 
 		for (var i = 1; i <= this.state.matrix_l; i++) {
-			if (this.refs.policyEditForm["field-" + this.getProbabilidade(null, i)[0].name].value.length>0) {
+			if (this.refs.policyEditForm["field-" + this.getProbabilidade(null, i)[0].name].value.length > 0) {
 				probabilidade.push({ 'label': this.refs.policyEditForm["field-" + this.getProbabilidade(null, i)[0].name].value })
 			}
 		}
 
 		for (var i = 1; i <= this.state.matrix_c; i++) {
-			if (this.refs.policyEditForm["field-" + this.getImpacto(null, i)[0].name].value.length>0) {
+			if (this.refs.policyEditForm["field-" + this.getImpacto(null, i)[0].name].value.length > 0) {
 				impacto.push({ 'label': this.refs.policyEditForm["field-" + this.getImpacto(null, i)[0].name].value })
 			}
 		}
@@ -445,7 +465,7 @@ export default React.createClass({
 
 						for (var k = 0; k < cor.length; k++) {
 							if (this.refs.policyEditForm["field-[" + i + "," + j + "]"]) {
-								if(risk_level[k] != null){
+								if (risk_level[k] != null) {
 									if (risk_level[k]['label'] == this.refs.policyEditForm["field-[" + i + "," + j + "]"].value) {
 										classe = risk_level[k]['cor'];
 										break;
@@ -511,7 +531,7 @@ export default React.createClass({
 					}
 				} else {
 					if (i != this.state.matrix_l) {
-						children.push(<td style={{"padding": "0 13px 0px 0px"}} >{
+						children.push(<td style={{ "padding": "0 13px 0px 0px" }} >{
 							<VerticalInput
 								formId={this.props.id}
 								fieldDef={{
@@ -559,22 +579,63 @@ export default React.createClass({
 	},
 
 	getProbLabel(i) {
-		var probs = this.state.policyModel.data.probability.match(/\[.*?\]/g)
-		if (probs[i] != null) {
-			return probs[i].substring(1, probs[i].length - 1)
+		if( this.state.policyModel==null){
+			if(this.refs.policyEditForm['field-probability_description_'+(i+1)]){
+				return this.refs.policyEditForm['field-probability_description_'+(i+1)].value
+			}
+		}else{
+			var probs = this.state.policyModel.data.probability.match(/\[.*?\]/g)
+			if (probs[i] != null) {
+				return probs[i].substring(1, probs[i].length - 1)
+			}
 		}
 		return null
 	},
 
-	getImpacLabel(i) {
-		var impac = this.state.policyModel.data.impact.match(/\[.*?\]/g)
-		if (impac[i] != null) {
-			return impac[i].substring(1, impac[i].length - 1)
+	getImpactLabel(i) {
+		if( this.state.policyModel==null){
+			if(this.refs.policyEditForm['field-impact_description_'+(i+1)]){
+				return this.refs.policyEditForm['field-impact_description_'+(i+1)].value
+			}
+		}else{
+			var impac = this.state.policyModel.data.impact.match(/\[.*?\]/g)
+			if (impac[i] != null) {
+				return impac[i].substring(1, impac[i].length - 1)
+			}
 		}
 		return null
 	},
 
-	probabilidadeImpacto() {
+	getProbDescription(i) {
+
+		if( this.state.policyModel==null || this.state.policyModel.data.PIDescriptions == null){
+			return
+		}
+
+		var desc = JSON.parse( this.state.policyModel.data.PIDescriptions).PIDescriptions.pdescriptions
+
+		if (desc[i] != null) {
+			return desc[i].description
+		}
+		return null
+	},
+
+	getImpactDescription(i) {
+
+		if(this.state.policyModel==null || this.state.policyModel.data.PIDescriptions == null){
+			return
+		}
+
+		var desc = JSON.parse( this.state.policyModel.data.PIDescriptions).PIDescriptions.idescriptions
+
+		if (desc[i] != null) {
+			return desc[i].description
+		}
+		return null
+	},
+
+
+	probability() {
 		var campos = []
 		var contem = false
 		var field
@@ -583,46 +644,48 @@ export default React.createClass({
 
 				field = document.getElementById("field-probability_" + (i + 1))
 
-				campos.push(this.getProbabilidade(this.state.policyModel ? this.getProbLabel(i) : (field ? field.value : null), i + 1).map((field, idx) => {
-
+				campos.push(this.getProbabilidade(this.state.policyModel ? this.getProbLabel(i) : (field ? field.value : null), i + 1,this.getProbDescription(i)).map((field, idx) => {
 					return (<HorizontalInput
 						name={field.name}
 						formId={this.props.id}
 						fieldDef={field}
 						key={field.name}
-						confirmKey={idx == (this.getProbabilidade().length - 1) ? this.props.confirmKey : undefined}
-					/>
+						className="form-control-h"
+						/>
 					);
 				}))
+				campos.push(<br/>)
 				contem = true;
-			} else {
-				if (this.state.ncolumn > i) {
-					campos.push(<div style={{ display: "inline-block" }}>
-						&emsp;&emsp;&emsp;&emsp;&emsp;
-						&emsp;&emsp;&emsp;&emsp;&emsp;
-						&emsp;&emsp;&emsp;&emsp;&emsp;
-						&emsp;&emsp; &nbsp;&nbsp;&nbsp;
-				&nbsp;</div>)
-				}
 			}
+		}
+		return (<div>{campos}</div>)
+	},
 
-			field = document.getElementById("field-impact_" + (i + 1))
 
+
+	impact() {
+		var campos = []
+		var contem = false
+		var field
+		for (var i = 0; i < 6; i++) {
 			if (this.state.ncolumn > i && this.state.ncolumn > 1) {
-				campos.push(this.getImpacto(this.state.policyModel ? this.getImpacLabel(i) : (field ? field.value : null), i + 1).map((field, idx) => {
+
+				field = document.getElementById("field-impact_" + (i + 1))
+
+				campos.push(this.getImpacto(this.state.policyModel ? this.getImpactLabel(i) : (field ? field.value : null), i + 1, this.getImpactDescription(i)).map((field, idx) => {
+
 					return (<HorizontalInput
 						name={field.name}
 						formId={this.props.id}
 						fieldDef={field}
 						key={field.name}
-						confirmKey={idx == (this.getImpacto().length - 1) ? this.props.confirmKey : undefined}
-					/>
+						className="form-control-h"
+						/>
 					);
+
 				}))
+				campos.push(<br/>)
 				contem = true;
-			}
-			if (contem) {
-				campos.push(<br />)
 			}
 		}
 		return (<div>{campos}</div>)
@@ -648,13 +711,13 @@ export default React.createClass({
 
 		if (n > 1) {
 			grau.push(
-			<span>
-				<Link onClick={this.deleteGrauRisco.bind(this, n)} >
-					<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}></span>
-				</Link>
-			</span>)
+				<span>
+					<Link onClick={this.deleteGrauRisco.bind(this, n)} >
+						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deleteRiskGrade")}></span>
+					</Link>
+				</span>)
 		}
-		return (<div><div style={{"display": "inline-flex"}}>{grau}</div><br/></div>)
+		return (<div><div style={{ "display": "inline-flex" }}>{grau}</div><br /></div>)
 	},
 
 	changeColumn() {
@@ -662,14 +725,14 @@ export default React.createClass({
 		this.state.ncolumn = this.refs.policyEditForm['field-ncolumn'].value
 
 
-		if(this.state.ncolumn<2){
-			this.state.ncolumn=2
-			this.refs.policyEditForm['field-ncolumn'].value=2
+		if (this.state.ncolumn < 2) {
+			this.state.ncolumn = 2
+			this.refs.policyEditForm['field-ncolumn'].value = 2
 		}
 
-		if(this.state.ncolumn>6){
-			this.state.ncolumn=6
-			this.refs.policyEditForm['field-ncolumn'].value=6
+		if (this.state.ncolumn > 6) {
+			this.state.ncolumn = 6
+			this.refs.policyEditForm['field-ncolumn'].value = 6
 		}
 
 
@@ -695,15 +758,15 @@ export default React.createClass({
 		this.state.nline = this.refs.policyEditForm['field-nline'].value
 
 
-		if(this.state.nline<2){
-			this.state.nline=2
-			this.refs.policyEditForm['field-nline'].value=2
+		if (this.state.nline < 2) {
+			this.state.nline = 2
+			this.refs.policyEditForm['field-nline'].value = 2
 		}
 
 
-		if(this.state.nline>6){
-			this.state.nline=6
-			this.refs.policyEditForm['field-nline'].value=6
+		if (this.state.nline > 6) {
+			this.state.nline = 6
+			this.refs.policyEditForm['field-nline'].value = 6
 		}
 
 		this.setState({
@@ -797,6 +860,9 @@ export default React.createClass({
 
 		var msg = Validate.validationPolicyEdit(data, this.refs);
 
+
+		console.log("data", data)
+
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
 			return;
@@ -821,6 +887,9 @@ export default React.createClass({
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
+
+		var column = this.getColumn()[0]
+		var line = this.getLine()[0]
 
 		return (
 			<div>
@@ -876,27 +945,41 @@ export default React.createClass({
 						/>
 
 
-						<br/>
-						<br/>
-						<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
-							{Messages.getEditable("label.policyPI", "fpdi-nav-label fpdi-required")}
+						<br />
+						<br />
+						<label htmlFor={this.state.fieldId} className="fpdi-text-label-none fpdi-nav-label">
+							Probabilidade - Linhas da matriz de riscos
 						</label>
-						<br/>
+						<br />
 
-						{this.getNumero().map((field, idx) => {
-							return (<HorizontalInput
-								name={field.name}
-								formId={this.props.id}
-								fieldDef={field}
-								key={field.value ? idx : field.name}
-								//confirmKey={idx == (this.getNumero().length - 1) ? this.props.confirmKey : undefined}
-								onConfirm={this.submitWrapper}
-								ref={'numero-' + (idx)}
-							/>);
-						})}
+						<HorizontalInput
+							name={line.name}
+							formId={this.props.id}
+							fieldDef={line}
+							className={"form-control-h"}
+							onConfirm={this.submitWrapper}
+							ref={'numero-linha'}
+						/>
+						{!this.state.piHide ? this.probability() : ""}
 
+
+						<br />
+						<br />
+						<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
+							Impacto - Colunas da matriz de riscos
+						</label>
+						<br />
+
+						<HorizontalInput
+							name={column.name}
+							formId={this.props.id}
+							fieldDef={column}
+							className={"form-control-h"}
+							onConfirm={this.submitWrapper}
+							ref={'numero-coluna'}
+						/>
+						{!this.state.piHide ? this.impact() : ""}
 						<br /><br /><br />
-						{!this.state.piHide ? this.probabilidadeImpacto() : ""}
 
 						{
 							((this.context.roles.MANAGER || _.contains(this.context.permissions,
