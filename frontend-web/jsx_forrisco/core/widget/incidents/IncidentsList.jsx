@@ -17,21 +17,25 @@ export default React.createClass({
 			//Incidente
 				incidentType: null,
 				incidentList: [],
-				totalOfIncidents: null
+				totalOfIncidents: null,
 		};
 	},
 
 	componentDidMount() {
 		RiskStore.on("paginatedIncidents", response => {
 			const incidentList = [];
-			response.data.map(incident => {incidentList.push({incident});});
+			if (response.data) {
+				response.data.map(incident => {incidentList.push({incident});});
 
-			this.setState({
-				incidentType: response.data[0].type,
-				incidentList: incidentList,
-				totalOfIncidents: response.total,
-				isLoading: false
-			})
+				this.setState({
+					incidentType: response.data[0].type,
+					incidentList: incidentList,
+					totalOfIncidents: response.total,
+					isLoading: false
+				});
+			} else {
+				this.setState({ isLoading: null });
+			}
 		}, this);
 		this.refreshComponent(this.props.incidents, this.state.page, this.state.pageSize);
 	},
@@ -71,6 +75,45 @@ export default React.createClass({
 		RiskStore.off("paginatedIncidents");
 	},
 
+	renderContent() {
+		console.log(this.props.incidents);
+		if (this.state.isLoading === true) {
+			return (<LoadingGauge/>);
+		} else if (this.state.isLoading === null) {
+			return (<span>Nada cadastrado nesse período</span>);
+		} else {
+			return this.state.incidentList.map((callback, index) => (
+				<div className="row" key={index}>
+					<div className="col-sm-8 center">
+						<label className="paddingTop5">
+							{callback.incident.description}
+						</label>
+					</div>
+					<div className="col-sm-4 center paddingTop5">
+						<a
+							href={
+								"/#/forrisco/plan-risk/" + callback.incident.risk.unit.planRisk.id +
+								"/unit/" + callback.incident.risk.unit.id + "/risk/" + callback.incident.risk.id + "/incident"
+							}
+							className="btn btn-sm btn-primary center"
+							onClick={this.onRedirect}
+						>
+							Visualizar
+						</a>
+					</div>
+				</div>
+			))
+		}
+	},
+
+	renderTitle() {
+		if (this.state.incidentType === 1) {
+			return (<span>Tipo: Ameaça</span>);
+		} else if (this.state.incidentType === 2) {
+			return (<span>Tipo: Oportunidade</span>);
+		}
+	},
+
 	render() {
 		return (
 			<div>
@@ -81,43 +124,18 @@ export default React.createClass({
 								<button type="button" className="close" onClick={this.onDismiss} aria-label="Close">
 									<span aria-hidden="true">&times;</span>
 								</button>
-								<span> <h1 className="modal-title"> Incidentes </h1> </span>
+								<span><h1 className="modal-title">Incidentes</h1></span>
 							</div>
 
 							<div>
-								{this.state.incidentType === 1 ? <span> Tipo: Ameaça </span> : <span> Tipo: Oportunidade </span>}
+								{this.renderTitle()}
 							</div>
 						</div>
 
-						<hr className="divider"/>
+						<hr className="divider" />
 
 						<div className="modal-body fpdi-modal-body">
-							{
-								this.state.isLoading === true ?
-									<LoadingGauge/>
-								:
-									this.state.incidentList.map((callback, index) => {
-										return (
-											<div className="row" key={index}>
-												<div className="col-sm-8 center">
-													<label
-														className="paddingTop5"> {callback.incident.description} </label>
-												</div>
-												<div className="col-sm-4 center paddingTop5">
-													<a href={
-															"/#/forrisco/plan-risk/" + callback.incident.risk.unit.planRisk.id +
-															"/unit/" + callback.incident.risk.unit.id + "/risk/" + callback.incident.risk.id + "/incident"
-														}
-													   className="btn btn-sm btn-primary center"
-													   onClick={this.onRedirect}>
-														Visualizar
-													</a>
-												</div>
-											</div>
-										)
-									})
-
-							}
+							{this.renderContent()}
 						</div>
 
 						<div className="text-align-center">

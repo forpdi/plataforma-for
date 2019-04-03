@@ -17,6 +17,7 @@
     }
 
   	& > .fpdi-plan-tabs {
+      width:  70%;
   		@include flex(7);
   	}
 }
