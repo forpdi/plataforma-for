@@ -441,7 +441,7 @@ export default React.createClass({
 
 
 					if (i != this.state.matrix_l) {
-						var classe = "Cinza"
+						var classe = "CinzaMatriz"
 
 						for (var k = 0; k < cor.length; k++) {
 							if (this.refs.policyEditForm["field-[" + i + "," + j + "]"]) {
@@ -462,7 +462,7 @@ export default React.createClass({
 												case 3: classe = "Laranja"; break;
 												case 4: classe = "Verde"; break;
 												case 5: classe = "Azul"; break;
-												default: classe = "Cinza";
+												default: classe = "CinzaMatriz";
 											}
 											break;
 										}
@@ -542,7 +542,7 @@ export default React.createClass({
 		}
 
 		return (
-			<div style={{ overflowX: "scroll" }}>
+			<div style={{ overflowX: "scroll" , overflowY: "hidden", padding: "20px 0px", margin: "10px 0px"}}>
 				<table style={{ width: "min-content" }}>
 					<th style={{ top: (this.state.matrix_l * 33 + 30) + "px", right: "10px", position: "relative" }} >
 						<div style={{ width: "30px" }} className="vertical-text">PROBABILIDADE</div>
@@ -902,7 +902,7 @@ export default React.createClass({
 							((this.context.roles.MANAGER || _.contains(this.context.permissions,
 								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) && this.state.validPI) ?
 								<a className="btn btn-sm btn-primary " onClick={this.generateMatrix}>
-									<span /> {Messages.getEditable("label.generateMatrix", "fpdi-nav-label")}
+									{Messages.getEditable("label.generateMatrix", "fpdi-nav-label")}
 								</a> : ""
 						}
 
