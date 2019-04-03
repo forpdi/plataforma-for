@@ -1,7 +1,10 @@
 import _ from "underscore";
 import React from "react";
 import Toastr from "toastr";
+import moment from 'moment';
+
 import Messages from "@/core/util/Messages";
+import DatePicker from 'react-datepicker';
 
 export default React.createClass({
 
@@ -118,6 +121,25 @@ export default React.createClass({
 							</option>);
 						}):''}
 				</select>
+			);
+		} else if (this.props.fieldDef.type == 'date') {
+			fieldEl = (
+				<DatePicker
+					className="form-control-h"
+					type="datepicker"
+					ref={this.state.fieldId}
+					dateFormat="DD/MM/YYYY"
+					id={this.state.fieldId}
+					selected={this.props.fieldDef.value
+						? moment(this.props.fieldDef.value, "DD/MM/YYYY")
+						: null
+					}
+					onChange={this.props.fieldDef.onChange || _.noop}
+					onKeyPress={this.onKeyUp}
+					onPaste={this.onKeyUp}
+					placeholderText={this.props.fieldDef.placeholder || 'DD/MM/AAAA'}
+					showYearDropdown
+				/>
 			);
 		} else {
 			fieldEl = (<input

@@ -1,6 +1,7 @@
 import React from "react";
 import _ from "underscore";
 import {Link} from "react-router";
+import moment from 'moment'
 
 import Messages from "@/core/util/Messages";
 import Modal from "@/core/widget/Modal";
@@ -307,6 +308,17 @@ export default React.createClass({
 						<pre className="pre-info">{this.state.policyModel.data.description}</pre>
 					</span>
 
+					<br/><br/>
+					<label  className="fpdi-text-label">{"PRAZO DE VIGÊNCIA"}</label>
+					<div className="padding5">
+						<span>
+							{this.state.policyModel.data.validityBegin && this.state.policyModel.data.validityBegin.split(' ')[0]}
+							&nbsp;&nbsp;
+							à
+							&nbsp;&nbsp;
+							{this.state.policyModel.data.validityEnd && this.state.policyModel.data.validityEnd.split(' ')[0]}
+						</span>
+					</div>
 					<br/><br/>
 					{this.getMatrix()}
 					<br/>

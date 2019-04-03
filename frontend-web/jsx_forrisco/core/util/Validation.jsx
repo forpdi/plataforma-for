@@ -1,4 +1,6 @@
 import S from 'string';
+import moment from 'moment'
+
 import Messages from "forpdi/jsx/core/util/Messages";
 
 var Validate = {
@@ -46,6 +48,28 @@ var Validate = {
 				refs['ref-0'].refs['field-name'].className = "form-control";
 				refs['ref-0'].refs['formAlertError'].innerHTML = "";
 			}
+		}
+
+		// data de vigencia invalida
+		var validityBegin = moment(data.validityBegin, 'DD/MM/YYYY').toDate();
+		var validityEnd = moment(data.validityEnd, 'DD/MM/YYYY').toDate();
+
+		if(validityBegin > validityEnd) {
+			var validityBeginInput = refs['risk-vigencia-begin']
+				.refs['field-risk-vigencia-begin']
+				.refs['input']
+				.refs['input'];
+			var validityEndInput = refs['risk-vigencia-end']
+				.refs['field-risk-vigencia-end']
+				.refs['input']
+				.refs['input'];
+			validityBeginInput.className += ' borderError';
+			validityEndInput.className += ' borderError';
+			var errorElement = refs['risk-vigencia-begin'].refs['formAlertError'];
+			errorElement.innerHTML = 'Data de início superior à data de término';
+			errorElement = refs['risk-vigencia-end'].refs['formAlertError'];
+			errorElement.innerHTML = '&nbsp;';
+			msg = "A data de início do prazo de vigência não deve ser superior à data de término"
 		}
 
 		//graus de risco e cores em branco
