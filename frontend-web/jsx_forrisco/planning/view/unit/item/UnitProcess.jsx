@@ -87,11 +87,18 @@ export default React.createClass({
 			}
 		}, this);
 		UnitStore.on('allunitsbyplan', response => {
+
+
 			const unit = _.find(response.data, unit => (
 				unit.id === parseInt(this.props.unitId)
 			));
+
+			const units= _.filter(response.data, unit =>{
+				return unit.id != this.props.unitId
+			})
+
 			this.setState({
-				units: _.map(response.data, unit => ({
+				units: _.map(units, unit => ({
 					label: unit.name,
 					value: unit.id,
 					data: unit,
@@ -186,7 +193,6 @@ export default React.createClass({
 								className="unit-mult-select"
 								placeholderButtonLabel="Selecione uma ou mais"
 								options={this.state.units}
-								onChange={this.unitChangeHandler}
 							/>
 						</div>
 					),
@@ -229,16 +235,18 @@ export default React.createClass({
     },
 
 	enableUpdateMode(idx) {
+
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
 		const { processes } = this.state;
 		const process = processes[idx];
 		const selectedUnits = _.map(process.relatedUnits, unit => ({
-			value: unit.id,
 			label: unit.name,
+			value: unit.id,
 			data: unit
 		}));
+
 	    processes[idx] = {
 			name: <VerticalInput
 				className="padding7"
@@ -333,9 +341,7 @@ export default React.createClass({
 	},
 
 	unitChangeHandler(values) {
-		this.setState({
-			selectedUnits: values,
-		});
+		this.state.selectedUnits=values
 	},
 
 	fileLinkChangeHandler() {
@@ -493,10 +499,12 @@ export default React.createClass({
 		},
 		{
 			Header: 'Unidade(s) relacionada(s)',
-			accessor: "relatedUnits[0].name",
 			Cell: props => <span className=''>{
 				props.original.relatedUnits.map( (unit, idx)=>{
-					return <p>{unit.name}</p>
+					if(this.props.unitId != unit.id){
+						return <p>{unit.name}</p>
+					}
+
 				})
 			}</span>
 		},
