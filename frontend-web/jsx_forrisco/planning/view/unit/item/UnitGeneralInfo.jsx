@@ -200,7 +200,7 @@ export default React.createClass({
 					</Link>
 				</li>
 
-				{!this.context.roles.MANAGER ?
+				{this.context.roles.ADMIN  ?
 				<li>
 					<Link onClick={this.deleteUnit}>
 					<span className="mdi mdi-delete cursorPointer" title={this.props.isSubunit ? Messages.get("label.deleteSubunit") : Messages.get("label.deleteUnit")}>
