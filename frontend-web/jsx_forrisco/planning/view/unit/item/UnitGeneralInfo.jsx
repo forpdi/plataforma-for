@@ -358,6 +358,7 @@ export default React.createClass({
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
 						unitId={unit.id}
+						isSubunit={this.props.isSubunit}
 					/>
 						:""}
 				</div>

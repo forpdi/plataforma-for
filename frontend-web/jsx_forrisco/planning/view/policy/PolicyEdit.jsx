@@ -29,6 +29,8 @@ export default React.createClass({
 			policyModel: null,
 			risklevelModel: null,
 			fields: null,
+			validityBegin: null,
+			validityEnd: null,
 			visualization: true,
 			hide: true,
 			hidePI: true,
@@ -119,6 +121,36 @@ export default React.createClass({
 			});
 
 		return fields
+	},
+
+	getVigencia() {
+		var fields = [];
+		fields.push(
+			{
+				name: "risk-vigencia-begin",
+				ref: "risk-vigencia-begin",
+				type: "date",
+				required: true,
+				maxLength: 30,
+				placeholder: "Data de início",
+				value: this.state.validityBegin,
+				onChange: (date) =>
+					this.setState({ validityBegin: date.format('DD/MM/YYYY') }),
+			},
+			{
+				name: "risk-vigencia-end",
+				ref: "risk-vigencia-end",
+				type: "date",
+				required: true,
+				maxLength: 30,
+				placeholder: "Data de término",
+				value: this.state.validityEnd,
+				onChange: (date) =>
+					this.setState({ validityEnd: date.format('DD/MM/YYYY') }),
+			}
+		);
+
+		return fields;
 	},
 
 	getLine() {
@@ -216,6 +248,8 @@ export default React.createClass({
 			PolicyStore.on("findpolicy", (model) => {
 				this.setState({
 					policyModel: model,
+					validityBegin: model.data.validityBegin,
+					validityEnd: model.data.validityEnd,
 					fields: me.getFields(),
 					ncolumn: model.data.ncolumn,
 					nline: model.data.nline,
@@ -354,12 +388,10 @@ export default React.createClass({
 		var pdescriptions=[]
 		var idescriptions=[]
 		for (var i = 0; i < this.state.nline; i++) {
-			console.log(this.getProbLabel(i))
 			pdescriptions.push({description: this.refs.policyEditForm['field-probability_description_'+(i+1)].value, value: this.getProbLabel(i)})
 		}
 
 		for (var i = 0; i < this.state.ncolumn; i++) {
-			console.log(this.getImpactLabel(i))
 			idescriptions.push({description: this.refs.policyEditForm['field-impact_description_'+(i+1)].value, value: this.getImpactLabel(i)})
 		}
 
@@ -367,6 +399,8 @@ export default React.createClass({
 		data["probability"] = probabilidade
 		data["impact"] = impacto
 		data["matrix"] = matrix.substring(0, matrix.length - 1)
+		data["validityBegin"] = this.state.validityBegin;
+		data["validityEnd"] = this.state.validityEnd;
 		data["PIDescriptions"]=JSON.stringify({PIDescriptions:
 												{idescriptions: idescriptions,
 												pdescriptions: pdescriptions}})
@@ -907,6 +941,25 @@ export default React.createClass({
 							/>);
 						})}
 
+
+						<label htmlFor={this.state.fieldId} className="fpdi-text-label">
+							Prazo de vigência
+						</label>
+						<br />
+						{this.getVigencia().map((field, idx) => {
+							return (<HorizontalInput
+								name={field.name}
+								formId={this.props.id}
+								fieldDef={field}
+								key={field.value ? idx : field.name}
+								onConfirm={this.submitWrapper}
+								ref={field.ref}
+							/>);
+						})}
+
+						<br />
+						<br />
+
 						<label htmlFor={this.state.fieldId} className="fpdi-text-label">
 							{Messages.getEditable("label.policyConfig", "fpdi-nav-label")}
 						</label>
@@ -916,7 +969,7 @@ export default React.createClass({
 						<div style={{ position: "relative", bottom: '5px' }}>
 							<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
 								{Messages.getEditable("label.policyLevel", "fpdi-nav-label fpdi-required")}&nbsp;&nbsp;
-					</label>
+							</label>
 							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
 								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
 								<a className="mdi mdi-plus-circle icon-link" onClick={this.RiskColor}></a> : ""

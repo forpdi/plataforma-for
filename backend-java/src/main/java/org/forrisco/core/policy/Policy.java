@@ -1,10 +1,14 @@
 package org.forrisco.core.policy;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
@@ -33,6 +37,14 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_begin")
+	private Date validityBegin;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_end")
+	private Date validityEnd;
+
 	@Column(nullable=false)
 	private int nline;
 	
@@ -101,6 +113,22 @@ public class Policy extends SimpleLogicalDeletableEntity {
 		this.description = description;
 	}
 
+	public Date getValidityBegin() {
+		return validityBegin;
+	}
+
+	public void setValidityBegin(Date validityBegin) {
+		this.validityBegin = validityBegin;
+	}
+
+	public Date getValidityEnd() {
+		return validityEnd;
+	}
+
+	public void setValidityEnd(Date validityEnd) {
+		this.validityEnd = validityEnd;
+	}
+
 	public int getNline() {
 		return nline;
 	}
@@ -156,7 +184,4 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	public void setPIDescriptions(String pIDescriptions) {
 		PIDescriptions = pIDescriptions;
 	}
-	
-	
-
 }

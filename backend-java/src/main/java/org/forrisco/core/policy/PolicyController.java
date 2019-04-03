@@ -71,11 +71,14 @@ public class PolicyController extends AbstractController {
 	@NoCache
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void savePolicy(@NotNull @Valid  Policy policy){
-		
 		try {
 			if(this.domain == null) {
 				this.fail("Instituição não definida");
 				return;
+			}
+			if (policy.getValidityEnd().before(policy.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;				
 			}
 			policy.setCompany(this.domain.getCompany());
 			policy.setId(null);
@@ -266,6 +269,11 @@ public class PolicyController extends AbstractController {
 				return;
 			}
 
+			if (policy.getValidityEnd().before(policy.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;				
+			}
+
 			PaginatedList<RiskLevel> existentLevels = this.policyBS.listRiskLevelbyPolicy(existent);
 			List<Risk> risks = new ArrayList<Risk>();
 			
@@ -326,8 +334,10 @@ public class PolicyController extends AbstractController {
 			Map <String,String> impact_probability = new HashMap<String,String>();
 			
 			//atualizar política
-			existent.setDescription(policy.getDescription());
 			existent.setName(policy.getName());
+			existent.setDescription(policy.getDescription());
+			existent.setValidityBegin(policy.getValidityBegin());
+			existent.setValidityEnd(policy.getValidityEnd());
 			existent.setImpact(policy.getImpact());
 			existent.setProbability(policy.getProbability());
 			existent.setMatrix(policy.getMatrix());
