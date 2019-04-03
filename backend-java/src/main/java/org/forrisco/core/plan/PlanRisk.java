@@ -7,15 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.policy.Policy;
-import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
  * @author Matheus Nascimento

@@ -23,7 +23,7 @@ export default React.createClass({
 			submitLabel: "Salvar",
 			vizualization: false,
 			formFields: [],
-			title: Messages.getEditable("label.newItem","fpdi-nav-label"),
+			title: Messages.getEditable("label.newSubitem","fpdi-nav-label"),
 		}
 	},
 

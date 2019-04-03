@@ -155,29 +155,14 @@ export default React.createClass({
 		}
 		return (
 			<div style={{display: "inline-block", margin: "0 20px 0 0"}}>
-			<div className="form-group form-group-sm">
-
-				<div className="col-3">
-					{fieldEl}
-					{this.props.fieldDef.helpBox}
-
+				<div className="form-group form-group-sm">
+					<div className="col-3">
+						{fieldEl}
+						{this.props.fieldDef.helpBox}
+					</div>
+					<div className="formAlertError" ref="formAlertError"></div>
 				</div>
-				<div className="formAlertError" ref="formAlertError"></div>
-			</div>
-
 			</div>
 		);
-		/*
-		return (
-			<div className="form-group form-group-sm">
-				<label htmlFor={this.state.fieldId} className="col-sm-2 fpdi-text-label">
-					{this.props.fieldDef.label}
-				</label>
-				<div className="col-sm-10">
-					{fieldEl}
-					{this.props.fieldDef.helpBox}
-				</div>
-			</div>
-		);*/
 	}
 });

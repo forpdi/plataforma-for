@@ -526,7 +526,7 @@ export default React.createClass({
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-          			PROCESSOS DA UNIDADE
+    			{this.props.isSubunit ? 'PROCESSOS DA SUBUNIDADE' : 'PROCESSOS DA UNIDADE'}
 					{
 						this.isPermissionedUser() && <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
 					}

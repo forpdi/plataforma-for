@@ -27,6 +27,10 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_policy";
 	private static final long serialVersionUID = 1L;
 
+	@SkipSerialization
+	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
+	private Company company;
+	
 	@Column(nullable=false, length=400)
 	private String name;
 
@@ -56,9 +60,8 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000)
 	private String matrix;
 	
-	@SkipSerialization
-	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
-	private Company company;
+	@Column(nullable = true, columnDefinition="text")
+	private String PIDescriptions;
 
 	private boolean archived = false;
 	
@@ -78,11 +81,11 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	}
 	
 
-	public int getLevel() {
+	public int getLevels() {
 		return levels;
 	}
 
-	public void setLevel(int color) {
+	public void setLevels(int color) {
 		this.levels = color;
 	}
 
@@ -172,5 +175,13 @@ public class Policy extends SimpleLogicalDeletableEntity {
 
 	public void setMatrix(String matrix) {
 		this.matrix = matrix;
+	}
+
+	public String getPIDescriptions() {
+		return PIDescriptions;
+	}
+
+	public void setPIDescriptions(String pIDescriptions) {
+		PIDescriptions = pIDescriptions;
 	}
 }

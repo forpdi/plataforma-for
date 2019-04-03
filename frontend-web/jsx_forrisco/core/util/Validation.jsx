@@ -131,23 +131,25 @@ var Validate = {
 
 
 		//linha e coluna em branco
-		if(data.ncolumn == ""){
-			refs['numero-1'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
-			refs['numero-1'].refs['field-ncolumn'].className += " borderError";
+		if(data.nline == ""){
+			refs['numero-linha'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-linha'].refs['field-nline'].className += " borderError";
 			msg = Messages.get("label.form.error");
 		}else{
-			refs['numero-1'].refs['formAlertError'].innerHTML="<br/>"
-			refs['numero-1'].refs['field-ncolumn'].className = "form-control-h"
+			refs['numero-linha'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-linha'].refs['field-nline'].className = "form-control-h"
 		}
 
-		if(data.nline == ""){
-			refs['numero-0'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
-			refs['numero-0'].refs['field-nline'].className += " borderError";
+
+		if(data.ncolumn == ""){
+			refs['numero-coluna'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-coluna'].refs['field-ncolumn'].className += " borderError";
 			msg = Messages.get("label.form.error");
 		}else{
-			refs['numero-0'].refs['formAlertError'].innerHTML="<br/>"
-			refs['numero-0'].refs['field-nline'].className = "form-control-h"
+			refs['numero-coluna'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-coluna'].refs['field-ncolumn'].className = "form-control-h"
 		}
+
 
 
 		//impacto e probabilidade em branco

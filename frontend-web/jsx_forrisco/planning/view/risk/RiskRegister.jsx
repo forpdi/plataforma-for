@@ -260,14 +260,14 @@ export default React.createClass({
 				type: AttributeTypes.TEXT_AREA_FIELD,
 				placeholder: "Causas do risco",
 				maxLength: 1000,
-				label: "Causa",
+				label: "Causa (s)",
 				value: risk != null ? risk.reason : null,
 			}, {
 				name: "result",
 				type: AttributeTypes.TEXT_AREA_FIELD,
 				placeholder: "Consequência do risco",
 				maxLength: 1000,
-				label: "Consequência",
+				label: "Consequência (s)",
 				value: risk != null ? risk.result : null,
 			}, {
 				name: "probability",
@@ -296,7 +296,7 @@ export default React.createClass({
 				value: risk != null ? risk.riskLevel.level : null,
 			}, {
 				name: "periodicity",
-				label: "Periodicidade da análise",
+				label: "Periodicidade do monitoramento",
 				type: AttributeTypes.SELECT_FIELD,
 				optionsField: [{ label: 'Diária' },
 				{ label: 'Semanal' },
