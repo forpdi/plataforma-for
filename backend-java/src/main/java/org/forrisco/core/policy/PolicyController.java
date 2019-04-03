@@ -284,7 +284,7 @@ public class PolicyController extends AbstractController {
 			//não podem existir riscos vinculados
 			if(policy.getNcolumn() != existent.getNcolumn() 
 				|| policy.getNline() != existent.getNline()
-				|| policy.getLevel() != existentLevels.getTotal()) {
+				|| policy.getLevels() != existentLevels.getTotal()) {
 			
 				if (!risks.isEmpty()) {
 					this.fail("Impossível modificar política com Risco(s) vinculado(s)");
@@ -294,9 +294,9 @@ public class PolicyController extends AbstractController {
 			
 			//atualiza graus de risco
 			//se a quantidade de os novos graus >= graus antigos 
-			for(int i=0; i < (policy.getLevel() > existentLevels.getTotal() ? (policy.getLevel()): existentLevels.getTotal()) ;i++) {
+			for(int i=0; i < (policy.getLevels() > existentLevels.getTotal() ? (policy.getLevels()): existentLevels.getTotal()) ;i++) {
 				
-				if(i < existentLevels.getTotal() && i < policy.getLevel() ) {
+				if(i < existentLevels.getTotal() && i < policy.getLevels() ) {
 					if(!existentLevels.getList().get(i).getLevel().equals(policy.getRisk_level()[0][i]) 
 						|| existentLevels.getList().get(i).getColor() != Integer.parseInt(policy.getRisk_level()[1][i])) {
 					
@@ -333,6 +333,7 @@ public class PolicyController extends AbstractController {
 			existent.setMatrix(policy.getMatrix());
 			existent.setNline(policy.getNline());
 			existent.setNcolumn(policy.getNcolumn());
+			existent.setPIDescriptions(policy.getPIDescriptions());
 			this.policyBS.persist(existent);
 			
 			

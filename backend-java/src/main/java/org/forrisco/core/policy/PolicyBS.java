@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
-import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forrisco.core.item.FieldItem;
 import org.forrisco.core.item.FieldSubItem;
 import org.forrisco.core.item.Item;

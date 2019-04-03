@@ -8,7 +8,6 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
-import org.forpdi.core.company.CompanyDomain;
 import org.forrisco.core.plan.PlanRisk;
 import org.forrisco.core.process.ProcessUnit;
 import org.forrisco.core.unit.Unit;

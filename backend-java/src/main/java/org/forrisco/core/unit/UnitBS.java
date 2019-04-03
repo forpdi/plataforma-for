@@ -69,11 +69,6 @@ public class UnitBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("parent", unit));
 
-//		Criteria count = this.dao.newCriteria(Unit.class)
-//				.add(Restrictions.eq("deleted", false))
-//				.add(Restrictions.eq("parent", unit))
-//				.setProjection(Projections.countDistinct("id"));
-
 		List<Unit> subunits = this.dao.findByCriteria(criteria, Unit.class);
 		results.setList(subunits);
 		results.setTotal((long) subunits.size());

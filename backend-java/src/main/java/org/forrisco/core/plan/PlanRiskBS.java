@@ -9,12 +9,10 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
-import org.forrisco.core.item.FieldSubItem;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
 import org.forrisco.core.item.PlanRiskSubItemField;
-import org.forrisco.core.item.SubItem;
 import org.forrisco.core.policy.Policy;
 
 import org.hibernate.Criteria;

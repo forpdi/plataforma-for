@@ -8,7 +8,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.forrisco.core.item.SubItem;
-import org.hibernate.annotations.Type;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;

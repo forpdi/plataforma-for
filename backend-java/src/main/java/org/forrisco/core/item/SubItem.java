@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
+
 
 /**
  * @author Matheus Nascimento

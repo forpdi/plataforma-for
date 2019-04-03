@@ -228,6 +228,33 @@ export default React.createClass({
 		);
 	},
 
+	getDescriptions(){
+
+		if(this.state.policyModel == null || this.state.policyModel.data.PIDescriptions==null){
+			return
+		}
+
+		var pdesc = JSON.parse( this.state.policyModel.data.PIDescriptions).PIDescriptions.pdescriptions
+		var idesc = JSON.parse( this.state.policyModel.data.PIDescriptions).PIDescriptions.idescriptions
+
+		var desc=[<br/>]
+
+		for(var i=0; i< this.state.policyModel.data.nline;i++){
+			desc.push(<div>
+					<b>{"Probabilidade "+pdesc[i].value}</b> {" - "+pdesc[i].description}
+				</div>)
+		}
+
+		desc.push(<br/>)
+
+		for(var i=0; i< this.state.policyModel.data.ncolumn;i++){
+			desc.push(<div>
+					<b>{"Impacto "+idesc[i].value}</b> {" - "+idesc[i].description}
+				</div>)
+		}
+
+		return desc
+	},
 
 	renderDropdown() {
 		return (
@@ -236,17 +263,14 @@ export default React.createClass({
 					<Link
 						to={"/forrisco/policy/"+this.props.params.policyId+"/edit"}>
 							<span className="mdi mdi-pencil cursorPointer" title={Messages.get("label.title.editPolicy")}>
-							<span id="menu-levels"> {"Editar Política"/*Messages.getEditable("label.title.editPolicy","fpdi-nav-label")*/} </span>
+							<span id="menu-levels"> {"Editar Política"} </span>
 							</span>
 					</Link>
 				</li>
 				<li>
-					<Link
-						//to={"/forrisco/policy/"+this.props.params.policyId+"/item/"+this.props.params.itemId}//this.state.model.get("id")}
-						onClick={this.deletePolicy}
-					>
+					<Link onClick={this.deletePolicy}>
 						<span className="mdi mdi-delete cursorPointer" title={Messages.get("label.deletePolicy")}>
-							<span id="menu-levels"> {"Deletar Política" /*Messages.getEditable("label.deletePolicy","fpdi-nav-label")*/} </span>
+							<span id="menu-levels"> {"Deletar Política"} </span>
 						</span>
 					</Link>
 				</li>
@@ -299,18 +323,22 @@ export default React.createClass({
 
 				<div>
 					<br/>
-
-					<label  className="fpdi-text-label">{"DESCRIÇÃO"}</label>
+						<label  className="fpdi-text-label">{"DESCRIÇÃO"}</label>
 					<br/>
+
 					<span className="pdi-normal-text">
 						<pre className="pre-info">{this.state.policyModel.data.description}</pre>
 					</span>
 
-					<br/><br/>
+					<br/>
+					<br/>
 					{this.getMatrix()}
 					<br/>
+					<br/>
+						<label  className="fpdi-text-label">{"DESCRIÇÃO DOS TIPOS DE PROBABILIDADE E IMPACTO"}</label>
+					<br/>
+					{this.getDescriptions()}
 				</div>
-
 			</div>
 		</div>)
 	}
