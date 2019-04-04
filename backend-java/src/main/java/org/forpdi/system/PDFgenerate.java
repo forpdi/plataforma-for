@@ -2989,7 +2989,25 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		description.setIndentationLeft(firstLineIndent);
 		description.setSpacingAfter(paragraphSpacing);
 		document.add(description);
-		
+				
+		if (policy.getValidityBegin() != null && policy.getValidityEnd() != null) {
+			Paragraph validityTitle = new Paragraph("Prazo de vigência", titulo);
+			validityTitle.setLeading(interLineSpacing);
+			validityTitle.setSpacingAfter(paragraphSpacing);
+			validityTitle.setSpacingBefore(paragraphSpacing);
+			document.add(validityTitle);
+
+			Paragraph validity = new Paragraph(
+				String.format("%s à %s", 
+					GeneralUtils.DATE_FORMAT.format(policy.getValidityBegin()),
+					GeneralUtils.DATE_FORMAT.format(policy.getValidityEnd())
+				)
+			);
+			validity.setIndentationLeft(firstLineIndent);
+			validity.setSpacingAfter(paragraphSpacing);
+			document.add(validity);
+		}
+
 		//matrix de risco
 		String[][] matrix = this.riskBS.getMatrixVector(policy);
 		String table = "";
@@ -3804,6 +3822,23 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			description.setSpacingAfter(paragraphSpacing);
 			document.add(description);
 	
+			if (plan.getValidityBegin() != null && plan.getValidityEnd() != null) {
+				c2 = new Chunk("Prazo de vigência", titulo);
+				attTitle = new Paragraph(c2);
+				attTitle.setLeading(interLineSpacing);
+				attTitle.setSpacingAfter(paragraphSpacing);
+				document.add(attTitle);
+				description = new Paragraph(
+					String.format("%s à %s",
+						GeneralUtils.DATE_FORMAT.format(plan.getValidityBegin()),
+						GeneralUtils.DATE_FORMAT.format(plan.getValidityEnd())
+					)
+				);
+				description.setIndentationLeft(firstLineIndent);
+				description.setSpacingAfter(paragraphSpacing);
+				document.add(description);
+			}
+			
 			c2 = new Chunk("Política Vinculada", titulo);
 			attTitle = new Paragraph(c2 );
 			attTitle.setLeading(interLineSpacing);
