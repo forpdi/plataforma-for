@@ -76,7 +76,14 @@ public class PolicyController extends AbstractController {
 				this.fail("Instituição não definida");
 				return;
 			}
-			if (policy.getValidityEnd().before(policy.getValidityBegin())) {
+			if ((policy.getValidityBegin() == null && policy.getValidityEnd() != null) ||
+					(policy.getValidityEnd() == null && policy.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
+
+			if (policy.getValidityBegin() != null && policy.getValidityEnd() != null &&
+					policy.getValidityEnd().before(policy.getValidityBegin())) {
 				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
 				return;				
 			}
@@ -268,8 +275,15 @@ public class PolicyController extends AbstractController {
 				this.fail("Política sem Istituição associada");
 				return;
 			}
+			
+			if ((policy.getValidityBegin() == null && policy.getValidityEnd() != null) ||
+					(policy.getValidityEnd() == null && policy.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
 
-			if (policy.getValidityEnd().before(policy.getValidityBegin())) {
+			if (policy.getValidityBegin() != null && policy.getValidityEnd() != null &&
+					policy.getValidityEnd().before(policy.getValidityBegin())) {
 				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
 				return;				
 			}

@@ -24,6 +24,8 @@ export default React.createClass({
 			fields: [],
 			title: '',
 			description: '',
+			validityBegin: null,
+			validityEnd: null,
 			policy: '',
 			isLoading: true
 		}
@@ -34,6 +36,8 @@ export default React.createClass({
 			this.setState({
 				title: response.attributes.name,
 				description: response.attributes.description,
+				validityBegin: response.attributes.validityBegin,
+				validityEnd: response.attributes.validityEnd,
 				policy: response.attributes.policy.name,
 				isLoading: false
 			});
@@ -125,7 +129,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.context.permissions);
 		if (this.state.isLoading === true) {
 			return <LoadingGauge/>;
 		}
@@ -160,6 +163,21 @@ export default React.createClass({
 									<pre className="pre-info">{this.state.description}</pre>
 								</span>
 								<br/>
+								{
+									this.state.validityBegin && this.state.validityEnd &&
+									<div>
+										<label  className="fpdi-text-label">{"PRAZO DE VIGÊNCIA"}</label>
+										<div className="padding5">
+											<span>
+												{this.state.validityBegin && this.state.validityBegin.split(' ')[0]}
+												&nbsp;&nbsp;
+												à
+												&nbsp;&nbsp;
+												{this.state.validityEnd && this.state.validityEnd.split(' ')[0]}
+											</span>
+										</div>
+									</div>
+								}
 								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
 								<br/>
 								<span className="pdi-normal-text"><p>{this.state.policy}</p></span>

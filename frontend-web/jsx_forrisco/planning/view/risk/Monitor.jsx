@@ -12,6 +12,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
 import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -389,11 +390,17 @@ export default React.createClass({
 	},
 
 	deleteMonitor(id) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_DELETE_MONITOR,
-			data: {
-				monitorId: id,
-			},
+		var msg = "Você tem certeza que deseja excluir este Monitoramento?"
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_DELETE_MONITOR,
+				data: {
+					monitorId: id,
+				},
+			});
+		}, msg, () => {
+			Modal.hide()
 		});
 	},
 
@@ -507,19 +514,19 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Parecer',
 			accessor: 'report',
-			minWidth: 350,
+			minWidth: 320,
 		}, {
 			Header: 'Probabilidade',
 			accessor: 'probability',
-			minWidth: 150,
+			minWidth: 140,
 		}, {
 			Header: 'Impacto',
 			accessor: 'impact',
-			minWidth: 150,
+			minWidth: 140,
 		}, {
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 250,
+			minWidth: 200,
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',

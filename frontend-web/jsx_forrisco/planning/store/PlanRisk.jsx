@@ -32,7 +32,6 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			},
 			error(opts, status, errorMsg) {
 				me.trigger("plariskcreated", {msg: opts})
-				me.handleRequestErrors([], opts);
 			}
 		});
 	},
@@ -109,8 +108,8 @@ var PlanRiskStore = Fluxbone.Store.extend({
 			success(model) {
 				me.trigger("editPlanRisk", model);
 			},
-			error(model, response, options) {
-				me.handleRequestErrors([], options.xhr);
+			error(opts) {
+				me.trigger("editPlanRisk", {msg: opts})
 			}
 		})
 	},

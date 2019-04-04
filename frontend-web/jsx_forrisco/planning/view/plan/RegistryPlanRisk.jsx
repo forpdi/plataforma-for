@@ -1,12 +1,12 @@
 import React from "react";
-import Messages from "@/core/util/Messages";
+import moment from 'moment'
+
 import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import PlanRiskStore from "forpdi/jsx_forrisco/planning/store/PlanRisk.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import Router from "react-router";
-import UserSession from "@/core/store/UserSession";
-import StructureStore from "@/planning/store/Structure";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge";
+import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
+import Messages from "@/core/util/Messages";
 
 export default React.createClass({
 
@@ -23,6 +23,8 @@ export default React.createClass({
 			planRiskModel: null,
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
+			validityBegin: null,
+			validityEnd: null,
 			policyId: null,
 			plansLength: null,
 			policies: [{
@@ -75,7 +77,7 @@ export default React.createClass({
 					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
 				});
 			} else {
-				var msg = model.msg ? model.msg.message : "Erro ao criar Plano"
+				var msg = response.msg ? response.msg.responseJSON.message : "Erro ao criar Plano"
 				this.context.toastr.addAlertError(msg);
 			}
 		});
@@ -111,7 +113,41 @@ export default React.createClass({
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
-		}, {
+		});
+
+		return fields;
+	},
+
+	getVigencia() {
+		var fields = [];
+		fields.push(
+			{
+				name: "risk_vigencia_begin",
+				type: "date",
+				required: true,
+				maxLength: 30,
+				placeholder: "Data de início",
+				value: this.state.validityBegin,
+				onChange: (date) =>
+					this.setState({ validityBegin: date ? date.format('DD/MM/YYYY') : null }),
+			},
+			{
+				name: "risk_vigencia_end",
+				type: "date",
+				required: true,
+				maxLength: 30,
+				placeholder: "Data de término",
+				value: this.state.validityEnd,
+				onChange: (date) =>
+					this.setState({ validityEnd: date ? date.format('DD/MM/YYYY') : null }),
+			}
+		);
+
+		return fields;
+	},
+
+	getPoliciesField() {
+		return {
 			name: "linkedPolicy",
 			type: "select",
 			options: this.state.policies,
@@ -122,9 +158,7 @@ export default React.createClass({
 			placeholder: "Selecione a Política",
 			label: Messages.getEditable("label.linkPlanPolicy", "fpdi-nav-label"),
 			value: this.state.planRiskModel ? this.state.planRiskModel.attributes.description : null,
-		});
-
-		return fields;
+		};
 	},
 
 	handleSubmit(event) {
@@ -141,11 +175,25 @@ export default React.createClass({
 			return false;
 		}
 
+		if ((!this.state.validityBegin && this.state.validityEnd) ||
+				(this.state.validityBegin && !this.state.validityEnd)) {
+			this.context.toastr.addAlertError("Não é permitido preencher somente uma das datas do prazo de vigência");
+			return false;
+		}
+		var validityBegin = moment(this.state.validityBegin, 'DD/MM/YYYY').toDate();
+		var validityEnd = moment(this.state.validityEnd, 'DD/MM/YYYY').toDate();
+		if(validityBegin > validityEnd) {
+			this.context.toastr.addAlertError("A data de início do prazo de vigência não deve ser superior à data de término");
+			return false;
+		}
+
 		PlanRiskStore.dispatch({
 			action: PlanRiskStore.ACTION_NEWPLANRISK,
 			data: {
 				name: formData.get('name'),
 				description: formData.get('description'),
+				validityBegin: this.state.validityBegin,
+				validityEnd: this.state.validityEnd,
 				policy: {
 					id: formData.get('linkedPolicy')
 				}
@@ -181,6 +229,25 @@ export default React.createClass({
 								);
 							})
 						}
+
+						<label htmlFor={this.state.fieldId} className="fpdi-text-label">
+							Prazo de vigência
+						</label>
+						<br />
+						{
+							this.getVigencia().map((field, idx) =>
+								<HorizontalInput
+									name={field.name}
+									formId={this.props.id}
+									fieldDef={field}
+									key={field.value ? idx : field.name}
+									onConfirm={this.submitWrapper}
+									ref={field.ref}
+								/>
+							)
+						}
+
+						<VerticalInput fieldDef={this.getPoliciesField()}/>
 
 						<div className="fpdi-editable-data-input-group">
 							<button type="submit" className="btn btn-success">{this.state.submitLabel}</button>

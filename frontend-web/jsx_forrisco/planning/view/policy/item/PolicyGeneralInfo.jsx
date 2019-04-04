@@ -333,17 +333,22 @@ export default React.createClass({
 					</span>
 
 					<br/><br/>
-					<label  className="fpdi-text-label">{"PRAZO DE VIGÊNCIA"}</label>
-					<div className="padding5">
-						<span>
-							{this.state.policyModel.data.validityBegin && this.state.policyModel.data.validityBegin.split(' ')[0]}
-							&nbsp;&nbsp;
-							à
-							&nbsp;&nbsp;
-							{this.state.policyModel.data.validityEnd && this.state.policyModel.data.validityEnd.split(' ')[0]}
-						</span>
-					</div>
-					<br/><br/>
+					{
+						this.state.policyModel.data.validityBegin && this.state.policyModel.data.validityEnd &&
+						<div>
+							<label  className="fpdi-text-label">{"PRAZO DE VIGÊNCIA"}</label>
+							<div className="padding5">
+								<span>
+									{this.state.policyModel.data.validityBegin && this.state.policyModel.data.validityBegin.split(' ')[0]}
+									&nbsp;&nbsp;
+									à
+									&nbsp;&nbsp;
+									{this.state.policyModel.data.validityEnd && this.state.policyModel.data.validityEnd.split(' ')[0]}
+								</span>
+							</div>
+							<br/><br/>
+						</div>
+					}
 					{this.getMatrix()}
 					<br/>
 					<br/>
