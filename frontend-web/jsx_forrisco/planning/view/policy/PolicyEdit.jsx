@@ -894,9 +894,6 @@ export default React.createClass({
 
 		var msg = Validate.validationPolicyEdit(data, this.refs);
 
-
-		console.log("data", data)
-
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
 			return;
