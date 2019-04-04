@@ -77,6 +77,11 @@ public class PlanRiskController extends AbstractController {
 				this.fail("O plano de risco solicitada não foi encontrado.");
 				return;
 			}
+			if ((planRisk.getValidityBegin() == null && planRisk.getValidityEnd() != null) ||
+					(planRisk.getValidityEnd() == null && planRisk.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
 			if (planRisk.getValidityBegin() != null && planRisk.getValidityEnd() != null
 					&& planRisk.getValidityEnd().before(planRisk.getValidityBegin())) {
 				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
@@ -169,6 +174,11 @@ public class PlanRiskController extends AbstractController {
 				this.fail("Plano sem política associada");
 			}
 
+			if ((planRisk.getValidityBegin() == null && planRisk.getValidityEnd() != null) ||
+					(planRisk.getValidityEnd() == null && planRisk.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
 			if (planRisk.getValidityBegin() != null && planRisk.getValidityEnd() != null
 					&& planRisk.getValidityEnd().before(planRisk.getValidityBegin())) {
 				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");

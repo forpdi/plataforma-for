@@ -175,6 +175,11 @@ export default React.createClass({
 			return false;
 		}
 
+		if ((!this.state.validityBegin && this.state.validityEnd) ||
+				(this.state.validityBegin && !this.state.validityEnd)) {
+			this.context.toastr.addAlertError("Não é permitido preencher somente uma das datas do prazo de vigência");
+			return false;
+		}
 		var validityBegin = moment(this.state.validityBegin, 'DD/MM/YYYY').toDate();
 		var validityEnd = moment(this.state.validityEnd, 'DD/MM/YYYY').toDate();
 		if(validityBegin > validityEnd) {
