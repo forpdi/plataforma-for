@@ -57,8 +57,9 @@
         display: flex;
         flex-direction: row;
         justify-content: space-around;
-		width: fit-content;
-		margin-left: -10px;
+        width: fit-content;
+        margin-top: 3px;
+		// margin-left: -10px;
 
         .row-button-icon {
             background-color: transparent;
@@ -69,8 +70,9 @@
 			}
 		}
 		.btn {
-			margin-left: 0 !important;
-			margin-top: 18px;
+			// margin-left: 0 !important;
+            // margin-top: 18px;
+            margin: 0;
 		}
 	}
 

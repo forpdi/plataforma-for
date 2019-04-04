@@ -12,6 +12,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
 import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 const incidentTypes = {
 	values: [
@@ -373,12 +374,19 @@ export default React.createClass({
 		});
 	},
 
+
 	deleteIncident(id) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_DELETE_INCIDENT,
-			data: {
-				incidentId: id,
-			},
+		var msg = "Você tem certeza que deseja excluir este Incidente?"
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_DELETE_INCIDENT,
+				data: {
+					incidentId: id,
+				},
+			});
+		}, msg, () => {
+			Modal.hide()
 		});
 	},
 
@@ -502,16 +510,16 @@ export default React.createClass({
 		}, {
 			Header: 'Responsável',
 			accessor: 'user.name',
-			minWidth: 250
+			minWidth: 150
 		}, {
 			Header: 'Data e horário',
 			accessor: 'begin',
-			minWidth: 150
+			minWidth: 140
 		}, {
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
-			width: 100,
+			width: 120,
 		}];
 		return (
 			<div className="general-table">
