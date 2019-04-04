@@ -160,7 +160,11 @@ export default React.createClass({
 						{fieldEl}
 						{this.props.fieldDef.helpBox}
 					</div>
-					<div className="formAlertError" ref="formAlertError"></div>
+					<div className="formAlertError" ref="formAlertError">
+						{
+							this.props.formAlertErrorFixedHeight && <br/>
+						}
+					</div>
 				</div>
 			</div>
 		);
