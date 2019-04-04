@@ -11,6 +11,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
 import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -270,12 +271,19 @@ export default React.createClass({
 		});
 	},
 
+
 	deleteContingency(id) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_DELETE_CONTINGENCY,
-			data: {
-				contingencyId: id,
-			},
+		var msg = "Você tem certeza que deseja excluir esta Ação de Contigenciamento?"
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_DELETE_CONTINGENCY,
+				data: {
+					contingencyId: id,
+				},
+			});
+		}, msg, () => {
+			Modal.hide()
 		});
 	},
 
@@ -334,16 +342,16 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 770
+			minWidth: 630
 		}, {
 			Header: 'Responsável',
 			accessor: 'user.name',
-			minWidth: 280
+			minWidth: 250
 		}, {
 			Header: '',
 			accessor: 'tools',
 			sortable: false,
-			width: 100,
+			width: 120,
 		}];
 		return (
 			<div className="general-table">
