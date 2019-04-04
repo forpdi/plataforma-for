@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from 'react-router';
 import _ from 'underscore';
+import ReactMultiSelectCheckboxes from 'react-multiselect-checkboxes';
 
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
@@ -112,6 +113,7 @@ export default React.createClass({
 
 		this.refresh(this.props);
 	},
+
 	componentWillUnmount() {
 		UserStore.off(null, null, this)
 		StructureStore.off(null, null, this)
@@ -119,7 +121,6 @@ export default React.createClass({
 		UnitStore.off(null, null, this)
 		ProcessStore.off(null, null, this)
 	},
-
 
 	componentWillReceiveProps(newProps, newContext) {
 
@@ -140,7 +141,6 @@ export default React.createClass({
 			});
 		}
 	},
-
 
 	// users
 	// structure (objetivos estratégicos)
@@ -193,7 +193,6 @@ export default React.createClass({
 			this.state.risk_act_process = this.props.risk.risk_act_process
 		}
 	},
-
 
 	componentDidUpdate(){
 		if (this.props.route.path == "new" && !this.state.update) {
@@ -312,18 +311,6 @@ export default React.createClass({
 				maxLength: 100,
 				value: risk != null ? risk.periodicity : null,
 			}, {
-				name: "tipology",
-				type: AttributeTypes.SELECT_FIELD,
-				optionsField: [{ label: 'Risco operacional' },
-				{ label: 'Risco de imagem/reputação do órgão' },
-				{ label: 'Risco legal' },
-				{ label: 'Risco financeiro/orçamentário' },
-				{ label: 'Risco de Integridade'}],
-				placeholder: "Selecione",
-				maxLength: 100,
-				label: "Tipologia",
-				value: risk != null ? risk.tipology : null,
-			}, {
 				name: "type",
 				type: AttributeTypes.SELECT_FIELD,
 				optionsField: [{ label: 'Ameaça' }, { label: 'Oportunidade' }],
@@ -332,6 +319,21 @@ export default React.createClass({
 				maxLength: 100,
 				label: "Tipo",
 				value: risk != null ? risk.type : null,
+			// },{
+			// 	name: "tipology",
+			// 	type: AttributeTypes.SELECT_FIELD,
+			// 	optionsField: [
+			// 		{ label: 'Risco operacional' },
+			// 		{ label: 'Risco de imagem/reputação do órgão' },
+			// 		{ label: 'Risco legal' },
+			// 		{ label: 'Risco financeiro/orçamentário' },
+			// 		{ label: 'Risco de Integridade'},
+			// 		{ label: 'Outro' },
+			// 	],
+			// 	placeholder: "Selecione",
+			// 	maxLength: 100,
+			// 	label: "Tipologia",
+			// 	value: risk != null ? risk.tipology : null,
 			},{
 				name: "date",
 				type: AttributeTypes.DATE,
@@ -451,7 +453,6 @@ export default React.createClass({
 		return fields
 	},
 
-
 	getProbabilities() {
 		var probility = this.state.policyModel.probability.match(/\[.*?\]/g)
 		var fields = []
@@ -518,8 +519,6 @@ export default React.createClass({
 
 
 	onCancel() {
-
-
 		if (this.state.newRisk) {
 			document.getElementById("field-name").value = ''
 			document.getElementById("field-code").value = ''
@@ -549,6 +548,7 @@ export default React.createClass({
 		}
 
 	},
+
 	handleStrategyChange: function (changeEvent) {
 		this.setState({
 			risk_pdi: (changeEvent.target.value == "Sim" ? true : false)
@@ -566,7 +566,6 @@ export default React.createClass({
 			risk_act_process: (changeEvent.target.value == "Sim" ? true : false)
 		});
 	},
-
 
 	getPA(n) {
 		var fields = [];
@@ -682,7 +681,6 @@ export default React.createClass({
 		}
 	},
 
-
 	getValues() {
 		var data = {};
 
@@ -713,8 +711,8 @@ export default React.createClass({
 		data['periodicity'] = document.getElementById("field-periodicity").value
 		data['reason'] = document.getElementById("field-reason").value
 		data['result'] = document.getElementById("field-result").value
-		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
+		data['tipology'] = document.getElementById("field-tipology").value
 
 		if(this.refs["field-1"].refs.user.refs["field-user"].selectedIndex != 0){
 			data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
@@ -732,7 +730,6 @@ export default React.createClass({
 		return data;
 	},
 
-
 	submitWrapper() {
 		if (this.onSubmit(this.getValues())) {
 			$(this.refs['btn-submit']).attr("disabled", "disabled");
@@ -749,6 +746,7 @@ export default React.createClass({
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
+		console.log(data);
 		if (me.props.params.riskId) {
 			data.id = me.props.params.riskId
 			RiskStore.dispatch({
@@ -784,34 +782,76 @@ export default React.createClass({
 						/>
 					: ""}
 
-				{this.getFields().map((fielditem, index) => {
+				{
+					this.getFields().map((fieldItem, index) => {
 
-					if ((fielditem.name == "riskLevel" || fielditem.name == "date") && !this.state.visualization) {
-						return
-					}
+						if ((fieldItem.name == "riskLevel" || fieldItem.name == "date") && !this.state.visualization) {
+							return
+						}
 
-					if(index== 2 || index==3 || this.state.visualization){
+						if (index == 2 || index == 3 || this.state.visualization) {
+							return (
+								<VerticalForm
+									vizualization={this.state.visualization}
+									fields={[fieldItem]}
+									submitLabel={Messages.get("label.submitLabel")}
+									showButtons={false}
+									ref={'field-' + index}
+								/>
+							);
+						}
 
-						return (<VerticalForm
-							vizualization={this.state.visualization}
-							fields={[fielditem]}
-							submitLabel={Messages.get("label.submitLabel")}
-							showButtons={false}
-							ref={'field-' + index}
-						/>)
-					}
+						return (
+							<span className="form-horizontal">
+								<VerticalForm
+									vizualization={this.state.visualization}
+									fields={[fieldItem]}
+									submitLabel={Messages.get("label.submitLabel")}
+									showButtons={false}
+									ref={'field-' + index}
+								/>
+							</span>
+						);
+					})
+				}
 
-					return (<span className="form-horizontal">
-						<VerticalForm
-							vizualization={this.state.visualization}
-							fields={[fielditem]}
-							submitLabel={Messages.get("label.submitLabel")}
-							showButtons={false}
-							ref={'field-' + index}
-						/>
-					</span>)
-
-				})}
+				<span className="form-horizontal">
+					<form>
+						<div className="form-group form-group-sm">
+							<label htmlFor="field-tipology" className="fpdi-text-label">
+								Tipologia
+							</label>
+							<select
+								className="form-control"
+								name="tipology"
+								id="field-tipology"
+								placeholder="Selecione"
+								type="org.forpdi.planning.attribute.types.SelectField"
+								ref={'field-9'}
+							>
+								<option value="" disabled>Selecione</option>
+								<option data-placement="right" title="Risco Operacional">
+									Risco Operacional
+								</option>
+								<option data-placement="right" title="Risco de imagem/reputação do órgão">
+									Risco de imagem/reputação do órgão
+								</option>
+								<option data-placement="right" title="Risco legal">
+									Risco legal
+								</option>
+								<option data-placement="right" title="Risco financeiro/orçamentário">
+									Risco financeiro/orçamentário
+								</option>
+								<option data-placement="right" title="Risco de Integridade">
+									Risco de Integridade
+								</option>
+								<option data-placement="right" title="Outro">
+									Outro
+								</option>
+							</select>
+						</div>
+					</form>
+				</span>
 
 				{//Plano Estratégico
 				}
@@ -899,18 +939,20 @@ export default React.createClass({
 					</div>
 				: ""}
 
-				{!this.state.visualization && this.state.risk_act_process ?
-					this.getProcessActivity() : ""}
+				{!this.state.visualization && this.state.risk_act_process ? this.getProcessActivity() : ""}
 
-				{this.state.visualization  ?
+				{
+					this.state.visualization
+					?
 					<ListForm
 						vizualization={this.state.visualization}
 						fields={this.getActivities()}
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
-
 					/>
-				: ""}
+					:
+					""
+				}
 
 				<br />
 				<br />

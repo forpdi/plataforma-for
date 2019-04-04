@@ -153,6 +153,7 @@ export default React.createClass({
 	},
 
 	insertNewRow() {
+		console.log(this.state.units);
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
@@ -224,11 +225,11 @@ export default React.createClass({
 		}
 		const { processes } = this.state;
 		processes.unshift(newRow);
-        this.setState({
-			selectedUnits: [],
-			process: {},
-			newRowDisplayed: true,
-		});
+      this.setState({
+				selectedUnits: [],
+				process: {},
+				newRowDisplayed: true,
+			});
     },
 
 	enableUpdateMode(idx) {
@@ -242,7 +243,7 @@ export default React.createClass({
 			label: unit.name,
 			data: unit
 		}));
-	    processes[idx] = {
+    processes[idx] = {
 			name: <VerticalInput
 				className="padding7"
 				fieldDef={{
@@ -306,13 +307,13 @@ export default React.createClass({
 				/>
 			</div>,
 		}
-        this.setState({
+    this.setState({
 			selectedUnits,
 			processes,
 			process,
 			updateRowDisplayed: true,
 		});
-    },
+  },
 
 	nameChangeHandler(e) {
 		this.setState({
