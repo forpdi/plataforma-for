@@ -2,12 +2,16 @@ package org.forrisco.core.plan;
 
 
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.forrisco.core.policy.Policy;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
@@ -28,7 +32,15 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
-	
+
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_begin")
+	private Date validityBegin;
+
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_end")
+	private Date validityEnd;
+
 	//@SkipSerialization
 	@ManyToOne(targetEntity=Policy.class, optional=false,  fetch=FetchType.EAGER)
 	private Policy policy;
@@ -57,6 +69,22 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getValidityBegin() {
+		return validityBegin;
+	}
+
+	public void setValidityBegin(Date validityBegin) {
+		this.validityBegin = validityBegin;
+	}
+
+	public Date getValidityEnd() {
+		return validityEnd;
+	}
+
+	public void setValidityEnd(Date validityEnd) {
+		this.validityEnd = validityEnd;
 	}
 
 	public Policy getPolicy() {
