@@ -257,7 +257,7 @@ var RiskStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: {unitId: data.unit, planId: data.plan},
+			data: {unitId: data.unit, planId: data.plan, threat: data.threat},
 			success(model) {
 				me.trigger("historyByUnit", model);
 			},

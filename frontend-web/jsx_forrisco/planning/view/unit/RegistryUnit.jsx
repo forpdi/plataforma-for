@@ -1,13 +1,9 @@
 import React from "react";
 import _ from 'underscore';
 import Messages from "@/core/util/Messages";
-// import PolicyStore from "forpdi/jsx_forrisco/planning/store/Policy.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
-import Router from "react-router";
-import UserSession from "@/core/store/UserSession";
-import StructureStore from "@/planning/store/Structure";
 
 export default React.createClass({
 	contextTypes: {
@@ -18,10 +14,8 @@ export default React.createClass({
 
 	getInitialState() {
 		return {
-			// planRiskModel: null,
 			submitLabel: "Salvar",
 			cancelLabel: "Cancelar",
-			// policyId: null,
 			plansLength: null,
 			users: [],
 			unit: {
@@ -35,34 +29,12 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		// var policiData = [];
-		// var resultSelect = PolicyStore.on("unarchivedpolicylisted", (response) => {
-		//
-		// 	if (response.status !== true) {
-		// 		this.setState({domainError: true});
-		// 	}
-		//
-		// 	if (response.success === true) {
-		// 		response.data.map((attr) => {
-		// 			policiData.push({
-		// 				id: attr.id,
-		// 				label: attr.name
-		// 			});
-		// 		});
-		//
-		// 		this.setState({
-		// 			policies: policiData, domainError: false,
-		// 		});
-		// 	}
-		// 	resultSelect.off("unarchivedpolicylisted");
-		// });
-
-		// UnitStore.on("listedunarchivedplanrisk", (response) => {
-		// 	this.setState({
-		// 		plansLength: response.total
-		// 	});
-		// });
-
+		const tab = this.context.tabPanel.getTabByPath(this.props.location.pathname);
+		if (tab && tab.state) {
+			this.setState({
+				unit: tab.state,
+			});
+		}
 		UserStore.on('retrieve-user', (response) => {
 			let arrUsers = []
 			if (response.data) {
@@ -88,6 +60,7 @@ export default React.createClass({
 
 		UnitStore.on("unitcreated", (response) => {
 			if (response.data) {
+				this.context.tabPanel.clearTabState(this.props.location.pathname);
 				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${response.data.id}/info`);
 				this.context.toastr.addAlertSuccess(Messages.get("notification.unit.save"));
 			} else {
@@ -100,18 +73,7 @@ export default React.createClass({
 		});
 	},
 
-	// componentWillMount() {
-	// 	PolicyStore.dispatch({
-	// 		action: PolicyStore.ACTION_FIND_UNARCHIVED,
-	// 	});
-	//
-	// 	PolicyStore.dispatch({
-	// 		action: UnitStore.ACTION_FIND_UNARCHIVED,
-	// 	});
-	// },
-
 	componentWillUnmount() {
-		// PolicyStore.off(null, null, this);
 		UnitStore.off(null, null, this);
 		UserStore.off(null, null, this);
 	},
@@ -122,7 +84,7 @@ export default React.createClass({
 				...this.state.unit,
 				[e.target.name]: e.target.value,
 			}
-		});
+		}, this.updateTabPanelState);
 	},
 
 	selectChangeHandler(e) {
@@ -132,7 +94,14 @@ export default React.createClass({
 				...this.state.unit,
 				user: this.state.users[idx],
 			}
-		});
+		}, this.updateTabPanelState);
+	},
+
+	updateTabPanelState() {
+		this.context.tabPanel.setTabState(
+			this.props.location.pathname,
+			this.state.unit,
+		);
 	},
 
 	getFields() {
@@ -140,6 +109,7 @@ export default React.createClass({
 		fields.push({
 			name: "name",
 			type: "text",
+			currValue: this.state.unit.name,
 			required: true,
 			maxLength: 240,
 			placeholder: "Nome da Unidade",
@@ -148,6 +118,7 @@ export default React.createClass({
 		}, {
 			name: "abbreviation",
 			type: "text",
+			currValue: this.state.unit.abbreviation,
 			required: true,
 			placeholder: "Sigla da Unidade",
 			maxLength: 240,
@@ -156,6 +127,7 @@ export default React.createClass({
 		}, {
 			name: "user",
 			type: "select",
+			currValue: this.state.unit.user ? this.state.unit.user.name: null,
 			options: _.map(this.state.users, user => user.name),
 			renderDisplay: value => value,
 			className: "form-control-h",
@@ -167,6 +139,7 @@ export default React.createClass({
 		}, {
 			name: "description",
 			type: "textarea",
+			currValue: this.state.unit.description,
 			placeholder: "Descrição da Unidade",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
@@ -192,17 +165,7 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		// if (this.state.plansLength > 0 || this.state.policies.length === 0) {
-		// 	this.context.router.push("/forrisco/home/");
-		// }
-		//
-		// if (this.state.policies.length && this.state.policies.length === 1) {
-		// 	this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/")
-		// }
-
 		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-		const { id } = this.state.unit.planRisk;
-		this.context.router.push(`/forrisco/plan-risk/${id}/unit/`);
 	},
 
 	render() {
