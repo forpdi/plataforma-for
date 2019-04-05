@@ -746,7 +746,6 @@ export default React.createClass({
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
-		console.log(data);
 		if (me.props.params.riskId) {
 			data.id = me.props.params.riskId
 			RiskStore.dispatch({
@@ -764,7 +763,7 @@ export default React.createClass({
 	handleSelect(event) {
 		const option = event.target.value;
 
-		if (option === 'Outro') {
+		if (option === 'Outra') {
 			this.setState({ showOtherField: true });
 		} else if (this.state.showOtherField) {
 			this.setState({ showOtherField: false });
@@ -772,8 +771,6 @@ export default React.createClass({
 	},
 
 	renderTypologies() {
-		console.log(this.state);
-
 		if (this.state.visualization) {
 			return (
 				<form>
@@ -822,8 +819,8 @@ export default React.createClass({
 								<option data-placement="right" title="Risco de Integridade">
 									Risco de Integridade
 								</option>
-								<option data-placement="right" title="Outro">
-									Outro
+								<option data-placement="right" title="Outra">
+									Outra
 								</option>
 							</select>
 						</div>
@@ -834,7 +831,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.state.showOtherField);
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
@@ -895,6 +891,28 @@ export default React.createClass({
 				}
 
 				{this.renderTypologies()}
+
+				{
+					this.state.showOtherField
+					?
+					<span className="form-horizontal">
+						<VerticalForm
+							vizualization={this.state.visualization}
+							fields={[{
+								name: "newTipology",
+								type: AttributeTypes.TEXT_AREA,
+								placeholder: "Nome da Tipologia",
+								maxLength: 100,
+								label: "Nova Tipologia",
+								value: null,
+							}]}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+						/>
+					</span>
+					:
+					""
+				}
 
 				{//Plano Estratégico
 				}
