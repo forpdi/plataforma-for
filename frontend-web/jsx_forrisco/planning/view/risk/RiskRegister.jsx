@@ -53,6 +53,7 @@ export default React.createClass({
 			processList:[],
 			unit: null,
 			update:false,
+			showOtherField: false,
 		}
 	},
 
@@ -517,7 +518,6 @@ export default React.createClass({
 		return fields
 	},
 
-
 	onCancel() {
 		if (this.state.newRisk) {
 			document.getElementById("field-name").value = ''
@@ -761,26 +761,105 @@ export default React.createClass({
 		}
 	},
 
+	handleSelect(event) {
+		const option = event.target.value;
+
+		if (option === 'Outro') {
+			this.setState({ showOtherField: true });
+		} else if (this.state.showOtherField) {
+			this.setState({ showOtherField: false });
+		}
+	},
+
+	renderTypologies() {
+		console.log(this.state);
+
+		if (this.state.visualization) {
+			return (
+				<form>
+					<div className="form-group form-group-sm">
+						<label htmlFor="field-tipology" className="fpdi-text-label">
+							Tipologia
+						</label>
+						<div>
+							<span className="pdi-normal-text">
+								{this.state.riskModel.tipology}
+							</span>
+						</div>
+					</div>
+				</form>
+			);
+		} else {
+			return (
+				<span className="form-horizontal">
+					<form>
+						<div className="form-group form-group-sm">
+							<label htmlFor="field-tipology" className="fpdi-text-label">
+								Tipologia
+							</label>
+							<select
+								className="form-control"
+								name="tipology"
+								id="field-tipology"
+								placeholder="Selecione"
+								type="org.forpdi.planning.attribute.types.SelectField"
+								ref={'field-9'}
+								onChange={this.handleSelect}
+							>
+								<option value="" disabled>Selecione</option>
+								<option data-placement="right" title="Risco Operacional">
+									Risco Operacional
+								</option>
+								<option data-placement="right" title="Risco de imagem/reputação do órgão">
+									Risco de imagem/reputação do órgão
+								</option>
+								<option data-placement="right" title="Risco legal">
+									Risco legal
+								</option>
+								<option data-placement="right" title="Risco financeiro/orçamentário">
+									Risco financeiro/orçamentário
+								</option>
+								<option data-placement="right" title="Risco de Integridade">
+									Risco de Integridade
+								</option>
+								<option data-placement="right" title="Outro">
+									Outro
+								</option>
+							</select>
+						</div>
+					</form>
+				</span>
+			);
+		}
+	},
+
 	render() {
+		console.log(this.state.showOtherField);
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
 
 		return (<div>
-			{this.state.newRisk ?
-				<h1>Novo Risco</h1>
-				: ""}
+			{
+				this.state.newRisk
+				? <h1>Novo Risco</h1>
+				: ""
+			}
 
 			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
-				{!this.state.visualization ?
+				{
+					!this.state.visualization
+					?
 					<VerticalForm
 						vizualization={this.state.visualization}
 						fields={this.getName()}
 						submitLabel={Messages.get("label.submitLabel")}
 						showButtons={false}
 						ref={'field-name'}
-						/>
-					: ""}
+					/>
+					:
+					""
+				}
 
 				{
 					this.getFields().map((fieldItem, index) => {
@@ -815,48 +894,14 @@ export default React.createClass({
 					})
 				}
 
-				<span className="form-horizontal">
-					<form>
-						<div className="form-group form-group-sm">
-							<label htmlFor="field-tipology" className="fpdi-text-label">
-								Tipologia
-							</label>
-							<select
-								className="form-control"
-								name="tipology"
-								id="field-tipology"
-								placeholder="Selecione"
-								type="org.forpdi.planning.attribute.types.SelectField"
-								ref={'field-9'}
-							>
-								<option value="" disabled>Selecione</option>
-								<option data-placement="right" title="Risco Operacional">
-									Risco Operacional
-								</option>
-								<option data-placement="right" title="Risco de imagem/reputação do órgão">
-									Risco de imagem/reputação do órgão
-								</option>
-								<option data-placement="right" title="Risco legal">
-									Risco legal
-								</option>
-								<option data-placement="right" title="Risco financeiro/orçamentário">
-									Risco financeiro/orçamentário
-								</option>
-								<option data-placement="right" title="Risco de Integridade">
-									Risco de Integridade
-								</option>
-								<option data-placement="right" title="Outro">
-									Outro
-								</option>
-							</select>
-						</div>
-					</form>
-				</span>
+				{this.renderTypologies()}
 
 				{//Plano Estratégico
 				}
 
-				{!this.state.visualization ?
+				{
+					!this.state.visualization
+					?
 					<div>
 						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
 						<div>
@@ -865,13 +910,21 @@ export default React.createClass({
 						</div>
 						<br />
 					</div>
-					: ""}
-				{!this.state.visualization && this.state.risk_pdi ?
+					:
+					""
+				}
+				{
+					!this.state.visualization && this.state.risk_pdi
+					?
 					<label htmlFor={"texto"} className="fpdi-text-label-none">
 						{"Objetivo Estratégico do PDI"}
 					</label>
-					: ""}
-				{this.state.visualization || this.state.risk_pdi ?
+					:
+					""
+				}
+				{
+					this.state.visualization || this.state.risk_pdi
+					?
 					<ListForm
 						vizualization={this.state.visualization}
 						fields={this.getStrategies()}
@@ -879,28 +932,60 @@ export default React.createClass({
 						showButtons={false}
 						onChange={this.onChangeStrategies}
 					/>
-				: ""}
+					:
+					""
+				}
 				<br />
 
 				{//Processo
 				}
 
-				{!this.state.visualization ? <div>
-					<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
+				{
+					!this.state.visualization
+					?
 					<div>
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
-						<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
+						<div
+							style={{ "display": "-webkit-box", margin: "10px 0px" }}
+							className={"fpdi-text-label"}
+						>
+							{Messages.get('label.risk.objectiveProcess')}
+						</div>
+						<div>
+							<input
+								style={{ "margin": "0px 5px" }}
+								type="radio"
+								name="objectiveProcess"
+								checked={this.state.risk_obj_process === true}
+								onChange={this.handleProcessChange}
+								value="Sim"
+							/>Sim
+							<input
+								style={{ "margin": "0px 5px" }}
+								type="radio"
+								name="objectiveProcess"
+								checked={this.state.risk_obj_process === false}
+								onChange={this.handleProcessChange}
+								value="Não"
+							/>Não
+						</div>
+						<br />
 					</div>
-					<br />
-				</div>
-					: ""}
-				{!this.state.visualization && this.state.risk_obj_process ?
+					:
+					""
+				}
+				{
+					!this.state.visualization && this.state.risk_obj_process
+					?
 					<label htmlFor={"texto"} className="fpdi-text-label-none">
 						{"Processo/Objetivo"}
 					</label>
-					: ""}
+					:
+					""
+				}
 
-				{this.state.visualization || this.state.risk_obj_process ?
+				{
+					this.state.visualization || this.state.risk_obj_process
+					?
 					<ListForm
 						vizualization={this.state.visualization}
 						fields={this.getProcesses()}
@@ -908,23 +993,47 @@ export default React.createClass({
 						showButtons={false}
 						onChange={this.onChangeProcesses}
 					/>
-				:""}
+					:
+					""
+				}
 				<br />
 
 				{//Atividade
 				}
 
-				{!this.state.visualization ?
+				{
+					!this.state.visualization
+					?
 					<div>
-						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
+						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>
+							{Messages.get('label.risk.activityProcess')}
+						</div>
 						<div>
-							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
-							<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
+							<input
+								style={{ "margin": "0px 5px" }}
+								type="radio"
+								name="activityProcess"
+								checked={this.state.risk_act_process === true}
+								onChange={this.handleActivityChange}
+								value="Sim"
+							/>Sim
+							<input
+								style={{ "margin": "0px 5px" }}
+								type="radio"
+								name="activityProcess"
+								checked={this.state.risk_act_process === false}
+								onChange={this.handleActivityChange}
+								value="Não"
+							/>Não
 						</div>
 						<br />
 					</div>
-				: ""}
-				{!this.state.visualization && this.state.risk_act_process ?
+					:
+					""
+				}
+				{
+					!this.state.visualization && this.state.risk_act_process
+					?
 					<div>
 						<div style={{ position: "relative", bottom: '5px' }}>
 							<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
@@ -937,7 +1046,9 @@ export default React.createClass({
 							<br />
 						</div>
 					</div>
-				: ""}
+					:
+					""
+				}
 
 				{!this.state.visualization && this.state.risk_act_process ? this.getProcessActivity() : ""}
 
@@ -957,14 +1068,17 @@ export default React.createClass({
 				<br />
 				<br />
 
-				{!this.state.visualization ?
+				{
+					!this.state.visualization
+					?
 					<VerticalForm
 						vizualization={this.state.visualization}
 						onCancel={this.onCancel}
 						onSubmit={this.submitWrapper}
 					/>
-				: ""}
-
+					:
+					""
+				}
 			</form>
 		</div>);
 	}
