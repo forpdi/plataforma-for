@@ -257,8 +257,9 @@ export default React.createClass({
 			hAxis: { title: "Tempo", minValue: 1, maxValue: 12 },
 			vAxis: { title: 'Quantidade', minValue: 1, maxValue: max },
 			// height: 250,
-			width: "658px",
-			// chartArea:{width:"471",height:"155"},
+			chartArea: { minWidth: '100%', width: '600px' },
+			// chartArea:{width:"600",height:"155"},
+			// width:
 			legend: 'none',
 			colors: lines,
 		}
@@ -310,6 +311,7 @@ export default React.createClass({
 							options={options}
 							graph_id={"LineChart-" + this.props.title}
 							legend_toggle={true}
+							width={"100%"}
 						/>
 						<div className="colaborator-goal-performance-legend" key={this.props.title}>
 							{levels}
