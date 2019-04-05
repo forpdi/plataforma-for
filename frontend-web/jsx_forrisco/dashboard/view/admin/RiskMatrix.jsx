@@ -295,7 +295,7 @@ export default React.createClass({
 							<div className="matrix-vertical-text dashboard">PROBABILIDADE</div>
 							{this.state.loading ? <LoadingGauge /> : this.getMatrix()}
 						</div>
-						<div style={{display: "flex", "justifycontent": "center", "fontWeight": "bold"}}>IMPACTO</div>
+						<div style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>
 
 					</div>
 				</div>
