@@ -1446,3 +1446,90 @@ pre.pre-info {
 	padding: 0;
 	word-break: normal;
 }
+
+.dashboard-risk-centralize{
+	background: #6C7A89;
+	width: 36vw;
+	height: 36vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.dashboard-matrix-container {
+	height: 362px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	table-layout: fixed;
+}
+
+.dashboard-matrix-container-inner {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+.matrix-tr {
+	min-width: 200px;
+	width: 90%;
+	text-align: -webkit-center;
+}
+
+.matrix-td {
+	text-align: center;
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.matrix-content {
+	text-align: center;
+	display: flex;
+}
+
+.matrix-td-risk {
+	text-align: center;
+	width: 10%;
+}
+
+.matrix-impact-tr {
+	padding-left: 110px;
+	width: 90%;
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-td {
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-div {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.matrix-vertical-text {
+	transform: rotate(270deg);
+
+	&.dashboard {
+		width: 25px;
+		margin-left: 5px;
+		margin-top: 60px;
+		position: relative;
+		font-weight: bold;
+	}
+}
