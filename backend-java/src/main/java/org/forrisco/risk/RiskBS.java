@@ -908,7 +908,7 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 	}
 
-	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units) {
+	public PaginatedList<RiskHistory> listHistoryByUnits(PaginatedList<Unit> units, boolean threat) {
 
 		PaginatedList<RiskHistory> results = new PaginatedList<RiskHistory>();
 		List<RiskHistory> list = new ArrayList<>();
@@ -917,6 +917,7 @@ public class RiskBS extends HibernateBusiness {
 			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
 					.add(Restrictions.eq("unit", unit))
 					.add(Restrictions.eq("deleted", false))
+					.add(Restrictions.eq("threat", threat))
 					.addOrder(Order.asc("id"));
 
 			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));

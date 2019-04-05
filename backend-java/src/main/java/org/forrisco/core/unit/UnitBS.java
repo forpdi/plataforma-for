@@ -240,7 +240,7 @@ public class UnitBS extends HibernateBusiness {
 	 *            Plano de Risco
 	 *
 	 */
-	public void updateHistory(PlanRisk plan) {
+	public void updateHistory(PlanRisk plan, boolean threat) {
 		if (plan == null) {
 			return;
 		}
@@ -256,7 +256,8 @@ public class UnitBS extends HibernateBusiness {
 			
 			Criteria criteria = this.dao.newCriteria(Risk.class)
 					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("unit", unit));
+					.add(Restrictions.eq("unit", unit))
+					.add(Restrictions.eq("type", threat?"Ameaça":"Oportunidade"));
 
 			List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
 			
@@ -275,7 +276,8 @@ public class UnitBS extends HibernateBusiness {
 						.add(Restrictions.eq("month", month))
 						.add(Restrictions.eq("year", year))
 						.add(Restrictions.eq("riskLevel", level))
-						.add(Restrictions.eq("unit", unit));
+						.add(Restrictions.eq("unit", unit))
+						.add(Restrictions.eq("threat", threat));
 
 				criteria.setMaxResults(1);
 				RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
@@ -286,6 +288,7 @@ public class UnitBS extends HibernateBusiness {
 					riskhistory.setMonth(month);
 					riskhistory.setYear(year);
 					riskhistory.setRiskLevel(level);
+					riskhistory.setThreat(threat);
 				}
 
 				riskhistory.setQuantity(map.get(level));
@@ -340,9 +343,7 @@ public class UnitBS extends HibernateBusiness {
 					default:
 						state = "atrasado";
 				}
-
-				//for (int j = month + 1; j <= 12; j++) {
-
+				
 				criteria = this.dao.newCriteria(MonitorHistory.class)
 						.add(Restrictions.eq("deleted", false))
 						.add(Restrictions.eq("month", month))
@@ -364,8 +365,6 @@ public class UnitBS extends HibernateBusiness {
 				hmonitor.setEstado(state);
 
 				this.persist(hmonitor);
-
-				//}
 			}
 		}
 	}

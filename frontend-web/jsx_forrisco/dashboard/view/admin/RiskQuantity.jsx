@@ -34,7 +34,7 @@ export default React.createClass({
 		this.state.risks=newProps.risks;
 		this.state.unit=newProps.unit;
 		this.state.plan= newProps.plan;
-		this.state.threats= newProps.threats;
+
 		this.state.riskLevelModel= newProps.riskLevel;
 		this.state.allRisks= newProps.allRisks;
 		this.state.loading=false;
@@ -43,15 +43,21 @@ export default React.createClass({
 
 		if(newProps.units.length>0 && this.state.units != newProps.units){
 			this.state.units= newProps.units;
+		}
+
+		if(this.state.threats!= newProps.threats){
+			this.state.threats= newProps.threats;
 			this.refresh()
 		}
 	},
 
 	refresh(){
 		RiskStore.dispatch({
+
 			action:RiskStore.ACTION_FIND_HISTORY_BY_UNIT,
 			data:{unit: this.state.unit,
-				plan:this.state.plan.id }
+				plan:this.state.plan.id,
+				threat: this.state.threats}
 		})
 	},
 
@@ -215,11 +221,12 @@ export default React.createClass({
 			return (<LoadingGauge/>)
 		}
 
+
 		return (
 			<div className="frisco-dashboard frisco-dashboard-right" style={{ position: 'relative' }}>
 				{this.getPanel()}
-				{
-					this.state.displayGraph
+
+				{this.state.displayGraph
 					&&
 					<Graphic
 						title={Messages.get("label.risk.history").toUpperCase()}
