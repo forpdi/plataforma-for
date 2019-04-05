@@ -32,6 +32,9 @@ public class RiskHistory extends SimpleLogicalDeletableEntity {
 
 	@Column(nullable=false)
 	private int year;
+	
+	@Column(nullable=false)
+	private boolean threat;
 
 	@Column(nullable=false)
 	private int quantity;
@@ -74,6 +77,14 @@ public class RiskHistory extends SimpleLogicalDeletableEntity {
 
 	public void setUnit(Unit unit) {
 		this.unit = unit;
+	}
+
+	public boolean isThreat() {
+		return threat;
+	}
+
+	public void setThreat(boolean threat) {
+		this.threat = threat;
 	}
 
 	

@@ -22,6 +22,8 @@ export default React.createClass({
 			risklevelModel: null,
 			policyId: null,
 			currentRisks: null,
+			impact: [],
+			prb: [],
 			risks: [],
 			unit: -1,
 			units: [],
@@ -147,14 +149,14 @@ export default React.createClass({
 		return count
 	},
 	getMatrixValue(risks, matrix, line, column) {
-
+		var firstMatch = 0;
 		for (var i = 0; i < matrix.length; i++) {
 			if (matrix[i][1] == line) {
 				if (matrix[i][2] == column) {
 					if (matrix[i][2] == 0) {
-						return <div style={{ "text-align": "right" }}>{matrix[i][0]}&nbsp;&nbsp;&nbsp;&nbsp;</div>
+						return <div style={{ "textAlign": "center", "minWidth": "80px", "maxWidth": "80px", "marginRight": "20px"}}>{matrix[i][0]}</div>
 					} else if (matrix[i][1] == this.state.policyModel.nline) {
-						return <div style={{ "text-align": "-webkit-center", margin: "5px" }} className="">{/*&emsp;&emsp;&emsp;&nbsp;*/}{matrix[i][0]}</div>
+						return <div className="matrix-impact-div" id={"match" + firstMatch}>{matrix[i][0]}</div>
 					} else {
 
 						var current_color = -1;
@@ -186,6 +188,7 @@ export default React.createClass({
 					}
 				}
 			}
+			firstMatch ++;
 		}
 		return ""
 	},
@@ -212,50 +215,40 @@ export default React.createClass({
 			fields = this.state.fields
 		}
 
-		var aux = this.state.policyModel.matrix.split(/;/)
-		var matrix = []
+		var aux = this.state.policyModel.matrix.split(/;/);
+		var matrix = [];
 
 		for (var i = 0; i < aux.length; i++) {
-			matrix[i] = new Array(3)
-			matrix[i][0] = aux[i].split(/\[.*\]/)[1]
-			matrix[i][1] = aux[i].match(/\[.*\]/)[0].substring(1, aux[i].match(/\[.*\]/)[0].length - 1).split(/,/)[0]
-			matrix[i][2] = aux[i].match(/\[.*\]/)[0].substring(1, aux[i].match(/\[.*\]/)[0].length - 1).split(/,/)[1]
+			matrix[i] = new Array(3);
+			matrix[i][0] = aux[i].split(/\[.*\]/)[1]; //prob / impacto
+			matrix[i][1] = aux[i].match(/\[.*\]/)[0].substring(1, aux[i].match(/\[.*\]/)[0].length - 1).split(/,/)[0]; //linha
+			matrix[i][2] = aux[i].match(/\[.*\]/)[0].substring(1, aux[i].match(/\[.*\]/)[0].length - 1).split(/,/)[1]; //coluna
 		}
 
-		var table = []
+		var table = [];
 		for (var i = 0; i <= this.state.policyModel.nline; i++) {
-			var children = []
+			var children = [];
 			for (var j = 0; j <= this.state.policyModel.ncolumn; j++) {
-				children.push(<td key={j}>{this.getMatrixValue(this.state.currentRisks, matrix, i, j)} </td>)
+				children.push(this.getMatrixValue(this.state.currentRisks, matrix, i, j))
 			}
-			table.push(<tr key={i} >{children}</tr>)
+
+			if(children[0] === "") {
+					table.push(
+						<div className="matrix-impact-tr" key={i}>
+							<div className="matrix-impact-td" key={j}>{children}</div>
+						</div>
+					)
+			} else {
+				table.push(
+					<div className="matrix-tr" key={i}>
+						<div className="matrix-td" key={j}>{children}</div>
+					</div>
+				)
+			}
 		}
 		return (
-			<div style={{ overflowX: 'auto' }}>
-				<br />
-				<table style={{ width: "max-content", display: "inline-block" }}>
-					<th>
-						<tr>
-							<td style={{ position: "relative", left: "30px" }}>
-								{table}
-								<tr>
-									<td></td>
-									<td colSpan={this.state.policyModel.ncolumn}>
-										<div style={{ "text-align": "-webkit-center",    position: "relative",  top: "10px"}}>IMPACTO</div>
-									</td>
-								</tr>
-							</td>
-
-
-						</tr>
-
-						<tr>
-							<th>
-								<div style={{ width: "115px", bottom: 95 + 30 * (this.state.policyModel.nline - 2) + "px" }} className="vertical-text dashboard">PROBABILIDADE</div>
-							</th>
-						</tr>
-					</th>
-				</table>
+			<div className="dashboard-matrix-container-inner">
+				{table}
 			</div>
 		);
 	},
@@ -297,10 +290,13 @@ export default React.createClass({
 							<span className={this.state.opportunities ? "active" : ""} onClick={this.selectOpportunities}>{Messages.get("label.risk.opportunities")}</span>
 						</div>
 						<br/>
-						<div style={{ padding: "0px 0px 0px 20px" }}>
-							{this.state.loading ? <LoadingGauge /> :
-								this.getMatrix()}
+
+						<div className="dashboard-matrix-container">
+							<div className="matrix-vertical-text dashboard">PROBABILIDADE</div>
+							{this.state.loading ? <LoadingGauge /> : this.getMatrix()}
 						</div>
+						<div style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>
+
 					</div>
 				</div>
 				{this.state.loading ? <LoadingGauge /> :

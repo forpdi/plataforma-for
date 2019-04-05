@@ -336,13 +336,18 @@ public class UserBS extends HibernateBusiness {
 			results.setTotal((Long) counting.uniqueResult());
 
 		} else {
-			Criteria criteria = this.dao.newCriteria(CompanyUser.class).setFirstResult((page - 1) * pageSize)
-					.setMaxResults(pageSize).add(Restrictions.eq("company", this.domain.getCompany()))
-					.createAlias("user", "user", JoinType.INNER_JOIN).addOrder(Order.asc("user.name"));
+			Criteria criteria = this.dao.newCriteria(CompanyUser.class)
+					.setFirstResult((page - 1) * pageSize)
+					.setMaxResults(pageSize)
+					.add(Restrictions.eq("company", this.domain.getCompany()))
+					.createAlias("user", "user", JoinType.INNER_JOIN)
+					.addOrder(Order.asc("user.name"));
+			
 			Criteria counting = this.dao.newCriteria(CompanyUser.class)
 					.add(Restrictions.eq("company", this.domain.getCompany()))
 					.createAlias("user", "user", JoinType.INNER_JOIN)
 					.setProjection(Projections.countDistinct("user.id"));
+			
 			List<CompanyUser> companyUsers = this.dao.findByCriteria(criteria, CompanyUser.class);
 			ArrayList<User> users = new ArrayList<User>(companyUsers.size());
 			for (CompanyUser companyUser : companyUsers) {
@@ -352,7 +357,8 @@ public class UserBS extends HibernateBusiness {
 				users.add(user);
 			}
 			results.setList(users);
-			results.setTotal((Long) counting.uniqueResult());
+			//results.setTotal((Long) counting.uniqueResult());
+			results.setTotal((long) users.size());
 		}
 		return results;
 	}

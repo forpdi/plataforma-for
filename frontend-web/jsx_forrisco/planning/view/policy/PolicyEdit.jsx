@@ -135,7 +135,7 @@ export default React.createClass({
 				placeholder: "Data de início",
 				value: this.state.validityBegin,
 				onChange: (date) =>
-					this.setState({ validityBegin: date.format('DD/MM/YYYY') }),
+					this.setState({ validityBegin: date ? date.format('DD/MM/YYYY') : null }),
 			},
 			{
 				name: "risk-vigencia-end",
@@ -146,7 +146,7 @@ export default React.createClass({
 				placeholder: "Data de término",
 				value: this.state.validityEnd,
 				onChange: (date) =>
-					this.setState({ validityEnd: date.format('DD/MM/YYYY') }),
+					this.setState({ validityEnd: date ? date.format('DD/MM/YYYY') : null }),
 			}
 		);
 
@@ -894,9 +894,6 @@ export default React.createClass({
 
 		var msg = Validate.validationPolicyEdit(data, this.refs);
 
-
-		console.log("data", data)
-
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
 			return;
@@ -954,6 +951,7 @@ export default React.createClass({
 								key={field.value ? idx : field.name}
 								onConfirm={this.submitWrapper}
 								ref={field.ref}
+								formAlertErrorFixedHeight={true}
 							/>);
 						})}
 

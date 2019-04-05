@@ -59,6 +59,7 @@ export default React.createClass({
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
+				loading: false
 			});
 		}, this);
 
@@ -78,7 +79,7 @@ export default React.createClass({
 		StructureStore.on("companyobjectivesretrivied", (model) => {
 			this.setState({
 				strategy: model.data,
-				loading: false
+
 			})
 		}, this)
 
@@ -158,7 +159,6 @@ export default React.createClass({
 
 		if (Props.route.path == "new") {
 			this.setState({
-				loading: false,
 				visualization: false,
 				newRisk: true
 			})
@@ -170,6 +170,10 @@ export default React.createClass({
 	refreshData(Props) {
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: 1,
+				pageSize: 500,
+			},
 		});
 
 		StructureStore.dispatch({
@@ -208,7 +212,6 @@ export default React.createClass({
 				document.getElementById("field-periodicity").value = ''
 				document.getElementById("field-tipology").value = ''
 				document.getElementById("field-type").value = ''
-				document.getElementById("field-user").value = ''
 			}
 		}
 	},
@@ -255,6 +258,8 @@ export default React.createClass({
 				label: "Responsável",
 				displayField: 'label',
 				value: risk != null ? risk.user.name : null,
+				id: risk != null ? risk.user.id : null,
+				search: true
 			}, {
 				name: "reason",
 				type: AttributeTypes.TEXT_AREA_FIELD,
@@ -480,7 +485,6 @@ export default React.createClass({
 
 	getUsers() {
 		var fields = []
-		//fields.push({label:"", id:0})
 
 		for (var i = 0; i < this.state.users.length; i++) {
 			fields.push(
@@ -709,8 +713,8 @@ export default React.createClass({
 		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
 
-		if(this.refs["field-1"].refs.user.refs["field-user"].selectedIndex != 0){
-			data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
+		if(this.refs["field-1"].refs.user.refs["field-user"].props.value.value != 0){
+			data['user'] = { id: this.refs["field-1"].refs.user.refs["field-user"].props.value.value }
 		}
 		data['unit'] = { id: this.props.params.unitId }
 

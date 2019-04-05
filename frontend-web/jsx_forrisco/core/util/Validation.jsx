@@ -51,25 +51,36 @@ var Validate = {
 		}
 
 		// data de vigencia invalida
-		var validityBegin = moment(data.validityBegin, 'DD/MM/YYYY').toDate();
-		var validityEnd = moment(data.validityEnd, 'DD/MM/YYYY').toDate();
-
-		if(validityBegin > validityEnd) {
-			var validityBeginInput = refs['risk-vigencia-begin']
-				.refs['field-risk-vigencia-begin']
+		if (data.validityBegin && data.validityEnd) {
+			var validityBegin = moment(data.validityBegin, 'DD/MM/YYYY').toDate();
+			var validityEnd = moment(data.validityEnd, 'DD/MM/YYYY').toDate();
+			if(validityBegin > validityEnd) {
+				var validityBeginInput = refs['risk-vigencia-begin']
+					.refs['field-risk-vigencia-begin']
+					.refs['input']
+					.refs['input'];
+				var validityEndInput = refs['risk-vigencia-end']
+					.refs['field-risk-vigencia-end']
+					.refs['input']
+					.refs['input'];
+				validityBeginInput.className += ' borderError';
+				validityEndInput.className += ' borderError';
+				var errorElement = refs['risk-vigencia-begin'].refs['formAlertError'];
+				errorElement.innerHTML = 'Data de início superior à data de término';
+				msg = "A data de início do prazo de vigência não deve ser superior à data de término";
+			}
+		} else if ((!data.validityBegin && data.validityEnd) || (data.validityBegin && !data.validityEnd)) {
+			var nameRefValidityEmpty = !data.validityBegin && data.validityEnd
+				? 'risk-vigencia-begin'
+				: 'risk-vigencia-end';
+			var validityInputEmpty = refs[nameRefValidityEmpty]
+				.refs[`field-${nameRefValidityEmpty}`]
 				.refs['input']
 				.refs['input'];
-			var validityEndInput = refs['risk-vigencia-end']
-				.refs['field-risk-vigencia-end']
-				.refs['input']
-				.refs['input'];
-			validityBeginInput.className += ' borderError';
-			validityEndInput.className += ' borderError';
-			var errorElement = refs['risk-vigencia-begin'].refs['formAlertError'];
-			errorElement.innerHTML = 'Data de início superior à data de término';
-			errorElement = refs['risk-vigencia-end'].refs['formAlertError'];
-			errorElement.innerHTML = '&nbsp;';
-			msg = "A data de início do prazo de vigência não deve ser superior à data de término"
+			validityInputEmpty.className += ' borderError';
+			var errorElementEmpty = refs[nameRefValidityEmpty].refs['formAlertError'];
+			errorElementEmpty.innerHTML = 'A data deve ser preenchida';
+			msg = "Não é permitido preencher somente uma das datas do prazo de vigência";
 		}
 
 		//graus de risco e cores em branco

@@ -317,7 +317,6 @@ export default React.createClass({
 	},
 
 	render() {
-		console.log(this.context.permissions);
 		if (this.state.loading === true) {
 			return <LoadingGauge/>;
 		}
