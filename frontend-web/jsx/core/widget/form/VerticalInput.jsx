@@ -156,6 +156,7 @@ export default React.createClass({
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					maxLength={this.props.fieldDef.maxLength*1.01}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
@@ -170,6 +171,7 @@ export default React.createClass({
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					onChange={this.props.fieldDef.onChange || _.noop}
@@ -382,6 +384,7 @@ export default React.createClass({
 					name={this.props.fieldDef.name}
 					maxLength={this.props.fieldDef.maxLength}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					placeholder={this.props.fieldDef.placeholder}
