@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
@@ -94,6 +95,23 @@ public class PlanRiskBS extends HibernateBusiness {
 		this.persist(planRisk);
 	}
 	
+	/**
+	 * @param planRisk
+	 * @param terms
+	 * @param itensSelect
+	 * @return boolean flag informando se algum campo foi encontrado nas informações gerais
+	 */
+	public boolean termsSearchedInGeneralInformation(PlanRisk planRisk, String terms, Long[] itensSelect) {
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms.toLowerCase());
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+		if (planRisk.getName().contains(stemTerms) || planRisk.getDescription().contains(stemTerms)) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Listar os itens/subitens pelo termo da busca.
 	 * 
@@ -214,4 +232,74 @@ public class PlanRiskBS extends HibernateBusiness {
 		return new ArrayList<PlanRiskSubItem>(subitens.values());
 	}
 
+	public PaginatedList<ItemSearchBean> termResult(boolean includeGeneralInformation, PlanRisk planRisk, List<PlanRiskItem> itens,
+			List<PlanRiskSubItem> subitens,  Integer page,  Long limit){
+		int firstResult = 0;
+		int maxResult;
+		int count = 0;
+		if (limit != null) {
+			firstResult = (int) ((page - 1) * limit);
+			maxResult = limit.intValue();
+		} else {
+			maxResult = Integer.MAX_VALUE;
+		}
+		
+		List<ItemSearchBean> list = new ArrayList<>();
+		// adiciona informacoes gerais
+		if (includeGeneralInformation) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setName(planRisk.getName());
+			bean.setDescription(planRisk.getDescription());
+			bean.setLevel("Informações gerais");
+			list.add(bean);
+			count++;
+		}
+		// adiciona itens 
+		for(PlanRiskItem item : itens) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setId(item.getId());
+			bean.setName(item.getName());
+			bean.setDescription(item.getDescription());
+			bean.setLevel("Item");
+			if (limit != null) {
+				if (count >= firstResult && list.size() < maxResult) {
+					list.add(bean);
+					count++;
+				} else if (list.size() >= maxResult) {
+					break;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(bean);
+			}
+		}
+		// adiciona subitens
+		for(PlanRiskSubItem subitem : subitens) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setId(subitem.getId());
+			bean.setParentId(subitem.getPlanRiskItem().getId());
+			bean.setName(subitem.getName());
+			bean.setDescription(subitem.getDescription());
+			bean.setLevel("Subitem");
+			if (limit != null) {
+				if (count >= firstResult && list.size() < maxResult) {
+					list.add(bean);
+					count++;
+				} else if (list.size() >= maxResult) {
+					break;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(bean);
+			}
+		}
+
+		PaginatedList<ItemSearchBean> result = new PaginatedList<ItemSearchBean>();
+		
+		result.setList(list);
+		result.setTotal((long)list.size());
+		return result;
+	}
 }
