@@ -59,6 +59,7 @@ export default React.createClass({
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
+				loading: false
 			});
 		}, this);
 
@@ -78,7 +79,7 @@ export default React.createClass({
 		StructureStore.on("companyobjectivesretrivied", (model) => {
 			this.setState({
 				strategy: model.data,
-				loading: false
+
 			})
 		}, this)
 
@@ -158,7 +159,6 @@ export default React.createClass({
 
 		if (Props.route.path == "new") {
 			this.setState({
-				loading: false,
 				visualization: false,
 				newRisk: true
 			})
@@ -258,7 +258,7 @@ export default React.createClass({
 				label: "Responsável",
 				displayField: 'label',
 				value: risk != null ? risk.user.name : null,
-				id: risk.user.id,
+				id: risk != null ? risk.user.id : null,
 				search: true
 			}, {
 				name: "reason",

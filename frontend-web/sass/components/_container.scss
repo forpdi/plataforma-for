@@ -136,6 +136,7 @@
     margin: auto;
     &:hover {
       color: $brand-primary;
+      transition: color 0.3s;
     }
   }
   & > * {
@@ -161,6 +162,49 @@
       height: 50px;
       display: block;
       margin: 0 auto;
+    }
+  }
+
+  & .redirect-to-forRisco-button{
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: #7d45d8;
+    color: #7d45d8;
+    padding: 6px 10px;
+    
+    &:hover {
+      background-color: #7d45d8;
+      color: #fff;
+      transition: background-color 0.4s, color 0.2s;
+    }
+  }
+
+  & .redirect-to-forPDI-button{
+    background-color: transparent;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    border-color: #0a3f61;
+    color: #0a3f61;
+    padding: 6px 16px;
+    
+    &:hover {
+      background-color: #0a3f61;
+      color: #fff;
+      transition: background-color 0.4s, color 0.2s;
+    }
+  }
+}
+
+.forrisco-top-bar {
+  & > a, .dropdown-toggle {
+    color: #7d45d8;
+    &:hover {
+      color: $brand-secondary;
+      transition-property: color;
+      transition-duration: 0.3s;
     }
   }
 }
@@ -504,6 +548,7 @@
 
 .Cor{
 	width: 100%;
+	height: 15%;
 	white-space: nowrap;
 	border: .12px solid #ddd;
 	text-align: center;
@@ -556,10 +601,12 @@
 	transform: rotate(270deg);
 
 	&.dashboard {
-		bottom: 80px;
+		margin-left: 10px;
 		right: 50px;
 		position: relative;
-		}
+		font-weight: bold;
+		padding-left: 10px;
+	}
 }
 
 .matrixSelect {

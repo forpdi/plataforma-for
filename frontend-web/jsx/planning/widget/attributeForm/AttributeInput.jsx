@@ -334,7 +334,6 @@ export default React.createClass({
 
 			if (this.props.fieldDef.search) {
 
-
 				if(this.state.selectedOption == null){
 					var selected=[]
 					var options=[]
@@ -342,13 +341,11 @@ export default React.createClass({
 					for(var i=0; i<this.props.fieldDef.optionsField.length;i++){
 						options.push({label:this.props.fieldDef.optionsField[i].label, value:this.props.fieldDef.optionsField[i].id})
 					}
-					//this.props.fieldDef.optionsField={}
 					this.state.optionsField=options
-					this.state.selectedOption={label:this.props.fieldDef.value, value:this.props.fieldDef.id}
 
-					console.log(options)
-					console.log(this.props.fieldDef.value)
-					console.log({label:this.props.fieldDef.value.label, value:this.props.fieldDef.value.value})
+					if(this.props.fieldDef.value != null){
+						this.state.selectedOption={label:this.props.fieldDef.value, value:this.props.fieldDef.id}
+					}
 				}
 
 				fieldEl = (<Select
@@ -359,6 +356,7 @@ export default React.createClass({
 					ref={this.state.fieldId}
 					type={this.props.fieldDef.type}
 					options={this.state.optionsField}
+					placeholder={this.props.fieldDef.placeholder}
 					isSearchable="true"
 				/>)
 
