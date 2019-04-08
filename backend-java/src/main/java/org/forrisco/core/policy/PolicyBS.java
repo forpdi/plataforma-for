@@ -298,16 +298,15 @@ public class PolicyBS extends HibernateBusiness {
 		Map<Long,SubItem> subitens = new HashMap<Long,SubItem>();
 		List<SubItem> list = this.dao.findByCriteria(criteria, SubItem.class);
 		
-		for(int i=0; i < list.size(); i++) {
+		for (SubItem subItem : list) {
 			Criteria crit = this.dao.newCriteria(FieldSubItem.class)
 				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("subitem", list.get(i)))
+				.add(Restrictions.eq("subitem", subItem))
 		 		.add(orExp);
 			List<FieldSubItem> fields = this.dao.findByCriteria(crit, FieldSubItem.class);
-		
-			for(int j=0; j < fields.size(); j++) {
-				list.get(j).setItemId(list.get(j).getItem().getId());
-				subitens.put(fields.get(j).getSubitem().getId(),fields.get(j).getSubitem());
+			for (FieldSubItem field : fields) {
+				subItem.setItemId(subItem.getItem().getId());
+				subitens.put(field.getSubitem().getId(), field.getSubitem());				
 			}
 		}
 		
