@@ -99,8 +99,8 @@ export default React.createClass({
 			if (model.success) {
 				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id+"/info");
 			} else {
-				if (model.message != null) {
-					this.context.toastr.addAlertError(model.message);
+				if (model.msg != null) {
+					this.context.toastr.addAlertError(model.msg);
 				}
 			}
 		}, this)
@@ -468,6 +468,7 @@ export default React.createClass({
 				fields.push({ label: probility[i].substring(1, probility[i].length - 1) })
 			}
 		}
+
 		return fields
 	},
 
@@ -702,7 +703,6 @@ export default React.createClass({
 			}
 		}
 
-
 		data['name'] = document.getElementById("field-name").value
 		data['code'] = document.getElementById("field-code").value
 		data['impact'] = document.getElementById("field-impact").value
@@ -713,7 +713,7 @@ export default React.createClass({
 		data['tipology'] = document.getElementById("field-tipology").value
 		data['type'] = document.getElementById("field-type").value
 
-		if(this.refs["field-1"].refs.user.refs["field-user"].props.value.value != 0){
+		if(this.refs["field-1"].refs.user.refs["field-user"].props.value? this.refs["field-1"].refs.user.refs["field-user"].props.value.value != 0 :false){
 			data['user'] = { id: this.refs["field-1"].refs.user.refs["field-user"].props.value.value }
 		}
 		data['unit'] = { id: this.props.params.unitId }
@@ -772,6 +772,7 @@ export default React.createClass({
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
+
 		if (me.props.params.riskId) {
 			data.id = me.props.params.riskId
 			RiskStore.dispatch({

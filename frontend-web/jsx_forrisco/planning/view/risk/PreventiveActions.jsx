@@ -331,7 +331,7 @@ export default React.createClass({
 			Modal.hide()
 		});
 	},
-	
+
 	updatePreventiveAction(action) {
 		RiskStore.dispatch({
 			action: RiskStore.ACTION_UPDATE_PREVENTIVE_ACTION,
@@ -425,15 +425,15 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 400,
+			minWidth: 200,
 		},{
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 300,
+			minWidth: 150,
 		}, {
 			Header: 'Ação realizada?',
 			accessor: 'accomplished',
-			minWidth: 200,
+			minWidth: 100,
 		}, {
 			Header: '',
 			accessor: 'tools',

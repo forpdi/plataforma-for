@@ -237,30 +237,33 @@ export default React.createClass({
 		}, me)
 
 		RiskStore.on("riskcreated", (reponse) => {
-			const risk = reponse.data
-			const unitId = reponse.data.unit.id
 
-			const risknode={
-				label: risk.name,
-				iconCls: 'mdi mdi-play pointer',
-				to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
-				key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
-				id: risk.id,
-			}
+			if(reponse.success){
+				const risk = reponse.data
+				const unitId = reponse.data.unit.id
 
-			//unidades
-			for (var i = 0; i < this.state.treeItensUnit.length - 1; i++) {
-				if (this.state.treeItensUnit[i].id == unitId) {
-					this.state.treeItensUnit[i].children.splice( this.state.treeItensUnit[i].children.length-2, 0, risknode);
-					this.setState({ treeItensUnit: this.state.treeItensUnit });
-					return;
-				}else{
-					//subunidades
-					for (var j = 0; j < this.state.treeItensUnit[i].children.length - 2; j++) {
-						if (this.state.treeItensUnit[i].children[j].id == unitId) {
-							this.state.treeItensUnit[i].children[j].children.splice( this.state.treeItensUnit[i].children[j].children.length-1, 0, risknode);
-							this.setState({ treeItensUnit: this.state.treeItensUnit });
-							return;
+				const risknode={
+					label: risk.name,
+					iconCls: 'mdi mdi-play pointer',
+					to: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
+					key: `/forrisco/plan-risk/${this.props.planRisk.id}/unit/${unitId}/risk/${risk.id}/info`,
+					id: risk.id,
+				}
+
+				//unidades
+				for (var i = 0; i < this.state.treeItensUnit.length - 1; i++) {
+					if (this.state.treeItensUnit[i].id == unitId) {
+						this.state.treeItensUnit[i].children.splice( this.state.treeItensUnit[i].children.length-2, 0, risknode);
+						this.setState({ treeItensUnit: this.state.treeItensUnit });
+						return;
+					}else{
+						//subunidades
+						for (var j = 0; j < this.state.treeItensUnit[i].children.length - 2; j++) {
+							if (this.state.treeItensUnit[i].children[j].id == unitId) {
+								this.state.treeItensUnit[i].children[j].children.splice( this.state.treeItensUnit[i].children[j].children.length-1, 0, risknode);
+								this.setState({ treeItensUnit: this.state.treeItensUnit });
+								return;
+							}
 						}
 					}
 				}

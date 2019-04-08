@@ -6,6 +6,7 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import GraphicFilter from "forpdi/jsx_forrisco/dashboard/view/graphic/GraphicFilter.jsx";
 import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/Graphic.jsx";
 
+
 export default React.createClass({
 
 	getInitialState() {
@@ -148,18 +149,37 @@ export default React.createClass({
 				if (i >= 2) {
 					className += ' dashboard-risk-panel-bottom';
 				}
-				panel1.push( <span className={className}>
 
-						<GraphicFilter
-							level={level}
-							onClick={this.listRisk}
-							color={color}
-							quantity={true}
-						/>
+				var obj =JSON.parse(JSON.stringify(this.state.riskLevelModel.data[i].level))
+				var level = obj.split(" ");
+				for(var j=0; j<level.length; j++){
+					if(level[j].length>20){
+						level[j]=level[j].substr(0, 17).concat("...")
+					}
+				}
 
+				obj=""
+				for(var j=0; j<level.length; j++){
+					obj+=(level[j])
+
+					if(j+1!=level.length){
+						obj+=" "
+					}
+				}
+
+				panel1.push(<span className={className}>
+					<GraphicFilter
+						level={level}
+						onClick={this.listRisk}
+						color={color}
+						quantity={true}
+					/>
 					<div className="dashboard-risk-number">{quantity}</div>
-					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
+					<div className="dashboard-risk-text">Risco {obj}
+					</div>
 				</span>)
+
+
 			}else{
 
 				if ( i % 2 === 0 && i !== 0){
@@ -178,7 +198,12 @@ export default React.createClass({
 						/>
 					</a>
 					<div className="dashboard-risk-number">{quantity}</div>
-					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
+					<div className="dashboard-risk-text" title={this.state.riskLevelModel.data[i].level}>
+
+					{"Risco "+	(this.state.riskLevelModel.data[i].level.length > 5)
+										? ((this.state.riskLevelModel.data[i].level).trim().substr(0, 5).concat("...").toString())
+										: (this.state.riskLevelModel.data[i].level)}
+					</div>
 				</span>)
 			}
 		}

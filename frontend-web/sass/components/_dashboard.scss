@@ -456,12 +456,17 @@
 }
 
 .dashboard-risk-number {
-	font-size: 70px;
+	font-size: 68px;
+    bottom: 5px;
+    position: relative;
 }
 .dashboard-risk-text {
-	font-size: 20px;
-	font-weight: 100;
+	position: relative;
+    font-size: 18px;
+    font-weight: 500;
+    bottom: 10px;
 }
+
 
 .legend-risk{
 	//background-color:rgb(160, 160, 160);

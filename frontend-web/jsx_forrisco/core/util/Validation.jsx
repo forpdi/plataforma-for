@@ -372,19 +372,8 @@ var Validate = {
 			}
 		}
 
-		// if(code.refs["field-code"].value != null){
-		// 	if(code.refs["field-code"].value==""){
-		// 		code.refs["field-code"].className +=" borderError"
-		// 		code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-		// 		if(msg==""){msg="Código precisa estar preenchido."}
-		// 	}else{
-		// 		code.refs["field-code"].className="form-control"
-		// 		code.refs["formAlertError"].innerHTML = ""
-		// 	}
-		// }
-
-		if(user.refs["field-user"].value != null){
-			if(user.refs["field-user"].value==""){
+		//if(user.refs["field-user"].value != null){
+			if(user.refs["field-user"].state.value ==null || user.refs["field-user"].state.value==""){
 				user.refs["field-user"].className +=" borderError"
 				user.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
 				if(msg==""){msg="Usuário precisa estar preenchido."}
@@ -392,7 +381,7 @@ var Validate = {
 				user.refs["field-user"].className="form-control"
 				user.refs["formAlertError"].innerHTML = ""
 			}
-		}
+		//}
 
 		if(probability.refs["field-probability"] != null){
 			if(probability.refs["field-probability"].value==""){

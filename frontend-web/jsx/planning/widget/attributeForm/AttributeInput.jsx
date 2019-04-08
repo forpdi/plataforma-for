@@ -210,7 +210,6 @@ export default React.createClass({
 
 	handleChange(selectedOption){
 		this.setState({ selectedOption });
-		console.log(`Option selected:`, selectedOption);
 	  },
 
 	render() {
@@ -330,10 +329,7 @@ export default React.createClass({
 			}
 		} else if (this.props.fieldDef.type == AttributeTypes.SELECT_FIELD) {
 
-
-
 			if (this.props.fieldDef.search) {
-
 				if(this.state.selectedOption == null){
 					var selected=[]
 					var options=[]

@@ -179,13 +179,20 @@ export default React.createClass({
 						{string(this.props.fieldDef.placeholder).isEmpty() ? "":
 							<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
 						}
+
 						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
 							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt.get ? opt.get(this.props.fieldDef.valueField):opt[this.props.fieldDef.valueField]}
 								data-placement="right" title={opt[this.props.fieldDef.displayField]}>
-									{ this.props.fieldDef.renderDisplay ?
-										this.props.fieldDef.renderDisplay(opt)
-										:
-										(opt.get ?string(opt.get(this.props.fieldDef.displayField)).trim().truncate(80, "...").toString() :opt[this.props.fieldDef.displayField])
+									{ this.props.fieldDef.renderDisplay
+									? this.props.fieldDef.renderDisplay(opt)
+									:(
+										(opt.get ?string(opt.get(this.props.fieldDef.displayField)).trim().truncate(80, "...").toString()
+											:((opt[this.props.fieldDef.displayField].length > this.props.limit)
+												? opt[this.props.fieldDef.displayField].substring(0,this.props.limit-3)+"..."
+												: opt[this.props.fieldDef.displayField]
+											)
+										)
+									)
 									}
 							</option>);
 						}):''}

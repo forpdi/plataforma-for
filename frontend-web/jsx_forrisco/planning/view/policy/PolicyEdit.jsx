@@ -363,12 +363,12 @@ export default React.createClass({
 
 		if (this.state.nline > 1 && this.state.ncolumn > 1) {
 			for (var i = 1; i <= this.state.nline; i++) {
-				probabilidade += "[" + this.refs.policyEditForm["field-" + this.getProbabilidade(null, i)[0].name].value;
+				probabilidade += "[" + this.refs.policyEditForm["field-" + this.getProbabilidade(null, i)[0].name].value.trim();
 				probabilidade += "]"
 			}
 
 			for (var i = 1; i <= this.state.ncolumn; i++) {
-				impacto += "[" + this.refs.policyEditForm["field-" + this.getImpacto(null, i)[0].name].value;
+				impacto += "[" + this.refs.policyEditForm["field-" + this.getImpacto(null, i)[0].name].value.trim();
 				impacto += "]"
 			}
 		}
@@ -528,6 +528,7 @@ export default React.createClass({
 						children.push(<td><div className={classe + " Quadro "}>{
 							<VerticalInput
 								formId={this.props.id}
+								limit={20}
 								fieldDef={{
 									name: "[" + i + "," + j + "]",
 									type: "select",
@@ -547,12 +548,13 @@ export default React.createClass({
 						children.push(<td>{
 							<VerticalInput
 								formId={this.props.id}
+								limit={20}
 								fieldDef={{
 									name: "[" + i + "," + j + "]",
 									type: "select",
 									required: false,
 									maxLength: 40,
-									placeholder: "Selecione o Impacto".substring(0, 18) + "...",
+									placeholder: "Selecione o Impacto",
 									value: impact,
 									options: impacto,
 									valueField: 'label',
@@ -568,6 +570,7 @@ export default React.createClass({
 						children.push(<td style={{ "padding": "0 13px 0px 0px" }} >{
 							<VerticalInput
 								formId={this.props.id}
+								limit={20}
 								fieldDef={{
 									name: "[" + i + "," + j + "]",
 									type: "select",
