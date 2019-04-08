@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 
 import org.forpdi.core.company.Company;
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.FieldItem;
 import org.forrisco.core.item.FieldSubItem;
 import org.forrisco.core.item.Item;
@@ -23,6 +24,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.tartarus.snowball.SnowballStemmer;
+import org.tartarus.snowball.ext.portugueseStemmer;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -175,6 +178,23 @@ public class PolicyBS extends HibernateBusiness {
 		return results;
 	}
 
+	
+	/**
+	 * @param planRisk
+	 * @param terms
+	 * @param itensSelect
+	 * @return boolean flag informando se algum campo foi encontrado nas informações gerais
+	 */
+	public boolean termsSearchedInGeneralInformation(Policy policy, String terms, Long[] itensSelect) {
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms.toLowerCase());
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+		if (policy.getName().toLowerCase().contains(stemTerms) || policy.getDescription().toLowerCase().contains(stemTerms)) {
+			return true;
+		}
+		return false;
+	}
 
 
 	/**
@@ -197,9 +217,14 @@ public class PolicyBS extends HibernateBusiness {
 		if(itensSelect != null && itensSelect.length == 0) {
 			return new ArrayList<Item>();
 		}
-		
-		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
-		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms.toLowerCase());
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+
+		Criterion name = Restrictions.like("name", "%" + stemTerms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + stemTerms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name, description);
 		
 		Criteria criteria = this.dao.newCriteria(Item.class)
@@ -248,8 +273,13 @@ public class PolicyBS extends HibernateBusiness {
 			return new ArrayList<SubItem>();
 		}
 		
-		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
-		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms.toLowerCase());
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+
+		Criterion name = Restrictions.like("name", "%" + stemTerms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + stemTerms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name,description);
 		
 		Criteria criteria = this.dao.newCriteria(SubItem.class)
@@ -290,5 +320,79 @@ public class PolicyBS extends HibernateBusiness {
 		}
 			
 		return new ArrayList<SubItem>(subitens.values());
+	}
+	
+	
+
+	
+	public PaginatedList<ItemSearchBean> termResult(boolean includeGeneralInformation, Policy policy, List<Item> itens,
+			List<SubItem> subitens,  Integer page,  Long limit){
+		int firstResult = 0;
+		int maxResult;
+		int count = 0;
+		if (limit != null) {
+			firstResult = (int) ((page - 1) * limit);
+			maxResult = limit.intValue();
+		} else {
+			maxResult = Integer.MAX_VALUE;
+		}
+		
+		List<ItemSearchBean> list = new ArrayList<>();
+		// adiciona informacoes gerais
+		if (includeGeneralInformation) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setName(policy.getName());
+			bean.setDescription(policy.getDescription());
+			bean.setLevel("Informações gerais");
+			list.add(bean);
+			count++;
+		}
+		// adiciona itens 
+		for(Item item : itens) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setId(item.getId());
+			bean.setName(item.getName());
+			bean.setDescription(item.getDescription());
+			bean.setLevel("Item");
+			if (limit != null) {
+				if (count >= firstResult && list.size() < maxResult) {
+					list.add(bean);
+					count++;
+				} else if (list.size() >= maxResult) {
+					break;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(bean);
+			}
+		}
+		// adiciona subitens
+		for(SubItem subitem : subitens) {
+			ItemSearchBean bean = new ItemSearchBean();
+			bean.setId(subitem.getId());
+			bean.setParentId(subitem.getItem().getId());
+			bean.setName(subitem.getName());
+			bean.setDescription(subitem.getDescription());
+			bean.setLevel("Subitem");
+			if (limit != null) {
+				if (count >= firstResult && list.size() < maxResult) {
+					list.add(bean);
+					count++;
+				} else if (list.size() >= maxResult) {
+					break;
+				} else {
+					count++;
+				}
+			} else {
+				list.add(bean);
+			}
+		}
+
+		PaginatedList<ItemSearchBean> result = new PaginatedList<ItemSearchBean>();
+		
+		result.setList(list);
+		result.setTotal((long)list.size());
+		return result;
 	}
 }

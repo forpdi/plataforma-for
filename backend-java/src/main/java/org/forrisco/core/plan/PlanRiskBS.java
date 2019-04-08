@@ -106,7 +106,7 @@ public class PlanRiskBS extends HibernateBusiness {
 		snowballStemmer.setCurrent(terms.toLowerCase());
 		snowballStemmer.stem();
 		String stemTerms = snowballStemmer.getCurrent();
-		if (planRisk.getName().contains(stemTerms) || planRisk.getDescription().contains(stemTerms)) {
+		if (planRisk.getName().toLowerCase().contains(stemTerms) || planRisk.getDescription().toLowerCase().contains(stemTerms)) {
 			return true;
 		}
 		return false;
@@ -188,8 +188,13 @@ public class PlanRiskBS extends HibernateBusiness {
 			return new ArrayList<PlanRiskSubItem>();
 		}
 		
-		Criterion name = Restrictions.like("name", "%" + terms + "%").ignoreCase();
-		Criterion description = Restrictions.like("description", "%" + terms + "%").ignoreCase();
+		SnowballStemmer snowballStemmer = new portugueseStemmer();
+		snowballStemmer.setCurrent(terms);
+		snowballStemmer.stem();
+		String stemTerms = snowballStemmer.getCurrent();
+
+		Criterion name = Restrictions.like("name", "%" + stemTerms + "%").ignoreCase();
+		Criterion description = Restrictions.like("description", "%" + stemTerms + "%").ignoreCase();
 		LogicalExpression orExp = Restrictions.or(name,description);
 		
 		Criteria criteria = this.dao.newCriteria(PlanRiskSubItem.class)

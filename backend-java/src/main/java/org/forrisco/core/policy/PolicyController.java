@@ -30,6 +30,7 @@ import org.forrisco.risk.RiskLevel;
 
 import com.itextpdf.text.DocumentException;
 
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.FieldItem;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.item.ItemBS;
@@ -418,10 +419,12 @@ public class PolicyController extends AbstractController {
 		try {
 			Policy policy = this.policyBS.exists(policyId, Policy.class);
 			
+			boolean includeGeneralInformation = this.policyBS.termsSearchedInGeneralInformation(policy, terms, itensSelect);
+
 			List<Item> itens = this.policyBS.listItemTerms(policy, terms, itensSelect, ordResult);
 			List<SubItem> subitens = this.policyBS.listSubitemTerms(policy, terms, subitensSelect, ordResult);
 
-			PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.policyBS.termResult(includeGeneralInformation, policy, itens, subitens, page, limit);
 			
 			this.success(result);
 
@@ -442,10 +445,12 @@ public class PolicyController extends AbstractController {
 		try {
 			Policy policy = this.policyBS.exists(policyId, Policy.class);
 			
+			boolean includeGeneralInformation = this.policyBS.termsSearchedInGeneralInformation(policy, terms, null);
+
 			List<Item> itens = this.policyBS.listItemTerms(policy, terms, null, ordResult);
 			List<SubItem> subitens = this.policyBS.listSubitemTerms(policy, terms, null, ordResult);
 
-			PaginatedList<SubItem> result = TermResult( itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.policyBS.termResult(includeGeneralInformation, policy, itens, subitens, page, limit);
 			
 			this.success(result);
  		} catch (Throwable ex) {
@@ -453,48 +458,6 @@ public class PolicyController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-
-	private PaginatedList<SubItem> TermResult(List<Item> itens, List<SubItem> subitens,  Integer page,  Long limit){
-		int firstResult = 0;
-		int maxResult = 0;
-		int count = 0;
-		int add = 0;
-		if (limit != null) {
-			firstResult = (int) ((page - 1) * limit);
-			maxResult = limit.intValue();
-		}
-		
-		for(Item item : itens) {
-			SubItem subitem = new SubItem();
-			subitem.setDescription(item.getDescription());
-			subitem.setId(item.getId());
-			subitem.setName(item.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			subitens.add(subitem);
-		}
-		
-		List<SubItem> list = new ArrayList<>();
-		for(SubItem subitem : subitens) {
-			if (limit != null) {
-				if (count >= firstResult && add < maxResult) {
-					list.add(subitem);
-					count++;
-					add++;
-				} else {
-					count++;
-				}
-			} else {
-				list.add(subitem);
-			}
-		}
-
-		PaginatedList<SubItem> result = new PaginatedList<SubItem>();
-		
-		result.setList(list);
-		result.setTotal((long)count);
-		return result;
-	}
-
 	
 	/**
 	 * Cria arquivo pdf  para exportar relatório  
