@@ -497,8 +497,11 @@ export default React.createClass({
 				  		var userList = [];
 				  		var csvValidation = true;
 				  		for (var i=1; i<(fileArr.length); i=i+1) {
-				  			 //fazer validação do arquivo csv de forma geral
-				  			 var linha = fileArr[i].split(';');
+							 //fazer validação do arquivo csv de forma geral
+							 if (!fileArr[i].trim()) {
+								continue;
+							 }
+							 var linha = fileArr[i].split(';');
 				  			 if(linha.length !=2){
 				  			 	csvValidation = false;
 				  			 	break;
