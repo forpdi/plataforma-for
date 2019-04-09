@@ -154,9 +154,30 @@ export default React.createClass({
 			if (matrix[i][1] == line) {
 				if (matrix[i][2] == column) {
 					if (matrix[i][2] == 0) {
-						return <div style={{ "textAlign": "center", "minWidth": "80px", "maxWidth": "80px", "marginRight": "20px"}}>{matrix[i][0]}</div>
+						return <div title={matrix[i][0]} style={{ "textAlign": "center", "minWidth": "80px", "maxWidth": "80px", "marginRight": "20px"}}>{matrix[i][0]}</div>
 					} else if (matrix[i][1] == this.state.policyModel.nline) {
-						return <div className="matrix-impact-div" id={"match" + firstMatch}>{matrix[i][0]}</div>
+
+						var imp= JSON.parse(JSON.stringify(matrix[i][0]))
+
+						if(this.state.policyModel.ncolumn>2){
+							var level = imp.split(" ");
+							for(var j=0; j<level.length; j++){
+								if(level[j].length>15){
+									level[j]=level[j].substr(0, 13).concat("...")
+								}
+							}
+
+							imp=""
+							for(var j=0; j<level.length; j++){
+								imp+=(level[j])
+
+								if(j+1!=level.length){
+									imp+="  "
+								}
+							}
+						}
+
+						return <div title={matrix[i][0]} className="matrix-impact-div" style={{ "white-space" : "pre-line", "textAlign" : "-webkit-center", "padding" : "2px"}} id={"match" + firstMatch}>{imp}</div>
 					} else {
 
 						var current_color = -1;
@@ -181,8 +202,8 @@ export default React.createClass({
 						var probability = matrix[(line) * (this.state.policyModel.ncolumn + 1)][0];
 
 						return (
-							<div className={"icon-link Cor " + color} onClick={() => this.showRisk(probability, impact)}>
-								{this.countRisks(risks, impact, probability, color)}
+							<div className={"icon-link Cor dashboard " + color} onClick={() => this.showRisk(probability, impact)}>
+								<b>{this.countRisks(risks, impact, probability, color)}</b>
 							</div>
 						)
 					}
@@ -246,10 +267,12 @@ export default React.createClass({
 				)
 			}
 		}
-		return (
-			<div className="dashboard-matrix-container-inner">
-				{table}
-			</div>
+		table.push(<div className="matrix-impact-tr"
+						style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>)
+
+		return (<div className="dashboard-matrix-container-inner">
+					{table}
+				</div>
 		);
 	},
 
@@ -291,11 +314,11 @@ export default React.createClass({
 						</div>
 						<br/>
 
-						<div className="dashboard-matrix-container">
-							<div className="matrix-vertical-text dashboard">PROBABILIDADE</div>
+
+						<div className="dashboard-matrix-container" style={{height: "362px"}}>
+						{<div className="matrix-vertical-text dashboard">PROBABILIDADE</div>}
 							{this.state.loading ? <LoadingGauge /> : this.getMatrix()}
 						</div>
-						<div style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>
 
 					</div>
 				</div>

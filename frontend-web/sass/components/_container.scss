@@ -545,16 +545,18 @@
 }
 
 
-
 .Cor{
 	width: 100%;
-	height: 15%;
-	white-space: nowrap;
 	border: .12px solid #ddd;
 	text-align: center;
-	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	&.dashboard{
+		height: 15%;
+		white-space: nowrap;
+		display: flex;
+	}
 }
 
 .Cinza {

@@ -85,7 +85,7 @@ export default React.createClass({
 				: <p>Nenhum dado de política encontrada.</p>}
 			</div>
 
-			<div className="fpdi-plan-tabs">
+			<div className="frisco-plan-tabs">
 				<PolicyTabPanel
 					{...this.props}
 					policy={this.state.model}

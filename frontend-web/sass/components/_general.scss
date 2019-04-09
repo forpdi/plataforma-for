@@ -1433,11 +1433,11 @@ label{
 }
 
 pre.pre-info {
-	white-space: pre-wrap; /* css-3 */ 
-	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */ 
-	white-space: -pre-wrap; /* Opera 4-6 */ 
-	white-space: -o-pre-wrap; /* Opera 7 */ 
-	word-wrap: break-word; /* Internet Explorer 5.5+ */ 
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
 	background-color: transparent;
 	border: none;
 	color: #575858;
@@ -1468,7 +1468,7 @@ pre.pre-info {
 .dashboard-matrix-container-inner {
 	display: flex;
 	height: 100%;
-	width: 100%;
+	width: 95%;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
