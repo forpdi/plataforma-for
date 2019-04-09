@@ -177,7 +177,7 @@ export default React.createClass({
 							}
 						}
 
-						return <div title={matrix[i][0]} className="matrix-impact-div" style={{ "white-space" : "pre-line", "textAlign" : "-webkit-center", "padding" : "2px"}} id={"match" + firstMatch}>{imp}</div>
+						return <div key={i} title={matrix[i][0]} className="matrix-impact-div" style={{ "whiteSpace" : "pre-line", "textAlign" : "-webkit-center", "padding" : "2px"}} id={"match" + firstMatch}>{imp}</div>
 					} else {
 
 						var current_color = -1;
@@ -267,9 +267,7 @@ export default React.createClass({
 				)
 			}
 		}
-		table.push(<div className="matrix-impact-tr"
-						style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>)
-
+		table.push()
 		return (<div className="dashboard-matrix-container-inner">
 					{table}
 				</div>
@@ -319,6 +317,7 @@ export default React.createClass({
 						{<div className="matrix-vertical-text dashboard">PROBABILIDADE</div>}
 							{this.state.loading ? <LoadingGauge /> : this.getMatrix()}
 						</div>
+						<div style={{display: "flex", "justifyContent": "center", "fontWeight": "bold"}}>IMPACTO</div>
 
 					</div>
 				</div>
