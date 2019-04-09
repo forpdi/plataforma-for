@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,6 +18,7 @@ import org.forpdi.core.event.Current;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
@@ -352,11 +352,11 @@ public class PlanRiskController extends AbstractController {
 		try {
 			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
 			
-	
+			boolean generalInformationSearched = this.planRiskBS.termsSearchedInGeneralInformation(planRisk, terms, null);
 			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, null, ordResult);
 			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, null, ordResult);
 
-			PaginatedList<PlanRiskSubItem> result = TermResult( itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.planRiskBS.termResult(generalInformationSearched, planRisk, itens, subitens, page, limit);
 			
 			
 			this.success(result);
@@ -386,10 +386,11 @@ public class PlanRiskController extends AbstractController {
 		try {
 			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
 			
+			boolean includeGeneralInformation = this.planRiskBS.termsSearchedInGeneralInformation(planRisk, terms, itensSelect);
 			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, itensSelect, ordResult);
 			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, subitensSelect, ordResult);
 
-			PaginatedList<PlanRiskSubItem> result = TermResult(itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.planRiskBS.termResult(includeGeneralInformation, planRisk, itens, subitens, page, limit);
 			
 			this.success(result);
 
@@ -397,46 +398,5 @@ public class PlanRiskController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
-	}
-	
-	private PaginatedList<PlanRiskSubItem> TermResult(List<PlanRiskItem> itens, List<PlanRiskSubItem> subitens,  Integer page,  Long limit){
-		int firstResult = 0;
-		int maxResult = 0;
-		int count = 0;
-		int add = 0;
-		if (limit != null) {
-			firstResult = (int) ((page - 1) * limit);
-			maxResult = limit.intValue();
-		}
-		
-		for(PlanRiskItem item : itens) {
-			PlanRiskSubItem subitem = new PlanRiskSubItem();
-			subitem.setDescription(item.getDescription());
-			subitem.setId(item.getId());
-			subitem.setName(item.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			subitens.add(subitem);
-		}
-		
-		List<PlanRiskSubItem> list = new ArrayList<>();
-		for(PlanRiskSubItem subitem : subitens) {
-			if (limit != null) {
-				if (count >= firstResult && add < maxResult) {
-					list.add(subitem);
-					count++;
-					add++;
-				} else {
-					count++;
-				}
-			} else {
-				list.add(subitem);
-			}
-		}
-
-		PaginatedList<PlanRiskSubItem> result = new PaginatedList<PlanRiskSubItem>();
-		
-		result.setList(list);
-		result.setTotal((long)count);
-		return result;
 	}
 }

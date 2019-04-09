@@ -157,17 +157,17 @@ export default React.createClass({
 			return <div style={{display: 'none'}} />;
 		}
 		return (
-			<div className="fpdi-top-bar">
-	    	<Link to='/home' className="fpdi-top-bar-brand">
-					{
-						(EnvInfo.company && EnvInfo.company.logo == "" )
-						? <img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
-						: <img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo : Logo} />
-					}
-        </Link>
+			<div className="fpdi-top-bar forrisco-top-bar">
+				{/* <Link to='/home' className="fpdi-top-bar-brand" >
+						{
+							(EnvInfo.company && EnvInfo.company.logo == "" )
+							? <img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
+							: <img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo : Logo} />
+						}
+				</Link> */}
 				<Link to='/forrisco/home' className="fpdi-top-bar-brand">
 					<img alt={Messages.get("label.forRiscoLogo")} src={forRiscoLogo} />
-        </Link>
+        		</Link>
 				<span className="fpdi-fill" />
 				{/* <span className="mdi mdi-account-circle" style={{marginRight: '5px'}} />
 				<span>{this.state.user.name}</span> */}
@@ -187,6 +187,8 @@ export default React.createClass({
 					}
 				</Link>
 				<span title="Notificações" className="mdi mdi-magnify hidden" />
+
+				<Link to="/home" title="Acessar ForPDI" id="for-pdi-button" className="redirect-to-forPDI-button"> Acessar ForPDI </Link>
 
 				<div className="dropdown">
 					<a
@@ -219,6 +221,7 @@ export default React.createClass({
 						</div>
 					</ul>
 				</div>
+
 				<div className="dropdown">
 					<a
 						id="top-bar-notification"
@@ -230,8 +233,9 @@ export default React.createClass({
 					/>
 					<div className="dropdown-menu dropdown-menu-right">
 						<LinkInformation />
-			  	</div>
+			  		</div>
 				</div>
+
 
 				<div className="dropdown">
 					<a

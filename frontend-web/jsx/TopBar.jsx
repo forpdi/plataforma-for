@@ -166,11 +166,11 @@ export default React.createClass({
 		}
 		return (<div className="fpdi-top-bar">
 	        <Link to='/home' className="fpdi-top-bar-brand">
-				{(EnvInfo.company && EnvInfo.company.logo == "" )?(<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>):(<img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo:Logo} />)}
+						<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
 	        </Link>
-			<Link to='/forrisco/home' className="fpdi-top-bar-brand">
+			{/* <Link to='/forrisco/home' className="fpdi-top-bar-brand">
 				{<img alt={Messages.get("label.forRiscoLogo")} src={forRiscoLogo} />}
-	        </Link>
+	        </Link> */}
 			<span className="fpdi-fill" />
 			{/*<span className="mdi mdi-account-circle" style={{marginRight: '5px'}} />
 			<span>{this.state.user.name}</span>*/}
@@ -179,6 +179,9 @@ export default React.createClass({
 					"http://cloud.progolden.com.br/file/8352" : this.state.user.picture} /></span>
 				{this.state.model == null ? (this.state.user.name.length>25)?(string(this.state.user.name).trim().substr(0,25).concat("...").toString()):(this.state.user.name)   : (this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)}
 			</Link>
+
+			<Link to="/forrisco/home" title="Acessar ForPDI" id="for-risco-button" className="redirect-to-forRisco-button"> Acessar ForRisco </Link>
+
 			<span title="Notificações" className="mdi mdi-magnify hidden" />
 
 			<div className="dropdown">

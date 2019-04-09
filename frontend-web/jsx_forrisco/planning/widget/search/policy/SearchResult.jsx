@@ -35,16 +35,6 @@ export default React.createClass({
 
 		PolicyStore.on("findTerms", (model, data) => {
 			if (model.data != null){
-
-				var i;
-				for (i = 0; i < model.data.length; i++) {
-					if(model.data[i].item != null){
-						model.data[i].level="Subitem"
-					}else{
-						model.data[i].level="Item"
-					}
-				}
-
 				if (data.page == 1) {
 					this.setState({
 						resultSearchMore:model.data,
@@ -115,13 +105,33 @@ export default React.createClass({
     	})
 	},
 
+	getPath(model) {
+		switch(model.level) {
+			case 'Item':
+				return `/forrisco/policy/${this.props.policyId}/item/${model.id}`;
+			case 'Subitem':
+				return `/forrisco/policy/${this.props.policyId}/item/${model.parentId}/subitem/${model.id}`;
+			case 'Informações gerais':
+				return `/forrisco/policy/${this.props.policyId}/item/overview`;
+			default: return null;
+		}
+	},
 
 	render() {
 
 		return (
 			<div className="fpdi-search">
 				<div className = "fpdi-search-view">
-					<p>{Messages.getEditable("label.searchReturned","fpdi-nav-label")} {this.state.resultSearchTotal} { this.state.resultSearchTotal == 1 ? Messages.getEditable("label.result","fpdi-nav-label") : Messages.getEditable("label.results","fpdi-nav-label")}</p>
+					<p>
+						{Messages.getEditable("label.searchReturned","fpdi-nav-label")}&nbsp;
+						{this.state.resultSearchTotal}&nbsp;
+						{
+							this.state.resultSearchTotal == 1
+								? Messages.getEditable("label.result","fpdi-nav-label")
+								: Messages.getEditable("label.results","fpdi-nav-label")
+						}
+
+					</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
@@ -133,7 +143,8 @@ export default React.createClass({
 											{model.level}
 										</div>
 										<Link
-											to={"/forrisco/policy/" + this.props.policyId + "/item/" + (model.item ? model.item.id + "/subitem/" : "") + model.id}
+											// to={"/forrisco/policy/" + this.props.policyId + "/item/" + (model.item ? model.item.id + "/subitem/" : "") + model.id}
+											to={this.getPath(model)}
 											activeClassName="active"
 											title={Messages.get("label.title.viewMore")}>
 											{model.name}
