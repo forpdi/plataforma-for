@@ -1,4 +1,6 @@
 
+![PlataformaFor_logo](http://teste.forpdi.org/images/plataforma-for-logo.svg)
+
 ![ForPDI Logo](http://forpdi.org/img/logo_forpdi.png)
 
 Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgação de Planos de Desenvolvimento Institucional (PDI).
