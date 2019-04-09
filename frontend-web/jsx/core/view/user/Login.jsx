@@ -3,13 +3,10 @@ import { Link } from "react-router";
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-//import Toastr from 'toastr';
 
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
-import AppLogo from "forpdi/img/logoLogin.png";
-import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
+import AppLogo from "forpdi/img/plataforma-for-logo.svg";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
 var Validate = Validation.validate;
@@ -87,7 +84,7 @@ export default React.createClass({
 						<div className="fpdi-login-header">
 							<img
 								className="fpdi-login-brand"
-								src={AppRiscoLogo}
+								src={AppLogo}
 								alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")}
 							/>
 							<center>
