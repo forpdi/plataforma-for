@@ -1,8 +1,15 @@
 
 ![ForPDI Logo](http://forpdi.org/img/logo_forpdi.png)
+
 Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgação de Planos de Desenvolvimento Institucional (PDI).
 
-Website: [http://www.forpdi.org/](http://www.forpdi.org/)
+![ForRisco logo](http://www.forrisco.org/imagens/logo.svg)
+
+Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgação de Riscos.
+
+Website ForPDI: [http://www.forpdi.org/](http://www.forpdi.org/)
+
+Website ForRisco: [http://www.forrisco.org/](http://www.forrisco.org/)
 
 **Table of Contents**
 
@@ -14,6 +21,7 @@ Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 	- [Runtime](#runtime)
 	- [Configurando o Eclipse para desenvolvimento](#configurando-o-eclipse-para-desenvolvimento)
 - [Licença](#licen%C3%A7a)
+- [Documentos e Capacitação](#documentos-e-capacitação)
 
 
 ## Stack de tecnologias utilizadas
@@ -30,7 +38,7 @@ Website: [http://www.forpdi.org/](http://www.forpdi.org/)
 
 
 ## Pré-requisitos
-Para a utilização do ForPDI, são necessárias algumas ferramentas para o build e algumas para o runtime do sistema.
+Para a utilização do ForPDI e ForRisco, são necessárias algumas ferramentas para o build e algumas para o runtime do sistema.
 
 ### Build
 Você precisará de no mínimo, as seguintes ferramentas para realizar o build do sistema:
@@ -135,7 +143,7 @@ mvn clean package -P prd
 Após o packaging, o arquivo WAR estará disponível na pasta `backend-java/target/forpdi.war`. Esse arquivo é o backend da sua aplicação, pronto para publicação no Wildfly.
 
 ### Runtime
-Para o runtime do ForPDI você vai precisar:
+Para o runtime do ForPDI/ForRisco você vai precisar:
 
 - Java 1.8 (JDK)
 - Servidor de aplicação Java EE: Wildfly 9.0.2
@@ -216,11 +224,11 @@ preciso ativá-los nos arquivos de configuração do Apache HTTPD (este procedim
 a sua distribuição). Nos próximos passos iremos considerar que os arquivos de configuração do HTTPD estão na
 pasta `/etc/httpd` e que você estará logado no terminal com o usuário `root`.
 
-Primeiramente você precisa criar um arquivo `.conf` para inserir as configurações do ForPDI. Para isso,
+Primeiramente você precisa criar um arquivo `.conf` para inserir as configurações do ForPDI/ForRisco. Para isso,
 você precisará definir alguns parâmetros que utilizaremos na configuração do sistema:
 
 - FRONTEND_DIR -> Deve ser substituído pelo caminho de uma pasta do servidor onde está a versão gerada pelo build da aplicação (disponível na pasta `frontend-web/dist`), ex: `/var/www/forpdi`
-- FORPDI_DOMAIN -> Domínio que será utilizado para acessar o ForPDI, ex: `www.forpdi.org`
+- FORPDI_DOMAIN -> Domínio que será utilizado para acessar o ForPDI/ForRisco, ex: `www.forpdi.org`
 
 Com essas definições, podemos criar o arquivo `forpdi.conf` na pasta apropriada:
 
@@ -331,10 +339,24 @@ Senha: 12345
 ```
 
 Para um guia mais detalhado da configuração inicial, acesse [o vídeo de instrução dos primeiros passos no ForPDI](https://youtu.be/4INjIqucYRo),
-que explica as configurações e recursos mínimos para iniciar a utilização do ForPDI.
+que explica as configurações e recursos mínimos para iniciar a utilização do ForPDI/ForRisco.
 
 ### Configurando o Eclipse para desenvolvimento
 
 ## Licença
 
-O ForPDI é disponibilizado sob a licença Apache License 2.0.
+O ForPDI/ForRisco é disponibilizado sob a licença Apache License 2.0.
+
+## Documentos e Capacitação
+
+- [Capacitação Online](https://www.youtube.com/channel/UC1DP0ZGoTm0OlX-vOc-Ns5Q/videos)
+- [Diagrama Entidade-Relacionamento ForPDI](http://teste.forpdi.org/data-model/diagram_forpdi.pdf)
+- [Diagrama Entidade-Relacionamento ForRisco](http://teste.forpdi.org/data-model/diagram_forrisco.pdf)
+- [Diagrama Entidade-Relacionamento ForPDI + ForRisco](http://teste.forpdi.org/data-model/diagram.pdf)
+- [Dicionário de Dados ForPDI](http://teste.forpdi.org/data-model/dictionary_forpdi.html)
+- [Dicionário de Dados ForRisco](http://teste.forpdi.org/data-model/dictionary_forrisco.html)
+- [Dicionário de Dados ForPDI + ForRisco](http://teste.forpdi.org/data-model/dictionary.html)
+- [Documentação do Sistema (ForPDI)](http://teste.forpdi.org/data-model/FORPDI_documentacao_do_sistema.pdf)
+- [Documentação da Interface (ForPDI)](http://teste.forpdi.org/data-model/FORPDI_documentacao_da_interface.pdf)
+- [Manual ForPDI](http://forpdi.org/manual.pdf)
+- [Manual ForRisco]()
