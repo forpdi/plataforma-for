@@ -3,7 +3,6 @@ import _ from 'underscore';
 
 import UserStore from "forpdi/jsx/core/store/User.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
-import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
@@ -30,6 +29,12 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
+		const tab = this.context.tabPanel.getTabByPath(this.props.location.pathname);
+		if (tab && tab.state) {
+			this.setState({
+				unit: tab.state,
+			});
+		}
 		UserStore.on('retrieve-user', (response) => {
 			if (response.data) {
 				this.setState({
@@ -50,6 +55,7 @@ export default React.createClass({
 
 		UnitStore.on("subunitCreated", (response) => {
 			if (response.data) {
+				this.context.tabPanel.clearTabState(this.props.location.pathname);
 				this.context.toastr.addAlertSuccess(Messages.get("notification.subunit.save"));
 				this.context.router.push(`forrisco/plan-risk/${this.props.params.planRiskId}/unit/${this.props.params.unitId}/subunit/${response.data.id}/info`);
 			} else {
@@ -93,29 +99,13 @@ export default React.createClass({
 		);
 	},
 
-	getFields() {
-		/*Título do Item*/
-		const formFields = [{
-			name: 'description',
-			type: AttributeTypes.TEXT_FIELD,
-			placeholder: "Título do Item",
-			maxLength: 100,
-			label: "Título",
-			required: true,
-		}];
-
-		this.setState({
-			formFields: formFields
-		});
-	},
-
 	fieldChangeHandler(e) {
 		this.setState({
 			unit: {
 				...this.state.unit,
 				[e.target.name]: e.target.value,
 			}
-		});
+		}, this.updateTabPanelState);
 	},
 
 	selectChangeHandler(e) {
@@ -125,7 +115,14 @@ export default React.createClass({
 				...this.state.unit,
 				user: this.state.users[idx],
 			}
-		});
+		}, this.updateTabPanelState);
+	},
+
+	updateTabPanelState() {
+		this.context.tabPanel.setTabState(
+			this.props.location.pathname,
+			this.state.unit,
+		);
 	},
 
 	handleSubmit(event) {
@@ -144,17 +141,7 @@ export default React.createClass({
 	},
 
 	onCancel() {
-		// if (this.state.plansLength > 0 || this.state.policies.length === 0) {
-		// 	this.context.router.push("/forrisco/home/");
-		// }
-		//
-		// if (this.state.policies.length && this.state.policies.length === 1) {
-		// 	this.context.router.push("/forrisco/policy/" + this.state.policies[0].id + "/");
-		// }
-
 		this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-		const { id } = this.state.unit.planRisk;
-		this.context.router.push(`/forrisco/plan-risk/${id}/unit/`);
 	},
 
 	getFields() {
@@ -162,6 +149,7 @@ export default React.createClass({
 		fields.push({
 			name: "name",
 			type: "text",
+			currValue: this.state.unit.name,
 			required: true,
 			maxLength: 240,
 			placeholder: "Nome da Subnidade",
@@ -170,6 +158,7 @@ export default React.createClass({
 		}, {
 			name: "abbreviation",
 			type: "text",
+			currValue: this.state.unit.abbreviation,
 			placeholder: "Sigla da Unidade",
 			required: true,
 			maxLength: 240,
@@ -178,6 +167,7 @@ export default React.createClass({
 		}, {
 			name: "user",
 			type: "select",
+			currValue: this.state.unit.user ? this.state.unit.user.name: null,
 			options: _.map(this.state.users, user => user.name),
 			renderDisplay: value => value,
 			className: "form-control-h",
@@ -189,6 +179,7 @@ export default React.createClass({
 		}, {
 			name: "description",
 			type: "textarea",
+			currValue: this.state.unit.description,
 			placeholder: "Descrição da Subnidade",
 			maxLength: 9900,
 			label: Messages.getEditable("label.descriptionPolicy", "fpdi-nav-label"),
