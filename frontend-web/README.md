@@ -5,7 +5,7 @@ Pré condição:
 	- Altere as configurações do arquivo index.html com as configurações do backend.
 
 Execute os seguintes comandos na pasta onde fica o projeto:
-	- docker build -t forpdi-front-end .
-	- docker run -d --name forpdi-front-end -p 7778:80 forpdi-front-end
+	- docker build -t forpdi-frontend .
+	- docker run -d --name forpdi-frontend -p 7778:80 forpdi-frontend
 
 Pronto! Seu container com a aplicação referente ao frontent estará disponivel para acesso em: http://host:7778/forpdi
