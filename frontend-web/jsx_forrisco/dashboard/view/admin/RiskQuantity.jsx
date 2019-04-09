@@ -6,7 +6,6 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import GraphicFilter from "forpdi/jsx_forrisco/dashboard/view/graphic/GraphicFilter.jsx";
 import Graphic from "forpdi/jsx_forrisco/dashboard/view/graphic/Graphic.jsx";
 
-
 export default React.createClass({
 
 	getInitialState() {
@@ -35,7 +34,7 @@ export default React.createClass({
 		this.state.risks=newProps.risks;
 		this.state.unit=newProps.unit;
 		this.state.plan= newProps.plan;
-
+		this.state.threats= newProps.threats;
 		this.state.riskLevelModel= newProps.riskLevel;
 		this.state.allRisks= newProps.allRisks;
 		this.state.loading=false;
@@ -44,21 +43,15 @@ export default React.createClass({
 
 		if(newProps.units.length>0 && this.state.units != newProps.units){
 			this.state.units= newProps.units;
-		}
-
-		if(this.state.threats!= newProps.threats){
-			this.state.threats= newProps.threats;
 			this.refresh()
 		}
 	},
 
 	refresh(){
 		RiskStore.dispatch({
-
 			action:RiskStore.ACTION_FIND_HISTORY_BY_UNIT,
 			data:{unit: this.state.unit,
-				plan:this.state.plan.id,
-				threat: this.state.threats}
+				plan:this.state.plan.id }
 		})
 	},
 
@@ -80,12 +73,12 @@ export default React.createClass({
 		})
 	},
 
- 	componentWillUnmount() {
+	componentWillUnmount() {
 		RiskStore.off(null, null, this);
 		StructureStore.off(null, null, this);
 	},
 
-  	changePageTo1(){
+	changePageTo1(){
 		this.setState({
 			page2:false
 		})
@@ -149,37 +142,18 @@ export default React.createClass({
 				if (i >= 2) {
 					className += ' dashboard-risk-panel-bottom';
 				}
+				panel1.push( <span className={className}>
 
-				var obj =JSON.parse(JSON.stringify(this.state.riskLevelModel.data[i].level))
-				var level = obj.split(" ");
-				for(var j=0; j<level.length; j++){
-					if(level[j].length>20){
-						level[j]=level[j].substr(0, 17).concat("...")
-					}
-				}
+						<GraphicFilter
+							level={level}
+							onClick={this.listRisk}
+							color={color}
+							quantity={true}
+						/>
 
-				obj=""
-				for(var j=0; j<level.length; j++){
-					obj+=(level[j])
-
-					if(j+1!=level.length){
-						obj+=" "
-					}
-				}
-
-				panel1.push(<span className={className}>
-					<GraphicFilter
-						level={level}
-						onClick={this.listRisk}
-						color={color}
-						quantity={true}
-					/>
 					<div className="dashboard-risk-number">{quantity}</div>
-					<div className="dashboard-risk-text">Risco {obj}
-					</div>
+					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
-
-
 			}else{
 
 				if ( i % 2 === 0 && i !== 0){
@@ -191,49 +165,44 @@ export default React.createClass({
 				panel2.push( <span className={className}>
 					<a>
 					<GraphicFilter
-							level={level}
-							onClick={this.listRisk}
-							color={color}
-							quantity={true}
-						/>
+						level={level}
+						onClick={this.listRisk}
+						color={color}
+						quantity={true}
+					/>
 					</a>
 					<div className="dashboard-risk-number">{quantity}</div>
-					<div className="dashboard-risk-text" title={this.state.riskLevelModel.data[i].level}>
-
-					{"Risco "+	(this.state.riskLevelModel.data[i].level.length > 5)
-										? ((this.state.riskLevelModel.data[i].level).trim().substr(0, 5).concat("...").toString())
-										: (this.state.riskLevelModel.data[i].level)}
-					</div>
+					<div className="dashboard-risk-text">{"Risco "+ this.state.riskLevelModel.data[i].level}</div>
 				</span>)
 			}
 		}
 
 		if(this.state.riskLevelModel.data.length>4){
 			var arrow = <div><br/>
-							<div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePageTo1}/>
-							<div className={"mdi mdi-arrow-right-bold-circle icon-link"}  style={{float: "right"}} onClick={this.changePageTo2}/>
-						</div>
+				<div className={"mdi mdi-arrow-left-bold-circle icon-link"} onClick={this.changePageTo1}/>
+				<div className={"mdi mdi-arrow-right-bold-circle icon-link"}  style={{float: "right"}} onClick={this.changePageTo2}/>
+			</div>
 			//panel1.push(arrow)
 			//panel2.push(arrow)
 		}
 		if(!this.state.page2){
 			return <div>
-					<div>
-						{panel1}
-					</div>
-					<div     style={{position: "relative", top: "200px"}}>
-						{arrow}
-					</div>
+				<div>
+					{panel1}
 				</div>
+				<div     style={{position: "relative", top: "200px"}}>
+					{arrow}
+				</div>
+			</div>
 		}else{
 			return <div>
-					<div>
-						{panel2}
-					</div>
-					<div     style={{position: "relative", top: "200px"}}>
-						{arrow}
-					</div>
+				<div>
+					{panel2}
 				</div>
+				<div     style={{position: "relative", top: "200px"}}>
+					{arrow}
+				</div>
+			</div>
 		}
 	},
 
@@ -246,12 +215,11 @@ export default React.createClass({
 			return (<LoadingGauge/>)
 		}
 
-
 		return (
 			<div className="frisco-dashboard frisco-dashboard-right" style={{ position: 'relative' }}>
 				{this.getPanel()}
-
-				{this.state.displayGraph
+				{
+					this.state.displayGraph
 					&&
 					<Graphic
 						title={Messages.get("label.risk.history").toUpperCase()}
