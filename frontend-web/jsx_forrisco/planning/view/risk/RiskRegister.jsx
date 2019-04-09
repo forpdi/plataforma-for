@@ -299,14 +299,16 @@ export default React.createClass({
 				name: "periodicity",
 				label: "Periodicidade da análise",
 				type: AttributeTypes.SELECT_FIELD,
-				optionsField: [{ label: 'Diária' },
-				{ label: 'Semanal' },
-				{ label: 'Quinzenal' },
-				{ label: 'Mensal' },
-				{ label: 'Bimestral' },
-				{ label: 'Trimestral' },
-				{ label: 'Semestral' },
-				{ label: 'Anual' }],
+				optionsField: [
+					{ label: 'Diária' },
+					{ label: 'Semanal' },
+					{ label: 'Quinzenal' },
+					{ label: 'Mensal' },
+					{ label: 'Bimestral' },
+					{ label: 'Trimestral' },
+					{ label: 'Semestral' },
+					{ label: 'Anual' }
+				],
 				displayField: 'label',
 				placeholder: "Selecione",
 				maxLength: 100,
@@ -320,21 +322,22 @@ export default React.createClass({
 				maxLength: 100,
 				label: "Tipo",
 				value: risk != null ? risk.type : null,
-			// },{
-			// 	name: "tipology",
-			// 	type: AttributeTypes.SELECT_FIELD,
-			// 	optionsField: [
-			// 		{ label: 'Risco operacional' },
-			// 		{ label: 'Risco de imagem/reputação do órgão' },
-			// 		{ label: 'Risco legal' },
-			// 		{ label: 'Risco financeiro/orçamentário' },
-			// 		{ label: 'Risco de Integridade'},
-			// 		{ label: 'Outro' },
-			// 	],
-			// 	placeholder: "Selecione",
-			// 	maxLength: 100,
-			// 	label: "Tipologia",
-			// 	value: risk != null ? risk.tipology : null,
+			},{
+				name: "tipology",
+				type: AttributeTypes.SELECT_FIELD,
+				optionsField: [
+					{ label: 'Risco operacional' },
+					{ label: 'Risco de imagem/reputação do órgão' },
+					{ label: 'Risco legal' },
+					{ label: 'Risco financeiro/orçamentário' },
+					{ label: 'Risco de Integridade'},
+					{ label: 'Outra' },
+				],
+				onChange: this.handleSelect,
+				placeholder: "Selecione",
+				maxLength: 100,
+				label: "Tipologia",
+				value: risk != null ? risk.tipology : null,
 			},{
 				name: "date",
 				type: AttributeTypes.DATE,
@@ -343,7 +346,6 @@ export default React.createClass({
 				label: "Data e hora de criação do risco",
 				value: risk != null ? risk.begin : null,
 			},);
-
 
 		return fields;
 	},
@@ -770,334 +772,349 @@ export default React.createClass({
 		}
 	},
 
-	renderTypologies() {
-		if (this.state.visualization) {
-			return (
-				<form>
-					<div className="form-group form-group-sm">
-						<label htmlFor="field-tipology" className="fpdi-text-label">
-							Tipologia
-						</label>
-						<div>
-							<span className="pdi-normal-text">
-								{this.state.riskModel.tipology}
-							</span>
-						</div>
-					</div>
-				</form>
-			);
-		} else {
-			return (
-				<span className="form-horizontal">
-					<form>
-						<div className="form-group form-group-sm">
-							<label htmlFor="field-tipology" className="fpdi-text-label">
-								Tipologia
-							</label>
-							<select
-								className="form-control"
-								name="tipology"
-								id="field-tipology"
-								placeholder="Selecione"
-								type="org.forpdi.planning.attribute.types.SelectField"
-								ref={'field-9'}
-								onChange={this.handleSelect}
-							>
-								<option value="" disabled>Selecione</option>
-								<option data-placement="right" title="Risco Operacional">
-									Risco Operacional
-								</option>
-								<option data-placement="right" title="Risco de imagem/reputação do órgão">
-									Risco de imagem/reputação do órgão
-								</option>
-								<option data-placement="right" title="Risco legal">
-									Risco legal
-								</option>
-								<option data-placement="right" title="Risco financeiro/orçamentário">
-									Risco financeiro/orçamentário
-								</option>
-								<option data-placement="right" title="Risco de Integridade">
-									Risco de Integridade
-								</option>
-								<option data-placement="right" title="Outra">
-									Outra
-								</option>
-							</select>
-						</div>
-					</form>
-				</span>
-			);
-		}
-	},
+	// renderTypologies() {
+	// 	if (this.state.visualization) {
+	// 		return (
+	// 			<form>
+	// 				<div className="form-group form-group-sm">
+	// 					<label htmlFor="field-tipology" className="fpdi-text-label">
+	// 						Tipologia
+	// 					</label>
+	// 					<div>
+	// 						<span className="pdi-normal-text">
+	// 							{this.state.riskModel.tipology}
+	// 						</span>
+	// 					</div>
+	// 				</div>
+	// 			</form>
+	// 		);
+	// 	} else {
+	// 		return (
+	// 			<span className="form-horizontal">
+	// 				<form>
+	// 					<div className="form-group form-group-sm">
+	// 						<label htmlFor="field-tipology" className="fpdi-text-label">
+	// 							Tipologia
+	// 						</label>
+	// 						<select
+	// 							className="form-control"
+	// 							name="tipology"
+	// 							id="field-tipology"
+	// 							placeholder="Selecione"
+	// 							type="org.forpdi.planning.attribute.types.SelectField"
+	// 							ref={'field-9'}
+	// 							onChange={this.handleSelect}
+	// 						>
+	// 							<option value="" disabled>Selecione</option>
+	// 							<option data-placement="right" title="Risco Operacional">
+	// 								Risco Operacional
+	// 							</option>
+	// 							<option data-placement="right" title="Risco de imagem/reputação do órgão">
+	// 								Risco de imagem/reputação do órgão
+	// 							</option>
+	// 							<option data-placement="right" title="Risco legal">
+	// 								Risco legal
+	// 							</option>
+	// 							<option data-placement="right" title="Risco financeiro/orçamentário">
+	// 								Risco financeiro/orçamentário
+	// 							</option>
+	// 							<option data-placement="right" title="Risco de Integridade">
+	// 								Risco de Integridade
+	// 							</option>
+	// 							<option data-placement="right" title="Outra">
+	// 								Outra
+	// 							</option>
+	// 						</select>
+	// 					</div>
+	// 				</form>
+	// 			</span>
+	// 		);
+	// 	}
+	// },
 
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
 
-		return (<div>
-			{
-				this.state.newRisk
-				? <h1>Novo Risco</h1>
-				: ""
-			}
-
-			<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
+		return (
+			<div>
 				{
-					!this.state.visualization
-					?
-					<VerticalForm
-						vizualization={this.state.visualization}
-						fields={this.getName()}
-						submitLabel={Messages.get("label.submitLabel")}
-						showButtons={false}
-						ref={'field-name'}
-					/>
-					:
-					""
+					this.state.newRisk
+					? <h1>Novo Risco</h1>
+					: ""
 				}
 
-				{
-					this.getFields().map((fieldItem, index) => {
-
-						if ((fieldItem.name == "riskLevel" || fieldItem.name == "date") && !this.state.visualization) {
-							return
-						}
-
-						if (index == 2 || index == 3 || this.state.visualization) {
-							return (
-								<VerticalForm
-									vizualization={this.state.visualization}
-									fields={[fieldItem]}
-									submitLabel={Messages.get("label.submitLabel")}
-									showButtons={false}
-									ref={'field-' + index}
-								/>
-							);
-						}
-
-						return (
-							<span className="form-horizontal">
-								<VerticalForm
-									vizualization={this.state.visualization}
-									fields={[fieldItem]}
-									submitLabel={Messages.get("label.submitLabel")}
-									showButtons={false}
-									ref={'field-' + index}
-								/>
-							</span>
-						);
-					})
-				}
-
-				{this.renderTypologies()}
-
-				{
-					this.state.showOtherField
-					?
-					<span className="form-horizontal">
+				<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
+					{
+						!this.state.visualization
+						?
 						<VerticalForm
 							vizualization={this.state.visualization}
-							fields={[{
-								name: "newTipology",
-								type: AttributeTypes.TEXT_AREA,
-								placeholder: "Nome da Tipologia",
-								maxLength: 100,
-								label: "Nova Tipologia",
-								value: null,
-							}]}
+							fields={this.getName()}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+							ref={'field-name'}
+						/>
+						:
+						""
+					}
+
+					{
+						this.getFields().map((fieldItem, index) => {
+
+							if ((fieldItem.name == "riskLevel" || fieldItem.name == "date") && !this.state.visualization) {
+								return
+							}
+
+							if (index == 2 || index == 3 || this.state.visualization) {
+								return (
+									<VerticalForm
+										vizualization={this.state.visualization}
+										fields={[fieldItem]}
+										submitLabel={Messages.get("label.submitLabel")}
+										showButtons={false}
+										ref={'field-' + index}
+									/>
+								);
+							}
+
+							return (
+								<span className="form-horizontal" style={{ 'marginRight': '45px' }}>
+									<VerticalForm
+										vizualization={this.state.visualization}
+										fields={[fieldItem]}
+										submitLabel={Messages.get("label.submitLabel")}
+										showButtons={false}
+										ref={'field-' + index}
+									/>
+								</span>
+							);
+						})
+					}
+
+					{/* this.renderTypologies() */}
+
+					{
+						this.state.showOtherField
+						?
+						<span className="form-horizontal" style={{ 'margin': '0' }}>
+							<form>
+								<label htmlFor="field-tipology" className="fpdi-text-label">
+									Nova Tipologia
+								</label>
+								<div className="form-group form-group-sm" style={{ 'width': '100%', 'margin': '0' }}>
+									<input
+										className="form-control"
+										name="tipology"
+										id="field-tipology"
+										placeholder="Selecione"
+										type="org.forpdi.planning.attribute.types.TextField"
+										style={{ 'display': 'inline-block', 'width': '67%' }}
+									/>
+									<div className="row-tools-box" style={{ 'display': 'inline-block', 'marginLeft': '15px' }}>
+										<span
+											className="mdi mdi-check btn btn-sm btn-success"
+											title="Salvar"
+											onClick={() => {console.log('salvar')}}
+											style={{ 'marginRight': '0', 'padding': '6px 4px' }}
+										/>
+										<span
+											className="mdi mdi-close btn btn-sm btn-danger"
+											title="Cancelar"
+											onClick={() => {console.log('cancelar')}}
+											style={{ 'marginRight': '0', 'padding': '6px 4px' }}
+										/>
+									</div>
+								</div>
+							</form>
+						</span>
+						:
+						""
+					}
+
+					{/* Plano Estratégico */}
+
+					{
+						!this.state.visualization
+						?
+						<div>
+							<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
+							<div>
+								<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
+								<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
+							</div>
+							<br />
+						</div>
+						:
+						""
+					}
+					{
+						!this.state.visualization && this.state.risk_pdi
+						?
+						<label htmlFor={"texto"} className="fpdi-text-label-none">
+							{"Objetivo Estratégico do PDI"}
+						</label>
+						:
+						""
+					}
+					{
+						this.state.visualization || this.state.risk_pdi
+						?
+						<ListForm
+							vizualization={this.state.visualization}
+							fields={this.getStrategies()}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+							onChange={this.onChangeStrategies}
+						/>
+						:
+						""
+					}
+					<br />
+
+					{/* Processo */}
+
+					{
+						!this.state.visualization
+						?
+						<div>
+							<div
+								style={{ "display": "-webkit-box", margin: "10px 0px" }}
+								className={"fpdi-text-label"}
+							>
+								{Messages.get('label.risk.objectiveProcess')}
+							</div>
+							<div>
+								<input
+									style={{ "margin": "0px 5px" }}
+									type="radio"
+									name="objectiveProcess"
+									checked={this.state.risk_obj_process === true}
+									onChange={this.handleProcessChange}
+									value="Sim"
+								/>Sim
+								<input
+									style={{ "margin": "0px 5px" }}
+									type="radio"
+									name="objectiveProcess"
+									checked={this.state.risk_obj_process === false}
+									onChange={this.handleProcessChange}
+									value="Não"
+								/>Não
+							</div>
+							<br />
+						</div>
+						:
+						""
+					}
+					{
+						!this.state.visualization && this.state.risk_obj_process
+						?
+						<label htmlFor={"texto"} className="fpdi-text-label-none">
+							{"Processo/Objetivo"}
+						</label>
+						:
+						""
+					}
+
+					{
+						this.state.visualization || this.state.risk_obj_process
+						?
+						<ListForm
+							vizualization={this.state.visualization}
+							fields={this.getProcesses()}
+							submitLabel={Messages.get("label.submitLabel")}
+							showButtons={false}
+							onChange={this.onChangeProcesses}
+						/>
+						:
+						""
+					}
+					<br />
+
+					{/* Atividade */}
+
+					{
+						!this.state.visualization
+						?
+						<div>
+							<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>
+								{Messages.get('label.risk.activityProcess')}
+							</div>
+							<div>
+								<input
+									style={{ "margin": "0px 5px" }}
+									type="radio"
+									name="activityProcess"
+									checked={this.state.risk_act_process === true}
+									onChange={this.handleActivityChange}
+									value="Sim"
+								/>Sim
+								<input
+									style={{ "margin": "0px 5px" }}
+									type="radio"
+									name="activityProcess"
+									checked={this.state.risk_act_process === false}
+									onChange={this.handleActivityChange}
+									value="Não"
+								/>Não
+							</div>
+							<br />
+						</div>
+						:
+						""
+					}
+					{
+						!this.state.visualization && this.state.risk_act_process
+						?
+						<div>
+							<div style={{ position: "relative", bottom: '5px' }}>
+								<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
+									{"Processo"}&nbsp;&nbsp;
+							</label>
+								{(this.context.roles.MANAGER || _.contains(this.context.permissions,
+									PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
+									<a className="mdi mdi-plus-circle icon-link" onClick={this.addActivity}></a> : ""
+								}
+								<br />
+							</div>
+						</div>
+						:
+						""
+					}
+
+					{!this.state.visualization && this.state.risk_act_process ? this.getProcessActivity() : ""}
+
+					{
+						this.state.visualization
+						?
+						<ListForm
+							vizualization={this.state.visualization}
+							fields={this.getActivities()}
 							submitLabel={Messages.get("label.submitLabel")}
 							showButtons={false}
 						/>
-					</span>
-					:
-					""
-				}
+						:
+						""
+					}
 
-				{//Plano Estratégico
-				}
+					<br />
+					<br />
 
-				{
-					!this.state.visualization
-					?
-					<div>
-						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
-						<div>
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
-							<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
-						</div>
-						<br />
-					</div>
-					:
-					""
-				}
-				{
-					!this.state.visualization && this.state.risk_pdi
-					?
-					<label htmlFor={"texto"} className="fpdi-text-label-none">
-						{"Objetivo Estratégico do PDI"}
-					</label>
-					:
-					""
-				}
-				{
-					this.state.visualization || this.state.risk_pdi
-					?
-					<ListForm
-						vizualization={this.state.visualization}
-						fields={this.getStrategies()}
-						submitLabel={Messages.get("label.submitLabel")}
-						showButtons={false}
-						onChange={this.onChangeStrategies}
-					/>
-					:
-					""
-				}
-				<br />
-
-				{//Processo
-				}
-
-				{
-					!this.state.visualization
-					?
-					<div>
-						<div
-							style={{ "display": "-webkit-box", margin: "10px 0px" }}
-							className={"fpdi-text-label"}
-						>
-							{Messages.get('label.risk.objectiveProcess')}
-						</div>
-						<div>
-							<input
-								style={{ "margin": "0px 5px" }}
-								type="radio"
-								name="objectiveProcess"
-								checked={this.state.risk_obj_process === true}
-								onChange={this.handleProcessChange}
-								value="Sim"
-							/>Sim
-							<input
-								style={{ "margin": "0px 5px" }}
-								type="radio"
-								name="objectiveProcess"
-								checked={this.state.risk_obj_process === false}
-								onChange={this.handleProcessChange}
-								value="Não"
-							/>Não
-						</div>
-						<br />
-					</div>
-					:
-					""
-				}
-				{
-					!this.state.visualization && this.state.risk_obj_process
-					?
-					<label htmlFor={"texto"} className="fpdi-text-label-none">
-						{"Processo/Objetivo"}
-					</label>
-					:
-					""
-				}
-
-				{
-					this.state.visualization || this.state.risk_obj_process
-					?
-					<ListForm
-						vizualization={this.state.visualization}
-						fields={this.getProcesses()}
-						submitLabel={Messages.get("label.submitLabel")}
-						showButtons={false}
-						onChange={this.onChangeProcesses}
-					/>
-					:
-					""
-				}
-				<br />
-
-				{//Atividade
-				}
-
-				{
-					!this.state.visualization
-					?
-					<div>
-						<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>
-							{Messages.get('label.risk.activityProcess')}
-						</div>
-						<div>
-							<input
-								style={{ "margin": "0px 5px" }}
-								type="radio"
-								name="activityProcess"
-								checked={this.state.risk_act_process === true}
-								onChange={this.handleActivityChange}
-								value="Sim"
-							/>Sim
-							<input
-								style={{ "margin": "0px 5px" }}
-								type="radio"
-								name="activityProcess"
-								checked={this.state.risk_act_process === false}
-								onChange={this.handleActivityChange}
-								value="Não"
-							/>Não
-						</div>
-						<br />
-					</div>
-					:
-					""
-				}
-				{
-					!this.state.visualization && this.state.risk_act_process
-					?
-					<div>
-						<div style={{ position: "relative", bottom: '5px' }}>
-							<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
-								{"Processo"}&nbsp;&nbsp;
-						</label>
-							{(this.context.roles.MANAGER || _.contains(this.context.permissions,
-								PermissionsTypes.MANAGE_DOCUMENT_PERMISSION)) ?
-								<a className="mdi mdi-plus-circle icon-link" onClick={this.addActivity}></a> : ""
-							}
-							<br />
-						</div>
-					</div>
-					:
-					""
-				}
-
-				{!this.state.visualization && this.state.risk_act_process ? this.getProcessActivity() : ""}
-
-				{
-					this.state.visualization
-					?
-					<ListForm
-						vizualization={this.state.visualization}
-						fields={this.getActivities()}
-						submitLabel={Messages.get("label.submitLabel")}
-						showButtons={false}
-					/>
-					:
-					""
-				}
-
-				<br />
-				<br />
-
-				{
-					!this.state.visualization
-					?
-					<VerticalForm
-						vizualization={this.state.visualization}
-						onCancel={this.onCancel}
-						onSubmit={this.submitWrapper}
-					/>
-					:
-					""
-				}
-			</form>
-		</div>);
+					{
+						!this.state.visualization
+						?
+						<VerticalForm
+							vizualization={this.state.visualization}
+							onCancel={this.onCancel}
+							onSubmit={this.submitWrapper}
+						/>
+						:
+						""
+					}
+				</form>
+			</div>
+		);
 	}
 });
