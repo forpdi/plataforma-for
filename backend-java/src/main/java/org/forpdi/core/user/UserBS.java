@@ -357,8 +357,7 @@ public class UserBS extends HibernateBusiness {
 				users.add(user);
 			}
 			results.setList(users);
-			//results.setTotal((Long) counting.uniqueResult());
-			results.setTotal((long) users.size());
+			results.setTotal((Long) counting.uniqueResult());
 		}
 		return results;
 	}
