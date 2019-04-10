@@ -642,6 +642,12 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 					levelInstance.setId(null);
 					levelInstance.setLevel(structureLevels.get(levelInstance.getExportLevelId()));
 					levelInstance.setPlan(plans.get(levelInstance.getExportPlanId()));
+					
+					if(levelInstance.getParent() != null) {
+						StructureLevelInstance sli = structureLevelInstances.get(levelInstance.getParent());
+						levelInstance.setParent(sli.getId());
+					}
+						
 					session.persist(levelInstance);
 					structureLevelInstances.put(oldId, levelInstance);
 				});

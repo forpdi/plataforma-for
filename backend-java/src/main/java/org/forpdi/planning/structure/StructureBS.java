@@ -837,7 +837,9 @@ public class StructureBS extends HibernateBusiness {
 			return Collections.emptyList();
 		}
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
-		criteria.add(Restrictions.in("plan", plans));
+		criteria.add(Restrictions.in("plan", plans))
+				.addOrder(Order.asc("parent"));
+		
 		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 	}
 	

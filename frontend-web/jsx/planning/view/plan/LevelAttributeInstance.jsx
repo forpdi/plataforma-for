@@ -101,6 +101,7 @@ export default React.createClass({
 
 		if (model.data.level.attributes) {
 			model.data.level.attributes.map((model,idx) =>{
+
 				var formattedValue = (model.attributeInstance ? model.attributeInstance.formattedValue : "");
 				var value = (model.attributeInstance ? model.attributeInstance.value : "");
 				var editModeValue = null;
@@ -115,6 +116,9 @@ export default React.createClass({
 
 				}
 
+				if(model.type == AttributeTypes.RESPONSIBLE_FIELD && model.attributeInstance.valueAsNumber != undefined) {
+					value=model.attributeInstance.valueAsNumber
+				}
 
 				if (model.beginField) {
 					dateBegin = value;
@@ -924,7 +928,7 @@ export default React.createClass({
 				<li>
 					<a onClick={this.deleteLevelAttribute}>
 						<span className="mdi mdi-delete cursorPointer deleteIcon" title={Messages.get("label.delete")}>
-							<span id="menu-levels">	{Messages.getEditable("label.delete"),"fpdi-nav-label"} </span>
+							<span id="menu-levels">	{Messages.getEditable("label.delete","fpdi-nav-label")} </span>
 						</span>
 					</a>
 		         </li>
