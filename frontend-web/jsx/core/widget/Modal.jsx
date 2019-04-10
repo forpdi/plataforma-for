@@ -432,7 +432,7 @@ var ImportUsersModal = React.createClass({
 });
 
 
-//mdi-level-search mdi mdi-close-circle cursorPointer
+
 var GraphHistory= React.createClass({
 	render() {
 		return (
@@ -662,6 +662,7 @@ var Modal = {
 		ReactDOM.render((
 			<GraphHistory title={title} text={text}/>
 		),this.$el);
+
 		this.show();
 	},
 

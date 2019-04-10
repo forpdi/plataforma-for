@@ -264,6 +264,7 @@ export default React.createClass({
 		}
 		this.state.options.colors = colors
 		this.state.options.vAxis.maxValue = max
+		this.state.options.vAxis.format ='#'
 
 		this.setState({
 			data: axis,

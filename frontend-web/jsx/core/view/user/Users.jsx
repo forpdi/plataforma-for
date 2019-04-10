@@ -72,7 +72,6 @@ export default React.createClass({
 
 
 		UserStore.on("retrieve-user", (model) => {
-			console.log("retrieve-user");
 			me.setState({
 				loading: false,
 				models: model.data,

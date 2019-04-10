@@ -76,7 +76,6 @@ export default React.createClass({
 	},
 
 	renderContent() {
-		console.log(this.props.incidents);
 		if (this.state.isLoading === true) {
 			return (<LoadingGauge/>);
 		} else if (this.state.isLoading === null) {

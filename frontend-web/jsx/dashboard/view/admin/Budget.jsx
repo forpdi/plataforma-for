@@ -25,7 +25,7 @@ export default React.createClass({
        options:{
           //title: Messages.getEditable("label.generalBudget","fpdi-nav-label"),
           hAxis: {title: '', minValue: 0, maxValue: 15},
-          vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
+          vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15, format : '#,##0'},
           legend: 'none',
           bar: {groupWidth: '50%'}
         }
@@ -108,7 +108,7 @@ export default React.createClass({
 		options:{
 		title: Messages.get("label.generalBudget"),
 		hAxis: {title: '', minValue: 0, maxValue: 15},
-		vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15},
+		vAxis: {title: 'Valor (R$)', minValue: 0, maxValue: 15, format : '#,##0'},
 		legend: 'none',
 		bar: {groupWidth: '50%'}
 		},

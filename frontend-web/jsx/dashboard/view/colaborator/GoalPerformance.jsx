@@ -55,7 +55,7 @@ export default React.createClass({
 			options:{
 				title: '',
 				colors: ['#CCCCCC','#333333'],
-				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15, format : '#,##0'},
 				hAxis: {slantedText:true,slantedTextAngle:45},
 				legend: {position: 'none'},
 				bar: {groupWidth: '50%'},
@@ -129,7 +129,7 @@ export default React.createClass({
             options:{
                 title: '',
                 colors: ['#CCCCCC','#333333'],
-                vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+                vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15, format : '#,##0'},
                 hAxis: {title:hTitle, slantedText:bool,slantedTextAngle:30},
                 legend: {position: 'none'},
                 bar: {groupWidth: '50%'},

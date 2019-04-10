@@ -255,7 +255,7 @@ export default React.createClass({
 
 		var options = {
 			hAxis: { title: "Tempo", minValue: 1, maxValue: 12 },
-			vAxis: { title: 'Quantidade', minValue: 1, maxValue: max },
+			vAxis: { title: 'Quantidade', minValue: 1, maxValue: max, format : '#' },
 			// height: 250,
 			chartArea: { minWidth: '100%', width: '600px' },
 			// chartArea:{width:"600",height:"155"},

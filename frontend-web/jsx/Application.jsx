@@ -95,7 +95,6 @@ export default React.createClass({
 		}
 		return (
 			<main className='fpdi-app-container'>
-			{console.log(this.props.location.pathname.includes("forrisco"))}
 				{ this.props.location.pathname.includes("forrisco") ? <ForRiscoTopBar /> : <ForPDITopBar /> }
 				<ToastContainer ref="container"
 					className="toast-top-center" />

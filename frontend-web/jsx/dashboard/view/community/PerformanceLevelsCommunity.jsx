@@ -20,7 +20,7 @@ export default React.createClass({
           options:{
             title: '',
             hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
-            vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+            vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15, format : '#,##0'},
             legend: 'none',
             explorer: { axis: 'horizontal' },
           },
@@ -40,7 +40,7 @@ export default React.createClass({
 		options:{
 			title: '',
 			hAxis: {title: Messages.get("label.thematicAxes"), minValue: 0, maxValue: 15, slantedText:true, slantedTextAngle:45},
-			vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+			vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15, format : '#,##0'},
 			legend: 'none',
 			explorer: { axis: 'horizontal' },
 		},
