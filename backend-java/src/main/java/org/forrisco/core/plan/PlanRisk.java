@@ -2,20 +2,19 @@ package org.forrisco.core.plan;
 
 
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import org.forrisco.core.item.PlanRiskItem;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.forrisco.core.policy.Policy;
-import org.forrisco.core.unit.Unit;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
  * @author Matheus Nascimento
@@ -28,24 +27,26 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_plan_risk";
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 
-	@Column(nullable = true, length=10000)
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
-	
+
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_begin")
+	private Date validityBegin;
+
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_end")
+	private Date validityEnd;
+
 	//@SkipSerialization
 	@ManyToOne(targetEntity=Policy.class, optional=false,  fetch=FetchType.EAGER)
 	private Policy policy;
 
 	private boolean archived = false;
-	
-	/*@Transient
-	private PaginatedList<PlanRiskItem> duplicateItens;
-	
-	@Transient
-	private PaginatedList<Unit> duplicateUnits;
-	*/
+
 	public boolean isArchived() {
 		return archived;
 	}
@@ -70,6 +71,22 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 		this.description = description;
 	}
 
+	public Date getValidityBegin() {
+		return validityBegin;
+	}
+
+	public void setValidityBegin(Date validityBegin) {
+		this.validityBegin = validityBegin;
+	}
+
+	public Date getValidityEnd() {
+		return validityEnd;
+	}
+
+	public void setValidityEnd(Date validityEnd) {
+		this.validityEnd = validityEnd;
+	}
+
 	public Policy getPolicy() {
 		return policy;
 	}
@@ -77,22 +94,5 @@ public class PlanRisk extends SimpleLogicalDeletableEntity {
 	public void setPolicy(Policy policy) {
 		this.policy = policy;
 	}
-
-/*	public PaginatedList<PlanRiskItem> getDuplicateItens() {
-		return duplicateItens;
-	}
-
-	public void setDuplicateItens(PaginatedList<PlanRiskItem> duplicateItens) {
-		this.duplicateItens = duplicateItens;
-	}
-
-	public PaginatedList<Unit> getDuplicateUnits() {
-		return duplicateUnits;
-	}
-
-	public void setDuplicateUnits(PaginatedList<Unit> duplicateUnits) {
-		this.duplicateUnits = duplicateUnits;
-	}*/
-	
 
 }

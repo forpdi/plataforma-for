@@ -25,10 +25,10 @@ public class Item extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_item";
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 	
-	@Column(nullable = true, length=4000)
+	@Column(nullable = true, length=10000)
 	private String description;
 
 	@SkipSerialization

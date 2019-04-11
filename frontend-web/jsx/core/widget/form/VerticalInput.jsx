@@ -156,6 +156,7 @@ export default React.createClass({
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					maxLength={this.props.fieldDef.maxLength*1.01}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
@@ -170,6 +171,7 @@ export default React.createClass({
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					onChange={this.props.fieldDef.onChange || _.noop}
@@ -177,13 +179,20 @@ export default React.createClass({
 						{string(this.props.fieldDef.placeholder).isEmpty() ? "":
 							<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
 						}
+
 						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
 							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt.get ? opt.get(this.props.fieldDef.valueField):opt[this.props.fieldDef.valueField]}
 								data-placement="right" title={opt[this.props.fieldDef.displayField]}>
-									{ this.props.fieldDef.renderDisplay ?
-										this.props.fieldDef.renderDisplay(opt)
-										:
-										(opt.get ?string(opt.get(this.props.fieldDef.displayField)).trim().truncate(80, "...").toString() :opt[this.props.fieldDef.displayField])
+									{ this.props.fieldDef.renderDisplay
+									? this.props.fieldDef.renderDisplay(opt)
+									:(
+										(opt.get ?string(opt.get(this.props.fieldDef.displayField)).trim().truncate(80, "...").toString()
+											:((opt[this.props.fieldDef.displayField].length > this.props.limit)
+												? opt[this.props.fieldDef.displayField].substring(0,this.props.limit-3)+"..."
+												: opt[this.props.fieldDef.displayField]
+											)
+										)
+									)
 									}
 							</option>);
 						}):''}
@@ -382,6 +391,7 @@ export default React.createClass({
 					name={this.props.fieldDef.name}
 					maxLength={this.props.fieldDef.maxLength}
 					defaultValue={this.props.fieldDef.value}
+					value={this.props.fieldDef.currValue}
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					placeholder={this.props.fieldDef.placeholder}

@@ -133,9 +133,9 @@ public class UnitController extends AbstractController {
 	
 	
 	/**
-	 * Duplica uma unidade
+	 * Duplica unidades
 	 *  
-	 *  @Param Unit uma unidade com o id da unidade ogirinal
+	 *  @Param List<Unit> lista de unidade com o id da unidade ogirinal
 	 *  				 e o id no plano a ser salvo a unidade duplicado
 	 * @return void
 	 */
@@ -185,7 +185,7 @@ public class UnitController extends AbstractController {
 				duplicateRisk(unit);
 			}
 			
-			this.success("successfully duplicated plan risk");;
+			this.success("successfully duplicated plan risk");
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

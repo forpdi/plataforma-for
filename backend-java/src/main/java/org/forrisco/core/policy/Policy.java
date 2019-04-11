@@ -1,10 +1,14 @@
 package org.forrisco.core.policy;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.forpdi.core.company.Company;
@@ -23,12 +27,24 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_policy";
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable=false, length=255)
+	@SkipSerialization
+	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
+	private Company company;
+	
+	@Column(nullable=false, length=400)
 	private String name;
 
-	@Column(nullable=true, length=4000)
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_begin")
+	private Date validityBegin;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(nullable = true, name="validity_end")
+	private Date validityEnd;
+
 	@Column(nullable=false)
 	private int nline;
 	
@@ -44,9 +60,8 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	@Column(nullable=false, length=4000)
 	private String matrix;
 	
-	@SkipSerialization
-	@ManyToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
-	private Company company;
+	@Column(nullable = true, columnDefinition="text")
+	private String PIDescriptions;
 
 	private boolean archived = false;
 	
@@ -66,11 +81,11 @@ public class Policy extends SimpleLogicalDeletableEntity {
 	}
 	
 
-	public int getLevel() {
+	public int getLevels() {
 		return levels;
 	}
 
-	public void setLevel(int color) {
+	public void setLevels(int color) {
 		this.levels = color;
 	}
 
@@ -96,6 +111,22 @@ public class Policy extends SimpleLogicalDeletableEntity {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Date getValidityBegin() {
+		return validityBegin;
+	}
+
+	public void setValidityBegin(Date validityBegin) {
+		this.validityBegin = validityBegin;
+	}
+
+	public Date getValidityEnd() {
+		return validityEnd;
+	}
+
+	public void setValidityEnd(Date validityEnd) {
+		this.validityEnd = validityEnd;
 	}
 
 	public int getNline() {
@@ -146,4 +177,11 @@ public class Policy extends SimpleLogicalDeletableEntity {
 		this.matrix = matrix;
 	}
 
+	public String getPIDescriptions() {
+		return PIDescriptions;
+	}
+
+	public void setPIDescriptions(String pIDescriptions) {
+		PIDescriptions = pIDescriptions;
+	}
 }

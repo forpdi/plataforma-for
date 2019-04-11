@@ -152,7 +152,7 @@ export default React.createClass({
 				this.setState({
 					allSubItens: response.data,
 					export:false,
-				})
+				});
 				this.retrieveFilledSections();
 			}
 		}, this);

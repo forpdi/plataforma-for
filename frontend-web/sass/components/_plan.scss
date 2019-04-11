@@ -17,8 +17,14 @@
     }
 
   	& > .fpdi-plan-tabs {
+      width:  70%;
   		@include flex(7);
-  	}
+	}
+
+	& > .frisco-plan-tabs {
+		//width:  70%;
+			@include flex(7);
+	}
 }
 
 .fpdi-attributesTitle {

@@ -10,6 +10,7 @@ import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 import TablePagination from "forpdi/jsx/core/widget/TablePagination.jsx";
 import { MED_PAGE_SIZE } from "forpdi/jsx/core/util/const.js";
+import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -317,11 +318,17 @@ export default React.createClass({
 	},
 
 	deletePreventiveAction(id) {
-		RiskStore.dispatch({
-			action: RiskStore.ACTION_DELETE_PREVENTIVE_ACTION,
-			data: {
-				actionId: id,
-			},
+		var msg = "Você tem certeza que deseja excluir esta Ação Preventiva?"
+		Modal.confirmCustom(() => {
+			Modal.hide();
+			RiskStore.dispatch({
+				action: RiskStore.ACTION_DELETE_PREVENTIVE_ACTION,
+				data: {
+					actionId: id,
+				},
+			});
+		}, msg, () => {
+			Modal.hide()
 		});
 	},
 
@@ -418,15 +425,15 @@ export default React.createClass({
 		const columns = [{
 			Header: 'Ação',
 			accessor: 'action',
-			minWidth: 400,
+			minWidth: 200,
 		},{
 			accessor: 'user.name',
 			Header: 'Responsável',
-			minWidth: 300,
+			minWidth: 150,
 		}, {
 			Header: 'Ação realizada?',
 			accessor: 'accomplished',
-			minWidth: 200,
+			minWidth: 100,
 		}, {
 			Header: '',
 			accessor: 'tools',

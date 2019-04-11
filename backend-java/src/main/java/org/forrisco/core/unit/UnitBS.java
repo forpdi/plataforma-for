@@ -69,11 +69,6 @@ public class UnitBS extends HibernateBusiness {
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("parent", unit));
 
-//		Criteria count = this.dao.newCriteria(Unit.class)
-//				.add(Restrictions.eq("deleted", false))
-//				.add(Restrictions.eq("parent", unit))
-//				.setProjection(Projections.countDistinct("id"));
-
 		List<Unit> subunits = this.dao.findByCriteria(criteria, Unit.class);
 		results.setList(subunits);
 		results.setTotal((long) subunits.size());
@@ -245,7 +240,7 @@ public class UnitBS extends HibernateBusiness {
 	 *            Plano de Risco
 	 *
 	 */
-	public void updateHistory(PlanRisk plan) {
+	public void updateHistory(PlanRisk plan, boolean threat) {
 		if (plan == null) {
 			return;
 		}
@@ -261,7 +256,8 @@ public class UnitBS extends HibernateBusiness {
 			
 			Criteria criteria = this.dao.newCriteria(Risk.class)
 					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("unit", unit));
+					.add(Restrictions.eq("unit", unit))
+					.add(Restrictions.eq("type", threat?"Ameaça":"Oportunidade"));
 
 			List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
 			
@@ -280,7 +276,8 @@ public class UnitBS extends HibernateBusiness {
 						.add(Restrictions.eq("month", month))
 						.add(Restrictions.eq("year", year))
 						.add(Restrictions.eq("riskLevel", level))
-						.add(Restrictions.eq("unit", unit));
+						.add(Restrictions.eq("unit", unit))
+						.add(Restrictions.eq("threat", threat));
 
 				criteria.setMaxResults(1);
 				RiskHistory riskhistory = (RiskHistory) criteria.uniqueResult();
@@ -291,6 +288,7 @@ public class UnitBS extends HibernateBusiness {
 					riskhistory.setMonth(month);
 					riskhistory.setYear(year);
 					riskhistory.setRiskLevel(level);
+					riskhistory.setThreat(threat);
 				}
 
 				riskhistory.setQuantity(map.get(level));
@@ -345,9 +343,7 @@ public class UnitBS extends HibernateBusiness {
 					default:
 						state = "atrasado";
 				}
-
-				//for (int j = month + 1; j <= 12; j++) {
-
+				
 				criteria = this.dao.newCriteria(MonitorHistory.class)
 						.add(Restrictions.eq("deleted", false))
 						.add(Restrictions.eq("month", month))
@@ -369,8 +365,6 @@ public class UnitBS extends HibernateBusiness {
 				hmonitor.setEstado(state);
 
 				this.persist(hmonitor);
-
-				//}
 			}
 		}
 	}
@@ -488,10 +482,10 @@ public class UnitBS extends HibernateBusiness {
 		PaginatedList<Process> processes = this.processBS.listProcessByUnit(unit);
 		for(Process process :processes.getList()) {
 			
-			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId() == unit.getId()) {
+			if (this.riskBS.hasLinkedRiskProcess(process) && process.getUnitCreator().getId().equals(unit.getId())) {
 				return false;
 			}
-			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId() == unit.getId()) {
+			if (this.riskBS.hasLinkedRiskActivity(process) && process.getUnitCreator().getId().equals(unit.getId())) {
 				return false;
 			}
 		}

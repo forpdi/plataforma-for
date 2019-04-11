@@ -562,8 +562,8 @@ public class NotificationBS extends HibernateBusiness {
 					+ "padding-left: 20px;padding-right: 20px;border-radius: 7px;font-family: sans-serif;' href='" + url
 					+ "'>" + "Acesse o ForRisco" + "</a></p>" + "</center>"
 					+ "<center style='margin-top: 30px;font-family: sans-serif; font-size: 12px;'>"
-					+ "<p style='color: #1C486D;font-weight: 600;'>ForPDI - Todos os direitos reservados</p>"
-					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forpdi.org</a>"
+					+ "<p style='color: #1C486D;font-weight: 600;'>ForRisco - Todos os direitos reservados</p>"
+					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forrisco.org/</a>"
 					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
 		}
 

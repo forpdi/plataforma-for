@@ -44,6 +44,10 @@
     font-weight: $font-weight-light;
   }
 
+  & > li > a > span.mdi.icon-link-forrisco {
+    color: #7d45d8;
+  }
+
 
   & li.selected {
     background-color: #f5faff;

@@ -9,7 +9,7 @@ import Logo from 'forpdi/img/logo.png';
 import forRiscoLogo from 'forpdi/img/forrisco-logo.png';
 import _ from 'underscore';
 import string from 'string';
-import LinkInformation from "forpdi/jsx/LinkInformation.jsx";
+import LinkInformation from "forpdi/jsx_forrisco/LinkInformation.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -157,17 +157,17 @@ export default React.createClass({
 			return <div style={{display: 'none'}} />;
 		}
 		return (
-			<div className="fpdi-top-bar">
-	    	<Link to='/home' className="fpdi-top-bar-brand">
-					{
-						(EnvInfo.company && EnvInfo.company.logo == "" )
-						? <img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
-						: <img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo : Logo} />
-					}
-        </Link>
+			<div className="fpdi-top-bar forrisco-top-bar">
+				{/* <Link to='/home' className="fpdi-top-bar-brand" >
+						{
+							(EnvInfo.company && EnvInfo.company.logo == "" )
+							? <img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
+							: <img alt={Messages.get("label.forPdiLogo")} src={EnvInfo.company ? EnvInfo.company.logo : Logo} />
+						}
+				</Link> */}
 				<Link to='/forrisco/home' className="fpdi-top-bar-brand">
 					<img alt={Messages.get("label.forRiscoLogo")} src={forRiscoLogo} />
-        </Link>
+        		</Link>
 				<span className="fpdi-fill" />
 				{/* <span className="mdi mdi-account-circle" style={{marginRight: '5px'}} />
 				<span>{this.state.user.name}</span> */}
@@ -187,6 +187,8 @@ export default React.createClass({
 					}
 				</Link>
 				<span title="Notificações" className="mdi mdi-magnify hidden" />
+
+				<Link to="/home" title="Acessar ForPDI" id="for-pdi-button" className="redirect-to-forPDI-button"> Acessar ForPDI </Link>
 
 				<div className="dropdown">
 					<a
@@ -219,6 +221,7 @@ export default React.createClass({
 						</div>
 					</ul>
 				</div>
+
 				<div className="dropdown">
 					<a
 						id="top-bar-notification"
@@ -230,8 +233,9 @@ export default React.createClass({
 					/>
 					<div className="dropdown-menu dropdown-menu-right">
 						<LinkInformation />
-			  	</div>
+			  		</div>
 				</div>
+
 
 				<div className="dropdown">
 					<a
@@ -248,48 +252,42 @@ export default React.createClass({
 					<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
 						<li>
 							<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-								<span className="mdi mdi-account-circle icon-link">
-									{Messages.getEditable("label.myProfile","fpdi-nav-label")}
-								</span>
+								<span className="mdi mdi-account-circle icon-link-forrisco" />
+								{Messages.getEditable("label.myProfile","fpdi-nav-label")}
 							</Link>
 						</li>
 
 						{
 							(this.context.roles.MANAGER  || _.contains(this.context.permissions,
-						"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions,
-						"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company
-							?
+							"org.forpdi.core.user.authz.permission.ManageUsersPermission") || _.contains(this.context.permissions,
+							"org.forpdi.core.user.authz.permission.ViewUsersPermission")) && EnvInfo.company ?
 							<li>
 								<Link to="/users">
-			          	<span className="mdi mdi-account-multiple icon-link" />
+									<span className="mdi mdi-account-multiple icon-link-forrisco" />
 									{Messages.getEditable("label.users","fpdi-nav-label")}
-			        	</Link>
-		          </li>
+								</Link>
+							</li>
 							:
 							""
 						}
-		        {
-							this.context.roles.SYSADMIN
-							?
+		       			{ 
+							this.context.roles.SYSADMIN ?
 							<li>
 								<Link to="/system/companies">
-		              <span className="mdi mdi-chemical-weapon icon-link">
-										{Messages.getEditable("label.system","fpdi-nav-label")}
-									</span>
-		            </Link>
+		                			<span className="mdi mdi-chemical-weapon icon-link-forrisco" />
+									{Messages.getEditable("label.system","fpdi-nav-label")}
+		            			</Link>
 							</li>
 							:
 							""
 						}
 						{
-							this.context.roles.SYSADMIN
-							?
+							this.context.roles.SYSADMIN ?
 							<li>
 								<Link to="/structures">
-		              <span className="mdi mdi-note-text icon-link">
-										{Messages.getEditable("label.structures","fpdi-nav-label")}
-									</span>
-		            </Link>
+		              				<span className="mdi mdi-note-text icon-link-forrisco" />
+									{Messages.getEditable("label.structures","fpdi-nav-label")}
+		            			</Link>
 							</li>
 							:
 							""
@@ -297,7 +295,7 @@ export default React.createClass({
 						<li role="separator" className="divider" />
 						<li>
 							<a onClick={this.onLogout}>
-								<span className="mdi mdi-logout icon-link" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
+								<span className="mdi mdi-logout icon-link-forrisco" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
 							</a>
 						</li>
 					</ul>

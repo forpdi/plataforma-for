@@ -33,14 +33,6 @@ export default React.createClass({
 		var me = this;
 		PlanRiskStore.on("searchTerms", (response, data) => {
 			if (response.data !== null) {
-				for (var i = 0; i < response.data.length; i++) {
-					if (response.data[i].itemId !== null &&response.data[i].itemId !== undefined){
-						response.data[i].level = "Subitem"
-					} else {
-						response.data[i].level = "Item"
-					}
-				}
-
 				if (data.page === 1) {
 					this.setState({
 						resultSearchMore: response.data,
@@ -107,13 +99,33 @@ export default React.createClass({
 		})
 	},
 
+	getPath(model) {
+		switch(model.level) {
+			case 'Item':
+				return `/forrisco/plan-risk/${this.props.planRiskId}/item/${model.id}`;
+			case 'Subitem':
+				return `/forrisco/plan-risk/${this.props.planRiskId}/item/${model.parentId}/subitem/${model.id}`;
+			case 'Informações gerais':
+				return `/forrisco/plan-risk/${this.props.planRiskId}/item/overview`;
+			default: return null;
+		}
+	},
 
 	render() {
 
 		return (
 			<div className="fpdi-search">
 				<div className = "fpdi-search-view">
-					<p>{Messages.getEditable("label.searchReturned","fpdi-nav-label")} {this.state.resultSearchTotal} { this.state.resultSearchTotal == 1 ? Messages.getEditable("label.result","fpdi-nav-label") : Messages.getEditable("label.results","fpdi-nav-label")}</p>
+					<p>
+						{Messages.getEditable("label.searchReturned","fpdi-nav-label")}&nbsp;
+						{this.state.resultSearchTotal}&nbsp;
+						{
+							this.state.resultSearchTotal == 1
+								? Messages.getEditable("label.result","fpdi-nav-label")
+								: Messages.getEditable("label.results","fpdi-nav-label")
+						}
+
+					</p>
 				</div>
 				{this.state.resultSearchMore.length > 0 ?
 					<div>
@@ -125,11 +137,10 @@ export default React.createClass({
 											{model.level}
 										</div>
 										<Link
-											to={
-												//http://localhost:8081/#/forrisco/plan-risk/12/item/79/subitem/20?_k=3086gw
-												"/forrisco/plan-risk/" + this.props.planRiskId + "/item/" + (model.itemId ? model.itemId + "/subitem/" : "") + model.id}
+											to={this.getPath(model)}
 											activeClassName="active"
-											title={Messages.get("label.title.viewMore")}>
+											title={Messages.get("label.title.viewMore")}
+										>
 											{model.name}
 										</Link>
 										{model.description ? (model.description != "" ? " "+model.description : "") :""}

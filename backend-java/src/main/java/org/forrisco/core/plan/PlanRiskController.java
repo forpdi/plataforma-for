@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,10 +15,10 @@ import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.system.PDFgenerate;
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.PlanRiskItem;
 import org.forrisco.core.item.PlanRiskItemField;
 import org.forrisco.core.item.PlanRiskSubItem;
@@ -31,7 +30,6 @@ import org.forrisco.core.process.ProcessBS;
 import org.forrisco.core.unit.Unit;
 import org.forrisco.core.unit.UnitBS;
 
-import com.google.gson.GsonBuilder;
 import com.itextpdf.text.DocumentException;
 
 import br.com.caelum.vraptor.Consumes;
@@ -79,8 +77,16 @@ public class PlanRiskController extends AbstractController {
 				this.fail("O plano de risco solicitada não foi encontrado.");
 				return;
 			}
-			
-			
+			if ((planRisk.getValidityBegin() == null && planRisk.getValidityEnd() != null) ||
+					(planRisk.getValidityEnd() == null && planRisk.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
+			if (planRisk.getValidityBegin() != null && planRisk.getValidityEnd() != null
+					&& planRisk.getValidityEnd().before(planRisk.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;
+			}
 			
 			planRisk.setId(null);
 			planRisk.setPolicy(policy);
@@ -92,7 +98,6 @@ public class PlanRiskController extends AbstractController {
 			this.success(planRisk);
 			
 		} catch (Throwable e) {
-			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
@@ -159,20 +164,33 @@ public class PlanRiskController extends AbstractController {
 	public void editPlanRisk(@NotNull @Valid PlanRisk planRisk) {
 		try {
 			PlanRisk existent = this.planRiskBS.exists(planRisk.getId(), PlanRisk.class);
-			
+
 			if (GeneralUtils.isInvalid(existent)) {
 				this.fail("Plano de risco não encontrado");
 				return;
 			}
-			
+
 			if (existent.getPolicy() == null) {
 				this.fail("Plano sem política associada");
 			}
-			
+
+			if ((planRisk.getValidityBegin() == null && planRisk.getValidityEnd() != null) ||
+					(planRisk.getValidityEnd() == null && planRisk.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
+			if (planRisk.getValidityBegin() != null && planRisk.getValidityEnd() != null
+					&& planRisk.getValidityEnd().before(planRisk.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;
+			}
+
 			existent.setPolicy(planRisk.getPolicy());
 			existent.setName(planRisk.getName());
 			existent.setDescription(planRisk.getDescription());
-			
+			existent.setValidityBegin(planRisk.getValidityBegin());
+			existent.setValidityEnd(planRisk.getValidityEnd());
+
 			this.planRiskBS.persist(existent);
 			this.success(existent);
 		} catch (Throwable ex) {
@@ -186,7 +204,6 @@ public class PlanRiskController extends AbstractController {
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePlanRiskPermission.class })
 	public void deletePlanRisk(Long id) {
 		try {
-			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(id)));
 			PlanRisk planRisk = this.planRiskBS.exists(id, PlanRisk.class);
 			
 			if (GeneralUtils.isInvalid(planRisk)) {
@@ -198,17 +215,12 @@ public class PlanRiskController extends AbstractController {
 			//verificar unidades
 			PaginatedList<Unit> units= this.unitBS.listUnitsbyPlanRisk(planRisk);
 			
-			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(units)));
-
 			for(Unit unit:units.getList()) {
 				if(!this.unitBS.deletableUnit(unit)) {	
 					this.fail("O plano possui unidades que não podem ser deletadas." );
 					return;
 				}
 			}
-			
-			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(units)));
-			
 					
 			//deletar unidades
 			for(Unit unit:units.getList()) {
@@ -237,13 +249,12 @@ public class PlanRiskController extends AbstractController {
 				this.planRiskItemBS.delete(item);
 			}
 			
-			EmailSenderTask.LOG.info((new GsonBuilder().setPrettyPrinting().create().toJson(planRisk)));	
 			//deletar plano
 			this.planRiskBS.delete(planRisk);
 			this.success();
 			
 		} catch (Throwable ex) {
-			EmailSenderTask.LOG.error("Unexpected runtime error", ex);
+			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
@@ -341,11 +352,11 @@ public class PlanRiskController extends AbstractController {
 		try {
 			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
 			
-	
+			boolean generalInformationSearched = this.planRiskBS.termsSearchedInGeneralInformation(planRisk, terms, null);
 			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, null, ordResult);
 			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, null, ordResult);
 
-			PaginatedList<PlanRiskSubItem> result = TermResult( itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.planRiskBS.termResult(generalInformationSearched, planRisk, itens, subitens, page, limit);
 			
 			
 			this.success(result);
@@ -375,10 +386,11 @@ public class PlanRiskController extends AbstractController {
 		try {
 			PlanRisk planRisk = this.planRiskBS.exists(planRiskId, PlanRisk.class);
 			
+			boolean includeGeneralInformation = this.planRiskBS.termsSearchedInGeneralInformation(planRisk, terms, itensSelect);
 			List<PlanRiskItem> itens = this.planRiskBS.listItemTerms(planRisk, terms, itensSelect, ordResult);
 			List<PlanRiskSubItem> subitens = this.planRiskBS.listSubitemTerms(planRisk, terms, subitensSelect, ordResult);
 
-			PaginatedList<PlanRiskSubItem> result = TermResult(itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.planRiskBS.termResult(includeGeneralInformation, planRisk, itens, subitens, page, limit);
 			
 			this.success(result);
 
@@ -386,46 +398,5 @@ public class PlanRiskController extends AbstractController {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
-	}
-	
-	private PaginatedList<PlanRiskSubItem> TermResult(List<PlanRiskItem> itens, List<PlanRiskSubItem> subitens,  Integer page,  Long limit){
-		int firstResult = 0;
-		int maxResult = 0;
-		int count = 0;
-		int add = 0;
-		if (limit != null) {
-			firstResult = (int) ((page - 1) * limit);
-			maxResult = limit.intValue();
-		}
-		
-		for(PlanRiskItem item : itens) {
-			PlanRiskSubItem subitem = new PlanRiskSubItem();
-			subitem.setDescription(item.getDescription());
-			subitem.setId(item.getId());
-			subitem.setName(item.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			subitens.add(subitem);
-		}
-		
-		List<PlanRiskSubItem> list = new ArrayList<>();
-		for(PlanRiskSubItem subitem : subitens) {
-			if (limit != null) {
-				if (count >= firstResult && add < maxResult) {
-					list.add(subitem);
-					count++;
-					add++;
-				} else {
-					count++;
-				}
-			} else {
-				list.add(subitem);
-			}
-		}
-
-		PaginatedList<PlanRiskSubItem> result = new PaginatedList<PlanRiskSubItem>();
-		
-		result.setList(list);
-		result.setTotal((long)count);
-		return result;
 	}
 }

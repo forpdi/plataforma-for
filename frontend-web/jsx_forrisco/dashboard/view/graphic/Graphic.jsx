@@ -26,7 +26,6 @@ export default React.createClass({
 		this.state.history=this.props.history
 		this.state.unit=this.props.unit
 		this.state.year=(new Date).getFullYear()
-		//this.props.loading(true)
 	 },
 
 	 componentDidMount() {
@@ -48,24 +47,15 @@ export default React.createClass({
 	 },
 
 	componentWillReceiveProps(newProps){
-
 		this.state.levelActive=newProps.levelActive
-		//this.state.history=this.props.history
 		this.state.unit=newProps.unit
 		this.state.year=(new Date).getFullYear()
-		//this.props.loading(true)
 
 		if(newProps.history.length>0 && this.state.history != newProps.history){
 			this.state.units= newProps.units;
-			//this.refresh()
 		}
 		this.state.updated=false
 	},
-
-
-	/*unmount(){
-		this.props.loading(true)
-	},*/
 
 	onUnitChange(){
 		this.state.unit=document.getElementById('selectUnits').value
@@ -102,8 +92,6 @@ export default React.createClass({
 			head.push(levels[j].level)
 		}
 		data.push(head)
-
-
 
 		for(var i=1;i<=month;i++){
 			var p=[]
@@ -177,7 +165,6 @@ export default React.createClass({
 		this.state.data=data
 		this.state.loadingGraph=false
 		this.state.updated=true
-
 
 		this.setState({
 			data:data,
@@ -270,18 +257,11 @@ export default React.createClass({
 
 		var options = {
 			hAxis: {title: "Tempo", minValue: 1, maxValue: 12},
-			vAxis: {title: 'Quantidade', minValue: 1, maxValue: max},
+			vAxis: {title: 'Quantidade', minValue: 1, maxValue: max, format : '#' },
 			legend: 'none',
-			//interpolateNulls : true,
-			//explorer: {axis: 'horizontal'},
-			//bar: {groupWidth: '100%'},
 			colors: lines,
 		}
-		/*var thematicAxes=[]
-		var	selectedThematicAxes= -1
-		var chartEvents= [{eventName : 'select', callback  : this.onChartClick}]
-		*/
-		//this.state.updated=false
+
 
 		return (<div>
 			<div className="dashboard-panel-title">
@@ -291,7 +271,7 @@ export default React.createClass({
 					{this.props.units.map((attr, idy) =>{
 						return(
 						<option  key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
-							{(attr.name.length>20)?(string(attr.name).trim().substr(0, 20).concat("...").toString()):(attr.name)}
+							{(attr.name.length>20)?(attr.name).trim().substr(0, 20).concat("...").toString():(attr.name)}
 						</option>);})
 					}
 				</select>
@@ -311,15 +291,16 @@ export default React.createClass({
 					chartType="LineChart"
 					data={this.state.data}
 					options={options}
-					graph_id={"LineChart-"+this.props.title}
+					graph_id={"LineChart-"+this.props.levelActive[0].level}
 					width="100%"
 					height="250px"
 					legend_toggle={true}
-					/>
+				/>
 				<div className="colaborator-goal-performance-legend" key={this.props.title}>
 					{levels}
 				</div>
 			</div>
+
 		</div>);
 	},
 
@@ -328,6 +309,7 @@ export default React.createClass({
 		if(this.state.loadingGraph){
 			return <LoadingGauge/>
 		}
+
 		this.state.loadingGraph=true
 
 		return(<div>

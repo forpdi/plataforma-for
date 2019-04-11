@@ -83,8 +83,9 @@ public class RiskController extends AbstractController {
 			this.riskBS.saveProcesses(risk);
 			this.riskBS.saveStrategies(risk);
 			
-			this.riskBS.sendUserLinkedToRiskNoktification(risk, unit, this.domain.getBaseUrl());
-			
+			if(this.domain != null) {
+				this.riskBS.sendUserLinkedToRiskNoktification(risk, unit, this.domain.getBaseUrl());
+			}
 			this.success(risk);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
@@ -725,7 +726,7 @@ public class RiskController extends AbstractController {
 	@Get( PATH + "/history")
 	@NoCache
 	@Permissioned
-	public void listHistory(@NotNull Long planId, Long unitId) {
+	public void listHistory(@NotNull Long planId, Long unitId, boolean threat) {
 		try {
 			PaginatedList<Unit> units= new PaginatedList<Unit>();
 			PlanRisk plan = this.riskBS.exists(planId, PlanRisk.class);
@@ -734,7 +735,8 @@ public class RiskController extends AbstractController {
 				return;
 			} 
 			
-			this.unitBS.updateHistory(plan);
+			this.unitBS.updateHistory(plan,true);
+			this.unitBS.updateHistory(plan,false);
 			
 			
 			if(unitId== -1) {
@@ -752,7 +754,7 @@ public class RiskController extends AbstractController {
 				units.setList(list);
 			}
 			
-			PaginatedList<RiskHistory> history = this.riskBS.listHistoryByUnits(units);
+			PaginatedList<RiskHistory> history = this.riskBS.listHistoryByUnits(units, threat);
 						
 			this.success(history);
 			

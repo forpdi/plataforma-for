@@ -2563,7 +2563,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return null;
 	}
 	
-
 	private void generatePolicyContent(File contentFile, Long policyId, String itens, String subitens, TOCEvent event) 
 			throws DocumentException, IOException, MalformedURLException {
 			
@@ -2590,7 +2589,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		int secIndex = 0;
 		int subSecIndex = 0;
 		boolean lastAttWasPlan = false;
-		boolean haveContent = false;
+		boolean haveContent = true;
 
 		document.open();
 		document.add(new Chunk(""));
@@ -2598,11 +2597,16 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		//para cada item selecionado
 		if(sections !=null) {
 
-			//informações gerais matrix
-			generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
-			
-			// demais itens
 			for (int i = 0; i < sections.length; i++) {
+				
+				if(Long.parseLong(sections[i])==0) {
+					//informações gerais matrix
+					generatePolicyGeneralInformation(policyId, document, outputDir, prefix);
+					secIndex++;
+					continue;
+				}
+				
+				
 				Item item = this.itemBS.retrieveItembyId(Long.parseLong(sections[i]));//item altual
 				PaginatedList<FieldItem> fielditens = this.itemBS.listFieldsByItem(item);//fields atual
 				PaginatedList<SubItem> subs = this.itemBS.listSubItensByItem(item);	//lista todos subitens
@@ -2618,19 +2622,25 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 					}
 				}
+				
+				if(item == null) {
+					continue;
+				}
 					
-				//haveContent = true;
 				boolean secTitlePrinted = false;
+				boolean hasfields=false;
 				subSecIndex = 0;
 				String secName = item.getName();
 	
 				if(fielditens.getTotal() > 0){
 					secIndex++;
+					hasfields=true;
 				}
 				
+				/*
 				// print do titulo
-				Chunk c = new Chunk(String.format("%d. %s", secIndex + 1, secName));
-				c.setGenericTag(String.format("%d. %s", secIndex + 1, secName));
+				Chunk c = new Chunk(String.format("%d. %s", secIndex , secName));
+				c.setGenericTag(String.format("%d. %s", secIndex, secName));
 				Paragraph secTitle = new Paragraph(c);
 				secTitle.setLeading(interLineSpacing);
 				secTitle.setSpacingAfter(paragraphSpacing);
@@ -2640,12 +2650,27 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				if (item.getDescription() != null) {
 					haveContent = true;
 				}
-				secIndex++;
 				
+				//secIndex++;
+				*/
 				
 				for (FieldItem fielditem: fielditens.getList()) {
 					
 					haveContent = true;
+					
+					if (!secTitlePrinted) {
+						Chunk c = new Chunk(String.format("%d. %s", secIndex , secName));
+						c.setGenericTag(String.format("%d. %s", secIndex, secName));
+						Paragraph secTitle = new Paragraph(c);
+						secTitle.setLeading(interLineSpacing);
+						secTitle.setSpacingAfter(paragraphSpacing);
+						secTitle.setSpacingBefore(paragraphSpacing);
+						document.add(secTitle);
+						/*if (item.getDescription() != null) {
+							haveContent = true;
+						}*/
+						secTitlePrinted = true;
+					}
 					
 					if(fielditem.isText()) { // campo de texto
 						if (!GeneralUtils.isEmpty(fielditem.getDescription())) {
@@ -2790,6 +2815,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					
 					PaginatedList<FieldSubItem> fieldsubs = this.itemBS.listFieldsBySubItem(sub);
 						
+					
+					if(fieldsubs.getTotal()>0 && !hasfields){
+						secIndex++;
+					}
+					
 					for(FieldSubItem fieldsub : fieldsubs.getList()) {
 							
 						if( fieldsub.isText()) { // campo de texto
@@ -2799,9 +2829,9 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 									document.newPage();
 								}
 								if (!secTitlePrinted) {
-									c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
+									Chunk c = new Chunk(secIndex + "." + subSecIndex + ". " + subSecName, titulo);
 									c.setGenericTag(secIndex + "." + subSecIndex + ". " + subSecName);
-									secTitle = new Paragraph(c);
+									Paragraph secTitle = new Paragraph(c);
 									secTitle.setLeading(interLineSpacing);
 									secTitle.setSpacingAfter(paragraphSpacing);
 									secTitle.setSpacingBefore(paragraphSpacing);
@@ -2959,7 +2989,25 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		description.setIndentationLeft(firstLineIndent);
 		description.setSpacingAfter(paragraphSpacing);
 		document.add(description);
-		
+				
+		if (policy.getValidityBegin() != null && policy.getValidityEnd() != null) {
+			Paragraph validityTitle = new Paragraph("Prazo de vigência", titulo);
+			validityTitle.setLeading(interLineSpacing);
+			validityTitle.setSpacingAfter(paragraphSpacing);
+			validityTitle.setSpacingBefore(paragraphSpacing);
+			document.add(validityTitle);
+
+			Paragraph validity = new Paragraph(
+				String.format("%s à %s", 
+					GeneralUtils.DATE_FORMAT.format(policy.getValidityBegin()),
+					GeneralUtils.DATE_FORMAT.format(policy.getValidityEnd())
+				)
+			);
+			validity.setIndentationLeft(firstLineIndent);
+			validity.setSpacingAfter(paragraphSpacing);
+			document.add(validity);
+		}
+
 		//matrix de risco
 		String[][] matrix = this.riskBS.getMatrixVector(policy);
 		String table = "";
@@ -2987,6 +3035,11 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 		Paragraph attTitleInfo = new Paragraph("Matriz De Risco", titulo);
 		attTitle.setLeading(interLineSpacing);
+		attTitle.setSpacingBefore(paragraphSpacing);
+		attTitle.setSpacingAfter(paragraphSpacing);
+		document.add(attTitleInfo);
+		
+		attTitleInfo = new Paragraph(" ", titulo);
 		attTitle.setSpacingBefore(paragraphSpacing);
 		attTitle.setSpacingAfter(paragraphSpacing);
 		document.add(attTitleInfo);
@@ -3030,11 +3083,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								cells[x].setPaddingLeft(10);
 								cells[x].setPaddingRight(10);
 							}else {
-								//if(x==policy.getNline()*policy.getNcolumn()) {
 								if(x == 0 && y == policy.getNline() + 1) {
 									cells[x].setRotation(90);
-									//cells[x].setBottom(100);
-									//cells[x].setLeft(20);
 								}
 								
 								if(y == policy.getNline() + 1) {
@@ -3219,8 +3269,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						}
 						break;
 						
-					case "Riscos não iniciados"	:
-						/*for(Risk risk : risks.getList()) {
+					/*case "Riscos não iniciados":
+						for(Risk risk : risks.getList()) {
 							Monitor monitor = this.unitBS.lastMonitorbyRisk(risk);
 							Date date= risk.getBegin();
 							
@@ -3236,8 +3286,8 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 								attTitle.setSpacingBefore(paragraphSpacing);
 								document.add(attTitle);
 							}
-						}*/
-						break;
+						}
+						break;*/
 					
 					default:
 						
@@ -3279,7 +3329,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 	
 	/*unidade*/
-	
 	private void generateProcesses(Document document, Unit unit) throws DocumentException {
 		//exportar processos da unidade
 		List<Process> processes =  this.processBS.listProcessByUnit(unit).getList();
@@ -3747,11 +3796,12 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		if(Arrays.stream(sections).anyMatch("0"::equals)) {
 	
-			String secName2 =plan.getName();
+			//String secName2 ="Informações Gerais";//plan.getName();
 			haveContent = true;
 			secIndex++;
-			Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
-			c2.setGenericTag(secIndex + ". " + secName2);
+			//Chunk c2 = new Chunk(secIndex + ". " + plan.getName(), titulo);
+			Chunk c2 = new Chunk(secIndex + ". " + "Informações Gerais", titulo);
+			c2.setGenericTag(secIndex + ". " + "Informações Gerais");
 			Paragraph secTitle2 = new Paragraph(c2);
 			secTitle2.setLeading(interLineSpacing);
 			secTitle2.setSpacingAfter(paragraphSpacing);
@@ -3772,6 +3822,23 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 			description.setSpacingAfter(paragraphSpacing);
 			document.add(description);
 	
+			if (plan.getValidityBegin() != null && plan.getValidityEnd() != null) {
+				c2 = new Chunk("Prazo de vigência", titulo);
+				attTitle = new Paragraph(c2);
+				attTitle.setLeading(interLineSpacing);
+				attTitle.setSpacingAfter(paragraphSpacing);
+				document.add(attTitle);
+				description = new Paragraph(
+					String.format("%s à %s",
+						GeneralUtils.DATE_FORMAT.format(plan.getValidityBegin()),
+						GeneralUtils.DATE_FORMAT.format(plan.getValidityEnd())
+					)
+				);
+				description.setIndentationLeft(firstLineIndent);
+				description.setSpacingAfter(paragraphSpacing);
+				document.add(description);
+			}
+			
 			c2 = new Chunk("Política Vinculada", titulo);
 			attTitle = new Paragraph(c2 );
 			attTitle.setLeading(interLineSpacing);
@@ -3812,13 +3879,14 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 				
 				//haveContent = true;
 				boolean secTitlePrinted = false;
+				boolean hasfields =false;
 				subSecIndex = 0;
 				String secName =item.getName();
 	
 				if(fielditens.getTotal()>0){
 					secIndex++;
+					hasfields=true;
 				}
-				
 				
 				for (PlanRiskItemField fielditem: fielditens.getList()) {
 					
@@ -3957,7 +4025,7 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 						
 					}
 				}
-					
+				
 				subSecIndex = 0;
 				secTitlePrinted=false;
 	
@@ -3972,6 +4040,10 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 					
 					PaginatedList<PlanRiskSubItemField> fieldsubs = this.planRiskItemBS.listSubFieldsBySubItem(sub);
 						
+					if(fieldsubs.getTotal()>0 && !hasfields){
+						secIndex++;
+					}
+					
 					for(PlanRiskSubItemField fieldsub : fieldsubs.getList()) {
 						
 							if (lastAttWasPlan) {
@@ -4205,81 +4277,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		
 	}
 
-	/*public File exportPolicyReport(String title, String author, String selecao, Long planId) throws IOException, DocumentException {
-		
-		File outputDir=tempFile();
-		
-		final String prefix = String.format("frisco-report-export-%d", System.currentTimeMillis());
-
-		File finalSummaryPdfFile = new File(outputDir, String.format("%s-final-summary.pdf", prefix));
-		File destinationFile = new File(outputDir, String.format("%s-mounted.pdf", prefix));
-		File finalPdfFile = new File(outputDir, String.format("%s-final.pdf", prefix));
-		File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
-		File contentFile = new File(outputDir, String.format("%s-content.pdf", prefix));		
-
-		generateCover(coverPdfFile, title, author);
-
-		TOCEvent event = new TOCEvent();
-		PdfReader cover = new PdfReader(coverPdfFile.getPath());
-
-		generate
-		
-		generateContent(contentFile, selecao, planId, event);
-		
-		int summaryCountPages = generateSummary( finalSummaryPdfFile, event, cover.getNumberOfPages());		
-		
-
-		com.itextpdf.text.Document newDocument = new com.itextpdf.text.Document();
-
-		PdfImportedPage page;
-		int n;
-		PdfCopy copy = new PdfCopy(newDocument, new FileOutputStream(destinationFile.getPath()));
-		newDocument.open();
-
-		PdfReader summary = new PdfReader(finalSummaryPdfFile.getPath());
-		PdfReader content;
-
-		// CAPA
-		n = cover.getNumberOfPages();
-		for (int i = 0; i < n;) {
-			page = copy.getImportedPage(cover, ++i);
-			copy.addPage(page);
-		}
-
-		// SUMÁRIO
-		n = summary.getNumberOfPages();
-		for (int i = 0; i < n;) {
-			page = copy.getImportedPage(summary, ++i);
-			copy.addPage(page);
-		}
-		
-		if(contentFile.length()>0) {
-			content = new PdfReader(contentFile.getPath());
-			// CONTEÚDO
-			n = content.getNumberOfPages();
-			for (int i = 0; i < n;) {
-				page = copy.getImportedPage(content, ++i);
-				copy.addPage(page);
-			}
-			content.close();
-		}
-			
-		cover.close();
-		summary.close();		
-		newDocument.close();
-
-		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
-		
-		destinationFile.delete();
-		coverPdfFile.delete();
-		finalSummaryPdfFile.delete();
-		contentFile.delete();	
-		
-		outputDir.delete();
-	
-		return finalPdfFile;  //capa+sumario+conteudo+paginação
-	}*/
-
 	public File exportUnitReport(String title, String author, String units, String subunits) throws IOException, DocumentException {
 		
 		File outputDir=tempFile();
@@ -4426,7 +4423,6 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
-	
 	public File exportBoardReport(String title, String author, Long planId, String selecao) throws IOException, DocumentException {
 
 		File outputDir=tempFile();

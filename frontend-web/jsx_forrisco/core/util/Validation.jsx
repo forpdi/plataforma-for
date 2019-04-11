@@ -1,4 +1,6 @@
 import S from 'string';
+import moment from 'moment'
+
 import Messages from "forpdi/jsx/core/util/Messages";
 
 var Validate = {
@@ -46,6 +48,39 @@ var Validate = {
 				refs['ref-0'].refs['field-name'].className = "form-control";
 				refs['ref-0'].refs['formAlertError'].innerHTML = "";
 			}
+		}
+
+		// data de vigencia invalida
+		if (data.validityBegin && data.validityEnd) {
+			var validityBegin = moment(data.validityBegin, 'DD/MM/YYYY').toDate();
+			var validityEnd = moment(data.validityEnd, 'DD/MM/YYYY').toDate();
+			if(validityBegin > validityEnd) {
+				var validityBeginInput = refs['risk-vigencia-begin']
+					.refs['field-risk-vigencia-begin']
+					.refs['input']
+					.refs['input'];
+				var validityEndInput = refs['risk-vigencia-end']
+					.refs['field-risk-vigencia-end']
+					.refs['input']
+					.refs['input'];
+				validityBeginInput.className += ' borderError';
+				validityEndInput.className += ' borderError';
+				var errorElement = refs['risk-vigencia-begin'].refs['formAlertError'];
+				errorElement.innerHTML = 'Data de início superior à data de término';
+				msg = "A data de início do prazo de vigência não deve ser superior à data de término";
+			}
+		} else if ((!data.validityBegin && data.validityEnd) || (data.validityBegin && !data.validityEnd)) {
+			var nameRefValidityEmpty = !data.validityBegin && data.validityEnd
+				? 'risk-vigencia-begin'
+				: 'risk-vigencia-end';
+			var validityInputEmpty = refs[nameRefValidityEmpty]
+				.refs[`field-${nameRefValidityEmpty}`]
+				.refs['input']
+				.refs['input'];
+			validityInputEmpty.className += ' borderError';
+			var errorElementEmpty = refs[nameRefValidityEmpty].refs['formAlertError'];
+			errorElementEmpty.innerHTML = 'A data deve ser preenchida';
+			msg = "Não é permitido preencher somente uma das datas do prazo de vigência";
 		}
 
 		//graus de risco e cores em branco
@@ -107,23 +142,25 @@ var Validate = {
 
 
 		//linha e coluna em branco
-		if(data.ncolumn == ""){
-			refs['numero-1'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
-			refs['numero-1'].refs['field-ncolumn'].className += " borderError";
+		if(data.nline == ""){
+			refs['numero-linha'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-linha'].refs['field-nline'].className += " borderError";
 			msg = Messages.get("label.form.error");
 		}else{
-			refs['numero-1'].refs['formAlertError'].innerHTML="<br/>"
-			refs['numero-1'].refs['field-ncolumn'].className = "form-control-h"
+			refs['numero-linha'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-linha'].refs['field-nline'].className = "form-control-h"
 		}
 
-		if(data.nline == ""){
-			refs['numero-0'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
-			refs['numero-0'].refs['field-nline'].className += " borderError";
+
+		if(data.ncolumn == ""){
+			refs['numero-coluna'].refs['formAlertError'].innerHTML = Messages.get("label.error.fieldEmpty");
+			refs['numero-coluna'].refs['field-ncolumn'].className += " borderError";
 			msg = Messages.get("label.form.error");
 		}else{
-			refs['numero-0'].refs['formAlertError'].innerHTML="<br/>"
-			refs['numero-0'].refs['field-nline'].className = "form-control-h"
+			refs['numero-coluna'].refs['formAlertError'].innerHTML="<br/>"
+			refs['numero-coluna'].refs['field-ncolumn'].className = "form-control-h"
 		}
+
 
 
 		//impacto e probabilidade em branco
@@ -315,14 +352,15 @@ var Validate = {
 		var msg=""
     console.log(refs["field-8"].refs.type.refs);
 
+
 		var name = refs["field-name"].refs.name
-		var code = refs["field-0"].refs.code
+		// var code = refs["field-0"].refs.code
 		var user = refs["field-1"].refs.user
 		var probability = refs["field-4"].refs.probability
 		var impact = refs["field-5"].refs.impact
 		var periodicity = refs["field-7"].refs.periodicity
     var type = refs["field-8"].refs.type
-		// var tipology = refs["field-9"].refs.tipology
+		var tipology = refs["field-9"].refs.tipology
 
 		if(name.refs["field-name"].value != null){
 			if(name.refs["field-name"].value==""){
@@ -335,19 +373,8 @@ var Validate = {
 			}
 		}
 
-		if(code.refs["field-code"].value != null){
-			if(code.refs["field-code"].value==""){
-				code.refs["field-code"].className +=" borderError"
-				code.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
-				if(msg==""){msg="Código precisa estar preenchido."}
-			}else{
-				code.refs["field-code"].className="form-control"
-				code.refs["formAlertError"].innerHTML = ""
-			}
-		}
-
-		if(user.refs["field-user"].value != null){
-			if(user.refs["field-user"].value==""){
+		//if(user.refs["field-user"].value != null){
+			if(user.refs["field-user"].state.value ==null || user.refs["field-user"].state.value==""){
 				user.refs["field-user"].className +=" borderError"
 				user.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
 				if(msg==""){msg="Usuário precisa estar preenchido."}
@@ -355,7 +382,7 @@ var Validate = {
 				user.refs["field-user"].className="form-control"
 				user.refs["formAlertError"].innerHTML = ""
 			}
-		}
+		//}
 
 		if(probability.refs["field-probability"] != null){
 			if(probability.refs["field-probability"].value==""){
@@ -364,7 +391,7 @@ var Validate = {
 				if(msg==""){msg="A probabilidade precisa estar selecionada."}
 			}else{
 				probability.refs["field-probability"].className="form-control"
-				probability.refs["formAlertError"].innerHTML = ""
+				probability.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -375,7 +402,7 @@ var Validate = {
 				if(msg==""){msg="O impacto precisa estar selecionado."}
 			}else{
 				impact.refs["field-impact"].className="form-control"
-				impact.refs["formAlertError"].innerHTML = ""
+				impact.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -386,7 +413,18 @@ var Validate = {
 				if(msg==""){msg="A periodicidade precisa estar selecionada."}
 			}else{
 				periodicity.refs["field-periodicity"].className="form-control"
-				periodicity.refs["formAlertError"].innerHTML = ""
+				periodicity.refs["formAlertError"].innerHTML = "<br/>"
+			}
+		}
+
+		if(tipology.refs["field-tipology"] != null){
+			if(tipology.refs["field-tipology"].value==""){
+				tipology.refs["field-tipology"].className +=" borderError"
+				tipology.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+				if(msg==""){msg="A tipologia precisa estar selecionada."}
+			}else{
+				tipology.refs["field-tipology"].className="form-control"
+				tipology.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 
@@ -397,7 +435,7 @@ var Validate = {
 				if(msg==""){msg="O tipo precisa estar selecionado."}
 			}else{
 				type.refs["field-type"].className="form-control"
-				type.refs["formAlertError"].innerHTML = ""
+				type.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
 

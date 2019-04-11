@@ -28,6 +28,7 @@ export default React.createClass({
 		return {
 			processes: [],
 			processesTotal: null,
+			unit: null,
 			units: [],
 			process: null,
 			selectedUnits: [],
@@ -40,29 +41,22 @@ export default React.createClass({
 
 	componentDidMount() {
 		ProcessStore.on('processListedByUnit', response => {
-			const filteredProcesses = _.map(response.data, process => ({
-					...process,
-					relatedUnits: _.filter(process.relatedUnits, unit => (
-						unit.id !== parseInt(this.props.unitId)
-					)),
-				}
-			));
-
-			_.map(filteredProcesses, (value, idx) => {
+			const processes = response.data;
+			_.forEach(processes, (value, idx) => {
 				_.assign(
 					value,
 					{ tools: value.unitCreator.id == this.props.unitId && this.isPermissionedUser() ? this.getTools(idx) : null},
 					{
 						fileData: {
-							fileName: value.file.name,
-							fileLink: value.fileLink,
+							fileName: value.file? value.file.name : null,
+							fileLink: value.file? value.fileLink : null,
 						}
 					}
 				)
 			});
 
 			this.setState({
-				processes:filteredProcesses,
+				processes,
 				processesTotal: response.total,
 				newRowDisplayed: false,
 				updateRowDisplayed: false,
@@ -94,15 +88,22 @@ export default React.createClass({
 		}, this);
 		UnitStore.on('allunitsbyplan', response => {
 
-			const filteredUnits = _.filter(response.data, unit => (
-				unit.id !== parseInt(this.props.unitId)
+
+			const unit = _.find(response.data, unit => (
+				unit.id === parseInt(this.props.unitId)
 			));
+
+			const units= _.filter(response.data, unit =>{
+				return unit.id != this.props.unitId
+			})
+
 			this.setState({
-				units: _.map(filteredUnits, unit => ({
+				units: _.map(units, unit => ({
 					label: unit.name,
 					value: unit.id,
 					data: unit,
 				})),
+				unit,
 			});
 		}, this);
 		this.refreshComponent(this.props.unitId, this.props.planRiskId);
@@ -163,8 +164,8 @@ export default React.createClass({
 					className="padding7"
 					fieldDef={{
 						name: "new-process-name",
-						type: "text",
-						placeholder: "Nome do processo",
+						type: "textarea",
+						rows: 3,
 						onChange: this.nameChangeHandler,
 						required: true,
 					}}
@@ -175,13 +176,16 @@ export default React.createClass({
 					className="padding7"
 					fieldDef={{
 						name: "new-process-objective",
-						type: "text",
-						placeholder: "Nome do objetivo",
+						type: "textarea",
+						rows: 3,
 						onChange: this.objectiveChangeHandler,
 						required: true,
 					}}
 				/>
 			),
+			unitCreator: {
+				name: this.state.unit.name,
+			},
 			relatedUnits: [
 				{
 					name: (
@@ -190,7 +194,6 @@ export default React.createClass({
 								className="unit-mult-select"
 								placeholderButtonLabel="Selecione uma ou mais"
 								options={this.state.units}
-								onChange={this.unitChangeHandler}
 							/>
 						</div>
 					),
@@ -233,14 +236,15 @@ export default React.createClass({
     },
 
 	enableUpdateMode(idx) {
+
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}
 		const { processes } = this.state;
 		const process = processes[idx];
 		const selectedUnits = _.map(process.relatedUnits, unit => ({
-			value: unit.id,
 			label: unit.name,
+			value: unit.id,
 			data: unit
 		}));
     processes[idx] = {
@@ -248,8 +252,8 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-process-name",
-					type: "text",
-					placeholder: "Nome do processo",
+					type: "textarea",
+					rows: 3,
 					value: process.name,
 					onChange: this.nameChangeHandler,
 					required: true,
@@ -259,8 +263,8 @@ export default React.createClass({
 				className="padding7"
 				fieldDef={{
 					name: "new-process-objective",
-					type: "text",
-					placeholder: "Nome do objetivo",
+					type: "textarea",
+					rows: 3,
 					objective: process.objective,
 					value: process.objective,
 					onChange: this.objectiveChangeHandler,
@@ -280,10 +284,13 @@ export default React.createClass({
 					</div>
 				}
 			],
+			unitCreator: {
+				name: process.unitCreator.name,
+			},
 			fileData: <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 				<a onClick={this.fileLinkChangeHandler}>
 					<span className="fpdi-nav-label" id="process-file-upload">
-						{process.fileData.fileName}
+						{process.fileData.fileName ? process.fileData.fileName : Messages.get("label.attachFiles")}
 					</span>
 				</a>
 			</div>,
@@ -334,9 +341,7 @@ export default React.createClass({
 	},
 
 	unitChangeHandler(values) {
-		this.setState({
-			selectedUnits: values,
-		});
+		this.state.selectedUnits=values
 	},
 
 	fileLinkChangeHandler() {
@@ -400,7 +405,7 @@ export default React.createClass({
 	newProcess() {
 		const { process } = this.state;
 
-		if (!process.name || !process.objective || !process.file) {
+		if (!process.name || !process.objective){ // || !process.file) {
 			this.context.toastr.addAlertError("Para confirmar a ação preencha todos os campos obrigatórios.");
 		} else {
 			ProcessStore.dispatch({
@@ -437,7 +442,7 @@ export default React.createClass({
 	updateProcess() {
 		const { process } = this.state;
 
-		if (!process.name || !process.objective || !process.file) {
+		if (!process.name || !process.objective){ // || !process.file) {
 			this.context.toastr.addAlertError(Messages.get("label.msg.errorsForm"));
 		} else {
 			ProcessStore.dispatch({
@@ -475,18 +480,33 @@ export default React.createClass({
 	},
 
 	render() {
+
 		if (this.state.loading === true) {
 			return <LoadingGauge/>;
 		}
+
 		const columns = [{
 			Header: 'Processo',
 			accessor: 'name',
-		}, {
+		},
+		{
 			Header: 'Objetivo',
 			accessor: 'objective',
-		}, {
-			Header: 'Unidade relacionada',
-			accessor: 'relatedUnits[0].name',
+		},
+		{
+			Header: 'Unidade responsável',
+			accessor: 'unitCreator.name',
+		},
+		{
+			Header: 'Unidade(s) relacionada(s)',
+			Cell: props => <span className=''>{
+				props.original.relatedUnits.map( (unit, idx)=>{
+					if(this.props.unitId != unit.id){
+						return <p>{unit.name}</p>
+					}
+
+				})
+			}</span>
 		},
 		{
 			Header: 'Anexo',
@@ -507,10 +527,14 @@ export default React.createClass({
 			width: 100
 		}];
 
+		if(this.state.updateRowDisplayed){
+			columns[2].Cell=null
+		}
+
 		return (
 			<div className="general-table">
 				<div className='table-outter-header'>
-          			PROCESSOS DA UNIDADE
+    			{this.props.isSubunit ? 'PROCESSOS DA SUBUNIDADE' : 'PROCESSOS DA UNIDADE'}
 					{
 						this.isPermissionedUser() && <Button bsStyle="info" onClick={this.insertNewRow}>Novo</Button>
 					}

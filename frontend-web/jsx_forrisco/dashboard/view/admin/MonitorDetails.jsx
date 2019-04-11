@@ -39,8 +39,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		var me = this;
-
 		RiskStore.on("monitorByPlan", (model) => {
 			this.state.monitors = []
 			for (var i = 0; i < model.data.length; i++) {
@@ -53,7 +51,7 @@ export default React.createClass({
 			this.state.unit = -1
 			this.Quantify()
 
-		}, me);
+		}, this);
 
 		RiskStore.on("monitorHistoryByUnit", (model) => {
 			if (model.success) {
@@ -61,7 +59,8 @@ export default React.createClass({
 					monitor_history: model.data,
 				});
 			}
-		})
+		}, this);
+		//this.refreshComponent(this.state.plan.id, this.state.unit);
 	},
 
 	componentWillReceiveProps(newProps) {
@@ -87,38 +86,30 @@ export default React.createClass({
 			});
 		}
 		else {
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_FIND_MONITORS_BY_PLAN,
-				data: newProps.plan.id
-			});
-
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_FIND_MONITOR_HISTORY_BY_UNIT,
-				data: {
-					unit: this.state.unit,
-					plan: this.state.plan.id
-				}
-			})
+			this.refreshComponent(this.state.plan.id, this.state.unit);
 		}
 		if (this.state.plan !== newProps.plan.id) {
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_FIND_MONITORS_BY_PLAN,
-				data: newProps.plan.id
-			});
-
-			RiskStore.dispatch({
-				action: RiskStore.ACTION_FIND_MONITOR_HISTORY_BY_UNIT,
-				data: {
-					unit: this.state.unit,
-					plan: newProps.plan.id
-				}
-			});
+			this.refreshComponent(newProps.plan.id, this.state.unit);
 			this.setState({
 				plan: newProps.plan.id,
 			})
 		}
 	},
 
+	refreshComponent(planId, unit) {
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_FIND_MONITORS_BY_PLAN,
+			data: planId
+		});
+
+		RiskStore.dispatch({
+			action: RiskStore.ACTION_FIND_MONITOR_HISTORY_BY_UNIT,
+			data: {
+				unit: unit,
+				plan: planId
+			}
+		})
+	},
 
 	componentWillUnmount() {
 		RiskStore.off(null, null, this);
@@ -277,18 +268,23 @@ export default React.createClass({
 		return (
 			<div className="frisco-dashboard frisco-dashboard-right dashboard-risk-details panel">
 				<div className="dashboard-plan-details-header">
-					<span title={title}>{title.toUpperCase()}
-					</span>
-					<span className="frisco-containerSelect"> {Messages.get("label.units")}
-						<select onChange={this.onUnitChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectUnits">
-							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}> {Messages.get("label.viewAll_")} </option>
-							{this.state.units.map((attr, idy) => {
-								return (
+					<span title={title}>{title.toUpperCase()}</span>
+					<span className="frisco-containerSelect">
+						{Messages.get("label.units")}
+						<select
+							onChange={this.onUnitChange}
+							className="form-control dashboard-select-box-graphs marginLeft10"
+							ref="selectUnits"
+						>
+							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}>
+								{Messages.get("label.viewAll_")}
+							</option>
+							{
+								this.state.units.map((attr, idy) => (
 									<option key={attr.id} value={attr.id} data-placement="right" title={attr.name}>
 										{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
 									</option>
-								);
-							})
+								))
 							}
 						</select>
 					</span>

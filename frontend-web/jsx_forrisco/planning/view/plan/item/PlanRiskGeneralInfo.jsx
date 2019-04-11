@@ -24,6 +24,8 @@ export default React.createClass({
 			fields: [],
 			title: '',
 			description: '',
+			validityBegin: null,
+			validityEnd: null,
 			policy: '',
 			isLoading: true
 		}
@@ -34,6 +36,8 @@ export default React.createClass({
 			this.setState({
 				title: response.attributes.name,
 				description: response.attributes.description,
+				validityBegin: response.attributes.validityBegin,
+				validityEnd: response.attributes.validityEnd,
 				policy: response.attributes.policy.name,
 				isLoading: false
 			});
@@ -56,8 +60,6 @@ export default React.createClass({
 			if(response.success === false) {
 				this.context.toastr.addAlertError('O plano possui unidades e riscos que não podem ser deletados.');
 			}
-
-			PlanRiskStore.off('deletePlanRisk');
 		});
 
 		this.refreshData(this.props.params.planRiskId);
@@ -137,9 +139,7 @@ export default React.createClass({
 					<h1>
 						{this.state.title}
 						{
-							(this.context.roles.ADMIN ||
-								_.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION))
-							&&
+							(this.context.roles.ADMIN || _.contains(this.context.permissions, PermissionsTypes.FORRISCO_MANAGE_PLAN_RISK_PERMISSION)) &&
 							<span className="dropdown">
 								<a className="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
 								aria-expanded="true"
@@ -159,8 +159,25 @@ export default React.createClass({
 							<div >
 								<h3 className="fpdi-text-label">{"DESCRIÇÃO"}</h3>
 								<br/>
-								<span className="pdi-normal-text"><p>{this.state.description}</p></span>
+								<span className="pdi-normal-text">
+									<pre className="pre-info">{this.state.description}</pre>
+								</span>
 								<br/>
+								{
+									this.state.validityBegin && this.state.validityEnd &&
+									<div>
+										<label  className="fpdi-text-label">{"PRAZO DE VIGÊNCIA"}</label>
+										<div className="padding5">
+											<span>
+												{this.state.validityBegin && this.state.validityBegin.split(' ')[0]}
+												&nbsp;&nbsp;
+												à
+												&nbsp;&nbsp;
+												{this.state.validityEnd && this.state.validityEnd.split(' ')[0]}
+											</span>
+										</div>
+									</div>
+								}
 								<h3 className="fpdi-text-label">{"POLÍTICA VINCULADA"} </h3>
 								<br/>
 								<span className="pdi-normal-text"><p>{this.state.policy}</p></span>

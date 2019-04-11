@@ -86,24 +86,8 @@ public class ProcessController extends AbstractController{
 						processUnit.setProcess(process);
 						processUnit.setUnit(relatedUnit);
 						this.processBS.save(processUnit);
-						
-						User user=relatedUnit.getUser();
-						
-						//enviar email de notificação de criação de processo(unidade relacionada)
-						String texto="Prezado(a) "+user.getName()+
-								", A sua unidade ["+relatedUnit.getName()+"] foi relacionada ao Processo ["+process.getName()+
-								"] com o objetivo ["+process.getObjective()+"] da unidade ["+unit.getName()+"]. O responsável"+
-								" por essa unidade é o(a) "+unit.getUser().getName()+
-								". Segue em anexo o Processo na qual a sua unidade foi relacionada.";						
-						
-						String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlanRisk().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
-		
-						try {
-								this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());
-						} catch (Throwable ex) {
-							LOGGER.errorf(ex, "Unexpected error occurred.");
-							this.fail(ex.getMessage());
-						}
+			
+						sendMail(relatedUnit, unit, relatedUnit.getUser(), process);
 							
 					}
 				}
@@ -234,46 +218,60 @@ public class ProcessController extends AbstractController{
 				return;
 			}
 			List<ProcessUnit> processUnitsExistent = this.processBS.getProcessUnitsByProcess(process);
-			// mapeia todas as processUnits
+			List<Unit> relatedUnits = process.getRelatedUnits();
+			List<ProcessUnit> newProcessUnits = new LinkedList<>();
+			
+			// mapeia todos os processUnits
 			Map<Long, ProcessUnit> processUnitsExistentMap = new HashMap<>();
 			for (ProcessUnit processUnit : processUnitsExistent) {
 				processUnitsExistentMap.put(processUnit.getUnit().getId(), processUnit);
 			}
-			List<Unit> relatedUnits = process.getRelatedUnits();
-			List<ProcessUnit> newProcessUnits = new LinkedList<>();
-			// verifica as unidades que foram vinculadas e as que foram desvinculadas 
-			for (Unit unit : relatedUnits) {
-				ProcessUnit processUnit = processUnitsExistentMap.get(unit.getId());
+			
+			// verifica as unidades que foram/continuam vinculadas
+			for (Unit relatedUnit : relatedUnits) {
+				ProcessUnit processUnit = processUnitsExistentMap.get(relatedUnit.getId());
 				if (processUnit == null) {
+					processUnitsExistentMap.remove(relatedUnit.getId());
 					processUnit = new ProcessUnit();
 					processUnit.setProcess(process);
-					processUnit.setUnit(unit);
+					processUnit.setUnit(relatedUnit);
 					newProcessUnits.add(processUnit);
+					
+					//nova unidade relacionada
+					//envia email de notificação
+					Unit unit = this.processBS.exists(process.getUnit().getId(), Unit.class);
+					sendMail(relatedUnit, unit, relatedUnit.getUser(), existent);
+					
 				} else if (processUnit.isDeleted()) {
+					processUnitsExistentMap.remove(relatedUnit.getId());
 					processUnit.setDeleted(false);
 					newProcessUnits.add(processUnit);
 				} else {
-					processUnitsExistentMap.remove(unit.getId());
+					processUnitsExistentMap.remove(relatedUnit.getId());
 				}
 			}
+			
 			// persiste as processUnits
 			for (ProcessUnit processUnit : newProcessUnits) {
 				this.processBS.persist(processUnit);
 			}
+			
+			//processUnits que foram desvinculadas 
 			for (ProcessUnit processUnit : processUnitsExistentMap.values()) {
-				if (processUnit.getUnit().getId() != process.getUnit().getId()) {
+				if (!processUnit.getUnit().getId().equals(process.getUnit().getId())) {
 					processUnit.setDeleted(true);
 					this.processBS.persist(processUnit);
 				}
 			}
+			
 			// atualiza e persiste o processo
 			existent.setFileLink(process.getFileLink());
-			//existent.setFileName(process.getFileName());
 			existent.setFile(process.getFile());
 			existent.setName(process.getName());
 			existent.setObjective(process.getObjective());
 			this.processBS.persist(existent);
-			this.success();
+			
+			this.success(existent);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
@@ -299,6 +297,42 @@ public class ProcessController extends AbstractController{
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
+	
+	
+	
+	/**
+	 * Envia email de notificação de nova unidade relacionado a um processo
+	 *	@Param Unit relatedUnit
+	 *  			Unidade que está sendo relacionada
+	 *  @Param Unit unit
+	 *  			Unidade do processo
+	 *  @Param User user
+	 *  		Responsável da unidade relacionada
+	 *  @Param Process process
+	 *  		Processo relacionado
+	 */
+	private void sendMail(Unit relatedUnit, Unit unit, User user, Process process) {
+		String texto="Prezado(a) "+user.getName()+
+				", A sua unidade ["+relatedUnit.getName()+"] foi relacionada ao Processo ["+process.getName()+
+				"] com o objetivo ["+process.getObjective()+"] da unidade ["+unit.getName()+"]. O responsável"+
+				" por essa unidade é o(a) "+unit.getUser().getName()+
+				". Segue em anexo o Processo na qual a sua unidade foi relacionada.";						
+		
+		String url=this.domain.getBaseUrl()+"/#/forrisco/plan-risk/"+String.valueOf(relatedUnit.getPlanRisk().getId())+"/unit/"+String.valueOf(relatedUnit.getId())+"/info";
+
+		try {
+			
+			if( process.getFile() !=null) {
+				this.notificationBS.sendAttachedNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url, process.getFile());
+			}else {
+				this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_PROCESS_CREATED, texto, "aux", user, url);
+			}
+			
+		} catch (Throwable ex) {
+			LOGGER.errorf(ex, "Unexpected error occurred.");
+			this.fail(ex.getMessage());
 		}
 	}
 }

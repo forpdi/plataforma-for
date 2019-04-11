@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from "react";
-import {Link, hashHistory} from "react-router";
+import { Link, hashHistory } from "react-router";
 
 import ItemStore from "forpdi/jsx_forrisco/planning/store/Item.jsx";
 import Form from "forpdi/jsx/planning/widget/attributeForm/AttributeForm.jsx";
@@ -43,6 +43,7 @@ export default React.createClass({
 			newFieldType: null,
 			cancelLabel: "Cancelar",
 			submitLabel: "Salvar",
+			hasPendindField: false,
 			fields: [],
 			length: 0
 		};
@@ -186,24 +187,28 @@ export default React.createClass({
 		}, me);
 
 
-		ItemStore.on("newSubItem", (model) => {
-			this.state.fields.map((fieldsubitem, index) => {
-				ItemStore.dispatch({
-					action: ItemStore.ACTION_CREATE_SUBFIELD,
-					data:{
-						subitem: model.data,
-						name: fieldsubitem.value,
-						isText: fieldsubitem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
-						description: fieldsubitem.description,
-						fileLink: fieldsubitem.fileLink
-					}
-				})
-			})
-		}, me);
+		ItemStore.on("newSubItem", (itemModel) => {
+			if (this.state.fields.length === 0) {
+				this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+itemModel.data.id);
+			} else {
+				this.state.fields.map((fieldsubitem, index) => {
+					ItemStore.dispatch({
+						action: ItemStore.ACTION_CREATE_SUBFIELD,
+						data:{
+							subitem: itemModel.data,
+							name: fieldsubitem.value,
+							isText: fieldsubitem.type == AttributeTypes.TEXT_AREA_FIELD ? true : false,
+							description: fieldsubitem.description,
+							fileLink: fieldsubitem.fileLink
+						}
+					})
+				});
 
-		ItemStore.on("itemField", model => {
-			this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+model.data.id);
-		});
+				ItemStore.on("itemField", fieldModel => {
+					this.context.router.push("/forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id+"/subitem/"+itemModel.data.id);
+				});
+			}
+		}, me);
 
 		ItemStore.on("subitemDeleted", (model) => {
 			this.context.router.push("forrisco/policy/"+this.props.params.policyId+"/item/"+this.state.itemModel.attributes.id);
@@ -277,6 +282,7 @@ export default React.createClass({
 		if (this.state.subitemModel) {
 			this.setState({
 				vizualization: true,
+				hasPendindField:false,
 			});
 		} else {
 			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
@@ -317,7 +323,8 @@ export default React.createClass({
 			newField: false,
 			newFieldType: null,
 			description: null,
-			fileData: null
+			fileData: null,
+			hasPendindField:false,
 		});
 	},
 	getLength(){
@@ -335,6 +342,7 @@ export default React.createClass({
 		this.setState({
 			fields: this.state.fields,
 			newField:false,
+			hasPendindField: false,
 		})
 	},
 	deleteFunc(id){
@@ -346,7 +354,8 @@ export default React.createClass({
 				}
 			})
 			this.setState({
-				fields: this.state.fields
+				fields: this.state.fields,
+				hasPendindField: false,
 			})
 		}, Messages.get("label.msg.deleteField"),()=>{Modal.hide()});
 	},
@@ -470,6 +479,9 @@ export default React.createClass({
 			Modal.alert(() => {
 				Modal.hide();
 			}, msg);
+			this.setState({
+				hasPendindField: true,
+			});
 			return;
 		}
 
@@ -632,7 +644,8 @@ export default React.createClass({
 										field={fieldsubitem}
 										index={index}
 										getLength={this.getLength}
-										/>
+										buttonsErrorMark={this.state.hasPendindField}
+									/>
 									</div>
 								)
 						}else if (fieldsubitem.type ==  AttributeTypes.ATTACHMENT_FIELD){
@@ -649,7 +662,8 @@ export default React.createClass({
 									field={fieldsubitem}
 									index={index}
 									getLength={this.getLength}
-									/>
+									buttonsErrorMark={this.state.hasPendindField}
+								/>
 								</div>)
 						}
 					}):""}
@@ -661,7 +675,6 @@ export default React.createClass({
 
 					{this.state.newField ?
 						<FieldItemInput
-							key={this.getLength()}
 							vizualization={this.props.vizualization}
 							deleteFunc={this.deleteFunc}
 							editFunc={this.editFunc}
@@ -669,6 +682,7 @@ export default React.createClass({
 							fields={this.state.fields}
 							reset={this.reset}
 							getLength={this.getLength}
+							buttonsErrorMark={this.state.hasPendindField}
 						/>
 					:
 					(((this.context.roles.MANAGER || _.contains(this.context.permissions,

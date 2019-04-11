@@ -7,8 +7,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.Type;
-
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 import br.com.caelum.vraptor.serialization.SkipSerialization;
 
@@ -27,16 +25,16 @@ public class FieldItem extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=Item.class, optional=false, fetch=FetchType.EAGER)
 	private Item item;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 
-	@Column(nullable = true, columnDefinition="mediumtext")
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 
 	@Column(nullable = false)
 	private boolean isText;
 
-	@Column(length=255)
+	@Column(length=400)
 	private String fileLink;
 	
 	@Transient

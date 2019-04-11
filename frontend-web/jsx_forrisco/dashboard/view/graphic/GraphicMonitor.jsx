@@ -255,63 +255,63 @@ export default React.createClass({
 
 		var options = {
 			hAxis: { title: "Tempo", minValue: 1, maxValue: 12 },
-			vAxis: { title: 'Quantidade', minValue: 1, maxValue: max },
+			vAxis: { title: 'Quantidade', minValue: 1, maxValue: max, format : '#' },
 			// height: 250,
-			// width: 658,
-			// chartArea:{width:"471",height:"155"},
+			chartArea: { minWidth: '100%', width: '600px' },
+			// chartArea:{width:"600",height:"155"},
+			// width:
 			legend: 'none',
 			colors: lines,
 		}
 
-		return (<div>
-			<div className="dashboard-panel-title">
-				<span className="frisco-containerSelect"> {Messages.get("label.units")}
-					<select
-						onChange={this.onUnitChange}
-						value={this.state.unit}
-						className="form-control dashboard-select-box-graphs marginLeft10"
-						id="selectUnits"
-					>
-						<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}>
-							{Messages.get("label.viewAll_")}
-						</option>
+
+		return (
+			<div>
+				<div className="dashboard-panel-title">
+					<span className="frisco-containerSelect"> {Messages.get("label.units")}
+						<select
+							onChange={this.onUnitChange}
+							value={this.state.unit}
+							className="form-control dashboard-select-box-graphs marginLeft10"
+							id="selectUnits"
+						>
+							<option value={-1} data-placement="right" title={Messages.get("label.viewAll_")}>
+								{Messages.get("label.viewAll_")}
+							</option>
+							{
+								this.props.units.map((attr) => {
+									return (
+										<option key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
+											{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
+										</option>
+									);
+								})
+							}
+						</select>
+					</span>
+				</div>
+				<div style={{ "text-align": "center" }}>
+					<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectYear" >
 						{
-							this.props.units.map((attr) => {
+							years.map((attr, idx) => {
 								return (
-									<option key={attr.id} value={attr.id} data-placement="right" title={attr.name} >
-										{(attr.name.length > 20) ? ((attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
-									</option>
+									<option key={idx} value={attr} data-placement="right" title={attr} >{attr}</option>
 								);
 							})
 						}
 					</select>
-				</span>
-			</div>
-			<div style={{ "text-align": "center" }}>
-				<select onChange={this.onYearChange} className="form-control dashboard-select-box-graphs marginLeft10" id="selectYear" >
-					{
-						years.map((attr, idx) => {
-							return (
-								<option key={idx} value={attr} data-placement="right" title={attr} >{attr}</option>
-							);
-						})
-					}
-				</select>
-			</div>
+				</div>
 
 			<div>
-				{
-					!this.loadingGraph &&
+				{ !this.loadingGraph &&
 					<div>
 						<ForPDIChart
 							chartType="LineChart"
 							data={this.state.data}
 							options={options}
 							graph_id={"LineChart-" + this.props.title}
-							width='100%'
-							height='250'
-							// chartArea={{left:110,top:0,width:"471",height:"155"}}
 							legend_toggle={true}
+							width={"100%"}
 						/>
 						<div className="colaborator-goal-performance-legend" key={this.props.title}>
 							{levels}
@@ -326,9 +326,7 @@ export default React.createClass({
 		this.props.displayGraph(false)
 		return (
 			<div>
-				{
-					Modal.GraphHistory(this.props.title, this.Graph())
-				}
+				{Modal.GraphHistory(this.props.title, this.Graph())}
 			</div>
 		);
 	}

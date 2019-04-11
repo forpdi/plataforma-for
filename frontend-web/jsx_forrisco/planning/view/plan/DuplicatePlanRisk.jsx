@@ -1,7 +1,7 @@
 import React from "react";
 import _ from "underscore";
 import Messages from "@/core/util/Messages";
-
+import Toastr from 'toastr';
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge";
 
@@ -68,12 +68,16 @@ export default React.createClass({
 			});
 		},this);
 
-		PlanRiskItemStore.on("duplicatedItens",response => { console.log("itensDuplicated")},this);
-		UnitStore.on("duplicatedUnits",response => { console.log("duplicatedUnits")},this);
+		PlanRiskItemStore.on("duplicatedItens",(response) => {
+			console.log("duplicatedItens",response)
+		},this);
+		UnitStore.on("duplicatedUnits",(response) => {
+			console.log("duplicatedUnits",response)
+		},this);
 
-		PlanRiskStore.on('plariskcreated', response => {
+		PlanRiskStore.on('plariskcreated', (response) => {
 
-			if (response.success != null) {
+			if (response.success) {
 
 				var itens=[];
 				var units=[];
@@ -93,8 +97,9 @@ export default React.createClass({
 					}
 				}
 
+				console.log("duplicating itens and units",itens,units, response.data.id)
 				PlanRiskItemStore.dispatch({
-					action: PlanRiskItemStore.ACTION_SAVE_ITENS_DUPLICATE,
+					action: PlanRiskItemStore.ACTION_ITENS_DUPLICATE,
 					data: {	itens:itens,
 							planRisk: {id: response.data.id}
 						}
@@ -108,16 +113,16 @@ export default React.createClass({
 				});
 
 
-			this.context.tabPanel.removeTabByPath(this.props.location.pathname);
-			this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
+				this.context.tabPanel.removeTabByPath(this.props.location.pathname);
+				this.context.router.push("/forrisco/plan-risk/"+response.data.id+"/item/overview")
 
-			PlanRiskStore.dispatch({
-				action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
-			});
+				PlanRiskStore.dispatch({
+					action: PlanRiskStore.ACTION_FIND_UNARCHIVED_FOR_MENU
+				});
 
 			}else{
-				var msg = model.msg ? "Erro ao duplicar Plano: "+model.msg.message : "Erro ao duplicar Plano"
-				this.context.toastr.addAlertError(msg);
+				var msg = response.msg ? "Erro ao duplicar Plano: "+response.msg.message : "Erro ao duplicar Plano"
+				Toastr.error(msg);
 			}
 
 		},this);

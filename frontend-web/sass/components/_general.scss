@@ -391,8 +391,9 @@ span.inner{
 }
 
 .fpdi-plan-details{
-   position: relative;
-   min-height: 100%;
+	width: 100%;
+  position: relative;
+  min-height: 100%;
 }
 
 .fpdi-tabs .fpdi-tabs-content {
@@ -791,6 +792,7 @@ label{
 
 .exportDocumentError {
 	color: #FF0000;
+	display: -webkit-inline-box;
 }
 
 .importUsersWarning {
@@ -1329,7 +1331,12 @@ label{
 }
 
 .icon-link {
-    cursor: pointer !important;
+	cursor: pointer !important;
+}
+
+.icon-link-forrisco {
+	cursor: pointer !important;
+	color: #7d45d8;
 }
 
 .fpdi-browsers-info {
@@ -1408,7 +1415,7 @@ label{
 
 .break-text{
 	white-space: pre-line;
-    word-break: break-all;
+  // word-break: break-all;
 }
 
 .white-space {
@@ -1427,5 +1434,107 @@ label{
 	}
 	&:-ms-input-placeholder {
 		font-style: italic;
+	}
+}
+
+pre.pre-info {
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+	background-color: transparent;
+	border: none;
+	color: #575858;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	padding: 0;
+	word-break: normal;
+}
+
+.dashboard-risk-centralize{
+	background: #6C7A89;
+	width: 36vw;
+	height: 36vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.dashboard-matrix-container {
+	height: 362px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	table-layout: fixed;
+}
+
+.dashboard-matrix-container-inner {
+	display: flex;
+	height: 100%;
+	width: 95%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+.matrix-tr {
+	min-width: 200px;
+	width: 90%;
+	text-align: -webkit-center;
+}
+
+.matrix-td {
+	text-align: center;
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.matrix-content {
+	text-align: center;
+	display: flex;
+}
+
+.matrix-td-risk {
+	text-align: center;
+	width: 10%;
+}
+
+.matrix-impact-tr {
+	padding-left: 110px;
+	width: 90%;
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-td {
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-div {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.matrix-vertical-text {
+	transform: rotate(270deg);
+
+	&.dashboard {
+		width: 25px;
+		margin-left: 5px;
+		margin-top: 60px;
+		position: relative;
+		font-weight: bold;
 	}
 }

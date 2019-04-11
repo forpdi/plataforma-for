@@ -411,7 +411,9 @@ var ImportUsersModal = React.createClass({
 			<div className="modal-dialog modal-lg">
 				<div className="modal-content">
 					<div className="modal-header fpdi-modal-header">
-	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+	        			</button>
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body">
@@ -430,52 +432,21 @@ var ImportUsersModal = React.createClass({
 });
 
 
-//mdi-level-search mdi mdi-close-circle cursorPointer
+
 var GraphHistory= React.createClass({
 	render() {
 		return (
 			<div className="modal-dialog modal-graph modal-md">
 				<div className="modal-content graph">
 					<div className="frisco-modal-history">
-	        			<span><h4 className="modal-title" id="myModalLabel">{this.props.title}</h4></span>
-						<button type="button" className="mdi mdi-close-circle close-modal cursorPointer" data-dismiss="modal"></button>
+	        			<span>
+							<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
+	        			</span>
+						<button type="button" className="mdi mdi-close-circle close-modal cursorPointer" data-dismiss="modal"/>
 	      			</div>
 
-	      			<hr className="divider"></hr>
-	      			<div className="modal-body fpdi-modal-body">
-					  {this.props.text}
-	      				{/*<form>
-		      				<div className="col-md-6">
-			        			<label htmlFor="documentTitle">{Messages.get("label.documentTitle")} <span className="fpdi-required">&nbsp;</span>
-			        				<input type='text' name="documentTitle" ref="documentTitle" id="documentTitle" />
-			        			</label>
-			        		</div>
-			        		<div className="col-md-6">
-			        			<label htmlFor="documentAuthor">{Messages.get("label.author")} <span className="fpdi-required">&nbsp;</span>
-			        				<input type='text' name="documentAuthor"  ref="documentAuthor" id="documentAuthor" />
-			        			</label>
-	      					</div>
-	      					<div className="col-md-12" >
-		      					<label htmlFor="container"> {Messages.get("label.includeSectionsDocument")} <span className="fpdi-required">&nbsp;</span></label>
-		      					<div className="container" id="container">
-		      						{this.props.text}
-								</div>
-							</div>
-							<br/>
-							<div className="col-md-12" >
-								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
-							</div>
-							<div id="exportDocumentModalFooter" name="exportDocumentModalFooter">
-								<p id="paramError" className="exportDocumentError"></p>
-								<p className="help-block">
-									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
-								</p>
-								<br/>
-	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.export")}</button>
-	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
-	        				</div>
-	      				</form>*/}
-	      			</div>
+	      			<hr className="divider"/>
+	      			<div className="modal-body fpdi-modal-body"> {this.props.text} </div>
 				</div>
 			</div>
 		);
@@ -691,6 +662,7 @@ var Modal = {
 		ReactDOM.render((
 			<GraphHistory title={title} text={text}/>
 		),this.$el);
+
 		this.show();
 	},
 

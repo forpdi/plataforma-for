@@ -112,7 +112,7 @@ export default React.createClass({
 	onChartClick(Chart) {
 		const incidents = [];
 
-		if(this.refs['selectUnits'].value == -1) {
+		if (this.refs['selectUnits'].value == -1) {
 			for (var i in this.state.incidents) {
 				if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
 					if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row) {
@@ -127,7 +127,7 @@ export default React.createClass({
 				if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getFullYear() == this.refs['selectYear'].value) {
 					if (moment(this.state.incidents[i].begin, 'DD/MM/YYYY hh:mm:ss').toDate().getMonth() == Chart.chart.getSelection()[0].row) {
 						if (this.state.incidents[i].type == Chart.chart.getSelection()[0].column) {
-							if(this.state.incidents[i].unitId == this.refs['selectUnits'].value) {
+							if (this.state.incidents[i].unitId == this.refs['selectUnits'].value) {
 								incidents.push(this.state.incidents[i])
 							}
 						}
@@ -264,6 +264,7 @@ export default React.createClass({
 		}
 		this.state.options.colors = colors
 		this.state.options.vAxis.maxValue = max
+		this.state.options.vAxis.format ='#'
 
 		this.setState({
 			data: axis,
@@ -295,12 +296,15 @@ export default React.createClass({
 				</div>
 				<br/>
 				<div style={{"textAlign": "center"}}>
-					<select onChange={this.onYearChange}
-							className="form-control dashboard-select-box-graphs marginLeft10" ref="selectYear">
-						{this.state.year.map((attr, idx) => {
-							return (
-								<option key={idx} value={attr} data-placement="right" title={attr}>{attr}</option>);
-						})
+					<select
+						className="form-control dashboard-select-box-graphs marginLeft10"
+						onChange={this.onYearChange}
+						ref="selectYear"
+					>
+						{
+							this.state.year.map((attr, idx) => (
+								<option key={idx} value={attr} data-placement="right" title={attr}>{attr}</option>
+							))
 						}
 					</select>
 				</div>
@@ -317,17 +321,28 @@ export default React.createClass({
 							pageSize={this.state.pageSize}
 							total={this.state.total}
 							onChangePage={this.getInfo}
-							chartEvents={this.state.chartEvents}/>
+							chartEvents={this.state.chartEvents}
+						/>
 						<div className="colaborator-goal-performance-legend">
 							<span onClick={this.onThreatsChange}>
-								<span className="legend-item icon-link"><input type="text"
-																			   className={"icon-link marginLeft10 legend-risk " + (this.state.threats ? "threat" : "")}
-																			   disabled/> {Messages.getEditable("label.risk.threats", "fpdi-nav-label")}</span>
+								<span className="legend-item icon-link">
+									<input
+										type="text"
+								   	disabled
+										className={"icon-link marginLeft10 legend-risk " + (this.state.threats ? "threat" : "")}
+									/>
+									{Messages.getEditable("label.risk.threats", "fpdi-nav-label")}
+								</span>
 							</span>
 							<span onClick={this.onOpportunitiesChange}>
-								<span className="legend-item icon-link"><input type="text"
-																			   className={"icon-link marginLeft10 legend-risk " + (this.state.opportunities ? "opportunities" : "")}
-																			   disabled/> {Messages.getEditable("label.risk.opportunities", "fpdi-nav-label")}</span>
+								<span className="legend-item icon-link">
+									<input
+										type="text"
+								   	disabled
+										className={"icon-link marginLeft10 legend-risk " + (this.state.opportunities ? "opportunities" : "")}
+									/>
+									{Messages.getEditable("label.risk.opportunities", "fpdi-nav-label")}
+								</span>
 							</span>
 						</div>
 					</div>

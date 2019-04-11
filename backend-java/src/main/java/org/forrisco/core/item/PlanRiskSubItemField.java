@@ -1,7 +1,5 @@
 package org.forrisco.core.item;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -28,16 +26,16 @@ public class PlanRiskSubItemField extends SimpleLogicalDeletableEntity {
 	@ManyToOne(targetEntity=PlanRiskSubItem.class, optional=false, fetch=FetchType.EAGER)
 	private PlanRiskSubItem planRiskSubItem;
 	
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length=400)
 	private String name;
 
-	@Column(nullable = true, columnDefinition="mediumtext")
+	@Column(nullable = true, columnDefinition="longtext")
 	private String description;
 	
 	@Column(nullable = false)
 	private boolean isText;
 	
-	@Column(length=255)
+	@Column(length=400)
 	private String fileLink;
 	
 	@Transient

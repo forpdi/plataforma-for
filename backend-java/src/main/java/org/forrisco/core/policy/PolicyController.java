@@ -30,6 +30,7 @@ import org.forrisco.risk.RiskLevel;
 
 import com.itextpdf.text.DocumentException;
 
+import org.forrisco.core.bean.ItemSearchBean;
 import org.forrisco.core.item.FieldItem;
 import org.forrisco.core.item.Item;
 import org.forrisco.core.item.ItemBS;
@@ -71,11 +72,21 @@ public class PolicyController extends AbstractController {
 	@NoCache
 	@Permissioned(value = AccessLevels.COMPANY_ADMIN, permissions = { ManagePolicyPermission.class })
 	public void savePolicy(@NotNull @Valid  Policy policy){
-		
 		try {
 			if(this.domain == null) {
 				this.fail("Instituição não definida");
 				return;
+			}
+			if ((policy.getValidityBegin() == null && policy.getValidityEnd() != null) ||
+					(policy.getValidityEnd() == null && policy.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
+
+			if (policy.getValidityBegin() != null && policy.getValidityEnd() != null &&
+					policy.getValidityEnd().before(policy.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;				
 			}
 			policy.setCompany(this.domain.getCompany());
 			policy.setId(null);
@@ -265,6 +276,18 @@ public class PolicyController extends AbstractController {
 				this.fail("Política sem Istituição associada");
 				return;
 			}
+			
+			if ((policy.getValidityBegin() == null && policy.getValidityEnd() != null) ||
+					(policy.getValidityEnd() == null && policy.getValidityBegin() != null)) {
+				this.fail("Não é permitido preencher somente uma das datas do prazo de vigência");
+				return;
+			}
+
+			if (policy.getValidityBegin() != null && policy.getValidityEnd() != null &&
+					policy.getValidityEnd().before(policy.getValidityBegin())) {
+				this.fail("A data de início do prazo de vigência não deve ser superior à data de término");
+				return;				
+			}
 
 			PaginatedList<RiskLevel> existentLevels = this.policyBS.listRiskLevelbyPolicy(existent);
 			List<Risk> risks = new ArrayList<Risk>();
@@ -284,7 +307,7 @@ public class PolicyController extends AbstractController {
 			//não podem existir riscos vinculados
 			if(policy.getNcolumn() != existent.getNcolumn() 
 				|| policy.getNline() != existent.getNline()
-				|| policy.getLevel() != existentLevels.getTotal()) {
+				|| policy.getLevels() != existentLevels.getTotal()) {
 			
 				if (!risks.isEmpty()) {
 					this.fail("Impossível modificar política com Risco(s) vinculado(s)");
@@ -294,9 +317,9 @@ public class PolicyController extends AbstractController {
 			
 			//atualiza graus de risco
 			//se a quantidade de os novos graus >= graus antigos 
-			for(int i=0; i < (policy.getLevel() > existentLevels.getTotal() ? (policy.getLevel()): existentLevels.getTotal()) ;i++) {
+			for(int i=0; i < (policy.getLevels() > existentLevels.getTotal() ? (policy.getLevels()): existentLevels.getTotal()) ;i++) {
 				
-				if(i < existentLevels.getTotal() && i < policy.getLevel() ) {
+				if(i < existentLevels.getTotal() && i < policy.getLevels() ) {
 					if(!existentLevels.getList().get(i).getLevel().equals(policy.getRisk_level()[0][i]) 
 						|| existentLevels.getList().get(i).getColor() != Integer.parseInt(policy.getRisk_level()[1][i])) {
 					
@@ -326,13 +349,16 @@ public class PolicyController extends AbstractController {
 			Map <String,String> impact_probability = new HashMap<String,String>();
 			
 			//atualizar política
-			existent.setDescription(policy.getDescription());
 			existent.setName(policy.getName());
+			existent.setDescription(policy.getDescription());
+			existent.setValidityBegin(policy.getValidityBegin());
+			existent.setValidityEnd(policy.getValidityEnd());
 			existent.setImpact(policy.getImpact());
 			existent.setProbability(policy.getProbability());
 			existent.setMatrix(policy.getMatrix());
 			existent.setNline(policy.getNline());
 			existent.setNcolumn(policy.getNcolumn());
+			existent.setPIDescriptions(policy.getPIDescriptions());
 			this.policyBS.persist(existent);
 			
 			
@@ -393,10 +419,12 @@ public class PolicyController extends AbstractController {
 		try {
 			Policy policy = this.policyBS.exists(policyId, Policy.class);
 			
+			boolean includeGeneralInformation = this.policyBS.termsSearchedInGeneralInformation(policy, terms, itensSelect);
+
 			List<Item> itens = this.policyBS.listItemTerms(policy, terms, itensSelect, ordResult);
 			List<SubItem> subitens = this.policyBS.listSubitemTerms(policy, terms, subitensSelect, ordResult);
 
-			PaginatedList<SubItem> result = TermResult(itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.policyBS.termResult(includeGeneralInformation, policy, itens, subitens, page, limit);
 			
 			this.success(result);
 
@@ -417,10 +445,12 @@ public class PolicyController extends AbstractController {
 		try {
 			Policy policy = this.policyBS.exists(policyId, Policy.class);
 			
+			boolean includeGeneralInformation = this.policyBS.termsSearchedInGeneralInformation(policy, terms, null);
+
 			List<Item> itens = this.policyBS.listItemTerms(policy, terms, null, ordResult);
 			List<SubItem> subitens = this.policyBS.listSubitemTerms(policy, terms, null, ordResult);
 
-			PaginatedList<SubItem> result = TermResult( itens,subitens, page, limit);
+			PaginatedList<ItemSearchBean> result = this.policyBS.termResult(includeGeneralInformation, policy, itens, subitens, page, limit);
 			
 			this.success(result);
  		} catch (Throwable ex) {
@@ -428,48 +458,6 @@ public class PolicyController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-
-	private PaginatedList<SubItem> TermResult(List<Item> itens, List<SubItem> subitens,  Integer page,  Long limit){
-		int firstResult = 0;
-		int maxResult = 0;
-		int count = 0;
-		int add = 0;
-		if (limit != null) {
-			firstResult = (int) ((page - 1) * limit);
-			maxResult = limit.intValue();
-		}
-		
-		for(Item item : itens) {
-			SubItem subitem = new SubItem();
-			subitem.setDescription(item.getDescription());
-			subitem.setId(item.getId());
-			subitem.setName(item.getName());
-			//item.setSubitemParentId(subitem.getItem().getId());
-			subitens.add(subitem);
-		}
-		
-		List<SubItem> list = new ArrayList<>();
-		for(SubItem subitem : subitens) {
-			if (limit != null) {
-				if (count >= firstResult && add < maxResult) {
-					list.add(subitem);
-					count++;
-					add++;
-				} else {
-					count++;
-				}
-			} else {
-				list.add(subitem);
-			}
-		}
-
-		PaginatedList<SubItem> result = new PaginatedList<SubItem>();
-		
-		result.setList(list);
-		result.setTotal((long)count);
-		return result;
-	}
-
 	
 	/**
 	 * Cria arquivo pdf  para exportar relatório  

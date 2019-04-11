@@ -199,13 +199,16 @@ export default React.createClass({
 						</span>
 					</Link>
 				</li>
+
+				{this.context.roles.ADMIN  ?
 				<li>
 					<Link onClick={this.deleteUnit}>
 					<span className="mdi mdi-delete cursorPointer" title={this.props.isSubunit ? Messages.get("label.deleteSubunit") : Messages.get("label.deleteUnit")}>
 						<span id="menu-levels">{this.props.isSubunit ? Messages.get("label.deleteSubunit") : Messages.get("label.deleteUnit")}</span>
 					</span>
 					</Link>
-				</li>
+				</li> : ""
+				}
 			</ul>
 		)
 	},
@@ -240,7 +243,7 @@ export default React.createClass({
 					</label>
 					<div>
 						<span className="pdi-normal-text">
-							{unit.description}
+							<pre className="pre-info">{unit.description}</pre>
 						</span>
 					</div>
 				</div>
@@ -354,6 +357,7 @@ export default React.createClass({
 					<UnitProcess
 						planRiskId={this.props.params.planRiskId}
 						unitId={unit.id}
+						isSubunit={this.props.isSubunit}
 					/>
 						:""}
 				</div>

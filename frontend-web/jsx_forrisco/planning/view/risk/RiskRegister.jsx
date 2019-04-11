@@ -19,9 +19,6 @@ import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 
 var VerticalForm = Form.VerticalForm;
 
-var HorizontalForm = Form.HorizontalForm;
-
-
 var Validate = Validation.validate;
 
 export default React.createClass({
@@ -58,6 +55,8 @@ export default React.createClass({
 			showOtherField: false,
 			newTipology: "",
 			tipologies: [],
+			StrategyError:false,
+			ObjectiveError:false,
 		}
 	},
 
@@ -66,6 +65,7 @@ export default React.createClass({
 		UserStore.on("retrieve-user", (model) => {
 			this.setState({
 				users: model.data,
+				loading: false
 			});
 		}, this);
 
@@ -85,7 +85,7 @@ export default React.createClass({
 		StructureStore.on("companyobjectivesretrivied", (model) => {
 			this.setState({
 				strategy: model.data,
-				loading: false
+
 			})
 		}, this)
 
@@ -105,8 +105,8 @@ export default React.createClass({
 			if (model.success) {
 				this.context.router.push("/forrisco/plan-risk/" + this.props.params.planRiskId + "/unit/" + this.props.params.unitId + "/risk/" + model.data.id+"/info");
 			} else {
-				if (model.message != null) {
-					this.context.toastr.addAlertError(model.message);
+				if (model.msg != null) {
+					this.context.toastr.addAlertError(model.msg);
 				}
 			}
 		}, this)
@@ -122,6 +122,7 @@ export default React.createClass({
 				TipologyStore.dispatch({
 					action: TipologyStore.ACTION_RETRIEVE_ALL_TIPOLOGIES,
 				});
+				this.setState({ showOtherField: false });
 			}
 		});
 
@@ -184,7 +185,6 @@ export default React.createClass({
 
 		if (Props.route.path == "new") {
 			this.setState({
-				loading: false,
 				visualization: false,
 				newRisk: true
 			})
@@ -196,6 +196,10 @@ export default React.createClass({
 	refreshData(Props) {
 		UserStore.dispatch({
 			action: UserStore.ACTION_RETRIEVE_USER,
+			data: {
+				page: 1,
+				pageSize: 500,
+			},
 		});
 
 		StructureStore.dispatch({
@@ -233,7 +237,6 @@ export default React.createClass({
 				document.getElementById("field-periodicity").value = ''
 				document.getElementById("field-tipology").value = ''
 				document.getElementById("field-type").value = ''
-				document.getElementById("field-user").value = ''
 			}
 		}
 	},
@@ -280,19 +283,21 @@ export default React.createClass({
 				label: "Responsável",
 				displayField: 'label',
 				value: risk != null ? risk.user.name : null,
+				id: risk != null ? risk.user.id : null,
+				search: true
 			}, {
 				name: "reason",
 				type: AttributeTypes.TEXT_AREA_FIELD,
 				placeholder: "Causas do risco",
 				maxLength: 1000,
-				label: "Causa",
+				label: "Causa (s)",
 				value: risk != null ? risk.reason : null,
 			}, {
 				name: "result",
 				type: AttributeTypes.TEXT_AREA_FIELD,
 				placeholder: "Consequência do risco",
 				maxLength: 1000,
-				label: "Consequência",
+				label: "Consequência (s)",
 				value: risk != null ? risk.result : null,
 			}, {
 				name: "probability",
@@ -321,7 +326,7 @@ export default React.createClass({
 				value: risk != null ? risk.riskLevel.level : null,
 			}, {
 				name: "periodicity",
-				label: "Periodicidade da análise",
+				label: "Periodicidade do monitoramento",
 				type: AttributeTypes.SELECT_FIELD,
 				optionsField: [
 					{ label: 'Diária' },
@@ -390,7 +395,7 @@ export default React.createClass({
 		}
 
 		var fields = [];
-		this.state.riskModel.strategies.list.map((fielditem, index) => {
+		this.state.riskModel.strategies.list.map((fieldItem, index) => {
 			fields.push({
 				name: "strategy-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
@@ -398,8 +403,8 @@ export default React.createClass({
 				linkName: "(Visualizar no PDI)",
 				placeholder: "Selecione um ou mais objetivos",
 				maxLength: 100,
-				value: {name: fielditem.structure.name, id:fielditem.structure.id},
-				link: fielditem.linkFPDI,
+				value: {name: fieldItem.structure.name, id:fieldItem.structure.id},
+				link: fieldItem.linkFPDI,
 				optionsField: index == 0 ? this.getAllStrategies() : null,
 				isvalue:true,
 			})
@@ -427,17 +432,17 @@ export default React.createClass({
 
 
 		var fields = [];
-		this.state.riskModel.processes.list.map((fielditem, index) => {
-			var name= fielditem.process.objective +" - "+fielditem.process.name
+		this.state.riskModel.processes.list.map((fieldItem, index) => {
+			var name= fieldItem.process.objective +" - "+fieldItem.process.name
 			fields.push({
 				name: "process-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
 				placeholder: "Selecione um ou mais objetivos",
 				label: "Objetivo(s) do(s) processo(s) vinculado(s)",//index==0 ? (this.state.visualization ?"Objetivo(s) do(s) processo(s) vinculado(s)":"") : null,
 				linkName: "(Visualizar objetivo do processo)",
-				link: fielditem.linkFPDI,
+				link: fieldItem.linkFPDI,
 				maxLength: 100,
-				value: {name: name, id:fielditem.process.id},
+				value: {name: name, id:fieldItem.process.id},
 				optionsField: index == 0 ? this.getAllProcessesObjective() : null,
 				isvalue:true,
 			})
@@ -463,16 +468,16 @@ export default React.createClass({
 
 		var fields = []
 
-		this.state.riskModel.activities.list.map((fielditem, index) => {
-			var name=fielditem.name+" - "+fielditem.process.name
+		this.state.riskModel.activities.list.map((fieldItem, index) => {
+			var name=fieldItem.name+" - "+fieldItem.process.name
 			fields.push({
 				name: "activity-" + (index),
 				type: AttributeTypes.SELECT_MULTI_FIELD,
 				placeholder: "*",
 				maxLength: 100,
 				label: index == 0 ? (this.state.visualization ? "Atividade(s) do(s) processo(s) vinculado(s)" : "") : null,
-				value: {name: name, id:fielditem.id},
-				link: fielditem.linkFPDI,
+				value: {name: name, id:fieldItem.id},
+				link: fieldItem.linkFPDI,
 				linkName: "(Visualizar processo)",
 			})
 		})
@@ -490,6 +495,7 @@ export default React.createClass({
 				fields.push({ label: probility[i].substring(1, probility[i].length - 1) })
 			}
 		}
+
 		return fields
 	},
 
@@ -507,7 +513,6 @@ export default React.createClass({
 
 	getUsers() {
 		var fields = []
-		//fields.push({label:"", id:0})
 
 		for (var i = 0; i < this.state.users.length; i++) {
 			fields.push(
@@ -549,7 +554,6 @@ export default React.createClass({
 		if (this.state.newRisk) {
 			document.getElementById("field-name").value = ''
 			document.getElementById("field-code").value = ''
-			//document.getElementById("field-user").value = ''
 			document.getElementById("field-impact").value = ''
 			document.getElementById("field-probability").value = ''
 			document.getElementById("field-periodicity").value = ''
@@ -558,20 +562,13 @@ export default React.createClass({
 			document.getElementById("field-tipology").value = ''
 			document.getElementById("field-type").value = ''
 
-			//var index=this.refs["field-1"].refs.user.refs["field-user"].selectedIndex
-
-			//data['user']={id:this.state.users[index].id}
-			//data['unit']={id:this.state.unitId}
 			this.setState({
 				risk_pdi: false,
 				risk_obj_process: false,
 				risk_act_process: false
 			})
-		} else {
+		} else{
 			this.props.onChange()
-			/*this.setState({
-				visualization: true
-			})*/
 		}
 
 	},
@@ -730,7 +727,6 @@ export default React.createClass({
 			}
 		}
 
-
 		data['name'] = document.getElementById("field-name").value
 		data['code'] = document.getElementById("field-code").value
 		data['impact'] = document.getElementById("field-impact").value
@@ -741,8 +737,8 @@ export default React.createClass({
 		data['type'] = document.getElementById("field-type").value
 		data['tipology'] = document.getElementById("field-tipology").value
 
-		if(this.refs["field-1"].refs.user.refs["field-user"].selectedIndex != 0){
-			data['user'] = { id: this.state.users[this.refs["field-1"].refs.user.refs["field-user"].selectedIndex-1].id }
+		if(this.refs["field-1"].refs.user.refs["field-user"].props.value? this.refs["field-1"].refs.user.refs["field-user"].props.value.value != 0 :false){
+			data['user'] = { id: this.refs["field-1"].refs.user.refs["field-user"].props.value.value }
 		}
 		data['unit'] = { id: this.props.params.unitId }
 
@@ -769,10 +765,37 @@ export default React.createClass({
 
 		var msg = Validate.validationRiskRegister(data, this.refs);
 
+		var objectivePDI= this.refs["objectivePDI"]
+		var objectiveProcess= this.refs["objectiveProcess"]
+
+		if(data.processes.total == 0 && objectivePDI.checked){
+			if(msg==""){msg=Messages.get("notification.risk.objectivePDI")}
+			this.setState({
+				StrategyError:true
+			})
+		}else{
+			this.setState({
+				StrategyError:false
+			})
+		}
+
+		if(data.processes.total == 0 && objectiveProcess.checked){
+			if(msg==""){msg=Messages.get("notification.risk.objectiveProcess")}
+
+			this.setState({
+				ObjectiveError:true
+			})
+		}else{
+			this.setState({
+				ObjectiveError:false
+			})
+		}
+
 		if (msg != "") {
 			this.context.toastr.addAlertError(msg);
 			return;
 		}
+
 		if (me.props.params.riskId) {
 			data.id = me.props.params.riskId
 			RiskStore.dispatch({
@@ -785,6 +808,7 @@ export default React.createClass({
 				data: data
 			});
 		}
+
 	},
 
 	handleSelect(event) {
@@ -814,7 +838,7 @@ export default React.createClass({
 					: ""
 				}
 
-				<form  className="fpdi-card fpdi-card-full floatLeft" id={this.props.id} >
+				<form className="fpdi-card fpdi-card-full floatLeft" id={this.props.id}>
 					{
 						!this.state.visualization
 						?
@@ -880,7 +904,7 @@ export default React.createClass({
 									onChange={this.handleNewTipologyField}
 									value={this.state.newTipology}
 								/>
-								<div className="row-tools-box" style={{ 'display': 'inline-block', 'marginLeft': '15px' }}>
+								<div className="row-tools-box" style={{ 'display': 'inline-block', 'marginLeft': '13px' }}>
 									<span
 										className="mdi mdi-check btn btn-sm btn-success"
 										style={{ 'marginRight': '0', 'padding': '6px 4px' }}
@@ -910,139 +934,75 @@ export default React.createClass({
 
 					{/* Plano Estratégico */}
 
-					{
-						!this.state.visualization
-						?
+					{!this.state.visualization ?
 						<div>
 							<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectivePDI')}</div>
 							<div>
-								<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
+								<input  ref="objectivePDI" style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === true} onChange={this.handleStrategyChange} value="Sim" />Sim
 								<input style={{ "margin": "0px 5px" }} type="radio" name="objectivePDI" checked={this.state.risk_pdi === false} onChange={this.handleStrategyChange} value="Não" />Não
 							</div>
 							<br />
 						</div>
-						:
-						""
-					}
-					{
-						!this.state.visualization && this.state.risk_pdi
-						?
+						: ""}
+					{!this.state.visualization && this.state.risk_pdi ?
 						<label htmlFor={"texto"} className="fpdi-text-label-none">
 							{"Objetivo Estratégico do PDI"}
 						</label>
-						:
-						""
-					}
-					{
-						this.state.visualization || this.state.risk_pdi
-						?
+						: ""}
+					{this.state.visualization || this.state.risk_pdi ?
 						<ListForm
 							vizualization={this.state.visualization}
 							fields={this.getStrategies()}
 							submitLabel={Messages.get("label.submitLabel")}
 							showButtons={false}
 							onChange={this.onChangeStrategies}
+							className= {this.state.StrategyError  ? " borderError":""}
 						/>
-						:
-						""
-					}
+					: ""}
 					<br />
 
 					{/* Processo */}
 
-					{
-						!this.state.visualization
-						?
+					{!this.state.visualization ? <div>
+						<div id="objectiveProcess" style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.objectiveProcess')}</div>
 						<div>
-							<div
-								style={{ "display": "-webkit-box", margin: "10px 0px" }}
-								className={"fpdi-text-label"}
-							>
-								{Messages.get('label.risk.objectiveProcess')}
-							</div>
-							<div>
-								<input
-									style={{ "margin": "0px 5px" }}
-									type="radio"
-									name="objectiveProcess"
-									checked={this.state.risk_obj_process === true}
-									onChange={this.handleProcessChange}
-									value="Sim"
-								/>Sim
-								<input
-									style={{ "margin": "0px 5px" }}
-									type="radio"
-									name="objectiveProcess"
-									checked={this.state.risk_obj_process === false}
-									onChange={this.handleProcessChange}
-									value="Não"
-								/>Não
-							</div>
-							<br />
+							<input  ref="objectiveProcess" style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === true} onChange={this.handleProcessChange} value="Sim" />Sim
+							<input style={{ "margin": "0px 5px" }} type="radio" name="objectiveProcess" checked={this.state.risk_obj_process === false} onChange={this.handleProcessChange} value="Não" />Não
 						</div>
-						:
-						""
-					}
-					{
-						!this.state.visualization && this.state.risk_obj_process
-						?
+						<br />
+					</div>
+						: ""}
+					{!this.state.visualization && this.state.risk_obj_process ?
 						<label htmlFor={"texto"} className="fpdi-text-label-none">
 							{"Processo/Objetivo"}
 						</label>
-						:
-						""
-					}
+						: ""}
 
-					{
-						this.state.visualization || this.state.risk_obj_process
-						?
+					{this.state.visualization || this.state.risk_obj_process ?
 						<ListForm
 							vizualization={this.state.visualization}
 							fields={this.getProcesses()}
 							submitLabel={Messages.get("label.submitLabel")}
 							showButtons={false}
 							onChange={this.onChangeProcesses}
+							className= {this.state.ObjectiveError  ? " borderError":""}
 						/>
-						:
-						""
-					}
+					:""}
 					<br />
 
 					{/* Atividade */}
 
-					{
-						!this.state.visualization
-						?
+					{!this.state.visualization ?
 						<div>
-							<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>
-								{Messages.get('label.risk.activityProcess')}
-							</div>
+							<div style={{ "display": "-webkit-box", margin: "10px 0px" }} className={"fpdi-text-label"}>{Messages.get('label.risk.activityProcess')}</div>
 							<div>
-								<input
-									style={{ "margin": "0px 5px" }}
-									type="radio"
-									name="activityProcess"
-									checked={this.state.risk_act_process === true}
-									onChange={this.handleActivityChange}
-									value="Sim"
-								/>Sim
-								<input
-									style={{ "margin": "0px 5px" }}
-									type="radio"
-									name="activityProcess"
-									checked={this.state.risk_act_process === false}
-									onChange={this.handleActivityChange}
-									value="Não"
-								/>Não
+								<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === true} onChange={this.handleActivityChange} value="Sim" />Sim
+								<input style={{ "margin": "0px 5px" }} type="radio" name="activityProcess" checked={this.state.risk_act_process === false} onChange={this.handleActivityChange} value="Não" />Não
 							</div>
 							<br />
 						</div>
-						:
-						""
-					}
-					{
-						!this.state.visualization && this.state.risk_act_process
-						?
+					: ""}
+					{!this.state.visualization && this.state.risk_act_process ?
 						<div>
 							<div style={{ position: "relative", bottom: '5px' }}>
 								<label htmlFor={this.state.fieldId} className="fpdi-text-label-none">
@@ -1055,39 +1015,30 @@ export default React.createClass({
 								<br />
 							</div>
 						</div>
-						:
-						""
-					}
+					: ""}
 
-					{!this.state.visualization && this.state.risk_act_process ? this.getProcessActivity() : ""}
+					{!this.state.visualization && this.state.risk_act_process ?
+						this.getProcessActivity() : ""}
 
-					{
-						this.state.visualization
-						?
+					{this.state.visualization  ?
 						<ListForm
 							vizualization={this.state.visualization}
 							fields={this.getActivities()}
 							submitLabel={Messages.get("label.submitLabel")}
 							showButtons={false}
 						/>
-						:
-						""
-					}
+					: ""}
 
 					<br />
 					<br />
 
-					{
-						!this.state.visualization
-						?
+					{!this.state.visualization ?
 						<VerticalForm
 							vizualization={this.state.visualization}
 							onCancel={this.onCancel}
 							onSubmit={this.submitWrapper}
 						/>
-						:
-						""
-					}
+					: ""}
 				</form>
 			</div>
 		);

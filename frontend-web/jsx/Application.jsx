@@ -2,7 +2,8 @@
 import React from "react";
 import { ToastContainer } from 'react-toastr';
 
-import TopBar from "forpdi/jsx/TopBar.jsx";
+import ForPDITopBar from "forpdi/jsx/TopBar.jsx";
+import ForRiscoTopBar from "forpdi/jsx_forrisco/TopBar.jsx";
 
 import AccessLevels from "forpdi/jsx/core/store/AccessLevels.json";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
@@ -94,7 +95,7 @@ export default React.createClass({
 		}
 		return (
 			<main className='fpdi-app-container'>
-				<TopBar />
+				{ this.props.location.pathname.includes("forrisco") ? <ForRiscoTopBar /> : <ForPDITopBar /> }
 				<ToastContainer ref="container"
 					className="toast-top-center" />
 				{this.props.children}
