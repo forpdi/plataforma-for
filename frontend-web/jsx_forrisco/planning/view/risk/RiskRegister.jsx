@@ -12,6 +12,7 @@ import RiskStore from "forpdi/jsx_forrisco/planning/store/Risk.jsx";
 import UnitStore from "forpdi/jsx_forrisco/planning/store/Unit.jsx";
 import ProcessStore from "forpdi/jsx_forrisco/planning/store/Process.jsx";
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
+import TipologyStore from "forpdi/jsx_forrisco/planning/store/RiskTipology.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
@@ -772,66 +773,6 @@ export default React.createClass({
 		}
 	},
 
-	// renderTypologies() {
-	// 	if (this.state.visualization) {
-	// 		return (
-	// 			<form>
-	// 				<div className="form-group form-group-sm">
-	// 					<label htmlFor="field-tipology" className="fpdi-text-label">
-	// 						Tipologia
-	// 					</label>
-	// 					<div>
-	// 						<span className="pdi-normal-text">
-	// 							{this.state.riskModel.tipology}
-	// 						</span>
-	// 					</div>
-	// 				</div>
-	// 			</form>
-	// 		);
-	// 	} else {
-	// 		return (
-	// 			<span className="form-horizontal">
-	// 				<form>
-	// 					<div className="form-group form-group-sm">
-	// 						<label htmlFor="field-tipology" className="fpdi-text-label">
-	// 							Tipologia
-	// 						</label>
-	// 						<select
-	// 							className="form-control"
-	// 							name="tipology"
-	// 							id="field-tipology"
-	// 							placeholder="Selecione"
-	// 							type="org.forpdi.planning.attribute.types.SelectField"
-	// 							ref={'field-9'}
-	// 							onChange={this.handleSelect}
-	// 						>
-	// 							<option value="" disabled>Selecione</option>
-	// 							<option data-placement="right" title="Risco Operacional">
-	// 								Risco Operacional
-	// 							</option>
-	// 							<option data-placement="right" title="Risco de imagem/reputação do órgão">
-	// 								Risco de imagem/reputação do órgão
-	// 							</option>
-	// 							<option data-placement="right" title="Risco legal">
-	// 								Risco legal
-	// 							</option>
-	// 							<option data-placement="right" title="Risco financeiro/orçamentário">
-	// 								Risco financeiro/orçamentário
-	// 							</option>
-	// 							<option data-placement="right" title="Risco de Integridade">
-	// 								Risco de Integridade
-	// 							</option>
-	// 							<option data-placement="right" title="Outra">
-	// 								Outra
-	// 							</option>
-	// 						</select>
-	// 					</div>
-	// 				</form>
-	// 			</span>
-	// 		);
-	// 	}
-	// },
-
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
@@ -893,41 +834,45 @@ export default React.createClass({
 						})
 					}
 
-					{/* this.renderTypologies() */}
-
 					{
 						this.state.showOtherField
 						?
 						<span className="form-horizontal" style={{ 'margin': '0' }}>
-							<form>
-								<label htmlFor="field-tipology" className="fpdi-text-label">
-									Nova Tipologia
-								</label>
-								<div className="form-group form-group-sm" style={{ 'width': '100%', 'margin': '0' }}>
-									<input
-										className="form-control"
-										name="tipology"
-										id="field-tipology"
-										placeholder="Selecione"
-										type="org.forpdi.planning.attribute.types.TextField"
-										style={{ 'display': 'inline-block', 'width': '67%' }}
+							<label htmlFor="field-tipology" className="fpdi-text-label">
+								Nova Tipologia
+							</label>
+							<div className="form-group form-group-sm" style={{ 'width': '100%', 'margin': '0' }}>
+								<input
+									className="form-control"
+									name="tipology"
+									id="field-tipology"
+									placeholder="Selecione"
+									type="org.forpdi.planning.attribute.types.TextField"
+									style={{ 'display': 'inline-block', 'width': '67%' }}
+								/>
+								<div className="row-tools-box" style={{ 'display': 'inline-block', 'marginLeft': '15px' }}>
+									<span
+										className="mdi mdi-check btn btn-sm btn-success"
+										style={{ 'marginRight': '0', 'padding': '6px 4px' }}
+										title="Salvar"
+										onClick={() => {
+											TipologyStore.dispatch({
+												action: TipologyStore.ACTION_CREATE,
+												data: this.refs['field-9'].refs.tipology.refs['field-tipology'].value,
+											})
+										}}
 									/>
-									<div className="row-tools-box" style={{ 'display': 'inline-block', 'marginLeft': '15px' }}>
-										<span
-											className="mdi mdi-check btn btn-sm btn-success"
-											title="Salvar"
-											onClick={() => {console.log('salvar')}}
-											style={{ 'marginRight': '0', 'padding': '6px 4px' }}
-										/>
-										<span
-											className="mdi mdi-close btn btn-sm btn-danger"
-											title="Cancelar"
-											onClick={() => {console.log('cancelar')}}
-											style={{ 'marginRight': '0', 'padding': '6px 4px' }}
-										/>
-									</div>
+									<span
+										className="mdi mdi-close btn btn-sm btn-danger"
+										style={{ 'marginRight': '0', 'padding': '6px 4px' }}
+										title="Cancelar"
+										onClick={() => {
+											this.refs['field-9'].refs.tipology.refs['field-tipology'].value = "";
+											this.setState({ showOtherField: false });
+										}}
+									/>
 								</div>
-							</form>
+							</div>
 						</span>
 						:
 						""
