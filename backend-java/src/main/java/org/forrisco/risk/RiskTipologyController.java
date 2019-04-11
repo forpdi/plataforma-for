@@ -14,6 +14,7 @@ import org.forrisco.risk.permissions.ManageRiskPermission;
 
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
+import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.NoCache;
@@ -33,15 +34,37 @@ public class RiskTipologyController extends AbstractController {
 	@Consumes
 	@NoCache
 	public void save(@NotNull @Valid RiskTipology tipology) {
-		Company company = this.domain.getCompany();
-		
-		if (company == null) {
-			this.fail("Impossível criar tipologia sem uma compania!");
+		try {
+			Company company = this.domain.getCompany();
+			
+			if (company == null) {
+				this.fail("Impossível criar tipologia sem uma compania!");
+			}
+			
+			tipology.setCompany(company);
+			
+			bs.save(tipology);
+			this.success();
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());			
 		}
-		
-		tipology.setCompany(company);
-		
-		bs.save(tipology);
-		this.success();
+	}
+
+	@Get(PATH)
+	@NoCache
+	public void getAll() {
+		try {
+			Company company = this.domain.getCompany();
+			
+			if (company == null) {
+				this.fail("Impossível buscar tipologias sem uma compania!");
+			}
+			
+			this.success(bs.getAll(company));
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
 	}
 }

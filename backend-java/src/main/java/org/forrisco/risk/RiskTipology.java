@@ -3,6 +3,8 @@ package org.forrisco.risk;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -22,7 +24,7 @@ public class RiskTipology extends SimpleLogicalDeletableEntity {
     @Column(nullable=false, length=4000)
     private String name;
     
-    @OneToOne(targetEntity=Company.class, optional=false, fetch=FetchType.EAGER)
+    @ManyToOne(targetEntity=Company.class, fetch=FetchType.EAGER)
     private Company company;
 
     public String getName() {
