@@ -9,7 +9,7 @@ import Logo from 'forpdi/img/logo.png';
 import forRiscoLogo from 'forpdi/img/forrisco-logo.png';
 import _ from 'underscore';
 import string from 'string';
-import LinkInformation from "forpdi/jsx/LinkInformation.jsx";
+import LinkInformation from "forpdi/jsx_forrisco/LinkInformation.jsx";
 
 export default React.createClass({
 	contextTypes: {

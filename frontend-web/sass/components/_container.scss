@@ -207,6 +207,12 @@
       transition-duration: 0.3s;
     }
   }
+  .forrisco-link-information {
+    color: $brand-secondary;
+    &:hover {
+      color: #4c2192;
+    }
+  }
 }
 
 .fpdi-fill {
