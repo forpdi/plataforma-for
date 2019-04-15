@@ -64,6 +64,7 @@ export default React.createClass({
 		PlanStore.on("find", (store, raw, opts) => {
 			var tree = raw.map((plan, index) => {
 				var to = '/plan/'+this.props.plan.get("id")+'/details/subplan/'+plan.id;
+
 				return {
 					label: plan.name,
 					expanded: false,
@@ -401,6 +402,7 @@ export default React.createClass({
 				data: newProps.plan.id
 			});
 		}
+
 	},
 
 	createDocumentNodeDef(section, namePrefix, idx) {

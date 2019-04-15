@@ -29,7 +29,6 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_DESTROY: 'item-destroy',
 	ACTION_FIND: 'item-find',
 	ACTION_FIND_TERMS:'item-findTerms',
-	//ACTION_RETRIEVE: 'item-retrieve',
 	ACTION_RETRIEVE_ITEM: 'item-retrieveItem',
 	ACTION_RETRIEVE_ITENS: 'item-retrieveItens',
 	ACTION_RETRIEVE_FIELD: 'item-retrieveField',
@@ -37,7 +36,6 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_UPDATE: 'item-update',
 	ACTION_CUSTOM_UPDATE: 'item-customUpdate',
 	ACTION_DELETE_PLAN: 'item-deleteItem',
-	dispatchAcceptRegex: /^item-[a-zA-Z0-9]+$/,
 	ACTION_DELETE: "item-delete",
 	ACTION_RETRIEVE_SUBITEM: "item-retrieveSubitem",
 	ACTION_RETRIEVE_SUBITENS: "item-retrieveSubitens",
@@ -47,6 +45,7 @@ var ItemStore = Fluxbone.Store.extend({
 	ACTION_RETRIEVE_SUBFIELD: 'item-retrieveSubField',
 	ACTION_DELETE_SUB: 'item-deleteSubitem',
 	ACTION_CUSTOM_UPDATE_SUB: 'item-customUpdateSub',
+	dispatchAcceptRegex: /^item-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: ItemModel,
 

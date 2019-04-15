@@ -16,6 +16,7 @@ var PlanRiskStore = Fluxbone.Store.extend({
 	ACTION_EDIT_PLANRISK: 'planRisk-editPlanRisk',
 	ACTION_SEARCH_TERMS: 'planRisk-searchTerms',
 	ACTION_SEARCH_BY_KEY: 'planRisk-searchTermsByKey',
+	dispatchAcceptRegex: /^planRisk-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: PlanRiskModel,
 

@@ -16,12 +16,12 @@ var processModel = Fluxbone.Model.extend({
 });
 
 var ProcessStore = Fluxbone.Store.extend({
-	dispatchAcceptRegex: /^process-[a-zA-Z0-9]+$/,
 	ACTION_LIST_BY_UNIT: 'process-listProcessByUnit',
 	ACTION_LIST_BY_PLAN: 'process-listProcessByPlan',
 	ACTION_CREATE: 'process-newProcess',
 	ACTION_DELETE: 'process-deleteProcess',
 	ACTION_UPDATE: 'process-updateProcess',
+	dispatchAcceptRegex: /^process-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: processModel,
 

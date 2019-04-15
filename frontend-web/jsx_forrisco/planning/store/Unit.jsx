@@ -30,7 +30,6 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_DELETE_UNIT: "unit-deleteUnit",
 	ACTION_DUPLICATE: "unit-duplicateUnits",
 	ACTION_NEW_SUBUNIT: "unit-newSubunit",
-	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "unit-customUpdate",
 	ACTION_FIND_BY_PLAN: "unit-findByPlan",
 	ACTION_FIND_ALL_BY_PLAN: "unit-findAllByPlan",
@@ -38,6 +37,7 @@ var UnitStore = Fluxbone.Store.extend({
 	ACTION_LIST_SUBUNIT_BY_PLAN: "unit-listSubunitsByPlan",
 	ACTION_FIND_TERMS: 'unit-findTerms',
 	ACTION_FINDALL_TERMS: 'unit-findAllTerms',
+	dispatchAcceptRegex: /^unit-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: unitModel,
 

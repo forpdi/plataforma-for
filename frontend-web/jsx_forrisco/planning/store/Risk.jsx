@@ -30,7 +30,6 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_MAIN_MENU_STATE: "risk-mainMenuState",
 	ACTION_DELETE: "risk-delete",
 	ACTION_NEWRISK: "risk-newRisk",
-	dispatchAcceptRegex: /^risk-[a-zA-Z0-9]+$/,
 	ACTION_CUSTOM_UPDATE: "risk-customUpdate",
 	ACTION_FIND_BY_PLAN: 'risk-findByPlan',
 	ACTION_FIND_INCIDENTS_BY_PLAN: "risk-findIncdentsByPlan",
@@ -58,6 +57,7 @@ var RiskStore = Fluxbone.Store.extend({
 	ACTION_LIST_RISKS_BY_PI: "risk-listRisksByPI",
 	ACTION_PAGINATE_INCIDENTS: 'risk-paginateIncidents',
 	ACTION_FIND_INCIDENTS_BY_UNIT: 'unit-findIncidentsByUnit',
+	dispatchAcceptRegex: /^risk-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: RiskModel,
 

@@ -36,7 +36,7 @@ export default React.createClass({
 			fields: null,
 			structures: null,
 			structureError:false,
-			vizualization: false,
+			vizualization: true,
 			tabPath: this.props.location.pathname,
 			undeletable: false
 		};

@@ -47,7 +47,7 @@ export default React.createClass({
 		PlanMacroStore.off(null, null, this);
 	},
 	componentWillReceiveProps(newProps) {
-		if (newProps.params.id !== this.state.planId) {
+		if (newProps.params.id != this.state.planId) {
 			this.setState({
 				model: null,
 				planId: null

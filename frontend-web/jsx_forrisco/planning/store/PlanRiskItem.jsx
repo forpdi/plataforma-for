@@ -19,8 +19,7 @@ var PlanRiskItemStore = Fluxbone.Store.extend({
 	ACTION_UPDATE_SUBITEM: 'planRiskItem-updateSubitens',
 	ACTION_DELETE_ITEM: 'planRiskItem-deleteItens',
 	ACTION_DELETE_SUBITEM: 'planRiskItem-deleteSubItens',
-
-
+	dispatchAcceptRegex: /^planRiskItem-[a-zA-Z0-9]+$/,
 	url: URL,
 	model: ItemModel,
 
