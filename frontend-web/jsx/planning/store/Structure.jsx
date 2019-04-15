@@ -46,6 +46,7 @@ var StructureStore = Fluxbone.Store.extend({
 	ACTION_REMOVE_FAVORITE: "structure-removeFavorite",
 	ACTION_LIST_FAVORITES: "structure-listFavorites",
 	ACTION_LIST_AGGREGATES: "structure-listAggregateIndicatorsByAggregate",
+	ACTION_RETRIEVE_OBJECTIVES_BY_COMPANY: "structure-retrieveObjectivesByCompany",
 	dispatchAcceptRegex: /^structure-[a-zA-Z0-9]+$/,
 
 	url: URL,
@@ -57,7 +58,7 @@ var StructureStore = Fluxbone.Store.extend({
 			url: me.url+"/attributetypes",
 			method: 'GET',
 			dataType: 'json',
-			success(response) {				
+			success(response) {
 				me.trigger("attributetypes", response);
 			},
 			error(opts, status, errorMsg) {
@@ -73,7 +74,7 @@ var StructureStore = Fluxbone.Store.extend({
 			method: 'GET',
 			data: data,
 			dataType: 'json',
-			success(response) {				
+			success(response) {
 				me.trigger("levelInstanceFind", response.data, pigback);
 			},
 			error(opts, status, errorMsg) {
@@ -89,7 +90,7 @@ var StructureStore = Fluxbone.Store.extend({
 			method: 'GET',
 			data: data,
 			dataType: 'json',
-			success(response) {				
+			success(response) {
 				me.trigger("retrieve-level-instance-performance", response.data, pigback);
 			},
 			error(opts, status, errorMsg) {
@@ -300,7 +301,7 @@ var StructureStore = Fluxbone.Store.extend({
 		});
 	},
 
-	getIndicatorsMacroPlan(data){		
+	getIndicatorsMacroPlan(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/indicatorsByMacroAndPlan",
@@ -334,6 +335,24 @@ var StructureStore = Fluxbone.Store.extend({
 		});
 	},
 
+	retrieveObjectivesByCompany(data){
+		var me = this;
+		$.ajax({
+			url: me.url+"/allobjectives",
+			method: 'GET',
+			dataType: 'json',
+			contentType: 'json',
+			data: data,
+			success(model) {
+				me.trigger("companyobjectivesretrivied", model);
+			},
+			error(opts, status, errorMsg) {
+				me.trigger("companyobjectivesretrivied", model);
+				me.handleRequestErrors([], opts);
+			}
+		});
+	},
+
 	getGoals(data){
 		var me = this;
 		$.ajax({
@@ -348,7 +367,7 @@ var StructureStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	getLevelSonsFilter(data) {
@@ -365,13 +384,13 @@ var StructureStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	deleteGoals(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: me.url+"/deleteGoals",	
+			url: me.url+"/deleteGoals",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
@@ -379,7 +398,7 @@ var StructureStore = Fluxbone.Store.extend({
 				list: {
 					list: data.list,
 					total: data.total
-				}				
+				}
 			}),
 			success(model) {
 				me.trigger("deletegoals", model);
@@ -391,13 +410,13 @@ var StructureStore = Fluxbone.Store.extend({
 	},
 
 	saveFavorite(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: me.url+"/savefavorite",	
+			url: me.url+"/savefavorite",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: JSON.stringify(data),		
+			data: JSON.stringify(data),
 			success(model) {
 				me.trigger("favoriteSaved", model);
 			},
@@ -408,13 +427,13 @@ var StructureStore = Fluxbone.Store.extend({
 	},
 
 	removeFavorite(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: me.url+"/removefavorite",	
+			url: me.url+"/removefavorite",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: JSON.stringify(data),		
+			data: JSON.stringify(data),
 			success(model) {
 				me.trigger("favoriteRemoved", model);
 			},
@@ -425,13 +444,13 @@ var StructureStore = Fluxbone.Store.extend({
 	},
 
 	listFavorites(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: me.url+"/listfavorites",	
+			url: me.url+"/listfavorites",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: data,		
+			data: data,
 			success(model) {
 				me.trigger("favoritesListeds", model);
 			},
@@ -442,13 +461,13 @@ var StructureStore = Fluxbone.Store.extend({
 	},
 
 	listAggregateIndicatorsByAggregate(data){
-		var me = this;		
+		var me = this;
 		$.ajax({
-			url: me.url+"/listaggregates",	
+			url: me.url+"/listaggregates",
 			method: 'GET',
 			dataType: 'json',
 			contentType: 'application/json',
-			data: data,		
+			data: data,
 			success(model) {
 				me.trigger("aggregatesListed", model);
 			},

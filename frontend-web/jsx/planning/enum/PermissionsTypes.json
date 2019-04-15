@@ -1,6 +1,23 @@
 {
+	"MANAGE_USERS_PERMISSION": "org.forpdi.core.user.authz.permission.ManageUsersPermission",
+	"VIEW_USERS_PERMISSION": "org.forpdi.core.user.authz.permission.ViewUsersPermission",
+	"EDIT_MESSAGES_PERMISSION": "org.forpdi.core.user.authz.permission.EditMessagesPermission",
+	"EXPORT_DATA_PERMISSION_FORPDI":"org.forpdi.core.user.authz.permission.ExportDataPermission",
+	"RESTORE_DATA_PERMISSION": "org.forpdi.core.user.authz.permission.RestoreDataPermission",
 	"MANAGE_PLAN_MACRO_PERMISSION":"org.forpdi.planning.permissions.ManagePlanMacroPermission",
 	"MANAGE_DOCUMENT_PERMISSION":"org.forpdi.planning.permissions.ManageDocumentPermission",
 	"MANAGE_PLAN_PERMISSION":"org.forpdi.planning.permissions.ManagePlanPermission",
-	"UPDATE_GOAL_PERMISSION":"org.forpdi.planning.permissions.UpdateGoalPermission"
+	"UPDATE_GOAL_PERMISSION":"org.forpdi.planning.permissions.UpdateGoalPermission",
+
+	"FORRISCO_MANAGE_USERS_PERMISSION": "org.forrisco.core.authz.permissions.ManageUsersPermission",
+	"FORRISCO_VIEW_USERS_PERMISSION": "org.forrisco.core.authz.permissions.ViewUsersPermission",
+	"FORRISCO_EDIT_MESSAGES_PERMISSION": "org.forrisco.core.authz.permissions.EditMessagesPermission",
+	"FORRISCO_EXPORT_DATA_PERMISSION":"org.forrisco.core.authz.permissions.ExportDataPermission",
+	"FORRISCO_MANAGE_POLICY_PERMISSION":"org.forrisco.core.policy.permissions.ManagePolicyPermission",
+	"FORRISCO_MANAGE_PLAN_RISK_PERMISSION":"org.forrisco.core.plan.permissions.ManagePlanRiskPermission",
+	"FORRISCO_MANAGE_UNIT_PERMISSION":"org.forrisco.core.unit.permissions.ManageUnitPermission",
+	"FORRISCO_EDIT_UNIT_PERMISSION":"org.forrisco.core.unit.permissions.EditUnitPermission",
+	"FORRISCO_MANAGE_PROCESS_PERMISSION":"org.forrisco.core.process.permissions.ManageProcessPermission",
+	"FORRISCO_MANAGE_RISK_PERMISSION":"org.forrisco.risk.permissions.ManageRiskPermission",
+	"FORRISCO_MANAGE_RISK_ITEMS_PERMISSION":"org.forrisco.risk.permissions.ManageRiskItemsPermission"
 }

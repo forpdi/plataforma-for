@@ -7,15 +7,20 @@ import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AppLogo from "forpdi/img/logoLogin.png";
-
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 
 var VerticalForm = Form.VerticalForm;
 
 var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; 
+var {ToastContainer} = ReactToastr;
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage);
 
 export default React.createClass({
+
+	contextTypes: {
+        router: React.PropTypes.object,
+    },
+
 	getInitialState() {
 		return {
 			fields: [{
@@ -37,18 +42,18 @@ export default React.createClass({
 			this.addAlertError(Messages.get("label.error.emptyEmail"));
 		}
 	},
+	onCancel(){
+		this.context.router.push("/login")
+	},
 	componentWillMount() {
-		UserSession.on("recoverpassword", model => {	
+		UserSession.on("recoverpassword", model => {
 			Modal.confirm(
-				Messages.get("label.attention"), 
+				Messages.get("label.attention"),
 				Messages.get("label.recoveryPasswordRecovery")+ " " + model.message+"." + "  " + Messages.get("label.recoveryPasswordRecoverySpam"),
 			() => {
 				Modal.hide();
-				location.assign("#/");		
-			});		
-		}, this);
-		UserSession.on("fail", msg => {			
-			this.addAlertError(msg);	
+				location.assign("#/");
+			});
 		}, this);
 	},
 	componentWillUnmount() {
@@ -56,7 +61,7 @@ export default React.createClass({
 	},
 
 	addAlertError(msg) {
-		this.refs.container.clear(); 
+		this.refs.container.clear();
 		this.refs.container.error(
 			msg,null, {
 				timeOut: 5000,
@@ -83,34 +88,36 @@ export default React.createClass({
 	render() {
 		return (
 			<div className="container-fluid">
-				<ToastContainer ref="container"					
+				<ToastContainer ref="container"
 							className="toast-top-center" />
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.get("label.forRiscoLogo")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titleRiskComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>
 
 		    <div className="row">
-				<div className="col-md-4 col-md-offset-4">	
-				<div className="fpdi-card-login">		
+				<div className="col-md-4 col-md-offset-4">
+				<div className="fpdi-card-login">
 					<div className="panel panel-default">
 					  <div className="panel-heading"><p className="fpdi-login-title"> {Messages.getEditable("label.title.recoverPassword","fpdi-nav-label")}</p></div>
 					  <div className="panel-body">
 
 					  <p className="fpdi-recover-password-title">{Messages.getEditable("label.emailRecoveryPassword","fpdi-nav-label")}</p>
-									<div className="fpdi-login-body">
-										<VerticalForm
-											onSubmit={this.onSubmit}
-											fields={this.state.fields}
-											store={UserSession}
-											submitLabel={Messages.get("label.submit.passwordRecoveryEmail")}
-											blockButtons={true}
-										/>
-									</div>
+							<div className="fpdi-login-body">
+								<VerticalForm
+									onSubmit={this.onSubmit}
+									fields={this.state.fields}
+									store={UserSession}
+									submitLabel={Messages.get("label.submit.passwordRecoveryEmail")}
+									blockButtons={true}
+									onCancel={this.onCancel}
+								/>
+							</div>
 					  </div>
 					</div>
 				</div>

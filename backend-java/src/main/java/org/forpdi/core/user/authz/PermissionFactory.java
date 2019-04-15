@@ -10,6 +10,13 @@ import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
+import org.forrisco.core.plan.permissions.ManagePlanRiskPermission;
+import org.forrisco.core.policy.permissions.ManagePolicyPermission;
+import org.forrisco.core.process.permissions.ManageProcessPermission;
+import org.forrisco.core.unit.permissions.EditUnitPermission;
+import org.forrisco.core.unit.permissions.ManageUnitPermission;
+import org.forrisco.risk.permissions.ManageRiskItemsPermission;
+import org.forrisco.risk.permissions.ManageRiskPermission;
 
 public final class PermissionFactory extends ComponentFactory<Permission> {
 
@@ -20,19 +27,34 @@ public final class PermissionFactory extends ComponentFactory<Permission> {
 	}
 
 	private PermissionFactory() {
+		// forpdi permissions
 		// this.register(new SystemAdminPermission());
+		
+		// forpdi permissions
 		this.register(new ManageUsersPermission());
 		this.register(new ViewUsersPermission());
 		this.register(new EditMessagesPermission());
 		// this.register(new ManageStructurePermission());
 		// FIXME Isso não pode estar aqui, viola as dependências dos módulos.
+		this.register(new ExportDataPermission());
+		this.register(new RestoreDataPermission());
 		this.register(new ManagePlanMacroPermission());
 		this.register(new ManageDocumentPermission());
 		this.register(new ManagePlanPermission());
 		this.register(new UpdateGoalPermission());
-
-		this.register(new ExportDataPermission());
-		this.register(new RestoreDataPermission());
+		
+		// forrisco permissions
+		this.register(new org.forrisco.core.authz.permissions.ManageUsersPermission());
+		this.register(new org.forrisco.core.authz.permissions.ViewUsersPermission());
+		this.register(new org.forrisco.core.authz.permissions.EditMessagesPermission());
+		this.register(new org.forrisco.core.authz.permissions.ExportDataPermission());
+		this.register(new ManagePolicyPermission());
+		this.register(new ManagePlanRiskPermission());
+		this.register(new ManageUnitPermission());
+		this.register(new EditUnitPermission());
+		this.register(new ManageProcessPermission());
+		this.register(new ManageRiskPermission());
+		this.register(new ManageRiskItemsPermission());
 	}
 
 	public class SystemAdminPermission extends Permission {

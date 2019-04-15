@@ -1,8 +1,8 @@
 
 .fpdi-required {
-	color: $brand-danger;
 
 	&:after {
+		color: $brand-danger;
 		content: "*";
 	}
 }
@@ -48,7 +48,7 @@ form {
 }
 
 .form-group:last-child {
-  margin-bottom: 0;
+  /*margin-bottom: 0;*/
 }
 
 // Custom Form Containers
@@ -119,4 +119,24 @@ form {
 
 .btn-group.btn-group-justified .button-radio-default:not(:last-child) {
 	border-right: 2px solid rgba(0,0,0,.06);
+}
+
+
+.css-15brt4p {
+	display: none !important;
+}
+
+
+/*.multiselect {
+	//margin-top: 8px;
+}*/
+
+.css-ik6y5r{
+	border: 1px solid #A9A9A9;
+}
+
+.buttons-check-and-close-error {
+	@extend .borderError;
+	border-radius: 3px;
+	padding: 2px 0 2px 4px;
 }

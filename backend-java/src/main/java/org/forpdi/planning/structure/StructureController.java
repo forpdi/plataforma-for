@@ -1014,6 +1014,42 @@ public class StructureController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+	
+	/**
+	 * Listar instâncias do level objetivo pela instituição.
+	 * 	(structlevel.name='objective')
+	 * 
+	 * @return list Lista de instâncias do level objetivo.
+	 */
+	@Get(BASEPATH + "/structure/allobjectives")
+	@NoCache
+	@Permissioned
+	public void listObjectiveByCompany() {
+		
+		List<PlanMacro> plans= this.planBS.listAllMacros(this.domain.getCompany());
+		List<StructureLevelInstance> list = new ArrayList<StructureLevelInstance>();
+		
+		try {
+			for(PlanMacro plan :plans) {
+				PaginatedList<StructureLevelInstance> sli = this.bs.listObjectives(plan);
+				
+				for(StructureLevelInstance instance : sli.getList()) {	
+					if(instance.getLevel().getName().equals("Objetivo")){
+						list.add(instance);
+					}
+				}
+			}
+
+			PaginatedList<StructureLevelInstance> result= new PaginatedList<StructureLevelInstance>();
+			
+			result.setList(list);
+			result.setTotal((long) list.size());
+			this.success(result);
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.fail("Erro inesperado: " + ex.getMessage());
+		}
+	}
 
 	/**
 	 * Gerar instâncias de um level meta.

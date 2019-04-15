@@ -882,7 +882,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("deleted", deleted));
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
 		return list;
 	}

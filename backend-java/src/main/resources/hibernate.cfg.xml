@@ -82,6 +82,36 @@
   		<mapping class="org.forpdi.planning.document.DocumentAttribute"/>
   		<mapping class="org.forpdi.planning.document.DocumentSection"/>
   		<mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
+  		<mapping class="org.forpdi.system.Archive"/>
+  		<mapping class="org.forrisco.core.policy.Policy"/>
+  		<mapping class="org.forrisco.core.plan.PlanRisk"/>
+  		<mapping class="org.forrisco.core.unit.Unit"/>
+  		<mapping class="org.forrisco.core.item.Item"/>
+  		<mapping class="org.forrisco.core.item.SubItem"/>
+  		<mapping class="org.forrisco.core.item.FieldItem"/>
+  		<mapping class="org.forrisco.core.item.FieldSubItem"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskItem"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskItemField"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskSubItem"/>
+  		<mapping class="org.forrisco.core.item.PlanRiskSubItemField"/>
+  		<mapping class="org.forrisco.core.process.Process"/>
+  		<mapping class="org.forrisco.core.process.ProcessUnit"/>
+  		<mapping class="org.forrisco.risk.Risk"/>
+  		<mapping class="org.forrisco.risk.RiskLevel"/>
+  		<mapping class="org.forrisco.risk.RiskHistory"/>
+  		<mapping class="org.forrisco.risk.Contingency"/>
+  		<mapping class="org.forrisco.risk.Incident"/>
+  		<mapping class="org.forrisco.risk.Monitor"/>
+  		<mapping class="org.forrisco.risk.MonitorHistory"/>
+  		<mapping class="org.forrisco.risk.PreventiveAction"/>
+  		<mapping class="org.forrisco.risk.objective.RiskActivity"/>
+  		<mapping class="org.forrisco.risk.objective.RiskProcess"/>
+  		<mapping class="org.forrisco.risk.objective.RiskStrategy"/>
+
+		<!-- <event type="post-insert">
+            <listener class="org.forrisco.risk.RiskInterceptor"/>
+             listener class="org.hibernate.event.def.DefaultLoadEventListener"/>
+        </event> -->
 
 	</session-factory>
 </hibernate-configuration>

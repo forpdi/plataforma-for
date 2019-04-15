@@ -12,7 +12,9 @@ export default React.createClass({
         options: {
           //title: Messages.getEditable("label.indicatorsHistory","fpdi-nav-label"),
           vAxis: {
-            title: 'Desempenho (%)', minValue: 0
+			title: 'Desempenho (%)',
+			minValue: 0,
+			format : '#,##0'
           },
           hAxis: {
             title: 'Período'

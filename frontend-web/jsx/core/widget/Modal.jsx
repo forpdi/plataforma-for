@@ -5,6 +5,8 @@ import ReactDOM from 'react-dom';
 
 import FeedbackPost from "forpdi/jsx/core/widget/contact/FeedbackPost.jsx";
 import ReportProblem from "forpdi/jsx/core/widget/contact/ReportProblem.jsx";
+import RiskList from "forpdi/jsx_forrisco/core/widget/risk/RiskList.jsx";
+import IncidentsList from "forpdi/jsx_forrisco/core/widget/incidents/IncidentsList.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 var EL = document.getElementById("main-global-modal");
@@ -365,7 +367,7 @@ var ExportDocumentModal = React.createClass({
 			        			<label htmlFor="documentTitle">{Messages.get("label.documentTitle")} <span className="fpdi-required">&nbsp;</span>
 			        				<input type='text' name="documentTitle" ref="documentTitle" id="documentTitle" />
 			        			</label>
-			        			
+
 			        		</div>
 			        		<div className="col-md-6">
 			        			<label htmlFor="documentAuthor">{Messages.get("label.author")} <span className="fpdi-required">&nbsp;</span>
@@ -375,9 +377,9 @@ var ExportDocumentModal = React.createClass({
 	      					<div className="col-md-12" >
 		      					<label htmlFor="container"> {Messages.get("label.includeSectionsDocument")} <span className="fpdi-required">&nbsp;</span></label>
 		      					<div className="container" id="container">
-		      						{this.props.text}	
+		      						{this.props.text}
 								</div>
-							</div>								
+							</div>
 							<br/>
 							<div className="col-md-12" >
 								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
@@ -387,6 +389,11 @@ var ExportDocumentModal = React.createClass({
 								<p className="help-block">
 									<span className="fpdi-required" /> {Messages.get("label.requiredFields")}
 								</p>
+
+								<div className={"icon-link "} onClick={this.props.preview.onClick}>
+									<a>{this.props.preview.label}</a>
+								</div>
+								<br/>
 	        					<button type="button" className="btn btn-sm btn-success"  onClick={this.props.onConfirm}>{Messages.get("label.export")}</button>
 	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
@@ -404,7 +411,9 @@ var ImportUsersModal = React.createClass({
 			<div className="modal-dialog modal-lg">
 				<div className="modal-content">
 					<div className="modal-header fpdi-modal-header">
-	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        			<button type="button" className="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+	        			</button>
 	        			<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
 	      			</div>
 	      			<div className="modal-body fpdi-modal-body">
@@ -416,6 +425,28 @@ var ImportUsersModal = React.createClass({
 	        					<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
 	        				</div>
 	      			</div>
+				</div>
+			</div>
+		);
+	}
+});
+
+
+
+var GraphHistory= React.createClass({
+	render() {
+		return (
+			<div className="modal-dialog modal-graph modal-md">
+				<div className="modal-content graph">
+					<div className="frisco-modal-history">
+	        			<span>
+							<h4 className="modal-title" id="myModalLabel">{this.props.title}</h4>
+	        			</span>
+						<button type="button" className="mdi mdi-close-circle close-modal cursorPointer" data-dismiss="modal"/>
+	      			</div>
+
+	      			<hr className="divider"/>
+	      			<div className="modal-body fpdi-modal-body"> {this.props.text} </div>
 				</div>
 			</div>
 		);
@@ -464,21 +495,21 @@ var Modal = {
 		ReactDOM.render((
 			<ConfirmModalCustom onConfirm={cb} text={text} onCancel = {cd}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	confirmConviteUserCustom(text) {
 		ReactDOM.render((
 			<ConfirmConviteUser text={text} />
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	confirmCancelCustom(cb, text, cd) {
 		ReactDOM.render((
 			<CancelModalCustom onConfirm={cb} text={text} onCancel = {cd}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 
 	deleteConfirm(cb) {
@@ -497,7 +528,7 @@ var Modal = {
 		ReactDOM.render((
 			<ConcludeGoalModalCustom onConfirm={cb} text={text}/>
 		),this.$el);
-		$(this.$el).modal('show');	
+		$(this.$el).modal('show');
 	},
 	readText(title, msg, cb) {
 		ReactDOM.render((
@@ -546,9 +577,9 @@ var Modal = {
 		var uploadOptions = {
 	        url: url,
 	        dataType: 'json',
-	        beforeSend : function(xhr, opts) {	        	
-				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length); 
-	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType))) 
+	        beforeSend : function(xhr, opts) {
+				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length);
+	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType)))
 	        			|| format.toLowerCase().match(typesBlocked)) { //|| this.files[0].type.toLowerCase().match(typesBlocked)
 	        		if (!this.files[0].type.toLowerCase().match(fileType) || this.files[0].type.toLowerCase().match(typesBlocked))
 	        			format = this.files[0].type.split("/")[1] || "";
@@ -562,9 +593,9 @@ var Modal = {
 					xhr.abort();
 				}
 				me.fileName = this.files[0].name;
-	        }, 
+	        },
 	        done: function (evt, opts) {
-	            if (evt.type == 'fileuploaddone') {			            	
+	            if (evt.type == 'fileuploaddone') {
 	            	if (typeof onSuccess == 'function') {
 	            		onSuccess.call(me,opts.jqXHR.responseJSON);
 					}
@@ -577,11 +608,11 @@ var Modal = {
 				}
 	        },
 			fail: function (evt,opts) {
-				if(typeViolation){					
-					document.getElementById('upload-error-span').innerHTML = 
+				if(typeViolation){
+					document.getElementById('upload-error-span').innerHTML =
 					"O formato "+format+" não é válido.<br>"+(validSamples ? Messages.get("label.examplesValidFormats") + ": "+validSamples : "");
 				} else if (sizeExceeded){
-					document.getElementById('upload-error-span').innerHTML = 
+					document.getElementById('upload-error-span').innerHTML =
 					"Tamanho máximo excedido, o tamanho máximo é "+maxSize/10e5 +"MB";
 				} else if (typeof onFailure == 'function') {
 	            	onFailure.call(me,opts.jqXHR.responseJSON);
@@ -607,13 +638,13 @@ var Modal = {
 			<FileReaderModal title={title} message={msg} type={fileType} onSuccess={onSuccess}/>
 		),this.$el);
 		this.show();
-		
+
 	},
 
-	exportDocument(title, text, cb) {
+	exportDocument(title, text, cb, pre) {
 		var me = this;
 		ReactDOM.render((
-			<ExportDocumentModal title={title} text={text} onConfirm={cb}/>
+			<ExportDocumentModal title={title} text={text} onConfirm={cb} preview={pre}/>
 		),this.$el);
 		this.show();
 	},
@@ -623,6 +654,37 @@ var Modal = {
 		ReactDOM.render((
 			<ImportUsersModal title={title} text={text} onConfirm={cb}/>
 		),this.$el);
+		this.show();
+	},
+
+	GraphHistory(title, text){
+		var me = this;
+		ReactDOM.render((
+			<GraphHistory title={title} text={text}/>
+		),this.$el);
+
+		this.show();
+	},
+
+	riskList(plan, unit, threats, probability, impact) {
+		var me = this;
+		ReactDOM.render((
+			<RiskList
+				plan={plan}
+				unit={unit}
+				threats={threats}
+				probability={probability}
+				impact={impact}
+				redirect={this.hide.bind(this)}/>
+		), this.$el);
+		this.show();
+	},
+
+	incidentModal(incidents) {
+		var me = this;
+		ReactDOM.render((
+			<IncidentsList incidents={incidents} redirect={this.hide.bind(this)}/>
+		), this.$el);
 		this.show();
 	}
 };

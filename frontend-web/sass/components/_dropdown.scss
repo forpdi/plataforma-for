@@ -44,19 +44,19 @@
     font-weight: $font-weight-light;
   }
 
+  & > li > a > span.mdi.icon-link-forrisco {
+    color: #7d45d8;
+  }
+
 
   & li.selected {
     background-color: #f5faff;
-    //border: 1px solid rgba(79, 215, 146, .5); 
+    //border: 1px solid rgba(79, 215, 146, .5);
     border-radius: 3px;
 
     & > a,
     & > a > span {
       color: rgba(79, 215, 146, 1);
-    }
-
-    & .selected-icon {
-
     }
   }
 }

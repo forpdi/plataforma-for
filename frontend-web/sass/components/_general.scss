@@ -1,6 +1,7 @@
 .mdi {
 	cursor: default;
 	&:before {
+		cursor: pointer;
 		vertical-align: middle;
 	}
 	& + .mdi:not(:first-child) {
@@ -220,7 +221,7 @@ span.cursorDefault {
 .right-addon .mdiBsc {
 	position: absolute;
 	background-color:#D3D3D3;
-	width: 25px;
+	width: 29px;
 	height: 30px;
 	padding-left:5px;
 	color:#666666;
@@ -245,9 +246,9 @@ span.cursorDefault {
 }
 
 
-.fpdi-app-body .fpdi-app-content{
-	padding-left: 0px;
-}
+// .fpdi-app-body .fpdi-app-content{
+// 	padding-left: 0px;
+// }
 
 .marginLeft0{
 	margin-left: 0px !important;
@@ -390,8 +391,9 @@ span.inner{
 }
 
 .fpdi-plan-details{
-   position: relative;
-   min-height: 100%;
+	width: 100%;
+  position: relative;
+  min-height: 100%;
 }
 
 .fpdi-tabs .fpdi-tabs-content {
@@ -453,6 +455,10 @@ span.inner{
 .center {
 	display: block;
 	margin: auto;
+}
+
+.text-align-center {
+	text-align: center;
 }
 
 .divider {
@@ -786,6 +792,7 @@ label{
 
 .exportDocumentError {
 	color: #FF0000;
+	display: -webkit-inline-box;
 }
 
 .importUsersWarning {
@@ -1208,7 +1215,7 @@ label{
 .right-addonPesquisa .mdiIconPesquisa {
 	position: absolute;
 	right: -1px;
-	width: 36px;
+	width: 31px;
 	height: 32px;
 	padding: 8px 0px 0px 10px;
 	background-color: #0085D9;
@@ -1258,7 +1265,7 @@ label{
 *******************************************************************************************/
 
 .dashboard-plan-details-header {
-	background-color: #2980B9;
+	background-color: #5064d8;
 	color: white;
 	padding: 16px; //Atributo principal
 	font-size: 12px;
@@ -1324,7 +1331,12 @@ label{
 }
 
 .icon-link {
-    cursor: pointer !important;
+	cursor: pointer !important;
+}
+
+.icon-link-forrisco {
+	cursor: pointer !important;
+	color: #7d45d8;
 }
 
 .fpdi-browsers-info {
@@ -1403,9 +1415,126 @@ label{
 
 .break-text{
 	white-space: pre-line;
-    word-break: break-all;
+  // word-break: break-all;
 }
 
 .white-space {
 	white-space: nowrap;
+}
+
+.placeholder-italic {
+	&::-webkit-input-placeholder {
+		font-style: italic;
+	}
+	&:-moz-placeholder {
+		font-style: italic;
+	}
+	&::-moz-placeholder {
+		font-style: italic;
+	}
+	&:-ms-input-placeholder {
+		font-style: italic;
+	}
+}
+
+pre.pre-info {
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+	background-color: transparent;
+	border: none;
+	color: #575858;
+	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	padding: 0;
+	word-break: normal;
+}
+
+.dashboard-risk-centralize{
+	background: #6C7A89;
+	width: 36vw;
+	height: 36vh;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.dashboard-matrix-container {
+	height: 362px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	table-layout: fixed;
+}
+
+.dashboard-matrix-container-inner {
+	display: flex;
+	height: 100%;
+	width: 95%;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+
+.matrix-tr {
+	min-width: 200px;
+	width: 90%;
+	text-align: -webkit-center;
+}
+
+.matrix-td {
+	text-align: center;
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.matrix-content {
+	text-align: center;
+	display: flex;
+}
+
+.matrix-td-risk {
+	text-align: center;
+	width: 10%;
+}
+
+.matrix-impact-tr {
+	padding-left: 110px;
+	width: 90%;
+	margin-top: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-td {
+	width: 90%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.matrix-impact-div {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.matrix-vertical-text {
+	transform: rotate(270deg);
+
+	&.dashboard {
+		width: 25px;
+		margin-left: 5px;
+		margin-top: 60px;
+		position: relative;
+		font-weight: bold;
+	}
 }

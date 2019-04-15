@@ -2,3 +2,7 @@
 *.bak
 *.backup
 *.sublime-workspace
+.idea/
+/.metadata/
+.recommenders/
+RemoteSystemsTempFiles/

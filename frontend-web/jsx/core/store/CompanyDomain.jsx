@@ -42,7 +42,6 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 
 	removeDomain(id) {
 		var me = this;
-		console.log(id)
 		$.ajax({
 			method: "DELETE",
 			url: me.url+"/"+id,

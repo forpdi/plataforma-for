@@ -4,6 +4,8 @@ import S from 'string';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import UserSession from 'forpdi/jsx/core/store/UserSession.jsx';
+import _ from 'underscore';
+import permissionTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 const PropTypes = React.PropTypes;
 
@@ -61,7 +63,7 @@ const EditMessagePopover = React.createClass({
 	componentDidMount() {
 		var me = this;
 		$(document).ready(function(){
-	  		$("#message-edit-container").click(function(e){				
+	  		$("#message-edit-container").click(function(e){
 				var e=window.event||e;
 				e.stopPropagation();
 			});
@@ -74,7 +76,7 @@ const EditMessagePopover = React.createClass({
 					left: -200,
 					messageComponent: null
 	    		})
-			});	
+			});
 		});
 	},
 
@@ -136,11 +138,15 @@ const EditableMessage = React.createClass({
 		};
 	},
 	onContextMenu(event) {
-		if (!this.context.roles.ADMIN)
-			return;
-		event.preventDefault();
-		EditCt.show(this.props.messageKey, this.props.text,
-			event.clientX, event.clientY, this);
+		// permissao de editar do forpdi como default
+		const permission = this.props.permission || permissionTypes.EDIT_MESSAGES_PERMISSION;
+		console.log(permission)
+		if (this.context.roles.ADMIN ||
+				_.contains(this.context.permissions, permission)) {
+			event.preventDefault();
+			EditCt.show(this.props.messageKey, this.props.text,
+				event.clientX, event.clientY, this);
+		}
 	},
 	updateText(text) {
 		this.setState({text: text});
@@ -165,9 +171,14 @@ var Messages = {
 		}
 		return this._messages[key];
 	},
-	getEditable(key, containerClassName) {
+	getEditable(key, containerClassName, permission) {
 		var msg = this.get(key);
-		return <EditableMessage messageKey={key} text={msg} className={containerClassName} />;
+		return <EditableMessage
+			messageKey={key}
+			text={msg}
+			className={containerClassName}
+			permission={permission}
+		/>;
 	},
 };
 

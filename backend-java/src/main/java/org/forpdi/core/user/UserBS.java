@@ -17,9 +17,11 @@ import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationSetting;
 import org.forpdi.core.notification.NotificationType;
 import org.forpdi.core.user.auth.UserAccessToken;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permission;
 import org.forpdi.core.user.authz.PermissionFactory;
 import org.forpdi.core.user.authz.UserPermission;
+import org.forpdi.core.utils.Consts;
 import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.ResponsibleField;
 import org.forpdi.planning.permissions.PermissionDTO;
@@ -47,7 +49,6 @@ public class UserBS extends HibernateBusiness {
 	private CompanyDomain domain;
 	@Inject
 	private NotificationBS notificationBS;
-	private static final int PAGESIZE = 5;
 
 	/**
 	 * Salvar o usuário no banco de dados.
@@ -324,7 +325,7 @@ public class UserBS extends HibernateBusiness {
 			page = 1;
 		}
 		if (pageSize == null) {
-			pageSize = PAGESIZE;
+			pageSize = Consts.MIN_PAGE_SIZE;
 		}
 		PaginatedList<User> results = new PaginatedList<User>();
 		if (this.domain == null) {
@@ -335,13 +336,18 @@ public class UserBS extends HibernateBusiness {
 			results.setTotal((Long) counting.uniqueResult());
 
 		} else {
-			Criteria criteria = this.dao.newCriteria(CompanyUser.class).setFirstResult((page - 1) * pageSize)
-					.setMaxResults(pageSize).add(Restrictions.eq("company", this.domain.getCompany()))
-					.createAlias("user", "user", JoinType.INNER_JOIN).addOrder(Order.asc("user.name"));
+			Criteria criteria = this.dao.newCriteria(CompanyUser.class)
+					.setFirstResult((page - 1) * pageSize)
+					.setMaxResults(pageSize)
+					.add(Restrictions.eq("company", this.domain.getCompany()))
+					.createAlias("user", "user", JoinType.INNER_JOIN)
+					.addOrder(Order.asc("user.name"));
+			
 			Criteria counting = this.dao.newCriteria(CompanyUser.class)
 					.add(Restrictions.eq("company", this.domain.getCompany()))
 					.createAlias("user", "user", JoinType.INNER_JOIN)
 					.setProjection(Projections.countDistinct("user.id"));
+			
 			List<CompanyUser> companyUsers = this.dao.findByCriteria(criteria, CompanyUser.class);
 			ArrayList<User> users = new ArrayList<User>(companyUsers.size());
 			for (CompanyUser companyUser : companyUsers) {
@@ -608,6 +614,20 @@ public class UserBS extends HibernateBusiness {
 			user = null;
 		}
 		return user;
+	}
+
+	public PaginatedList<User> listByPermissionLevel(AccessLevels accessLevel) {
+		PaginatedList<User> results = new PaginatedList<User>();
+		
+		Criteria criteria = this.dao.newCriteria(User.class);
+		criteria.add(Restrictions.eq("accessLevel", accessLevel.getLevel()));
+		criteria.add(Restrictions.eq("deleted",false));
+		
+		List<User> list = this.dao.findByCriteria(criteria, User.class);
+		
+		results.setList(list);
+		results.setTotal((long) list.size());
+		return results;
 	}
 
 }

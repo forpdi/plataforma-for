@@ -1,29 +1,30 @@
 import _ from 'underscore';
 import React from "react";
-import {Store} from 'forpdi/jsx/core/store/Fluxbone.jsx';
-import Modal from 'forpdi/jsx/core/widget/Modal.jsx';
 import $ from 'jquery';
+
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
+import { MIN_PAGE_SIZE } from "forpdi/jsx/core/util/const.js"
 
 export default React.createClass({
 	getDefaultProps() {
 		return {
 			total: 0,
-			onChangePage: _.noop
+			onChangePage: _.noop,
+			defaultPageSize: MIN_PAGE_SIZE,
 		};
 	},
 	getInitialState() {
 		return {
-			page: 1,			
-			pageSize: 5,
-			pages: 0
+			page: 1,
+			pageSize: this.props.defaultPageSize,
+			pages: 0,
 		};
 	},
 
-	loadPage(page, size){		
+	loadPage(page, size){
 		size = (isNaN(size) ? this.state.pageSize : size);
 		page = (page > Math.ceil(this.props.total/size) ? Math.ceil(this.props.total/size) : page);
-		this.props.onChangePage(page, size);		
+		this.props.onChangePage(page, size);
 		this.state.page = page;
 	},
 
@@ -37,7 +38,7 @@ export default React.createClass({
 		this.setState({
 			pages: Math.ceil(newProps.total/this.state.pageSize),
 			page: (this.props.page != undefined ? this.props.page : (this.state.page > Math.ceil(newProps.total/this.state.pageSize) ? 1 : this.state.page))
-		});	
+		});
 	},
 
 	changePageSize(evt){
@@ -59,7 +60,7 @@ export default React.createClass({
 			   				{i}
 			   			</a>
 			   		</li>
-			   	);		    
+			   	);
 			}
 			return pages;
 		}
@@ -80,7 +81,7 @@ export default React.createClass({
 			if(!_.contains(newPages, n)){
 				newPages.push(n);
 			}
-		});		
+		});
 		newPages.sort(function(a, b){return a-b});
 		pages = [];
 		newPages.map((i, idx) => {
@@ -91,7 +92,7 @@ export default React.createClass({
 			   				...
 			   			</a>
 			   		</li>
-			   	);	
+			   	);
 			}
 			pages.push(
 	    		<li key={"page-"+i} className={i == this.state.page ? "active" : ""}>
@@ -105,14 +106,14 @@ export default React.createClass({
 		return pages;
 	},
 
-	render(){	
+	render(){
 		if(this.props.total > 0){
 			return(
 				<div className="pagination-ctn">
 					<span className="page-number">
 						{"Página "+this.state.page+" de "+this.state.pages}
 						<span className="marginLeft20">{ Messages.get ("label.show") + " "}</span>
-						<select onChange={this.changePageSize} id={this.props.tableName} className="page-size-dropdown">
+						<select onChange={this.changePageSize} id={this.props.tableName} className="page-size-dropdown" value={this.state.pageSize}>
 							<option value="5">{Messages.get("label.fiveItems")}</option>
 							<option value="10">{Messages.get("label.tenItems")}</option>
 							<option value="15">{Messages.get("label.fifteenItems")}</option>
@@ -120,7 +121,7 @@ export default React.createClass({
 							<option value="25">{Messages.get("label.twentyFiveItems")}</option>
 							<option value="50">{Messages.get("label.fiftyItems")}</option>
 						</select>
-					</span>				
+					</span>
 					<nav aria-label="Page navigation" className="floatRight">
 					  <ul className="pagination">
 					    <li>
@@ -129,7 +130,7 @@ export default React.createClass({
 					        <span aria-hidden="true">{Messages.get("label.previous")}</span>
 					      </a>
 					    </li>
-					    {this.renderPages()}								    
+					    {this.renderPages()}
 					    <li>
 					      <a aria-label="Next" className={this.state.page >= this.state.pages ? "page_disabled page-nr" : "page-nr"}
 					       onClick={this.state.page < this.state.pages ? this.loadPage.bind(this,Number(this.state.page)+1) : _.noop}>
@@ -142,6 +143,6 @@ export default React.createClass({
 			);
 		} else {
 			return <div/>
-		}		
+		}
 	}
 });
