@@ -202,7 +202,7 @@ export default React.createClass({
 						var probability = matrix[(line) * (this.state.policyModel.ncolumn + 1)][0];
 
 						return (
-							<div className={"icon-link Cor dashboard " + color} onClick={() => this.showRisk(probability, impact)}>
+							<div style={{"font-size" : "18px"}}className={"icon-link Cor dashboard " + color} onClick={() => this.showRisk(probability, impact)}>
 								<b>{this.countRisks(risks, impact, probability, color)}</b>
 							</div>
 						)
