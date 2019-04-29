@@ -116,7 +116,7 @@ export default React.createClass({
 
 				}
 
-				if(model.type == AttributeTypes.RESPONSIBLE_FIELD && model.attributeInstance.valueAsNumber != undefined) {
+				if(model.type == AttributeTypes.RESPONSIBLE_FIELD && model.attributeInstance && model.attributeInstance.valueAsNumber) {
 					value=model.attributeInstance.valueAsNumber
 				}
 
