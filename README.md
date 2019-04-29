@@ -1,13 +1,10 @@
 
 ![PlataformaFor_logo](http://teste.forpdi.org/images/plataforma-for-logo.svg)
 
-![ForPDI Logo](http://forpdi.org/img/logo_forpdi.png)
+Plataforma Open Source para:
 
-Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgação de Planos de Desenvolvimento Institucional (PDI).
-
-![ForRisco logo](http://www.forrisco.org/imagens/logo.svg)
-
-Plataforma Open Source para criação, gerenciamento, acompanhamento e divulgação de Riscos.
+- Criação, gerenciamento, acompanhamento e divulgação de Planos de Desenvolvimento Institucional (PDI).
+- Criação, gerenciamento, acompanhamento e divulgação de Planos de Gestão de  Riscos.
 
 Website ForPDI: [http://www.forpdi.org/](http://www.forpdi.org/)
 
