@@ -12,7 +12,6 @@ import org.forpdi.core.user.User;
 import org.forrisco.core.plan.PlanRisk;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
  * @author Matheus Nascimento
@@ -25,35 +24,35 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_unit";
 	private static final long serialVersionUID = 1L;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length = 255)
 	private String name;
 
-	@Column(nullable = false, length=255)
+	@Column(nullable = false, length = 255)
 	private String abbreviation;
-	
-	@Column(nullable = true, length=4000)
+
+	@Column(nullable = true, length = 4000)
 	private String description;
 
-	@OneToOne(targetEntity=Unit.class, optional=true, fetch=FetchType.EAGER)
+	@OneToOne(targetEntity = Unit.class, optional = true, fetch = FetchType.EAGER)
 	private Unit parent;
-	
-	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
+
+	@ManyToOne(targetEntity = User.class, optional = false, fetch = FetchType.EAGER)
 	private User user;
 
-	//@SkipSerialization
-	@ManyToOne(targetEntity=PlanRisk.class, optional=false, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity = PlanRisk.class, optional = false, fetch = FetchType.EAGER)
 	private PlanRisk planRisk;
 
 	@Transient
 	private Long riskSearchId;
-	
-	public Unit() {}
-	
+
+	public Unit() {
+	}
+
 	public Unit(Unit unit) {
-		this.name =unit.getName();
+		this.name = unit.getName();
 		this.abbreviation = unit.getAbbreviation();
 		this.description = unit.getDescription();
-		this.user =unit.getUser();
+		this.user = unit.getUser();
 	}
 
 	public String getName() {
@@ -96,9 +95,6 @@ public class Unit extends SimpleLogicalDeletableEntity {
 		this.user = user;
 	}
 
-	//public PlanRisk getPlan() {
-		//return planRisk;
-	//}
 	public PlanRisk getPlanRisk() {
 		return planRisk;
 	}
@@ -114,7 +110,5 @@ public class Unit extends SimpleLogicalDeletableEntity {
 	public void setRiskSearchId(Long riskSearchId) {
 		this.riskSearchId = riskSearchId;
 	}
-
-	
 
 }

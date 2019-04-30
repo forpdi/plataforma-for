@@ -4,8 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.forpdi.core.company.Company;
@@ -18,28 +16,28 @@ import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 @Entity(name = RiskTipology.TABLE)
 @Table(name = RiskTipology.TABLE)
 public class RiskTipology extends SimpleLogicalDeletableEntity {
-    public static final String TABLE = "frisco_risk_tipology";
-    private static final long serialVersionUID = 1L;
+	public static final String TABLE = "frisco_risk_tipology";
+	private static final long serialVersionUID = 1L;
 
-    @Column(nullable=false, length=4000)
-    private String name;
-    
-    @ManyToOne(targetEntity=Company.class, fetch=FetchType.EAGER)
-    private Company company;
+	@Column(nullable = false, length = 4000)
+	private String name;
 
-    public String getName() {
-        return name;
-    }
+	@ManyToOne(targetEntity = Company.class, fetch = FetchType.EAGER)
+	private Company company;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public Company getCompany() {
-        return company;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
+	public Company getCompany() {
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
+	}
 }

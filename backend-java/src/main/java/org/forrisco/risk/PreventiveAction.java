@@ -9,8 +9,6 @@ import javax.persistence.Table;
 import org.forpdi.core.user.User;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
-
 
 /**
  * @author Matheus Nascimento
@@ -23,24 +21,23 @@ public class PreventiveAction extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_preventive_action";
 	private static final long serialVersionUID = 1L;
 
-//	@SkipSerialization
-	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity = Risk.class, optional = false, fetch = FetchType.EAGER)
 	private Risk risk;
-	
-	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
+
+	@ManyToOne(targetEntity = User.class, optional = false, fetch = FetchType.EAGER)
 	private User user;
 
-	@Column(nullable=false, length=4000)
+	@Column(nullable = false, length = 4000)
 	private String action;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private boolean accomplished;
 
-	
-	public PreventiveAction() {}
+	public PreventiveAction() {
+	}
 
 	public PreventiveAction(PreventiveAction action) {
-		this.user =action.getUser();
+		this.user = action.getUser();
 		this.action = action.getAction();
 		this.accomplished = action.isAccomplished();
 	}

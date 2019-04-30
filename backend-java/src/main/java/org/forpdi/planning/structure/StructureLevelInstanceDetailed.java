@@ -3,11 +3,9 @@ package org.forpdi.planning.structure;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
 
@@ -29,47 +27,58 @@ public class StructureLevelInstanceDetailed extends SimpleLogicalDeletableEntity
 
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
-	
+
 	@Transient
 	private Long exportStructureLevelInstanceId;
-	
+
 	private Double levelValue;
 	private Double levelMinimum;
 	private Double levelMaximum;
-	
+
 	public int getMonth() {
 		return month;
 	}
+
 	public void setMonth(int month) {
 		this.month = month;
 	}
+
 	public int getYear() {
 		return year;
 	}
+
 	public void setYear(int year) {
 		this.year = year;
 	}
+
 	public StructureLevelInstance getLevelInstance() {
 		return levelInstance;
 	}
+
 	public void setLevelInstance(StructureLevelInstance levelInstance) {
 		this.levelInstance = levelInstance;
 	}
+
 	public Double getLevelValue() {
 		return levelValue;
 	}
+
 	public void setLevelValue(Double levelValue) {
 		this.levelValue = levelValue;
 	}
+
 	public Double getLevelMinimum() {
 		return levelMinimum;
 	}
+
 	public void setLevelMinimum(Double levelMinimum) {
 		this.levelMinimum = levelMinimum;
 	}
+
 	public Double getLevelMaximum() {
 		return levelMaximum;
 	}
+
 	public void setLevelMaximum(Double levelMaximum) {
 		this.levelMaximum = levelMaximum;
 	}
@@ -77,8 +86,9 @@ public class StructureLevelInstanceDetailed extends SimpleLogicalDeletableEntity
 	public Long getExportStructureLevelInstanceId() {
 		return exportStructureLevelInstanceId;
 	}
+
 	public void setExportStructureLevelInstanceId(Long exportStructureLevelInstanceId) {
 		this.exportStructureLevelInstanceId = exportStructureLevelInstanceId;
 	}
-	
+
 }
