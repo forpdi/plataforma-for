@@ -50,9 +50,9 @@ export default React.createClass({
     render(){
 
 		//forçar renderização para expandir gráfico dentro do modal
-		if(this.state.cont<3){
+		if(this.state.cont<5){
 			this.state.cont+=1
-			setTimeout(()=>{this.forceUpdate()}, 100)
+			setTimeout(()=>{this.forceUpdate()}, 50)
 		}
 
 		return(

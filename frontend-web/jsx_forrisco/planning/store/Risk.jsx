@@ -61,7 +61,7 @@ var RiskStore = Fluxbone.Store.extend({
 	url: URL,
 	model: RiskModel,
 
-	findRisk(data){
+	findRisk(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/"+data,
@@ -78,7 +78,7 @@ var RiskStore = Fluxbone.Store.extend({
 	},
 
 
-	findArchived(data){
+	findArchived(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/archivedrisk",
@@ -94,7 +94,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByUnit(data, payload){
+	findByUnit(data, payload) {
 		var me = this;
 		$.ajax({
 			url: `${me.url}/listbyunit/${data.unitId}`,
@@ -126,7 +126,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findUnarchived(data){
+	findUnarchived(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/unarchivedrisk",
@@ -142,7 +142,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	newRisk(data){
+	newRisk(data) {
 		var me = this;
 
 		$.ajax({
@@ -163,7 +163,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	archive(data){
+	archive(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/archive",
@@ -182,7 +182,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	unarchive(data){
+	unarchive(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/unarchive",
@@ -201,7 +201,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	delete(data){
+	delete(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/"+data,
@@ -234,7 +234,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findByPlan(data){
+	findByPlan(data) {
 		var me = this;
 		$.ajax({
 			url: me.url,
@@ -250,7 +250,7 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-	findHistoryByUnit(data){
+	findHistoryByUnit(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/history",
@@ -266,7 +266,7 @@ var RiskStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-	findIncdentsByPlan(data){
+	findIncdentsByPlan(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/incidents",
@@ -283,7 +283,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findMonitorsByPlan(data){
+	findMonitorsByPlan(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/monitors",
@@ -302,7 +302,7 @@ var RiskStore = Fluxbone.Store.extend({
 
 
 
-	findMonitorHistoryByUnit(data){
+	findMonitorHistoryByUnit(data) {
 		var me = this;
 		$.ajax({
 			url: me.url+"/monitorHistory",
@@ -715,7 +715,7 @@ var RiskStore = Fluxbone.Store.extend({
 		});
 	},
 
-	mainMenuState(data){
+	mainMenuState(data) {
 		var me = this;
 		me.trigger("getmainmenustate", data);
 	}

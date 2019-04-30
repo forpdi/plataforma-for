@@ -616,7 +616,7 @@ public class UserBS extends HibernateBusiness {
 		return user;
 	}
 
-	public PaginatedList<User> listByPermissionLevel(AccessLevels accessLevel) {
+	public  PaginatedList<User> listByPermissionLevel(AccessLevels accessLevel) {
 		PaginatedList<User> results = new PaginatedList<User>();
 		
 		Criteria criteria = this.dao.newCriteria(User.class);

@@ -290,7 +290,7 @@ export default React.createClass({
 					</span>
 				</div>
 				<div className="dashboard-risk-details-body" >
-					<div className="mdi mdi-chart-line icon-link" style={{ float: "right", padding: "10px" }} onClick={() => this.switchGraph(true)} />
+					<div className="mdi mdi-chart-line icon-link" style={{ float: "right", "margin": "10px" }} onClick={() => this.switchGraph(true)} />
 					{
 						this.state.loading ? <LoadingGauge /> :
 

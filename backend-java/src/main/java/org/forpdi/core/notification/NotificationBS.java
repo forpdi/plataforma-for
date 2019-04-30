@@ -8,7 +8,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.mail.EmailException;
-import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
@@ -132,10 +131,10 @@ public class NotificationBS extends HibernateBusiness {
 			builder = new EmailBuilder(type, notification.getDescription(), url);
 		}
 		this.persist(notification);
-		this.emailTask
-				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
+		this.emailTask.add(
+				new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
 	}
-	
+
 	/**
 	 * Enviar notificação do sistema para o email do usuário com arquivo anexado.
 	 * 
@@ -149,8 +148,8 @@ public class NotificationBS extends HibernateBusiness {
 	 *            Id do usuário para receber a notificação.
 	 * @throws EmailException
 	 */
-	public void sendAttachedNotificationEmail(NotificationType type, String text, String aux, User user, String url, Archive attachment)
-			throws EmailException {
+	public void sendAttachedNotificationEmail(NotificationType type, String text, String aux, User user, String url,
+			Archive attachment) throws EmailException {
 		if (url == null) {
 			url = this.domain.getBaseUrl();
 		}
@@ -176,10 +175,9 @@ public class NotificationBS extends HibernateBusiness {
 			builder = new EmailBuilder(type, notification.getDescription(), url);
 		}
 		this.persist(notification);
-		this.emailTask
-				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), attachment.getName()));
+		this.emailTask.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(),
+				builder.getBody(), attachment.getName()));
 	}
-	
 
 	/**
 	 * Enviar notificação do sistema para o email do usuário.
@@ -194,8 +192,8 @@ public class NotificationBS extends HibernateBusiness {
 	 *            Id do usuário para receber a notificação.
 	 * @throws EmailException
 	 */
-	public void sendNotificationEmail(NotificationType type, String text, String aux, User user, String url, CompanyDomain companyDomain)
-			throws EmailException {
+	public void sendNotificationEmail(NotificationType type, String text, String aux, User user, String url,
+			CompanyDomain companyDomain) throws EmailException {
 		if (url == null) {
 			url = companyDomain.getBaseUrl();
 		}
@@ -221,12 +219,10 @@ public class NotificationBS extends HibernateBusiness {
 			builder = new EmailBuilder(type, notification.getDescription(), url);
 		}
 		this.persist(notification);
-		this.emailTask
-				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
+		this.emailTask.add(
+				new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
 	}
-	
-	
-	
+
 	/**
 	 * Listar as permissões do usuário em uma instituição.
 	 * 
@@ -305,8 +301,8 @@ public class NotificationBS extends HibernateBusiness {
 			notification
 					.setDescription("<b>Seu tipo de conta foi alterado. Agora você é um </b>\"" + text + "\"<b>.</b>");
 		} else if (type == NotificationType.PERMISSION_CHANGED) {
-			notification.setDescription(
-					"<b>Suas permissões foram alteradas. Agora você pode: </b>\"" + text + "\"<b>. Faça o login novamente para aplicar as alterações.</b>");
+			notification.setDescription("<b>Suas permissões foram alteradas. Agora você pode: </b>\"" + text
+					+ "\"<b>. Faça o login novamente para aplicar as alterações.</b>");
 		} else if (type == NotificationType.PLAN_MACRO_CREATED) {
 			notification.setDescription("<b>O plano </b>\"" + text + "\"<b> foi criado.</b>");
 		} else if (type == NotificationType.PLAN_CREATED) {
@@ -317,10 +313,9 @@ public class NotificationBS extends HibernateBusiness {
 					"<b>Você foi atribuído como responsável em: </b>\"" + aux + "\" - \"" + text + "\"<b>.</b>");
 		} else if (type == NotificationType.GOAL_CLOSED) {
 			notification.setDescription("<b>A meta </b>\"" + text + "\"<b> foi concluída.</b>");
-		} 
-		else if (type == NotificationType.GOAL_OPENED) {
+		} else if (type == NotificationType.GOAL_OPENED) {
 			notification.setDescription("<b>A meta </b>\"" + text + "\"<b> foi reaberta.</b>");
-		}else if (type == NotificationType.PLAN_CLOSE_TO_MATURITY) {
+		} else if (type == NotificationType.PLAN_CLOSE_TO_MATURITY) {
 			notification.setDescription("<b>O plano de metas </b>\"" + text + "\"<b> do plano </b>\"" + aux
 					+ "\"<b> está próximo da data de término.</b>");
 		} else if (type == NotificationType.GOAL_CLOSE_TO_MATURITY) {
@@ -347,13 +342,13 @@ public class NotificationBS extends HibernateBusiness {
 			notification.setDescription(
 					"<b>A data de </b>\"" + aux + "\" - \"" + text + "\"<b> foi alterada. Verifique o novo prazo.</b>");
 		} else if (type == NotificationType.FORRISCO_PROCESS_CREATED) {
-			notification.setDescription("<b>"+ text +"</b>");
-			
+			notification.setDescription("<b>" + text + "</b>");
+
 		} else if (type == NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY) {
-			notification.setDescription("<b>O monitoramento do risco</b> \"" + text 
+			notification.setDescription("<b>O monitoramento do risco</b> \"" + text
 					+ "\" <b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
 		} else if (type == NotificationType.FORRISCO_USER_LINKED_TO_RISK) {
-			notification.setDescription("<b>"+ text +"</b>");
+			notification.setDescription("<b>" + text + "</b>");
 		} else {
 			notification.setDescription("");
 		}
@@ -428,8 +423,8 @@ public class NotificationBS extends HibernateBusiness {
 		 * @param type
 		 *            Tipo da notificação.
 		 * @param extras
-		 *            Campo com as informações para gerar a mensagem do e-mail
-		 *            da notificação.
+		 *            Campo com as informações para gerar a mensagem do e-mail da
+		 *            notificação.
 		 */
 		public EmailBuilder(NotificationType type, String... extras) {
 			this.subject = this.getSubjectByType(type);
@@ -534,8 +529,7 @@ public class NotificationBS extends HibernateBusiness {
 					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forpdi.org</a>"
 					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
 		}
-		
-		
+
 		/**
 		 * Mensagem base do email para os vários tipos de notificação.
 		 * 
@@ -714,7 +708,8 @@ public class NotificationBS extends HibernateBusiness {
 		this.emailTask.add(new NotificationEmail(messageHistory.getUserReceiver().getEmail(),
 				messageHistory.getUserReceiver().getName(), messageHistory.getSubject(),
 				"<" + "p style=\"font-size:12pt;\">" + "Você recebeu uma mensagem de "
-						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>", null));
+						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>",
+				null));
 		Notification notification = new Notification();
 		notification.setUser(messageHistory.getUserReceiver());
 		notification.setCompany(this.domain.getCompany());

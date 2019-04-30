@@ -1,7 +1,6 @@
-
 //import Toastr from 'toastr';
 import React from "react";
-import {Link, hashHistory} from "react-router";
+import { Link, hashHistory } from "react-router";
 import AttributeInput from "forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx";
 import BudgetField from "forpdi/jsx/planning/view/field/BudgetField.jsx";
 import AttachmentField from "forpdi/jsx/planning/view/field/AttachmentField.jsx";

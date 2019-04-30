@@ -11,9 +11,7 @@ import javax.persistence.Transient;
 
 import org.forpdi.core.user.User;
 
-
 import br.com.caelum.vraptor.boilerplate.SimpleLogicalDeletableEntity;
-import br.com.caelum.vraptor.serialization.SkipSerialization;
 
 /**
  * @author Matheus Nascimento
@@ -26,44 +24,39 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	public static final String TABLE = "frisco_incident";
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne(targetEntity=User.class, optional=false, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity = User.class, optional = false, fetch = FetchType.EAGER)
 	private User user;
 
-	//@SkipSerialization
-	@ManyToOne(targetEntity=Risk.class, optional=false, fetch=FetchType.EAGER)
+	@ManyToOne(targetEntity = Risk.class, optional = false, fetch = FetchType.EAGER)
 	private Risk risk;
 
-	@Column(nullable=false, length=4000)
+	@Column(nullable = false, length = 4000)
 	private String description;
 
-	@Column(nullable=false, length=4000)
+	@Column(nullable = false, length = 4000)
 	private String action;
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private int type;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private Date begin;
-	
+
 	@Transient
 	private Long unitId;
-	
-	
+
 	public Incident() {
-		
+
 	}
-	
+
 	public Incident(Incident incident) {
-		
-		
+
 		this.description = incident.getDescription();
 		this.action = incident.getAction();
 		this.type = incident.getType();
 		this.user = incident.getUser();
-		this.begin =incident.getBegin();
+		this.begin = incident.getBegin();
 	}
-	
-	
 
 	public Incident(User user, Risk risk, String description, String action, Integer type, Date begin, Long unitId) {
 		super();
@@ -131,5 +124,5 @@ public class Incident extends SimpleLogicalDeletableEntity {
 	public void setUnitId(Long unitId) {
 		this.unitId = unitId;
 	}
-	
+
 }

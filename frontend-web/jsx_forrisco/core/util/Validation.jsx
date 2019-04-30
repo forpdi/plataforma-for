@@ -350,6 +350,7 @@ var Validate = {
 
 	validationRiskRegister: function(data, refs) {
 		var msg=""
+    console.log(refs["field-8"].refs.type.refs);
 
 
 		var name = refs["field-name"].refs.name
@@ -358,8 +359,8 @@ var Validate = {
 		var probability = refs["field-4"].refs.probability
 		var impact = refs["field-5"].refs.impact
 		var periodicity = refs["field-7"].refs.periodicity
-		var tipology = refs["field-8"].refs.tipology
-		var type = refs["field-9"].refs.type
+    var type = refs["field-8"].refs.type
+		var tipology = refs["field-9"].refs.tipology
 
 		if(name.refs["field-name"].value != null){
 			if(name.refs["field-name"].value==""){
@@ -437,6 +438,17 @@ var Validate = {
 				type.refs["formAlertError"].innerHTML = "<br/>"
 			}
 		}
+
+		// if(tipology.refs["field-tipology"] != null){
+		// 	if(tipology.refs["field-tipology"].value==""){
+		// 		tipology.refs["field-tipology"].className +=" borderError"
+		// 		tipology.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldNotselected");
+		// 		if(msg==""){msg="A tipologia precisa estar selecionada."}
+		// 	}else{
+		// 		tipology.refs["field-tipology"].className="form-control"
+		// 		tipology.refs["formAlertError"].innerHTML = ""
+		// 	}
+		// }
 
 
 		var i=0

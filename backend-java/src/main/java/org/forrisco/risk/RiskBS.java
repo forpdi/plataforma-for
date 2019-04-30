@@ -11,9 +11,9 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-
 import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.apache.commons.mail.EmailException;
 import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationType;
@@ -30,10 +30,12 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
 
 /**
  * @author Matheus Nascimento
@@ -53,7 +55,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados um novo risco
 	 * 
-	 * @param Risk, instância de um risco a ser salvo
+	 * @param Risk,
+	 *            instância de um risco a ser salvo
 	 */
 	public void saveRisk(Risk risk) {
 		risk.setDeleted(false);
@@ -63,7 +66,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados graus de risco
 	 * 
-	 * @param policy, instância da política a ser salva
+	 * @param policy,
+	 *            instância da política a ser salva
 	 */
 	public void saveRiskLevel(Policy policy) {
 
@@ -84,18 +88,20 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados uma nova ação preventiva
 	 * 
-	 * @param PreventiveAction, instância de uma ação preventiva a ser salva
+	 * @param PreventiveAction,
+	 *            instância de uma ação preventiva a ser salva
 	 */
 	public void saveAction(PreventiveAction action) {
 		action.setDeleted(false);
-//		action.setAccomplished(false);
+		// action.setAccomplished(false);
 		this.persist(action);
 	}
 
 	/**
 	 * Salva no banco de dados um novo monitoramento
 	 * 
-	 * @param Monitor, instância de um monitoramento a ser salva
+	 * @param Monitor,
+	 *            instância de um monitoramento a ser salva
 	 */
 	public void saveMonitor(Monitor monitor) {
 		monitor.setDeleted(false);
@@ -105,7 +111,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados graus de risco
 	 * 
-	 * @param RiskLevel, instância de um grau de risco a ser salvo
+	 * @param RiskLevel,
+	 *            instância de um grau de risco a ser salvo
 	 */
 	public void saveRiskLevel(RiskLevel risklevel) {
 		risklevel.setDeleted(false);
@@ -115,7 +122,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados incidente
 	 * 
-	 * @param Incident, instância de um incident a ser salvo
+	 * @param Incident,
+	 *            instância de um incident a ser salvo
 	 */
 	public void saveIncident(Incident incident) {
 		incident.setDeleted(false);
@@ -125,7 +133,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salva no banco de dados contigenciamento
 	 * 
-	 * @param Contigency, instância de um contigenciamento a ser salvo
+	 * @param Contigency,
+	 *            instância de um contigenciamento a ser salvo
 	 */
 	public void saveContingency(Contingency contingency) {
 		contingency.setDeleted(false);
@@ -135,8 +144,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salvar uma lista de atividades
 	 * 
-	 * @param PaginatedList<RiskActivity> instância de uma lista de atividades de
-	 *        risco
+	 * @param PaginatedList<RiskActivity>
+	 *            instância de uma lista de atividades de risco
 	 */
 	public void saveActivities(Risk risk) {
 
@@ -158,7 +167,7 @@ public class RiskBS extends HibernateBusiness {
 			}
 
 			// pegar link correto da unidade que contem o processo
-			if(process !=null && !process.isDeleted() && process.getUnitCreator() != null) {
+			if (process != null && !process.isDeleted() && process.getUnitCreator() != null) {
 				activity.setLinkFPDI("#/forrisco/plan-risk/" + process.getUnitCreator().getPlanRisk().getId() + "/unit/"
 						+ process.getUnitCreator().getId() + "/info");
 			}
@@ -169,8 +178,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salvar uma lista de objetivos de processos
 	 * 
-	 * @param PaginatedList<RiskProcess> instância de uma lista de processos de
-	 *        unidade/instituição
+	 * @param PaginatedList<RiskProcess>
+	 *            instância de uma lista de processos de unidade/instituição
 	 */
 	public void saveProcesses(Risk risk) {
 
@@ -197,8 +206,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Salvar uma lista de objetivos estratégicos
 	 * 
-	 * @param PaginatedList<RiskStrategy> instância de uma lista de objetivos
-	 *        estratégicos
+	 * @param PaginatedList<RiskStrategy>
+	 *            instância de uma lista de objetivos estratégicos
 	 * @throws Exception
 	 */
 	public void saveStrategies(Risk risk) throws Exception {
@@ -236,7 +245,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados graus de risco
 	 * 
-	 * @param Item, instância do item a ser deletado
+	 * @param Item,
+	 *            instância do item a ser deletado
 	 */
 	public void delete(RiskLevel risklevel) {
 		risklevel.setDeleted(true);
@@ -246,7 +256,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados uma ação de prevenção
 	 * 
-	 * @param PreventiveAction, instância da a ação ser deletado
+	 * @param PreventiveAction,
+	 *            instância da a ação ser deletado
 	 */
 	public void delete(PreventiveAction action) {
 		action.setDeleted(true);
@@ -256,7 +267,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um monitoramento
 	 * 
-	 * @param Monitor, instância do monitoramento ser deletado
+	 * @param Monitor,
+	 *            instância do monitoramento ser deletado
 	 */
 	public void delete(Monitor monitor) {
 		monitor.setDeleted(true);
@@ -266,7 +278,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um incidente
 	 * 
-	 * @param Incident, instância do incidente a ser deletado
+	 * @param Incident,
+	 *            instância do incidente a ser deletado
 	 */
 	public void delete(Incident incident) {
 		incident.setDeleted(true);
@@ -276,7 +289,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um incidente
 	 * 
-	 * @param Incident, instância do incidente a ser deletado
+	 * @param Incident,
+	 *            instância do incidente a ser deletado
 	 */
 	public void delete(Contingency contingency) {
 		contingency.setDeleted(true);
@@ -286,7 +300,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados uma atividade do processo
 	 * 
-	 * @param RiskActivity, instância da atividade do processo
+	 * @param RiskActivity,
+	 *            instância da atividade do processo
 	 */
 	private void delete(RiskActivity act) {
 		act.setDeleted(true);
@@ -296,7 +311,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um processo do objetivo
 	 * 
-	 * @param RiskProcess, instância do processo
+	 * @param RiskProcess,
+	 *            instância do processo
 	 */
 	private void delete(RiskProcess pro) {
 		pro.setDeleted(true);
@@ -306,7 +322,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um objetivo estratégico
 	 * 
-	 * @param RiskStrategy, instância do objetivo
+	 * @param RiskStrategy,
+	 *            instância do objetivo
 	 */
 	private void delete(RiskStrategy str) {
 		str.setDeleted(true);
@@ -317,7 +334,8 @@ public class RiskBS extends HibernateBusiness {
 	 * Deleta do banco de dados as atividades, os processos e os objetivos
 	 * estratégicos de um risco
 	 * 
-	 * @param Risk, instância do risco
+	 * @param Risk,
+	 *            instância do risco
 	 */
 	public void deleteAPS(Risk oldrisk) {
 
@@ -346,7 +364,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Deleta do banco de dados um risco,
 	 * 
-	 * @param Risk, instância do risco
+	 * @param Risk,
+	 *            instância do risco
 	 */
 	public void delete(Risk risk) {
 		risk.setDeleted(true);
@@ -356,7 +375,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna um risco
 	 * 
-	 * @param id Id do risco
+	 * @param id
+	 *            Id do risco
 	 */
 	public Risk listRiskById(Long id) {
 		Criteria criteria = this.dao.newCriteria(Risk.class).add(Restrictions.eq("deleted", false))
@@ -398,7 +418,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os graus de risco a partir da política
 	 * 
-	 * @param policy instância da política
+	 * @param policy
+	 *            instância da política
 	 * @return
 	 */
 	public PaginatedList<RiskLevel> listRiskLevelByPolicy(Policy policy) {
@@ -418,7 +439,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna riscos de uma unidade
 	 * 
-	 * @param Unit, instância da unidade
+	 * @param Unit,
+	 *            instância da unidade
 	 * 
 	 */
 	public PaginatedList<Risk> listRiskByUnit(Unit unit) {
@@ -427,10 +449,10 @@ public class RiskBS extends HibernateBusiness {
 		Criteria criteria = this.dao.newCriteria(Risk.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("unit", unit));
 
-//		Criteria count = this.dao.newCriteria(Risk.class)
-//				.add(Restrictions.eq("deleted", false))
-//				.add(Restrictions.eq("unit", unit))
-//				.setProjection(Projections.countDistinct("id"));
+		// Criteria count = this.dao.newCriteria(Risk.class)
+		// .add(Restrictions.eq("deleted", false))
+		// .add(Restrictions.eq("unit", unit))
+		// .setProjection(Projections.countDistinct("id"));
 
 		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
 		results.setList(risks);
@@ -442,7 +464,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna riscos de uma lista de unidades
 	 * 
-	 * @param List<Unit>, lista da unidades
+	 * @param List<Unit>,
+	 *            lista da unidades
 	 * 
 	 */
 	public PaginatedList<Risk> listRiskByUnitList(List<Unit> units) {
@@ -458,7 +481,6 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 	}
 
-
 	/**
 	 * Retorna os riscos a partir de um impácto e uma probabilidade
 	 * 
@@ -468,9 +490,9 @@ public class RiskBS extends HibernateBusiness {
 	 * @param pageSize
 	 * @return Riscos paginados
 	 */
-	
-	public PaginatedList<Risk> listRiskByPI(PlanRisk planRisk, String impact, String probability, Integer page, Integer pageSize) {
 
+	public PaginatedList<Risk> listRiskByPI(PlanRisk planRisk, String impact, String probability, Integer page,
+			Integer pageSize) {
 
 		if (page == null || page < 1) {
 			page = 1;
@@ -482,19 +504,13 @@ public class RiskBS extends HibernateBusiness {
 		PaginatedList<Risk> results = new PaginatedList<Risk>();
 
 		Criteria criteria = this.dao.newCriteria(Risk.class).setFirstResult((page - 1) * pageSize)
-				.setMaxResults(pageSize).addOrder(Order.asc("name"))
-				.createAlias("unit","unit")
-				.add(Restrictions.eq("unit.planRisk",planRisk))
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("impact", impact))
-				.add(Restrictions.eq("probability", probability));
-		
-		Criteria counting = this.dao.newCriteria(Risk.class)
-				.createAlias("unit","unit")
-				.add(Restrictions.eq("unit.planRisk",planRisk))
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("impact", impact))
-				.add(Restrictions.eq("probability", probability))
+				.setMaxResults(pageSize).addOrder(Order.asc("name")).createAlias("unit", "unit")
+				.add(Restrictions.eq("unit.planRisk", planRisk)).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("impact", impact)).add(Restrictions.eq("probability", probability));
+
+		Criteria counting = this.dao.newCriteria(Risk.class).createAlias("unit", "unit")
+				.add(Restrictions.eq("unit.planRisk", planRisk)).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("impact", impact)).add(Restrictions.eq("probability", probability))
 				.setProjection(Projections.countDistinct("id"));
 
 		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
@@ -514,22 +530,21 @@ public class RiskBS extends HibernateBusiness {
 		}
 
 		PaginatedList<Incident> results = new PaginatedList<Incident>();
-		
+
 		Criteria criteria = this.dao.newCriteria(Incident.class);
 		criteria.setFirstResult((page - 1) * pageSize);
 		criteria.setMaxResults(pageSize).addOrder(Order.asc("description"));
 		criteria.add(Restrictions.in("id", incidentsId));
-		
-		
+
 		Criteria counting = this.dao.newCriteria(Incident.class);
 		counting.add(Restrictions.in("id", incidentsId));
 		counting.setProjection(Projections.countDistinct("id"));
 
 		List<Incident> findCriteria = this.dao.findByCriteria(criteria, Incident.class);
-		
+
 		results.setList(findCriteria);
 		results.setTotal((Long) counting.uniqueResult());
-				  
+
 		return results;
 	}
 
@@ -538,7 +553,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna o grau de risco a partir da probabilidade e impacto
 	 * 
-	 * @param ProcessUnit, instância processunit
+	 * @param ProcessUnit,
+	 *            instância processunit
 	 * 
 	 * @return List<Risk>
 	 * @throws Exception
@@ -605,7 +621,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna as ativiades do processo de um risco
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<RiskActivity>
 	 */
@@ -628,7 +645,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna as ações preventivas a partir de um risco
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<PreventiveAction>
 	 */
@@ -648,7 +666,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna as ações preventivas a partir de um risco com paginacao
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<PreventiveAction>
 	 */
@@ -656,16 +675,11 @@ public class RiskBS extends HibernateBusiness {
 
 		PaginatedList<PreventiveAction> results = new PaginatedList<PreventiveAction>();
 
-		Criteria criteria = this.dao.newCriteria(PreventiveAction.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setFirstResult((page - 1) * pageSize)
-				.setMaxResults(pageSize);
+		Criteria criteria = this.dao.newCriteria(PreventiveAction.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setFirstResult((page - 1) * pageSize).setMaxResults(pageSize);
 
-		Criteria count = this.dao.newCriteria(PreventiveAction.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(PreventiveAction.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, PreventiveAction.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -675,7 +689,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os monitoramentos a partir de um risco
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Monitor>
 	 */
@@ -695,7 +710,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os monitoramentos a partir de um risco com paginacao
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Monitor>
 	 */
@@ -703,25 +719,22 @@ public class RiskBS extends HibernateBusiness {
 
 		PaginatedList<Monitor> results = new PaginatedList<Monitor>();
 
-		Criteria criteria = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setFirstResult((page - 1) * pageSize)
-				.setMaxResults(pageSize);
+		Criteria criteria = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setFirstResult((page - 1) * pageSize).setMaxResults(pageSize);
 
-		Criteria count = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Monitor.class));
 		results.setTotal((Long) count.uniqueResult());
 		return results;
 	}
+
 	/**
 	 * Retorna os incidentes a partir de um risco
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Incident>
 	 */
@@ -747,7 +760,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os incidentes a partir de um risco com paginacao
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Incident>
 	 */
@@ -755,16 +769,11 @@ public class RiskBS extends HibernateBusiness {
 
 		PaginatedList<Incident> results = new PaginatedList<Incident>();
 
-		Criteria criteria = this.dao.newCriteria(Incident.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setFirstResult((page - 1) * pageSize)
-				.setMaxResults(pageSize);
+		Criteria criteria = this.dao.newCriteria(Incident.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setFirstResult((page - 1) * pageSize).setMaxResults(pageSize);
 
-		Criteria count = this.dao.newCriteria(Incident.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(Incident.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Incident.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -780,7 +789,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os incidentes a partir de vários riscos
 	 * 
-	 * @param PaginatedList<Risk> instância de um risco
+	 * @param PaginatedList<Risk>
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Incident>
 	 */
@@ -804,7 +814,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os contingenciamentos a partir de um risco
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Contingency>
 	 */
@@ -824,7 +835,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os contingenciamentos a partir de um risco com paginacao
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<Contingency>
 	 */
@@ -832,16 +844,11 @@ public class RiskBS extends HibernateBusiness {
 
 		PaginatedList<Contingency> results = new PaginatedList<Contingency>();
 
-		Criteria criteria = this.dao.newCriteria(Contingency.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setFirstResult((page - 1) * pageSize)
-				.setMaxResults(pageSize);
+		Criteria criteria = this.dao.newCriteria(Contingency.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setFirstResult((page - 1) * pageSize).setMaxResults(pageSize);
 
-		Criteria count = this.dao.newCriteria(Contingency.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.setProjection(Projections.countDistinct("id"));
+		Criteria count = this.dao.newCriteria(Contingency.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).setProjection(Projections.countDistinct("id"));
 
 		results.setList(this.dao.findByCriteria(criteria, Contingency.class));
 		results.setTotal((Long) count.uniqueResult());
@@ -851,7 +858,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os objetivos estrategicos vinculados ao risco
 	 * 
-	 * @param risk instância do Risk
+	 * @param risk
+	 *            instância do Risk
 	 * @return PaginatedList<RiskStrategy> lista de objetivos estrategicos
 	 */
 	public PaginatedList<RiskStrategy> listRiskStrategy(Risk risk) {
@@ -871,7 +879,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna os objetivos de processo do risco
 	 * 
-	 * @param risk instância do Risk
+	 * @param risk
+	 *            instância do Risk
 	 * @return PaginatedList<RiskProcess> lista de objetivos de processo
 	 */
 	public PaginatedList<RiskProcess> listRiskProcess(Risk risk) {
@@ -891,7 +900,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna as atividades do processo do risco
 	 * 
-	 * @param risk instância do Risk
+	 * @param risk
+	 *            instância do Risk
 	 * @return PaginatedList<RiskActivity> lista de atividades do processo
 	 */
 	public PaginatedList<RiskActivity> listRiskActivity(Risk risk) {
@@ -914,10 +924,8 @@ public class RiskBS extends HibernateBusiness {
 		List<RiskHistory> list = new ArrayList<>();
 
 		for (Unit unit : units.getList()) {
-			Criteria criteria = this.dao.newCriteria(RiskHistory.class)
-					.add(Restrictions.eq("unit", unit))
-					.add(Restrictions.eq("deleted", false))
-					.add(Restrictions.eq("threat", threat))
+			Criteria criteria = this.dao.newCriteria(RiskHistory.class).add(Restrictions.eq("unit", unit))
+					.add(Restrictions.eq("deleted", false)).add(Restrictions.eq("threat", threat))
 					.addOrder(Order.asc("id"));
 
 			list.addAll(this.dao.findByCriteria(criteria, RiskHistory.class));
@@ -973,8 +981,10 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Atualiza a probabilidade e impacto do risco
 	 * 
-	 * @param Risk instância de um risco
-	 * @param      Map<String, String> map de probabilidade e risco novos e antigos
+	 * @param Risk
+	 *            instância de um risco
+	 * @param Map<String,
+	 *            String> map de probabilidade e risco novos e antigos
 	 */
 	public void updateRiskPI(Risk risk, Map<String, String> impact_probability) {
 
@@ -1006,8 +1016,10 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Verifica se um processo tem algum risco vinculado
 	 * 
-	 * @param process instância de um processo
-	 * @param         boolean booleano para verificação
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean
+	 *            booleano para verificação
 	 */
 	public boolean hasLinkedRiskProcess(Process process) {
 		Criteria criteria = this.dao.newCriteria(RiskProcess.class).add(Restrictions.eq("deleted", false))
@@ -1020,8 +1032,10 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Verifica se um processo tem alguma atividade vinculada
 	 * 
-	 * @param process instância de um processo
-	 * @param         boolean booleano para verificação
+	 * @param process
+	 *            instância de um processo
+	 * @param boolean
+	 *            booleano para verificação
 	 */
 	public boolean hasLinkedRiskActivity(Process process) {
 		Criteria criteria = this.dao.newCriteria(RiskActivity.class).add(Restrictions.eq("deleted", false))
@@ -1033,7 +1047,8 @@ public class RiskBS extends HibernateBusiness {
 	/**
 	 * Retorna as ações preventivas
 	 * 
-	 * @param Risk instância de um risco
+	 * @param Risk
+	 *            instância de um risco
 	 * 
 	 * @return PaginatedList<PreventiveAction>
 	 */
@@ -1051,10 +1066,9 @@ public class RiskBS extends HibernateBusiness {
 		return results;
 
 	}
-	
-	
+
 	/**
-	 * Retorna o estado de cada risco a partir da data 
+	 * Retorna o estado de cada risco a partir da data
 	 * 
 	 * @param String
 	 *            periodicidade
@@ -1064,7 +1078,7 @@ public class RiskBS extends HibernateBusiness {
 	 * 
 	 * @return int estado atual do monitoramento
 	 */
-	public int riskState(String periodicity, Date date) {
+	public static int riskState(String periodicity, Date date) {
 		int state = 0; // em dia
 
 		Date now = new Date();
@@ -1073,75 +1087,73 @@ public class RiskBS extends HibernateBusiness {
 		double diffDays = diffInSec / (60 * 60 * 24);
 		switch (periodicity.toLowerCase()) {
 		case "diária":
-			if(diffDays > 1) {
+			if (diffDays > 1) {
 				state = 2;
-			}else if(diffDays*24 > CloseToMaturityPeriod.DIARIO.getValue()) {
-				state=1;
+			} else if (diffDays * 24 > CloseToMaturityPeriod.DIARIO.getValue()) {
+				state = 1;
 			}
 			break;
-			
+
 		case "semanal":
-			if(diffDays > 7){	
+			if (diffDays > 7) {
 				state = 2;
-			}else if (diffDays >7-CloseToMaturityPeriod.SEMANAL.getValue()) {
+			} else if (diffDays > 7 - CloseToMaturityPeriod.SEMANAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "quinzenal":
-			if(diffDays > 15){	
+			if (diffDays > 15) {
 				state = 2;
-			}else if (diffDays >15-CloseToMaturityPeriod.QUINZENAL.getValue()) {
+			} else if (diffDays > 15 - CloseToMaturityPeriod.QUINZENAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "mensal":
-			if(diffDays > 30){	
+			if (diffDays > 30) {
 				state = 2;
-			}else if (diffDays >30-CloseToMaturityPeriod.MENSAL.getValue()) {
+			} else if (diffDays > 30 - CloseToMaturityPeriod.MENSAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "bimestral":
-			if(diffDays > 60){
+			if (diffDays > 60) {
 				state = 2;
-			}else if (diffDays >60-CloseToMaturityPeriod.BIMESTRAL.getValue()) {
+			} else if (diffDays > 60 - CloseToMaturityPeriod.BIMESTRAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "trimestral":
-			if(diffDays > 90){
+			if (diffDays > 90) {
 				state = 2;
-			}else if (diffDays >90-CloseToMaturityPeriod.TRIMESTRAL.getValue()) {
+			} else if (diffDays > 90 - CloseToMaturityPeriod.TRIMESTRAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "semestral":
-			if(diffDays > 180){
+			if (diffDays > 180) {
 				state = 2;
-			}else if (diffDays >180-CloseToMaturityPeriod.SEMESTRAL.getValue()) {
+			} else if (diffDays > 180 - CloseToMaturityPeriod.SEMESTRAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 
 		case "anual":
-			if(diffDays > 360){
+			if (diffDays > 360) {
 				state = 2;
-			}else if (diffDays >CloseToMaturityPeriod.ANUAL.getValue()) {
+			} else if (diffDays > CloseToMaturityPeriod.ANUAL.getValue()) {
 				state = 1;
-			} 
+			}
 			break;
 		}
 
 		return state;
 	}
-	
-	
-	
+
 	/**
 	 * Retorna o ultimo monitoramento de um risco
 	 * 
@@ -1152,10 +1164,8 @@ public class RiskBS extends HibernateBusiness {
 	 */
 	public Monitor lastMonitorbyRisk(Risk risk) {
 
-		Criteria criteria = this.dao.newCriteria(Monitor.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("risk", risk))
-				.addOrder(Order.desc("begin"));
+		Criteria criteria = this.dao.newCriteria(Monitor.class).add(Restrictions.eq("deleted", false))
+				.add(Restrictions.eq("risk", risk)).addOrder(Order.desc("begin"));
 
 		criteria.setMaxResults(1);
 		Monitor monitor = (Monitor) criteria.uniqueResult();
@@ -1163,105 +1173,49 @@ public class RiskBS extends HibernateBusiness {
 		return monitor;
 	}
 
-	
-	
 	public PaginatedList<Risk> listRiskState(int state) {
-		
+
 		PaginatedList<Risk> results = new PaginatedList<Risk>();
-		
-		
-		Criteria criteria = this.dao.newCriteria(Risk.class)
-				.add(Restrictions.eq("deleted", false));
-		
-		List<Risk> risks= this.dao.findByCriteria(criteria, Risk.class);
-		List<Risk> list= new ArrayList<>();
-		
-				 for(Risk risk : risks) {
-					 Monitor monitor = lastMonitorbyRisk(risk);
-						Date date = risk.getBegin();
 
-						if(monitor != null) {
-							date = monitor.getBegin();
-						}
+		Criteria criteria = this.dao.newCriteria(Risk.class).add(Restrictions.eq("deleted", false));
 
-					 if(new RiskBS().riskState(risk.getPeriodicity(),date)==state){
-						 list.add(risk);
-					 }
-				 }
-		
+		List<Risk> risks = this.dao.findByCriteria(criteria, Risk.class);
+		List<Risk> list = new ArrayList<>();
+
+		for (Risk risk : risks) {
+			Monitor monitor = lastMonitorbyRisk(risk);
+			Date date = risk.getBegin();
+
+			if (monitor != null) {
+				date = monitor.getBegin();
+			}
+
+			if (new RiskBS().riskState(risk.getPeriodicity(), date) == state) {
+				list.add(risk);
+			}
+		}
+
+		try {
+			this.dao.persist(null);
+		} catch (Exception e) {
+			Logger LOG = Logger.getLogger(EmailSenderTask.class);
+			LOG.infof("Exception");
+		}
+
 		results.setList(list);
-		results.setTotal( (long) list.size());
+		results.setTotal((long) list.size());
 		return results;
 	}
 
-	public Date CloseToMaturityDate(Risk risk) {
-		//calcular corretamente o valor de próximo a vencer
-		
-		Monitor lastMonitor=this.lastMonitorbyRisk(risk);
-		
-		long time= lastMonitor!=null?lastMonitor.getBegin().getTime() : risk.getBegin().getTime();
-		long hour = 1000*60*60;
-		long day = hour*24;
-		
-		switch (risk.getPeriodicity().toLowerCase()) {
-			case "diária":
-				time+=hour*(24 - CloseToMaturityPeriod.DIARIO.getValue());
-				break;
-
-			case "semanal":
-				time+=day*(7 - CloseToMaturityPeriod.SEMANAL.getValue());
-				break;
-
-			case "quinzenal":
-				time+=day*(15 - CloseToMaturityPeriod.QUINZENAL.getValue());
-				break;
-
-			case "mensal":
-				time+=day*(30 - CloseToMaturityPeriod.MENSAL.getValue());
-				break;
-
-			case "bimestral":
-				time+=day*(60 - CloseToMaturityPeriod.BIMESTRAL.getValue());
-				break;
-
-			case "trimestral":
-				time+=day*(90 - CloseToMaturityPeriod.TRIMESTRAL.getValue());
-				break;
-
-			case "semestral":
-				time+=day*(180 - CloseToMaturityPeriod.SEMESTRAL.getValue());
-				break;
-
-			case "anual":
-				time+=day*(360 - CloseToMaturityPeriod.ANUAL.getValue());
-				break;
-		}
-		
-		return new Date (time);
-	}
-
-	public CompanyDomain companyDomainByRisk(Risk risk) {
-		
-		PlanRisk  planRisk= this.dao.exists(risk.getUnit().getPlanRisk().getId(), PlanRisk.class);
-		
-		Company copmany = this.dao.exists(planRisk.getPolicy().getCompany().getId(), Company.class);
-		
-		Criteria criteria = this.dao.newCriteria(CompanyDomain.class)
-				.add(Restrictions.eq("company", copmany));
-		
-		return (CompanyDomain) criteria.list().get(0);
-	}
-	
-
 	public void sendUserLinkedToRiskNoktification(Risk risk, Unit unit, String baseUrl) throws EmailException {
-		String url = baseUrl + "/#/forrisco/plan-risk/" + unit.getPlanRisk().getId() + "/unit/" +
-				unit.getId() + "/risk/" + risk.getId() + "/info";
+		String url = baseUrl + "/#/forrisco/plan-risk/" + unit.getPlanRisk().getId() + "/unit/" + unit.getId()
+				+ "/risk/" + risk.getId() + "/info";
 
 		String text = String.format("Você foi vinculado como responsável pelo risco %s no ForRisco", risk.getName());
 
-		this.notificationBS.sendNotification(NotificationType.FORRISCO_USER_LINKED_TO_RISK,
-				text, null, risk.getUser().getId(), url);
-		this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_USER_LINKED_TO_RISK,
-				text, "", risk.getUser(), url);
+		this.notificationBS.sendNotification(NotificationType.FORRISCO_USER_LINKED_TO_RISK, text, null,
+				risk.getUser().getId(), url);
+		this.notificationBS.sendNotificationEmail(NotificationType.FORRISCO_USER_LINKED_TO_RISK, text, "",
+				risk.getUser(), url);
 	}
 }
