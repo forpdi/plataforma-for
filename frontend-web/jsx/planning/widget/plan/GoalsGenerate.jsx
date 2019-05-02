@@ -125,7 +125,7 @@ export default onClickOutside(React.createClass({
 						id="responsibleGoal"
 						defaultValue={users && users.length > 0 ? this.props.users[0].id : ""}
 						>
-							{users && users.maxLength > 0 ?
+							{users && users.length > 0 ?
 								users.map((opt,idx) => {
 									return (<option key={'goal-opt-'+idx} value={opt.id}
 										 data-placement="right" title={opt.name}>
