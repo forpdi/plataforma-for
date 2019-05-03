@@ -15,6 +15,7 @@ var TipologyModel = Fluxbone.Model.extend({
 var TipologyStore = Fluxbone.Store.extend({
   ACTION_CREATE: 'tipology-newTipology',
   ACTION_RETRIEVE_ALL_TIPOLOGIES: 'tipology-retrieveAllTipologies',
+  dispatchAcceptRegex: /^tipology-[a-zA-Z0-9]+$/,
   url: URL,
   model: TipologyModel,
 
