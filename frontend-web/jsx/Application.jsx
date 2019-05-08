@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastr';
 
 import ForPDITopBar from "forpdi/jsx/TopBar.jsx";
 import ForRiscoTopBar from "forpdi/jsx_forrisco/TopBar.jsx";
+import PlataformaForTopbar from "forpdi/jsx/PlataformaForTopbar.jsx";;
 
 import AccessLevels from "forpdi/jsx/core/store/AccessLevels.json";
 import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
@@ -89,13 +90,21 @@ export default React.createClass({
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 	},
+	getTopbar() {
+		if (this.props.location.pathname.includes("forrisco")) {
+			return <ForRiscoTopBar />;
+		} else if (this.props.location.pathname.includes("app-select")) {
+			return <PlataformaForTopbar />;
+		}
+		return <ForPDITopBar />;
+	},
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
 		}
 		return (
 			<main className='fpdi-app-container'>
-				{ this.props.location.pathname.includes("forrisco") ? <ForRiscoTopBar /> : <ForPDITopBar /> }
+				{ this.getTopbar() }
 				<ToastContainer ref="container"
 					className="toast-top-center" />
 				{this.props.children}

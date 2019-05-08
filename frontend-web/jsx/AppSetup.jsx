@@ -12,7 +12,9 @@ import Messages from 'forpdi/jsx/core/util/Messages.jsx';
 
 import Application from 'forpdi/jsx/Application.jsx';
 import ForPDIApplication from 'forpdi/jsx/ForPDI.jsx';
-import ForRiscoApplication from "forpdi/jsx/ForRisco.jsx";
+import ForRiscoApplication from 'forpdi/jsx/ForRisco.jsx';
+
+import AppSelect from 'forpdi/jsx/AppSelect';
 
 import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
@@ -96,6 +98,7 @@ ReactDOM.render((
 
 		<Route path="/" component={Application}>
 			<IndexRedirect to="/login" />
+			<Route path="/app-select" component={AppSelect} />
 			<Route path="forrisco" component={ForRiscoApplication}>
 				<Route path="home" component={Forrisco_Dashboard} />
 				{/*<Route path="risk" component={Forrisco_RiskList} /> */}
