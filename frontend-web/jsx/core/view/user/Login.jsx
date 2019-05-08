@@ -52,7 +52,7 @@ export default React.createClass({
 			var url = window.location.href.split("#");
 			var path = url[1].split("?");
 			if (path[0] == "/login")
-				location.assign("#/forrisco/home");
+				location.assign("#/app-select");
 		}, me);
 		UserSession.on("loaded", () => {
 			me.setState({ loaded: true });

@@ -8,9 +8,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import NotificationTopBar from "forpdi/jsx/core/view/user/NotificationTopBar.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import UserStore from "forpdi/jsx/core/store/User.jsx";
-import Logo from 'forpdi/img/logo.png';
-import forRiscoLogo from 'forpdi/img/forrisco-logo.png';
-import LinkInformation from "forpdi/jsx/LinkInformation.jsx";
+import Logo from "forpdi/img/plataforma-for-logo.svg";
 import permissionTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 export default React.createClass({
@@ -20,6 +18,7 @@ export default React.createClass({
 		permissions: React.PropTypes.array.isRequired,
 		roles: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
 			user: UserSession.get("user"),
@@ -28,7 +27,6 @@ export default React.createClass({
 			notifications:0
 		};
 	},
-
 
 	componentWillMount() {
 		var me = this;
@@ -112,6 +110,7 @@ export default React.createClass({
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
 	},
+
     onLogout() {
     	Modal.confirmCustom(
 			() => {
@@ -125,7 +124,8 @@ export default React.createClass({
 			() => {Modal.hide()}
 		);
 
-    },
+	},
+
     onSearch(evt, id) {
     	evt.preventDefault();
     	//console.log("Searching:",this.refs['search'].value);
@@ -134,7 +134,8 @@ export default React.createClass({
     openFeedback(evt) {
     	evt.preventDefault();
     	Modal.feedbackPost();
-    },
+	},
+
     openReportProblem(evt) {
     	evt.preventDefault();
     	Modal.reportProblem();
@@ -164,27 +165,24 @@ export default React.createClass({
 		if (!this.state.logged) {
 			return <div style={{display: 'none'}} />;
 		}
-		return (<div className="fpdi-top-bar">
-	        <Link to='/home' className="fpdi-top-bar-brand">
-				<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
-	        </Link>
-			{/* <Link to='/forrisco/home' className="fpdi-top-bar-brand">
-				{<img alt={Messages.get("label.forRiscoLogo")} src={forRiscoLogo} />}
-	        </Link> */}
-			<span className="fpdi-fill" />
-			{/*<span className="mdi mdi-account-circle" style={{marginRight: '5px'}} />
-			<span>{this.state.user.name}</span>*/}
-			<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-				<span><img className="fpdi-userPicture" src={(!this.state.user.picture || this.state.user.picture == "" ) ?
-					"http://cloud.progolden.com.br/file/8352" : this.state.user.picture} /></span>
-				{this.state.model == null ? (this.state.user.name.length>25)?(string(this.state.user.name).trim().substr(0,25).concat("...").toString()):(this.state.user.name)   : (this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)}
-			</Link>
+		return (
+			<div className="fpdi-top-bar">
+				{/* logo */}
+				<Link to='/app-select' className="fpdi-top-bar-brand">
+					<img alt={Messages.get("label.forPdiLogo")} src={Logo}/>
+				</Link>
 
-			<Link to="/forrisco/home" title="Acessar ForPDI" id="for-risco-button" className="redirect-to-forRisco-button"> Acessar ForRisco </Link>
+				{/* informacoes de usuario */}
+				<span className="fpdi-fill" />
+				<Link  to = {"/users/profilerUser/" +this.state.user.id}>
+					<span><img className="fpdi-userPicture" src={(!this.state.user.picture || this.state.user.picture == "" ) ?
+						"http://cloud.progolden.com.br/file/8352" : this.state.user.picture} /></span>
+					{this.state.model == null ? (this.state.user.name.length>25)?(string(this.state.user.name).trim().substr(0,25).concat("...").toString()):(this.state.user.name)   : (this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)}
+				</Link>
 
-			<span title="Notificações" className="mdi mdi-magnify hidden" />
-
-			<div className="dropdown">
+				{/* notificacoes */}
+				<span title="Notificações" className="mdi mdi-magnify hidden" />
+				<div className="dropdown">
 					<a
 						id="top-bar-notification"
 						className={this.state.notifications == 0 ? " hidden " : "fpdi-notifications-number"}
@@ -196,7 +194,6 @@ export default React.createClass({
 					>
 						{this.state.notifications < 10 ? "0"+this.state.notifications : this.state.notifications}
 					</a>
-
 					<a
 						id="top-bar-notification"
 						className="dropdown-toggle mdi mdi-bell fpdi-notifications icon-link"
@@ -214,93 +211,64 @@ export default React.createClass({
 						</div>
 
 					</ul>
+				</div>
+
+				{/* menu */}
+				<div className="dropdown">
+					<a
+						id="top-bar-main-menu"
+						className="dropdown-toggle"
+						data-toggle="dropdown"
+						aria-haspopup="true"
+						aria-expanded="true"
+						title="Menu de Opções"
+						>
+							<span className="sr-only">{Messages.get("label.optionMenu")}</span>
+							<span id="align-top-bar-menu" className="mdi mdi-menu icon-link" />
+					</a>
+					<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
+						<li>
+							<Link  to = {"/users/profilerUser/" +this.state.user.id}>
+								<span className="mdi mdi-account-circle icon-link"/> {Messages.getEditable("label.myProfile","fpdi-nav-label")}
+							</Link>
+						</li>
+						{
+							(this.context.roles.MANAGER ||
+									_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
+									_.contains(this.context.permissions, permissionTypes.VIEW_USERS_PERMISSION) ||
+									_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION) ||
+									_.contains(this.context.permissions, permissionTypes.FORRISCO_VIEW_USERS_PERMISSION)) &&
+									EnvInfo.company
+								? <li>
+									<Link to="/users">
+										<span className="mdi mdi-account-multiple icon-link"
+											/> {Messages.getEditable("label.users","fpdi-nav-label")}
+									</Link>
+								</li>
+								: ''
+						}
+						{this.context.roles.SYSADMIN ? <li>
+							<Link to="/system/companies">
+								<span className="mdi mdi-chemical-weapon icon-link"
+									/> {Messages.getEditable("label.system","fpdi-nav-label")}
+							</Link>
+						</li>:""}
+
+						{this.context.roles.SYSADMIN ? <li>
+							<Link to="/structures">
+								<span className="mdi mdi-note-text icon-link"
+									/> {Messages.getEditable("label.structures","fpdi-nav-label")}
+							</Link>
+						</li>:""}
+						<li role="separator" className="divider"></li>
+						<li>
+							<a onClick={this.onLogout}>
+								<span className="mdi mdi-logout icon-link" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
+							</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-			<div className="dropdown">
-				<a
-					id="top-bar-notification"
-					className="mdi mdi-help-circle dropdown-toggle"
-					data-toggle="dropdown"
-					aria-haspopup="true"
-					aria-expanded="true"
-					title="Informações"
-					>
-				</a>
-				<div className="dropdown-menu dropdown-menu-right">
-					<LinkInformation />
-			  	</div>
-
-			</div>
-
-
-			<div className="dropdown">
-				<a
-					id="top-bar-main-menu"
-					className="dropdown-toggle"
-					data-toggle="dropdown"
-					aria-haspopup="true"
-					aria-expanded="true"
-					title="Menu de Opções"
-					>
-						<span className="sr-only">{Messages.get("label.optionMenu")}</span>
-						<span id="align-top-bar-menu" className="mdi mdi-menu icon-link" />
-				</a>
-				<ul className="dropdown-menu dropdown-menu-right" aria-labelledby="top-bar-main-menu">
-					<li>
-						<Link  to = {"/users/profilerUser/" +this.state.user.id}>
-							<span className="mdi mdi-account-circle icon-link"/> {Messages.getEditable("label.myProfile","fpdi-nav-label")}
-						</Link>
-					</li>
-
-					{
-						(this.context.roles.MANAGER ||
-								_.contains(this.context.permissions, permissionTypes.MANAGE_USERS_PERMISSION) ||
-								_.contains(this.context.permissions, permissionTypes.VIEW_USERS_PERMISSION) ||
-								_.contains(this.context.permissions, permissionTypes.FORRISCO_MANAGE_USERS_PERMISSION) ||
-								_.contains(this.context.permissions, permissionTypes.FORRISCO_VIEW_USERS_PERMISSION)) &&
-								EnvInfo.company
-							? <li>
-								<Link to="/users">
-									<span className="mdi mdi-account-multiple icon-link"
-										/> {Messages.getEditable("label.users","fpdi-nav-label")}
-								</Link>
-							</li>
-							: ''
-					}
-
-					{/* Aba CONFIGURAÇOES COMENTADA
-					<li>
-						{(false)?(<Link to="/settings">
-			                <span className="mdi mdi-settings"
-			                    /> {Messages.get("label.settings")}
-
-			            </Link>
-					</li> */}
-
-
-			        {this.context.roles.SYSADMIN ? <li>
-						<Link to="/system/companies">
-			                <span className="mdi mdi-chemical-weapon icon-link"
-			                    /> {Messages.getEditable("label.system","fpdi-nav-label")}
-			            </Link>
-					</li>:""}
-
-					{this.context.roles.SYSADMIN ? <li>
-						<Link to="/structures">
-			                <span className="mdi mdi-note-text icon-link"
-			                    /> {Messages.getEditable("label.structures","fpdi-nav-label")}
-			            </Link>
-					</li>:""}
-
-
-
-					<li role="separator" className="divider"></li>
-					<li>
-						<a onClick={this.onLogout}>
-							<span className="mdi mdi-logout icon-link" /> {Messages.getEditable("label.logoff","fpdi-nav-label")}
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>);
+		);
 	  }
 	});

@@ -105,10 +105,10 @@ export default React.createClass({
 				var formattedValue = (model.attributeInstance ? model.attributeInstance.formattedValue : "");
 				var value = (model.attributeInstance ? model.attributeInstance.value : "");
 				var editModeValue = null;
-				if (model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
-					if (model.attributeInstance) {  //&& model.attributeInstance.valueAsNumber) {
-						value = model.attributeInstance.valueAsNumber;
-						editModeValue = value ? value.toString().replace(".", ",") : null;
+				if(model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
+					if (model.attributeInstance){  //&& model.attributeInstance.valueAsNumber) {
+						value = model.attributeInstance.valueAsNumber || '';
+						editModeValue = value.toString().replace(".", ",");
 					} else {
 						value = "";
 						editModeValue = value;
