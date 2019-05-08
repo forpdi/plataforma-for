@@ -36,11 +36,19 @@ import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
+import org.forpdi.system.factory.ApplicationSetup;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.internal.CriteriaImpl;
+import org.hibernate.loader.criteria.CriteriaJoinWalker;
+import org.hibernate.loader.criteria.CriteriaQueryTranslator;
+import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.hibernate.sql.JoinType;
+import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -400,29 +408,41 @@ public class DashboardBS extends HibernateBusiness {
 		Criteria responsible = this.filterByResponsibleCriteria();
 		responsible.setProjection(Projections.property("levelInstance.id"));
 		List<Long> ids = this.dao.findByCriteria(responsible, Long.class);
-		Criteria child = this.dao.newCriteria(StructureLevelInstance.class);
-		Disjunction or = Restrictions.disjunction();
+		
+		/*Disjunction or = Restrictions.disjunction();
 		for (Long id : ids) {
 			or.add(Restrictions.eq("parent", id));
+		}*///child.add(or);
+		
+		if(ids.isEmpty()) {
+			return new ArrayList<>();
 		}
-		child.add(or);
+		
+		Criteria child = this.dao.newCriteria(StructureLevelInstance.class);
+		child.add(Restrictions.in("parent", ids));
 		child.setProjection(Projections.property("id"));
+		
 		List<Long> ids2 = this.dao.findByCriteria(child, Long.class);
-		Criteria child2 = this.dao.newCriteria(StructureLevelInstance.class);
-		or = Restrictions.disjunction();
-		for (Long id : ids2) {
+		//or = Restrictions.disjunction();
+		/*for (Long id : ids2) {
 			or.add(Restrictions.eq("parent", id));
-		}
-		child2.add(or);
+		}*///child2.add(or);
+	
+		
+		Criteria child2 = this.dao.newCriteria(StructureLevelInstance.class);
+		child2.add(Restrictions.in("parent", ids2));
 		child2.setProjection(Projections.property("id"));
-		List<Long> ids3 = this.dao.findByCriteria(child2, Long.class);
-		Criteria child3 = this.dao.newCriteria(StructureLevelInstance.class);
-		or = Restrictions.disjunction();
+		
+		/*or = Restrictions.disjunction();
 		for (Long id : ids3) {
 			or.add(Restrictions.eq("parent", id));
-		}
-		child3.add(or);
+		}*///child3.add(or);
+		
+		List<Long> ids3 = this.dao.findByCriteria(child2, Long.class);
+		Criteria child3 = this.dao.newCriteria(StructureLevelInstance.class);		
+		child3.add(Restrictions.in("parent", ids3));
 		child3.setProjection(Projections.property("id"));
+		
 		List<Long> ids4 = this.dao.findByCriteria(child3, Long.class);
 
 		List<Long> allIds = new ArrayList<>();
@@ -454,6 +474,7 @@ public class DashboardBS extends HibernateBusiness {
 		if (pageSize == null) {
 			pageSize = PAGESIZE;
 		}
+
 		this.peformanceFilter.setType(type);
 		List<Long> allIds = this.retrieveChildResponsibleIds();
 		allIds = this.peformanceFilter.depurate(allIds);
