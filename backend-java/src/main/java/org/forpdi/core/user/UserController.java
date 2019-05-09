@@ -772,7 +772,7 @@ public class UserController extends AbstractController {
 			}
 		} catch (Throwable ex) {
 			LOGGER.errorf(ex, "Unexpected error occurred.");
-			this.fail(ex.getMessage());
+			this.fail("Unexpected error occurred: "+ex.getMessage());
 		}
 	}
 
