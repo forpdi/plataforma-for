@@ -225,7 +225,7 @@ var UserSession = Backbone.Model.extend({
 				me.trigger("recoverpassword", data);
 			},
 			error(opts, status, errorMsg) {
-				me.handleRequestErrors([], opts);
+				me.trigger("recoverpassword", opts.responseJSON);
 			}
 		});
 	},

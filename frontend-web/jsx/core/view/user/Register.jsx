@@ -208,7 +208,7 @@ export default React.createClass({
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
 							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.get("label.forRiscoLogo")} />
-							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titleRiskComplement")}<br/>
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titlePlatformComplement")}<br/>
 							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>

@@ -89,7 +89,7 @@ export default React.createClass({
 							/>
 							<center>
 								<h3 className="frisco-login-subtitle">
-									{Messages.get("label.login.titleRiskComplement")}<br/>
+									{Messages.get("label.login.titlePlatformComplement")}<br/>
 									{/* Messages.getEditable("label.login.title","fpdi-nav-label") */}
 								</h3>
 							</center>

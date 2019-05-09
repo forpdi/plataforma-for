@@ -77,8 +77,8 @@ public class DashboardBS extends HibernateBusiness {
 
 	/**
 	 * Calcular informações gerais (Em dia, Atrasados, Próximos a vencer, Não
-	 * iniciados, Abaixo do mínimo, Abaixo do esperado, Suficiente, Acima do
-	 * máximo) das metas.
+	 * iniciados, Abaixo do mínimo, Abaixo do esperado, Suficiente, Acima do máximo)
+	 * das metas.
 	 * 
 	 * @param goals
 	 *            Lista de metas para ser calculado as informações gerais.
@@ -98,7 +98,7 @@ public class DashboardBS extends HibernateBusiness {
 			Integer finished = 0;
 			Integer closeToMat = 0;
 			for (StructureLevelInstance goal : goals) {
-				List<AttributeInstance> attrInstances = this.sbs.listAttributeInstanceByLevel(goal,false);
+				List<AttributeInstance> attrInstances = this.sbs.listAttributeInstanceByLevel(goal, false);
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
@@ -399,54 +399,44 @@ public class DashboardBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Retorna uma lista dos IDs dos níveis os quais ele é responsável e seus
-	 * filhos
+	 * Retorna uma lista dos IDs dos níveis os quais ele é responsável e seus filhos
 	 * 
 	 * @return allIds, lista de IDs dos níveis
 	 */
 	public List<Long> retrieveChildResponsibleIds() {
+		List<Long> allIds = new ArrayList<>();
+
 		Criteria responsible = this.filterByResponsibleCriteria();
 		responsible.setProjection(Projections.property("levelInstance.id"));
 		List<Long> ids = this.dao.findByCriteria(responsible, Long.class);
-		
-		/*Disjunction or = Restrictions.disjunction();
-		for (Long id : ids) {
-			or.add(Restrictions.eq("parent", id));
-		}*///child.add(or);
-		
-		if(ids.isEmpty()) {
-			return new ArrayList<>();
+		allIds.addAll(ids);
+		if (ids.isEmpty()) {
+			return allIds;
 		}
-		
+
 		Criteria child = this.dao.newCriteria(StructureLevelInstance.class);
 		child.add(Restrictions.in("parent", ids));
 		child.setProjection(Projections.property("id"));
-		
 		List<Long> ids2 = this.dao.findByCriteria(child, Long.class);
-		//or = Restrictions.disjunction();
-		/*for (Long id : ids2) {
-			or.add(Restrictions.eq("parent", id));
-		}*///child2.add(or);
-	
-		
+		allIds.addAll(ids2);
+		if (ids2.isEmpty()) {
+			return allIds;
+		}
+
 		Criteria child2 = this.dao.newCriteria(StructureLevelInstance.class);
 		child2.add(Restrictions.in("parent", ids2));
 		child2.setProjection(Projections.property("id"));
-		
-		/*or = Restrictions.disjunction();
-		for (Long id : ids3) {
-			or.add(Restrictions.eq("parent", id));
-		}*///child3.add(or);
-		
 		List<Long> ids3 = this.dao.findByCriteria(child2, Long.class);
-		Criteria child3 = this.dao.newCriteria(StructureLevelInstance.class);		
+		allIds.addAll(ids3);
+		if (ids3.isEmpty()) {
+			return allIds;
+		}
+
+		Criteria child3 = this.dao.newCriteria(StructureLevelInstance.class);
 		child3.add(Restrictions.in("parent", ids3));
 		child3.setProjection(Projections.property("id"));
-		
 		List<Long> ids4 = this.dao.findByCriteria(child3, Long.class);
 
-		List<Long> allIds = new ArrayList<>();
-		allIds.addAll(ids);
 		allIds.addAll(ids2);
 		allIds.addAll(ids3);
 		allIds.addAll(ids4);
@@ -564,16 +554,15 @@ public class DashboardBS extends HibernateBusiness {
 			 * AttributeInstance attrInst = null;
 			 * 
 			 * for (Attribute atttr : attributeList) { if
-			 * (atttr.getType().equals(ResponsibleField.class.getCanonicalName()
-			 * )) { attrInst = this.sbs.retrieveAttributeInstance(s, atttr); } }
-			 * if (attrInst != null) { User user =
-			 * usrbs.existsByUser(Long.parseLong(attrInst.getValue()));
+			 * (atttr.getType().equals(ResponsibleField.class.getCanonicalName() )) {
+			 * attrInst = this.sbs.retrieveAttributeInstance(s, atttr); } } if (attrInst !=
+			 * null) { User user = usrbs.existsByUser(Long.parseLong(attrInst.getValue()));
 			 * goalAux.setResponsible(user.getName()); }
 			 */
 			// LOGGER.info(s.getName()+ " | DeadlineStatus:
 			// "+s.getDeadlineStatus());
 			// LOGGER.info("GoalsInfoTable: " + goalAux.toString());
-			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s,false)) {
+			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s, false)) {
 				Attribute attr = this.sbs.retrieveAttribute(a.getAttribute().getId());
 				if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
 					User user = usrbs.existsByUser(Long.parseLong(a.getValue()));
@@ -823,7 +812,7 @@ public class DashboardBS extends HibernateBusiness {
 			goalAux.setStrategicAxisName(strategicAxis.getName());
 
 			goalAux.setGoalName(s.getName());
-			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s,false)) {
+			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s, false)) {
 				Attribute attr = this.sbs.retrieveAttribute(a.getAttribute().getId());
 				if (attr.isFinishDate() && s.getPlan().getParent().getCompany().isShowMaturity())
 					goalAux.setFinishDate(a.getValueAsDate());
