@@ -35,14 +35,15 @@ export default React.createClass({
   },
 
   getInfos(page, pageSize, opt){
-    opt = opt || this.props;
-    DashboardStore.dispatch({
-        action: DashboardStore.ACTION_GET_OBJECTIVES_INFORMATION,
-        data: {
-          macro: (opt.plan == -1 ? null : opt.plan.get("id")),
-          plan: (opt.subPlan == -1 ? null : opt.subPlan.id)
-        }
-    });
+	opt = opt || this.props;
+	// comentado porque não tinha nenhum componente ouvindo e estava sobrecarregando o servidor
+    // DashboardStore.dispatch({
+    //     action: DashboardStore.ACTION_GET_OBJECTIVES_INFORMATION,
+    //     data: {
+    //       macro: (opt.plan == -1 ? null : opt.plan.get("id")),
+    //       plan: (opt.subPlan == -1 ? null : opt.subPlan.id)
+    //     }
+    // });
     DashboardStore.dispatch({
         action: DashboardStore.ACTION_GET_GOALS_INFO_TABLE,
         data: {
