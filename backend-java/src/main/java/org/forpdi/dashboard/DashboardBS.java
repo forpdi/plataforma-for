@@ -436,9 +436,6 @@ public class DashboardBS extends HibernateBusiness {
 		child3.add(Restrictions.in("parent", ids3));
 		child3.setProjection(Projections.property("id"));
 		List<Long> ids4 = this.dao.findByCriteria(child3, Long.class);
-
-		allIds.addAll(ids2);
-		allIds.addAll(ids3);
 		allIds.addAll(ids4);
 
 		return allIds;

@@ -4,7 +4,7 @@ import ImgTooltip from 'forpdi/img/tooltipFavorite.png';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
-	
+
 	getInitialState() {
 		return {
 		};
@@ -15,18 +15,18 @@ export default React.createClass({
 		var me = this;
 	},
 	componentWillUnmount() {
-		
+
 	},
 	componentWillReceiveProps() {
-		
+
 	},
 
 
 	render() {
 		return (
-			<div className="fpdi-favoriteTooltip">	
+			<div className="fpdi-favoriteTooltip">
 				<div className="tooltipText">
-					{Messsages.get("label.favoriteLevels")}<br/>
+					{Messages.get("label.favoriteLevels")}<br/>
 					<div className="tooltipImage"
 						style={{
 							backgroundImage: 'url('+ImgTooltip+')',

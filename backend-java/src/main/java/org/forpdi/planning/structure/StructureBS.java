@@ -1844,6 +1844,7 @@ public class StructureBS extends HibernateBusiness {
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 		}
+		//org.hibernate.QueryException: could not resolve property: plan.parent of: org.forpdi.planning.structure.StructureLevelInstance
 		List<StructureLevelInstance> indicatorsList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		indicatorsList = this.filterByResponsible(indicatorsList);
 		result.setList(indicatorsList);
@@ -1987,13 +1988,19 @@ public class StructureBS extends HibernateBusiness {
 	public PaginatedList<StructureLevelInstance> listObjectives(PlanMacro macro, Plan plan) {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
-				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
+				.createAlias("plan", "plan", JoinType.INNER_JOIN)
+				.createAlias("level", "level", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("level.objective", true));
+		
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
+		}else {
+			criteria.createAlias("plan.parent", "planMacro", JoinType.INNER_JOIN);
+			criteria.add(Restrictions.eq("planMacro.company",this.domain.getCompany()));
 		}
+		
 
 		List<StructureLevelInstance> objectivesList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		objectivesList = this.filterByResponsible(objectivesList);
@@ -2096,69 +2103,63 @@ public class StructureBS extends HibernateBusiness {
 	 * @return levelInstances Lista de instâncias dos leveis após filtro.
 	 */
 	public List<StructureLevelInstance> filterByResponsible(List<StructureLevelInstance> levelInstances) {
+		
+		int contador=0;
+		long userId=this.userSession.getUser().getId();
+		
 		if (this.userSession.getAccessLevel() < AccessLevels.COMPANY_ADMIN.getLevel()) {
 			List<StructureLevelInstance> list2 = new ArrayList<StructureLevelInstance>();
+						
 			for (StructureLevelInstance levelInst : levelInstances) {
 				boolean lvlAdd = false;
-				List<StructureLevelInstance> stLvInstList = this.retrieveLevelInstanceSons(levelInst.getId());
-				for (StructureLevelInstance stLvInst : stLvInstList) {
-					List<Attribute> attributeList = this.retrieveLevelAttributes(stLvInst.getLevel());
-					for (Attribute attr : attributeList) {
-						if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-							AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(stLvInst, attr);
-							if (attrInst != null) {
-								if (!lvlAdd
-										&& Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
-									list2.add(levelInst);
-									lvlAdd = true;
-									break;
-								}
-							}
+				StructureLevelInstance lvlI = levelInst;
+								
+					List<StructureLevelInstance> stLvInstList = this.retrieveLevelInstanceSons(levelInst.getId());
+					for (StructureLevelInstance stLvInst : stLvInstList) {
+						contador+=1;
+						if(!lvlAdd && this.isSLIResponsible(stLvInst,userId)){						
+							list2.add(levelInst);
+							lvlAdd = true;
+							continue;
 						}
 					}
-					if (lvlAdd) {
-						break;
+				
+				if (!lvlAdd) {
+					contador+=1;
+					if(this.isSLIResponsible(lvlI,userId)){
+						list2.add(levelInst);
+						lvlAdd = true;
+						continue;
 					}
 				}
-
-				if (!lvlAdd) {
-					StructureLevelInstance lvlI = levelInst;
-					List<Attribute> attributeList = this.retrieveLevelAttributes(lvlI.getLevel());
-					for (Attribute attr : attributeList) {
-						if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-							AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(lvlI, attr);
-							if (attrInst != null) {
-								if (!lvlAdd && Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
-									list2.add(levelInst);
-									lvlAdd = true;
-								}
-							}
-						}
-						if (lvlAdd) {
-							break;
-						}
-					}
-					while (lvlI.getParent() != null && !lvlAdd) {
-						lvlI = this.retrieveLevelInstance(lvlI.getParent());
-						attributeList = this.retrieveLevelAttributes(lvlI.getLevel());
-						for (Attribute attr : attributeList) {
-							if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-								AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(lvlI, attr);
-								if (attrInst != null) {
-									if (!lvlAdd
-											&& Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
-										list2.add(levelInst);
-										lvlAdd = true;
-									}
-								}
-							}
-						}
+				
+				while (!lvlAdd && lvlI.getParent() != null) {
+					lvlI = this.retrieveLevelInstance(lvlI.getParent());
+					contador+=1;
+					if(!lvlAdd && this.isSLIResponsible(lvlI,userId)) {
+						list2.add(levelInst);
+						lvlAdd = true;
+						break;
 					}
 				}
 			}
 			levelInstances = list2;
 		}
 		return levelInstances;
+	}
+
+	private boolean isSLIResponsible(StructureLevelInstance lvlI, long userId) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("attribute", "attribute", JoinType.LEFT_OUTER_JOIN)
+		.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+		.add(Restrictions.eq("levelInstance",lvlI))
+		.add(Restrictions.eq("value",String.valueOf(userId)));
+		criteria.setMaxResults(1);
+
+		if(criteria.uniqueResult() !=null) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

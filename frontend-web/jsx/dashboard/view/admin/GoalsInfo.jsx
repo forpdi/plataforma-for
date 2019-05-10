@@ -51,7 +51,16 @@ export default React.createClass({
 				info: store.data,
 				loading: false
 			});
-        });
+		});
+
+		DashboardStore.dispatch({
+			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
+			data: {
+				macro: (this.props.plan == -1 ? null : this.props.plan.get("id")),
+				plan: (this.props.subPlan == -1 ? null : this.props.subPlan.id)
+			}
+		});
+
     },
 
     componentWillUnmount() {
@@ -67,13 +76,16 @@ export default React.createClass({
 			loading: true
 		});
 
-		DashboardStore.dispatch({
-			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
-			data: {
-				macro: (newProps.plan == -1 ? null : newProps.plan.get("id")),
-				plan: (newProps.subPlan == -1 ? null : newProps.subPlan.id)
-			}
-		});
+		if (this.props.plan != newProps.plan || this.props.macro != newProps.macro) {
+			DashboardStore.dispatch({
+				action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
+				data: {
+					macro: (newProps.plan == -1 ? null : newProps.plan.get("id")),
+					plan: (newProps.subPlan == -1 ? null : newProps.subPlan.id)
+				}
+			});
+		}
+
     },
 
     hide(){
