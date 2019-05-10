@@ -1835,6 +1835,9 @@ public class StructureBS extends HibernateBusiness {
 			        .add( Projections.property("levelInstance.id"), "id")
 			    );
 		List<?> list = criteria.list();
+		if (list.isEmpty()) {
+			return new PaginatedList<>(new ArrayList<>(0), 0L);
+		}
 		criteria = this.dao.newCriteria(StructureLevelInstance.class)
 				.add(Restrictions.eq("deleted", false))
 				.add(Restrictions.in("parent", list));
