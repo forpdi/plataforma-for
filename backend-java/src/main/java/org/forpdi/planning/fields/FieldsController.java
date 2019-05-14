@@ -14,6 +14,7 @@ import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyBS;
 import org.forpdi.core.user.authz.Permissioned;
+import org.forpdi.dashboard.admin.GeneralBudgets;
 import org.forpdi.planning.attribute.Attribute;
 import org.forpdi.planning.fields.actionplan.ActionPlan;
 import org.forpdi.planning.fields.attachment.Attachment;
@@ -37,6 +38,7 @@ import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.boilerplate.NoCache;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 @Controller
 public class FieldsController extends AbstractController {
@@ -111,7 +113,7 @@ public class FieldsController extends AbstractController {
 				}
 			}
 
-			if (realized != null) {
+			if (!GeneralUtils.isEmpty(realized)) {
 				String numberRealized = realized;
 				String numberFormated = numberRealized.replaceAll(",", ".");
 				Double realizedD = Double.parseDouble(numberFormated);
@@ -122,7 +124,8 @@ public class FieldsController extends AbstractController {
 				} else {
 					budget.setRealized(realizedD);
 				}
-
+			} else {
+				budget.setRealized(0.0);
 			}
 
 			budget.setBudgetElement(budgetElement);

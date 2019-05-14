@@ -30,7 +30,7 @@ export default React.createClass({
 			loading: false,
 			hide: false,
 			editingIdx: -1,
-			budgetsLength: 0,
+			budgetSelectList: [],
 		};
 	},
 
@@ -103,8 +103,6 @@ export default React.createClass({
 			});
 		},this);
 		BudgetStore.on("budgetUpdated", model => {
-
-
 			if(model.data){
 				this.state.budgets[this.state.idx].budget.name=model.data.budget.name;
 				this.state.budgets[this.state.idx].budget.subAction=model.data.budget.subAction;
@@ -139,7 +137,7 @@ export default React.createClass({
 
 		BudgetStore.on("budgetElementRetrivied", (model) => {
 			this.setState({
-				budgetsLength: model.data.length,
+				budgetSelectList: model.data,
 				loading: false,
 			});
 		});
@@ -279,7 +277,12 @@ export default React.createClass({
 	renderEditLine(model, idx){
 		return(
 			<tr key={'new-budget-'+idx}>
-				<td><SubActionSelectBox className="" ref={"subActions-edit-"+idx} defaultValue={model.budget.budgetElement.id}/>
+				<td>
+					<SubActionSelectBox
+						ref={"subActions-edit-"+idx}
+						defaultValue={model.budget.budgetElement.id}
+						budgets={this.state.budgetSelectList}
+					/>
 					<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 				</td>
 				<td><input type='text' maxLength='255' className='budget-field-table' ref={'inputName'+idx}
@@ -307,10 +310,14 @@ export default React.createClass({
 	},
 
 	renderNewBudget(){
-		if(this.state.budgetsLength > 0){
+		if(this.state.budgetSelectList.length > 0){
 			return(
 				<tr key='new-budget'>
-					<td ref="tdSubAction"><SubActionSelectBox className="" ref="subActions"/>
+					<td ref="tdSubAction">
+						<SubActionSelectBox
+							budgets={this.state.budgetSelectList}
+							ref="subActions"
+						/>
 						<div className="formAlertError" ref="formAlertErrorSubAction"></div>
 					</td>
 					<td ref="tdName"><input type='text' maxLength='255' className='budget-field-table' ref="budgetNameText" onKeyPress={this.onKeyUp}/>
