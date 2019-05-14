@@ -1538,6 +1538,8 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("level.goal", true));
 		criteria.add(Restrictions.eq("macro.archived", false));
+		criteria.add(Restrictions.eq("macro.deleted", false));
+		
 
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
@@ -1818,11 +1820,12 @@ public class StructureBS extends HibernateBusiness {
 	public PaginatedList<StructureLevelInstance> listIndicators(PlanMacro macro, Plan plan) {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
 //**************************** este bloco foi comentado para tentar diminuir a sobrecarga do servidor ********************************** 
-//		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
-//				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
-//				.add(Restrictions.eq("deleted", false)).add(Restrictions.eq("level.indicator", true));
-//		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-//		criteria.add(Restrictions.eq("macro.archived", false));
+/*		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
+				.add(Restrictions.eq("deleted", false)).add(Restrictions.eq("level.indicator", true));
+		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("macro.archived", false));
+*/
 //**************************************************************************************************************************************
 //**************************** foi colocado no lugar do codigo anterior para diminuir o numero de **************************************
 //**************************** registros que serao processados nos metodos seguintes ***************************************************
@@ -2107,8 +2110,23 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public List<StructureLevelInstance> filterByResponsible(List<StructureLevelInstance> levelInstances) {
 		
-		int contador=0;
+		if(levelInstances.size()==0) {
+			return levelInstances;
+		}
+		
 		long userId=this.userSession.getUser().getId();
+		List<Long> list= new ArrayList<>();
+		
+		for (StructureLevelInstance levelInst : levelInstances) {
+			list.add(levelInst.getId());
+		}
+
+		//pegar todos os filhos de uma vez para evitar muitos acessos ao banco
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.add(Restrictions.in("parent", list))
+			.add(Restrictions.eq("deleted", false));
+			
+		List<StructureLevelInstance> sonList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		
 		if (this.userSession.getAccessLevel() < AccessLevels.COMPANY_ADMIN.getLevel()) {
 			List<StructureLevelInstance> list2 = new ArrayList<StructureLevelInstance>();
@@ -2116,29 +2134,26 @@ public class StructureBS extends HibernateBusiness {
 			for (StructureLevelInstance levelInst : levelInstances) {
 				boolean lvlAdd = false;
 				StructureLevelInstance lvlI = levelInst;
-								
-					List<StructureLevelInstance> stLvInstList = this.retrieveLevelInstanceSons(levelInst.getId());
-					for (StructureLevelInstance stLvInst : stLvInstList) {
-						contador+=1;
-						if(!lvlAdd && this.isSLIResponsible(stLvInst,userId)){						
-							list2.add(levelInst);
-							lvlAdd = true;
-							continue;
-						}
-					}
+				
+				if(this.isSLIResponsible(lvlI,userId)){
+					list2.add(levelInst);
+					lvlAdd = true;
+				}
 				
 				if (!lvlAdd) {
-					contador+=1;
-					if(this.isSLIResponsible(lvlI,userId)){
-						list2.add(levelInst);
-						lvlAdd = true;
-						continue;
+					for (StructureLevelInstance stLvInst : sonList) {
+						if(stLvInst.getParent().equals(levelInst.getId())) {
+							if(this.isSLIResponsible(stLvInst,userId)){
+								list2.add(levelInst);
+								lvlAdd = true;
+								break;
+							}
+						}
 					}
 				}
 				
 				while (!lvlAdd && lvlI.getParent() != null) {
 					lvlI = this.retrieveLevelInstance(lvlI.getParent());
-					contador+=1;
 					if(!lvlAdd && this.isSLIResponsible(lvlI,userId)) {
 						list2.add(levelInst);
 						lvlAdd = true;
@@ -2150,10 +2165,12 @@ public class StructureBS extends HibernateBusiness {
 		}
 		return levelInstances;
 	}
+	
+	
 
 	private boolean isSLIResponsible(StructureLevelInstance lvlI, long userId) {
-		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
-		criteria.createAlias("attribute", "attribute", JoinType.LEFT_OUTER_JOIN)
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+		.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
 		.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
 		.add(Restrictions.eq("levelInstance",lvlI))
 		.add(Restrictions.eq("value",String.valueOf(userId)));

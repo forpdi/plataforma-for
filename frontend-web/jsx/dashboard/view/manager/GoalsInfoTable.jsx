@@ -61,7 +61,6 @@ export default React.createClass({
 		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 			this.getInfos(1, 5, newProps);
 		}
-
 	},
 
 	componentDidMount() {
@@ -75,12 +74,17 @@ export default React.createClass({
 				tamGoalsInformation: store.total
 			});
 		});
-		/*DashboardStore.on("generalObjectivesInformation", (store) =>{
-			  me.setState({
+
+
+
+		DashboardStore.on("generalObjectivesInformation", (store) => {
+			me.setState({
 				objectivesInformation: store.data,
-				hide:false
-			  });
-			});*/
+				hide: false
+			});
+		});
+
+
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
 		});
