@@ -154,7 +154,6 @@ export default React.createClass({
 	},
 
 	insertNewRow() {
-		console.log(this.state.units);
 		if (this.state.newRowDisplayed || this.state.updateRowDisplayed) {
 			return;
 		}

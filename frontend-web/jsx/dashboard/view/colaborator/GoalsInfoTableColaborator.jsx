@@ -93,7 +93,8 @@ export default React.createClass({
                 macroId:(this.state.plan != -1)?(this.state.plan.get("id")):(null),
                 planId:(this.state.subPlan != -1)?(this.state.subPlan.id):(null)
             }
-      });
+	  });
+	  /*comentado porque não tinha nenhum componente ouvindo e estava sobrecarregando o servidor
       DashboardStore.dispatch({
         action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
         data: {
@@ -101,15 +102,16 @@ export default React.createClass({
             plan:(this.state.subPlan != -1)?(this.state.subPlan.id):(null),
             indicator:(this.state.indicator !=-1)?(this.state.indicator.id):(null)
         }
-      });
+      });*/
     });
     PlanMacroStore.on("find", (store) => {
       StructureStore.dispatch({
           action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
         });
-      DashboardStore.dispatch({
+	  /*comentado porque não tinha nenhum componente ouvindo e estava sobrecarregando o servidor
+	  DashboardStore.dispatch({
           action: DashboardStore.ACTION_GET_GOALS_INFO_COL
-        });
+        });*/
 
       }, me);
   },

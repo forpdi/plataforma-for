@@ -35,6 +35,8 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps) {
 		var me = this;
+
+
 		me.setState({
 			plan: newProps.plan,
 			subPlan: newProps.subPlan,
@@ -48,6 +50,7 @@ export default React.createClass({
 		this.getInfos(1, this.state.pageSize, newProps);
 
 		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
+
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_GET_OBJECTIVES,
 				data: {
@@ -55,6 +58,7 @@ export default React.createClass({
 					planId: (newProps.subPlan && newProps.subPlan != -1) ? (newProps.subPlan.id) : (null)
 				}
 			});
+
 		}
 	},
 
@@ -104,6 +108,7 @@ export default React.createClass({
 		}, me);
 
 		DashboardStore.on("generalGoalsInformation", (model) => {
+
 			var elements = [];
 			var data = [
 				['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
@@ -253,7 +258,6 @@ export default React.createClass({
 				loading: false
 			});
 		}, me);
-
 
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_OBJECTIVES,
@@ -535,7 +539,7 @@ export default React.createClass({
 
 					</div>
 					{!me.state.hide ?
-						(me.state.loading ? <LoadingGauge /> :
+						(me.state.loading || me.state.data ==null ? <LoadingGauge /> :
 							<div>
 								<ForPDIChart
 									chartType={me.state.typeGraph}
