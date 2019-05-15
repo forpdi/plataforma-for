@@ -33,7 +33,6 @@ export default React.createClass({
     };
   },
 
-
   componentWillReceiveProps(newProps){
 		this.setState({
 		plan: newProps.plan,

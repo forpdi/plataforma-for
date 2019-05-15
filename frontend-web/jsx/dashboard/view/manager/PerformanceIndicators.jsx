@@ -47,9 +47,11 @@ export default React.createClass({
 			this.refs.selectIndicators.value = -1;
 		}
 
-		this.getInfos(1, this.state.pageSize, newProps);
+
 
 		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
+
+			this.getInfos(1, this.state.pageSize, newProps);
 
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_GET_OBJECTIVES,
@@ -99,6 +101,10 @@ export default React.createClass({
 			]
 		});
 		me.updateChartOptions();
+
+		/*Essa chamada ocorria no componentWillReceiveProps,
+        ocasionando uma repetição desnecessária da requisição, sobrecarregando o servidor*/
+		this.getInfos(1, this.state.pageSize, this.props);
 
 		StructureStore.on("objectivesretrivied", (model) => {
 			me.setState({
@@ -539,7 +545,7 @@ export default React.createClass({
 
 					</div>
 					{!me.state.hide ?
-						(me.state.loading || me.state.data ==null ? <LoadingGauge /> :
+						(me.state.loading || me.state.data == null ? <LoadingGauge /> :
 							<div>
 								<ForPDIChart
 									chartType={me.state.typeGraph}

@@ -14,28 +14,44 @@ var numeral = require('numeral');
 
 export default React.createClass({
 
-	getInitialState() {
-		return {
-			loading: true,
-			indicator: -1,
-			indicators: [],
-			plan: this.props.plan,
-			subPlan: this.props.subPlan,
-			elements: [],
-			aggregateIndicator: false,
-			chartEvents: [
-				{
-					eventName: 'select',
-					callback: this.onChartClick
-				},
-			],
-			pageSize: 20,
-			total: 0
-		};
+    getInitialState() {
+        return {
+            loading: true,
+            indicator:-1,
+            indicators:[],
+        	plan: this.props.plan,
+        	subPlan: this.props.subPlan,
+            elements:[],
+            aggregateIndicator: false,
+            chartEvents: [
+                {
+                    eventName : 'select',
+                    callback  : this.onChartClick
+                },
+            ],
+            pageSize: 20,
+            total: 0
+        };
 	},
-	componentWillReceiveProps(newProps) {
-		var me = this;
+	/*	if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
+			me.setState({
+				plan: newProps.plan,
+				subPlan: newProps.subPlan,
+				indicator: -1,
+				loading: true
+			});
 
+			this.refs.selectIndicator.value = -1;
+
+			StructureStore.dispatch({
+				action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
+			});
+
+			this.getGoalsInfo(1, this.state.pageSize, newProps);
+		}*/
+
+    componentWillReceiveProps(newProps){
+    	var me = this;
 		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 			me.setState({
 				plan: newProps.plan,
@@ -52,9 +68,10 @@ export default React.createClass({
 
 			this.getGoalsInfo(1, this.state.pageSize, newProps);
 		}
-	},
-	componentDidMount() {
-		var me = this;
+    },
+
+    componentDidMount(){
+    	var me = this;
 		this.setState({
 			options: {
 				title: '',
@@ -71,7 +88,8 @@ export default React.createClass({
 				["", 0, '', 0]
 			]
 		});
-		StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
+
+        StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
 			this.setState({
 				indicators: model.data,
 			});
