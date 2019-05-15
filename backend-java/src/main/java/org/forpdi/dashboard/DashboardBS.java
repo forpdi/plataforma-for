@@ -97,15 +97,28 @@ public class DashboardBS extends HibernateBusiness {
 			Integer notStarted = 0;
 			Integer finished = 0;
 			Integer closeToMat = 0;
+			
+			 Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+			.add(Restrictions.in("levelInstance", goals))
+			.add(Restrictions.eq("deleted", false));
+			List<AttributeInstance> attrinstances = this.dao.findByCriteria(criteria, AttributeInstance.class);
+			
 			for (StructureLevelInstance goal : goals) {
-				List<AttributeInstance> attrInstances = this.sbs.listAttributeInstanceByLevel(goal, false);
+				
+				List<AttributeInstance> attrInstances = new ArrayList<>();
+				for(AttributeInstance attr : attrinstances) {
+					if(attr.getLevelInstance().getId().equals(goal.getId())) {
+						attrInstances.add(attr);
+					}
+				}
+								
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
 				Double max = null;
 				Double min = null;
 				for (AttributeInstance attrInstance : attrInstances) {
-					Attribute attr = this.sbs.retrieveAttribute(attrInstance.getAttribute().getId());
+					Attribute attr = attrInstance.getAttribute();
 					if (attr.isFinishDate()) {
 						finish = attrInstance.getValueAsDate();
 					} else if (attr.isExpectedField()) {
@@ -150,6 +163,7 @@ public class DashboardBS extends HibernateBusiness {
 					}
 				}
 			}
+			
 			info.setInDay(inDay);
 			info.setInDayPercentage((double) inDay * 100 / goals.size());
 			info.setLate(late);
@@ -219,9 +233,7 @@ public class DashboardBS extends HibernateBusiness {
 	 */
 	public Integer getNumberOfGoalsReached(List<StructureLevelInstance> goals) {
 		GoalsInfo info = this.retrieveAdminGoalsInfo(goals);
-
 		return (info.getReached() + info.getAboveExpected());
-
 	}
 
 	/**

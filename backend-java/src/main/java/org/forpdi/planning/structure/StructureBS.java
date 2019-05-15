@@ -1704,15 +1704,31 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public PaginatedList<StructureLevelInstance> listAllIndicators() {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(PlanMacro.class);
-		criteria.add(Restrictions.eq("deleted", false));
-		criteria.add(Restrictions.eq("archived", false));
-		List<PlanMacro> plans = this.filter.filterAndList(criteria, PlanMacro.class);
+		
+		Criteria criteria = this.dao.newCriteria(PlanMacro.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.eq("archived", false));
+		List<PlanMacro> plansmacro = this.filter.filterAndList(criteria, PlanMacro.class);
+
+		criteria = this.dao.newCriteria(Plan.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.in("parent", plansmacro));
+		List<Plan> plans = this.dao.findByCriteria(criteria, Plan.class);
+
+		criteria = this.dao.newCriteria(StructureLevel.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.eq("indicator", true));
+		List<StructureLevel> levelList = this.dao.findByCriteria(criteria, StructureLevel.class);
 
 		List<StructureLevelInstance> list = new ArrayList<>();
-		for (PlanMacro plan : plans) {
-			list.addAll(this.listIndicators(plan).getList());
-		}
+		criteria = this.dao.newCriteria(StructureLevelInstance.class)
+		.createAlias("plan", "plan", JoinType.INNER_JOIN)
+		.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+		.add(Restrictions.eq("macro.archived", false))
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.in("level", levelList))
+		.add(Restrictions.in("plan", plans));
+		list.addAll(this.dao.findByCriteria(criteria, StructureLevelInstance.class));
 
 		result.setList(list);
 		result.setTotal((long) list.size());
@@ -1789,22 +1805,32 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("indicator", true));
 		List<StructureLevel> levelList = this.dao.findByCriteria(criteria, StructureLevel.class);
+		
 
 		List<StructureLevelInstance> list = new ArrayList<>();
 		for (StructureLevel level : levelList) {
+			/*Criteria criteria2 = this.dao.newCriteria(StructureLevelInstance.class)
+			.createAlias("plan", "plan", JoinType.INNER_JOIN)
+			.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("macro.archived", false))
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("level", level))
+			.add(Restrictions.eq("plan", plan));*/
 			Criteria criteria2 = this.dao.newCriteria(StructureLevelInstance.class);
-			criteria.createAlias("plan", "plan", JoinType.INNER_JOIN);
-			criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-			criteria.add(Restrictions.eq("macro.archived", false));
-			criteria2.add(Restrictions.eq("deleted", false));
-			criteria2.add(Restrictions.eq("level", level));
-			criteria2.add(Restrictions.eq("plan", plan));
+					criteria2.createAlias("plan", "plan", JoinType.INNER_JOIN);
+					criteria2.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+					criteria2.add(Restrictions.eq("macro.archived", false));
+					criteria2.add(Restrictions.eq("deleted", false));
+					criteria2.add(Restrictions.eq("level", level));
+					criteria2.add(Restrictions.eq("plan", plan));
 			list.addAll(this.dao.findByCriteria(criteria2, StructureLevelInstance.class));
 		}
 
 		result.setList(list);
 		result.setTotal((long) list.size());
 
+		LOGGER.error(String.valueOf(list.size()));
+		
 		return result;
 	}
 
