@@ -5,6 +5,7 @@ import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
 
 import PlanMacroTabPanel from "forpdi/jsx/planning/widget/plan/PlanMacroTabPanel.jsx";
 import PlanMacroTree from "forpdi/jsx/planning/widget/plan/PlanMacroTree.jsx";
+import PermissionsTypes from "forpdi/jsx/planning/enum/PermissionsTypes.json";
 
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
