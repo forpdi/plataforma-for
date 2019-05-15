@@ -45,18 +45,14 @@ export default React.createClass({
 			this.refs.selectIndicators.value = -1;
 		}
 
-		this.getInfos(1, this.state.pageSize, newProps);
-
-		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
-			StructureStore.dispatch({
-				action: StructureStore.ACTION_GET_OBJECTIVES,
-				data: {
-					macroId: (newProps.plan && newProps.plan != -1) ? (newProps.plan.get("id")) : (null),
-					planId: (newProps.subPlan && newProps.subPlan != -1) ? (newProps.subPlan.id) : (null)
-				}
-			});
-		}
-	},
+		StructureStore.dispatch({
+			action: StructureStore.ACTION_GET_OBJECTIVES,
+			data: {
+				macroId: (newProps.plan && newProps.plan != -1)?(newProps.plan.get("id")):(null),
+				planId:(newProps.subPlan && newProps.subPlan != -1)?(newProps.subPlan.id):(null)
+			}
+		});
+    },
 
 	updateChartOptions(model) {
 		var bool = (model ? model.data.length > 0 : true);
@@ -96,7 +92,11 @@ export default React.createClass({
 		});
 		me.updateChartOptions();
 
-		StructureStore.on("objectivesretrivied", (model) => {
+		/*Essa chamada ocorria no componentWillReceiveProps,
+        ocasionando uma repetição desnecessária da requisição, sobrecarregando o servidor*/
+		this.getInfos(1, this.state.pageSize, this.props);
+
+        StructureStore.on("objectivesretrivied", (model) => {
 			me.setState({
 				objectives: model.data,
 				loading: false

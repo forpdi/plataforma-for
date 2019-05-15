@@ -33,6 +33,7 @@ export default React.createClass({
             total: 0
         };
     },
+
     componentWillReceiveProps(newProps){
     	var me = this;
 		me.setState({
@@ -42,13 +43,9 @@ export default React.createClass({
 			loading: true
 		});
         this.refs.selectIndicator.value = -1;
-
-        StructureStore.dispatch({
-            action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
-        });
-
-        this.getGoalsInfo(1, this.state.pageSize, newProps);
+        //this.getGoalsInfo(1, this.state.pageSize, newProps);
     },
+
     componentDidMount(){
     	var me = this;
 		this.setState({
@@ -67,6 +64,13 @@ export default React.createClass({
 				["",0,'',0]
 				]
 		});
+
+		this.getGoalsInfo(1, this.state.pageSize, this.props);
+
+		StructureStore.dispatch({
+			action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
+		});
+
         StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
 			this.setState({
 				indicators:model.data,

@@ -31,7 +31,8 @@ export default React.createClass({
 	plan: newProps.plan,
 	performance: -1
 	});
-	this.getInfos(1, 5, newProps);
+	/* this.getInfos(1, 5, newProps); //Essa requisição já ocorre no momento que o componente monta, aqui existe
+	  uma repetição desnecessária e sobrecarga do servidor */
   },
 
   getInfos(page, pageSize, opt){
@@ -78,6 +79,7 @@ export default React.createClass({
     StructureStore.dispatch({
       action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
     });
+
     StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
 		this.setState({
 			indicators:model.data,
@@ -87,13 +89,13 @@ export default React.createClass({
     }, me);
 
     PlanStore.on("find", (store, raw, opts) => {
-      StructureStore.dispatch({
-        action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
-        data: {
-                macroId:(this.state.plan != -1)?(this.state.plan.get("id")):(null),
-                planId:(this.state.subPlan != -1)?(this.state.subPlan.id):(null)
-            }
-      });
+      // StructureStore.dispatch({
+      //   action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
+      //   data: {
+      //           macroId:(this.state.plan != -1)?(this.state.plan.get("id")):(null),
+      //           planId:(this.state.subPlan != -1)?(this.state.subPlan.id):(null)
+      //       }
+      // });
       DashboardStore.dispatch({
         action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
         data: {
@@ -103,10 +105,11 @@ export default React.createClass({
         }
       });
     });
+
     PlanMacroStore.on("find", (store) => {
-      StructureStore.dispatch({
-          action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
-        });
+      // StructureStore.dispatch({
+      //     action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
+      //   });
       DashboardStore.dispatch({
           action: DashboardStore.ACTION_GET_GOALS_INFO_COL
         });
