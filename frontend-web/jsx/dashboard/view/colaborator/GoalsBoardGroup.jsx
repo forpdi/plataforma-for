@@ -49,13 +49,16 @@ export default React.createClass({
 				notStarted: store.data.notStarted,
 				loading: false
 			});
-		});
+		}, this);
+		this.refreshComponent(this.props.plan, this.props.subPlan);
+	},
 
+	refreshComponent(plan, subPlan) {
 		DashboardStore.dispatch({
 			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 			data: {
-				macro: (this.props.plan != -1) ? (this.props.plan.get("id")) : (null),
-				plan: (this.props.subPlan != -1) ? (this.props.subPlan.id) : (null)
+				macro: (plan != -1) ? (plan.get("id")) : (null),
+				plan: (subPlan != -1) ? (subPlan.id) : (null)
 			}
 		});
 	},
