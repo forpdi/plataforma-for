@@ -2136,43 +2136,54 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public List<StructureLevelInstance> filterByResponsible(List<StructureLevelInstance> levelInstances) {
 		
-		if(levelInstances.size()==0) {
-			return levelInstances;
-		}
-		
-		long userId=this.userSession.getUser().getId();
-		List<Long> list= new ArrayList<>();
-		
-		for (StructureLevelInstance levelInst : levelInstances) {
-			list.add(levelInst.getId());
-		}
-
-		//pegar todos os filhos de uma vez para evitar muitos acessos ao banco
-		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
-			.add(Restrictions.in("parent", list))
-			.add(Restrictions.eq("deleted", false));
-			
-		List<StructureLevelInstance> sonList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
-		
 		if (this.userSession.getAccessLevel() < AccessLevels.COMPANY_ADMIN.getLevel()) {
+
+			if(levelInstances.size()==0) {
+				return levelInstances;
+			}
+		
+			List<Long> idList= new ArrayList<>();
 			List<StructureLevelInstance> list2 = new ArrayList<StructureLevelInstance>();
-						
+			
+			for (StructureLevelInstance levelInst : levelInstances) {
+				idList.add(levelInst.getId());
+			}
+
+			//pegar todos os filhos de uma vez para evitar muitos acessos ao banco
+			Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.add(Restrictions.in("parent", idList))
+			.add(Restrictions.eq("deleted", false));
+			List<StructureLevelInstance> sonList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
+			
+			//pegar todos os attributeInstance de uma vez para evitar muitos acessos ao banco
+			criteria = this.dao.newCriteria(AttributeInstance.class)
+			.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+			.add(Restrictions.eq("value",String.valueOf(this.userSession.getUser().getId())))
+			.addOrder(Order.asc("levelInstance.id"));
+			List<AttributeInstance> attrList = this.dao.findByCriteria(criteria, AttributeInstance.class);
+
 			for (StructureLevelInstance levelInst : levelInstances) {
 				boolean lvlAdd = false;
 				StructureLevelInstance lvlI = levelInst;
 				
-				if(this.isSLIResponsible(lvlI,userId)){
-					list2.add(levelInst);
-					lvlAdd = true;
+				for(AttributeInstance att : attrList) {
+					if(levelInst.getId().equals(att.getLevelInstance().getId())) {
+						list2.add(levelInst);
+						lvlAdd = true;
+						break;
+					}
 				}
 				
 				if (!lvlAdd) {
 					for (StructureLevelInstance stLvInst : sonList) {
 						if(stLvInst.getParent().equals(levelInst.getId())) {
-							if(this.isSLIResponsible(stLvInst,userId)){
-								list2.add(levelInst);
-								lvlAdd = true;
-								break;
+							for(AttributeInstance att : attrList) {
+								if(stLvInst.getId().equals(att.getLevelInstance().getId())) {
+									list2.add(levelInst);
+									lvlAdd = true;
+									break;
+								}
 							}
 						}
 					}
@@ -2180,32 +2191,18 @@ public class StructureBS extends HibernateBusiness {
 				
 				while (!lvlAdd && lvlI.getParent() != null) {
 					lvlI = this.retrieveLevelInstance(lvlI.getParent());
-					if(!lvlAdd && this.isSLIResponsible(lvlI,userId)) {
-						list2.add(levelInst);
-						lvlAdd = true;
-						break;
+					for(AttributeInstance att : attrList) {
+						if(lvlI.getId().equals(att.getLevelInstance().getId())) {
+							list2.add(levelInst);
+							lvlAdd = true;
+							break;
+						}
 					}
 				}
 			}
 			levelInstances = list2;
 		}
 		return levelInstances;
-	}
-	
-	
-
-	private boolean isSLIResponsible(StructureLevelInstance lvlI, long userId) {
-		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
-		.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
-		.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
-		.add(Restrictions.eq("levelInstance",lvlI))
-		.add(Restrictions.eq("value",String.valueOf(userId)));
-		criteria.setMaxResults(1);
-
-		if(criteria.uniqueResult() !=null) {
-			return true;
-		}
-		return false;
 	}
 
 	/**

@@ -36,6 +36,7 @@ export default React.createClass({
 	componentWillReceiveProps(newProps) {
 		var me = this;
 
+		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 
 		me.setState({
 			plan: newProps.plan,
@@ -46,10 +47,6 @@ export default React.createClass({
 			this.refs.selectObjectives.value = -1;
 			this.refs.selectIndicators.value = -1;
 		}
-
-
-
-		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 
 			this.getInfos(1, this.state.pageSize, newProps);
 
