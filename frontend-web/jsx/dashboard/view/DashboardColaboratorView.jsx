@@ -18,14 +18,6 @@ export default React.createClass({
 		});
 	},
 
-	componentDidMount() {
-		var me = this;
-	},
-
-
-	componentWillUnmount() {
-	},
-
 	render() {
 		return (
 			<div>

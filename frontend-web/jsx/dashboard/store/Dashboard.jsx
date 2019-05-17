@@ -16,7 +16,7 @@ var DashboardModel = Fluxbone.Model.extend({
 	}
 });
 
-var DashboardStore = Fluxbone.Store.extend({	
+var DashboardStore = Fluxbone.Store.extend({
 	ACTION_CREATE: 'dashboard-create',
 	ACTION_DESTROY: 'dashboard-destroy',
 	ACTION_FIND: 'dashboard-find',
@@ -27,7 +27,7 @@ var DashboardStore = Fluxbone.Store.extend({
 	ACTION_GET_PLAN_DETAILS: 'dashboard-getPlanDetails',
 	ACTION_GET_PLAN_DETAILS_COMMUNITY: 'dashboard-getPlanDetailsCommunity',
 	ACTION_PERFORMANCE_STRATEGICAXIS: 'dashboard-performanceStrategicAxis',
-	ACTION_GET_THEMATIC_AXIS_INFORMATION: 'dashboard-getThematicAxis', 
+	ACTION_GET_THEMATIC_AXIS_INFORMATION: 'dashboard-getThematicAxis',
 	ACTION_GET_GENERAL_BUDGETS: 'dashboard-getGeneralBudgets',
 	ACTION_GET_INDICATORS_INFORMATION: 'dashboard-getIndicatorsInformation',
 	ACTION_GET_GOALS_INFORMATION: 'dashboard-getGoalsInformation',
@@ -57,7 +57,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	getGoalsInfoAdmin(data){
@@ -68,13 +68,13 @@ var DashboardStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'json',
 			data: data,
-			success(model) {				
+			success(model) {
 				me.trigger("goalsinfoadminretrivied", model);
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	getGoalsInfoMan(data){
@@ -91,7 +91,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	getPlanDetails(data){
@@ -108,7 +108,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 	getPlanDetailsCommunity(data){
@@ -125,7 +125,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
 
@@ -145,7 +145,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			}
 		});
 	},
-	
+
 	performanceStrategicAxis(data){
 		var me = this;
 		$.ajax({
@@ -177,9 +177,9 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});		
+		});
 	},
-	
+
 	getIndicatorsInformation(data) {
 		var me = this;
 		$.ajax({
@@ -194,7 +194,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});		
+		});
 	},
 
 	getGoalsInformation(data) {
@@ -211,7 +211,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});		
+		});
 	},
 
 	getGoalsInfoCol(data){
@@ -229,7 +229,7 @@ var DashboardStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], opts);
 			}
 
-		});	
+		});
 	},
 
 	getGraphForIndicator(data){
@@ -247,7 +247,7 @@ var DashboardStore = Fluxbone.Store.extend({
 				me.handleRequestErrors([], opts);
 			}
 
-		});	
+		});
 	},
 
 	getObjectivesInformation(data){
@@ -264,10 +264,10 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	},
 
-	getIndicatorsHistory(data){		
+	getIndicatorsHistory(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/manager/indicatorsHistory",
@@ -281,10 +281,10 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});		
+		});
 	},
 
-	getLevelSonsGraph(data){		
+	getLevelSonsGraph(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/community/levelsonsgraph",
@@ -298,7 +298,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});		
+		});
 	},
 
 	getCommunityInfoTable(data){
@@ -315,7 +315,7 @@ var DashboardStore = Fluxbone.Store.extend({
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
 			}
-		});	
+		});
 	}
 
 });

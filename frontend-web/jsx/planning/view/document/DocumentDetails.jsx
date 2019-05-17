@@ -11,37 +11,45 @@ export default React.createClass({
 		planMacro: React.PropTypes.object.isRequired,
 		tabPanel: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
 			tabPath: this.props.location.pathname
 		};
 	},
+
 	componentDidMount() {
 		if(this.context.planMacro.get('documented')){
-			DocumentStore.dispatch({
-				action: DocumentStore.ACTION_RETRIEVE,
-	 			data: this.context.planMacro.get('id')
-	 		});
-
-	 		DocumentStore.on("retrieve", (model) => {
+			DocumentStore.on("retrieve", (model) => {
 				this.setState({
 					loaded:true,
 					document:model.get('document')
 				});
 				this.context.tabPanel.addTab(this.state.tabPath, model.get("document").title);
-	     	});
+	     	}, this);
+			this.refreshComponent(this.context.planMacro);
  		} else {
  			this.context.router.push("/plan/"+this.context.planMacro.get('id')+"/details");
  		}
 	},
+
+	refreshComponent(planMacro){
+		DocumentStore.dispatch({
+			action: DocumentStore.ACTION_RETRIEVE,
+			data: planMacro.get('id')
+		});
+	},
+
+	componentWillUnmount() {
+		DocumentStore.off(null, null, this);
+	},
+
 	componentWillReceiveProps(newProps) {
 		if (newProps.location.pathname != this.state.tabPath) {
 			this.setState({
 				tabPath: newProps.location.pathname
 			});
 			this.context.tabPanel.addTab(newProps.location.pathname, this.context.planMacro.get("name"));
-
-
 		}
 	},
 

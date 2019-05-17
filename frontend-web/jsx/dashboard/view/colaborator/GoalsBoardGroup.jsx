@@ -20,12 +20,12 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		this.setState({
-			plan: newProps.plan,
-			subPlan: newProps.subPlan,
-			loading: true
-		});
 		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
+			this.setState({
+				plan: newProps.plan,
+				subPlan: newProps.subPlan,
+				loading: true
+			});
 			DashboardStore.dispatch({
 				action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 				data: {
@@ -33,6 +33,7 @@ export default React.createClass({
 					plan: (newProps.subPlan != -1) ? (newProps.subPlan.id) : (null)
 				}
 			});
+
 		}
 	},
 
@@ -47,12 +48,16 @@ export default React.createClass({
 				loading: false
 			});
 		}, this);
+		this.refreshComponent(this.props.plan, this.props.subPlan);
+	},
+
+	refreshComponent(plan, subPlan) {
 		DashboardStore.dispatch({
 			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 			data: {
-				macro: this.props.plan !== -1 ? this.props.plan.get("id") : null,
-				plan: this.props.subPlan !== -1 ? this.props.subPlan.id : null,
-			},
+				macro: (plan != -1) ? (plan.get("id")) : (null),
+				plan: (subPlan != -1) ? (subPlan.id) : (null)
+			}
 		});
 	},
 

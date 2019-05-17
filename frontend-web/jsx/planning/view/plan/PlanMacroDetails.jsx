@@ -28,25 +28,28 @@ export default React.createClass({
 			model: null
 		};
 	},
+
 	componentDidMount() {
-		var me = this;
 		PlanMacroStore.on("retrieve", (model) => {
-			me.setState({
+			this.setState({
 				model: model,
 				planId: model.get("id")
 			});
-		}, me);
+		}, this);
+		this.refreshComponent(this.props.params.id)
+	},
 
-
+	refreshComponent(id) {
 		PlanMacroStore.dispatch({
 			action: PlanMacroStore.ACTION_RETRIEVE,
-			data: this.props.params.id
+			data: id
 		});
-
 	},
+
 	componentWillUnmount() {
 		PlanMacroStore.off(null, null, this);
 	},
+
 	componentWillReceiveProps(newProps) {
 		if (newProps.params.id != this.state.planId) {
 			this.setState({
@@ -62,15 +65,15 @@ export default React.createClass({
 
 	render() {
 		if (!this.state.model) {
-			return <LoadingGauge />;
+			return <LoadingGauge/>;
 		}
-		if(this.state.model.attributes.deleted){
-			return(<div className="fpdi-plan-details">
-					<h1 className="marginLeft30">{Messages.getEditable("label.planUnavailable","fpdi-nav-label")}</h1>
-				</div>);
+		if (this.state.model.attributes.deleted) {
+			return (<div className="fpdi-plan-details">
+				<h1 className="marginLeft30">{Messages.getEditable("label.planUnavailable", "fpdi-nav-label")}</h1>
+			</div>);
 		}
-		if(this.state.model.attributes.archived){
-			if(this.context.roles.ADMIN || _.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)){
+		if (this.state.model.attributes.archived) {
+			if (this.context.roles.ADMIN || _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_MACRO_PERMISSION)) {
 				return (
 					<div className="fpdi-plan-details">
 						<PlanMacroTree plan={this.state.model} ref="tree" treeType={this.props.route.path}/>
@@ -78,29 +81,29 @@ export default React.createClass({
 							<PlanMacroTabPanel
 								{...this.props}
 								planMacro={this.state.model}
-								ref={"tabpanel-"+this.state.planId}
-								key={"tabpanel-"+this.state.planId} />
+								ref={"tabpanel-" + this.state.planId}
+								key={"tabpanel-" + this.state.planId}/>
 						</div>
 					</div>
 				);
-			}else{
-				return(<div className="fpdi-plan-details">
-					<h1 className="marginLeft30">{Messages.getEditable("label.planFiledNoPermission","fpdi-nav-label")}</h1>
+			} else {
+				return (<div className="fpdi-plan-details">
+					<h1 className="marginLeft30">{Messages.getEditable("label.planFiledNoPermission", "fpdi-nav-label")}</h1>
 				</div>);
 			}
-		}else{
+		} else {
 			return (
-					<div className="fpdi-plan-details">
-						<PlanMacroTree plan={this.state.model} ref="tree" treeType={this.props.route.path}/>
-						<div className="fpdi-plan-tabs">
-							<PlanMacroTabPanel
-								{...this.props}
-								planMacro={this.state.model}
-								ref={"tabpanel-"+this.state.planId}
-								key={"tabpanel-"+this.state.planId} />
-						</div>
+				<div className="fpdi-plan-details">
+					<PlanMacroTree plan={this.state.model} ref="tree" treeType={this.props.route.path}/>
+					<div className="fpdi-plan-tabs">
+						<PlanMacroTabPanel
+							{...this.props}
+							planMacro={this.state.model}
+							ref={"tabpanel-" + this.state.planId}
+							key={"tabpanel-" + this.state.planId}/>
 					</div>
-				)
+				</div>
+			)
 		}
 	}
 });

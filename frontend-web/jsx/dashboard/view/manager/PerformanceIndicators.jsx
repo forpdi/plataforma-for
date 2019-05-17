@@ -35,6 +35,9 @@ export default React.createClass({
 
 	componentWillReceiveProps(newProps) {
 		var me = this;
+
+		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
+
 		me.setState({
 			plan: newProps.plan,
 			subPlan: newProps.subPlan,
@@ -45,9 +48,8 @@ export default React.createClass({
 			this.refs.selectIndicators.value = -1;
 		}
 
-		this.getInfos(1, this.state.pageSize, newProps);
+			this.getInfos(1, this.state.pageSize, newProps);
 
-		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 			StructureStore.dispatch({
 				action: StructureStore.ACTION_GET_OBJECTIVES,
 				data: {
@@ -55,6 +57,7 @@ export default React.createClass({
 					planId: (newProps.subPlan && newProps.subPlan != -1) ? (newProps.subPlan.id) : (null)
 				}
 			});
+
 		}
 	},
 
@@ -96,6 +99,10 @@ export default React.createClass({
 		});
 		me.updateChartOptions();
 
+		/*Essa chamada ocorria no componentWillReceiveProps,
+        ocasionando uma repetição desnecessária da requisição, sobrecarregando o servidor*/
+		this.getInfos(1, this.state.pageSize, this.props);
+
 		StructureStore.on("objectivesretrivied", (model) => {
 			me.setState({
 				objectives: model.data,
@@ -104,6 +111,7 @@ export default React.createClass({
 		}, me);
 
 		DashboardStore.on("generalGoalsInformation", (model) => {
+
 			var elements = [];
 			var data = [
 				['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
@@ -253,7 +261,6 @@ export default React.createClass({
 				loading: false
 			});
 		}, me);
-
 
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_OBJECTIVES,
@@ -535,7 +542,7 @@ export default React.createClass({
 
 					</div>
 					{!me.state.hide ?
-						(me.state.loading ? <LoadingGauge /> :
+						(me.state.loading || me.state.data == null ? <LoadingGauge /> :
 							<div>
 								<ForPDIChart
 									chartType={me.state.typeGraph}

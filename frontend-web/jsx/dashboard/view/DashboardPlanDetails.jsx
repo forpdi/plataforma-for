@@ -11,18 +11,12 @@ export default React.createClass({
 		return {
 			plan: this.props.plan,
 			subplan: this.props.subplan,
-			loading: false
+			loading: true
 		};
 	},
 
 	componentWillReceiveProps(newProps) {
 		var me = this;
-		me.setState({
-			plan: newProps.plan,
-			subplan: newProps.subPlan,
-			loading: true
-		});
-
 
 		if (this.props.plan.id != newProps.plan.id || this.props.subPlan.id != newProps.subPlan.id) {
 			DashboardStore.dispatch({
@@ -31,6 +25,11 @@ export default React.createClass({
 					plan: newProps.subPlan.id,
 					macro: newProps.plan.id
 				}
+			});
+			me.setState({
+				plan: newProps.plan,
+				subplan: newProps.subPlan,
+				loading: true
 			});
 		}
 	},
