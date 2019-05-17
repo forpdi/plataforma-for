@@ -57,8 +57,9 @@ public class DashboardController extends AbstractController {
 	@Permissioned
 	public void adminGoalsInfo(Long macro, Long plan) {
 		try {
-			PaginatedList<StructureLevelInstance> list = this.sbs.listGoals(this.planBS.retrievePlanMacroById(macro),
-					this.planBS.retrieveById(plan), null);
+			PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
+			Plan plano = this.planBS.retrieveById(plan);
+			PaginatedList<StructureLevelInstance> list = this.sbs.listGoalsByResponsible(planMacro, plano);
 			this.success(this.bs.retrieveAdminGoalsInfo(list.getList()));
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
@@ -168,8 +169,7 @@ public class DashboardController extends AbstractController {
 				indicatorsList = this.sbs.listIndicators(plan2);
 			}
 
-			goalList = this.sbs.listGoals(this.planBS.retrievePlanMacroById(macro), this.planBS.retrieveById(plan),
-					null);
+			goalList = this.sbs.listGoalsByResponsible(this.planBS.retrievePlanMacroById(macro), this.planBS.retrieveById(plan));
 			objectivesList = this.sbs.listObjective(planMacro, plan2);
 			budgetList = this.sbs.listBudgets(planMacro, plan2);
 			if (goalList.getTotal() > 0) {

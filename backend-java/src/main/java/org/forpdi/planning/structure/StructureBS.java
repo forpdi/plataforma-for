@@ -1518,7 +1518,8 @@ public class StructureBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Listar instâncias dos leveis meta pelo plano macro e/ou plano de metas.
+	 * Listar instâncias dos levels meta pelo plano macro e/ou plano de metas considerando o 
+	 * responsável logado
 	 * 
 	 * @param macro
 	 *            Plano macro.
@@ -1526,36 +1527,37 @@ public class StructureBS extends HibernateBusiness {
 	 *            Plano de metas.
 	 * @param indicator
 	 *            Instância de um level indicador.
-	 * @return result Lista de instâncias dos leveis encontradas.
+	 * @return result Lista de instâncias dos levels encontradas.
 	 */
-	public PaginatedList<StructureLevelInstance> listGoals(PlanMacro macro, Plan plan,
-			StructureLevelInstance indicator) {
-		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
-		criteria.createAlias("level", "level", JoinType.INNER_JOIN);
-		criteria.createAlias("plan", "plan", JoinType.INNER_JOIN);
-		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-		criteria.add(Restrictions.eq("deleted", false));
-		criteria.add(Restrictions.eq("level.goal", true));
-		criteria.add(Restrictions.eq("macro.archived", false));
-		criteria.add(Restrictions.eq("macro.deleted", false));
-		
-
+	public PaginatedList<StructureLevelInstance> listGoalsByResponsible(PlanMacro macro, Plan plan) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+			.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
+			.createAlias("attribute.level", "level", JoinType.INNER_JOIN)
+			.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
+			.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN)
+			.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+			.setProjection(Projections.projectionList()
+				.add(Projections.property("levelInstance"))
+				.add(Projections.groupProperty("levelInstance.id"))
+			)
+			.add(Restrictions.eq("level.goal", true))
+			.add(Restrictions.eq("macro.archived", false))
+			.add(Restrictions.eq("levelInstance.deleted", false))
+			.add(Restrictions.eq("macro.deleted", false))
+			.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+			.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()));
 		if (plan != null) {
-			criteria.add(Restrictions.eq("plan", plan));
+			criteria.add(Restrictions.eq("levelInstance.plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 		}
-		if (indicator != null) {
-			criteria.add(Restrictions.eq("parent", indicator.getId()));
+		List<Object[]> list = this.filter.filterAndList(criteria, Object[].class, "macro.company");
+		List<StructureLevelInstance> structureInstances = new ArrayList<>();
+		for (Object[] obj : list) {
+			StructureLevelInstance structureLevelInstance = (StructureLevelInstance) obj[0];
+			structureInstances.add(structureLevelInstance);
 		}
-
-		List<StructureLevelInstance> list = this.filter.filterAndList(criteria, StructureLevelInstance.class,
-				"macro.company");
-		list = this.filterByResponsible(list);
-		result.setList(list);
-		result.setTotal((long) list.size());
-		return result;
+		return new PaginatedList<>(structureInstances, (long) structureInstances.size());
 	}
 
 	/**

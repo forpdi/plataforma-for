@@ -25,9 +25,7 @@ export default React.createClass({
 			subPlan: newProps.subPlan,
 			loading: true
 		});
-
-
-		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan){
+		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
 			DashboardStore.dispatch({
 				action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 				data: {
@@ -39,8 +37,6 @@ export default React.createClass({
 	},
 
 	componentDidMount() {
-		var me = this;
-
 		DashboardStore.on("goalsinfoadminretrivied", (store) => {
 			this.setState({
 				belowMinimum: store.data.belowMininum,
@@ -50,14 +46,13 @@ export default React.createClass({
 				notStarted: store.data.notStarted,
 				loading: false
 			});
-		});
-
+		}, this);
 		DashboardStore.dispatch({
 			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 			data: {
-				macro: (this.props.plan != -1) ? (this.props.plan.get("id")) : (null),
-				plan: (this.props.subPlan != -1) ? (this.props.subPlan.id) : (null)
-			}
+				macro: this.props.plan !== -1 ? this.props.plan.get("id") : null,
+				plan: this.props.subPlan !== -1 ? this.props.subPlan.id : null,
+			},
 		});
 	},
 
@@ -69,24 +64,49 @@ export default React.createClass({
 		return (
 			<div className="row">
 				<div className="col-sm-2">
-					<GoalBoard className="dashboard-goal-panel-color-red dashboard-goal-colaborator-box pull-left" numberValue={this.state.belowMinimum}
-						goalSubLabel={"abaixo do mínimo"} goalSubLabelSingular={"abaixo do mínimo"} loading={this.state.loading} />
+					<GoalBoard
+						className="dashboard-goal-panel-color-red dashboard-goal-colaborator-box pull-left"
+						numberValue={this.state.belowMinimum}
+						goalSubLabel={"abaixo do mínimo"}
+						goalSubLabelSingular={"abaixo do mínimo"}
+						loading={this.state.loading}
+					/>
 				</div>
 				<div className="col-sm-2 goals-board-group">
-					<GoalBoard className="dashboard-goal-panel-color-yellow dashboard-goal-colaborator-box pull-left" numberValue={this.state.belowExpected}
-						goalSubLabel={"abaixo do esperado"} goalSubLabelSingular={"abaixo do esperado"} loading={this.state.loading} />
+					<GoalBoard
+						className="dashboard-goal-panel-color-yellow dashboard-goal-colaborator-box pull-left"
+						numberValue={this.state.belowExpected}
+						goalSubLabel={"abaixo do esperado"}
+						goalSubLabelSingular={"abaixo do esperado"}
+						loading={this.state.loading}
+					/>
 				</div>
 				<div className="col-sm-2 goals-board-group">
-					<GoalBoard className="dashboard-goal-panel-color-green dashboard-goal-colaborator-box pull-left" numberValue={this.state.reached}
-						goalSubLabel={"suficientes"} goalSubLabelSingular={"suficiente"} loading={this.state.loading} />
+					<GoalBoard
+						className="dashboard-goal-panel-color-green dashboard-goal-colaborator-box pull-left"
+						numberValue={this.state.reached}
+						goalSubLabel={"suficientes"}
+						goalSubLabelSingular={"suficiente"}
+						loading={this.state.loading}
+					/>
 				</div>
 				<div className="col-sm-2 goals-board-group">
-					<GoalBoard className="dashboard-goal-panel-color-blue dashboard-goal-colaborator-box pull-left" numberValue={this.state.aboveExpected}
-						goalSubLabel={"acima do máximo"} goalSubLabelSingular={"acima do máximo"} loading={this.state.loading} />
+					<GoalBoard
+						className="dashboard-goal-panel-color-blue dashboard-goal-colaborator-box pull-left"
+						numberValue={this.state.aboveExpected}
+						goalSubLabel={"acima do máximo"}
+						goalSubLabelSingular={"acima do máximo"}
+						loading={this.state.loading}
+					/>
 				</div>
 				<div className="col-sm-2 goals-board-group">
-					<GoalBoard className="dashboard-goal-panel-color-gray dashboard-goal-colaborator-box margin-0 pull-left" numberValue={this.state.notStarted}
-						goalSubLabel={"não iniciadas"} goalSubLabelSingular={"não iniciada"} loading={this.state.loading} />
+					<GoalBoard
+						className="dashboard-goal-panel-color-gray dashboard-goal-colaborator-box margin-0 pull-left"
+						numberValue={this.state.notStarted}
+						goalSubLabel={"não iniciadas"}
+						goalSubLabelSingular={"não iniciada"}
+						loading={this.state.loading}
+					/>
 				</div>
 				<div className="clearfix" />
 			</div>

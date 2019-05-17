@@ -36,19 +36,11 @@ import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
-import org.forpdi.system.factory.ApplicationSetup;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.CriteriaImpl;
-import org.hibernate.loader.criteria.CriteriaJoinWalker;
-import org.hibernate.loader.criteria.CriteriaQueryTranslator;
-import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.hibernate.sql.JoinType;
-import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -88,36 +80,60 @@ public class DashboardBS extends HibernateBusiness {
 		GoalsInfo info = new GoalsInfo();
 
 		if (goals.size() > 0) {
-			Integer inDay = 0;
-			Integer late = 0;
-			Integer belowMin = 0;
-			Integer belowExp = 0;
-			Integer reached = 0;
-			Integer aboveExp = 0;
-			Integer notStarted = 0;
-			Integer finished = 0;
-			Integer closeToMat = 0;
-			
-			 Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
-			.add(Restrictions.in("levelInstance", goals))
-			.add(Restrictions.eq("deleted", false));
-			List<AttributeInstance> attrinstances = this.dao.findByCriteria(criteria, AttributeInstance.class);
-			
+			// recupera todas as AttributeInstance relacionadas as StructureLevelInstance
+			Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+				.add(Restrictions.in("levelInstance", goals))
+				.add(Restrictions.eq("deleted", false));
+			List<AttributeInstance> attrInstances = this.dao.findByCriteria(criteria, AttributeInstance.class);
+
+			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
+			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
+			List<Long> goalParentIds = new ArrayList<>(goals.size());
+			Map<Long, Long> idParentMap = new HashMap<>();
 			for (StructureLevelInstance goal : goals) {
-				
-				List<AttributeInstance> attrInstances = new ArrayList<>();
-				for(AttributeInstance attr : attrinstances) {
+				if (goal.getParent() != null) {
+					goalParentIds.add(goal.getParent());
+					idParentMap.put(goal.getParent(), goal.getId());
+				}
+			}
+			
+			// recupera todas AttributeInstance em que levelInstance eh um campo de polaridade
+			criteria = this.dao.newCriteria(AttributeInstance.class)
+				.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
+				.add(Restrictions.in("levelInstance.id", goalParentIds))
+				.add(Restrictions.eq("attribute.polarityField", true));
+			List<AttributeInstance> polarities = this.dao.findByCriteria(criteria, AttributeInstance.class);
+			
+			// cria um map para acessar a polaridade atraves do id do goal (meta)
+			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
+			for (AttributeInstance polarity : polarities) {
+				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
+				polarityMap.put(structureLevelInstanceId, polarity);
+			}
+			
+			int inDay = 0;
+			int late = 0;
+			int belowMin = 0;
+			int belowExp = 0;
+			int reached = 0;
+			int aboveExp = 0;
+			int notStarted = 0;
+			int finished = 0;
+			int closeToMat = 0;			
+			// calcula goals info
+			for (StructureLevelInstance goal : goals) {
+				List<AttributeInstance> goalAttrInstances = new ArrayList<>();
+				for(AttributeInstance attr : attrInstances) {
 					if(attr.getLevelInstance().getId().equals(goal.getId())) {
-						attrInstances.add(attr);
+						goalAttrInstances.add(attr);
 					}
 				}
-								
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
 				Double max = null;
 				Double min = null;
-				for (AttributeInstance attrInstance : attrInstances) {
+				for (AttributeInstance attrInstance : goalAttrInstances) {
 					Attribute attr = attrInstance.getAttribute();
 					if (attr.isFinishDate()) {
 						finish = attrInstance.getValueAsDate();
@@ -131,9 +147,13 @@ public class DashboardBS extends HibernateBusiness {
 						max = attrInstance.getValueAsNumber();
 					}
 				}
-				AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(goal.getParent());
+				
+				// a polaridade era recuperada diretamente do bd criando multiplos acessos
+				// AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(goal.getParent());
+
+				AttributeInstance polarity = polarityMap.get(goal.getId());
 				Date today = new Date();
-				if (reach == null && ((min == null && expected == null && max == null) || (finish.after(today)))) {
+				if (reach == null && ((min == null && expected == null && max == null) || finish.after(today))) {
 					notStarted++;
 				} else {
 					if (goal.isClosed()) {
@@ -185,6 +205,20 @@ public class DashboardBS extends HibernateBusiness {
 		}
 
 		return info;
+	}
+
+	/**
+	 * Calcular informações gerais (Em dia, Atrasados, Próximos a vencer, Não
+	 * iniciados, Abaixo do mínimo, Abaixo do esperado, Suficiente, Acima do máximo)
+	 * das metas. Este método ja recebe uma lista de AttributeInstance, logo nao precisa acessar 
+	 * o BD para gerar as informacoes, como no metodo retrieveAdminGoalsInfo  
+	 * 
+	 * @param attributeInstances
+	 *            Lista de instancias de atributos para ser calculado as informações gerais.
+	 * @return Informações gerais sobre as metas.
+	 */
+	public GoalsInfo retrieveAdminGoalsInfoByAttributeInstances(List<AttributeInstance> attributeInstances) {
+		return null;
 	}
 
 	/**
