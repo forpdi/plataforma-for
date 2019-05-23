@@ -18,8 +18,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -1493,13 +1495,13 @@ public class StructureBS extends HibernateBusiness {
 			pageSize = this.PAGESIZE;
 		}		
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dbs.filterByResponsibleCriteria();	
+		Criteria criteria = this.filterByResponsibleCriteria();	
 		criteria.add(Restrictions.eq("level.goal", true));
 		criteria.add(Restrictions.eq("macro.archived", false));
 		criteria.setProjection(Projections.property("levelInstance"));
 		criteria.setFirstResult((page - 1) * pageSize);
 		criteria.setMaxResults(pageSize);
-		Criteria counting = this.dbs.filterByResponsibleCriteria();		
+		Criteria counting = this.filterByResponsibleCriteria();		
 		counting.add(Restrictions.eq("level.goal", true));
 		counting.add(Restrictions.eq("macro.archived", false));
 		counting.setProjection(Projections.countDistinct("levelInstance.id"));
@@ -1537,34 +1539,88 @@ public class StructureBS extends HibernateBusiness {
 	 * @return result Lista de instâncias dos levels encontradas.
 	 */
 	public PaginatedList<StructureLevelInstance> listGoalsByResponsible(PlanMacro macro, Plan plan) {
-		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
-			.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
-			.createAlias("attribute.level", "level", JoinType.INNER_JOIN)
-			.createAlias("levelInstance", "levelInstance", JoinType.INNER_JOIN)
-			.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN)
+		Set<Long> structurelevelIds = this.retrieveChildResponsibleIds();
+		if (structurelevelIds.isEmpty()) {
+			return new PaginatedList<>(new ArrayList<>(0), 0L);
+		}
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.createAlias("level", "level", JoinType.INNER_JOIN)
+			.createAlias("plan", "plan", JoinType.INNER_JOIN)
 			.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
-			.setProjection(Projections.projectionList()
-				.add(Projections.property("levelInstance"))
-				.add(Projections.groupProperty("levelInstance.id"))
-			)
-			.add(Restrictions.eq("level.goal", true))
-			.add(Restrictions.eq("macro.archived", false))
-			.add(Restrictions.eq("levelInstance.deleted", false))
-			.add(Restrictions.eq("macro.deleted", false))
-			.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
-			.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()));
+			.add(Restrictions.in("id", structurelevelIds))
+			.add(Restrictions.eq("level.goal", true));
 		if (plan != null) {
-			criteria.add(Restrictions.eq("levelInstance.plan", plan));
+			criteria.add(Restrictions.eq("plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 		}
-		List<Object[]> list = this.filter.filterAndList(criteria, Object[].class, "macro.company");
-		List<StructureLevelInstance> structureInstances = new ArrayList<>();
-		for (Object[] obj : list) {
-			StructureLevelInstance structureLevelInstance = (StructureLevelInstance) obj[0];
-			structureInstances.add(structureLevelInstance);
-		}
+		List<StructureLevelInstance> structureInstances = this.filter.filterAndList(criteria, StructureLevelInstance.class, "macro.company");
 		return new PaginatedList<>(structureInstances, (long) structureInstances.size());
+	}
+	
+	/**
+	 * Cria uma criteria com uma query para filtrar se o usuário da sessão é o
+	 * responsável pelos níveis.
+	 * 
+	 * @return criteria
+	 */
+	public Criteria filterByResponsibleCriteria() {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
+		criteria.createAlias("levelInstance", "levelInstance", JoinType.RIGHT_OUTER_JOIN);
+		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance.level", "level", JoinType.INNER_JOIN);
+		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
+		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("macro.archived", false));
+		criteria.add(Restrictions.eq("levelInstance.deleted", false));
+		criteria.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()));
+		criteria.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()));
+
+		return criteria;
+	}
+	
+	/**
+	 * Retorna uma lista dos IDs dos níveis nos quais o usuario logado eh responsavel e seus filhos (se houver)
+	 * 
+	 * @return allIds, lista de IDs dos níveis
+	 */
+	public Set<Long> retrieveChildResponsibleIds() {
+		Set<Long> allIds = new HashSet<>();
+
+		Criteria criteriaLvl4 = this.filterByResponsibleCriteria();
+		
+		criteriaLvl4.setProjection(Projections.property("levelInstance.id"));
+		List<Long> idsLevel4 = this.filter.filterAndList(criteriaLvl4, Long.class, "macro.company");
+		allIds.addAll(idsLevel4);
+		if (idsLevel4.isEmpty()) {
+			return allIds;
+		}
+
+		Criteria criteriaLvl3 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl3.add(Restrictions.in("parent", idsLevel4));
+		criteriaLvl3.setProjection(Projections.property("id"));
+		List<Long> idsLevel3 = this.dao.findByCriteria(criteriaLvl3, Long.class);
+		allIds.addAll(idsLevel3);
+		if (idsLevel3.isEmpty()) {
+			return allIds;
+		}
+
+		Criteria criteriaLvl2 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl2.add(Restrictions.in("parent", idsLevel3));
+		criteriaLvl2.setProjection(Projections.property("id"));
+		List<Long> idsLevel2 = this.dao.findByCriteria(criteriaLvl2, Long.class);
+		allIds.addAll(idsLevel2);
+		if (idsLevel2.isEmpty()) {
+			return allIds;
+		}
+
+		Criteria criteriaLvl1 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl1.add(Restrictions.in("parent", idsLevel2));
+		criteriaLvl1.setProjection(Projections.property("id"));
+		List<Long> idsLevel1 = this.dao.findByCriteria(criteriaLvl1, Long.class);
+		allIds.addAll(idsLevel1);
+
+		return allIds;
 	}
 
 	/**
@@ -1927,14 +1983,14 @@ public class StructureBS extends HibernateBusiness {
 			pageSize = PAGESIZE;
 		}
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dbs.filterByResponsibleCriteria();
+		Criteria criteria = this.filterByResponsibleCriteria();
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("level.indicator", true));
 		criteria.add(Restrictions.eq("macro.archived", false));
 		criteria.setFirstResult((page - 1) * pageSize);
 		criteria.setMaxResults(pageSize);
 		criteria.setProjection(Projections.property("levelInstance"));
-		Criteria counting = this.dbs.filterByResponsibleCriteria();
+		Criteria counting = this.filterByResponsibleCriteria();
 		counting.add(Restrictions.eq("deleted", false));
 		counting.add(Restrictions.eq("level.indicator", true));
 		counting.add(Restrictions.eq("macro.archived", false));

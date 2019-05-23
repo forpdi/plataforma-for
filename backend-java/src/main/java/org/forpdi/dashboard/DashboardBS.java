@@ -412,71 +412,6 @@ public class DashboardBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Cria uma criteria com uma query para filtrar se o usuário da sessão é o
-	 * responsável pelos níveis.
-	 * 
-	 * @return criteria
-	 */
-	public Criteria filterByResponsibleCriteria() {
-		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
-		criteria.createAlias("levelInstance", "levelInstance", JoinType.RIGHT_OUTER_JOIN);
-		criteria.createAlias("attribute", "attribute", JoinType.INNER_JOIN);
-		criteria.createAlias("levelInstance.level", "level", JoinType.INNER_JOIN);
-		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
-		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-		criteria.add(Restrictions.eq("macro.archived", false));
-		criteria.add(Restrictions.eq("levelInstance.deleted", false));
-		criteria.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()));
-		criteria.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()));
-
-		return criteria;
-	}
-
-	/**
-	 * Retorna uma lista dos IDs dos níveis nos quais o usuario logado eh responsavel e seus filhos (se houver)
-	 * 
-	 * @return allIds, lista de IDs dos níveis
-	 */
-	public Set<Long> retrieveChildResponsibleIds() {
-		Set<Long> allIds = new HashSet<>();
-
-		Criteria criteriaLvl4 = this.filterByResponsibleCriteria();
-		
-		criteriaLvl4.setProjection(Projections.property("levelInstance.id"));
-		List<Long> idsLevel4 = this.filter.filterAndList(criteriaLvl4, Long.class, "macro.company");
-		allIds.addAll(idsLevel4);
-		if (idsLevel4.isEmpty()) {
-			return allIds;
-		}
-
-		Criteria criteriaLvl3 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl3.add(Restrictions.in("parent", idsLevel4));
-		criteriaLvl3.setProjection(Projections.property("id"));
-		List<Long> idsLevel3 = this.dao.findByCriteria(criteriaLvl3, Long.class);
-		allIds.addAll(idsLevel3);
-		if (idsLevel3.isEmpty()) {
-			return allIds;
-		}
-
-		Criteria criteriaLvl2 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl2.add(Restrictions.in("parent", idsLevel3));
-		criteriaLvl2.setProjection(Projections.property("id"));
-		List<Long> idsLevel2 = this.dao.findByCriteria(criteriaLvl2, Long.class);
-		allIds.addAll(idsLevel2);
-		if (idsLevel2.isEmpty()) {
-			return allIds;
-		}
-
-		Criteria criteriaLvl1 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl1.add(Restrictions.in("parent", idsLevel2));
-		criteriaLvl1.setProjection(Projections.property("id"));
-		List<Long> idsLevel1 = this.dao.findByCriteria(criteriaLvl1, Long.class);
-		allIds.addAll(idsLevel1);
-
-		return allIds;
-	}
-
-	/**
 	 * Listar todas as metas pertencentes a um indicador.
 	 * 
 	 * @param macro
@@ -497,8 +432,11 @@ public class DashboardBS extends HibernateBusiness {
 			pageSize = PAGESIZE;
 		}
 		// obtem todos os indices de StructureLevelInstance em que o usuario eh responsavel, inclusive os filhos
-		Set<Long> allLevelInstanceIds = this.retrieveChildResponsibleIds();		
+		Set<Long> allLevelInstanceIds = this.sbs.retrieveChildResponsibleIds();		
 		// obtem uma lista com as metas filtradas de acordo com os parametros passados
+		if (allLevelInstanceIds.isEmpty()) {
+			return new PaginatedList<>(new ArrayList<>(0), 0L);
+		}
 		List<StructureLevelInstance> goals = this.infoTableHelper.goalsFilter(allLevelInstanceIds, macro, plan, indicator, type);
 		// faz a paginacao
 		long total = goals.size();
