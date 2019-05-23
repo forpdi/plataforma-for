@@ -76,14 +76,14 @@ export default React.createClass({
 			});
 			me.forceUpdate();
 		}, this);
-		this.refreshComponent();
+		//this.refreshComponent();
 	},
 
-	refreshComponent() {
+	/*refreshComponent() {
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
 		});
-	},
+	},*/
 
 	componentWillUnmount() {
 		DashboardStore.off(null, null, this);

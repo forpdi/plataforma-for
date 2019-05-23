@@ -2135,7 +2135,6 @@ public class StructureBS extends HibernateBusiness {
 	 * @return levelInstances Lista de instâncias dos leveis após filtro.
 	 */
 	public List<StructureLevelInstance> filterByResponsible(List<StructureLevelInstance> levelInstances) {
-		
 		if (this.userSession.getAccessLevel() < AccessLevels.COMPANY_ADMIN.getLevel()) {
 
 			if(levelInstances.size()==0) {
@@ -2163,41 +2162,35 @@ public class StructureBS extends HibernateBusiness {
 			.addOrder(Order.asc("levelInstance.id"));
 			List<AttributeInstance> attrList = this.dao.findByCriteria(criteria, AttributeInstance.class);
 
+			Map<Long, AttributeInstance> attrMap = new HashMap<>();
+			for (AttributeInstance attr : attrList) {
+				attrMap.put(attr.getLevelInstance().getId(), attr);
+			}
+			
 			for (StructureLevelInstance levelInst : levelInstances) {
 				boolean lvlAdd = false;
 				StructureLevelInstance lvlI = levelInst;
 				
-				for(AttributeInstance att : attrList) {
-					if(levelInst.getId().equals(att.getLevelInstance().getId())) {
-						list2.add(levelInst);
+				if(attrMap.get(levelInst.getId()) !=null) {
+					list2.add(levelInst);
+					lvlAdd = true;
+					continue;
+				}
+
+				for (StructureLevelInstance stLvInst : sonList) {
+					if(attrMap.get(stLvInst.getId()) !=null) {
+						list2.add(stLvInst);
 						lvlAdd = true;
 						break;
-					}
+					}	
 				}
-				
-				if (!lvlAdd) {
-					for (StructureLevelInstance stLvInst : sonList) {
-						if(stLvInst.getParent().equals(levelInst.getId())) {
-							for(AttributeInstance att : attrList) {
-								if(stLvInst.getId().equals(att.getLevelInstance().getId())) {
-									list2.add(levelInst);
-									lvlAdd = true;
-									break;
-								}
-							}
-						}
-					}
-				}
-				
+
 				while (!lvlAdd && lvlI.getParent() != null) {
 					lvlI = this.retrieveLevelInstance(lvlI.getParent());
-					for(AttributeInstance att : attrList) {
-						if(lvlI.getId().equals(att.getLevelInstance().getId())) {
-							list2.add(levelInst);
-							lvlAdd = true;
-							break;
-						}
-					}
+					if(attrMap.get(lvlI.getId()) !=null) {
+						list2.add(lvlI);
+						lvlAdd=true;	
+					}		
 				}
 			}
 			levelInstances = list2;
