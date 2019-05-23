@@ -7,15 +7,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.forpdi.core.user.User;
-import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
 import org.forpdi.dashboard.admin.GoalsInfo;
 import org.forpdi.dashboard.admin.GoalsInfoTable;
@@ -27,28 +27,18 @@ import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.ResponsibleField;
 import org.forpdi.planning.attribute.types.enums.Periodicity;
 import org.forpdi.planning.fields.budget.Budget;
-import org.forpdi.planning.filters.PeformanceFilter;
 import org.forpdi.planning.filters.PeformanceFilterType;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanBS;
 import org.forpdi.planning.plan.PlanMacro;
 import org.forpdi.planning.structure.StructureBS;
-import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
-import org.forpdi.system.factory.ApplicationSetup;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.internal.CriteriaImpl;
-import org.hibernate.loader.criteria.CriteriaJoinWalker;
-import org.hibernate.loader.criteria.CriteriaQueryTranslator;
-import org.hibernate.persister.entity.OuterJoinLoadable;
 import org.hibernate.sql.JoinType;
-import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateBusiness;
 import br.com.caelum.vraptor.boilerplate.bean.PaginatedList;
@@ -61,17 +51,13 @@ public class DashboardBS extends HibernateBusiness {
 	@Inject
 	private StructureBS sbs;
 	@Inject
-	private UserBS usrbs;
-	@Inject
 	private PlanBS pbs;
 	@Inject
 	private AttributeHelper attrHelper;
 	@Inject
-	private StructureHelper structHelper;
-	@Inject
 	private CriteriaCompanyFilter filter;
 	@Inject
-	private PeformanceFilter peformanceFilter;
+	private GoalsInfoTableHelper infoTableHelper;
 
 	private final Integer PAGESIZE = 5;
 
@@ -88,36 +74,53 @@ public class DashboardBS extends HibernateBusiness {
 		GoalsInfo info = new GoalsInfo();
 
 		if (goals.size() > 0) {
-			Integer inDay = 0;
-			Integer late = 0;
-			Integer belowMin = 0;
-			Integer belowExp = 0;
-			Integer reached = 0;
-			Integer aboveExp = 0;
-			Integer notStarted = 0;
-			Integer finished = 0;
-			Integer closeToMat = 0;
-			
-			 Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
-			.add(Restrictions.in("levelInstance", goals))
-			.add(Restrictions.eq("deleted", false));
-			List<AttributeInstance> attrinstances = this.dao.findByCriteria(criteria, AttributeInstance.class);
-			
+			// recupera todas as AttributeInstance relacionadas as StructureLevelInstance
+			List<AttributeInstance> attrInstances = this.sbs.listAllAttributeInstanceByLevelInstances(goals);
+
+			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
+			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
+			List<Long> goalParentIds = new ArrayList<>(goals.size());
+			Map<Long, Long> idParentMap = new HashMap<>();
 			for (StructureLevelInstance goal : goals) {
-				
-				List<AttributeInstance> attrInstances = new ArrayList<>();
-				for(AttributeInstance attr : attrinstances) {
+				if (goal.getParent() != null) {
+					goalParentIds.add(goal.getParent());
+					idParentMap.put(goal.getParent(), goal.getId());
+				}
+			}
+			
+			// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
+			 List<AttributeInstance> polarities = this.attrHelper.retrievePolaritiesByLevelInstanceIds(goalParentIds);
+			 
+			// cria um map para acessar a polaridade atraves do id do goal (meta)
+			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
+			for (AttributeInstance polarity : polarities) {
+				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
+				polarityMap.put(structureLevelInstanceId, polarity);
+			}
+			
+			int inDay = 0;
+			int late = 0;
+			int belowMin = 0;
+			int belowExp = 0;
+			int reached = 0;
+			int aboveExp = 0;
+			int notStarted = 0;
+			int finished = 0;
+			int closeToMat = 0;			
+			// calcula goals info
+			for (StructureLevelInstance goal : goals) {
+				List<AttributeInstance> goalAttrInstances = new ArrayList<>();
+				for(AttributeInstance attr : attrInstances) {
 					if(attr.getLevelInstance().getId().equals(goal.getId())) {
-						attrInstances.add(attr);
+						goalAttrInstances.add(attr);
 					}
 				}
-								
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
 				Double max = null;
 				Double min = null;
-				for (AttributeInstance attrInstance : attrInstances) {
+				for (AttributeInstance attrInstance : goalAttrInstances) {
 					Attribute attr = attrInstance.getAttribute();
 					if (attr.isFinishDate()) {
 						finish = attrInstance.getValueAsDate();
@@ -131,9 +134,13 @@ public class DashboardBS extends HibernateBusiness {
 						max = attrInstance.getValueAsNumber();
 					}
 				}
-				AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(goal.getParent());
+				
+				// a polaridade era recuperada diretamente do bd criando multiplos acessos
+				// AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(goal.getParent());
+
+				AttributeInstance polarity = polarityMap.get(goal.getId());
 				Date today = new Date();
-				if (reach == null && ((min == null && expected == null && max == null) || (finish.after(today)))) {
+				if (reach == null && ((min == null && expected == null && max == null) || finish.after(today))) {
 					notStarted++;
 				} else {
 					if (goal.isClosed()) {
@@ -185,6 +192,20 @@ public class DashboardBS extends HibernateBusiness {
 		}
 
 		return info;
+	}
+
+	/**
+	 * Calcular informações gerais (Em dia, Atrasados, Próximos a vencer, Não
+	 * iniciados, Abaixo do mínimo, Abaixo do esperado, Suficiente, Acima do máximo)
+	 * das metas. Este método ja recebe uma lista de AttributeInstance, logo nao precisa acessar 
+	 * o BD para gerar as informacoes, como no metodo retrieveAdminGoalsInfo  
+	 * 
+	 * @param attributeInstances
+	 *            Lista de instancias de atributos para ser calculado as informações gerais.
+	 * @return Informações gerais sobre as metas.
+	 */
+	public GoalsInfo retrieveAdminGoalsInfoByAttributeInstances(List<AttributeInstance> attributeInstances) {
+		return null;
 	}
 
 	/**
@@ -403,6 +424,7 @@ public class DashboardBS extends HibernateBusiness {
 		criteria.createAlias("levelInstance.level", "level", JoinType.INNER_JOIN);
 		criteria.createAlias("levelInstance.plan", "plan", JoinType.INNER_JOIN);
 		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+		criteria.add(Restrictions.eq("macro.archived", false));
 		criteria.add(Restrictions.eq("levelInstance.deleted", false));
 		criteria.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()));
 		criteria.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()));
@@ -411,44 +433,45 @@ public class DashboardBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Retorna uma lista dos IDs dos níveis os quais ele é responsável e seus filhos
+	 * Retorna uma lista dos IDs dos níveis nos quais o usuario logado eh responsavel e seus filhos (se houver)
 	 * 
 	 * @return allIds, lista de IDs dos níveis
 	 */
-	public List<Long> retrieveChildResponsibleIds() {
-		List<Long> allIds = new ArrayList<>();
+	public Set<Long> retrieveChildResponsibleIds() {
+		Set<Long> allIds = new HashSet<>();
 
-		Criteria responsible = this.filterByResponsibleCriteria();
-		responsible.setProjection(Projections.property("levelInstance.id"));
-		List<Long> ids = this.dao.findByCriteria(responsible, Long.class);
-		allIds.addAll(ids);
-		if (ids.isEmpty()) {
+		Criteria criteriaLvl4 = this.filterByResponsibleCriteria();
+		
+		criteriaLvl4.setProjection(Projections.property("levelInstance.id"));
+		List<Long> idsLevel4 = this.filter.filterAndList(criteriaLvl4, Long.class, "macro.company");
+		allIds.addAll(idsLevel4);
+		if (idsLevel4.isEmpty()) {
 			return allIds;
 		}
 
-		Criteria child = this.dao.newCriteria(StructureLevelInstance.class);
-		child.add(Restrictions.in("parent", ids));
-		child.setProjection(Projections.property("id"));
-		List<Long> ids2 = this.dao.findByCriteria(child, Long.class);
-		allIds.addAll(ids2);
-		if (ids2.isEmpty()) {
+		Criteria criteriaLvl3 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl3.add(Restrictions.in("parent", idsLevel4));
+		criteriaLvl3.setProjection(Projections.property("id"));
+		List<Long> idsLevel3 = this.dao.findByCriteria(criteriaLvl3, Long.class);
+		allIds.addAll(idsLevel3);
+		if (idsLevel3.isEmpty()) {
 			return allIds;
 		}
 
-		Criteria child2 = this.dao.newCriteria(StructureLevelInstance.class);
-		child2.add(Restrictions.in("parent", ids2));
-		child2.setProjection(Projections.property("id"));
-		List<Long> ids3 = this.dao.findByCriteria(child2, Long.class);
-		allIds.addAll(ids3);
-		if (ids3.isEmpty()) {
+		Criteria criteriaLvl2 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl2.add(Restrictions.in("parent", idsLevel3));
+		criteriaLvl2.setProjection(Projections.property("id"));
+		List<Long> idsLevel2 = this.dao.findByCriteria(criteriaLvl2, Long.class);
+		allIds.addAll(idsLevel2);
+		if (idsLevel2.isEmpty()) {
 			return allIds;
 		}
 
-		Criteria child3 = this.dao.newCriteria(StructureLevelInstance.class);
-		child3.add(Restrictions.in("parent", ids3));
-		child3.setProjection(Projections.property("id"));
-		List<Long> ids4 = this.dao.findByCriteria(child3, Long.class);
-		allIds.addAll(ids4);
+		Criteria criteriaLvl1 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl1.add(Restrictions.in("parent", idsLevel2));
+		criteriaLvl1.setProjection(Projections.property("id"));
+		List<Long> idsLevel1 = this.dao.findByCriteria(criteriaLvl1, Long.class);
+		allIds.addAll(idsLevel1);
 
 		return allIds;
 	}
@@ -460,12 +483,12 @@ public class DashboardBS extends HibernateBusiness {
 	 *            Plano Macro para buscar as metas.
 	 * @param plan
 	 *            Plano de Metas para buscar as metas.
-	 * @param indic
+	 * @param indicator
 	 *            Indicador para buscar as metas.
 	 * @return PaginatedList<GoalsInfoTable> Lista de Metas.
 	 * @throws ParseException
 	 */
-	public PaginatedList<GoalsInfoTable> getGoalsInfoTable(PlanMacro macro, Plan plan, StructureLevelInstance indic,
+	public PaginatedList<GoalsInfoTable> getGoalsInfoTable(PlanMacro macro, Plan plan, StructureLevelInstance indicator,
 			Integer page, Integer pageSize, PeformanceFilterType type) throws ParseException {
 		if (page == null || page < 1) {
 			page = 1;
@@ -473,141 +496,23 @@ public class DashboardBS extends HibernateBusiness {
 		if (pageSize == null) {
 			pageSize = PAGESIZE;
 		}
-
-		this.peformanceFilter.setType(type);
-		List<Long> allIds = this.retrieveChildResponsibleIds();
-		allIds = this.peformanceFilter.depurate(allIds);
-		if (allIds.isEmpty()) {
-			PaginatedList<GoalsInfoTable> result = new PaginatedList<>();
-			result.setTotal(0L);
-			return result;
-		}
-
-		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
-		criteria.createAlias("level", "level", JoinType.INNER_JOIN);
-		criteria.createAlias("plan", "plan", JoinType.INNER_JOIN);
-		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-		criteria.add(Restrictions.eq("level.goal", true));
-		criteria.add(Restrictions.eq("deleted", false));
-		criteria.add(Restrictions.eq("macro.archived", false));
-		Disjunction or = Restrictions.disjunction();
-		for (Long id : allIds) {
-			or.add(Restrictions.eq("id", id));
-		}
-		criteria.add(or);
-		criteria.setFirstResult((page - 1) * pageSize);
-		criteria.setMaxResults(pageSize);
-
-		Criteria counting = this.dao.newCriteria(StructureLevelInstance.class);
-		counting.setProjection(Projections.countDistinct("id"));
-		counting.createAlias("level", "level", JoinType.INNER_JOIN);
-		counting.createAlias("plan", "plan", JoinType.INNER_JOIN);
-		counting.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-		counting.add(Restrictions.eq("level.goal", true));
-		counting.add(Restrictions.eq("deleted", false));
-		counting.add(Restrictions.eq("macro.archived", false));
-		or = Restrictions.disjunction();
-		for (Long id : allIds) {
-			or.add(Restrictions.eq("id", id));
-		}
-		counting.add(or);
-		if (plan != null) {
-			criteria.add(Restrictions.eq("plan", plan));
-			counting.add(Restrictions.eq("plan", plan));
-		} else if (macro != null) {
-			criteria.add(Restrictions.eq("plan.parent", macro));
-			counting.add(Restrictions.eq("plan.parent", macro));
-		}
-		if (indic != null) {
-			criteria.add(Restrictions.eq("parent", indic.getId()));
-			counting.add(Restrictions.eq("parent", indic.getId()));
-		}
-
-		PaginatedList<GoalsInfoTable> result = new PaginatedList<>();
-		List<StructureLevelInstance> levelInstances = this.filter.filterAndList(criteria, StructureLevelInstance.class,
-				"macro.company");
-		Long total = this.filter.filterAndFind(counting, "macro.company");
-		for (int i = 0; i < levelInstances.size(); i++) {
-			levelInstances.get(i).getLevel().setAttributes(this.sbs.retrieveLevelSonsAttributes(levelInstances.get(i)));
-		}
-
-		ArrayList<GoalsInfoTable> goalsInfoTable = new ArrayList<GoalsInfoTable>();
-
-		for (StructureLevelInstance s : levelInstances) {
-			List<Attribute> attributeList = this.sbs.retrieveLevelAttributes(s.getLevel());
-			attributeList = this.sbs.setAttributesInstances(s, attributeList);
-			s.getLevel().setAttributes(attributeList);
-			GoalsInfoTable goalAux = new GoalsInfoTable();
-
-			StructureLevelInstance indicator = this.structHelper.retrieveLevelInstance(s.getParent());
-
-			goalAux.setIndicatorName(indicator.getName());
-			AttributeInstance attributeInstance = this.attrHelper.retrievePolarityAttributeInstance(indicator);
-			String polarity = null;
-			if (attributeInstance != null)
-				polarity = attributeInstance.getValue();
-			this.sbs.setGoalStatus(levelInstances, polarity);
-
-			StructureLevelInstance objective = this.sbs.retrieveLevelInstance(indicator.getParent());
-			goalAux.setObjectiveName(objective.getName());
-			goalAux.setGoalName(s.getName());
-
-			SimpleDateFormat fmt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-			String dataString = fmt.format(s.getModification());
-			goalAux.setLastModification(dataString);
-
-			goalAux.setDeadLineStatus(s.getDeadlineStatus());
-			goalAux.setProgressStatus(s.getProgressStatus());
-
-			/*
-			 * AttributeInstance attrInst = null;
-			 * 
-			 * for (Attribute atttr : attributeList) { if
-			 * (atttr.getType().equals(ResponsibleField.class.getCanonicalName() )) {
-			 * attrInst = this.sbs.retrieveAttributeInstance(s, atttr); } } if (attrInst !=
-			 * null) { User user = usrbs.existsByUser(Long.parseLong(attrInst.getValue()));
-			 * goalAux.setResponsible(user.getName()); }
-			 */
-			// LOGGER.info(s.getName()+ " | DeadlineStatus:
-			// "+s.getDeadlineStatus());
-			// LOGGER.info("GoalsInfoTable: " + goalAux.toString());
-			for (AttributeInstance a : this.sbs.listAttributeInstanceByLevel(s, false)) {
-				Attribute attr = this.sbs.retrieveAttribute(a.getAttribute().getId());
-				if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-					User user = usrbs.existsByUser(Long.parseLong(a.getValue()));
-					goalAux.setResponsible(user.getName());
-					goalAux.setIdResponsible(user.getId());
-				} else if (attr.isFinishDate()) {
-					goalAux.setFinishDate(a.getValueAsDate());
-					Date today = new Date();
-
-					Long diferenca = goalAux.getFinishDate().getTime() - today.getTime();
-					diferenca = ((diferenca / 1000) / 60 / 60 / 24);
-
-					if (diferenca >= 0 || s.isClosed()) {
-						goalAux.setGoalStatus("Em dia.");
-					} else {
-
-						if (((-1) * diferenca) <= 1) {
-							goalAux.setGoalStatus("Atraso em " + ((-1) * diferenca) + " dia.");
-						} else {
-							goalAux.setGoalStatus("Atraso em " + ((-1) * diferenca) + " dias.");
-						}
-					}
-				} else if (attr.isReachedField()) {
-					goalAux.setReached(a.getValueAsNumber());
-				} else if (attr.isExpectedField()) {
-					goalAux.setExpected(a.getValueAsNumber());
-				}
-			}
-			goalsInfoTable.add(goalAux);
-		}
-
-		result.setList(goalsInfoTable);
-		result.setTotal(total);
-
-		return result;
+		// obtem todos os indices de StructureLevelInstance em que o usuario eh responsavel, inclusive os filhos
+		Set<Long> allLevelInstanceIds = this.retrieveChildResponsibleIds();		
+		// obtem uma lista com as metas filtradas de acordo com os parametros passados
+		List<StructureLevelInstance> goals = this.infoTableHelper.goalsFilter(allLevelInstanceIds, macro, plan, indicator, type);
+		// faz a paginacao
+		long total = goals.size();
+		int minIdx = (page - 1) * pageSize;
+		int maxIdx = minIdx + pageSize;
+		goals = goals.subList(minIdx, maxIdx < goals.size() ? maxIdx : goals.size());
+		// seta os indicadores e objetivos das metas
+		this.infoTableHelper.setIndicators(goals);
+		this.infoTableHelper.setObjectives(goals);
+		// gera uma lista com as informacoes das metas
+		ArrayList<GoalsInfoTable> goalsInfo = this.infoTableHelper.generateGoalsInfo(goals);
+		return new PaginatedList<>(goalsInfo, total);
 	}
+
 
 	/**
 	 * Listar histórico dos indicadores.
@@ -839,5 +744,4 @@ public class DashboardBS extends HibernateBusiness {
 
 		return result;
 	}
-
 }

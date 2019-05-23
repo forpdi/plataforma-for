@@ -1152,7 +1152,7 @@ public class StructureController extends AbstractController {
 		try {
 			planMacro = this.planBS.retrievePlanMacroById(macroId);
 			plan2 = this.planBS.retrieveById(planId);
-			PaginatedList<StructureLevelInstance> list = this.bs.listIndicators(planMacro, plan2);
+			PaginatedList<StructureLevelInstance> list = this.bs.listIndicatorsByMacroAndPlan(planMacro, plan2);
 			this.success(list);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);

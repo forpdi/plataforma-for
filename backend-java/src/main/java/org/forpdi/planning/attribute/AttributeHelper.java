@@ -1,17 +1,19 @@
 package org.forpdi.planning.attribute;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.forpdi.planning.attribute.types.enums.FormatValue;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
-import org.jboss.logging.Logger;
+import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 
 /**
  * Classe com implementações de métodos para auxílios nas classes de negócio e
@@ -85,6 +87,23 @@ public class AttributeHelper {
 
 	public AttributeInstance retrievePolarityAttributeInstance(StructureLevelInstance levelInstance) {
 		return this.retrievePolarityAttributeInstance(levelInstance.getId());
+	}
+	
+	/**
+	 * Busca as instancias de atributos referentes a polaridade relacionados com os ids de StructureLevelInstance passados
+	 * 
+	 * @param levelInstanceIds lista de ids de StructureLevelInstance
+	 * @return lista de atributos que se refere a polaridade
+	 */
+	public List<AttributeInstance> retrievePolaritiesByLevelInstanceIds(List<Long> levelInstanceIds) {
+		if (GeneralUtils.isEmpty(levelInstanceIds)) {
+			return Collections.emptyList();
+		}
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+			.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
+			.add(Restrictions.in("levelInstance.id", levelInstanceIds))
+			.add(Restrictions.eq("attribute.polarityField", true));
+		return this.dao.findByCriteria(criteria, AttributeInstance.class);
 	}
 
 	/**
