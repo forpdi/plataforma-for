@@ -314,10 +314,13 @@ public class DashboardController extends AbstractController {
 	public void goalsInfoTable(Long macro, Long plan, Long indicator, Integer page, Integer pageSize, Integer filter) {
 		try {
 			PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
-			Plan plan2 = this.planBS.retrieveById(plan);
+			Plan planInstance = this.planBS.retrieveById(plan);
 			StructureLevelInstance indicatorLevel = this.sbs.retrieveLevelInstance(indicator);
-			PaginatedList<GoalsInfoTable> goalsList = this.bs.getGoalsInfoTable(planMacro, plan2, indicatorLevel, page,
-					pageSize, PeformanceFilterType.valueOf(filter));
+			PeformanceFilterType peformanceFilterType = filter != null 
+				? PeformanceFilterType.valueOf(filter)
+				: null;
+			PaginatedList<GoalsInfoTable> goalsList = this.bs.getGoalsInfoTable(planMacro, planInstance, indicatorLevel, page,
+					pageSize, peformanceFilterType);
 
 			this.success(goalsList);
 		} catch (Throwable ex) {

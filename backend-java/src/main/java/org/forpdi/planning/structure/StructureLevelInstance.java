@@ -124,10 +124,15 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 	@Transient
 	private List<StructureLevelInstanceDetailed> levelInstanceDetailedList;
 	
-	@Transient private Long exportLevelId;
+	@Transient
+	private Long exportLevelId;
 	
-	@Transient private Long exportPlanId;
+	@Transient
+	private Long exportPlanId;
 
+	@Transient
+	private StructureLevelInstance levelParent;
+	
 	public List<Attribute> getAttributeList() {
 		return attributeList;
 	}
@@ -324,6 +329,14 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 				+ sons + ", haveBudget=" + haveBudget + "]";
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof StructureLevelInstance && this.id == ((StructureLevelInstance) obj).id) {
+			return true;
+		}
+		return false;
+	}
+	
 	public Double getLevelMinimum() {
 		return levelMinimum;
 	}
@@ -370,5 +383,13 @@ public class StructureLevelInstance extends SimpleLogicalDeletableEntity {
 
 	public void setExportResponsibleMail(String exportResponsibleMail) {
 		this.exportResponsibleMail = exportResponsibleMail;
+	}
+	
+	public StructureLevelInstance getLevelParent() {
+		return levelParent;
+	}
+
+	public void setLevelParent(StructureLevelInstance levelParent) {
+		this.levelParent = levelParent;
 	}
 }

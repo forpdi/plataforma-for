@@ -28,6 +28,7 @@ import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
@@ -824,7 +825,13 @@ public class StructureBS extends HibernateBusiness {
 		return list;
 	}
 	
-	public List<AttributeInstance> listAllAttributeInstanceByPlans(List<StructureLevelInstance> slis) {
+	/**
+	 * Busca os atributos relacionados com os elementos de uma lista de StructureLevelInstance
+	 * 
+	 * @param slis lista de StructureLevelInstance
+	 * @return lista de AttributeInstance relacionados com lista de StructureLevelInstance
+	 */
+	public List<AttributeInstance> listAllAttributeInstanceByLevelInstances(List<StructureLevelInstance> slis) {
 		if (GeneralUtils.isEmpty(slis)) {
 			return Collections.emptyList();
 		}
@@ -1837,7 +1844,7 @@ public class StructureBS extends HibernateBusiness {
 	}
 
 	/**
-	 * Listar instâncias dos leveis indicador pelo plano macro e/ou plan.
+	 * Listar instâncias dos levels indicador pelo plano macro e/ou plan.
 	 * 
 	 * @param macro
 	 *            Plano de macro.
@@ -1845,45 +1852,22 @@ public class StructureBS extends HibernateBusiness {
 	 *            Plano de metas.
 	 * @return result Lista de instâncias dos leveis encontradas.
 	 */
-	public PaginatedList<StructureLevelInstance> listIndicators(PlanMacro macro, Plan plan) {
-		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-//**************************** este bloco foi comentado para tentar diminuir a sobrecarga do servidor ********************************** 
-/*		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
-				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
-				.add(Restrictions.eq("deleted", false)).add(Restrictions.eq("level.indicator", true));
-		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-		criteria.add(Restrictions.eq("macro.archived", false));
-*/
-//**************************************************************************************************************************************
-//**************************** foi colocado no lugar do codigo anterior para diminuir o numero de **************************************
-//**************************** registros que serao processados nos metodos seguintes ***************************************************
-		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
-				.createAlias("attribute", "attribute")
-                .createAlias("levelInstance", "levelInstance")
-				.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
-				.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()))
-				.setProjection( Projections.projectionList()
-			        .add( Projections.property("levelInstance.id"), "id")
-			    );
-		List<?> list = criteria.list();
-		if (list.isEmpty()) {
-			return new PaginatedList<>(new ArrayList<>(0), 0L);
-		}
-		criteria = this.dao.newCriteria(StructureLevelInstance.class)
-				.add(Restrictions.eq("deleted", false))
-				.add(Restrictions.in("parent", list));
-//**************************************************************************************************************************************
+	public PaginatedList<StructureLevelInstance> listIndicatorsByMacroAndPlan(PlanMacro macro, Plan plan) {
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.createAlias("plan", "plan", JoinType.INNER_JOIN)
+			.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+			.createAlias("level", "level", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("level.indicator", true))
+			.add(Restrictions.eq("macro.archived", false))
+			.add(Restrictions.eq("deleted", false));
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 		}
-		//org.hibernate.QueryException: could not resolve property: plan.parent of: org.forpdi.planning.structure.StructureLevelInstance
-		List<StructureLevelInstance> indicatorsList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
-		indicatorsList = this.filterByResponsible(indicatorsList);
-		result.setList(indicatorsList);
-		result.setTotal((long) indicatorsList.size());
-		return result;
+		List<StructureLevelInstance> structureInstances = this.filter.filterAndList(criteria,
+				StructureLevelInstance.class, "macro.company");
+		return new PaginatedList<>(structureInstances, (long) structureInstances.size());
 	}
 
 	/**
@@ -2545,6 +2529,6 @@ public class StructureBS extends HibernateBusiness {
 		}
 		return haveBudget;
 	}
+		
 	
-
 }

@@ -337,7 +337,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		}
 		
 		//Exportando as instância de atributos
-		final List<AttributeInstance> attributeInstances = this.structureBS.listAllAttributeInstanceByPlans(structureLevelInstances);
+		final List<AttributeInstance> attributeInstances = this.structureBS.listAllAttributeInstanceByLevelInstances(structureLevelInstances);
 		if(!GeneralUtils.isEmpty(attributeInstances)) {
 			for (final AttributeInstance attrInstance : attributeInstances) {
 				attrInstance.setExportAttributeId(attrInstance.getAttribute().getId());
