@@ -49,7 +49,7 @@ export default React.createClass({
 				hide: false,
 			});
 		}, this);
-		this.refresh(this.props);
+		//this.refresh(this.props);
 	},
 
 	componentWillReceiveProps(newProps) {
