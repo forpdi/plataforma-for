@@ -1,7 +1,9 @@
 package org.forpdi.dashboard;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -375,31 +377,52 @@ public class DashboardController extends AbstractController {
 	@Permissioned
 	public void goalsInformation(Long macro, Long plan, Long indicator, Integer page, Integer pageSize) {
 		try {
-			PaginatedList<StructureLevelInstance> goalsList;
 			PlanMacro planMacro = this.planBS.retrievePlanMacroById(macro);
 			Plan plan2 = this.planBS.retrieveById(plan);
 			StructureLevelInstance indicatorLevel = this.sbs.retrieveLevelInstance(indicator);
-			goalsList = this.sbs.listGoals(planMacro, plan2, indicatorLevel, page, pageSize);
-			List<StructureLevelInstance> list = new ArrayList<StructureLevelInstance>();
-			for (StructureLevelInstance sli : goalsList.getList()) {
-				sli.setAttributeInstanceList(new ArrayList<AttributeInstance>());
-				sli.setAttributeList(this.sbs.retrieveLevelAttributes(sli.getLevel()));
-				AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(sli.getParent());
-				if (polarity == null)
-					sli.setPolarity("Maior-melhor");
-				else
-					sli.setPolarity(polarity.getValue());
-				for (Attribute attr : sli.getAttributeList()) {
-					AttributeInstance attrInst = this.attrHelper.retrieveAttributeInstance(sli, attr);
-					if (attrInst != null)
-						sli.getAttributeInstanceList().add(attrInst);
-					else
-						sli.getAttributeInstanceList().add(new AttributeInstance());
+			PaginatedList<StructureLevelInstance> goals = this.sbs.listGoals(planMacro, plan2, indicatorLevel, page, pageSize);
+			// recupera todas as AttributeInstance relacionadas as StructureLevelInstance
+			List<AttributeInstance> attrInstances = this.sbs.listAllAttributeInstanceByLevelInstances(goals.getList());
+			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
+			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
+			List<Long> goalParentIds = new ArrayList<>(goals.getList().size());
+			Map<Long, Long> idParentMap = new HashMap<>();
+			for (StructureLevelInstance goal : goals.getList()) {
+				if (goal.getParent() != null) {
+					goalParentIds.add(goal.getParent());
+					idParentMap.put(goal.getParent(), goal.getId());
 				}
-				list.add(sli);
 			}
-			goalsList.setList(list);
-			this.success(goalsList);
+			// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
+			 List<AttributeInstance> polarities = this.attrHelper.retrievePolaritiesByLevelInstanceIds(goalParentIds);
+			// cria um map para acessar a polaridade atraves do id do goal (meta)
+			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
+			for (AttributeInstance polarity : polarities) {
+				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
+				polarityMap.put(structureLevelInstanceId, polarity);
+			}
+			// seta os atributos das metas
+			for (StructureLevelInstance goal : goals.getList()) {
+				List<AttributeInstance> goalAttrInstances = new ArrayList<>();
+				for (AttributeInstance attr : attrInstances) {
+					if (attr.getLevelInstance().getId().equals(goal.getId())) {
+						goalAttrInstances.add(attr);
+					}
+				}
+				goal.setAttributeInstanceList(goalAttrInstances);
+				AttributeInstance polarity = polarityMap.get(goal.getId());
+				if (polarity == null) {
+					goal.setPolarity("Maior-melhor");
+				} else {
+					goal.setPolarity(polarity.getValue());
+				}
+				List<Attribute> attributes = new ArrayList<>(goalAttrInstances.size());
+				for (AttributeInstance attrInstance : goalAttrInstances) {
+					attributes.add(attrInstance.getAttribute());
+				}
+				goal.setAttributeList(attributes);
+			}
+			this.success(goals);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.fail("Erro inesperado: " + ex.getMessage());

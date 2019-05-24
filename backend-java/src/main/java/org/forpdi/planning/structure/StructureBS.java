@@ -30,7 +30,6 @@ import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
@@ -107,10 +106,8 @@ public class StructureBS extends HibernateBusiness {
 	private GoalsGenerationTask goalTask;
 	@Inject
 	private OnLevelInstanceUpdateTask onLevelInstanceUpdateTask;
-	@Inject
-	private DashboardBS dbs;
 
-	private final int PAGESIZE = 5;
+	private static final int PAGESIZE = 5;
 
 	public static final String SCHEMA;
 	static {
@@ -1492,7 +1489,7 @@ public class StructureBS extends HibernateBusiness {
 			page = 1;
 		}
 		if (pageSize == null || pageSize <= 0) {
-			pageSize = this.PAGESIZE;
+			pageSize = PAGESIZE;
 		}		
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
 		Criteria criteria = this.filterByResponsibleCriteria();	
@@ -1501,7 +1498,7 @@ public class StructureBS extends HibernateBusiness {
 		criteria.setProjection(Projections.property("levelInstance"));
 		criteria.setFirstResult((page - 1) * pageSize);
 		criteria.setMaxResults(pageSize);
-		Criteria counting = this.filterByResponsibleCriteria();		
+		Criteria counting = this.filterByResponsibleCriteria();
 		counting.add(Restrictions.eq("level.goal", true));
 		counting.add(Restrictions.eq("macro.archived", false));
 		counting.setProjection(Projections.countDistinct("levelInstance.id"));

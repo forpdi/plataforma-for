@@ -1,12 +1,11 @@
 import React from "react";
+import string from 'string';
+import _ from 'underscore';
 
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import ForPDIChart from "forpdi/jsx/core/widget/ForPDIChart.jsx"
 import StructureStore from "forpdi/jsx/planning/store/Structure.jsx";
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
-import PlanStore from "forpdi/jsx/planning/store/Plan.jsx";
-import PlanMacroStore from "forpdi/jsx/planning/store/PlanMacro.jsx";
-import string from 'string';
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
@@ -14,65 +13,23 @@ var numeral = require('numeral');
 
 export default React.createClass({
 
-    getInitialState() {
-        return {
-            loading: true,
-            indicator:-1,
-            indicators:[],
-        	plan: this.props.plan,
-        	subPlan: this.props.subPlan,
-            elements:[],
-            aggregateIndicator: false,
-            chartEvents: [
-                {
-                    eventName : 'select',
-                    callback  : this.onChartClick
-                },
-            ],
-            pageSize: 20,
-            total: 0
-        };
-	},
-	/*	if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
-			me.setState({
-				plan: newProps.plan,
-				subPlan: newProps.subPlan,
-				indicator: -1,
-				loading: true
-			});
-
-			this.refs.selectIndicator.value = -1;
-
-			StructureStore.dispatch({
-				action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
-			});
-
-			this.getGoalsInfo(1, this.state.pageSize, newProps);
-		}*/
-
-    componentWillReceiveProps(newProps){
-    	var me = this;
-		if (this.props.plan != newProps.plan || this.props.subPlan != newProps.subPlan) {
-			me.setState({
-				plan: newProps.plan,
-				subPlan: newProps.subPlan,
-				indicator: -1,
-				loading: true
-			});
-
-			this.refs.selectIndicator.value = -1;
-
-			StructureStore.dispatch({
-				action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
-			});
-
-			this.getGoalsInfo(1, this.state.pageSize, newProps);
-		}
-    },
-
-    componentDidMount(){
-    	var me = this;
-		this.setState({
+	getInitialState() {
+		return {
+			loading: true,
+			indicators: [],
+			selectedIndicator: null,
+			planId: null,
+			subPlanId: null,
+			elements: [],
+			aggregateIndicator: false,
+			chartEvents: [
+				{
+					eventName: 'select',
+					callback: this.onChartClick
+				},
+			],
+			pageSize: 20,
+			total: 0,
 			options: {
 				title: '',
 				colors: ['#CCCCCC', '#333333'],
@@ -81,43 +38,27 @@ export default React.createClass({
 				legend: { position: 'none' },
 				bar: { groupWidth: '50%' },
 				seriesType: 'bars',
-				series: { 1: { type: 'line', pointsVisible: true, pointSize: 4 } }
+				series: { 1: { type: 'line', pointsVisible: true, pointSize: 4 } },
 			},
 			data: [
 				['titulo', 'Alcançado', { role: 'style' }, 'Esperado'],
-				["", 0, '', 0]
-			]
-		});
+				['', 0, '', 0],
+			],
+		};
+	},
 
-        StructureStore.on("indicatorsByMacroAndPlanRetrivied", (model) => {
+	componentDidMount() {
+		var me = this;
+		StructureStore.on("indicatorsByMacroAndPlanRetrivied", model => (
 			this.setState({
 				indicators: model.data,
-			});
-		}, me);
-
-		PlanStore.on("find", (store, raw, opts) => {
-			StructureStore.dispatch({
-				action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
-				data: {
-					macroId: (this.state.plan != -1) ? (this.state.plan.get("id")) : (null),
-					planId: (this.state.subPlan != -1) ? (this.state.subPlan.id) : (null)
-				}
-			});
-			this.getGoalsInfo(1, this.state.pageSize);
-		});
-		PlanMacroStore.on("find", (store) => {
-			StructureStore.dispatch({
-				action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN
-			});
-			this.getGoalsInfo(1, this.state.pageSize);
-
-		}, me);
+			})
+		), me);
 
 		DashboardStore.on("goalsInformationColaborator", (model) => {
 			var elements = [];
 			var data = [['Element', 'Alcançado', { role: 'style' }, 'Esperado']];
 			var goalValue;
-
 			model.data.map((goal) => {
 				goalValue = this.getGoalsValues(goal);
 				elements.push(goalValue);
@@ -131,17 +72,64 @@ export default React.createClass({
 					data.push(elements[idx]);
 				});
 			}
-
 			this.setState({
 				elements: elements,
 				data: data,
 				goals: model.data,
 				loading: false,
-				total: model.total
+				hide: false,
+				total: model.total,
 			});
 			this.updateChartOptions(model);
 		}, me);
 
+		this.refresh(this.props);
+	},
+
+	componentWillReceiveProps(newProps) {
+		const planId = newProps.plan !== -1 ? newProps.plan.id : null;
+		const subPlanId = newProps.subPlanId !== -1 ? newProps.subPlan.id : null;
+		if (planId !== this.state.planId || subPlanId !== this.state.subPlanId) {
+			this.setState({
+				planId,
+				subPlanId,
+			});
+			this.refresh(newProps);
+		}
+	},
+
+	componentWillUnmount() {
+		DashboardStore.off(null, null, this);
+		StructureStore.off(null, null, this);
+	},
+
+	refresh(props) {
+		this.setState({
+			indicators: [],
+			selectedIndicator: null,
+			loading: true,
+		}, () => this.getGoalsInfo(1, this.state.pageSize, props));
+		StructureStore.dispatch({
+			action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
+			data: {
+				macroId: props.plan === -1 ? null : props.plan.id,
+				planId: props.subPlan === -1 ? null : props.subPlan.id,
+			},
+		});
+	},
+
+	getGoalsInfo(page, pageSize, opt) {
+		opt = opt || this.props;
+		DashboardStore.dispatch({
+			action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
+			data: {
+				macro: opt.plan != -1 ? opt.plan.get("id") : null,
+				plan: opt.subPlan != -1 ? opt.subPlan.id : null,
+				indicator: this.state.selectedIndicator,
+				page: page,
+				pageSize: pageSize
+			},
+		});
 	},
 
 	updateChartOptions(model) {
@@ -164,7 +152,7 @@ export default React.createClass({
 	getGoalsValues(goal) {
 		var expectedField, maximumField, minimumField, reachedField;
 		var index;
-		var fExp, fMax, fMin, fRec;
+		let fExp, fRec;
 		for (var cont = 1; cont < goal.attributeList.length; cont++) {
 			index = cont;
 			if (goal.attributeInstanceList[index]) {
@@ -173,10 +161,8 @@ export default React.createClass({
 					fExp = goal.attributeInstanceList[index].formattedValue || "0";
 				} else if (goal.attributeList[cont].maximumField) {
 					maximumField = goal.attributeInstanceList[index].valueAsNumber || 0;
-					fMax = goal.attributeInstanceList[index].formattedValue || "0";
 				} else if (goal.attributeList[cont].minimumField) {
 					minimumField = goal.attributeInstanceList[index].valueAsNumber || 0;
-					fMin = goal.attributeInstanceList[index].formattedValue || "0";
 				} else if (goal.attributeList[cont].reachedField) {
 					reachedField = goal.attributeInstanceList[index].valueAsNumber || 0;
 					fRec = goal.attributeInstanceList[index].formattedValue || "0";
@@ -190,7 +176,7 @@ export default React.createClass({
 			graphItem[0] = goal.name;
 		}
 
-		if (reachedField == undefined) {
+		if (reachedField === undefined) {
 			reachedField = 0;
 		}
 
@@ -201,7 +187,7 @@ export default React.createClass({
 		} else {
 			sufix = format;
 		}
-		if (goal.polarity == Messages.get("label.highestBest")) {
+		if (goal.polarity === Messages.get("label.highestBest")) {
 			if (reachedField < minimumField) {
 				graphItem[1] = {
 					v: reachedField,
@@ -243,7 +229,7 @@ export default React.createClass({
 				};
 				graphItem[2] = "#4EB4FE";
 			}
-		} else if (goal.polarity == Messages.get("label.lowerBest")) {
+		} else if (goal.polarity === Messages.get("label.lowerBest")) {
 			if (reachedField > minimumField) {
 				graphItem[1] = {
 					v: reachedField,
@@ -291,41 +277,16 @@ export default React.createClass({
 
 	hideFields() {
 		this.setState({
-			hide: !this.state.hide
+			hide: !this.state.hide,
 		})
 	},
 
-	componentWillUnmount() {
-		DashboardStore.off(null, null, this);
-		PlanMacroStore.off(null, null, this);
-		PlanStore.off(null, null, this);
-		StructureStore.off(null, null, this);
-	},
-
-	onIndicatorSelectChange() {
+	onIndicatorSelectChange(e) {
+		const value = parseInt(e.target.value);
 		this.setState({
-			indicator: (this.refs.selectIndicator.value == -1) ? (null) : (this.state.indicators[this.refs.selectIndicator.value]),
-			startIndex: 0,
-			endIndex: 19,
-			loading: true
-		});
-
-		this.getGoalsInfo(1, this.state.pageSize);
-
-
-		if (this.state.indicators[this.refs.selectIndicator.value] != undefined) {
-			if (this.state.indicators[this.refs.selectIndicator.value].aggregate == true) {
-				this.setState({
-					aggregateIndicator: true
-				});
-			} else {
-				this.setState({
-					aggregateIndicator: false
-				});
-			}
-		}
-
-
+			selectedIndicator: value === -1 ? null : value,
+			loading: true,
+		}, () => this.getGoalsInfo(1, this.state.pageSize));
 	},
 
 	onChartClick(Chart) {
@@ -339,31 +300,18 @@ export default React.createClass({
 					level.plan.parent.id + "/details/subplan/level/" + level.id;
 
 				var msg = Messages.get("label.askGoToSelectedLevel");
-				Modal.confirmCustom(() => {
-					Modal.hide();
-					location.assign(url);
-				}, msg,
+				Modal.confirmCustom(
+					() => {
+						Modal.hide();
+						location.assign(url);
+					},
+					msg,
 					() => {
 						Chart.chart.setSelection([]);
 						Modal.hide();
-					});
+					}
+				);
 			}
-		}
-	},
-
-	getGoalsInfo(page, pageSize, opt) {
-		opt = opt || this.state;
-		if (this.refs.selectIndicator != undefined) {
-			DashboardStore.dispatch({
-				action: DashboardStore.ACTION_GET_GOALS_INFO_COL,
-				data: {
-					macro: (opt.plan != -1) ? (opt.plan.get("id")) : (null),
-					plan: (opt.subPlan != -1) ? (opt.subPlan.id) : (null),
-					indicator: (this.refs.selectIndicator.value == -1) ? (null) : (opt.indicators[this.refs.selectIndicator.value].id),
-					page: page,
-					pageSize: pageSize
-				}
-			});
 		}
 	},
 
@@ -373,51 +321,81 @@ export default React.createClass({
 				<div>
 					<div className="panel panel-default dashboard-goals-info-ctn">
 						<div className="panel-heading">
-							<b className="budget-graphic-title"> {Messages.getEditable("label.goalsPerformance", "fpdi-nav-label")}</b>
-							<span className={(this.state.hide) ? ("mdi mdi-chevron-right marginLeft15 floatRight") : ("mdi mdi-chevron-down marginLeft15 floatRight")} onClick={this.hideFields} />
-							<select onChange={this.onIndicatorSelectChange} className="form-control dashboard-select-box-graphs marginLeft10" ref="selectIndicator">
-								<option value={-1} data-placement="right" title={Messages.get("label.allIndicators")}>{Messages.get("label.allIndicators")}</option>
-								{this.state.indicators.map((attr, idy) => {
-									return (<option key={"ind-opt-" + idy} value={idy} data-placement="right" title={attr.name}>
-										{(attr.name.length > 20) ? (string(attr.name).trim().substr(0, 20).concat("...").toString()) : (attr.name)}
-									</option>);
-								})
+							<b className="budget-graphic-title">
+								{Messages.getEditable("label.goalsPerformance", "fpdi-nav-label")}
+							</b>
+							<span
+								className={this.state.hide
+									? "mdi mdi-chevron-right marginLeft15 floatRight"
+									: "mdi mdi-chevron-down marginLeft15 floatRight"}
+								onClick={this.hideFields}
+							/>
+							<select
+								onChange={this.onIndicatorSelectChange}
+								className="form-control dashboard-select-box-graphs marginLeft10"
+							>
+								<option value={-1} data-placement="right">
+									{Messages.get("label.allIndicators")}
+								</option>
+								{
+									_.map(this.state.indicators, (indicator, idx) => (
+										<option key={"ind-opt-" + idx} value={indicator.id} data-placement="right" title={indicator.name}>
+											{
+												indicator.name.length > 20
+													? string(indicator.name).trim().substr(0, 20).concat("...").toString()
+													: indicator.name
+											}
+										</option>
+									))
 								}
 							</select>
 						</div>
-						{!this.state.hide ?
-							(this.state.loading ? <LoadingGauge /> :
-								<div>
-									<ForPDIChart
-										chartType="ComboChart"
-										data={this.state.data}
-										options={this.state.options}
-										graph_id="ColumnChart-Budget"
-										width={"100%"}
-										height={"300px"}
-										legend_toggle={true}
-										chartEvents={this.state.chartEvents}
-										pageSize={this.state.pageSize}
-										total={this.state.total}
-										onChangePage={this.getGoalsInfo} />
-									<div className="colaborator-goal-performance-legend">
-										<div className="aggregate-indicator-without-goals-legend">
-											<span className="legend-item">
-												{this.state.aggregateIndicator ?
-													<p id="aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
-													:
-													<p>&nbsp;</p>}
+						{
+							!this.state.hide && (
+								this.state.loading ? <LoadingGauge /> : (
+									<div>
+										<ForPDIChart
+											chartType="ComboChart"
+											data={this.state.data}
+											options={this.state.options}
+											graph_id="ColumnChart-Budget"
+											width="100%"
+											height="300px"
+											legend_toggle={true}
+											chartEvents={this.state.chartEvents}
+											pageSize={this.state.pageSize}
+											total={this.state.total}
+											onChangePage={this.getGoalsInfo}
+										/>
+										<div className="colaborator-goal-performance-legend">
+											<div className="aggregate-indicator-without-goals-legend">
+												<span className="legend-item">
+													{
+														this.state.aggregateIndicator &&
+														<p id="aggregate-indicator-goals">{Messages.get("label.aggIndicatorHaveNoGoals")}</p>
+													}
+												</span>
+											</div>
+											<span className="legend-item"><input type="text" className="legend-goals-minimumbelow marginLeft10" disabled />
+												{Messages.getEditable("label.goals.belowMinimum", "fpdi-nav-label")}
+											</span>
+											<span className="legend-item"><input type="text" className="legend-goals-expectedbelow marginLeft10" disabled />
+												{Messages.getEditable("label.goals.belowExpected", "fpdi-nav-label")}
+											</span>
+											<span className="legend-item"><input type="text" className="legend-goals-enough marginLeft10" disabled />
+												{Messages.getEditable("label.goals.reached", "fpdi-nav-label")}
+											</span>
+											<span className="legend-item"><input type="text" className="legend-goals-expectedabove marginLeft10" disabled />
+												{Messages.getEditable("label.goals.aboveExpected", "fpdi-nav-label")}
+											</span>
+											<span className="legend-item"><input type="text" className="legend-goals-difference-expected marginLeft10" disabled />
+												{Messages.getEditable("label.goals.expected", "fpdi-nav-label")}
 											</span>
 										</div>
-										<span className="legend-item"><input type="text" className="legend-goals-minimumbelow marginLeft10" disabled /> {Messages.getEditable("label.goals.belowMinimum", "fpdi-nav-label")}</span>
-										<span className="legend-item"><input type="text" className="legend-goals-expectedbelow marginLeft10" disabled /> {Messages.getEditable("label.goals.belowExpected", "fpdi-nav-label")}</span>
-										<span className="legend-item"><input type="text" className="legend-goals-enough marginLeft10" disabled /> {Messages.getEditable("label.goals.reached", "fpdi-nav-label")}</span>
-										<span className="legend-item"><input type="text" className="legend-goals-expectedabove marginLeft10" disabled /> {Messages.getEditable("label.goals.aboveExpected", "fpdi-nav-label")}</span>
-										<span className="legend-item"><input type="text" className="legend-goals-difference-expected marginLeft10" disabled /> {Messages.getEditable("label.goals.expected", "fpdi-nav-label")}</span>
 									</div>
-								</div>)
-							: ""}
-
+								)
+							)
+						}
 					</div>
 				</div>
 			</div>

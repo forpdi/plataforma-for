@@ -28,8 +28,8 @@ export default React.createClass({
 			indicators: [],
 			selectedIndicator: null,
 			selectedPerformance: null,
-			plan: this.props.plan,
-			subPlan: this.props.subPlan.id,
+			planId: null,
+			subPlanId: null,
 			sortedColumn: null,
 			loading: true,
 		};
@@ -53,10 +53,12 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-		if (this.state.subPlan !== newProps.subPlan.id || this.state.plan !== newProps.plan) {
+		const planId = newProps.plan !== -1 ? newProps.plan.id : null;
+		const subPlanId = newProps.subPlan !== -1 ? newProps.subPlan.id : null;
+		if (this.state.subPlanId !== subPlanId || this.state.planId !== planId) {
 			this.setState({
-				subPlan: newProps.subPlan.id,
-				plan: newProps.plan,
+				subPlanId,
+				planId,
 			});
 			this.refresh(newProps);
 		}
@@ -70,7 +72,7 @@ export default React.createClass({
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_INDICATORS_MACRO_PLAN,
 			data: {
-				macroId: props.plan.id === -1 ? null : props.plan.id,
+				macroId: props.plan === -1 ? null : props.plan.id,
 				planId: props.subPlan === -1 ? null : props.subPlan.id,
 			}
 		});

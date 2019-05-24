@@ -137,8 +137,8 @@ public class DashboardBS extends HibernateBusiness {
 				
 				// a polaridade era recuperada diretamente do bd criando multiplos acessos
 				// AttributeInstance polarity = this.attrHelper.retrievePolarityAttributeInstance(goal.getParent());
-
 				AttributeInstance polarity = polarityMap.get(goal.getId());
+				
 				Date today = new Date();
 				if (reach == null && ((min == null && expected == null && max == null) || finish.after(today))) {
 					notStarted++;
@@ -192,20 +192,6 @@ public class DashboardBS extends HibernateBusiness {
 		}
 
 		return info;
-	}
-
-	/**
-	 * Calcular informações gerais (Em dia, Atrasados, Próximos a vencer, Não
-	 * iniciados, Abaixo do mínimo, Abaixo do esperado, Suficiente, Acima do máximo)
-	 * das metas. Este método ja recebe uma lista de AttributeInstance, logo nao precisa acessar 
-	 * o BD para gerar as informacoes, como no metodo retrieveAdminGoalsInfo  
-	 * 
-	 * @param attributeInstances
-	 *            Lista de instancias de atributos para ser calculado as informações gerais.
-	 * @return Informações gerais sobre as metas.
-	 */
-	public GoalsInfo retrieveAdminGoalsInfoByAttributeInstances(List<AttributeInstance> attributeInstances) {
-		return null;
 	}
 
 	/**
