@@ -2,6 +2,7 @@ package org.forpdi.dashboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -383,33 +384,21 @@ public class DashboardController extends AbstractController {
 			PaginatedList<StructureLevelInstance> goals = this.sbs.listGoals(planMacro, plan2, indicatorLevel, page, pageSize);
 			// recupera todas as AttributeInstance relacionadas as StructureLevelInstance
 			List<AttributeInstance> attrInstances = this.sbs.listAllAttributeInstanceByLevelInstances(goals.getList());
-			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
-			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
-			List<Long> goalParentIds = new ArrayList<>(goals.getList().size());
-			Map<Long, Long> idParentMap = new HashMap<>();
-			for (StructureLevelInstance goal : goals.getList()) {
-				if (goal.getParent() != null) {
-					goalParentIds.add(goal.getParent());
-					idParentMap.put(goal.getParent(), goal.getId());
+			Map<Long, List<AttributeInstance>> goalAttrInstanceMap = new HashMap<>();
+			for (AttributeInstance attrInstance : attrInstances) {
+				List<AttributeInstance> attrInstanceList = goalAttrInstanceMap.get(attrInstance.getLevelInstance().getId());
+				if (attrInstanceList == null) {
+					attrInstanceList = new LinkedList<>();
+					goalAttrInstanceMap.put(attrInstance.getLevelInstance().getId(), attrInstanceList);
 				}
+				attrInstanceList.add(attrInstance);
 			}
-			// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
-			 List<AttributeInstance> polarities = this.attrHelper.retrievePolaritiesByLevelInstanceIds(goalParentIds);
 			// cria um map para acessar a polaridade atraves do id do goal (meta)
-			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
-			for (AttributeInstance polarity : polarities) {
-				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
-				polarityMap.put(structureLevelInstanceId, polarity);
-			}
+			Map<Long, AttributeInstance> polarityMap = this.attrHelper.generatePolarityMap(goals.getList());
 			// seta os atributos das metas
+			this.structHelper.setAttributes(goals.getList());
 			for (StructureLevelInstance goal : goals.getList()) {
-				List<AttributeInstance> goalAttrInstances = new ArrayList<>();
-				for (AttributeInstance attr : attrInstances) {
-					if (attr.getLevelInstance().getId().equals(goal.getId())) {
-						goalAttrInstances.add(attr);
-					}
-				}
-				goal.setAttributeInstanceList(goalAttrInstances);
+				List<AttributeInstance> goalAttrInstances = goal.getAttributeInstanceList();
 				AttributeInstance polarity = polarityMap.get(goal.getId());
 				if (polarity == null) {
 					goal.setPolarity("Maior-melhor");

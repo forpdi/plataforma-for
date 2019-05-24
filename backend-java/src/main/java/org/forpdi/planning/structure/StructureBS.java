@@ -35,7 +35,6 @@ import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
 import org.forpdi.core.user.authz.AccessLevels;
-import org.forpdi.dashboard.DashboardBS;
 import org.forpdi.dashboard.manager.LevelInstanceHistory;
 import org.forpdi.planning.attribute.AggregateIndicator;
 import org.forpdi.planning.attribute.Attribute;

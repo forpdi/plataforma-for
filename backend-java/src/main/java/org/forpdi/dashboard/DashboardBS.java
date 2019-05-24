@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +31,7 @@ import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanBS;
 import org.forpdi.planning.plan.PlanMacro;
 import org.forpdi.planning.structure.StructureBS;
+import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.forpdi.system.CriteriaCompanyFilter;
 import org.hibernate.Criteria;
@@ -55,6 +55,8 @@ public class DashboardBS extends HibernateBusiness {
 	@Inject
 	private AttributeHelper attrHelper;
 	@Inject
+	private StructureHelper structureHelper;
+	@Inject
 	private CriteriaCompanyFilter filter;
 	@Inject
 	private GoalsInfoTableHelper infoTableHelper;
@@ -74,29 +76,10 @@ public class DashboardBS extends HibernateBusiness {
 		GoalsInfo info = new GoalsInfo();
 
 		if (goals.size() > 0) {
-			// recupera todas as AttributeInstance relacionadas as StructureLevelInstance
-			List<AttributeInstance> attrInstances = this.sbs.listAllAttributeInstanceByLevelInstances(goals);
-
-			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
-			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
-			List<Long> goalParentIds = new ArrayList<>(goals.size());
-			Map<Long, Long> idParentMap = new HashMap<>();
-			for (StructureLevelInstance goal : goals) {
-				if (goal.getParent() != null) {
-					goalParentIds.add(goal.getParent());
-					idParentMap.put(goal.getParent(), goal.getId());
-				}
-			}
-			
-			// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
-			 List<AttributeInstance> polarities = this.attrHelper.retrievePolaritiesByLevelInstanceIds(goalParentIds);
-			 
+			// seta os atributos
+			this.structureHelper.setAttributes(goals);
 			// cria um map para acessar a polaridade atraves do id do goal (meta)
-			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
-			for (AttributeInstance polarity : polarities) {
-				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
-				polarityMap.put(structureLevelInstanceId, polarity);
-			}
+			Map<Long, AttributeInstance> polarityMap = this.attrHelper.generatePolarityMap(goals);
 			
 			int inDay = 0;
 			int late = 0;
@@ -106,21 +89,15 @@ public class DashboardBS extends HibernateBusiness {
 			int aboveExp = 0;
 			int notStarted = 0;
 			int finished = 0;
-			int closeToMat = 0;			
+			int closeToMat = 0;
 			// calcula goals info
 			for (StructureLevelInstance goal : goals) {
-				List<AttributeInstance> goalAttrInstances = new ArrayList<>();
-				for(AttributeInstance attr : attrInstances) {
-					if(attr.getLevelInstance().getId().equals(goal.getId())) {
-						goalAttrInstances.add(attr);
-					}
-				}
 				Date finish = new Date();
 				Double expected = null;
 				Double reach = null;
 				Double max = null;
 				Double min = null;
-				for (AttributeInstance attrInstance : goalAttrInstances) {
+				for (AttributeInstance attrInstance : goal.getAttributeInstanceList()) {
 					Attribute attr = attrInstance.getAttribute();
 					if (attr.isFinishDate()) {
 						finish = attrInstance.getValueAsDate();

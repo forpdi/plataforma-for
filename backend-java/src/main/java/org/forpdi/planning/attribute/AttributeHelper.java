@@ -1,7 +1,10 @@
 package org.forpdi.planning.attribute;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -106,6 +109,36 @@ public class AttributeHelper {
 		return this.dao.findByCriteria(criteria, AttributeInstance.class);
 	}
 
+	/**
+	 * Gera um Map com o id de uma StructureLevelInstance que representa uma meta (goal) e um 
+	 * AttributeInstance que representa uma polaridade (polarity) 
+	 * 
+	 * @param goals lista de metas
+	 * @return mapa id da meta / polaridade
+	 */
+	public Map<Long, AttributeInstance> generatePolarityMap(List<StructureLevelInstance> goals) {
+		// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
+		// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
+		List<Long> goalParentIds = new ArrayList<>(goals.size());
+		Map<Long, Long> idParentMap = new HashMap<>();
+		for (StructureLevelInstance goal : goals) {
+			if (goal.getParent() != null) {
+				goalParentIds.add(goal.getParent());
+				idParentMap.put(goal.getParent(), goal.getId());
+			}
+		}
+		// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
+		 List<AttributeInstance> polarities = this.retrievePolaritiesByLevelInstanceIds(goalParentIds);
+		// cria um map para acessar a polaridade atraves do id do goal (meta)
+		Map<Long, AttributeInstance> polarityMap = new HashMap<>();
+		for (AttributeInstance polarity : polarities) {
+			long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
+			polarityMap.put(structureLevelInstanceId, polarity);
+		}
+		return polarityMap;
+	}
+	
+	
 	/**
 	 * Recupera os campos especiais de meta de uma instância de nível.
 	 * 

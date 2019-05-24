@@ -19,7 +19,7 @@ import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.filters.PeformanceFilterType;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.StructureBS;
+import org.forpdi.planning.structure.StructureHelper;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
@@ -42,7 +42,7 @@ public class GoalsInfoTableHelper {
 	private DashboardBS dashboardBS;
 	
 	@Inject
-	private StructureBS structureBS;
+	private StructureHelper structureHelper;
 	
 	@Inject 
 	private AttributeHelper attrHelper;
@@ -96,33 +96,13 @@ public class GoalsInfoTableHelper {
 			goals.add(structureLevelInstance);
 		}
 		
-		this.setAttributes(goals);
+		this.structureHelper.setAttributes(goals);
 		
 		List<StructureLevelInstance> goalsFiltered = new LinkedList<>();
 		if (type == null) {
 			goalsFiltered = goals;
 		} else {	
-			// cria uma lista com as instancias pai de goals (istancias metas) de onde eh possivel recuperar a polaridade
-			// cria um map com os ids de goals e dos pais para facilitar o aceeso posterior 
-			List<Long> goalParentIds = new ArrayList<>(goals.size());
-			Map<Long, Long> idParentMap = new HashMap<>();
-			for (StructureLevelInstance goal : goals) {
-				if (goal.getParent() != null) {
-					goalParentIds.add(goal.getParent());
-					idParentMap.put(goal.getParent(), goal.getId());
-				}
-			}
-			
-			// recupera todas AttributeInstance em que levelInstance possui o campo de polaridade
-			 List<AttributeInstance> polarities = this.attrHelper.retrievePolaritiesByLevelInstanceIds(goalParentIds);
-			 
-			// cria um map para acessar a polaridade atraves do id do goal (meta)
-			Map<Long, AttributeInstance> polarityMap = new HashMap<>();
-			for (AttributeInstance polarity : polarities) {
-				long structureLevelInstanceId = idParentMap.get(polarity.getLevelInstance().getId());
-				polarityMap.put(structureLevelInstanceId, polarity);
-			}
-			
+			Map<Long, AttributeInstance> polarityMap = this.attrHelper.generatePolarityMap(goals);
 			for (StructureLevelInstance goal : goals) {
 				Double max = null, min = null, exp = null, reach = null;
 				Date finish = null;
@@ -180,20 +160,12 @@ public class GoalsInfoTableHelper {
 		}
 		return goalsFiltered;
 	}
-	
-	private void setAttributes(final List<StructureLevelInstance> goals) {
-		List<AttributeInstance> attrInstances = this.structureBS.listAllAttributeInstanceByLevelInstances(goals);
-		for (StructureLevelInstance goal : goals) {
-			List<AttributeInstance> goalAttrInstances = new LinkedList<>();
-			for(AttributeInstance attr : attrInstances) {
-				if(attr.getLevelInstance().getId().equals(goal.getId())) {
-					goalAttrInstances.add(attr);
-				}
-			}
-			goal.setAttributeInstanceList(goalAttrInstances);			
-		}
-	}
 
+	/**
+	 * Recebe uma lista de metas e seta os indicadores em levelParent
+	 * 
+	 * @param goals 
+	 */
 	public void setIndicators(final List<StructureLevelInstance> goals) {
 		if (goals.size() == 0) {
 			return;
@@ -214,6 +186,11 @@ public class GoalsInfoTableHelper {
 		}
 	}
 	
+	/**
+	 * Recebe uma lista de metas e seta os objetivos em no parent de levelParent
+	 * 
+	 * @param goals 
+	 */
 	public void setObjectives(final List<StructureLevelInstance> goals) {
 		if (goals.size() == 0) {
 			return;

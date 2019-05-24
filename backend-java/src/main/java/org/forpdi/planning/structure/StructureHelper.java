@@ -1,7 +1,10 @@
 package org.forpdi.planning.structure;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -10,7 +13,6 @@ import org.forpdi.planning.attribute.AggregateIndicator;
 import org.forpdi.planning.attribute.AttributeInstance;
 import org.forpdi.planning.attribute.types.enums.CalculationType;
 import org.forpdi.planning.bean.PerformanceBean;
-import org.forpdi.planning.jobs.OnLevelInstanceUpdateTask;
 import org.forpdi.planning.plan.Plan;
 import org.forpdi.planning.plan.PlanDetailed;
 import org.hibernate.Criteria;
@@ -19,7 +21,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.jboss.logging.Logger;
 
 import br.com.caelum.vraptor.boilerplate.HibernateDAO;
 
@@ -33,8 +34,10 @@ import br.com.caelum.vraptor.boilerplate.HibernateDAO;
  */
 @RequestScoped
 public class StructureHelper {
-	private static final Logger LOG = Logger.getLogger(OnLevelInstanceUpdateTask.class);
 	private final HibernateDAO dao;
+	
+	@Inject
+	private StructureBS structureBS;
 	
 	/** @deprecated CDI-eyes only */
 	protected StructureHelper() {
@@ -310,4 +313,24 @@ public class StructureHelper {
 		this.dao.persist(levelInstance);
 	}
 
+	/**
+	 * Recebe uma lista de StructureLevelInstance e seta os atributos
+	 * 
+	 * @param structureLevelInstance 
+	 */
+	public void setAttributes(final List<StructureLevelInstance> structureLevelInstance) {
+		List<AttributeInstance> attrInstances = this.structureBS.listAllAttributeInstanceByLevelInstances(structureLevelInstance);
+		Map<Long, List<AttributeInstance>> strucAttrInstanceMap = new HashMap<>();
+		for (AttributeInstance attrInstance : attrInstances) {
+			List<AttributeInstance> attrInstanceList = strucAttrInstanceMap.get(attrInstance.getLevelInstance().getId());
+			if (attrInstanceList == null) {
+				attrInstanceList = new LinkedList<>();
+				strucAttrInstanceMap.put(attrInstance.getLevelInstance().getId(), attrInstanceList);
+			}
+			attrInstanceList.add(attrInstance);
+		}
+		for (StructureLevelInstance goal : structureLevelInstance) {
+			goal.setAttributeInstanceList(strucAttrInstanceMap.get(goal.getId()));			
+		}
+	}
 }
