@@ -30,6 +30,7 @@ import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
@@ -1583,38 +1584,41 @@ public class StructureBS extends HibernateBusiness {
 	public Set<Long> retrieveChildResponsibleIds() {
 		Set<Long> allIds = new HashSet<>();
 
-		Criteria criteriaLvl4 = this.filterByResponsibleCriteria();
-		
-		criteriaLvl4.setProjection(Projections.property("levelInstance.id"));
-		List<Long> idsLevel4 = this.filter.filterAndList(criteriaLvl4, Long.class, "macro.company");
-		allIds.addAll(idsLevel4);
-		if (idsLevel4.isEmpty()) {
-			return allIds;
-		}
+		Criteria criteriaLvl1 = this.filterByResponsibleCriteria();
 
-		Criteria criteriaLvl3 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl3.add(Restrictions.in("parent", idsLevel4));
-		criteriaLvl3.setProjection(Projections.property("id"));
-		List<Long> idsLevel3 = this.dao.findByCriteria(criteriaLvl3, Long.class);
-		allIds.addAll(idsLevel3);
-		if (idsLevel3.isEmpty()) {
+		criteriaLvl1.setProjection(Projections.property("levelInstance.id"));
+		List<Long> idsLevel1 = this.filter.filterAndList(criteriaLvl1, Long.class, "macro.company");
+		if (idsLevel1.isEmpty()) {
 			return allIds;
 		}
+		allIds.addAll(idsLevel1);
 
 		Criteria criteriaLvl2 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl2.add(Restrictions.in("parent", idsLevel3));
-		criteriaLvl2.setProjection(Projections.property("id"));
+		criteriaLvl2.add(Restrictions.in("parent", idsLevel1))
+			.add(Restrictions.eq("deleted", false))
+			.setProjection(Projections.property("id"));
 		List<Long> idsLevel2 = this.dao.findByCriteria(criteriaLvl2, Long.class);
-		allIds.addAll(idsLevel2);
 		if (idsLevel2.isEmpty()) {
 			return allIds;
 		}
+		allIds.addAll(idsLevel2);
 
-		Criteria criteriaLvl1 = this.dao.newCriteria(StructureLevelInstance.class);
-		criteriaLvl1.add(Restrictions.in("parent", idsLevel2));
-		criteriaLvl1.setProjection(Projections.property("id"));
-		List<Long> idsLevel1 = this.dao.findByCriteria(criteriaLvl1, Long.class);
-		allIds.addAll(idsLevel1);
+		Criteria criteriaLvl3 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl3.add(Restrictions.in("parent", idsLevel2))
+			.add(Restrictions.eq("deleted", false))
+			.setProjection(Projections.property("id"));
+		List<Long> idsLevel3 = this.dao.findByCriteria(criteriaLvl3, Long.class);
+		if (idsLevel3.isEmpty()) {
+			return allIds;
+		}
+		allIds.addAll(idsLevel3);
+
+		Criteria criteriaLvl4 = this.dao.newCriteria(StructureLevelInstance.class);
+		criteriaLvl4.add(Restrictions.in("parent", idsLevel3))
+			.add(Restrictions.eq("deleted", false))
+			.setProjection(Projections.property("id"));
+		List<Long> idsLevel4 = this.dao.findByCriteria(criteriaLvl4, Long.class);
+		allIds.addAll(idsLevel4);
 
 		return allIds;
 	}
