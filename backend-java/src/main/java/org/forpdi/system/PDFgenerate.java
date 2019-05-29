@@ -152,8 +152,6 @@ public class PDFgenerate {
 	@Inject
 	private PlanRiskBS planriskBS;
 	@Inject
-	private PlanRiskItemBS planriskItemkBS;
-	@Inject
 	private UnitBS unitBS;
 	@Inject
 	private ItemBS itemBS;
@@ -238,7 +236,7 @@ public InputStream exportDocument(String author, String title, String lista)
 			throw new RuntimeException("The configured storage path is not a directory.");
 		}
 	}
-	
+
 	final String prefix = String.format("fpdi-doc-export-%d", System.currentTimeMillis());
 
 	File coverPdfFile = new File(outputDir, String.format("%s-cover.pdf", prefix));
@@ -333,7 +331,7 @@ public InputStream exportDocument(String author, String title, String lista)
 	coverDocument.newPage();
 	coverDocument.close();
 
-	String[] sections = lista.split(",");
+	String[] sections = lista != null ? lista.split(",") : new String[0];
 	int secIndex = 0, subSecIndex = 0;
 
 	boolean lastAttWasPlan = false;
@@ -342,7 +340,8 @@ public InputStream exportDocument(String author, String title, String lista)
 	// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
 	document.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
 	document.open();
-
+	document.add(new Chunk(""));
+	
 	preTextDocument.setPageSize(PageSize.A4);
 	// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
 	preTextDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
@@ -919,11 +918,9 @@ public InputStream exportDocument(String author, String title, String lista)
 	}
 	if (havePreText)
 		preTextDocument.close();
-	if (haveContent) {
-		if(document.getPageNumber()>0) {
-			document.close();
-		}
-	}
+
+	document.close();
+	
 	summaryDocument.setPageSize(PageSize.A4);
 	// Margens Superior e esquerda: 3 cm Inferior e direita: 2 cm
 	summaryDocument.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
@@ -1031,6 +1028,14 @@ public InputStream exportDocument(String author, String title, String lista)
 
 	manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 	InputStream inpStr = new FileInputStream(finalPdfFile);
+	
+	for (File f : outputDir.listFiles()) {
+	    if (f.getName().startsWith("fpdi-") 
+	    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
+	        f.delete();
+	    }
+	}	
+	
 	return inpStr;
 }
 
@@ -1666,15 +1671,34 @@ public InputStream exportLevelAttributes(Long levelId)
 	com.itextpdf.text.Document document = new com.itextpdf.text.Document();
 
 	ClassLoader classLoader = getClass().getClassLoader();
-	String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
+	
+	/*String resourcesPath = new File(classLoader.getResource("/reports/pdf/example.pdf").getFile()).getPath();
 	resourcesPath = "/tmp"; // corrigir para salvar com um caminho
 	// dinamico
 	resourcesPath = resourcesPath.replace("example.pdf", "");
 	resourcesPath = resourcesPath.replace("%20", " ");
 	File pdfFile = File.createTempFile("output.", ".pdf", new File(resourcesPath));
 	InputStream in = new FileInputStream(pdfFile);
-	@SuppressWarnings("unused")
-	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(pdfFile));
+	*/
+	
+	File outputDir;
+	final String storagePath = SystemConfigs.getConfig("store.pdfs");
+	if (storagePath == null || storagePath.equals("") || storagePath.equals("${store.pdfs}")) {
+		outputDir = File.createTempFile("fpdi-document-export", ".pdf").getParentFile();
+	} else {
+		outputDir = new File(storagePath);
+		if (!outputDir.exists()) {
+			if (!outputDir.mkdirs()) {
+				throw new RuntimeException("Failed to create storage directory.");
+			}
+		} else if (!outputDir.isDirectory()) {
+			throw new RuntimeException("The configured storage path is not a directory.");
+		}
+	}
+	
+	File PdfFile = new File(outputDir, "pdi-levelattribute-output.pdf");
+	PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(PdfFile));
+	InputStream in = new FileInputStream(PdfFile);
 
 	// DEFINIÇÕES DE FONTE, MARGENS, ESPAÇAMENTO E CORES
 	Font texto = FontFactory.getFont(FontFactory.TIMES, 12.0f);
@@ -1697,7 +1721,8 @@ public InputStream exportLevelAttributes(Long levelId)
 	document.setMargins(85.0394f, 56.6929f, 85.0394f, 56.6929f);
 
 	document.open();
-
+	document.add(new Chunk(""));
+	
 	// CABEÇALHO
 	String companyLogoUrl = domain.getCompany().getLogo();
 	String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";// new
@@ -2239,7 +2264,6 @@ public InputStream exportLevelAttributes(Long levelId)
 	}
 
 	document.close();
-
 	return in;
 }
 
@@ -4340,12 +4364,19 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		
-		destinationFile.delete();
+		/*destinationFile.delete();
 		coverPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
 		
 		outputDir.delete();
+		
+		for (File f : outputDir.listFiles()) {
+		    if (f.getName().startsWith("frisco-") 
+		    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
+		        f.delete();
+		    }
+		}*/
 	
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
@@ -4413,13 +4444,19 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		
-		destinationFile.delete();
+		/*destinationFile.delete();
 		coverPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
 		
 		outputDir.delete();
-	
+		 */
+		for (File f : outputDir.listFiles()) {
+		    if (f.getName().startsWith("frisco-") 
+		    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
+		        f.delete();
+		    }
+		}	
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 
@@ -4486,13 +4523,20 @@ public void manipulatePdf(String src, String dest, com.itextpdf.text.Document do
 
 		manipulatePdf(destinationFile.getPath(), finalPdfFile.getPath(), newDocument, summaryCountPages);
 		
+		/*
 		destinationFile.delete();
 		coverPdfFile.delete();
 		finalSummaryPdfFile.delete();
 		contentFile.delete();	
 		
 		outputDir.delete();
-	
+		 */		
+		for (File f : outputDir.listFiles()) {
+			if (f.getName().startsWith("frisco-") 
+	    		&& (f.getName().endsWith(".pdf") || f.getName().endsWith(".html"))) {
+	        f.delete();
+	    }
+	}	
 		return finalPdfFile;  //capa+sumario+conteudo+paginação
 	}
 	

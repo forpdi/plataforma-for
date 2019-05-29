@@ -725,7 +725,12 @@ export default React.createClass({
 							Modal.hide();
 							var w = window.open(url,title);
 						}
-					});
+					}, ({
+						label: "",
+						onClick: ()=>{},
+						title: Messages.get("label.exportConfirmation")
+					})
+				);
 				document.getElementById("paramError").innerHTML = "";
 				document.getElementById("documentAuthor").className = "";
 				document.getElementById("documentTitle").className = "";
