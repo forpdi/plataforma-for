@@ -107,7 +107,7 @@ export default React.createClass({
 				],
 				loading: false
 			});
-		});
+		}, me);
 		this.setState({
 			options: {
 				title: Messages.get("label.generalBudget"),
@@ -123,12 +123,15 @@ export default React.createClass({
 				[Messages.get("label.budget.conducted"), 0, '#76D3BA', "R$ " + this.formatBR(this.formatEUA(0))]
 			]
 		});
+		this.refreshComponent(this.props.plan.id, this.props.subPlan.id);
+	},
 
+	refreshComponent(planId, subPlanId) {
 		StructureStore.dispatch({
 			action: StructureStore.ACTION_GET_OBJECTIVES,
 			data: {
-				macroId: this.props.plan.id,
-				planId: this.props.subPlan.id
+				macroId: planId,
+				planId: subPlanId
 			}
 		});
 	},

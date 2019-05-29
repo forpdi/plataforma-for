@@ -29,17 +29,19 @@ export default React.createClass({
 		};
 	},
 
-
 	componentWillMount() {
-		var me = this;
 		UserSession.on("login", session => {
-			me.setState({
+			this.setState({
 				user: session.get("user"),
 				logged: true,
 				model: session.get("user")
 			});
 			this.verifyNotificationTask();
-		}, me);
+		}, this);
+	},
+
+	componentDidMount() {
+		var me = this;
 
 		UserStore.on("retrieve-user-profile", (store) => {
 			me.setState({
@@ -47,7 +49,6 @@ export default React.createClass({
 				logged: true
 			});
 		}, me);
-
 
 		UserSession.on("logout", session => {
 			me.setState({
@@ -91,7 +92,6 @@ export default React.createClass({
 				user: model.data,
 			});
 		},me);
-
 		this.verifyNotificationTask();
 	},
 
@@ -111,7 +111,9 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
+
     onLogout() {
     	Modal.confirmCustom(
 			() => {
