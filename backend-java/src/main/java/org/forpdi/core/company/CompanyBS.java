@@ -76,10 +76,10 @@ public class CompanyBS extends HibernateBusiness {
 	 *             à ser utilizado na query
 	 * @return Domínio que utiliza o host epecificado
 	 */
-	
 	public Company retrieveCompanyById (Long id) {
-		Criteria criteria  = this.dao.newCriteria(Company.class).add(Restrictions.eq("id",id));
-
+		Criteria criteria  = this.dao.newCriteria(Company.class)
+			.add(Restrictions.eq("id",id))
+			.add(Restrictions.eq("deleted", false));
 		return (Company) criteria.uniqueResult();
 	}
 
@@ -142,11 +142,16 @@ public class CompanyBS extends HibernateBusiness {
 	 */
 	public PaginatedList<Company> list(int page) {
 		PaginatedList<Company> results = new PaginatedList<Company>();
-		Criteria criteria = this.dao.newCriteria(Company.class).add(Restrictions.eq("deleted", false)).addOrder(Order.asc("name"));
-		if (page > 0)
-			criteria.setFirstResult((page-1) * PAGESIZE).setMaxResults(PAGESIZE);
-		Criteria counting = this.dao.newCriteria(Company.class).setProjection(Projections.countDistinct("id"))
-				.add(Restrictions.eq("deleted", false));
+		Criteria criteria = this.dao.newCriteria(Company.class)
+			.add(Restrictions.eq("deleted", false))
+			.addOrder(Order.asc("name"));
+		if (page > 0) {
+			criteria.setFirstResult((page-1) * PAGESIZE)
+				.setMaxResults(PAGESIZE);
+		}
+		Criteria counting = this.dao.newCriteria(Company.class)
+			.setProjection(Projections.countDistinct("id"))
+			.add(Restrictions.eq("deleted", false));
 		results.setList(this.dao.findByCriteria(criteria, Company.class));
 		results.setTotal((Long) counting.uniqueResult());
 		return results;

@@ -1,21 +1,18 @@
-
 import React from "react";
 import {Link} from 'react-router';
+import _ from 'underscore';
+
 import CompanyStore from "forpdi/jsx/core/store/Company.jsx";
-import string from 'string';
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
-import Pagination from "forpdi/jsx/core/widget/Pagination.jsx";
-
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
-//import Toastr from 'toastr';
-
 import Logo from 'forpdi/img/logo.png';
 
 export default React.createClass({
 	contextTypes: {
 		toastr: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
 			loading: true,
@@ -24,15 +21,9 @@ export default React.createClass({
 			total: null
 		};
 	},
+
 	componentDidMount() {
 		var me = this;
-
-		CompanyStore.on('find', store => {
-			me.setState({
-				loading: false,
-				models: store.models
-			});
-		}, me);
 
 		CompanyStore.on('remove', store => {
 			me.findCompanies(1);
@@ -64,7 +55,7 @@ export default React.createClass({
 			})
 		}, me);
 
-		CompanyStore.on("fail", (msg) => {
+		CompanyStore.on("fail", msg => {
 			me.setState({
 				error: msg
 			});
@@ -72,6 +63,7 @@ export default React.createClass({
 
 		me.findCompanies(1);
 	},
+
 	componentWillUnmount() {
 		CompanyStore.off(null, null, this);
 	},
@@ -93,17 +85,17 @@ export default React.createClass({
 			Modal.hide();
 			CompanyStore.dispatch({
 				action: CompanyStore.ACTION_REMOVE_COMPANY,
-				data: model.id
+				data: model.id,
 			});
-		},msg,this.cancelBlockUnblock);
+		}, msg, this.cancelBlockUnblock);
 	},
 
 	findCompanies(page) {
 		CompanyStore.dispatch({
    			action: CompanyStore.ACTION_LIST_COMPANIES,
 			data: {
-				page: page
-			}
+				page,
+			},
  		});
 	},
 
@@ -111,53 +103,67 @@ export default React.createClass({
 		if (!this.state.models || (this.state.models.length <= 0)) {
 			return <p><i>Nenhuma instituição cadastrada ainda.</i></p>;
 		}
-		return (<div className="row">
-			{this.state.models.map((model, idx) => {
-				return (<div key={"company-"+idx} className="col-md-3 col-sm-4 col-xs-6">
-					<div className="fpdi-card fpdi-card-full fpdi-card-company">
-						<div className="row">
-							<div className="fpdi-card-title col-md-8">
-								<span title = {model.name} className = "cursorPointer truncate"> {model.name} </span>
-							</div>
-							<div className="text-right col-md-4">
-								<Link to={"/system/companies/edit/"+model.id} className="mdi mdi-pencil-box" title="Editar" />
-								<a onClick={this.deleteRecord.bind(this, model)} className="mdi mdi-delete" title="Excluir" />
+		return (
+			<div className="row">
+				{
+					_.map(this.state.models, (model, idx) => (
+						<div key={"company-"+idx} className="col-md-3 col-sm-4 col-xs-6">
+							<div className="fpdi-card fpdi-card-full fpdi-card-company">
+								<div className="row">
+									<div className="fpdi-card-title col-md-8">
+										<span title = {model.name} className = "cursorPointer truncate"> {model.name} </span>
+									</div>
+									<div className="text-right col-md-4">
+										<Link to={"/system/companies/edit/"+model.id} className="mdi mdi-pencil-box" title="Editar" />
+										<a onClick={this.deleteRecord.bind(this, model)} className="mdi mdi-delete" title="Excluir" />
+									</div>
+								</div>
+								<div
+									className="fpdi-company-logo"
+									style={{
+										backgroundImage: `url(${model.logo!='' ? model.logo : Logo})`
+									}}
+								/>
 							</div>
 						</div>
-						<div className="fpdi-company-logo" style={{backgroundImage: 'url('+
-						((model.logo!='')?(model.logo):(Logo))+")"}} />
+					))
+				}
+				<br /><br /><br />
+				{
+					this.state.total && this.state.models && this.state.models.length < this.state.total &&
+					<div className="showMore">
+						<a onClick={this.findCompanies.bind(this, this.state.page)}>
+							Ver mais
+						</a>
 					</div>
-				</div>);
-			})}
-			<br /><br /><br />
-			{this.state.total && this.state.models && this.state.models.length < this.state.total ?
-				<div className="showMore"><a onClick={this.findCompanies.bind(this, this.state.page)}>Ver mais</a></div>
-			: ""}
-		</div>);
+				}
+			</div>
+		);
 	},
 
 	render() {
 		if (this.props.children) {
 			return this.props.children;
 		}
-		return (<div className="container-fluid animated fadeIn">
-			<h1> {Messages.getEditable("label.institutions", "fpdi-nav-label")} </h1>
-			<ul className="fpdi-action-list text-right">
-				<Link to="/system/companies/new" className="btn btn-sm btn-primary">
-					{/*<span className="mdi mdi-plus"
-					/>*/} Adicionar instituição
-				</Link>
-			</ul>
-			{this.state.error ? (<div className="alert alert-danger animated fadeIn" role="alert">
-					<button type="button" className="close" aria-label="Fechar Alerta" onClick={this.closeAlert}>
-						<span aria-hidden="true">&times;</span>
-					</button>
-					{this.state.error}
-				</div>)
-			:""}
-
-			{this.state.loading ? <LoadingGauge /> : this.renderRecords()}
-			{/*<Pagination store={CompanyStore} />*/}
-		</div>);
-	  }
-	});
+		return (
+			<div className="container-fluid animated fadeIn">
+				<h1> {Messages.getEditable("label.institutions", "fpdi-nav-label")} </h1>
+				<ul className="fpdi-action-list text-right">
+					<Link to="/system/companies/new" className="btn btn-sm btn-primary">
+						Adicionar instituição
+					</Link>
+				</ul>
+				{
+					this.state.error &&
+					<div className="alert alert-danger animated fadeIn" role="alert">
+						<button type="button" className="close" aria-label="Fechar Alerta" onClick={this.closeAlert}>
+							<span aria-hidden="true">&times;</span>
+						</button>
+						{this.state.error}
+					</div>
+				}
+				{this.state.loading ? <LoadingGauge /> : this.renderRecords()}
+			</div>
+		);
+	}
+});
