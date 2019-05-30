@@ -1138,14 +1138,14 @@ public class StructureBS extends HibernateBusiness {
 				map.put(instance.getId(), instanceClone.getId());
 				if (keepContent) {
 					if (this.duplicateAttributeInstance(instance, instanceClone)) {
-						LOGGER.info("Conteúdo do nível " + instance.getName() + " duplicado com sucesso");
+						//LOGGER.info("Conteúdo do nível " + instance.getName() + " duplicado com sucesso");
 					} else {
 						LOGGER.info("Não foi possivel duplicar o conteúdo do nível " + instance.getName());
 					}
 				}
 				if (instanceClone.isAggregate()) {
 					if (this.duplicateAggregateIndicator(instance, instanceClone)) {
-						LOGGER.info("Nível agregado " + instance.getName() + " duplicado com sucesso");
+						//LOGGER.info("Nível agregado " + instance.getName() + " duplicado com sucesso");
 					} else {
 						LOGGER.info("Não foi possível duplicar nível agregado " + instance.getName());
 					}

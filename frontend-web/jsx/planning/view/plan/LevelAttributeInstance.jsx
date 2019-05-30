@@ -745,7 +745,7 @@ export default React.createClass({
 			<ul id="level-menu" className="dropdown-menu" >
 				{((this.context.roles.MANAGER || _.contains(this.context.permissions,
 					PermissionsTypes.MANAGE_PLAN_PERMISSION)) && this.state.vizualization) ||
-					(userResponsible && userResponsible.id == UserSession.get("user").id &&
+					(userResponsible && userResponsible.id == (UserSession.get("user") ? UserSession.get("user").id : null) &&
 						this.state.model.data.level.goal) ? (
 						<li>
 							<a onClick={this.editingAttributes}>

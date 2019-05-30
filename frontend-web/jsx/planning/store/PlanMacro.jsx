@@ -58,13 +58,14 @@ var PlanMacroStore = Fluxbone.Store.extend({
 	url: URL,
 	model: PlanMacroModel,
 
-	duplicate(data){		
+	duplicate(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/duplicate",
 			method: 'POST',
 			dataType: 'json',
 			contentType: 'application/json',
+			timeout: 5*60000,
 			data: JSON.stringify({
 				macro: data.macro,
 				keepPlanLevel: data.keepPlanLevel,
@@ -81,7 +82,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findArchived(data){	
+	findArchived(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/archivedplanmacro",
@@ -97,7 +98,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	findUnarchived(data){	
+	findUnarchived(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/unarchivedplanmacro",
@@ -113,7 +114,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	newPlan(data){		
+	newPlan(data){
 		var me = this;
 		$.ajax({
 			url: me.url,
@@ -132,7 +133,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	archive(data){		
+	archive(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/archive",
@@ -151,7 +152,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	unarchive(data){		
+	unarchive(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/unarchive",
@@ -170,7 +171,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	delete(data){		
+	delete(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/"+data.id,
@@ -184,7 +185,7 @@ var PlanMacroStore = Fluxbone.Store.extend({
 		});
 	},
 
-	scheduleRecalculation(id){		
+	scheduleRecalculation(id){
 		var me = this;
 		$.ajax({
 			url: me.url+"/"+id+"/schedule-recalculation",

@@ -212,7 +212,7 @@ export default React.createClass({
 		Modal.uploadFile(
 			Messages.get("label.importPlans"),
 			<p id="fbkupload">{Messages.get("label.uploadFbk")}</p>,
-			"/forpdi/company/fbkupload",
+			"/forpdi/api/company/fbkupload",
 			"fbk",
 			formatsBlocked,
 			(response) => {
@@ -270,9 +270,24 @@ export default React.createClass({
 			},
 			"xml."
 		);
+	},
 
-		//serverImportStatus(interval);
-		//interval= setInterval(function() {serverImportStatus(interval);},5000);
+	exportPlans(){
+		jQuery.ajax({
+			method: "GET",
+			url: BACKEND_URL + "company/export",
+			success(data, status, opts) {
+				if (data.success) {
+					window.location.href = "forpdi/company/export"
+				}else{
+					Toastr.error("Exportação falhou, verifique se há instituição cadastrada");
+				}
+			},
+			error(opts, status, errorMsg) {
+				console.log(opts)
+				Toastr.error(JSON.parse(opts.responseText).message);
+			}
+		});
 	},
 
     render() {
@@ -371,11 +386,11 @@ export default React.createClass({
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 			{this.state.user.accessLevel >=50?
-                <a href="/forpdi/company/export">
-                    <span className="fpdi-nav-icon mdi mdi-file-export icon-link"
-                        /> <span className="fpdi-nav-label">
-                            {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
-                        </span>
+				<a onClick={this.exportPlans}>
+                    <span className="fpdi-nav-icon mdi mdi-file-export icon-link"/>
+					<span className="fpdi-nav-label">
+                        {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
+                    </span>
                 </a>
 			:""}
             </div>

@@ -106,7 +106,7 @@ var DashboardStore = Fluxbone.Store.extend({
 				me.trigger("planDetailsRetrieved", model);
 			},
 			error(opts, status, errorMsg) {
-				me.handleRequestErrors([], opts);
+				me.trigger("planDetailsRetrieved", opts.responseJSON);
 			}
 		});
 	},
