@@ -42,13 +42,16 @@ export default React.createClass({
 				planDetails: store.data,
 				loading: false
 			});
-		});
+		}, this);
+		this.refreshComponent(this.props.plan.id, this.props.subPlan.id)
+	},
 
+	refreshComponent(planId, subPlanId) {
 		DashboardStore.dispatch({
 			action: DashboardStore.ACTION_GET_PLAN_DETAILS,
 			data: {
-				plan: this.props.subPlan.id,
-				macro: this.props.plan.id
+				plan: subPlanId,
+				macro: planId
 			}
 		});
 	},
@@ -73,10 +76,10 @@ export default React.createClass({
 					<div className="dashboard-plan-details-header">
 						<span title={title}>{(this.state.plan == -1) ? (Messages.get("label.allPlans")) :
 							((this.state.plan != -1 ? (this.state.plan.get("name").length > 30 ?
-								this.state.plan.get("name").substr(0, 30).concat("...") : this.state.plan.get("name")) +
-								(this.state.subplan != -1 ? " - " + (this.state.subplan.name.length > 30 ?
-									this.state.subplan.name.substr(0, 30).contat("...") : this.state.subplan.name) : "")
-								: "")
+									this.state.plan.get("name").substr(0, 30).concat("...") : this.state.plan.get("name")) +
+									(this.state.subplan != -1 ? " - " + (this.state.subplan.name.length > 30 ?
+										this.state.subplan.name.substr(0, 30).contat("...") : this.state.subplan.name) : "")
+									: "")
 							)
 						}
 						</span>

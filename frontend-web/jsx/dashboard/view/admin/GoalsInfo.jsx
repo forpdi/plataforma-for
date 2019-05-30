@@ -52,16 +52,18 @@ export default React.createClass({
 				info: store.data,
 				loading: false
 			});
-		});
+		}, this);
+		this.refreshComponent(this.props.plan, this.props.subPlan)
+	},
 
+	refreshComponent(plan, subPlan) {
 		DashboardStore.dispatch({
 			action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
 			data: {
-				macro: (this.props.plan == -1 ? null : this.props.plan.get("id")),
-				plan: (this.props.subPlan == -1 ? null : this.props.subPlan.id)
+				macro: (plan == -1 ? null : plan.get("id")),
+				plan: (subPlan == -1 ? null : subPlan)
 			}
 		});
-
 	},
 
 	componentWillUnmount() {
@@ -71,8 +73,6 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
-
-
 		if (this.props.plan != newProps.plan || this.props.macro != newProps.macro) {
 			DashboardStore.dispatch({
 				action: DashboardStore.ACTION_GET_GOALS_INFO_ADM,
@@ -88,7 +88,6 @@ export default React.createClass({
 				loading: true
 			});
 		}
-
 	},
 
 	hide() {

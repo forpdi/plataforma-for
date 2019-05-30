@@ -109,6 +109,7 @@ export default React.createClass({
 
 	componentWillUnmount() {
 		UserSession.off(null, null, this);
+		UserStore.off(null, null, this);
 	},
 
     onLogout() {

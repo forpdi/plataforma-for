@@ -68,7 +68,6 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));
 		}, me);
 
-
 		UserStore.dispatch({
 			action: UserStore.ACTION_USER_PROFILE,
 			data: this.state.modelId
@@ -76,7 +75,7 @@ export default React.createClass({
 
 		this.setState({
 			passwordChange: false
-		})
+		});
 
 		UserStore.on("useredit", (model) => {
 			if (model.data) {
@@ -146,9 +145,9 @@ export default React.createClass({
 	    },me);
 	},
 
-
 	componentWillUnmount() {
 		UserStore.off(null, null, this);
+		UserSession.off(null, null, this);
 	},
 
 	getFields(model) {
@@ -188,7 +187,6 @@ export default React.createClass({
 			label: Messages.getEditable("label.birthdate","fpdi-nav-label"),
 			onChange:this.onStartDateChange,
 			value:  model? model.birthdate:null,
-			required: true
 		},
 
 		{
