@@ -200,6 +200,15 @@ public class CompanyController extends AbstractController {
 	public void saveDomain(@NotNull @Valid CompanyDomain domain) {
 		try {
 			domain.setId(null);
+			if (domain.getCompany() == null) {
+				this.fail("Companhia não informada");
+				return;
+			}
+			Company company = this.bs.retrieveCompanyById(domain.getCompany().getId());
+			if (company == null) {
+				this.fail("Companhia não encontrada");
+				return;				
+			}
 			CompanyDomain existent = this.bs.retrieveByHost(domain.getHost());
 			if (existent == null) {
 				this.bs.persist(domain);

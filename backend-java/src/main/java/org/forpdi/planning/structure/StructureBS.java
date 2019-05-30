@@ -30,7 +30,6 @@ import org.forpdi.core.company.Company;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;

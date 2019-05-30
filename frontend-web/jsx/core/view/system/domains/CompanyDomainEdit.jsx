@@ -1,13 +1,9 @@
-
 import React from "react";
-import { Link } from 'react-router';
 
 import CompanyDomainStore from "forpdi/jsx/core/store/CompanyDomain.jsx";
 import CompanyStore from "forpdi/jsx/core/store/Company.jsx";
-
 import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
-import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
@@ -21,6 +17,7 @@ export default React.createClass({
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired
 	},
+
 	getInitialState() {
 		return {
 			loading: true,
@@ -83,7 +80,7 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;
-		CompanyDomainStore.on("sync", (model) => {
+		CompanyDomainStore.on("sync", model => {
 			me.context.router.push("/system/domains");
 			Toastr.oastr.success(Messages.get("notification.domain.save") + " " + Messages.get("notification.pageRefreshRequest"));
 		}, me);
@@ -94,13 +91,13 @@ export default React.createClass({
 			me.updateLoadingState();
 		}, me);
 
-		CompanyStore.on("find", (store) => {
+		CompanyStore.on("companies-listed", store => {
 			me.setState({
-				companies: store.models
+				companies: store.data
 			});
 			me.updateLoadingState();
 		}, me);
-		CompanyStore.on("themes", (themes) => {
+		CompanyStore.on("themes", themes => {
 			me.setState({
 				themes: themes
 			});
@@ -114,8 +111,7 @@ export default React.createClass({
 			});
 		}
 		CompanyStore.dispatch({
-			action: CompanyStore.ACTION_FIND,
-			data: null
+			action: CompanyStore.ACTION_LIST_COMPANIES,
 		});
 		CompanyStore.dispatch({
 			action: CompanyStore.ACTION_FIND_THEMES,
@@ -123,10 +119,61 @@ export default React.createClass({
 		});
 	},
 
-
 	componentWillUnmount() {
 		CompanyDomainStore.off(null, null, this);
 		CompanyStore.off(null, null, this);
+	},
+
+	getFields() {
+		return [{
+			name: "host",
+			type: "text",
+			placeholder: "",
+			maxLength: 128,
+			label: Messages.getEditable("label.host", "fpdi-nav-label"),
+			required: true,
+			helpBox: 'Ex: app.forpdi.org',
+			value: this.state.model ? this.state.model.get("host") : null
+		}, {
+			name: "baseUrl",
+			type: "url",
+			placeholder: "",
+			maxLength: 255,
+			label: Messages.getEditable("label.baseUrl", "fpdi-nav-label"),
+			required: true,
+			helpBox: "Ex: http://app.forpdi.org/",
+			value: this.state.model ? this.state.model.get("baseUrl") : null
+		}, {
+			name: 'theme',
+			type: 'select',
+			placeholder: Messages.get("label.selectTheme"),
+			label: Messages.getEditable("label.theme", "fpdi-nav-label"),
+			required: true,
+			value: this.state.model ? this.state.model.get("theme") : null,
+			displayField: 'label',
+			valueField: 'id',
+			options: this.state.themes
+		}, {
+			name: 'company',
+			type: 'select',
+			placeholder: Messages.get("label.selectInstitution"),
+			label: Messages.getEditable("label.institution", "fpdi-nav-label"),
+			required: true,
+			value: this.state.model ? this.state.model.get("company").id : null,
+			displayField: 'name',
+			valueField: 'id',
+			options: this.state.companies
+		}];
+	},
+
+	updateLoadingState() {
+		this.setState({
+			fields: this.getFields(),
+			loading:
+				!this.state.companies
+				|| !this.state.themes
+				|| (this.props.params.modelId && !this.state.model)
+		});
 	},
 
 	onSubmit(data) {
