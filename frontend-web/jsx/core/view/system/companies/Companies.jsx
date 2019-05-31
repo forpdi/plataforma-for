@@ -6,6 +6,8 @@ import CompanyStore from "forpdi/jsx/core/store/Company.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
+import Toastr from 'toastr';
+
 import Logo from 'forpdi/img/logo.png';
 
 export default React.createClass({
@@ -26,8 +28,14 @@ export default React.createClass({
 		var me = this;
 
 		CompanyStore.on('remove', store => {
-			me.findCompanies(1);
-			this.context.toastr.addAlertSuccess(Messages.get("notification.institution.delete"));
+			if(store.success){
+				me.findCompanies(1);
+				Toastr.success(Messages.get("notification.institution.delete"));
+			}else{
+				Toastr.error(store.message)
+			}
+
+
 		}, me);
 
 		CompanyStore.on('companies-listed', (store, data) => {

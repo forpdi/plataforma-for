@@ -46,7 +46,6 @@ export default React.createClass({
 			});
 		}, me);
 
-
 		UserSession.on("logout", session => {
 			me.setState({
 				user: null,

@@ -40,10 +40,28 @@ public class BackupAndRestoreController extends AbstractController  {
 	 *		id plano macro
 	 *
 	 */
-	@Get("/company/export")
+	@Get("api/company/export")
+	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
+	public void validexport() {
+		try {
+			
+			if (this.domain == null || this.domain.getCompany() == null) {
+				this.fail("Não há instituição cadastrada para exportar");
+				return;
+			}
+			this.success();
+		} catch (Throwable ex) {
+			LOGGER.error("Unexpected runtime error", ex);
+			this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			this.result.nothing();
+		}
+	}
+	
+	@Get("company/export")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
 	public void export() {
 		try {
+			
 			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
 			this.response.setHeader("Content-Disposition", String.format("attachment; filename=plans-%d-%s.fbk",
 					domain.getCompany().getId(), LocalDateTime.now().toString()));
@@ -67,7 +85,7 @@ public class BackupAndRestoreController extends AbstractController  {
 	 * @param id
 	 * 		id company
 	 */
-	@Post("/company/fbkupload")
+	@Post("api/company/fbkupload")
 	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {RestoreDataPermission.class})
 	@UploadSizeLimit(fileSizeLimit = 100 * 1024 * 1024, sizeLimit = 100 * 1024 * 1024)
 	public void  fbkupload(UploadedFile file) {

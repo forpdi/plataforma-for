@@ -238,6 +238,13 @@ public class CompanyController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
+			
+			CompanyDomain cd = this.bs.retrieveByHost(domain.getHost());
+			if (cd !=null && !cd.getHost().equals(existent.getHost())) {
+				this.fail("Já existe um domínio com este host registrado");
+				return;
+			}
+			
 			existent.setHost(domain.getHost());
 			existent.setBaseUrl(domain.getBaseUrl());
 			existent.setTheme(domain.getTheme());

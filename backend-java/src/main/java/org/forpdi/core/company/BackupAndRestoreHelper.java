@@ -10,8 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -102,9 +104,6 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 *
 	 */
 	public void export(Company company, OutputStream output) throws IOException {
-		if (company == null || output == null) {
-			throw new IllegalArgumentException("Company not found.");
-		}
 		
 		final ZipOutputStream zos = new ZipOutputStream(output);
 		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
@@ -490,6 +489,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		final Map<Long, TableFields> tableFields = new LinkedHashMap<>();
 		final Map<Long, TableInstance> tableInstances = new LinkedHashMap<>();
 		final Map<Long, TableStructure> tableStructures = new LinkedHashMap<>();
+		
 
 		this.dao.execute((session) -> {
 			String content;
@@ -732,6 +732,8 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 			}
 
 			// Importando as instâncias de atributos
+			final Set<String> emails = new LinkedHashSet<>();
+	
 			content = this.readFromFile(files, AttributeInstance.class);
 			List<AttributeInstance> attributeInstancesList = this.gson.fromJson(content, new TypeToken<List<AttributeInstance>>() {}.getType());
 			if (!GeneralUtils.isEmpty(attributeInstancesList)) {
@@ -745,7 +747,10 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 							attributeInstance.setValue(user.getId().toString());
 							attributeInstance.setValueAsNumber(user.getId().doubleValue());
 						} else {
-							LOGGER.warnf("Usuário responsável não encontrado: %s", attributeInstance.getLevelInstance().getExportResponsibleMail());
+							if(!emails.contains(attributeInstance.getLevelInstance().getExportResponsibleMail())) {
+								emails.add(attributeInstance.getLevelInstance().getExportResponsibleMail());
+								LOGGER.warnf("Usuário responsável não encontrado: %s", attributeInstance.getLevelInstance().getExportResponsibleMail());
+							}
 						}
 					}
 					session.persist(attributeInstance);

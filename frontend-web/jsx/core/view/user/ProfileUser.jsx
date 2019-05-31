@@ -68,11 +68,6 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess(Messages.get("notification.photoChangedSuccessfully"));
 		}, me);
 
-		UserStore.dispatch({
-			action: UserStore.ACTION_USER_PROFILE,
-			data: this.state.modelId
-		});
-
 		this.setState({
 			passwordChange: false
 		});
@@ -87,10 +82,12 @@ export default React.createClass({
 					editUser: false,
 				});
 
-				UserStore.dispatch({
-					action: UserStore.ACTION_USER_PROFILE,
-					data: this.state.modelId
-				});
+				// Requisição descenessária
+				// UserStore.dispatch({
+				// 	action: UserStore.ACTION_USER_PROFILE,
+				// 	data: this.state.modelId
+				// });
+
 			} else {
 				var errorMsg = JSON.parse(model.responseText)
 				this.context.toastr.addAlertError(errorMsg.message);
@@ -143,6 +140,15 @@ export default React.createClass({
 	    UserStore.on("notifications-settings-updated", (model) => {
 	    	this.context.toastr.addAlertSuccess(Messages.get("notification.settings.savedSuccessfully"));
 	    },me);
+	    this.refreshComponent(this.state.modelId);
+	},
+
+	refreshComponent(modelId) {
+		UserStore.dispatch({
+			action: UserStore.ACTION_USER_PROFILE,
+			data: modelId
+		});
+
 	},
 
 	componentWillUnmount() {
@@ -391,7 +397,6 @@ export default React.createClass({
 			},msg,this.refreshCancel);
 			 errorField = false
 		}
-
 	},
 
 	showDescription(description){

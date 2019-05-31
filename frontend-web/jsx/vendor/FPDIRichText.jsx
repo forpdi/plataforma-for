@@ -89,13 +89,15 @@ export default React.createClass({
     },
     render(){
 
+		console.log(this.quill);
 		//const toolbarId = `${this.props.id}-toolbar`;
 
         return (
             <div>
                 <ReactQuill
+					name="Quill"
 					onChange={this.onChange}
-					value={this.state.value}
+					value={this.state.value || ''}
 					ref={(c) => { this.quill = (c && c.editor) || this.quill; }}
 					modules = {{
 						toolbar: [

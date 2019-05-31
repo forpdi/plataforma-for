@@ -643,6 +643,8 @@ public class PlanController extends AbstractController {
 				this.fail("Plano inexistente.");
 				return;
 			} else {
+				
+				LOGGER.info("Starting Plan duplicate: "+macro.getName());
 				macro.setCompany(existent.getCompany());
 				macro.setId(null);
 				macro.setDocumented(existent.isDocumented());

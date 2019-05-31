@@ -28,7 +28,7 @@ var CompanyStore = Fluxbone.Store.extend({
 	ACTION_REMOVE_COMPANY:'company-removeCompany',
 	ACTION_LIST_COMPANIES: 'company-listCompanies',
 	dispatchAcceptRegex: /^company-[a-zA-Z0-9]+$/,
-	
+
 	url: URL,
 	model: CompanyModel,
 
@@ -42,7 +42,7 @@ var CompanyStore = Fluxbone.Store.extend({
 				me.trigger("remove", data);
 			},
 			error: (model,response,opts) => {
-				me.trigger("remove",model);
+				me.trigger("remove", model.responseJSON);
 			}
 		});
 	},
