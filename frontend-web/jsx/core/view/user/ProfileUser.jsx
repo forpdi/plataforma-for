@@ -631,7 +631,7 @@ export default React.createClass({
 											aria-expanded="true"
 											title={Messages.get("label.settings")}
 											>
-												<span className="mdi mdi-settings cursorPointer floatRight"/>
+											<span className="mdi mdi-settings cursorPointer floatRight"/>
 										</a>
 										<div className="dropdown-menu dropdown-menu-right width250" aria-labelledby="notifications-settings-menu">
 											<p>{Messages.getEditable("notification.receiving","fpdi-nav-label")}</p>
@@ -653,29 +653,38 @@ export default React.createClass({
 													value="2"
 													/>{Messages.getEditable("notification.emailType","fpdi-nav-label")}
 												</label></div>
-												<div key={'field-opt-3'}><label><input
-													type="radio"
-													name="notificationSetting"
-													id="notificationSetting3"
-													defaultChecked={this.state.model.notificationSettings == 3 ? true : false}
-													value="3"
-													/>{Messages.getEditable("notification.noEmailType","fpdi-nav-label")}
-												</label></div>
+												<div key={'field-opt-3'}>
+													<label>
+														<input
+															type="radio"
+															name="notificationSetting"
+															id="notificationSetting3"
+															defaultChecked={this.state.model.notificationSettings == 3 ? true : false}
+															value="3"
+														/>
+														{Messages.getEditable("notification.noEmailType","fpdi-nav-label")}
+													</label>
+												</div>
 											</div>
-											<p className="notificationSettingsDropdown"><span className="fpdi-required"></span> {Messages.getEditable("notification.typeInformation","fpdi-nav-label")} </p>
+											<p className="notificationSettingsDropdown">
+												<span className="fpdi-required" />
+												{Messages.getEditable("notification.typeInformation","fpdi-nav-label")}
+											</p>
 										</div>
 									</div>
 								:""}
 							</div>
-								{/*<div className="panel-body">Em construção</div>*/}
-								<div>
-									<NotificationUser ref={"userNotification"}/>
-									{this.state.hideShowMore == false ?
-										<div className="textAlignCenter marginBottom10">
-	                    					<a onClick={this.showMoreNotifications}>{Messages.getEditable("label.viewMore","fpdi-nav-label")}</a>
-	                					</div>
-	                				: ""}
-								</div>
+							<div>
+								<NotificationUser ref={"userNotification"}/>
+								{
+									!this.state.hideShowMore && this.state.total > 0 &&
+									<div className="textAlignCenter marginBottom10">
+										<a onClick={this.showMoreNotifications}>
+											{Messages.getEditable("label.viewMore","fpdi-nav-label")}
+										</a>
+									</div>
+								}
+							</div>
 						</div>
 					</div>
 				</div>

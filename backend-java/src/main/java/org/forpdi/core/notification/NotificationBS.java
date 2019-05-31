@@ -235,6 +235,9 @@ public class NotificationBS extends HibernateBusiness {
 	 * @return
 	 */
 	public PaginatedList<Notification> listNotificationByUserCompany(User user, Long limit, int page, boolean topBar) {
+		if (this.domain == null || this.domain.getCompany() == null) {
+			return new PaginatedList<>(new ArrayList<>(0), 0L);
+		}
 		PaginatedList<Notification> results = new PaginatedList<Notification>();
 		Criteria criteria = this.dao.newCriteria(Notification.class);
 		criteria.add(Restrictions.eq("user", user));

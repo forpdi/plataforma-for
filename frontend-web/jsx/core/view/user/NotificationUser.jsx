@@ -1,8 +1,8 @@
 import React from "react";
-import string from 'string';
-import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import {Link} from 'react-router';
+import _ from 'underscore';
 
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 export default React.createClass({
@@ -53,49 +53,59 @@ export default React.createClass({
     render() {
         return (
             <div>
-                {(this.state.notifications && this.state.notifications.length > 0) ?
-                    this.state.notifications.map((item, idx) => {
-                        return (
-                            <div key={"notification-"+idx} className = {item.vizualized == true && !item.vizualizeNow ? "" : "backgroundNotification"}>
-                                <div className = "row paddingNotification">
-
-                                    {item.url != undefined ?
-
-                                        (<Link to={item.url.split("#")[1]}>
-                                                <div className="col-md-1">
-                                                    <img alt="Notifications-Picture" src={item.picture}/>
-                                                </div>
-
-                                                <div className="col-md-8">
-                                                    <p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
-                                                </div>
-
-                                                <div className="col-md-3">
-                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>
-                                                </div>
-                                            </Link>
-                                        )
-                                        : (
-                                            <div>
-                                                 <div className="col-md-1">
-                                                    <img alt="Notifications-Picture" src={item.picture}/>
-                                                </div>
-
-                                                <div className="col-md-8">
-                                                    <p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
-                                                </div>
-
-                                                <div className="col-md-3">
-                                                    <p id = "p-notificationUser" > <i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons"> <span id = "p-time-notifications" className="fpdi-notificationDate"> {item.creation.split(" ")[0]} </span> </i>  </p>
-                                                </div>
-                                            </div>
-                                        )
-                                    }
-                                </div>
-                            </div>
-                        );
-                    })
-                : <div className="fpdi-noNotifications">{Messages.getEditable("notification.noNotifications","fpdi-nav-label")}</div>}
+                {
+					this.state.notifications && this.state.notifications.length > 0
+					?
+                    _.map(this.state.notifications, (item, idx) => (
+						<div key={"notification-"+idx} className = {item.vizualized && !item.vizualizeNow ? "" : "backgroundNotification"}>
+							<div className = "row paddingNotification">
+								{
+									item.url
+									?
+									<Link to={item.url.split("#")[1]}>
+										<div className="col-md-1">
+											<img alt="Notifications-Picture" src={item.picture}/>
+										</div>
+										<div className="col-md-8">
+											<p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
+										</div>
+										<div className="col-md-3">
+											<p id = "p-notificationUser">
+												<i className="mdi mdi-clock-notification mdi-calendar-clock" id = "notificationIcons">
+													<span id = "p-time-notifications" className="fpdi-notificationDate">
+														{item.creation.split(" ")[0]}
+													</span>
+												</i>
+											</p>
+										</div>
+									</Link>
+									:
+									<div>
+										<div className="col-md-1">
+											<img alt="Notifications-Picture" src={item.picture}/>
+										</div>
+										<div className="col-md-8">
+											<p id = "p-notificationUser" dangerouslySetInnerHTML={{__html:item.description}}/>
+										</div>
+										<div className="col-md-3">
+											<p id = "p-notificationUser">
+												<i className="mdi mdiclock-notification mdi-calendar-clock" id = "notificationIcons">
+													<span id = "p-time-notifications" className="fpdi-notificationDate">
+														{item.creation.split(" ")[0]}
+													</span>
+												</i>
+											</p>
+										</div>
+									</div>
+								}
+							</div>
+						</div>
+					))
+					:
+					<div className="fpdi-noNotifications">
+						{Messages.getEditable("notification.noNotifications","fpdi-nav-label")}
+					</div>
+				}
             </div>
         );
     }
