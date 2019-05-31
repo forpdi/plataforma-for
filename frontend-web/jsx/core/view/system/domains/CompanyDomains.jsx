@@ -77,9 +77,8 @@ export default React.createClass({
 		Modal.hide();
 	},
 
-	deleteRecord(model, event) {
+	deleteRecord(model) {
 		var msg = Messages.get("label.deleteConfirmation") + model.host + "?";
-		event.preventDefault();
 		Modal.confirmCancelCustom(() => {
 			Modal.hide();
 			CompanyDomainStore.dispatch({
