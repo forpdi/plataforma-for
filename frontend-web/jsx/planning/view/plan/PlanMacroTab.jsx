@@ -103,6 +103,7 @@ export default React.createClass({
 		}
 		this.context.tabPanel.addTab(this.props.location.pathname, this.context.planMacro.get("name"));
 	},
+
 	componentWillReceiveProps(newProps) {
 		if (newProps.location.pathname != this.state.tabPath) {
 			this.setState({
@@ -110,6 +111,10 @@ export default React.createClass({
 			});
 			this.context.tabPanel.addTab(newProps.location.pathname, this.context.planMacro.get("name"));
 		}
+	},
+
+	componentWillUnmount() {
+		PlanMacroStore.off(null, null, this);
 	},
 
 	cancelBlockUnblock () {

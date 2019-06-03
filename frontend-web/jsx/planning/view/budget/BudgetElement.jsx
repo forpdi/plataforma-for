@@ -91,7 +91,7 @@ export default React.createClass({
 			});
 		  },this);
 
-		  BudgetStore.on("budgetElementUpdated", model => {
+        BudgetStore.on("budgetElementUpdated", model => {
 			if(model.data) {
 				if (this.state.idx != undefined) {
 					this.state.budgetElements[this.state.idx].subAction = model.data.subAction;
@@ -131,8 +131,9 @@ export default React.createClass({
 		},this);
 
 	},
-	componentWillUnmount() {
 
+	componentWillUnmount() {
+		BudgetStore.off(null, null, this);
     },
 
     cancelNewBudget(){

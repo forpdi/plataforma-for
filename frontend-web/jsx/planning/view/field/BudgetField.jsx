@@ -67,14 +67,6 @@ export default React.createClass({
         return (neg ? '-'+tmp : tmp);
 	},
 
-	onKeyUp(evt){
-		var key = evt.which;
-		if(key == 13) {
-			evt.preventDefault();
-			return;
-		}
-	},
-
 	converteMoedaFloat(valor){
 		var valorFormated = valor.toString();
 		valorFormated =  valorFormated.replace(".",",");
@@ -140,7 +132,7 @@ export default React.createClass({
 				budgetSelectList: model.data,
 				loading: false,
 			});
-		});
+		}, this);
 	},
 
 	componentWillUnmount() {

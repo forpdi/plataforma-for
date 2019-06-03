@@ -41,18 +41,18 @@ export default React.createClass({
 		AttachmentStore.on("sync", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.savedAttachment"));
 			me.getAttachments(1,5);
-		});
+		}, this);
 		AttachmentStore.on("attachmentList", (model) => {
 			me.setState({
 				list: model.data,
 				total: model.total,
 				loading: false
 			});
-		});
+		}, this);
 		AttachmentStore.on("attachmentDeleted", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentDelete"));
 			me.getAttachments(1,5);
-		});
+		}, this);
 		AttachmentStore.on("attachmentUpdated", (model) => {
 			me.context.toastr.addAlertSuccess(Messages.get("label.success.attachmentRefresh"));
 			me.state.list.map((attachment) => {
@@ -61,16 +61,12 @@ export default React.createClass({
 				}
 			});
 			me.cancelEdit();
-		});
+		}, this);
 	},
 
 	componentWillUnmount() {
 		AttachmentStore.off(null, null, this);
 		FileStore.off(null, null, this);
-	},
-
-	componentWillReceiveProps(newProps){
-
 	},
 
 	hideFields(){
