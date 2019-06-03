@@ -57,7 +57,8 @@ export default React.createClass({
 			showPolarityAlert: false,
 			beginIdx: null,
 			endIdx: null,
-			finishIdx: null
+			finishIdx: null,
+			levelInstanceId: null
 		};
 	},
 
@@ -105,8 +106,8 @@ export default React.createClass({
 				var formattedValue = (model.attributeInstance ? model.attributeInstance.formattedValue : "");
 				var value = (model.attributeInstance ? model.attributeInstance.value : "");
 				var editModeValue = null;
-				if(model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
-					if (model.attributeInstance){  //&& model.attributeInstance.valueAsNumber) {
+				if (model.type == AttributeTypes.NUMBER_FIELD && value != undefined) {
+					if (model.attributeInstance) {  //&& model.attributeInstance.valueAsNumber) {
 						value = model.attributeInstance.valueAsNumber || '';
 						editModeValue = value.toString().replace(".", ",");
 					} else {
@@ -318,19 +319,21 @@ export default React.createClass({
 		}, me);
 
 		StructureStore.on("levelAttributeRetrieved", (model) => {
-			me.setState({
-				loading: false,
-				model: model,
-				title: model.data.level.name,
-				subTitle: model.data.name,
-				fields: this.getFields(model, model.data.aggregate),
-				aggregate: model.data.aggregate,
-				levelValue: model.data.levelValue,
-				level: model.data.level.name,
-				showPolarityAlert: false,
-				favoriteExistent: model.data.favoriteExistent,
-				favoriteTotal: model.data.favoriteTotal
-			});
+			if ((model.data.id == this.state.levelInstanceId || this.state.levelInstanceId == null)) {
+				me.setState({
+					loading: false,
+					model: model,
+					title: model.data.level.name,
+					subTitle: model.data.name,
+					fields: this.getFields(model, model.data.aggregate),
+					aggregate: model.data.aggregate,
+					levelValue: model.data.levelValue,
+					level: model.data.level.name,
+					showPolarityAlert: false,
+					favoriteExistent: model.data.favoriteExistent,
+					favoriteTotal: model.data.favoriteTotal
+				});
+			}
 			me.context.tabPanel.addTab(me.state.tabPath, model.data.name);
 		}, me);
 
@@ -354,6 +357,7 @@ export default React.createClass({
 	},
 
 	componentWillReceiveProps(newProps) {
+
 		this.setState({
 			vizualization: true
 		});
@@ -362,7 +366,8 @@ export default React.createClass({
 		if (newProps.location.pathname != this.state.tabPath) {
 			this.setState({
 				tabPath: newProps.location.pathname,
-				loading: true
+				loading: true,
+				levelInstanceId: newProps.params.levelInstanceId
 			});
 			this.getLevelInstanceAttributes(newProps.params.levelInstanceId);
 		}
@@ -386,7 +391,6 @@ export default React.createClass({
 				committed: committed,
 				realized: realized,
 				instanceId: this.props.params.levelInstanceId,
-
 			}
 		});
 	},
@@ -969,6 +973,8 @@ export default React.createClass({
 				}
 			}
 		}
+
+
 		return (
 			<div>
 				<div className="row paddingLeft15">
@@ -1054,7 +1060,8 @@ export default React.createClass({
 					parentId={this.state.model.data.id}
 					isParent={this.isParent}
 					users={this.state.users}
-					enabled={!this.state.aggregate && this.state.vizualization} />
+					enabled={!this.state.aggregate && this.state.vizualization}
+				/>
 			</div>);
 	}
 });
