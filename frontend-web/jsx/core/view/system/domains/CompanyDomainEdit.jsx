@@ -82,7 +82,7 @@ export default React.createClass({
 		var me = this;
 		CompanyDomainStore.on("sync", model => {
 			me.context.router.push("/system/domains");
-			Toastr.oastr.success(Messages.get("notification.domain.save") + " " + Messages.get("notification.pageRefreshRequest"));
+			Toastr.success(Messages.get("notification.domain.save") + " " + Messages.get("notification.pageRefreshRequest"));
 		}, me);
 		CompanyDomainStore.on("retrieve", (model) => {
 			me.setState({

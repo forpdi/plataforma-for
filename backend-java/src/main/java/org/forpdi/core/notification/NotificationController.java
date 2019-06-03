@@ -48,6 +48,11 @@ public class NotificationController extends AbstractController {
 		try {
 			Long notifications = (long) 0; 
 			if (this.userSession.isLogged() && this.userSession.getUser() != null) {
+				
+				if(this.domain== null || this.domain.getCompany()  == null) {
+					this.success(-1);
+					return;
+				}
 				CompanyUser companyUser = this.userBS.retrieveCompanyUser(this.userSession.getUser(), this.domain.getCompany());
 				if(companyUser != null && companyUser.isBlocked()) {
 					this.success(-1);

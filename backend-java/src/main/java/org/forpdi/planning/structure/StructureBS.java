@@ -149,6 +149,13 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public PaginatedList<Structure> list() {
 		PaginatedList<Structure> results = new PaginatedList<Structure>();
+		
+		if(this.domain == null) {
+			results.setList(new ArrayList<>());
+			results.setTotal((long) 0);
+			return results;
+		}
+
 		Criteria criteria = this.dao.newCriteria(Structure.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("company", this.domain.getCompany())).addOrder(Order.asc("name"));
 		
@@ -1774,10 +1781,18 @@ public class StructureBS extends HibernateBusiness {
 		.add(Restrictions.eq("archived", false));
 		List<PlanMacro> plansmacro = this.filter.filterAndList(criteria, PlanMacro.class);
 
+		
+		if(plansmacro.isEmpty()) {
+			result.setList(new ArrayList<>());
+			result.setTotal((long) 0);
+			return result;
+		}
+		
 		criteria = this.dao.newCriteria(Plan.class)
 		.add(Restrictions.eq("deleted", false))
 		.add(Restrictions.in("parent", plansmacro));
 		List<Plan> plans = this.dao.findByCriteria(criteria, Plan.class);
+
 
 		criteria = this.dao.newCriteria(StructureLevel.class)
 		.add(Restrictions.eq("deleted", false))
