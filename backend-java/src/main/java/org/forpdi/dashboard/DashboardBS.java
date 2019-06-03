@@ -15,6 +15,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.forpdi.core.jobs.EmailSenderTask;
 import org.forpdi.core.user.auth.UserSession;
 import org.forpdi.dashboard.admin.GoalsInfo;
 import org.forpdi.dashboard.admin.GoalsInfoTable;
@@ -97,18 +98,21 @@ public class DashboardBS extends HibernateBusiness {
 				Double reach = null;
 				Double max = null;
 				Double min = null;
-				for (AttributeInstance attrInstance : goal.getAttributeInstanceList()) {
-					Attribute attr = attrInstance.getAttribute();
-					if (attr.isFinishDate()) {
-						finish = attrInstance.getValueAsDate();
-					} else if (attr.isExpectedField()) {
-						expected = attrInstance.getValueAsNumber();
-					} else if (attr.isReachedField()) {
-						reach = attrInstance.getValueAsNumber();
-					} else if (attr.isMinimumField()) {
-						min = attrInstance.getValueAsNumber();
-					} else if (attr.isMaximumField()) {
-						max = attrInstance.getValueAsNumber();
+
+				if (goal.getAttributeInstanceList() != null) {
+					for (AttributeInstance attrInstance : goal.getAttributeInstanceList()) {
+						Attribute attr = attrInstance.getAttribute();
+						if (attr.isFinishDate()) {
+							finish = attrInstance.getValueAsDate();
+						} else if (attr.isExpectedField()) {
+							expected = attrInstance.getValueAsNumber();
+						} else if (attr.isReachedField()) {
+							reach = attrInstance.getValueAsNumber();
+						} else if (attr.isMinimumField()) {
+							min = attrInstance.getValueAsNumber();
+						} else if (attr.isMaximumField()) {
+							max = attrInstance.getValueAsNumber();
+						}
 					}
 				}
 				
