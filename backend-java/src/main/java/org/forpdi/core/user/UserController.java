@@ -750,6 +750,16 @@ public class UserController extends AbstractController {
 	public void requestRecover(String email) throws EmailException, UnknownHostException {
 		try {
 			User user = this.bs.existsByEmail(email);
+			
+			if(this.domain ==null || this.domain.getCompany()==null) {
+				if(user !=null) {
+					this.fail("Não foi possível recuperar a senha. Entre em contato com o administrador do sistema.");
+				}else {
+					this.fail("Este e-mail não está cadastrado no sistema.");
+				}
+				return;
+			}
+			
 			CompanyUser companyUser = this.bs.retrieveCompanyUser(user, this.domain.getCompany());
 			if (user == null) {
 				this.fail("Este e-mail não está cadastrado no sistema.");

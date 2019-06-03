@@ -269,7 +269,7 @@ export default React.createClass({
 					<div className="budget-btns">
 						{this.context.roles.MANAGER ||
 								_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
+								(this.props.responsible && UserSession.get("user") !=null && UserSession.get("user").id == this.props.responsible.id) ?
 							<button type="button" className="btn btn-primary budget-new-btn" onClick={this.attachFile}>{Messages.getEditable("label.attachFiles","fpdi-nav-label")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")}
@@ -298,7 +298,7 @@ export default React.createClass({
 									</th>
 									{this.context.roles.MANAGER ||
 										_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
+										(this.props.responsible && UserSession.get("user") !=null && UserSession.get("user").id == this.props.responsible.id) ?
 									<th>
 										<center>
 											{Messages.getEditable("label.actions","fpdi-nav-label")}
@@ -329,7 +329,7 @@ export default React.createClass({
 											</td>
 											{this.context.roles.MANAGER ||
 												_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
-												(this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
+												(this.props.responsible && UserSession.get("user") !=null && UserSession.get("user").id == this.props.responsible.id) ?
 											<td>
 												{attachment.id == this.state.editId ?
 													<center className='displayFlex'>

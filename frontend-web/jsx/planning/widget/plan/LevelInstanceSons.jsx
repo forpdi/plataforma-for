@@ -1268,7 +1268,7 @@ export default React.createClass({
 							{
 								!model.closed ? (this.context.roles.MANAGER
 								|| _.contains(this.context.permissions, PermissionsTypes.MANAGE_PLAN_PERMISSION)
-								|| (responsible && responsible.id == UserSession.get("user").id)) ?  (
+								|| (responsible && UserSession.get("user") !=null && responsible.id == UserSession.get("user").id)) ?  (
 									<i className  = {isEditGoal == true ? "mdi mdi-pencil edit-open" :"mdi mdi-pencil edit-close"}
 										onClick= {isEditGoal == true ? this.editGoal.bind(this,model.id,idx) : ""}
 										title= {isEditGoal == false ? "Não é possível editar a meta sem estar preenchida" : "Editar"}
@@ -1285,7 +1285,7 @@ export default React.createClass({
 							:""}
 
 							{this.context.roles.MANAGER || _.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION)
-								|| (responsible && responsible.id == UserSession.get("user").id) ?
+								|| (responsible && UserSession.get("user") !=null && responsible.id == UserSession.get("user").id) ?
 									(
 										isEditGoalReached == true ?
 											(<i className= {model.closed == false ? "mdi mdi-lock-open-outline lockGoal-open":"mdi  mdi-lock lockGoal-close"}

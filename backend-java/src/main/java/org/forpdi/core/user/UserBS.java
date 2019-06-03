@@ -504,6 +504,13 @@ public class UserBS extends HibernateBusiness {
 	 */
 	public PaginatedList<PermissionDTO> listPermissionsByUser(User user) {
 		PaginatedList<PermissionDTO> results = new PaginatedList<PermissionDTO>();
+		
+		if(this.domain ==null || this.domain.getCompany() == null) {
+			results.setTotal((long) 0);
+			results.setList(new ArrayList<>());
+			return results;
+		}
+		
 		Criteria criteria = this.dao.newCriteria(UserPermission.class);
 		criteria.setProjection(Projections.projectionList().add(Projections.property("permission"), "permission"));
 		criteria.add(Restrictions.eq("user", user));

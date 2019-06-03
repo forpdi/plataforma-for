@@ -155,7 +155,6 @@ var UserSession = Backbone.Model.extend({
 
 		if (errors.length > 0) {
 			me.trigger("fail", errors);
-			this.context.toastr.addAlertError(errors);
 		} else {
 			$.ajax({
 				method: "POST",

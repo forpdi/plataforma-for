@@ -58,7 +58,7 @@ export default React.createClass({
 
 	onKeyUp(evt){
 		var key = evt.which;
-		if(key == 13 || key == 17) {			
+		if(key == 13 || key == 17) {
 			evt.preventDefault();
 			return;
 		}
@@ -102,7 +102,7 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.planSaved"));
 		},this);
 
-		ActionPlanStore.on("actionPlanDeletedSuccess", model => {			
+		ActionPlanStore.on("actionPlanDeletedSuccess", model => {
 			this.state.actionPlans.splice(this.state.idx,1);
 			this.setState({
 				loading: false,
@@ -113,7 +113,7 @@ export default React.createClass({
 			this.context.toastr.addAlertSuccess(Messages.get("label.success.planDeleted"));
 		},this);
 
-		ActionPlanStore.on("actionPlanDeletedError", model => {			
+		ActionPlanStore.on("actionPlanDeletedError", model => {
     		//Toastr.remove();
 			//Toastr.error("Erro ao deletar plano de ação");
 			this.context.toastr.addAlertError(Messages.get("label.error.deletePlanAction"));
@@ -124,11 +124,11 @@ export default React.createClass({
 		},this);
 
 		ActionPlanStore.on("actionPlanEdited", model => {
-		
+
 			if(model.responseText){
 				//Toastr.remove();
 				//Toastr.error("Já existe um plano de ação cadastrado com esta descrição!");
-				this.context.toastr.addAlertError(Messages.get("label.error.alreadyRegisteredPlanAction"));				
+				this.context.toastr.addAlertError(Messages.get("label.error.alreadyRegisteredPlanAction"));
 			} else{
 				//Toastr.remove();
 				//Toastr.success("Plano de ação editado com sucesso!");
@@ -177,7 +177,7 @@ export default React.createClass({
 			this.context.toastr.addAlertError(validation.msg);
  			return;
 		}
-		
+
 		var actionPlan = {
 			checked : this.state.checked,
 			description : this.refs.descricao.value,
@@ -212,7 +212,7 @@ export default React.createClass({
 				begin: validation.initDate,
 				end:  validation.endDate
 			}
-		});		
+		});
 	},
 
 
@@ -241,7 +241,7 @@ export default React.createClass({
 				});
 
 			},msg,()=>{Modal.hide()});
-		
+
 		/*Modal.deleteConfirmCustom(() => {
 			Modal.hide();
 			this.setState({
@@ -254,9 +254,9 @@ export default React.createClass({
 				id: id
 				}
 			});
-			
+
 		},"Você tem certeza que deseja excluir " + ((this.state.actionPlans[idx].description.length >150)?(this.state.actionPlans[idx].description.substr(0,150)+"..."):
-			(this.state.actionPlans[idx].description)) + "?");*/	
+			(this.state.actionPlans[idx].description)) + "?");*/
 	},
 
 	renderActionField(edit, action,idx){
@@ -265,8 +265,8 @@ export default React.createClass({
 		} else {
 			return (
 				<tr  key={"action"+idx} >
-					{this.context.roles.MANAGER || 
-						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+					{this.context.roles.MANAGER ||
+						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 						this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td className="textAlignCenter" >
 							<input type='checkbox' name='checkbox' defaultChecked={action.checked} ref={"checkbox-action-"+action.id}
@@ -277,8 +277,8 @@ export default React.createClass({
 					<td>{action.responsible}</td>
 					<td>{action.begin.split(" ")[0]}</td>
 					<td>{action.end.split(" ")[0]}</td>
-					{this.context.roles.MANAGER || 
-						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
+					{this.context.roles.MANAGER ||
+						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 							this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td id={'options'+idx} className='edit-budget-col cursorDefault'>
 							<span className='mdi mdi-pencil cursorPointer' onClick={this.editActionPlan.bind(this,action.id,idx)} title={Messages.get("label.title.editInformation")}/>
@@ -315,17 +315,17 @@ export default React.createClass({
 		var desc = 'descricaoEdit';
 		var resp = 'responsavelEdit';
 		var me = this;
-		return(		
+		return(
 			<tr key={"action"+idx} >
 				<td className="textAlignCenter" >
 					<input type='checkbox' ref='checkEdit' name='checkbox' defaultChecked={action.checked} defaultValue={action.checked}
 					 onChange={this.onChange} />
 				</td>
-				<td><input 
-				type='text' 
-				ref='descricaoEdit' 
-				className='budget-field-table' 
-				defaultValue={action.description} 
+				<td><input
+				type='text'
+				ref='descricaoEdit'
+				className='budget-field-table'
+				defaultValue={action.description}
 				maxLength="255"
 				onKeyUp={function(evt){
 					me.ref = desc;
@@ -337,12 +337,12 @@ export default React.createClass({
 				}}/>
 					<div ref="formAlertErrorDescriptionEdit" className="formAlertError"></div>
 				</td>
-				<td><input 
-				type='text' 
-				ref='responsavelEdit' 
-				className='budget-field-table' 
-				defaultValue={action.responsible} 
-				maxLength="255" 
+				<td><input
+				type='text'
+				ref='responsavelEdit'
+				className='budget-field-table'
+				defaultValue={action.responsible}
+				maxLength="255"
 				onKeyUp={function(evt){
 					me.ref = resp;
 					if (evt.which != 17) {
@@ -355,23 +355,23 @@ export default React.createClass({
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='begin' 
+					ref='begin'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.initDate}
 					onChange={this.onChangeInit.bind(this,"formAlertErrorBeginEdit")}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
 					<div ref="formAlertErrorBeginEdit" className="formAlertError"></div>
 				</td>
 				<td><DatePicker
 					type="datepicker"
-					ref='end' 
+					ref='end'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.endDate}
 					onChange={this.onChangeEnd.bind(this,"formAlertErrorEndEdit")}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown  
+					showYearDropdown
 					/>
 					<div ref="formAlertErrorEndEdit" className="formAlertError"></div>
 				</td>
@@ -385,14 +385,14 @@ export default React.createClass({
 		);
 	},
 
-	onChange(e) {		
+	onChange(e) {
 		this.state.checked = e.target.checked;
 	},
 
-	sendCheckBox(id, actionPlan, evt) {	
-		var url = window.location.href;	
+	sendCheckBox(id, actionPlan, evt) {
+		var url = window.location.href;
 		evt.preventDefault();
-		var msg = (actionPlan.checked ? 
+		var msg = (actionPlan.checked ?
 		 Messages.get("label.reopenPlanAction")+actionPlan.description+"?" :
 		 Messages.get("label.completeActionPlan")+actionPlan.description+"?");
 		//Atualiza o checkbox do frontend
@@ -405,10 +405,10 @@ export default React.createClass({
 					id: id,
 					checked: actionPlan.checked,
 					url:url
-				}				
+				}
 			});
 			Modal.hide();
-		},msg,()=>{Modal.hide()});	
+		},msg,()=>{Modal.hide()});
 
 	},
 
@@ -456,13 +456,13 @@ export default React.createClass({
 		var desc = "descricao";
 		var resp = "responsavel";
 		var me = this;
-		return(			
+		return(
 			<tr key='new-actionPlan'>
 				<td className="textAlignCenter"><input type="checkbox" name="checkbox"  onChange={this.onChange} /></td>
-				<td><input 
-				type='text' 
-				ref="descricao" 
-				className='budget-field-table' 
+				<td><input
+				type='text'
+				ref="descricao"
+				className='budget-field-table'
 				maxLength="255"
 				onKeyUp={function(evt){
 					me.ref = desc;
@@ -474,10 +474,10 @@ export default React.createClass({
 				}}/>
 					<div ref="formAlertErrorDescription" className="formAlertError"></div>
 				</td>
-				<td><input type='text' 
-				ref="responsavel" 
-				className='budget-field-table' 
-				maxLength="255" 
+				<td><input type='text'
+				ref="responsavel"
+				className='budget-field-table'
+				maxLength="255"
 				onKeyUp={function(evt){
 					me.ref = resp;
 					if (evt.which != 17) {
@@ -492,19 +492,19 @@ export default React.createClass({
 				<td><DatePicker
 					type="datepicker"
 					className = 'budget-field-table'
-					ref='begin' 
+					ref='begin'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.initDate}
 					onChange={this.onChangeInit.bind(this,"formAlertErrorBegin")}
 					placeholderText="DD/MM/AAAA"
-					showYearDropdown 
+					showYearDropdown
 					/>
 					<div ref="formAlertErrorBegin" className="formAlertError"></div>
 				</td>
 				<td><DatePicker
 					type="datepicker"
 					className = 'budget-field-table'
-					ref='end' 
+					ref='end'
 					dateFormat="DD/MM/YYYY"
 					selected={this.state.endDate}
 					onChange={this.onChangeEnd.bind(this,"formAlertErrorEnd")}
@@ -513,7 +513,7 @@ export default React.createClass({
 					/>
 					<div ref="formAlertErrorEnd" className="formAlertError"></div>
 				</td>
-				<td>				
+				<td>
 	                <div className='displayFlex'>
 	                   	<span className='mdi mdi-check accepted-budget' onClick={this.acceptNewActionPlan} title={Messages.get("label.submitLabel")}></span>
 	                  	<span className='mdi mdi-close reject-budget' onClick={this.cancelNewActionPlan} title={Messages.get("label.cancel")}></span>
@@ -521,9 +521,9 @@ export default React.createClass({
 	            </td>
 			</tr>
 		);
-	},	
+	},
 
-	render(){		
+	render(){
 		return(
 			<div className="panel panel-default panel-margins">
 				<div className="panel-heading displayFlex">
@@ -531,25 +531,25 @@ export default React.createClass({
 					{(this.state.adding)?
 						"":
 					<div className="budget-btns">
-						{this.context.roles.MANAGER || 
-								(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
-								(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
-							
+						{this.context.roles.MANAGER ||
+								(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
+								(this.props.responsible && UserSession.get("user") !=null && UserSession.get("user").id == this.props.responsible.id)) ?
+
 								<button type="button" className="btn btn-primary budget-new-btn" onClick={this.newActionPlan}>{Messages.getEditable("label.new","fpdi-nav-label")}</button>
 						:""}
 						<span className={(this.state.hide)?("mdi mdi-chevron-right marginLeft15"):("mdi mdi-chevron-down marginLeft15")} onClick={this.hideFields}></span>
 					</div>}
 
 				</div>
-				{!this.state.hide ?					
+				{!this.state.hide ?
 					(<div>
 						{this.state.loading ? <LoadingGauge/> :
-						<table className="budget-field-table table">					
+						<table className="budget-field-table table">
 							<thead>
 								<tr>
-									{this.context.roles.ADMIN || this.context.roles.MANAGER == true || 
-										(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) || 
-										(this.props.responsible && UserSession.get("user").id == this.props.responsible.id)) ?
+									{this.context.roles.ADMIN || this.context.roles.MANAGER == true ||
+										(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
+										(this.props.responsible && UserSession.get("user") !=null && UserSession.get("user").id == this.props.responsible.id)) ?
 										<th className="textAlignCenter">{Messages.getEditable("label.completed","fpdi-nav-label")}</th>
 									:<th/>}
 									<th>{Messages.getEditable("label.description","fpdi-nav-label")}</th>
@@ -563,15 +563,15 @@ export default React.createClass({
 									{this.state.actionPlans.map((model, idx) => {
 										return this.renderActionField((model.id == this.state.editingActionID),model,idx);
 									})}
-								</tbody>					
+								</tbody>
 						</table>}
 
-						<TablePagination 
+						<TablePagination
 							total={this.state.totalPlans}
 							onChangePage={this.pageChange}
 							tableName={"actionPlan-table-"+this.props.levelInstanceId}
 						/>
-					</div>) : undefined 													
+					</div>) : undefined
 				}
 			</div>
 		);
