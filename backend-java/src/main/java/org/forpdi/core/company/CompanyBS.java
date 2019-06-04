@@ -63,10 +63,12 @@ public class CompanyBS extends HibernateBusiness {
 	 * @return Domínio que utiliza o host epecificado
 	 */
 	
-	public CompanyDomain retrieveCompanyByDomain (Company company) {
+	public List<CompanyDomain> retrieveCompanyByDomain (Company company) {
 		Criteria criteria  = this.dao.newCriteria(CompanyDomain.class).add(Restrictions.eq("company",company));
-			
-		return (CompanyDomain) criteria.uniqueResult();
+		
+		List<CompanyDomain> list = this.dao.findByCriteria(criteria, CompanyDomain.class);
+		return list;
+		//return (CompanyDomain) criteria.uniqueResult();
 	}
 	
 	/**
