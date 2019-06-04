@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -171,9 +172,9 @@ public class CompanyController extends AbstractController {
 				return;
 			}
 			
-			CompanyDomain companyDomain = this.bs.retrieveCompanyByDomain(existent);
+			List<CompanyDomain> companyDomain = this.bs.retrieveCompanyByDomain(existent);
 			
-			if (companyDomain == null) {
+			if (companyDomain.size() == 0) {
 				existent.setDeleted(true);
 				this.bs.persist(existent);
 				this.success(existent);
