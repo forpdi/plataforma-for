@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -530,14 +531,16 @@ public InputStream exportDocument(String author, String title, String lista)
 								if (att.getContent().contains("||IMAGE||")) {
 									String img = allMatches.poll();
 									if (img != null) {
-										// LOGGER.info("IMG------->"+img);
-										Image image = Image.getInstance(
-												new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-										float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
-												- document.rightMargin()) / image.getWidth()) * 100;
-										image.scalePercent(scaler * 0.4f);
-										image.setAlignment(Element.ALIGN_CENTER);
-										document.add(image);
+										try {
+											// LOGGER.info("IMG------->"+img);
+											Image image = Image.getInstance(
+													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
+											float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
+													- document.rightMargin()) / image.getWidth()) * 100;
+											image.scalePercent(scaler * 0.4f);
+											image.setAlignment(Element.ALIGN_CENTER);
+											document.add(image);
+										}catch(UnknownHostException ex) {}
 									}
 								} else {
 									att.setFirstLineIndent(firstLineIndent);
@@ -767,14 +770,17 @@ public InputStream exportDocument(String author, String title, String lista)
 										if (att.getContent().contains("||IMAGE||")) {
 											String img = allMatches.poll();
 											if (img != null) {
-												Image image = Image.getInstance(new URL(
-														img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-												float scaler = ((document.getPageSize().getWidth()
-														- document.leftMargin() - document.rightMargin())
-														/ image.getWidth()) * 100;
-												image.scalePercent(scaler * 0.4f);
-												image.setAlignment(Element.ALIGN_CENTER);
-												document.add(image);
+												try {
+													Image image = Image.getInstance(new URL(
+															img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
+													
+													float scaler = ((document.getPageSize().getWidth()
+															- document.leftMargin() - document.rightMargin())
+															/ image.getWidth()) * 100;
+													image.scalePercent(scaler * 0.4f);
+													image.setAlignment(Element.ALIGN_CENTER);
+													document.add(image);
+												}catch(UnknownHostException ex) {}
 											}
 										} else {
 											att.setFirstLineIndent(firstLineIndent);
@@ -1725,8 +1731,9 @@ public InputStream exportLevelAttributes(Long levelId)
 	
 	// CABEÇALHO
 	String companyLogoUrl = domain.getCompany().getLogo();
-	String fpdiLogoUrl = "http://cloud.progolden.com.br/file/8345";// new
-																	// File(classLoader.getResource("logo.png").getFile()).getPath();
+	//String fpdiLogoUrl2 = "http://cloud.progolden.com.br/file/8345";// new		
+	String fpdiLogoUrl =new File(classLoader.getResource("logo.png").getFile()).getPath();
+	
 	if (!companyLogoUrl.trim().isEmpty()) {
 		Image companyLogo = Image.getInstance(new URL(companyLogoUrl));
 		Image fpdiLogo = Image.getInstance(fpdiLogoUrl);
