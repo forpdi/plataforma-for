@@ -7,6 +7,7 @@ import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Logo from 'forpdi/img/logo.png';
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 export default React.createClass({
 	contextTypes: {
@@ -25,6 +26,11 @@ export default React.createClass({
 	componentDidMount() {
 		var me = this;
 		CompanyDomainStore.on('remove', store => {
+			if (store.data && store.data.host && store.data.host === location.host) {
+				// se o usuario deletar o dominio acessado no momento eh feito o logout
+				// e atualizada a pagina
+				UserSession.logout(true);
+			}
 			me.findDomains(1);
 			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.delete"));
 		}, me);

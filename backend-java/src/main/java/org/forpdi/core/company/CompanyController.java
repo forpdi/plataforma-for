@@ -318,7 +318,7 @@ public class CompanyController extends AbstractController {
 				return;
 			}
 			this.bs.remove(existent);
-			this.success();
+			this.success(existent);
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());

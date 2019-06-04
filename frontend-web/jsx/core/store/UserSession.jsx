@@ -188,7 +188,7 @@ var UserSession = Backbone.Model.extend({
 			});
 		}
 	},
-	logout() {
+	logout(reloadPage) {
 		var me = this;
 		$.ajax({
 			method: "POST",
@@ -203,7 +203,11 @@ var UserSession = Backbone.Model.extend({
 				});
 				me.clearStorage();
 				me.trigger("logout");
-				location.assign("#/");
+				if (reloadPage) {
+					location.reload();
+				} else {
+					location.assign("#/");
+				}
 			},
 			error(opts, status, errorMsg) {
 				me.handleRequestErrors([], opts);
