@@ -55,6 +55,25 @@ var CompanyDomainStore = Fluxbone.Store.extend({
 		});
 	},
 
+	update(data, opts) {
+		var me = this;
+		$.ajax({
+			method: "PUT",
+			url: me.url,
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({
+				domain: data,
+			}),
+			success(data) {
+				me.trigger("sync", data, opts);
+			},
+			error: (model,response,opts) => {
+				me.trigger("fail",model);
+			},
+		});
+	},
+
 	save(data) {
 		var me = this;
 		$.ajax({

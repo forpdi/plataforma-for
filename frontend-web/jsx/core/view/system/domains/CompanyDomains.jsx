@@ -30,8 +30,9 @@ export default React.createClass({
 				// se o usuario deletar o dominio acessado no momento eh feito o logout
 				// e atualizada a pagina
 				UserSession.logout(true);
+			} else {
+				me.findDomains(1);
 			}
-			me.findDomains(1);
 			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.delete"));
 		}, me);
 

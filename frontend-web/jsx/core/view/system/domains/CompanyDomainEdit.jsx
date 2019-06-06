@@ -6,6 +6,7 @@ import Form from "forpdi/jsx/core/widget/form/Form.jsx";
 import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
+import UserSession from "forpdi/jsx/core/store/UserSession.jsx";
 
 import Toastr from 'toastr';
 
@@ -80,8 +81,15 @@ export default React.createClass({
 	},
 	componentDidMount() {
 		var me = this;
-		CompanyDomainStore.on("sync", model => {
-			me.context.router.push("/system/domains");
+		// esse listener esta sendo usado para salvar e atualizar dominios
+		CompanyDomainStore.on("sync", (model, { newHost, host }) => {
+			if (host === location.host && newHost !== host) {
+				// se o usuario atualizar o host do dominio acessado no momento eh feito o logout
+				// e atualizada a pagina
+				UserSession.logout(true);
+			} else {
+				me.context.router.push("/system/domains");
+			}
 			Toastr.success(Messages.get("notification.domain.save") + " " + Messages.get("notification.pageRefreshRequest"));
 		}, me);
 		CompanyDomainStore.on("retrieve", (model) => {
@@ -187,10 +195,15 @@ export default React.createClass({
 			return;
 		}
 		if (me.props.params.modelId) {
+			const { host } = this.state.model.attributes;
 			me.state.model.set(data);
 			CompanyDomainStore.dispatch({
 				action: CompanyDomainStore.ACTION_UPDATE,
-				data: me.state.model
+				data: me.state.model,
+				opts: {
+					newHost: data.host,
+					host,
+				},
 			});
 		} else {
 			CompanyDomainStore.dispatch({
