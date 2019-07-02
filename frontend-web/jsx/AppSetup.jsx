@@ -15,6 +15,7 @@ import ForPDIApplication from 'forpdi/jsx/ForPDI.jsx';
 import ForRiscoApplication from 'forpdi/jsx/ForRisco.jsx';
 
 import AppSelect from 'forpdi/jsx/AppSelect';
+import Evaluate from "forpdi/jsx/Evaluate.jsx";
 
 import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
@@ -78,7 +79,7 @@ import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/ite
 
 import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
 import Forrisco_RiskDetail from "forpdi/jsx_forrisco/planning/view/risk/RiskDetail.jsx";
-//import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
+
 
 Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
@@ -91,6 +92,7 @@ Toastr.options.extendedTimeOut = 8000;
 ReactDOM.render((
 	<Router history={hashHistory}>
 		<Route path="/login" component={Login} />
+		<Route path="/evaluate" component={Evaluate} />
 		<Route path="/comunidade" component={Community} />
 		<Route path="/recover-password" component={RecoverPassword} />
 		<Route path="/reset-password/:token" component={ResetPassword} />
@@ -101,7 +103,6 @@ ReactDOM.render((
 			<Route path="/app-select" component={AppSelect} />
 			<Route path="forrisco" component={ForRiscoApplication}>
 				<Route path="home" component={Forrisco_Dashboard} />
-				{/*<Route path="risk" component={Forrisco_RiskList} /> */}
 
 				<Route path="policy/new" component={Forrisco_PolicyEdit} />
 

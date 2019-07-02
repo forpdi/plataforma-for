@@ -16,18 +16,18 @@ export default React.createClass({
 		return {
 			fieldDef: {
 				type: "text",
-				name: "input-"+Date.now(),
+				name: "input-" + Date.now(),
 				label: '',
 				placeholder: '',
 				value: null,
 				onChange: null,
-				helpBox: null
+				helpBox: null,
 			}
 		};
 	},
 	getInitialState() {
 		return {
-			fieldId: "field-"+this.props.fieldDef.name.replace(/\./g, "-")
+			fieldId: "field-" + this.props.fieldDef.name.replace(/\./g, "-")
 		};
 	},
 	getValue() {
@@ -39,21 +39,21 @@ export default React.createClass({
 		return this.refs[this.state.fieldId];
 	},
 
-	onKeyUp(evt){
+	onKeyUp(evt) {
 		this.maxLengthMask();
 		var key = evt.which;
-		if(key === 13 && key !== this.props.confirmKey) {
+		if (key === 13 && key !== this.props.confirmKey) {
 			evt.preventDefault();
 		}
 	},
 
-	maxLengthMask(){
-		if(this.refs[this.state.fieldId].value.length >= this.props.fieldDef.maxLength){
-			if(this.context.toastr == 'undefined'){
+	maxLengthMask() {
+		if (this.refs[this.state.fieldId].value.length >= this.props.fieldDef.maxLength) {
+			if (this.context.toastr == 'undefined') {
 				Toastr.remove();
-				Toastr.error(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength+" " + Messages.get("label.error.limitCaracteres"));
-			}else{
-				this.context.toastr.addAlertError(Messages.get("label.error.limit") + " " +this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
+				Toastr.error(Messages.get("label.error.limit") + " " + this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
+			} else {
+				this.context.toastr.addAlertError(Messages.get("label.error.limit") + " " + this.props.fieldDef.maxLength + " " + Messages.get("label.error.limitCaracteres"));
 			}
 		}
 	},
@@ -77,7 +77,7 @@ export default React.createClass({
 				</div>);
 		} else if (this.props.fieldDef.type == 'text') {
 			fieldEl = (
-				<input
+				<input style={this.props.fieldDef.style}
 					className="form-control-h"
 					placeholder={this.props.fieldDef.placeholder}
 					name={this.props.fieldDef.name}
@@ -112,14 +112,14 @@ export default React.createClass({
 					id={this.state.fieldId}
 					ref={this.state.fieldId}
 					onChange={this.props.fieldDef.onChange || _.noop}
-					>
-						<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
-						{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt,idx) => {
-							return (<option key={'field-opt-'+this.state.fieldId+"-"+idx} value={opt[this.props.fieldDef.valueField]}
-								data-placement="right" title={opt[this.props.fieldDef.displayField]}>
-									{opt[this.props.fieldDef.displayField]}
-							</option>);
-						}):''}
+				>
+					<option value="" data-placement="right" title={this.props.fieldDef.placeholder}>{this.props.fieldDef.placeholder}</option>
+					{this.props.fieldDef.options ? this.props.fieldDef.options.map((opt, idx) => {
+						return (<option key={'field-opt-' + this.state.fieldId + "-" + idx} value={opt[this.props.fieldDef.valueField]}
+							data-placement="right" title={opt[this.props.fieldDef.displayField]}>
+							{opt[this.props.fieldDef.displayField]}
+						</option>);
+					}) : ''}
 				</select>
 			);
 		} else if (this.props.fieldDef.type == 'date') {
@@ -154,15 +154,23 @@ export default React.createClass({
 			/>);
 		}
 		return (
-			<div style={{display: "inline-block", margin: "0 20px 0 0"}}>
+			<div style={{ display: "inline-block", margin: "0 20px 0 0" }}>
 				<div className="form-group form-group-sm">
+				{this.props.fieldDef.type != 'checkbox' ?
+					<label htmlFor={this.state.fieldId} className="fpdi-text-label">
+						{this.props.fieldDef.label}
+						{this.props.fieldDef.required ? <span className="fpdi-required">&nbsp;</span>:""}
+					</label>
+				:""}
 					<div className="col-3">
+
+
 						{fieldEl}
 						{this.props.fieldDef.helpBox}
 					</div>
 					<div className="formAlertError" ref="formAlertError">
 						{
-							this.props.formAlertErrorFixedHeight && <br/>
+							this.props.formAlertErrorFixedHeight && <br />
 						}
 					</div>
 				</div>

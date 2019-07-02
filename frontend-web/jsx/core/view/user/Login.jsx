@@ -132,10 +132,19 @@ export default React.createClass({
 							</div>
 						</div>
 
+						<Link role="tab" title="Plano"  className={""} to={"/evaluate/"}>
+							<div className="col-md-offset-4">
+								<div  className="btn btn-success btn-block" style={{"width":"50%"}}  >
+										evaluation
+								</div>
+							</div>
+						</Link>
+
 						<div className="fpdi-browsers-info">
 							{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
 							<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
 						</div>
+
 					</div>
 				</div>
 			</div>
