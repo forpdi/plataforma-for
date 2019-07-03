@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.properties.CoreMessages;
+import org.forpdi.core.user.User;
+import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.core.user.authz.permission.EditMessagesPermission;
@@ -34,6 +36,9 @@ import br.com.caelum.vraptor.boilerplate.util.GeneralUtils;
 public class CompanyController extends AbstractController {
 	@Inject
 	private CompanyBS bs;
+
+	@Inject
+	private UserBS userBS;
 
 	/**
 	 * Configura os temas no sistema.
@@ -63,8 +68,8 @@ public class CompanyController extends AbstractController {
 	 * 
 	 * @param company,
 	 *            nova companhia a ser persistida no banco de dados.
-	 * @return company, a nova companhia que acabou de ser persistida no banco
-	 *         de dados.
+	 * @return company, a nova companhia que acabou de ser persistida no banco de
+	 *         dados.
 	 */
 	@Post("/api/company")
 	@Consumes
@@ -84,9 +89,9 @@ public class CompanyController extends AbstractController {
 	/**
 	 * Atualiza uma companhia no banco de dados.
 	 * 
-	 * @param company, companhia a ser atualizada no banco de dados.
-	 * @return existent, companhia que acabou de ser atualizada no banco de
-	 *         dados.
+	 * @param company,
+	 *            companhia a ser atualizada no banco de dados.
+	 * @return existent, companhia que acabou de ser atualizada no banco de dados.
 	 */
 	@Put("/api/company")
 	@Consumes
@@ -116,7 +121,8 @@ public class CompanyController extends AbstractController {
 	/**
 	 * Retorna uma companhia de acordo com seu id.
 	 * 
-	 * @param id da companhia desejada.
+	 * @param id
+	 *            da companhia desejada.
 	 * @return company, companhia desejada que possui o dado id.
 	 */
 	@Get("/api/company/{id}")
@@ -138,7 +144,9 @@ public class CompanyController extends AbstractController {
 
 	/**
 	 * Lista as companhias limitados a uma dada página.
-	 * @param page, página desejada da listagem de companhias.
+	 * 
+	 * @param page,
+	 *            página desejada da listagem de companhias.
 	 * @return companies, lista de companhias da dada página.
 	 */
 	@Get("/api/company")
@@ -155,9 +163,12 @@ public class CompanyController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
+
 	/**
 	 * Deleta uma companhia específica, conforme um dado id.
-	 * @param id da companhia a ser deletada.
+	 * 
+	 * @param id
+	 *            da companhia a ser deletada.
 	 * @return void
 	 */
 	@Delete("/api/company/{id}")
@@ -170,9 +181,9 @@ public class CompanyController extends AbstractController {
 				this.result.notFound();
 				return;
 			}
-			
+
 			CompanyDomain companyDomain = this.bs.retrieveCompanyByDomain(existent);
-			
+
 			if (companyDomain == null) {
 				existent.setDeleted(true);
 				this.bs.persist(existent);
@@ -181,7 +192,7 @@ public class CompanyController extends AbstractController {
 				this.fail("Esta instituição não pode ser deletada, pois existe um domínio associado á ela.");
 				return;
 			}
-			
+
 		} catch (Throwable e) {
 			LOGGER.error("Unexpected runtime error", e);
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
@@ -190,7 +201,9 @@ public class CompanyController extends AbstractController {
 
 	/**
 	 * Salvar um novo domínio no banco de dados.
-	 * @param domain, novo domínio a ser salvo.
+	 * 
+	 * @param domain,
+	 *            novo domínio a ser salvo.
 	 * @return domain, novo domínio que acabou de ser salvo.
 	 */
 	@Post("/api/companydomain")
@@ -215,7 +228,9 @@ public class CompanyController extends AbstractController {
 
 	/**
 	 * Atualizar um domínio no banco de dados.
-	 * @param domain, domínio a atualizado.
+	 * 
+	 * @param domain,
+	 *            domínio a atualizado.
 	 * @return existent, domínio atualizado.
 	 */
 	@Put("/api/companydomain")
@@ -246,7 +261,9 @@ public class CompanyController extends AbstractController {
 
 	/**
 	 * Retorna um domínio do banco de dados, conforme um dado id.
-	 * @param id, referente ao domínio desejado.
+	 * 
+	 * @param id,
+	 *            referente ao domínio desejado.
 	 * @return domain, domínio desejado.
 	 */
 	@Get("/api/companydomain/{id}")
@@ -268,7 +285,9 @@ public class CompanyController extends AbstractController {
 
 	/**
 	 * Lista os domínios, limitados a uma dada página.
-	 * @param page, página desejada dos domínios.
+	 * 
+	 * @param page,
+	 *            página desejada dos domínios.
 	 * @return domains, lista dos domínios da dada página.
 	 */
 	@Get("/api/companydomain")
@@ -285,10 +304,12 @@ public class CompanyController extends AbstractController {
 			this.fail("Erro inesperado: " + ex.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Excluir um domínio, especificado pelo id.
-	 * @param id, referente ao domínio a ser deletado.
+	 * 
+	 * @param id,
+	 *            referente ao domínio a ser deletado.
 	 * @return void.
 	 */
 	@Delete("/api/companydomain/{id}")
@@ -328,7 +349,7 @@ public class CompanyController extends AbstractController {
 			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
 		}
 	}
-	
+
 	@Get("/api/company/messages")
 	public void getMessages() {
 		CompanyDomain domain = this.bs.currentDomain();
@@ -339,12 +360,67 @@ public class CompanyController extends AbstractController {
 		}
 		try {
 			this.response.setCharacterEncoding("UTF-8");
-			this.response.addHeader("Content-Type", "application/json"); 
+			this.response.addHeader("Content-Type", "application/json");
 			this.response.getWriter().print(msg.getJSONMessages());
 		} catch (IOException ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 		}
 		this.result.nothing();
+	}
+
+	/**
+	 * Salva um novo ambiente de teste no banco de dados.
+	 * 
+	 * @param Company
+	 *            company
+	 * @param Domain
+	 *            domain
+	 * @param User
+	 *            user
+	 */
+	@Post("/api/company/evaluation")
+	@Consumes
+	@NoCache
+	public void saveEvaluationEnvironment(Company company, CompanyDomain domain, User user) {
+		try {
+
+			CompanyDomain existent = this.bs.retrieveByHost(domain.getHost());
+			if (existent != null) {
+				this.fail("Já existe um domínio com este HOST.");
+				return;
+			}
+
+			User mail = userBS.existsByEmail(user.getEmail());
+
+			if (mail != null) {
+				this.fail("Email já cadastrado.");
+				return;
+			}
+
+			user.setAccessLevel(AccessLevels.COMPANY_ADMIN.getLevel());
+			user.setActive(true);
+			this.userBS.save(user);
+			
+
+			this.bs.save(company);
+			
+			domain.setBaseUrl("http://"+domain.getHost()+"/");
+			domain.setCompany(company);
+			this.bs.persist(domain);
+
+
+			CompanyUser companyUser = new CompanyUser();
+			companyUser.setCompany(company);
+			companyUser.setUser(user);
+
+			companyUser.setAccessLevel(AccessLevels.COMPANY_ADMIN.getLevel());
+			this.userBS.persist(companyUser);
+
+			this.success(domain.getBaseUrl());
+		} catch (Throwable e) {
+			LOGGER.error("Unexpected runtime error", e);
+			this.fail("Ocorreu um erro inesperado: " + e.getMessage());
+		}
 	}
 
 }

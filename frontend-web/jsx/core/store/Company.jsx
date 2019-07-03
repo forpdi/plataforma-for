@@ -2,7 +2,7 @@
 import _ from 'underscore';
 import Fluxbone from "forpdi/jsx/core/store/Fluxbone.jsx";
 
-var URL = Fluxbone.BACKEND_URL+"company";
+var URL = Fluxbone.BACKEND_URL + "company";
 
 var CompanyModel = Fluxbone.Model.extend({
 	url: URL,
@@ -25,10 +25,12 @@ var CompanyStore = Fluxbone.Store.extend({
 	ACTION_RETRIEVE: 'company-retrieve',
 	ACTION_UPDATE: 'company-update',
 	ACTION_FIND_THEMES: 'company-findThemes',
-	ACTION_REMOVE_COMPANY:'company-removeCompany',
+	ACTION_REMOVE_COMPANY: 'company-removeCompany',
 	ACTION_LIST_COMPANIES: 'company-listCompanies',
+	ACTION_EVALUATION: 'company-evaluation',
 	dispatchAcceptRegex: /^company-[a-zA-Z0-9]+$/,
-	
+
+
 	url: URL,
 	model: CompanyModel,
 
@@ -36,13 +38,13 @@ var CompanyStore = Fluxbone.Store.extend({
 		var me = this;
 		$.ajax({
 			method: "DELETE",
-			url: me.url+"/"+id,
+			url: me.url + "/" + id,
 			dataType: 'json',
 			success(data) {
 				me.trigger("remove", data);
 			},
-			error: (model,response,opts) => {
-				me.trigger("remove",model);
+			error: (model, response, opts) => {
+				me.trigger("remove", model);
 			}
 		});
 	},
@@ -51,7 +53,7 @@ var CompanyStore = Fluxbone.Store.extend({
 		var me = this;
 		if (typeof me._themes === 'undefined') {
 			$.ajax({
-				url: me.url+"/themes",
+				url: me.url + "/themes",
 				method: 'GET',
 				dataType: 'json',
 				success(data) {
@@ -76,8 +78,26 @@ var CompanyStore = Fluxbone.Store.extend({
 			success(model) {
 				me.trigger("companies-listed", model, data);
 			},
-			error: (model,response,opts) => {
-				me.trigger("remove",model);
+			error: (model, response, opts) => {
+				me.trigger("remove", model);
+			}
+		});
+	},
+
+
+	evaluation(data) {
+		var me = this;
+		$.ajax({
+			url: me.url + '/evaluation',
+			method: 'POST',
+			dataType: 'json',
+			contentType: 'application/json',
+			data: JSON.stringify({ user: data.user, company: data.company, domain: data.domain }),
+			success(model) {
+				me.trigger("evaluate", model);
+			},
+			error: (model, response, opts) => {
+				me.trigger("evaluate", model);
 			}
 		});
 	}

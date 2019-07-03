@@ -25,14 +25,14 @@ export default React.createClass({
 				name: "email",
 				type: "email",
 				placeholder: "",
-				required:true,
-				label: Messages.getEditable("label.email","fpdi-nav-label")
-			},{
+				required: true,
+				label: Messages.getEditable("label.email", "fpdi-nav-label")
+			}, {
 				name: "password",
 				type: "password",
 				placeholder: "",
-				required:true,
-				label: Messages.getEditable("label.password","fpdi-nav-label")
+				required: true,
+				label: Messages.getEditable("label.password", "fpdi-nav-label")
 			}]
 		};
 	},
@@ -85,11 +85,11 @@ export default React.createClass({
 							<img
 								className="fpdi-login-brand"
 								src={AppLogo}
-								alt={Messages.getEditable("label.forRiscoLogo","fpdi-nav-label")}
+								alt={Messages.getEditable("label.forRiscoLogo", "fpdi-nav-label")}
 							/>
 							<center>
 								<h3 className="frisco-login-subtitle">
-									{Messages.get("label.login.titlePlatformComplement")}<br/>
+									{Messages.get("label.login.titlePlatformComplement")}<br />
 									{/* Messages.getEditable("label.login.title","fpdi-nav-label") */}
 								</h3>
 							</center>
@@ -97,16 +97,16 @@ export default React.createClass({
 					</div>
 				</div>
 
-		    <div className="row">
+				<div className="row">
 					<div className="col-md-4 col-md-offset-4">
 						<div className="fpdi-card-login">
 							<div className="panel panel-default">
-							  <div className="panel-heading">
+								<div className="panel-heading">
 									<p className="fpdi-login-title">
-										{Messages.getEditable("label.login","fpdi-nav-label")}
+										{Messages.getEditable("label.login", "fpdi-nav-label")}
 									</p>
 								</div>
-							  <div className="panel-body">
+								<div className="panel-body">
 									<div className="fpdi-login-body">
 										<VerticalForm
 											ref="login"
@@ -124,25 +124,23 @@ export default React.createClass({
 									<div className="fpdi-login-footer">
 										<div className="row">
 											<div className="col-md-12 text-center marginBottom10">
-												<Link to="/recover-password">{Messages.getEditable("label.recoverPassword","fpdi-nav-label")}</Link>
+												<Link to="/recover-password">{Messages.getEditable("label.recoverPassword", "fpdi-nav-label")}</Link>
 											</div>
 										</div>
 									</div>
-							  </div>
+								</div>
 							</div>
 						</div>
 
-						<Link role="tab" title="Plano"  className={""} to={"/evaluate/"}>
-							<div className="col-md-offset-4">
-								<div  className="btn btn-success btn-block" style={{"width":"50%"}}  >
-										evaluation
-								</div>
+						<Link role="tab" title="Plano" className={""} to={"/evaluate/"}>
+							<div className="btn btn-success btn-block" style={{ "width": "50%", "margin-left": "25%" }}  >
+								evaluation
 							</div>
 						</Link>
 
 						<div className="fpdi-browsers-info">
-							{Messages.getEditable("label.infoBrowsers","fpdi-nav-label")}<br/>
-							<i>{Messages.getEditable("label.browsers","fpdi-nav-label")}</i>
+							{Messages.getEditable("label.infoBrowsers", "fpdi-nav-label")}<br />
+							<i>{Messages.getEditable("label.browsers", "fpdi-nav-label")}</i>
 						</div>
 
 					</div>

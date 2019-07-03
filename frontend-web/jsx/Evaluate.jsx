@@ -14,7 +14,7 @@ import AppLogo from "forpdi/img/plataforma-for-logo.svg";
 
 import VerticalInput from "forpdi/jsx/core/widget/form/VerticalInput.jsx";
 import HorizontalInput from "forpdi/jsx/core/widget/form/HorizontalInput.jsx";
-//import Toastr from 'toastr';
+import Toastr from 'toastr';
 
 var Validate = Validation.validate;
 var VerticalForm = Form.VerticalForm;
@@ -68,9 +68,21 @@ export default React.createClass({
 			maxLength: 12,
 			required: true,
 			label: "CPF",
-		},
-
-		]
+		}, {
+			name: "newPassword",
+			type: "password",
+			placeholder: "",
+			label: Messages.getEditable("label.newPassword", "fpdi-nav-label"),
+			value: "",
+			required: true
+		}, {
+			name: "newPasswordTwo",
+			type: "password",
+			placeholder: "",
+			label: Messages.getEditable("label.newPasswordTwo", "fpdi-nav-label"),
+			value: "",
+			required: true
+		}]
 	},
 
 
@@ -240,6 +252,22 @@ export default React.createClass({
 			});
 		}, me);
 
+		CompanyStore.on("evaluate", (model) => {
+			console.log("evaluate", (model))
+			if (model.success) {
+
+				var msg = Messages.get("notification.policy.save");
+				//this.context.toastr.addAlertSuccess(msg);
+				Toastr.success(msg)
+				this.context.push(model.message);
+
+			} else {
+				var msg = model.msg ? model.msg.message : "Erro ao criar Ambiente de Teste"
+				//this.context.toastr.addAlertError(msg);
+				Toastr.error(msg)
+			}
+		}, me)
+
 		CompanyStore.dispatch({
 			action: CompanyStore.ACTION_FIND_THEMES,
 			data: null
@@ -260,99 +288,49 @@ export default React.createClass({
 		CompanyStore.off(null, null, this);
 	},
 
-	onSubmit(data) {
-
-
-		console.log("submit")
-		return
-
-
-		var me = this;
-		data.company = { id: data.company };
-
-		var msg = Validate.validationCompanyDomainEdit(data, this.refs.CompanyDomainEditForm);
-
-		if (msg != "") {
-			//Toastr.remove();
-			//Toastr.error(msg);
-			this.context.toastr.addAlertError(msg);
-			return;
-		}
-		if (me.props.params.modelId) {
-			me.state.model.set(data);
-			CompanyDomainStore.dispatch({
-				action: CompanyDomainStore.ACTION_UPDATE,
-				data: me.state.model
-			});
-			//Toastr.remove();
-			//Toastr.success(Messages.get("notification.domain.update"));
-			this.context.toastr.addAlertSuccess(Messages.get("notification.domain.update") + " " + Messages.get("notification.pageRefreshRequest"));
-		} else {
-			CompanyDomainStore.dispatch({
-				action: CompanyDomainStore.ACTION_SAVE,
-				data: data,
-				opts: {
-					wait: true
-				}
-			});
-
-		}
-	},
-
-
 	cancelWrapper(evt) {
 		evt.preventDefault();
 		this.context.router.push('/login')
 	},
+
 	submitWrapper(evt) {
 		evt.preventDefault();
-
-
-		console.log(this.refs)
-
 
 		var data = {};
 		var user = {};
 		var company = {};
 		var domain = {};
 
-
-
-
-		user['nome'] = this.refs['user-0'].refs['field-nome'].value
+		user['name'] = this.refs['user-0'].refs['field-nome'].value
 		user['email'] = this.refs['user-1'].refs['field-e-mail'].value
-		user['telefone'] = this.refs['user-2'].refs['field-telefone'].input.value
+		user['cellphone'] = this.refs['user-2'].refs['field-telefone'].input.value
 		user['cpf'] = this.refs['user-3'].refs['field-cpf'].input.value
-
-
-		console.log(JSON.stringify({ user:user }))
+		user['password'] = this.refs['user-4'].refs['field-newPassword'].value
 
 		company['name'] = this.refs['company-0'].refs['field-name'].value
 		company['logo'] = this.refs['company-1'].refs['field-logo'].value
 		company['description'] = this.refs['company-2'].refs['field-description'].value
 		company['localization'] = this.refs['company-3'].refs['field-localization'].value
-		company['showDashboard'] = this.refs['company-4'].refs['field-showDashboard'].value
-		company['showMaturity'] = this.refs['company-5'].refs['field-showMaturity'].value
-		company['showBudgetElement'] = this.refs['company-6'].refs['field-showBudgetElement'].value
+		company['showDashboard'] = this.refs['company-4'].refs['field-showDashboard'].checked
+		company['showMaturity'] = this.refs['company-5'].refs['field-showMaturity'].checked
+		company['showBudgetElement'] = this.refs['company-6'].refs['field-showBudgetElement'].checked
 
-		console.log(JSON.stringify({ company:company }))
-
-
-
-		domain['host'] = this.refs['host'].refs['field-host'].value+'.teste.forpdi.org'
+		domain['host'] = this.refs['host'].refs['field-host'].value + '.teste.forpdi.org'
 		domain['theme'] = this.refs['theme'].refs['field-theme'].value
 
-		console.log(JSON.stringify({ domain:domain }))
-
-
-		data['user']=user
+		data['user'] = user
 		data["company"] = company
 		data["domain"] = domain
 
-
-		console.log(JSON.stringify({ data:data }))
-
-		return data;
+		CompanyStore.dispatch({
+			action: CompanyStore.ACTION_EVALUATION,
+			data:
+			{
+				user: user,
+				company: company,
+				domain: domain
+			}
+		});
 	},
 
 	render() {
@@ -381,7 +359,7 @@ export default React.createClass({
 
 						<h1>
 							Dados pessoais
-				</h1>
+						</h1>
 
 						{this.state.fieldsUser.map((field, idx) => {
 							return (<VerticalInput
@@ -399,7 +377,7 @@ export default React.createClass({
 
 						<h1>
 							Adicione uma nova instituição
-				</h1>
+						</h1>
 
 						{this.state.fieldsCompany.map((field, idx) => {
 							return (<VerticalInput
@@ -416,8 +394,8 @@ export default React.createClass({
 
 						<br />
 						<h1>
-							Adicionar novo domínio
-				</h1>
+							Adicione um novo domínio
+						</h1>
 
 						<HorizontalInput
 							formId={this.props.id}
