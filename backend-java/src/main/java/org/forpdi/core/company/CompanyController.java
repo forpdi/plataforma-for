@@ -3,6 +3,7 @@ package org.forpdi.core.company;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.forpdi.core.abstractions.AbstractController;
+import org.forpdi.core.evaluation.Evaluation;
 import org.forpdi.core.properties.CoreMessages;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
@@ -415,6 +417,11 @@ public class CompanyController extends AbstractController {
 
 			companyUser.setAccessLevel(AccessLevels.COMPANY_ADMIN.getLevel());
 			this.userBS.persist(companyUser);
+			
+			Evaluation eval = new Evaluation();
+			eval.setCompanyDomain(domain);
+			eval.setUser(user);
+			this.userBS.persist(eval);
 
 			this.success(domain.getBaseUrl());
 		} catch (Throwable e) {

@@ -11,6 +11,7 @@ import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.bean.SessionInfo;
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.company.CompanyUser;
+import org.forpdi.core.evaluation.Audit;
 import org.forpdi.core.event.Current;
 import org.forpdi.core.notification.NotificationBS;
 import org.forpdi.core.notification.NotificationSetting;
@@ -616,6 +617,10 @@ public class UserController extends AbstractController {
 						if (token == null) {
 							this.fail("E-mail e/ou senha inválido(s).");
 						} else {
+							Audit audit= new Audit();
+							audit.setUser(user);
+							this.bs.persist(audit);
+							
 							this.userSession.login(token);
 							this.success(new SessionInfo(this.userSession));
 						}
@@ -630,6 +635,10 @@ public class UserController extends AbstractController {
 						if (token == null) {
 							this.fail("E-mail e/ou senha inválido(s).");
 						} else {
+							Audit audit= new Audit();
+							audit.setUser(user);
+							this.bs.persist(audit);
+							
 							this.userSession.login(token);
 							this.success(new SessionInfo(this.userSession));
 						}

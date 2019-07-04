@@ -308,7 +308,6 @@ export default React.createClass({
 			return
 		}
 
-		return
 		CompanyStore.dispatch({
 			action: CompanyStore.ACTION_EVALUATION,
 			data:

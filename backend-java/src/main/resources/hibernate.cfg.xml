@@ -103,6 +103,10 @@
   <mapping class="org.forrisco.risk.objective.RiskProcess"/>
   <mapping class="org.forrisco.risk.objective.RiskStrategy"/>
   <mapping class="org.forrisco.risk.RiskTipology"/>
+  
+   <mapping class="org.forpdi.core.evaluation.Evaluation"/>
+   <mapping class="org.forpdi.core.evaluation.Audit"/>
+  
   <!-- <event type="post-insert">
             <listener class="org.forrisco.risk.RiskInterceptor"/>
              listener class="org.hibernate.event.def.DefaultLoadEventListener"/>
