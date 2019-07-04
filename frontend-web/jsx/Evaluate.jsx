@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from 'react-router';
 
@@ -95,14 +94,12 @@ export default React.createClass({
 			maxLength: 255,
 			required: true,
 			label: Messages.getEditable("label.name", "fpdi-nav-label"),
-			//value: model ? model.get("name") : null
 		}, {
 			name: "logo",
 			type: "text",
 			maxLength: 255,
 			placeholder: "",
 			label: Messages.getEditable("label.system.companyLogo", "fpdi-nav-label"),
-			//value: model ? model.get("logo") : null,
 			onChange: this.isImg
 		}, {
 			name: 'description',
@@ -110,8 +107,6 @@ export default React.createClass({
 			maxLength: 10000,
 			placeholder: '',
 			label: Messages.getEditable("label.description", "fpdi-nav-label"),
-			//value: model ? model.get("description") : null
-
 		}, {
 			name: 'localization',
 			type: 'text',
@@ -119,14 +114,12 @@ export default React.createClass({
 			placeholder: 'Cidade/Estado',
 			required: true,
 			label: Messages.getEditable("label.cityState", "fpdi-nav-label"),
-			//value: model ? model.get("localization") : null
 		}, {
 			name: "showDashboard",
 			type: "checkbox",
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.enableCommunityDashboard", "fpdi-nav-label"),
-			//value: model ? model.get("showDashboard") : true,
 			onChange: this.fieldsDashboardBoardCommunity
 		}, {
 			name: "showMaturity",
@@ -134,14 +127,12 @@ export default React.createClass({
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.showMaturityDateToCommunity", "fpdi-nav-label"),
-			//value: model ? model.get("showMaturity") : true
 		}, {
 			name: "showBudgetElement",
 			type: "checkbox",
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.showBudgetElement", "fpdi-nav-label"),
-			//value: model ? model.get("showBudgetElement") : true
 		}]
 	},
 
@@ -153,14 +144,12 @@ export default React.createClass({
 			maxLength: 255,
 			required: true,
 			label: Messages.getEditable("label.name", "fpdi-nav-label"),
-			//value: model ? model.get("name") : null
 		}, {
 			name: "logo",
 			type: "text",
 			maxLength: 255,
 			placeholder: "",
 			label: Messages.getEditable("label.system.companyLogo", "fpdi-nav-label"),
-			//value: model ? model.get("logo") : null,
 			onChange: this.isImg
 		}, {
 			name: 'description',
@@ -168,8 +157,6 @@ export default React.createClass({
 			maxLength: 10000,
 			placeholder: '',
 			label: Messages.getEditable("label.description", "fpdi-nav-label"),
-			//value: model ? model.get("description") : null
-
 		}, {
 			name: 'localization',
 			type: 'text',
@@ -177,14 +164,12 @@ export default React.createClass({
 			placeholder: 'Cidade/Estado',
 			required: true,
 			label: Messages.getEditable("label.cityState", "fpdi-nav-label"),
-			//value: model ? model.get("localization") : null
 		}, {
 			name: "showDashboard",
 			type: "checkbox",
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.enableCommunityDashboard", "fpdi-nav-label"),
-			//value: model ? model.get("showDashboard") : true,
 			onChange: this.fieldsDashboardBoardCommunity
 		}, {
 			name: "showMaturity",
@@ -192,14 +177,12 @@ export default React.createClass({
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.showMaturityDateToCommunity", "fpdi-nav-label"),
-			//value: model ? model.get("showMaturity") : true
 		}, {
 			name: "showBudgetElement",
 			type: "checkbox",
 			placeholder: "",
 			required: true,
 			label: Messages.getEditable("label.showBudgetElement", "fpdi-nav-label"),
-			//value: model ? model.get("showBudgetElement") : true
 		}, {
 			name: "host",
 			type: "text",
@@ -233,15 +216,6 @@ export default React.createClass({
 			options: this.state.companies
 		}];
 	},
-	/*updateLoadingState() {
-		this.setState({
-			fields: this.getFields(),
-			loading:
-				!this.state.companies
-				|| !this.state.themes
-				|| (this.props.params.modelId && !this.state.model)
-		});
-	},*/
 
 	componentDidMount() {
 		var me = this;
@@ -253,17 +227,12 @@ export default React.createClass({
 		}, me);
 
 		CompanyStore.on("evaluate", (model) => {
-			console.log("evaluate", (model))
 			if (model.success) {
-
 				var msg = Messages.get("notification.policy.save");
-				//this.context.toastr.addAlertSuccess(msg);
 				Toastr.success(msg)
-				this.context.push(model.message);
-
+				window.location = model.message
 			} else {
-				var msg = model.msg ? model.msg.message : "Erro ao criar Ambiente de Teste"
-				//this.context.toastr.addAlertError(msg);
+				var msg = model.responseJSON ? model.responseJSON.message : "Erro ao criar Ambiente de Teste"
 				Toastr.error(msg)
 			}
 		}, me)
@@ -274,8 +243,6 @@ export default React.createClass({
 		});
 
 		this.setState({
-			//fields: this.getFields(),
-			//fields: this.getFields(),
 			fieldsUser: this.getFieldsUser(),
 			fieldsDomain: this.getFieldsDomain(),
 			fieldsCompany: this.getFieldsCompany(),
@@ -306,6 +273,7 @@ export default React.createClass({
 		user['cellphone'] = this.refs['user-2'].refs['field-telefone'].input.value
 		user['cpf'] = this.refs['user-3'].refs['field-cpf'].input.value
 		user['password'] = this.refs['user-4'].refs['field-newPassword'].value
+		user['passwordconfirm'] = this.refs['user-5'].refs['field-newPasswordTwo'].value
 
 		company['name'] = this.refs['company-0'].refs['field-name'].value
 		company['logo'] = this.refs['company-1'].refs['field-logo'].value
@@ -322,6 +290,25 @@ export default React.createClass({
 		data["company"] = company
 		data["domain"] = domain
 
+
+		var errorUser = this.validationProfileUser(user);
+		var errorCompany = this.validationCompany(company);
+		var errorDomain = this.validationDomain(domain);
+
+		if (errorUser) {
+			Toastr.error(Messages.get("label.errorSavingdata"));
+			return
+		}
+		if (errorCompany) {
+			Toastr.error(Messages.get("label.errorSavingdata"));
+			return
+		}
+		if (errorDomain) {
+			Toastr.error(Messages.get("label.errorSavingdata"));
+			return
+		}
+
+		return
 		CompanyStore.dispatch({
 			action: CompanyStore.ACTION_EVALUATION,
 			data:
@@ -345,7 +332,6 @@ export default React.createClass({
 				<center>
 					<h3 className="frisco-login-subtitle">
 						{Messages.get("label.login.titlePlatformComplement")}<br />
-						{/* Messages.getEditable("label.login.title","fpdi-nav-label") */}
 					</h3>
 				</center>
 			</div>
@@ -436,11 +422,221 @@ export default React.createClass({
 						<div className="form-group text-left">
 							<input type="submit" className="btn btn-sm btn-success" ref="btn-submit" value={"Enviar"} onClick={this.submitWrapper} />
 							<input type="submit" className="btn btn-sm btn-defaul" ref="btn-submit" value={"Cancelar"} onClick={this.cancelWrapper} />
-							{/*<Link className="btn btn-sm btn-default" to={"/login/"}>Cancelar</Link>*/}
 						</div>
 					</div>
 				</div>
 			</div>}
 		</div>);
+	},
+
+	validationProfileUser(data) {
+		var errorField = false;
+		var msg;
+
+		var name = this.refs['user-0']
+		var email = this.refs['user-1']
+		var phone = this.refs['user-2']
+		var cpf = this.refs['user-3']
+		var newPassword = this.refs['user-4']
+		var newPasswordTwo = this.refs['user-5']
+
+		if (data.name.trim() == "") {
+			name.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+			name.refs['field-nome'].className += " borderError";
+			errorField = true;
+		} else {
+			name.refs["formAlertError"].innerHTML = "";
+			name.refs['field-nome'].className = "form-control";
+		}
+
+		if (data.cellphone.split("_")[0].length < 13) {
+			msg = Messages.get("label.form.error");
+			phone.refs['field-telefone'].input.className = "form-control borderError";
+			phone.refs["formAlertError"].innerHTML = Messages.get("label.invalidPhoneNumber");
+			errorField = true;
+		} else {
+			phone.refs['field-telefone'].input.className = "form-control";
+			phone.refs["formAlertError"].innerHTML = "";
+		}
+
+		if (data.cpf == "" || !!data.cpf.match(/^(\s)+$/)) {
+			cpf.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+			cpf.refs["field-cpf"].input.className = "form-control borderError";
+			errorField = true;
+		} else if (!this.validarCPF(data.cpf)) {
+			cpf.refs["formAlertError"].innerHTML = Messages.get("label.cpfInvalid");
+			cpf.refs["field-cpf"].input.className = "form-control borderError";
+			errorField = true;
+		} else {
+			if (cpf.refs["field-cpf"].input.className && cpf.refs["field-cpf"].input.className.indexOf('borderError')) {
+				cpf.refs["field-cpf"].input.className = "form-control";
+				cpf.refs["formAlertError"].innerHTML = "";
+			}
+		}
+
+		if (data.email != undefined) {
+			if (data.email.trim() == "") {
+				email.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				email.refs["field-e-mail"].className += " borderError";
+				errorField = true;
+			} else if (!this.emailIsValid(data.email.trim())) {
+				email.refs["formAlertError"].innerHTML = Messages.get("label.emailInvalid");
+				email.refs["field-e-mail"].className += " borderError";
+				errorField = true;
+			} else {
+				email.refs["formAlertError"].innerHTML = "";
+				email.refs["field-e-mail"].className = "form-control";
+			}
+		}
+
+		if (data.password != undefined && data.passwordconfirm != undefined && !errorField) {
+
+			if (data.password.trim() != "" && data.passwordconfirm.trim() != "") {
+				if (data.password.trim().localeCompare(data.passwordconfirm.trim()) != 0) {
+					newPassword.refs["formAlertError"].innerHTML = Messages.get("label.passwordNotMatch");
+					newPasswordTwo.refs["formAlertError"].innerHTML = Messages.get("label.passwordNotMatch");
+					newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
+					newPassword.refs["field-newPassword"].className += " borderError";
+					errorField = true;
+
+				} else {
+					newPassword.refs["formAlertError"].innerHTML = "";
+					newPasswordTwo.refs["formAlertError"].innerHTML = "";
+					newPassword.refs["field-newPassword"].className = "form-control";
+					newPasswordTwo.refs["field-newPasswordTwo"].className = "form-control";
+				}
+
+			}
+
+		} else if (data.password != undefined) {
+			if (data.password == "" || !!data.password.match(/^(\s)+$/)) {
+				msg = Messages.get("label.form.error");
+				newPassword.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				newPassword.refs["field-newPassword"].className += " borderError";
+				errorField = true;
+			} else {
+				if (newPassword.refs["field-newPassword"].className && newPassword.refs["field-newPassword"].className.indexOf('borderError')) {
+					newPassword.refs["field-newPassword"].className = "form-control";
+					newPassword.refs["formAlertError"].innerHTML = "";
+				}
+			}
+			if (data.password.length < 5 || !!data.password.match(/^(\s)+$/)) {
+				msg = Messages.get("label.form.error");
+				newPassword.refs["formAlertError"].innerHTML = Messages.get("label.passwordMinimumFiveCaracteres");
+				newPassword.refs["field-newPassword"].className += " borderError";
+				errorField = true;
+			} else {
+				if (newPassword.refs["field-newPassword"].className && newPassword.refs["field-newPassword"].className.indexOf('borderError')) {
+					newPassword.refs["field-newPassword"].className = "form-control";
+					newPassword.refs["formAlertError"].innerHTML = "";
+				}
+			}
+			if (data.passwordconfirm == "" || !!data.passwordconfirm.match(/^(\s)+$/)) {
+				msg = Messages.get("label.form.error");
+				newPasswordTwo.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+				newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
+				errorField = true;
+			} else {
+				if (data.password.trim().localeCompare(data.passwordconfirm.trim()) != 0) {
+					newPassword.refs["formAlertError"].innerHTML = Messages.get("label.passwordNotMatch");
+					newPasswordTwo.refs["formAlertError"].innerHTML = Messages.get("label.passwordNotMatch");
+					newPassword.refs["field-newPassword"].className += " borderError";
+					newPasswordTwo.refs["field-newPasswordTwo"].className += " borderError";
+					errorField = true;
+				}
+				else if (newPasswordTwo.refs["field-newPasswordTwo"].className && newPasswordTwo.refs["field-newPasswordTwo"].className.indexOf('borderError')) {
+					newPasswordTwo.refs["field-newPasswordTwo"].className = "form-control";
+					newPasswordTwo.refs["formAlertError"].innerHTML = "";
+				}
+			}
+		}
+
+		return errorField;
+	},
+
+	validationCompany(data) {
+		var msg;
+
+		var company = this.refs['company-0']
+		var localization = this.refs['company-3']
+
+		if (data.name.trim() == "") {
+			msg = Messages.get("label.form.error");
+			company.refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+			company.refs["field-name"].className += " borderError";
+		} else {
+				company.refs["field-name"].className = "form-control";
+				company.refs.formAlertError.innerHTML = "";
+		}
+		if (data.localization.trim() == "") {
+			msg = Messages.get("label.form.error");
+			localization.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+			localization.refs["field-localization"].className += " borderError";
+		} else {
+				localization.refs["field-localization"].className = "form-control";
+				localization.refs["formAlertError"].innerHTML = "";
+		}
+
+
+		return msg
+	},
+	validationDomain(data) {
+		var msg;
+
+		var host = this.refs['host']
+		var theme = this.refs['theme']
+
+
+		if (data.host.split('.')[0] == "" || !!data.host.match(/^(\s)+$/)) {
+			msg = Messages.get("label.form.error");
+			host.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+			host.refs["field-host"].className += " borderError";
+		} else {
+			host.refs["field-host"].className = "form-control-h";
+			host.refs["formAlertError"].innerHTML = "";
+		}
+
+		if (data.theme == "" || !!data.theme.match(/^(\s)+$/)) {
+			msg = Messages.get("label.form.error");
+			theme.refs["formAlertError"].innerHTML = Messages.get("label.alert.fieldEmpty");
+			theme.refs["field-theme"].className += " borderError";
+		} else {
+			theme.refs["field-theme"].className = "form-control";
+			theme.refs["formAlertError"].innerHTML = "";
+		}
+
+		return msg
+	},
+
+	validarCPF(cpf) {
+		cpf = cpf.replace(/\./g, '').replace('-', '')
+		if (cpf.length != 11 || cpf.replace(eval('/' + cpf.charAt(1) + '/g'), '') == '') {
+			return false;
+		} else {
+
+			var d;
+			var c;
+			for (var n = 9; n < 11; n++) {
+				for (d = 0, c = 0; c < n; c++)
+					d += cpf.charAt(c) * ((n + 1) - c);
+				d = ((10 * d) % 11) % 10;
+				if (cpf.charAt(c) != d)
+					return false;
+			}
+			return true;
+		}
+	},
+	emailIsValid(email) {
+		var user = email.substr(0, email.indexOf('@'));
+		var domain = email.substr(email.indexOf('@') + 1, email.length);
+
+		if ((user.length >= 1) && (domain.length >= 3) && (user.search("@") == -1) &&
+			(domain.search("@") == -1) && (user.search(" ") == -1) && (domain.search(" ") == -1) &&
+			(domain.search(".") != -1) && (domain.indexOf(".") >= 1) && (domain.lastIndexOf(".") < domain.length - 1)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 });
