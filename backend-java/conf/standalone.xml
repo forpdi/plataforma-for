@@ -346,29 +346,7 @@
             <buffer-cache name="default"/>
             <server name="default-server">
                 <http-listener name="default" socket-binding="http" redirect-socket="https"/>
-                <host name="default-host" alias="localhost">
-                    <location name="/" handler="welcome-content"/>
-                    <filter-ref name="server-header"/>
-                    <filter-ref name="x-powered-by-header"/>
-                </host>
-            </server>
-            <servlet-container name="default">
-                <jsp-config/>
-                <websockets/>
-            </servlet-container>
-            <handlers>
-                <file name="welcome-content" path="${jboss.home.dir}/welcome-content"/>
-            </handlers>
-            <filters>
-                <response-header name="server-header" header-name="Server" header-value="WildFly/9"/>
-                <response-header name="x-powered-by-header" header-name="X-Powered-By" header-value="Undertow/1"/>
-            </filters>
-        </subsystem>
-		<subsystem xmlns="urn:jboss:domain:undertow:2.0">
-            <buffer-cache name="default"/>
-            <server name="default-server">
-                <ajp-listener name="default-ajp" socket-binding="ajp" redirect-socket="http"/><!-- Inclua essa linha -->
-                <http-listener name="default" socket-binding="http" redirect-socket="https"/>
+                <ajp-listener name="ajp-default" socket-binding="ajp" />
                 <host name="default-host" alias="localhost">
                     <filter-ref name="server-header"/>
                     <filter-ref name="x-powered-by-header"/>
@@ -400,18 +378,18 @@
     </profile>
     <interfaces>
         <interface name="management">
-            <inet-address value="${jboss.bind.address.management:127.0.0.1}"/>
+            <inet-address value="0.0.0.0"/>
         </interface>
         <interface name="public">
-            <inet-address value="${jboss.bind.address:127.0.0.1}"/>
+            <inet-address value="0.0.0.0"/>
         </interface>
         <!-- TODO - only show this if the jacorb subsystem is added  -->
         <interface name="unsecure">
             <!--
               ~  Used for IIOP sockets in the standard configuration.
-              ~                  To secure JacORB you need to setup SSL 
+              ~                  To secure JacORB you need to setup SSL
               -->
-            <inet-address value="${jboss.bind.address.unsecure:127.0.0.1}"/>
+            <inet-address value="0.0.0.0"/>
         </interface>
     </interfaces>
     <socket-binding-group name="standard-sockets" default-interface="public" port-offset="${jboss.socket.binding.port-offset:0}">
