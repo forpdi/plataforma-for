@@ -6,3 +6,5 @@
 /.metadata/
 .recommenders/
 RemoteSystemsTempFiles/
+.DS*
+package-lock.json
