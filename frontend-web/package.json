@@ -6,7 +6,8 @@
 		"dev": "webpack-dev-server --colors --compress --progress --port 8081 --inline -w",
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "webpack --colors --progress --config webpack.production.config.js -p",
-		"build-dev": "webpack --progress --colors -d"
+		"build:docker": "./node_modules/.bin/webpack --config webpack.production.config.js -p",
+		"build:dev": "webpack --progress --colors -d"
 	},
 	"author": "Renato R. R. de Oliveira <renatorro@comp.ufla.br>, Rodrigo Freitas <rodrigotkd@gmail.com>",
 	"devDependencies": {
