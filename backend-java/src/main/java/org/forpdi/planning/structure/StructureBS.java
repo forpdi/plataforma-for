@@ -32,6 +32,7 @@ import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.User;
 import org.forpdi.core.user.UserBS;
 import org.forpdi.core.user.auth.UserSession;
+import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.dashboard.DashboardBS;
 import org.forpdi.dashboard.manager.LevelInstanceHistory;
 import org.forpdi.planning.attribute.AggregateIndicator;
@@ -837,7 +838,9 @@ public class StructureBS extends HibernateBusiness {
 			return Collections.emptyList();
 		}
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class);
-		criteria.add(Restrictions.in("plan", plans));
+		criteria.add(Restrictions.in("plan", plans))
+				.addOrder(Order.asc("parent"));
+		
 		return this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 	}
 	
@@ -880,7 +883,7 @@ public class StructureBS extends HibernateBusiness {
 	public List<AttributeInstance> listAttributeInstanceByLevel(StructureLevelInstance levelInstance, boolean deleted) {
 		Criteria criteria = this.dao.newCriteria(AttributeInstance.class);
 		criteria.add(Restrictions.eq("levelInstance", levelInstance));
-		criteria.add(Restrictions.eq("deleted", false));
+		criteria.add(Restrictions.eq("deleted", deleted));
 		List<AttributeInstance> list = this.dao.findByCriteria(criteria, AttributeInstance.class);
 		return list;
 	}
@@ -1535,6 +1538,8 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("level.goal", true));
 		criteria.add(Restrictions.eq("macro.archived", false));
+		criteria.add(Restrictions.eq("macro.deleted", false));
+		
 
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
@@ -1699,15 +1704,31 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public PaginatedList<StructureLevelInstance> listAllIndicators() {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(PlanMacro.class);
-		criteria.add(Restrictions.eq("deleted", false));
-		criteria.add(Restrictions.eq("archived", false));
-		List<PlanMacro> plans = this.filter.filterAndList(criteria, PlanMacro.class);
+		
+		Criteria criteria = this.dao.newCriteria(PlanMacro.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.eq("archived", false));
+		List<PlanMacro> plansmacro = this.filter.filterAndList(criteria, PlanMacro.class);
+
+		criteria = this.dao.newCriteria(Plan.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.in("parent", plansmacro));
+		List<Plan> plans = this.dao.findByCriteria(criteria, Plan.class);
+
+		criteria = this.dao.newCriteria(StructureLevel.class)
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.eq("indicator", true));
+		List<StructureLevel> levelList = this.dao.findByCriteria(criteria, StructureLevel.class);
 
 		List<StructureLevelInstance> list = new ArrayList<>();
-		for (PlanMacro plan : plans) {
-			list.addAll(this.listIndicators(plan).getList());
-		}
+		criteria = this.dao.newCriteria(StructureLevelInstance.class)
+		.createAlias("plan", "plan", JoinType.INNER_JOIN)
+		.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+		.add(Restrictions.eq("macro.archived", false))
+		.add(Restrictions.eq("deleted", false))
+		.add(Restrictions.in("level", levelList))
+		.add(Restrictions.in("plan", plans));
+		list.addAll(this.dao.findByCriteria(criteria, StructureLevelInstance.class));
 
 		result.setList(list);
 		result.setTotal((long) list.size());
@@ -1784,22 +1805,32 @@ public class StructureBS extends HibernateBusiness {
 		criteria.add(Restrictions.eq("deleted", false));
 		criteria.add(Restrictions.eq("indicator", true));
 		List<StructureLevel> levelList = this.dao.findByCriteria(criteria, StructureLevel.class);
+		
 
 		List<StructureLevelInstance> list = new ArrayList<>();
 		for (StructureLevel level : levelList) {
+			/*Criteria criteria2 = this.dao.newCriteria(StructureLevelInstance.class)
+			.createAlias("plan", "plan", JoinType.INNER_JOIN)
+			.createAlias("plan.parent", "macro", JoinType.INNER_JOIN)
+			.add(Restrictions.eq("macro.archived", false))
+			.add(Restrictions.eq("deleted", false))
+			.add(Restrictions.eq("level", level))
+			.add(Restrictions.eq("plan", plan));*/
 			Criteria criteria2 = this.dao.newCriteria(StructureLevelInstance.class);
-			criteria.createAlias("plan", "plan", JoinType.INNER_JOIN);
-			criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
-			criteria.add(Restrictions.eq("macro.archived", false));
-			criteria2.add(Restrictions.eq("deleted", false));
-			criteria2.add(Restrictions.eq("level", level));
-			criteria2.add(Restrictions.eq("plan", plan));
+					criteria2.createAlias("plan", "plan", JoinType.INNER_JOIN);
+					criteria2.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
+					criteria2.add(Restrictions.eq("macro.archived", false));
+					criteria2.add(Restrictions.eq("deleted", false));
+					criteria2.add(Restrictions.eq("level", level));
+					criteria2.add(Restrictions.eq("plan", plan));
 			list.addAll(this.dao.findByCriteria(criteria2, StructureLevelInstance.class));
 		}
 
 		result.setList(list);
 		result.setTotal((long) list.size());
 
+		LOGGER.error(String.valueOf(list.size()));
+		
 		return result;
 	}
 
@@ -1814,17 +1845,38 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public PaginatedList<StructureLevelInstance> listIndicators(PlanMacro macro, Plan plan) {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
-		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+//**************************** este bloco foi comentado para tentar diminuir a sobrecarga do servidor ********************************** 
+/*		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
 				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("deleted", false)).add(Restrictions.eq("level.indicator", true));
 		criteria.createAlias("plan.parent", "macro", JoinType.INNER_JOIN);
 		criteria.add(Restrictions.eq("macro.archived", false));
-
+*/
+//**************************************************************************************************************************************
+//**************************** foi colocado no lugar do codigo anterior para diminuir o numero de **************************************
+//**************************** registros que serao processados nos metodos seguintes ***************************************************
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+				.createAlias("attribute", "attribute")
+                .createAlias("levelInstance", "levelInstance")
+				.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+				.add(Restrictions.eq("value", this.userSession.getUser().getId().toString()))
+				.setProjection( Projections.projectionList()
+			        .add( Projections.property("levelInstance.id"), "id")
+			    );
+		List<?> list = criteria.list();
+		if (list.isEmpty()) {
+			return new PaginatedList<>(new ArrayList<>(0), 0L);
+		}
+		criteria = this.dao.newCriteria(StructureLevelInstance.class)
+				.add(Restrictions.eq("deleted", false))
+				.add(Restrictions.in("parent", list));
+//**************************************************************************************************************************************
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
 		}
+		//org.hibernate.QueryException: could not resolve property: plan.parent of: org.forpdi.planning.structure.StructureLevelInstance
 		List<StructureLevelInstance> indicatorsList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		indicatorsList = this.filterByResponsible(indicatorsList);
 		result.setList(indicatorsList);
@@ -1968,13 +2020,19 @@ public class StructureBS extends HibernateBusiness {
 	public PaginatedList<StructureLevelInstance> listObjectives(PlanMacro macro, Plan plan) {
 		PaginatedList<StructureLevelInstance> result = new PaginatedList<>();
 		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
-				.createAlias("plan", "plan", JoinType.INNER_JOIN).createAlias("level", "level", JoinType.INNER_JOIN)
+				.createAlias("plan", "plan", JoinType.INNER_JOIN)
+				.createAlias("level", "level", JoinType.INNER_JOIN)
 				.add(Restrictions.eq("level.objective", true));
+		
 		if (plan != null) {
 			criteria.add(Restrictions.eq("plan", plan));
 		} else if (macro != null) {
 			criteria.add(Restrictions.eq("plan.parent", macro));
+		}else {
+			criteria.createAlias("plan.parent", "planMacro", JoinType.INNER_JOIN);
+			criteria.add(Restrictions.eq("planMacro.company",this.domain.getCompany()));
 		}
+		
 
 		List<StructureLevelInstance> objectivesList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
 		objectivesList = this.filterByResponsible(objectivesList);
@@ -2077,60 +2135,77 @@ public class StructureBS extends HibernateBusiness {
 	 * @return levelInstances Lista de instâncias dos leveis após filtro.
 	 */
 	public List<StructureLevelInstance> filterByResponsible(List<StructureLevelInstance> levelInstances) {
-		if (this.userSession.getAccessLevel() < 50) {
+		
+		if(levelInstances.size()==0) {
+			return levelInstances;
+		}
+		
+		long userId=this.userSession.getUser().getId();
+		List<Long> list= new ArrayList<>();
+		
+		for (StructureLevelInstance levelInst : levelInstances) {
+			list.add(levelInst.getId());
+		}
+
+		//pegar todos os filhos de uma vez para evitar muitos acessos ao banco
+		Criteria criteria = this.dao.newCriteria(StructureLevelInstance.class)
+			.add(Restrictions.in("parent", list))
+			.add(Restrictions.eq("deleted", false));
+			
+		List<StructureLevelInstance> sonList = this.dao.findByCriteria(criteria, StructureLevelInstance.class);
+		
+		if (this.userSession.getAccessLevel() < AccessLevels.COMPANY_ADMIN.getLevel()) {
 			List<StructureLevelInstance> list2 = new ArrayList<StructureLevelInstance>();
+						
 			for (StructureLevelInstance levelInst : levelInstances) {
 				boolean lvlAdd = false;
-				List<StructureLevelInstance> stLvInstList = this.retrieveLevelInstanceSons(levelInst.getId());
-				for (StructureLevelInstance stLvInst : stLvInstList) {
-					List<Attribute> attributeList = this.retrieveLevelAttributes(stLvInst.getLevel());
-					for (Attribute attr : attributeList) {
-						if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-							AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(stLvInst, attr);
-							if (attrInst != null) {
-								if (!lvlAdd
-										&& Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
-									list2.add(levelInst);
-									lvlAdd = true;
-								}
-							}
-						}
-					}
-				}
-
 				StructureLevelInstance lvlI = levelInst;
-				List<Attribute> attributeList = this.retrieveLevelAttributes(lvlI.getLevel());
-				for (Attribute attr : attributeList) {
-					if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-						AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(lvlI, attr);
-						if (attrInst != null) {
-							if (!lvlAdd && Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
+				
+				if(this.isSLIResponsible(lvlI,userId)){
+					list2.add(levelInst);
+					lvlAdd = true;
+				}
+				
+				if (!lvlAdd) {
+					for (StructureLevelInstance stLvInst : sonList) {
+						if(stLvInst.getParent().equals(levelInst.getId())) {
+							if(this.isSLIResponsible(stLvInst,userId)){
 								list2.add(levelInst);
 								lvlAdd = true;
+								break;
 							}
 						}
 					}
 				}
-				while (lvlI.getParent() != null && !lvlAdd) {
+				
+				while (!lvlAdd && lvlI.getParent() != null) {
 					lvlI = this.retrieveLevelInstance(lvlI.getParent());
-					attributeList = this.retrieveLevelAttributes(lvlI.getLevel());
-					for (Attribute attr : attributeList) {
-						if (attr.getType().equals(ResponsibleField.class.getCanonicalName())) {
-							AttributeInstance attrInst = attrHelper.retrieveAttributeInstance(lvlI, attr);
-							if (attrInst != null) {
-								if (!lvlAdd
-										&& Long.parseLong(attrInst.getValue()) == this.userSession.getUser().getId()) {
-									list2.add(levelInst);
-									lvlAdd = true;
-								}
-							}
-						}
+					if(!lvlAdd && this.isSLIResponsible(lvlI,userId)) {
+						list2.add(levelInst);
+						lvlAdd = true;
+						break;
 					}
 				}
 			}
 			levelInstances = list2;
 		}
 		return levelInstances;
+	}
+	
+	
+
+	private boolean isSLIResponsible(StructureLevelInstance lvlI, long userId) {
+		Criteria criteria = this.dao.newCriteria(AttributeInstance.class)
+		.createAlias("attribute", "attribute", JoinType.INNER_JOIN)
+		.add(Restrictions.eq("attribute.type", ResponsibleField.class.getCanonicalName()))
+		.add(Restrictions.eq("levelInstance",lvlI))
+		.add(Restrictions.eq("value",String.valueOf(userId)));
+		criteria.setMaxResults(1);
+
+		if(criteria.uniqueResult() !=null) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

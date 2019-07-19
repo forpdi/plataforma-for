@@ -7,7 +7,7 @@ import string from 'string';
 
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
-export default React.createClass({	
+export default React.createClass({
 	contextTypes: {
 		router: React.PropTypes.object,
 		toastr: React.PropTypes.object.isRequired
@@ -47,10 +47,10 @@ export default React.createClass({
 		var me = this;
 	},
 	componentWillUnmount() {
-		
+
 	},
 	componentWillReceiveProps() {
-		
+
 	},
 
 	onIconClick(event) {
@@ -77,10 +77,10 @@ export default React.createClass({
 				newNode: true
 			});
 		}
-		
+
 	},
 
-	onNewNodeClick(event){	
+	onNewNodeClick(event){
 		this.setState({
 			newNode: true
 		});
@@ -146,7 +146,7 @@ export default React.createClass({
 			this.props.model.haveBudget = true;
 		}*/
 		return (
-			(this.state.newNode ? 
+			(this.state.newNode ?
 				this.renderNewNode()
 				:
 				(
@@ -158,7 +158,7 @@ export default React.createClass({
 						:
 							(this.props.model && this.props.model.aggregate ?
 								<a className={this.props.iconCls}  onClick={me.onLabelClick} title={Messages.get("label.indicatorAggregate")}/>
-							:	
+							:
 								<a className={this.props.iconCls}  onClick={me.onLabelClick} />)
 					}
 					{
@@ -167,11 +167,11 @@ export default React.createClass({
 							this.props.root ?
 							<a onClick={this.onLabelClick} key={this.props.node.index}>{this.props.label}</a>
 							:
-							<Link 
-								activeClassName="active" 
-								className={this.props.labelCls} 
-								to={this.props.to} 
-								onClick={this.onLabelClick} 
+							<Link
+								activeClassName="active"
+								className={this.props.labelCls}
+								to={this.props.to}
+								onClick={this.onLabelClick}
 								title={this.props.label}
 							>
 							{

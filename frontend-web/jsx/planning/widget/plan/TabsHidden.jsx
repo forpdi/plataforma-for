@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import _ from 'underscore';
 
 var onClickOutside = require('react-onclickoutside');
 
@@ -11,7 +11,9 @@ export default onClickOutside(React.createClass({
 		return (
 		<div className='fpdi-tabsHidden-content'>
 			<ul className="fpdi-tabsHidden-nav show-close" >
-				{this.props.tabs}
+				{
+					_.map(this.props.tabs, tab => tab.element)
+				}
 			</ul>
 		</div>);
 	}

@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  * @author Renato R. R. de Oliveira
@@ -24,20 +23,19 @@ public class CompanyMessage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@ManyToOne(targetEntity=Company.class, fetch=FetchType.EAGER, optional=false)
+	@ManyToOne(targetEntity = Company.class, fetch = FetchType.EAGER, optional = false)
 	private Company company;
 
 	@Id
-	@Column(nullable=false, length=128)
+	@Column(nullable = false, length = 128)
 	private String messageKey;
-	
-	@Column(nullable=false, length=4000)
+
+	@Column(nullable = false, length = 4000)
 	private String messageValue;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable=false)
+	@Column(nullable = false)
 	private Date lastUpdated = new Date();
-
 
 	public Company getCompany() {
 		return company;
@@ -101,5 +99,5 @@ public class CompanyMessage implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }

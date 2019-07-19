@@ -15,7 +15,7 @@ var DocumentModel = Fluxbone.Model.extend({
 		}
 		if (string(attrs.plan).isEmpty()) {
 			errors.push("O plano do documento é obrigatória.");
-		}		
+		}
 
 		if (errors.length > 0)
 			return errors;
@@ -66,7 +66,7 @@ var DocumentStore = Fluxbone.Store.extend({
 			method: 'GET',
 			dataType: 'json',
 			data: data,
-			success(response) {				
+			success(response) {
 				me.trigger("sectionAttributesRetrieved", response.data);
 			},
 			error(opts, status, errorMsg) {
@@ -101,7 +101,7 @@ var DocumentStore = Fluxbone.Store.extend({
 			url: me.url+"/" + data.id + "/filledsections",
 			method: 'GET',
 			dataType: 'json',
-			success(response) {				
+			success(response) {
 				me.trigger("filledSectionsRetrieved", response.data);
 			},
 			error(opts, status, errorMsg) {
@@ -143,7 +143,6 @@ var DocumentStore = Fluxbone.Store.extend({
 	},
 
 	deleteAttribute(data){
-		console.log("DELETE");
 		var me = this;
 		$.ajax({
 			url: me.url+"/sectionattribute/delete",
@@ -160,7 +159,7 @@ var DocumentStore = Fluxbone.Store.extend({
 		});
 	},
 
-	editAttribute(data){		
+	editAttribute(data){
 		var me = this;
 		$.ajax({
 			url: me.url+"/sectionattribute/edit",

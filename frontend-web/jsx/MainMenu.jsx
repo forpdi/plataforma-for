@@ -284,7 +284,7 @@ export default React.createClass({
             <div className="fpdi-tabs-nav">
     			<Link to="/home" activeClassName="active">
                     <span className="fpdi-nav-icon mdi mdi-view-dashboard icon-link"
-                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label")}
+                    /> {Messages.getEditable("label.dashboard","fpdi-nav-label", PermissionsTypes.EDIT_MESSAGES_PERMISSION)}
                 </Link>
     		</div>
             <div style={{height: "10px"}} />
@@ -360,20 +360,24 @@ export default React.createClass({
                 </a>
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+			{this.state.user.accessLevel >=50?
                 <a onClick={this.importPlans}>
                     <span className="fpdi-nav-icon mdi mdi-file-import icon-link"
                         /> <span className="fpdi-nav-label">
                             {Messages.getEditable("label.importPlans","fpdi-nav-label")}
                         </span>
                 </a>
+				:""}
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
+			{this.state.user.accessLevel >=50?
                 <a href="/forpdi/company/export">
                     <span className="fpdi-nav-icon mdi mdi-file-export icon-link"
                         /> <span className="fpdi-nav-label">
                             {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
                         </span>
                 </a>
+			:""}
             </div>
 
             <span className="fpdi-fill" />

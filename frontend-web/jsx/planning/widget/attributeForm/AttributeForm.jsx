@@ -1,7 +1,6 @@
-
 //import Toastr from 'toastr';
 import React from "react";
-import {Link, hashHistory} from "react-router";
+import { Link, hashHistory } from "react-router";
 import AttributeInput from "forpdi/jsx/planning/widget/attributeForm/AttributeInput.jsx";
 import BudgetField from "forpdi/jsx/planning/view/field/BudgetField.jsx";
 import AttachmentField from "forpdi/jsx/planning/view/field/AttachmentField.jsx";
@@ -63,7 +62,7 @@ var VerticalForm =  React.createClass({
 		if (!this.props.onSubmit)
 			console.warn("AttributeForm: You must pass your own onSubmit callback.");
 		else {
-			this.props.fields.map((field,idx) => {		
+			this.props.fields.map((field,idx) => {
 				if (field.type != AttributeTypes.BUDGET_FIELD
 					&& field.type != AttributeTypes.ACTION_PLAN_FIELD
 					&& field.type != AttributeTypes.SCHEDULE_FIELD
@@ -73,7 +72,7 @@ var VerticalForm =  React.createClass({
 								this.context.toastr.addAlertError(Messages.get("label.form.error"));
 								error = true;
 							}
-						} 
+						}
 					}
 			});
 
@@ -84,7 +83,7 @@ var VerticalForm =  React.createClass({
 	},
 	getValues() {
 		var data = {};
-		this.props.fields.forEach(field => {			
+		this.props.fields.forEach(field => {
 			 if(field.type != AttributeTypes.BUDGET_FIELD &&
 				field.type != AttributeTypes.ACTION_PLAN_FIELD &&
 				field.type != AttributeTypes.SCHEDULE_FIELD &&
@@ -112,7 +111,7 @@ var VerticalForm =  React.createClass({
 		var fieldName;
 		var me = this;
 		if(this.props.vizualization) {
-			this.props.fields.map((field,idx) => {	
+			this.props.fields.map((field,idx) => {
 				fieldName = field.name;
 				if (me.refs[fieldName] != undefined)
 					me.refs[fieldName].refs.formAlertError.innerHTML = "";
@@ -159,8 +158,9 @@ var VerticalForm =  React.createClass({
 		});
 	},
 	render() {
+
 		var alerts = null;
-		var showButtons = !this.props.vizualization;
+		var showButtons =  !this.props.vizualization;
 		var requiredFields = false;
 		if (this.state.error) {
 			if (typeof this.state.errorMessage == 'string') {
@@ -183,15 +183,20 @@ var VerticalForm =  React.createClass({
 				</div>);
 			}
 		}
-				
+
 		return (<form onSubmit={this.submitWrapper}>
-			{this.props.fields.map((field,idx) => {		
+			{this.props.fields.map((field,idx) => {
 				if (field.type != AttributeTypes.BUDGET_FIELD
 					&& field.type != AttributeTypes.ACTION_PLAN_FIELD
 					&& field.type != AttributeTypes.SCHEDULE_FIELD
 					&& field.type != AttributeTypes.TABLE_FIELD
 					&& field.type != AttributeTypes.ATTACHMENT_FIELD) {
-						showButtons = !this.props.vizualization;						
+						showButtons = !this.props.vizualization;
+
+						if(showButtons && this.props.showButtons != null){
+							showButtons = this.props.showButtons;
+						}
+
 						return (<AttributeInput
 							id={field.id}
 							index={idx}
@@ -212,7 +217,7 @@ var VerticalForm =  React.createClass({
 				if (field.required)
 					requiredFields = true;
 			})}
-			{showButtons && requiredFields ? 
+			{showButtons && requiredFields ?
 				<p className="help-block">
 					<span className="fpdi-required" /> {Messages.getEditable("label.requiredFields","fpdi-nav-label")}
 				</p>
@@ -252,7 +257,7 @@ var VerticalForm =  React.createClass({
 					return(<TableField key={field.name} data={field.tableFields} newFunc={field.extraTableFields} title={field.label}
 						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument} deleteFunc={this.props.deleteFunc}/>);
 				} else if(field.type == AttributeTypes.ATTACHMENT_FIELD){
-					return(<AttachmentField key={field.name} responsible={this.props.userResponsible} 
+					return(<AttachmentField key={field.name} responsible={this.props.userResponsible}
 						levelInstanceId={this.props.levelInstanceId}/>);
 				}
 			})}

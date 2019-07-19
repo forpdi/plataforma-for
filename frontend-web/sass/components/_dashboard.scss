@@ -15,7 +15,7 @@
 }
 
 .dashboard-plan-details-header{
-	background-color: #2980B9;
+	background-color: #5064d8;
     color: white;
     padding: 10px;
     font-size: 12px;
@@ -78,7 +78,7 @@
 
 .dashboard-goals-information-commmunity {
     padding-top: 60px;
-    padding-left:7%; 
+    padding-left:7%;
     padding-right:7%;
 }
 
@@ -102,8 +102,8 @@
     border-radius: 5px;
     border: 1px solid;
     border-color: #F0F0F0 #E8E8E8 #E0E0E0;
-    height: 460px;    
-    
+    height: 460px;
+
 }
 
 
@@ -118,9 +118,9 @@
 	width:100%;
 }
 
-.dashboard-goals-info-ctn {    
+.dashboard-goals-info-ctn {
     border-radius: 5px;
-    background-color: #FFF;    
+    background-color: #FFF;
 }
 
 .dashboard-goal-info {
@@ -159,7 +159,7 @@
     padding: 0px;
     font-size: 12px !important;
 }
-    
+
 .dashboard-panel{
     margin-top:30px;
     border:1px solid transparent;
@@ -221,7 +221,7 @@
     margin-bottom: 0px;
 }
 
-.dashboard-table tbody{    
+.dashboard-table tbody{
     overflow-y: auto;
     width: 100%;
     display: block;
@@ -354,7 +354,7 @@
     background-color: darken($brand-primary, 10%);
     padding: 3px 2px;
     border-radius: 17%;
-    color: #FFF;    
+    color: #FFF;
     margin-left:5px;
     cursor: pointer;
 }
@@ -364,7 +364,8 @@
     background-color: darken($brand-primary, 20%);
 }
 
-.dashboard-graph-pagination{    
+
+.dashboard-graph-pagination{
     z-index: 1;
     width: 78px;
     float: right;
@@ -416,4 +417,119 @@
 .loading-text-goal-board {
     margin: 40px 0px;
     font-size: 20px;
+}
+
+.frisco-dashboard {
+	height: 490px;
+	margin: 30px 0 0 0;
+}
+
+.frisco-dashboard-right {
+	max-width: 490px;
+}
+
+.dashboard-risk-board {
+    text-align: center;
+	width: 210px;
+	height: 210px;
+    border-radius: 5px;
+    font-weight: 600;
+	padding: 10px;
+	position: absolute;
+	&.dashboard-risk-panel-bottom {
+		bottom: 0;
+	}
+	&.dashboard-risk-panel-right {
+		right: 0;
+	}
+	@media (max-width: 1410px) {
+		width: 190px;
+		height: 190px;
+	}
+	@media (max-width: 1315px) {
+		width: 170px;
+		height: 170px;
+	}
+}
+
+.dashboard-risk-number {
+	font-size: 75px;
+    bottom: 10px;
+    position: relative;
+}
+.dashboard-risk-text {
+	position: relative;
+    font-size: 18px;
+    font-weight: 500;
+    bottom:20px;
+}
+
+
+.legend-risk{
+	//background-color:rgb(160, 160, 160);
+	border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+	margin: 0 auto;
+
+	&.threat{
+		background-color:#E74C3C;
+	}
+
+	&.opportunities{
+		background-color:rgb(60, 63, 231);
+	}
+}
+
+.legend-risk-threats {
+    background-color:#E74C3C;
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+    margin: 0 auto;
+}
+
+.legend-risk-opportunities {
+    background-color:rgb(60, 63, 231);
+    border: 1px solid transparent;
+    height: 10px;
+    width: 10px;
+    margin: 0 auto;
+    margin: 0 auto;
+}
+
+.dashboard-risk-details {
+	background-color: $brand-secondary;
+
+	& > .dashboard-risk-details-body {
+		color:white;
+		border-bottom-left-radius: 5px;
+		border-bottom-right-radius: 5px;
+		&.icon-link {
+			color: white;
+		}
+	}
+}
+
+.dashboard-risk-goal-info {
+    & > h1 {
+		font-size: 60px;
+		color: white;
+		margin: 0;
+    }
+    & > h4 {
+       font-size: 20px;
+	   color: white;
+	   font-weight: 100;
+	   margin: 0 0 5px 0;
+    }
+    & > p {
+       font-size: 16px;
+	   color: white;
+	   font-weight: 100;
+    }
+	margin: 40px 20px 0 20px;
+	text-align: -webkit-center;
 }

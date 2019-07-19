@@ -1,4 +1,3 @@
-
 import Backbone from "backbone";
 import Marked from "marked";
 import Moment from 'moment';
@@ -12,6 +11,10 @@ import { Router, Route, IndexRedirect, IndexRoute, hashHistory } from 'react-rou
 import Messages from 'forpdi/jsx/core/util/Messages.jsx';
 
 import Application from 'forpdi/jsx/Application.jsx';
+import ForPDIApplication from 'forpdi/jsx/ForPDI.jsx';
+import ForRiscoApplication from 'forpdi/jsx/ForRisco.jsx';
+
+import AppSelect from 'forpdi/jsx/AppSelect';
 
 import NotFound from "forpdi/jsx/core/view/NotFound.jsx";
 
@@ -50,8 +53,34 @@ import Community from "forpdi/jsx/dashboard/view/DashboardCommunityView.jsx";
 
 import BudgetElement from "forpdi/jsx/planning/view/budget/BudgetElement.jsx";
 
-Moment.locale("pt_BR");
+/* Forrisco */
+import Forrisco_Dashboard from "forpdi/jsx_forrisco/dashboard/view/DashboardPanel.jsx";
+import Forrisco_PolicyEdit from "forpdi/jsx_forrisco/planning/view/policy/PolicyEdit.jsx";
+import Forrisco_PolicyDetails from "forpdi/jsx_forrisco/planning/view/policy/PolicyDetails.jsx";
+import Forrisco_PolicyGeneralInfo from "forpdi/jsx_forrisco/planning/view/policy/item/PolicyGeneralInfo.jsx"
+import Forrisco_PolicyTab from "forpdi/jsx_forrisco/planning/view/policy/PolicyTab.jsx";
+import Forrisco_ItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/ItemRegister.jsx";
+import Forrisco_SubItemRegister from "forpdi/jsx_forrisco/planning/view/policy/item/SubItemRegister.jsx";
 
+import Forrisco_RegistryPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/RegistryPlanRisk.jsx";
+import Forrisco_PlanRiskGeneralInfo from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskGeneralInfo.jsx"
+import Forrisco_EditPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/EditPlanRisk.jsx";
+import Forrisco_DuplicatePlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DuplicatePlanRisk.jsx";
+import Forrisco_DetailPlanRisk from "forpdi/jsx_forrisco/planning/view/plan/DetailPlanRisk.jsx";
+import Forrisco_DetailPlanRiskItem from "forpdi/jsx_forrisco/planning/view/plan/item/DetailPlanRiskItem.jsx"
+import Forrisco_DetailPlanRiskSubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/DetailPlanRiskSubItem.jsx";
+import Forrisco_PlanRiskRegistryItem from "forpdi/jsx_forrisco/planning/view/plan/item/PlanRiskRegistryItem.jsx";
+import Forrisco_PlanRiskRegistrySubItem from "forpdi/jsx_forrisco/planning/view/plan/item/subitem/PlanRiskRegistrySubItem.jsx";
+
+import Forrisco_RegistryUnit from "forpdi/jsx_forrisco/planning/view/unit/RegistryUnit.jsx";
+import Forrisco_RegistrySubunit from "forpdi/jsx_forrisco/planning/view/unit/RegistrySubunit.jsx";
+import Forrisco_UnitGeneralInfo from "forpdi/jsx_forrisco/planning/view/unit/item/UnitGeneralInfo.jsx";
+
+import Forrisco_RiskRegister from "forpdi/jsx_forrisco/planning/view/risk/RiskRegister.jsx";
+import Forrisco_RiskDetail from "forpdi/jsx_forrisco/planning/view/risk/RiskDetail.jsx";
+//import Forrisco_RiskList from "forpdi/jsx_forrisco/planning/view/risk/RiskList.jsx";
+
+Moment.locale("pt_BR");
 Numeral.language('pt-br', require("numeral/languages/pt-br.js"));
 Numeral.language("pt-br");
 
@@ -61,65 +90,160 @@ Toastr.options.extendedTimeOut = 8000;
 
 ReactDOM.render((
 	<Router history={hashHistory}>
-		<Route path="comunidade" component={Community} />
-		<Route path="recover-password" component={RecoverPassword} />
-		<Route path="reset-password/:token" component={ResetPassword} />
-		<Route path="register/:token" component={Register} />
+		<Route path="/login" component={Login} />
+		<Route path="/comunidade" component={Community} />
+		<Route path="/recover-password" component={RecoverPassword} />
+		<Route path="/reset-password/:token" component={ResetPassword} />
+		<Route path="/register/:token" component={Register} />
+
 		<Route path="/" component={Application}>
-			<IndexRedirect to="login" />
-			<Route path="home" component={Dashboard} />
-			<Route path="login" component={Login} />
-			<Route path="users" component={Users}>
-				<Route path=":modelId/edit" component={UserEdit} />
-				<Route path="new" component={UserInvite} />
-				<Route path="profilerUser/:modelId" component={ProfileUser} />
+			<IndexRedirect to="/login" />
+			<Route path="/app-select" component={AppSelect} />
+			<Route path="forrisco" component={ForRiscoApplication}>
+				<Route path="home" component={Forrisco_Dashboard} />
+				{/*<Route path="risk" component={Forrisco_RiskList} /> */}
+
+				<Route path="policy/new" component={Forrisco_PolicyEdit} />
+
+				<Route path="policy/:policyId" component={Forrisco_PolicyDetails}>
+					<IndexRedirect to="item" />
+					<Route path="item">
+						<IndexRedirect to="overview"/>
+						<Route path="overview" component={Forrisco_PolicyGeneralInfo} />
+						<Route path="new" component={Forrisco_ItemRegister} />
+						<Route path=":itemId/subitem/new" component={Forrisco_SubItemRegister} />
+						<Route path=":itemId/subitem/:subitemId" component={Forrisco_SubItemRegister} />
+						<Route path=":itemId" component={Forrisco_ItemRegister} />
+					</Route>
+					<Route path="edit" >
+						<IndexRedirect to="overview" />
+						<Route path="overview" component={Forrisco_PolicyTab} />
+					</Route>
+				</Route>
+
+				<Route path="plan-risk/new" component={Forrisco_RegistryPlanRisk} /> /* Cadastrar novo plano de risco */
+
+				<Route path="plan-risk/:planRiskId" component={Forrisco_DetailPlanRisk}> /* Detalhar plano de risco */
+					<IndexRedirect to="item" />
+					<Route path="item">
+						<IndexRedirect to="overview" />
+						<Route path="overview" component={Forrisco_PlanRiskGeneralInfo} />
+						<Route path="new" component={Forrisco_PlanRiskRegistryItem} /> /* Novo item do plano de risco */
+						<Route path="duplicate" component={Forrisco_DuplicatePlanRisk} />
+						<Route path=":itemId" component={Forrisco_DetailPlanRiskItem} /> /* Detalhar Item de um Plano */
+						<Route path=":itemId/edit" component={Forrisco_EditPlanRisk} />
+						<Route path=":itemId/subitem/new" component={Forrisco_PlanRiskRegistrySubItem}/>
+						<Route path=":itemId/subitem/:subItemId" component={Forrisco_DetailPlanRiskSubItem}/>
+					</Route>
+
+					<Route path="unit">
+						<IndexRedirect to="overview" />
+						<Route path="overview" />
+						<Route path="new" component={Forrisco_RegistryUnit} /> /* Nova unidade */
+
+						<Route path=":unitId">
+							<Route path="risk">
+								<Route path="new" component={Forrisco_RiskRegister} />		/* Novo risco*/
+								<Route path=":riskId">
+									<Route path="info" component={Forrisco_RiskDetail} />
+									<Route
+										path="monitor"
+										component={props => (<Forrisco_RiskDetail {...props} selected={1} />)}
+									/>
+									<Route
+										path="incident"
+										component={props => (<Forrisco_RiskDetail {...props} selected={2} />)}
+									/>
+
+								</Route>
+							</Route>
+							<Route
+								path="info"
+								component={
+									props => (<Forrisco_UnitGeneralInfo {...props} isSubunit={false} />)
+								}
+							/>
+						</Route>
+
+						<Route path=":unitId">
+							<Route path="subunit/new" component={Forrisco_RegistrySubunit} /> /* Nova subunidade */
+							<Route
+								path="subunit/:subunitId/info"
+								component={props =>
+									<Forrisco_UnitGeneralInfo {...props} isSubunit={true} />
+								}
+							/> /* Detalhar subunidade */
+						</Route>
+					</Route>
+
+					<Route path="system" component={SystemManagement}>
+						<IndexRedirect to="general" />
+						<Route path="companies" component={Companies}>
+							<Route path="new" component={CompanyEdit} />
+							<Route path="edit/:modelId" component={CompanyEdit} />
+						</Route>
+						<Route path="domains" component={CompanyDomains}>
+							<Route path="new" component={CompanyDomainEdit} />
+							<Route path="edit/:modelId" component={CompanyDomainEdit} />
+						</Route>
+						<Route path="*" component={NotFound} />
+					</Route>
+					<Route path="*" component={NotFound} />
+				</Route>
 			</Route>
 
-			<Route path="structures" component={StructureList}>
-				<Route path="preview/:modelId" component={StructurePreview} />
+			<Route path="" component={ForPDIApplication}>
+				<Route path="home" component={Dashboard} />
+				<Route path="login" component={Login} />
+				<Route path="users" component={Users}>
+					<Route path=":modelId/edit" component={UserEdit} />
+					<Route path="new" component={UserInvite} />
+					<Route path="profilerUser/:modelId" component={ProfileUser} />
+				</Route>
+
+				<Route path="structures" component={StructureList}>
+					<Route path="preview/:modelId" component={StructurePreview} />
+				</Route>
+
+				<Route path="budget-element" component={BudgetElement} />
+
+				<Route path="plan/new" component={PlanMacroEdit} />
+				<Route path="plan/:id">
+					<IndexRedirect to="document" />
+					<Route path="edit" component={PlanMacroEdit} />
+					<Route path="details" component={PlanMacroDetails}>
+						<IndexRedirect to="overview" />
+						<Route path="overview" component={PlanMacroTab} />
+						<Route path="subplan/:subplanId" component={PlanRegister} />
+						<Route path="subplans/new" component={PlanRegister} />
+						<Route path="level/:subplanId/:levelId" component={LevelTab} />
+						<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
+						<Route path="duplicate" component={DuplicatePlan} />
+					</Route>
+					<Route path="document" component={PlanMacroDetails}>
+						<IndexRedirect to="overview" />
+						<Route path="overview" component={DocumentDetails} />
+						<Route path="section/:sectionId" component={DocumentSectionAttributes} />
+					</Route>
+				</Route>
+
+				<Route path="system" component={SystemManagement}>
+					<IndexRedirect to="general" />
+					<Route path="companies" component={Companies}>
+						<Route path="new" component={CompanyEdit} />
+						<Route path="edit/:modelId" component={CompanyEdit} />
+					</Route>
+					<Route path="domains" component={CompanyDomains}>
+						<Route path="new" component={CompanyDomainEdit} />
+						<Route path="edit/:modelId" component={CompanyDomainEdit} />
+					</Route>
+					<Route path="*" component={NotFound} />
+				</Route>
 			</Route>
-
-
-			<Route path="budget-element" component={BudgetElement} />
-
-			<Route path="plan/new" component={PlanMacroEdit} />
-			<Route path="plan/:id">
-				<IndexRedirect to="document" />
-				<Route path="edit" component={PlanMacroEdit} />
-				<Route path="details" component={PlanMacroDetails}>
-					<IndexRedirect to="overview" />
-					<Route path="overview" component={PlanMacroTab} />
-					<Route path="subplan/:subplanId" component={PlanRegister} />
-					<Route path="subplans/new" component={PlanRegister} />
-					<Route path="level/:subplanId/:levelId" component={LevelTab} />				
-					<Route path="subplan/level/:levelInstanceId" component={LevelAttributeInstance} />
-					<Route path="duplicate" component={DuplicatePlan} />
-				</Route>
-				<Route path="document" component={PlanMacroDetails}>
-					<IndexRedirect to="overview" />
-					<Route path="overview" component={DocumentDetails} />
-					<Route path="section/:sectionId" component={DocumentSectionAttributes} />
-				</Route>
-			</Route>
-
-			<Route path="system" component={SystemManagement}>
-				<IndexRedirect to="general" />
-				<Route path="companies" component={Companies}>
-					<Route path="new" component={CompanyEdit} />
-					<Route path="edit/:modelId" component={CompanyEdit} />
-				</Route>
-				<Route path="domains" component={CompanyDomains}>
-					<Route path="new" component={CompanyDomainEdit} />
-					<Route path="edit/:modelId" component={CompanyDomainEdit} />
-				</Route>
-				<Route path="*" component={NotFound} />
-			</Route>
-			
 			<Route path="*" component={NotFound} />
 		</Route>
 	</Router>
-  	),
-  	document.getElementById('main-body')
+),
+	document.getElementById('main-body')
 );
- 
 module.exports = true;

@@ -5,13 +5,10 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.forpdi.core.company.CompanyUser;
-import org.forpdi.core.user.User;
 
 /**
  * @author Rodrigo de Freitas Santos
@@ -26,11 +23,11 @@ public class FavoriteLevelInstance implements Serializable {
 	@Id
 	@ManyToOne(targetEntity = StructureLevelInstance.class, optional = false, fetch = FetchType.EAGER)
 	private StructureLevelInstance levelInstance;
-	
+
 	@Id
 	@ManyToOne(targetEntity = CompanyUser.class, optional = false, fetch = FetchType.EAGER)
 	private CompanyUser companyUser;
-	
+
 	private boolean deleted = false;
 
 	public StructureLevelInstance getLevelInstance() {
@@ -56,5 +53,5 @@ public class FavoriteLevelInstance implements Serializable {
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
 	}
-	
+
 }

@@ -2,86 +2,110 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-	<session-factory> 
-  		<property name="org.hibernate">true</property>
-  		
-		<property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo</property>
-		<property name="connection.username">${db.username}</property>
-		<property name="connection.password">${db.password}</property>
-		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
-		<property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
-
-		<!-- Configuração Propriedades Hibernate -->
-		<property name="hibernate.hbm2ddl.auto">update</property>
-		<property name="hibernate.show_sql">false</property>
-		<property name="hibernate.format_sql">false</property>
-		<!--
+ <session-factory>
+  <property name="org.hibernate">true</property>
+  <property name="connection.url">jdbc:mysql://${db.host}:${db.port}/${db.name}?autoReconnect=true&amp;useSSL=false&amp;serverTimezone=America/Sao_Paulo</property>
+  <property name="connection.username">${db.username}</property>
+  <property name="connection.password">${db.password}</property>
+  <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+  <property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+  <property name="connection.provider_class">org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
+  <!-- Configuração Propriedades Hibernate -->
+  <property name="hibernate.hbm2ddl.auto">update</property>
+  <property name="hibernate.show_sql">false</property>
+  <property name="hibernate.format_sql">false</property>
+  <!--
 		<property name="hibernate.c3p0.debugUnreturnedConnectionStackTraces">true</property>
 		<property name="hibernate.c3p0.unreturnedConnectionTimeout">300</property>
 		-->
-
-		<property name="hibernate.current_session_context_class">thread</property>
-		<property name="hibernate.order_updates">true</property>
-		<property name="hibernate.max_fetch_depth">6</property>
-		<property name="hibernate.transaction.auto_close_session">false</property>
-		<property name="hibernate.c3p0.acquireRetryAttempts">5</property>
-		<property name="hibernate.c3p0.acquireIncrement">4</property>
-		<property name="hibernate.c3p0.idleConnectionTestPeriod">60</property>
-		<property name="hibernate.c3p0.initialPoolSize">16</property>
-		<property name="hibernate.c3p0.minPoolSize">16</property>
-		<property name="hibernate.c3p0.maxPoolSize">64</property>
-		<property name="hibernate.c3p0.maxIdleTime">150</property>
-		<property name="hibernate.c3p0.checkoutTimeout">25000</property>
-		<property name="hibernate.c3p0.maxStatements">10000</property>
-
-		<!-- Cache configurations -->
-		<property name="hibernate.cache.use_second_level_cache">true</property>
-		<property name="hibernate.cache.use_query_cache">false</property>
-		<property name="hibernate.cache.region_prefix">hibernate.ehcacheregion</property>
-		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
-		<property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
-
-  		<mapping class="org.forpdi.core.company.Company"/>
-  		<mapping class="org.forpdi.core.company.CompanyDomain"/>
-  		<mapping class="org.forpdi.core.company.CompanyMessage"/>
-  		<mapping class="org.forpdi.core.company.CompanyUser"/>
-  		<mapping class="org.forpdi.core.notification.MessageHistory"/>
-  		<mapping class="org.forpdi.core.notification.Notification"/>
-  		<mapping class="org.forpdi.core.user.User"/>
-  		<mapping class="org.forpdi.core.user.UserRecoverRequest"/>
-  		<mapping class="org.forpdi.core.user.auth.UserAccessToken"/>
-  		<mapping class="org.forpdi.core.user.authz.Role"/>
-  		<mapping class="org.forpdi.core.user.authz.RolePermission"/>
-  		<mapping class="org.forpdi.core.user.authz.UserPermission"/>
-  		<mapping class="org.forpdi.planning.attribute.Attribute"/>
-  		<mapping class="org.forpdi.planning.attribute.AttributeInstance"/>
-  		<mapping class="org.forpdi.planning.attribute.AggregateIndicator"/>
-  		<mapping class="org.forpdi.planning.plan.Plan"/>
-  		<mapping class="org.forpdi.planning.plan.PlanDetailed"/>
-  		<mapping class="org.forpdi.planning.plan.PlanMacro"/>
-  		<mapping class="org.forpdi.planning.structure.FavoriteLevelInstance"/>
-  		<mapping class="org.forpdi.planning.structure.Structure"/>
-  		<mapping class="org.forpdi.planning.structure.StructureLevel"/>
-  		<mapping class="org.forpdi.planning.structure.StructureLevelInstance"/>
-  		<mapping class="org.forpdi.planning.structure.StructureLevelInstanceDetailed"/>
-  		<mapping class="org.forpdi.planning.fields.budget.Budget"/>
-  		<mapping class="org.forpdi.planning.fields.budget.BudgetElement"/>
-  		<mapping class="org.forpdi.planning.fields.actionplan.ActionPlan"/>
-  		<mapping class="org.forpdi.planning.fields.attachment.Attachment"/>
-  		<mapping class="org.forpdi.planning.fields.schedule.Schedule"/>
-  		<mapping class="org.forpdi.planning.fields.schedule.ScheduleStructure"/>
-  		<mapping class="org.forpdi.planning.fields.schedule.ScheduleInstance"/>
-  		<mapping class="org.forpdi.planning.fields.schedule.ScheduleValues"/>
-  		<mapping class="org.forpdi.planning.fields.table.TableFields"/>
-  		<mapping class="org.forpdi.planning.fields.table.TableStructure"/>
-  		<mapping class="org.forpdi.planning.fields.table.TableInstance"/>
-  		<mapping class="org.forpdi.planning.fields.table.TableValues"/>
-  		<mapping class="org.forpdi.planning.fields.OptionsField"/>
-  		<mapping class="org.forpdi.planning.document.Document"/>
-  		<mapping class="org.forpdi.planning.document.DocumentAttribute"/>
-  		<mapping class="org.forpdi.planning.document.DocumentSection"/>
-  		<mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
-
-	</session-factory>
+  <property name="hibernate.current_session_context_class">thread</property>
+  <property name="hibernate.order_updates">true</property>
+  <property name="hibernate.max_fetch_depth">6</property>
+  <property name="hibernate.transaction.auto_close_session">false</property>
+  <property name="hibernate.c3p0.acquireRetryAttempts">5</property>
+  <property name="hibernate.c3p0.acquireIncrement">4</property>
+  <property name="hibernate.c3p0.idleConnectionTestPeriod">60</property>
+  <property name="hibernate.c3p0.initialPoolSize">16</property>
+  <property name="hibernate.c3p0.minPoolSize">16</property>
+  <property name="hibernate.c3p0.maxPoolSize">64</property>
+  <property name="hibernate.c3p0.maxIdleTime">150</property>
+  <property name="hibernate.c3p0.checkoutTimeout">25000</property>
+  <property name="hibernate.c3p0.maxStatements">10000</property>
+  <!-- Cache configurations -->
+  <property name="hibernate.cache.use_second_level_cache">true</property>
+  <property name="hibernate.cache.use_query_cache">false</property>
+  <property name="hibernate.cache.region_prefix">hibernate.ehcacheregion</property>
+  <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+  <property name="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</property>
+  <mapping class="org.forpdi.core.company.Company"/>
+  <mapping class="org.forpdi.core.company.CompanyDomain"/>
+  <mapping class="org.forpdi.core.company.CompanyMessage"/>
+  <mapping class="org.forpdi.core.company.CompanyUser"/>
+  <mapping class="org.forpdi.core.notification.MessageHistory"/>
+  <mapping class="org.forpdi.core.notification.Notification"/>
+  <mapping class="org.forpdi.core.user.User"/>
+  <mapping class="org.forpdi.core.user.UserRecoverRequest"/>
+  <mapping class="org.forpdi.core.user.auth.UserAccessToken"/>
+  <mapping class="org.forpdi.core.user.authz.Role"/>
+  <mapping class="org.forpdi.core.user.authz.RolePermission"/>
+  <mapping class="org.forpdi.core.user.authz.UserPermission"/>
+  <mapping class="org.forpdi.planning.attribute.Attribute"/>
+  <mapping class="org.forpdi.planning.attribute.AttributeInstance"/>
+  <mapping class="org.forpdi.planning.attribute.AggregateIndicator"/>
+  <mapping class="org.forpdi.planning.plan.Plan"/>
+  <mapping class="org.forpdi.planning.plan.PlanDetailed"/>
+  <mapping class="org.forpdi.planning.plan.PlanMacro"/>
+  <mapping class="org.forpdi.planning.structure.FavoriteLevelInstance"/>
+  <mapping class="org.forpdi.planning.structure.Structure"/>
+  <mapping class="org.forpdi.planning.structure.StructureLevel"/>
+  <mapping class="org.forpdi.planning.structure.StructureLevelInstance"/>
+  <mapping class="org.forpdi.planning.structure.StructureLevelInstanceDetailed"/>
+  <mapping class="org.forpdi.planning.fields.budget.Budget"/>
+  <mapping class="org.forpdi.planning.fields.budget.BudgetElement"/>
+  <mapping class="org.forpdi.planning.fields.actionplan.ActionPlan"/>
+  <mapping class="org.forpdi.planning.fields.attachment.Attachment"/>
+  <mapping class="org.forpdi.planning.fields.schedule.Schedule"/>
+  <mapping class="org.forpdi.planning.fields.schedule.ScheduleStructure"/>
+  <mapping class="org.forpdi.planning.fields.schedule.ScheduleInstance"/>
+  <mapping class="org.forpdi.planning.fields.schedule.ScheduleValues"/>
+  <mapping class="org.forpdi.planning.fields.table.TableFields"/>
+  <mapping class="org.forpdi.planning.fields.table.TableStructure"/>
+  <mapping class="org.forpdi.planning.fields.table.TableInstance"/>
+  <mapping class="org.forpdi.planning.fields.table.TableValues"/>
+  <mapping class="org.forpdi.planning.fields.OptionsField"/>
+  <mapping class="org.forpdi.planning.document.Document"/>
+  <mapping class="org.forpdi.planning.document.DocumentAttribute"/>
+  <mapping class="org.forpdi.planning.document.DocumentSection"/>
+  <mapping class="org.forpdi.dashboard.manager.LevelInstanceHistory"/>
+  <mapping class="org.forpdi.system.Archive"/>
+  <mapping class="org.forrisco.core.policy.Policy"/>
+  <mapping class="org.forrisco.core.plan.PlanRisk"/>
+  <mapping class="org.forrisco.core.unit.Unit"/>
+  <mapping class="org.forrisco.core.item.Item"/>
+  <mapping class="org.forrisco.core.item.SubItem"/>
+  <mapping class="org.forrisco.core.item.FieldItem"/>
+  <mapping class="org.forrisco.core.item.FieldSubItem"/>
+  <mapping class="org.forrisco.core.item.PlanRiskItem"/>
+  <mapping class="org.forrisco.core.item.PlanRiskItemField"/>
+  <mapping class="org.forrisco.core.item.PlanRiskSubItem"/>
+  <mapping class="org.forrisco.core.item.PlanRiskSubItemField"/>
+  <mapping class="org.forrisco.core.process.Process"/>
+  <mapping class="org.forrisco.core.process.ProcessUnit"/>
+  <mapping class="org.forrisco.risk.Risk"/>
+  <mapping class="org.forrisco.risk.RiskLevel"/>
+  <mapping class="org.forrisco.risk.RiskHistory"/>
+  <mapping class="org.forrisco.risk.Contingency"/>
+  <mapping class="org.forrisco.risk.Incident"/>
+  <mapping class="org.forrisco.risk.Monitor"/>
+  <mapping class="org.forrisco.risk.MonitorHistory"/>
+  <mapping class="org.forrisco.risk.PreventiveAction"/>
+  <mapping class="org.forrisco.risk.objective.RiskActivity"/>
+  <mapping class="org.forrisco.risk.objective.RiskProcess"/>
+  <mapping class="org.forrisco.risk.objective.RiskStrategy"/>
+  <mapping class="org.forrisco.risk.RiskTipology"/>
+  <!-- <event type="post-insert">
+            <listener class="org.forrisco.risk.RiskInterceptor"/>
+             listener class="org.hibernate.event.def.DefaultLoadEventListener"/>
+        </event> -->
+ </session-factory>
 </hibernate-configuration>

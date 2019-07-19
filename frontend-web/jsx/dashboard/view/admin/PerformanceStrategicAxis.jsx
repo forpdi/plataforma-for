@@ -21,7 +21,7 @@ export default React.createClass({
         options:{
             title: '',
             hAxis: {minValue: 0, maxValue: 15},
-            vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+            vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15, format : '#,##0'},
             legend: 'none',
             explorer: {axis: 'horizontal'},
             bar: {groupWidth: '50%'},
@@ -128,7 +128,7 @@ export default React.createClass({
             options:{
                 thitle: '',
                 hAxis: {title: hTitle, minValue: 0, maxValue: 15,slantedText:bool, slantedTextAngle:30},
-                vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+                vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15, format : '#,##0'},
                 legend: 'none',
                 bar: {groupWidth: '50%'}
             }
@@ -204,7 +204,7 @@ export default React.createClass({
                 options:{
                     thitle: '',
                     hAxis: {title: hTitle, minValue: 0, maxValue: 15,slantedText:bool, slantedTextAngle:30},
-                    vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15},
+                    vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 15, format : '#,##0'},
                     legend: 'none',
                     bar: {groupWidth: '50%'}
                 }

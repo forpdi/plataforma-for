@@ -24,9 +24,7 @@ import org.forpdi.planning.permissions.ManageDocumentPermission;
 import org.forpdi.planning.permissions.ManagePlanMacroPermission;
 import org.forpdi.planning.permissions.ManagePlanPermission;
 import org.forpdi.planning.permissions.UpdateGoalPermission;
-import org.forpdi.planning.plan.PlanMacro;
-import org.forpdi.planning.structure.FavoriteLevelInstance;
-import org.forpdi.planning.structure.StructureLevelInstance;
+import org.forpdi.system.Archive;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -133,8 +131,96 @@ public class NotificationBS extends HibernateBusiness {
 			builder = new EmailBuilder(type, notification.getDescription(), url);
 		}
 		this.persist(notification);
-		this.emailTask
-				.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody()));
+		this.emailTask.add(
+				new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
+	}
+
+	/**
+	 * Enviar notificação do sistema para o email do usuário com arquivo anexado.
+	 * 
+	 * @param type
+	 *            Tipo da notificação.
+	 * @param text
+	 *            Texto da notificação.
+	 * @param aux
+	 *            Nome do Plano de metas onde ocorreu a notificação.
+	 * @param user
+	 *            Id do usuário para receber a notificação.
+	 * @throws EmailException
+	 */
+	public void sendAttachedNotificationEmail(NotificationType type, String text, String aux, User user, String url,
+			Archive attachment) throws EmailException {
+		if (url == null) {
+			url = this.domain.getBaseUrl();
+		}
+		url = url.replaceAll("//#", "/#");
+		EmailBuilder builder;
+		Notification notification = new Notification();
+		notification.setUser(user);
+		notification.setCompany(domain.getCompany());
+		notification.setCreation(new Date());
+		notification.setOnlyEmail(true);
+		notification.setPicture(type.getImageUrl());
+		notification.setVizualized(false);
+		notification.setType(type.getValue());
+		notification.setUrl(url);
+		this.setDescriptionForNotification(notification, type, text, aux);
+		if (type == NotificationType.WELCOME) {
+			builder = new EmailBuilder(NotificationType.WELCOME);
+		} else if (type == NotificationType.INVITE_USER) {
+			builder = new EmailBuilder(NotificationType.INVITE_USER, user.getName(), text);
+		} else if (type == NotificationType.RECOVER_PASSWORD) {
+			builder = new EmailBuilder(NotificationType.RECOVER_PASSWORD, user.getName(), text);
+		} else {
+			builder = new EmailBuilder(type, notification.getDescription(), url);
+		}
+		this.persist(notification);
+		this.emailTask.add(new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(),
+				builder.getBody(), attachment.getName()));
+	}
+
+	/**
+	 * Enviar notificação do sistema para o email do usuário.
+	 * 
+	 * @param type
+	 *            Tipo da notificação.
+	 * @param text
+	 *            Texto da notificação.
+	 * @param aux
+	 *            Nome do Plano de metas onde ocorreu a notificação.
+	 * @param user
+	 *            Id do usuário para receber a notificação.
+	 * @throws EmailException
+	 */
+	public void sendNotificationEmail(NotificationType type, String text, String aux, User user, String url,
+			CompanyDomain companyDomain) throws EmailException {
+		if (url == null) {
+			url = companyDomain.getBaseUrl();
+		}
+		url = url.replaceAll("//#", "/#");
+		EmailBuilder builder;
+		Notification notification = new Notification();
+		notification.setUser(user);
+		notification.setCompany(companyDomain.getCompany());
+		notification.setCreation(new Date());
+		notification.setOnlyEmail(false);
+		notification.setPicture(type.getImageUrl());
+		notification.setVizualized(false);
+		notification.setType(type.getValue());
+		notification.setUrl(url);
+		this.setDescriptionForNotification(notification, type, text, aux);
+		if (type == NotificationType.WELCOME) {
+			builder = new EmailBuilder(NotificationType.WELCOME);
+		} else if (type == NotificationType.INVITE_USER) {
+			builder = new EmailBuilder(NotificationType.INVITE_USER, user.getName(), text);
+		} else if (type == NotificationType.RECOVER_PASSWORD) {
+			builder = new EmailBuilder(NotificationType.RECOVER_PASSWORD, user.getName(), text);
+		} else {
+			builder = new EmailBuilder(type, notification.getDescription(), url);
+		}
+		this.persist(notification);
+		this.emailTask.add(
+				new NotificationEmail(user.getEmail(), user.getName(), builder.getSubject(), builder.getBody(), null));
 	}
 
 	/**
@@ -215,8 +301,8 @@ public class NotificationBS extends HibernateBusiness {
 			notification
 					.setDescription("<b>Seu tipo de conta foi alterado. Agora você é um </b>\"" + text + "\"<b>.</b>");
 		} else if (type == NotificationType.PERMISSION_CHANGED) {
-			notification.setDescription(
-					"<b>Suas permissões foram alteradas. Agora você pode: </b>\"" + text + "\"<b>. Faça o login novamente para aplicar as alterações.</b>");
+			notification.setDescription("<b>Suas permissões foram alteradas. Agora você pode: </b>\"" + text
+					+ "\"<b>. Faça o login novamente para aplicar as alterações.</b>");
 		} else if (type == NotificationType.PLAN_MACRO_CREATED) {
 			notification.setDescription("<b>O plano </b>\"" + text + "\"<b> foi criado.</b>");
 		} else if (type == NotificationType.PLAN_CREATED) {
@@ -227,10 +313,9 @@ public class NotificationBS extends HibernateBusiness {
 					"<b>Você foi atribuído como responsável em: </b>\"" + aux + "\" - \"" + text + "\"<b>.</b>");
 		} else if (type == NotificationType.GOAL_CLOSED) {
 			notification.setDescription("<b>A meta </b>\"" + text + "\"<b> foi concluída.</b>");
-		} 
-		else if (type == NotificationType.GOAL_OPENED) {
+		} else if (type == NotificationType.GOAL_OPENED) {
 			notification.setDescription("<b>A meta </b>\"" + text + "\"<b> foi reaberta.</b>");
-		}else if (type == NotificationType.PLAN_CLOSE_TO_MATURITY) {
+		} else if (type == NotificationType.PLAN_CLOSE_TO_MATURITY) {
 			notification.setDescription("<b>O plano de metas </b>\"" + text + "\"<b> do plano </b>\"" + aux
 					+ "\"<b> está próximo da data de término.</b>");
 		} else if (type == NotificationType.GOAL_CLOSE_TO_MATURITY) {
@@ -256,6 +341,14 @@ public class NotificationBS extends HibernateBusiness {
 		} else if (type == NotificationType.DATE_ATTRIBUTE_UPDATED) {
 			notification.setDescription(
 					"<b>A data de </b>\"" + aux + "\" - \"" + text + "\"<b> foi alterada. Verifique o novo prazo.</b>");
+		} else if (type == NotificationType.FORRISCO_PROCESS_CREATED) {
+			notification.setDescription("<b>" + text + "</b>");
+
+		} else if (type == NotificationType.FORRISCO_RISK_CLOSE_TO_MATURITY) {
+			notification.setDescription("<b>O monitoramento do risco</b> \"" + text
+					+ "\" <b>no ForRisco está próximo a vencer. Crie um novo monitoramento no sistema para atualizar o risco.</b>");
+		} else if (type == NotificationType.FORRISCO_USER_LINKED_TO_RISK) {
+			notification.setDescription("<b>" + text + "</b>");
 		} else {
 			notification.setDescription("");
 		}
@@ -330,8 +423,8 @@ public class NotificationBS extends HibernateBusiness {
 		 * @param type
 		 *            Tipo da notificação.
 		 * @param extras
-		 *            Campo com as informações para gerar a mensagem do e-mail
-		 *            da notificação.
+		 *            Campo com as informações para gerar a mensagem do e-mail da
+		 *            notificação.
 		 */
 		public EmailBuilder(NotificationType type, String... extras) {
 			this.subject = this.getSubjectByType(type);
@@ -344,6 +437,11 @@ public class NotificationBS extends HibernateBusiness {
 				break;
 			case RECOVER_PASSWORD:
 				this.body = this.mountRecoverEmail(extras[0], extras[1]);
+				break;
+			case FORRISCO_PROCESS_CREATED:
+			case FORRISCO_RISK_CLOSE_TO_MATURITY:
+			case FORRISCO_USER_LINKED_TO_RISK:
+				this.body = this.mountForriscoNotificationEmail(extras[0], extras[1]);
 				break;
 			default:
 				this.body = this.mountNotificationEmail(extras[0], extras[1]);
@@ -394,6 +492,10 @@ public class NotificationBS extends HibernateBusiness {
 				return "Um plano de ação está próximo do vencimento no ForPDI";
 			case DATE_ATTRIBUTE_UPDATED:
 				return "Ocorreu uma alteração de data";
+			case FORRISCO_PROCESS_CREATED:
+				return "ForRisco - A sua unidade foi relacionada a um processo";
+			case FORRISCO_RISK_CLOSE_TO_MATURITY:
+				return "ForRisco - O risco está com monitoramento vencido";
 			default:
 				return "";
 			}
@@ -425,6 +527,37 @@ public class NotificationBS extends HibernateBusiness {
 					+ "<center style='margin-top: 30px;font-family: sans-serif; font-size: 12px;'>"
 					+ "<p style='color: #1C486D;font-weight: 600;'>ForPDI - Todos os direitos reservados</p>"
 					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forpdi.org</a>"
+					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
+		}
+
+		/**
+		 * Mensagem base do email para os vários tipos de notificação.
+		 * 
+		 * Pela plataforma ForRisco
+		 * 
+		 * @param msg
+		 *            Mensagem da notificação.
+		 * @return Mensagem do e-mail para os vários tipos de notificação.
+		 */
+		private String mountForriscoNotificationEmail(String msg, String url) {
+			return ("<meta charset='utf-8'>" + "<div>" + "<div>"
+					+ "<div><p style='margin-bottom: 30px'>Se não for possível ver esse email, acesse o link: " + url
+					+ " </p>	" + "<center style='margin-top: 50px'>"
+					+ "<img src='http://cloud.progolden.com.br/file/11265' alt='ForRisco Logo' width='405' height='119'>"
+					+ "<h3 style='font-family:sans-serif;font-size:1rem;color:#293a59;margin-top: 25px;'>"
+					+ "Plataforma Aberta para Gestão e Acompanhamento de Riscos <br>Advindos dos Processos Desenvolvidos pelas Instituições"
+					+ "</h3>"
+					+ "<center style='margin: 25px;width: 600px;height: 350px;border-top: 4px solid #0383D9;border-right: 1px solid #CCC;"
+					+ "border-bottom: 1px solid #CCC;border-left: 1px solid #CCC;'>"
+					+ "<h1 style='color: #0A4068;font-family: sans-serif;'>Notifica&ccedil;&atilde;o</h1>"
+					+ "<p style='margin-bottom: 80px;margin-top: 90px;font-family: sans-serif;color: #9C9C9C;width: 90%;'>"
+					+ msg + "</p>"
+					+ "<p><a style='text-decoration: none;background-color: #7d7acc;color: #FFF;padding-top: 8px;padding-bottom: 8px;"
+					+ "padding-left: 20px;padding-right: 20px;border-radius: 7px;font-family: sans-serif;' href='" + url
+					+ "'>" + "Acesse o ForRisco" + "</a></p>" + "</center>"
+					+ "<center style='margin-top: 30px;font-family: sans-serif; font-size: 12px;'>"
+					+ "<p style='color: #1C486D;font-weight: 600;'>ForRisco - Todos os direitos reservados</p>"
+					+ "<a style='color: #9C9C9C;text-decoration: none;' href='www.forpdi.org'>www.forrisco.org/</a>"
 					+ "</center>" + "</center>" + "</div>" + "</div>" + "</div>");
 		}
 
@@ -575,7 +708,8 @@ public class NotificationBS extends HibernateBusiness {
 		this.emailTask.add(new NotificationEmail(messageHistory.getUserReceiver().getEmail(),
 				messageHistory.getUserReceiver().getName(), messageHistory.getSubject(),
 				"<" + "p style=\"font-size:12pt;\">" + "Você recebeu uma mensagem de "
-						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>"));
+						+ this.userSession.getUser().getName() + "<br/><br/>" + messageHistory.getMessage() + "</p>",
+				null));
 		Notification notification = new Notification();
 		notification.setUser(messageHistory.getUserReceiver());
 		notification.setCompany(this.domain.getCompany());

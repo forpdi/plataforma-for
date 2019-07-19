@@ -1,7 +1,5 @@
 package org.forpdi.planning.document.bootstrap;
 
-import java.util.logging.Logger;
-
 import org.forpdi.planning.attribute.types.DateField;
 import org.forpdi.planning.attribute.types.NumberField;
 import org.forpdi.planning.attribute.types.ScheduleField;
@@ -83,11 +81,8 @@ public class ForpladHelper {
 			this.document.setDescription("O PDI, elaborado para um período de cinco anos, é o documento"
 					+ " que identifica a IES no que diz respeito à sua filosofia de trabalho, à missão a que se propõe, "
 					+ "às diretrizes pedagógicas que orientam suas ações, à sua estrutura organizacional "
-					+ "e às atividades acadêmicas que desenvolve e/ou que pretende desenvolver "
-					+ "</br>"
-					+ "</br>"
-					+ "</br>"
-					+ "Atenção: Evite colar textos formatados nas seções do Documento do PDI.");
+					+ "e às atividades acadêmicas que desenvolve e/ou que pretende desenvolver " + "</br>" + "</br>"
+					+ "</br>" + "Atenção: Evite colar textos formatados nas seções do Documento do PDI.");
 			this.document.setTitle("Documento - " + plan.getName());
 		}
 
@@ -661,7 +656,7 @@ public class ForpladHelper {
 			optionsField = new OptionsField();
 			optionsField.setAttributeId(attr.getId());
 			optionsField.setColumnId(tableStructure.getId());
-			optionsField.setDocument(true);			
+			optionsField.setDocument(true);
 			optionsField.setLabel("Anual");
 			session.persist(optionsField);
 			optionsField = new OptionsField();
@@ -814,7 +809,7 @@ public class ForpladHelper {
 			optionsField.setLabel("Semipresencial");
 			session.persist(optionsField);
 			// Novo campo da tabela
-			tableStructure = new TableStructure();			
+			tableStructure = new TableStructure();
 			tableStructure.setLabel("Turno de funcionamento");
 			tableStructure.setType(SelectField.class.getCanonicalName());
 			tableStructure.setTableFields(tableFields);
@@ -848,8 +843,7 @@ public class ForpladHelper {
 			 * tableStructure = new TableStructure(); tableStructure.setLabel(
 			 * "Turno de funcionamento");
 			 * tableStructure.setType(TextField.generateId(TextField.class));
-			 * tableStructure.setTableFields(tableFields);
-			 * session.persist(tableStructure);
+			 * tableStructure.setTableFields(tableFields); session.persist(tableStructure);
 			 */
 			tableStructure = new TableStructure();
 			tableStructure.setLabel("Nº de vagas autorizadas");

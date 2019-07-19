@@ -1,12 +1,14 @@
 import React from "react";
 import {Chart} from 'react-google-charts';
 import Observables from "forpdi/jsx/core/util/Observables.jsx"
+import LoadingGauge from "forpdi/jsx/core/widget/LoadingGauge.jsx";
 
 export default React.createClass({
 
 	getInitialState() {
         return {
-            page: 1
+			page: 1,
+			cont: 0
         }
     },
 
@@ -18,15 +20,11 @@ export default React.createClass({
     },
 
     componentWillReceiveProps(newProps){
-        /*newProps.options.animation = {
-            duration: 600,
-            easing: 'out',
-            startup: true
-        }*/
         newProps.options.chartArea = {
             width: '65%'
-        }
-        newProps.options.vAxis.format = '#,##0';
+        };
+
+		this.state.cont=0
     },
 
     remount(){
@@ -35,7 +33,8 @@ export default React.createClass({
 
     componentDidMount() {
     	Observables.ResizeMenu.subscribe(this.remount);
-    },
+	},
+
 
     changePage(page){
         var lastPage = Math.ceil(this.props.total/this.props.pageSize);
@@ -49,25 +48,36 @@ export default React.createClass({
     },
 
     render(){
-    	return(
-            <div>
-                {this.props.total > this.props.pageSize ?
-                <div className="dashboard-graph-pagination">
-                    <i onClick={this.changePage.bind(this, Number(this.state.page - 1))}
-                    className="dashboard-previews-icon mdi mdi-arrow-left-bold" />
-                    <i onClick={this.changePage.bind(this, Number(this.state.page + 1))}
-                    className="dashboard-next-icon mdi mdi-arrow-right-bold" />
-                </div> : undefined}
-        		<Chart
-                 chartType= {this.props.chartType}
-                 data={this.props.data}
-                 options={this.props.options}
-                 graph_id={this.props.graph_id}
-                 width={this.props.width}
-                 height={this.props.height}
-                 legend_toggle={this.props.legend_toggle}
-                 chartEvents={this.props.chartEvents || []}/>
-            </div>
-    	);
+
+		//forçar renderização para expandir gráfico dentro do modal
+		if(this.state.cont<5){
+			this.state.cont+=1
+			setTimeout(()=>{this.forceUpdate()}, 50)
+		}
+
+		return(
+			<div>
+				{this.total > this.props.pageSize ?
+				<div className="dashboard-graph-pagination">
+					<i onClick={this.changePage.bind(this, Number(this.state.page - 1))}
+					className="dashboard-previews-icon mdi mdi-arrow-left-bold" />
+					<i onClick={this.changePage.bind(this, Number(this.state.page + 1))}
+					className="dashboard-next-icon mdi mdi-arrow-right-bold" />
+				</div> : undefined}
+				<div>
+					<Chart
+					 chartType= {this.props.chartType}
+					 data={this.props.data}
+					 options={this.props.options}
+					 graph_id={this.props.graph_id}
+					 width={this.props.width}
+					 height={this.props.height}
+					 legend_toggle={this.props.legend_toggle}
+					 chartEvents={this.props.chartEvents || []}
+					 loader={<div><LoadingGauge/></div>}
+					/>
+				</div>
+			</div>
+		);
     }
 });

@@ -13,6 +13,7 @@ import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import moment from 'moment';
 
 import AppLogo from "forpdi/img/logoLogin.png";
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 
 import Validation from 'forpdi/jsx/core/util/Validation.jsx';
 
@@ -22,7 +23,7 @@ var Validate = Validation.validate;
 
 var VerticalForm = Form.VerticalForm;
 var ReactToastr = require("react-toastr");
-var {ToastContainer} = ReactToastr; 
+var {ToastContainer} = ReactToastr;
 var ToastMessageFactory = React.createFactory(ReactToastr.ToastMessage);
 
 export default React.createClass({
@@ -51,7 +52,7 @@ export default React.createClass({
 				required: true,
 				onChange:this.onBirthDateChange,
 				label: Messages.getEditable("label.birthdate","fpdi-nav-label")
-				
+
 			},{
 				name: "cellphone",
 				type: "tel",
@@ -121,7 +122,7 @@ export default React.createClass({
 	},
 
 	addAlertError(msg) {
-		this.refs.container.clear(); 
+		this.refs.container.clear();
 		this.refs.container.error(
 			msg,null, {
 				timeOut: 5000,
@@ -182,7 +183,7 @@ export default React.createClass({
 		var birthdate = moment(data.birthdate,"DD/MM/YYYY");
 		var actualDate = moment();
 		var errorField = Validate.validationProfileUser(data, this.refs.registerForm);
-		
+
 		if(errorField){
 			this.addAlertError(Messages.get("label.error.form"));
 			return;
@@ -194,7 +195,7 @@ export default React.createClass({
 		});
 		return true;
 	},
-	
+
 	render() {
 		if (this.state.loading) {
 			return <LoadingGauge />;
@@ -206,8 +207,9 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.get("label.forRiscoLogo")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titlePlatformComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>
@@ -215,7 +217,7 @@ export default React.createClass({
 				<div className="row">
 					{this.state.valid ?
 							<div className="col-md-4 col-md-offset-4">
-								<div className="fpdi-card-login">		
+								<div className="fpdi-card-login">
 									<div className="panel panel-default">
 									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.completeRegistration","fpdi-nav-label")}</p></div>
 									  	<div className="panel-body">

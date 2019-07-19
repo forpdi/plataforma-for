@@ -8,6 +8,7 @@ import Toastr from 'toastr';
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 
 import AppLogo from "forpdi/img/logoLogin.png";
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 
 var VerticalForm = Form.VerticalForm;
 
@@ -46,8 +47,8 @@ export default React.createClass({
 		var me = this;
 		UserSession.on("resetpassword", model => {
 			Toastr.remove();
-			Toastr.success(Messages.get("label.sucess.passwordReset"));	
-			
+			Toastr.success(Messages.get("label.sucess.passwordReset"));
+
 			location.assign("#/");
 		}, me);
 		UserSession.on("recovertoken", valid => {
@@ -75,8 +76,9 @@ export default React.createClass({
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.get("label.forRiscoLogo")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titlePlatformComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>
@@ -86,7 +88,7 @@ export default React.createClass({
 
 
 							<div className="col-md-4 col-md-offset-4">
-								<div className="fpdi-card-login">		
+								<div className="fpdi-card-login">
 									<div className="panel panel-default">
 									  <div className="panel-heading"><p className="fpdi-login-title">{Messages.getEditable("label.resetPassword","fpdi-nav-label")}</p></div>
 									  	<div className="panel-body">

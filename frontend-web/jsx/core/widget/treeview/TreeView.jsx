@@ -22,23 +22,29 @@ export default React.createClass({
 		var me = this;
 	},
 	componentWillUnmount() {
-		
+
 	},
 	componentWillReceiveProps() {
-		
+
 	},
 
 	onExpand(nodeProps) {
 		if (typeof nodeProps.node.onExpand == 'function') {
 			nodeProps.node.onExpand(nodeProps.node, nodeProps.nodeLevel);
+		} else {
+			nodeProps.expanded = true;
+			this.forceUpdate();
 		}
 	},
 	onShrink(nodeProps) {
 		if (typeof nodeProps.node.onShrink == 'function') {
 			nodeProps.node.onShrink(nodeProps.node, nodeProps.nodeLevel);
+		} else {
+			nodeProps.expanded = false;
+			this.forceUpdate();
 		}
 	},
-	
+
 	renderNode(node, index, loop) {
 		var me = this;
 		loop = typeof loop == 'number' ? loop:0;

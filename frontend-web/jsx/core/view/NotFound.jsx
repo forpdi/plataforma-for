@@ -1,16 +1,18 @@
 import React from "react";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AppLogo from "forpdi/img/logoLogin.png";
+import AppRiscoLogo from "forpdi/img/forrisco-logo.png";
 
 export default React.createClass({
 	render() {
 		return (<div>
-			<div className="fpdi-error-404">				
+			<div className="fpdi-error-404">
 				<div className="row">
 					<div className="col-xs-12 text-center">
 						<div className="fpdi-login-header">
-							<img className="fpdi-login-brand" src={AppLogo} alt={Messages.get("label.forPdiLogo")} />
-							<h3 className="fpdi-login-subtitle">{Messages.getEditable("label.login.titleComplement","fpdi-nav-label")}<br/>{Messages.getEditable("label.login.title","fpdi-nav-label")}</h3>
+							<img className="fpdi-login-brand" src={AppRiscoLogo} alt={Messages.get("label.forRiscoLogo")} />
+							<center ><h3 className="frisco-login-subtitle">{Messages.get("label.login.titlePlatformComplement")}<br/>
+							{/*Messages.getEditable("label.login.title","fpdi-nav-label")*/}</h3></center>
 						</div>
 					</div>
 				</div>

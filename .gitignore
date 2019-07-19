@@ -2,3 +2,9 @@
 *.bak
 *.backup
 *.sublime-workspace
+.idea/
+/.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+.DS*
+package-lock.json

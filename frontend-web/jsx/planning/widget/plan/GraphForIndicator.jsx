@@ -55,14 +55,14 @@ export default React.createClass({
 				title: '',
 				hAxis: {minValue: 0, maxValue: 100,slantedText:true,
 						slantedTextAngle:45},
-				vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100},
+				vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100, format : '#,##0'},
 				legend: 'none',
 				bar: {groupWidth: '50%'}
 			},
 			options:{
 				title: '',
 				colors: ['#CCCCCC','#333333'],
-				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+				vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15, format : '#,##0'},
 				hAxis: {slantedText:true,slantedTextAngle:45},
 				legend: {position: 'none'},
 				bar: {groupWidth: '30%'},
@@ -177,14 +177,14 @@ export default React.createClass({
             optionsIndicators:{
                 title: '',
                 hAxis: {title:hTitle1, minValue: 0, maxValue: 100,slantedText:bool1, slantedTextAngle:30},
-                vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100},
+                vAxis: {title: 'Valor (%)', minValue: 0, maxValue: 100, format : '#,##0'},
                 legend: 'none',
                 bar: {groupWidth: '50%'}
             },
             options:{
                 title: '',
                 colors: ['#CCCCCC','#333333'],
-                vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15},
+                vAxis: {title: 'Esperado x Alcançado', minValue: 0, maxValue:15, format : '#,##0'},
                 hAxis: {title:hTitle2, slantedText:bool2,slantedTextAngle:30},
                 legend: {position: 'none'},
                 bar: {groupWidth: '30%'},

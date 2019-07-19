@@ -1,0 +1,1424 @@
+<html><head>
+<title>Schema Report for database: forpdi_db</title>
+<style>
+        td,th {
+        text-align:left;
+        vertical-align:middle;
+        }
+        table {
+        border-collapse: collapse;
+        border: 1px solid;
+        }
+        caption, th, td {
+        padding: .2em .8em;
+        border: 1px solid #000000;
+        }
+        caption {
+        background: #D3D3D3;
+        font-weight: bold;
+        font-size: 1.1em;
+        }
+        th {
+        font-weight: bold;
+        background: #000000;
+        color: white;
+        }
+        td {
+        background: #FFFFFF;
+        }
+        </style>
+      </head>
+     <body>
+<h1>Schema Report for database: forpdi_db</h1>
+<a id="home">Table List </a><br /><ul>
+<li><a href="#fpdi_action_plan">fpdi_action_plan </a></li>
+<li><a href="#fpdi_aggregate_indicator">fpdi_aggregate_indicator </a></li>
+<li><a href="#fpdi_archive">fpdi_archive </a></li>
+<li><a href="#fpdi_attachment">fpdi_attachment </a></li>
+<li><a href="#fpdi_attribute">fpdi_attribute </a></li>
+<li><a href="#fpdi_attribute_instance">fpdi_attribute_instance </a></li>
+<li><a href="#fpdi_budget">fpdi_budget </a></li>
+<li><a href="#fpdi_budget_element">fpdi_budget_element </a></li>
+<li><a href="#fpdi_company">fpdi_company </a></li>
+<li><a href="#fpdi_company_domain">fpdi_company_domain </a></li>
+<li><a href="#fpdi_company_message">fpdi_company_message </a></li>
+<li><a href="#fpdi_company_user">fpdi_company_user </a></li>
+<li><a href="#fpdi_document">fpdi_document </a></li>
+<li><a href="#fpdi_document_attribute">fpdi_document_attribute </a></li>
+<li><a href="#fpdi_document_section">fpdi_document_section </a></li>
+<li><a href="#fpdi_favorite_level_instance">fpdi_favorite_level_instance </a></li>
+<li><a href="#fpdi_level_instance_history">fpdi_level_instance_history </a></li>
+<li><a href="#fpdi_message_history">fpdi_message_history </a></li>
+<li><a href="#fpdi_notification">fpdi_notification </a></li>
+<li><a href="#fpdi_options_field">fpdi_options_field </a></li>
+<li><a href="#fpdi_plan_detailed">fpdi_plan_detailed </a></li>
+<li><a href="#fpdi_plan_macro">fpdi_plan_macro </a></li>
+<li><a href="#fpdi_plans">fpdi_plans </a></li>
+<li><a href="#fpdi_role">fpdi_role </a></li>
+<li><a href="#fpdi_role_permission">fpdi_role_permission </a></li>
+<li><a href="#fpdi_schedule">fpdi_schedule </a></li>
+<li><a href="#fpdi_schedule_instance">fpdi_schedule_instance </a></li>
+<li><a href="#fpdi_schedule_structure">fpdi_schedule_structure </a></li>
+<li><a href="#fpdi_schedule_values">fpdi_schedule_values </a></li>
+<li><a href="#fpdi_structure">fpdi_structure </a></li>
+<li><a href="#fpdi_structure_level">fpdi_structure_level </a></li>
+<li><a href="#fpdi_structure_level_instance">fpdi_structure_level_instance </a></li>
+<li><a href="#fpdi_structure_level_instance_detailed">fpdi_structure_level_instance_detailed </a></li>
+<li><a href="#fpdi_table_field">fpdi_table_field </a></li>
+<li><a href="#fpdi_table_instance">fpdi_table_instance </a></li>
+<li><a href="#fpdi_table_structure">fpdi_table_structure </a></li>
+<li><a href="#fpdi_table_values">fpdi_table_values </a></li>
+<li><a href="#fpdi_user">fpdi_user </a></li>
+<li><a href="#fpdi_user_access_token">fpdi_user_access_token </a></li>
+<li><a href="#fpdi_user_permission">fpdi_user_permission </a></li>
+<li><a href="#fpdi_user_recover_req">fpdi_user_recover_req </a></li>
+<li><a href="#frisco_contingency">frisco_contingency </a></li>
+<li><a href="#frisco_incident">frisco_incident </a></li>
+<li><a href="#frisco_item">frisco_item </a></li>
+<li><a href="#frisco_item_field">frisco_item_field </a></li>
+<li><a href="#frisco_monitor">frisco_monitor </a></li>
+<li><a href="#frisco_monitor_history">frisco_monitor_history </a></li>
+<li><a href="#frisco_plan_risk">frisco_plan_risk </a></li>
+<li><a href="#frisco_plan_risk_item">frisco_plan_risk_item </a></li>
+<li><a href="#frisco_plan_risk_item_field">frisco_plan_risk_item_field </a></li>
+<li><a href="#frisco_plan_risk_sub_item">frisco_plan_risk_sub_item </a></li>
+<li><a href="#frisco_plan_risk_sub_item_field">frisco_plan_risk_sub_item_field </a></li>
+<li><a href="#frisco_policy">frisco_policy </a></li>
+<li><a href="#frisco_preventive_action">frisco_preventive_action </a></li>
+<li><a href="#frisco_process">frisco_process </a></li>
+<li><a href="#frisco_process_unit">frisco_process_unit </a></li>
+<li><a href="#frisco_risk">frisco_risk </a></li>
+<li><a href="#frisco_risk_activity">frisco_risk_activity </a></li>
+<li><a href="#frisco_risk_history">frisco_risk_history </a></li>
+<li><a href="#frisco_risk_level">frisco_risk_level </a></li>
+<li><a href="#frisco_risk_process">frisco_risk_process </a></li>
+<li><a href="#frisco_risk_strategy">frisco_risk_strategy </a></li>
+<li><a href="#frisco_subitem">frisco_subitem </a></li>
+<li><a href="#frisco_subitem_field">frisco_subitem_field </a></li>
+<li><a href="#frisco_unit">frisco_unit </a></li>
+</ul>
+<a id="fpdi_action_plan"></a><table style="width:100%"><caption>Table: fpdi_action_plan </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>checked</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>end</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>responsible</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_aggregate_indicator"></a><table style="width:100%"><caption>Table: fpdi_aggregate_indicator </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>percentage</td><td>DOUBLE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>aggregate_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>indicator_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_archive"></a><table style="width:100%"><caption>Table: fpdi_archive </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_attachment"></a><table style="width:100%"><caption>Table: fpdi_attachment </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(250)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(250)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>author_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_attribute"></a><table style="width:100%"><caption>Table: fpdi_attribute </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>beginField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>bscField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>endField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>expectedField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>finishDate</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>formatField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>justificationField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>label</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>maximumField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>minimumField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>periodicityField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>polarityField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>reachedField</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>required</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>visibleInTables</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>level_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_attribute_instance"></a><table style="width:100%"><caption>Table: fpdi_attribute_instance </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>value</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsNumber</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>attribute_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_budget"></a><table style="width:100%"><caption>Table: fpdi_budget </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>committed</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>realized</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>subAction</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>budgetElement_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_budget_element"></a><table style="width:100%"><caption>Table: fpdi_budget_element </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>balanceAvailable</td><td>DOUBLE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>budgetLoa</td><td>DOUBLE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>linkedObjects</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>subAction</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_company"></a><table style="width:100%"><caption>Table: fpdi_company </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(11000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>localization</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>logo</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>showBudgetElement</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>showDashboard</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>showMaturity</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_company_domain"></a><table style="width:100%"><caption>Table: fpdi_company_domain </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>baseUrl</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>host</td><td>VARCHAR(128)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>theme</td><td>VARCHAR(128)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_company_message"></a><table style="width:100%"><caption>Table: fpdi_company_message </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>messageKey</td><td>VARCHAR(128)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>lastUpdated</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>messageValue</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_company_user"></a><table style="width:100%"><caption>Table: fpdi_company_user </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>accessLevel</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>blocked</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>notificationSetting</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_document"></a><table style="width:100%"><caption>Table: fpdi_document </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>title</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>plan_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_document_attribute"></a><table style="width:100%"><caption>Table: fpdi_document_attribute </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>required</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>sequence</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>value</td><td>VARCHAR(12000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsNumber</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>section_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_document_section"></a><table style="width:100%"><caption>Table: fpdi_document_section </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>leaf</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>preTextSection</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>sequence</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>document_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>parent_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_favorite_level_instance"></a><table style="width:100%"><caption>Table: fpdi_favorite_level_instance </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>companyUser_user_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>companyUser_company_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_level_instance_history"></a><table style="width:100%"><caption>Table: fpdi_level_instance_history </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>value</td><td>DOUBLE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_message_history"></a><table style="width:100%"><caption>Table: fpdi_message_history </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>message</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>subject</td><td>VARCHAR(70)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>userReceiver_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>userSender_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_notification"></a><table style="width:100%"><caption>Table: fpdi_notification </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>onlyEmail</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>picture</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>type</td><td>INT(11)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>url</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>vizualized</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_options_field"></a><table style="width:100%"><caption>Table: fpdi_options_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>attributeId</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>columnId</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>isDocument</td><td>BIT(1)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>label</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_plan_detailed"></a><table style="width:100%"><caption>Table: fpdi_plan_detailed </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>maximumAverage</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>minimumAverage</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>month</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>performance</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>year</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>plan_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_plan_macro"></a><table style="width:100%"><caption>Table: fpdi_plan_macro </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>archived</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>documented</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>end</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_plans"></a><table style="width:100%"><caption>Table: fpdi_plans </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>archived</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>end</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>maximumAverage</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>minimumAverage</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>performance</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>parent_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>structure_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_role"></a><table style="width:100%"><caption>Table: fpdi_role </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>label</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_role_permission"></a><table style="width:100%"><caption>Table: fpdi_role_permission </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>permission</td><td>VARCHAR(255)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>role_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_schedule"></a><table style="width:100%"><caption>Table: fpdi_schedule </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>attributeId</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>isDocument</td><td>BIT(1)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>periodicityEnable</td><td>BIT(1)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_schedule_instance"></a><table style="width:100%"><caption>Table: fpdi_schedule_instance </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>end</td><td>DATE</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>number</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>periodicity</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>schedule_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_schedule_structure"></a><table style="width:100%"><caption>Table: fpdi_schedule_structure </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>label</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>schedule_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_schedule_values"></a><table style="width:100%"><caption>Table: fpdi_schedule_values </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>value</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsNumber</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>scheduleInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>scheduleStructure_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_structure"></a><table style="width:100%"><caption>Table: fpdi_structure </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_structure_level"></a><table style="width:100%"><caption>Table: fpdi_structure_level </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>goal</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>indicator</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>leaf</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>objective</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>sequence</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>structure_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_structure_level_instance"></a><table style="width:100%"><caption>Table: fpdi_structure_level_instance </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>aggregate</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>calculation</td><td>INT(11)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>closed</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>closedDate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelMaximum</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>levelMinimum</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>levelValue</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>modification</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>nextSave</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>parent</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>level_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>plan_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_structure_level_instance_detailed"></a><table style="width:100%"><caption>Table: fpdi_structure_level_instance_detailed </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelMaximum</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>levelMinimum</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>levelValue</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>month</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>year</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>levelInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_table_field"></a><table style="width:100%"><caption>Table: fpdi_table_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>attributeId</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>isDocument</td><td>BIT(1)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_table_instance"></a><table style="width:100%"><caption>Table: fpdi_table_instance </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>tableFields_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_table_structure"></a><table style="width:100%"><caption>Table: fpdi_table_structure </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>isInTotal</td><td>BIT(1)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>label</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>tableFields_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_table_values"></a><table style="width:100%"><caption>Table: fpdi_table_values </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>value</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsDate</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>valueAsNumber</td><td>DOUBLE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>tableInstance_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>tableStructure_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_user"></a><table style="width:100%"><caption>Table: fpdi_user </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>accessLevel</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>active</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>birthdate</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>cellphone</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>cpf</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>department</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>email</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>inviteToken</td><td>VARCHAR(128)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>password</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>phone</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>picture</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_user_access_token"></a><table style="width:100%"><caption>Table: fpdi_user_access_token </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>token</td><td>VARCHAR(128)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creationIp</td><td>VARCHAR(64)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>expiration</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>ttl</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_user_permission"></a><table style="width:100%"><caption>Table: fpdi_user_permission </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>permission</td><td>VARCHAR(255)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>revoked</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="fpdi_user_recover_req"></a><table style="width:100%"><caption>Table: fpdi_user_recover_req </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>token</td><td>VARCHAR(128)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>creation</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>creationIp</td><td>VARCHAR(64)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>expiration</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>recover</td><td>DATETIME</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>recoverIp</td><td>VARCHAR(64)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>used</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_contingency"></a><table style="width:100%"><caption>Table: frisco_contingency </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>action</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_incident"></a><table style="width:100%"><caption>Table: frisco_incident </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>action</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_item"></a><table style="width:100%"><caption>Table: frisco_item </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>policy_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_item_field"></a><table style="width:100%"><caption>Table: frisco_item_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>MEDIUMTEXT</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>isText</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>item_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_monitor"></a><table style="width:100%"><caption>Table: frisco_monitor </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>impact</td><td>VARCHAR(40)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>probability</td><td>VARCHAR(40)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>report</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_monitor_history"></a><table style="width:100%"><caption>Table: frisco_monitor_history </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>estado</td><td>VARCHAR(200)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>month</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>quantity</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>year</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>unit_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_plan_risk"></a><table style="width:100%"><caption>Table: frisco_plan_risk </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>archived</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(10000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>policy_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>validity_begin</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>validity_end</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_plan_risk_item"></a><table style="width:100%"><caption>Table: frisco_plan_risk_item </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>planRisk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_plan_risk_item_field"></a><table style="width:100%"><caption>Table: frisco_plan_risk_item_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>MEDIUMTEXT</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>isText</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>planRiskItem_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_plan_risk_sub_item"></a><table style="width:100%"><caption>Table: frisco_plan_risk_sub_item </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>planRiskItem_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_plan_risk_sub_item_field"></a><table style="width:100%"><caption>Table: frisco_plan_risk_sub_item_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>MEDIUMTEXT</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>planRiskSubItem_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>isText</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_policy"></a><table style="width:100%"><caption>Table: frisco_policy </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>archived</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>impact</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>matrix</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>ncolumn</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>nline</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>probability</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>PIDescriptions</td><td>TEXT</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>validity_begin</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>validity_end</td><td>DATE</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_preventive_action"></a><table style="width:100%"><caption>Table: frisco_preventive_action </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>accomplished</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>action</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_process"></a><table style="width:100%"><caption>Table: frisco_process </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>objective</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>company_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+<tr><td>file_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+<tr><td>unitCreator_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_process_unit"></a><table style="width:100%"><caption>Table: frisco_process_unit </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>process_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+<tr><td>unit_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk"></a><table style="width:100%"><caption>Table: frisco_risk </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>begin</td><td>DATETIME</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>code</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>impact</td><td>VARCHAR(400)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>linkFPDI</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>periodicity</td><td>VARCHAR(400)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>probability</td><td>VARCHAR(400)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>reason</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>result</td><td>VARCHAR(4000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_act_process</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_obj_process</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_pdi</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>tipology</td><td>VARCHAR(400)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>type</td><td>VARCHAR(4010)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>riskLevel_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>unit_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk_activity"></a><table style="width:100%"><caption>Table: frisco_risk_activity </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>linkFPDI</td><td>VARCHAR(1000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(400)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>process_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk_history"></a><table style="width:100%"><caption>Table: frisco_risk_history </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>month</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>quantity</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>year</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>riskLevel_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>unit_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk_level"></a><table style="width:100%"><caption>Table: frisco_risk_level </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>color</td><td>INT(11)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>level</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>policy_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk_process"></a><table style="width:100%"><caption>Table: frisco_risk_process </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>linkFPDI</td><td>VARCHAR(1000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>process_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_risk_strategy"></a><table style="width:100%"><caption>Table: frisco_risk_strategy </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>linkFPDI</td><td>VARCHAR(1000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>risk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>structure_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(1000)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_subitem"></a><table style="width:100%"><caption>Table: frisco_subitem </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>item_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_subitem_field"></a><table style="width:100%"><caption>Table: frisco_subitem_field </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>MEDIUMTEXT</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>fileLink</td><td>VARCHAR(255)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>isText</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>subitem_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+<a id="frisco_unit"></a><table style="width:100%"><caption>Table: frisco_unit </caption>
+<tr><td>Table Comments</td><td colspan="6"></td></tr>
+<tr><td colspan="7">Columns</td></tr>
+        <tr>
+        <th>Name</th>
+        <th>Data Type</th>
+        <th>Nullable</th>
+        <th>PK</th>
+        <th>FK</th>
+        <th>Default</th>
+        <th>Comment</th>
+        </tr>
+<tr><td>id</td><td>BIGINT(20)</td><td>Yes</td><td>Yes</td><td>No</td><td></td><td></td></tr>
+<tr><td>deleted</td><td>BIT(1)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>abbreviation</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>description</td><td>VARCHAR(4000)</td><td>No</td><td>No</td><td>No</td><td>NULL</td><td></td></tr>
+<tr><td>name</td><td>VARCHAR(255)</td><td>Yes</td><td>No</td><td>No</td><td></td><td></td></tr>
+<tr><td>parent_id</td><td>BIGINT(20)</td><td>No</td><td>No</td><td>Yes</td><td>NULL</td><td></td></tr>
+<tr><td>planRisk_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+<tr><td>user_id</td><td>BIGINT(20)</td><td>Yes</td><td>No</td><td>Yes</td><td></td><td></td></tr>
+</table><a href="#home">Table List </a></br>
+</body></html>

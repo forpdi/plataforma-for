@@ -20,7 +20,7 @@ public class SelectField extends AttributeType{
 
 	@Override
 	public String getDisplayName() {
-		return "Campo de seleção";
+		return "Campo de multipla seleção";
 	}
 
 	public static class Wrapper extends TextField.Wrapper {

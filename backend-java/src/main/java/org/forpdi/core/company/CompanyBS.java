@@ -32,9 +32,13 @@ public class CompanyBS extends HibernateBusiness {
 	 * @return Domínio ativo no momento
 	 */
 	public CompanyDomain currentDomain() {
+		try {
 		Criteria criteria = this.dao.newCriteria(CompanyDomain.class)
 				.add(Restrictions.eq("host", this.request.getHeader("Host")));
-		return (CompanyDomain) criteria.uniqueResult();
+			return (CompanyDomain) criteria.uniqueResult();
+		}catch(NullPointerException ex) {
+			return null;
+		}
 	}
 
 	/**

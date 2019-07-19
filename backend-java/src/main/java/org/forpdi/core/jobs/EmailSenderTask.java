@@ -24,7 +24,7 @@ import br.com.caelum.vraptor.tasks.scheduler.Scheduled;
 @Scheduled(fixedRate = 60000)
 public class EmailSenderTask implements Task {
 
-	private static Logger LOG = Logger.getLogger(EmailSenderTask.class);
+	public static Logger LOG = Logger.getLogger(EmailSenderTask.class);
 	private Queue<NotificationEmail> queue;
 
 	public EmailSenderTask() {
@@ -60,7 +60,7 @@ public class EmailSenderTask implements Task {
 		while (!this.queue.isEmpty()) {
 			try {
 				NotificationEmail email = this.queue.poll();
-				EmailUtilsPlugin.sendHtmlEmail(email.getEmail(), email.getName(), email.getSubject(), email.getBody());
+				EmailUtilsPlugin.sendHtmlEmail(email.getEmail(), email.getName(), email.getSubject(), email.getBody(), email.getAttach());
 			} catch (EmailException e) {
 				LOG.error("Falha ao enviar e-mail.", e);
 			}

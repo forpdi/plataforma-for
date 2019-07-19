@@ -5,17 +5,19 @@ public class NotificationEmail {
 	private String name;
 	private String subject;
 	private String body;
+	private String attach;
 	
 	public NotificationEmail() {
 		super();
 	}
 	
-	public NotificationEmail(String email, String name, String subject, String body) {
+	public NotificationEmail(String email, String name, String subject, String body, String attach) {
 		super();
 		this.email = email;
 		this.name = name;
 		this.subject = subject;
 		this.body = body;
+		this.attach= attach;
 	}
 	
 	public String getEmail() {
@@ -42,4 +44,12 @@ public class NotificationEmail {
 	public void setBody(String body) {
 		this.body = body;
 	}
+	public String getAttach() {
+		return attach;
+	}
+	public void setAttach(String attach) {
+		this.attach = attach;
+	}
+	
+	
 }
