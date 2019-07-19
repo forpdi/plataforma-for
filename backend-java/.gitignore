@@ -12,3 +12,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 *.sublime-workspace
 /.metadata/
+.settings/
+.classpath
+.project
