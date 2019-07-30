@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+        forpdi-database:
+                image: mysql:5.7
+                environment:
+                        MYSQL_ROOT_PASSWORD: docker12345
+                        MYSQL_DATABASE: forpdi_db
+        forpdi-backend:
+                build: ./backend-java
+                image: platfor-backend
+                depends_on:
+                        - forpdi-database
+                ports:
+                        - 8009:8009
+                        - 8080:8080
+        forpdi-frontend:
+                build: ./frontend-web
+                image: platfor-front
+                depends_on:
+                        - forpdi-backend
+                ports:
+                        - 80:80
