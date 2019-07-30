@@ -1,11 +1,13 @@
-#### Construindo o frontend com o Docker
-Para construir o projeto com o Docker, se faz necessário ter no mínimo a versão 17.05 ou superior. A partir dessa versão é permitido a construição em modo multstage.
+#### Aviso
 
-Pré condição:
-	- Altere as configurações do arquivo index.html com as configurações do backend.
+Para subir a Plataforma-For por completo  utilize o docker-compose na raiz do projeto.
 
-Execute os seguintes comandos na pasta onde fica o projeto:
-	- docker build -t forpdi-frontend .
-	- docker run -d --name forpdi-frontend -p 7778:80 forpdi-frontend
+#### Construindo somente a imagem Docker do frontend 
+Para construir o projeto com o Docker, se faz necessário ter no mínimo a versão 18.06 ou superior. 
+A partir dessa versão é permitido a construição em modo multstage.
 
-Pronto! Seu container com a aplicação referente ao frontent estará disponivel para acesso em: http://host:7778/forpdi
+Execute os seguintes comandos na pasta frontend-web:
+	- docker build -t platfor-frontend .
+	- docker run -d --name platfor-frontend -p 80:80 platfor-frontend
+
+Pronto! Seu container com a aplicação referente ao frontent está disponivel, acesso em: http://localhost/

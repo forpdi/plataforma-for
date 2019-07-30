@@ -1,12 +1,17 @@
-#### Construindo o backend com o Docker
-Para construir o projeto com o Docker, se faz necessário ter no mínimo a versão 17.05 ou superior. A partir dessa versão é permitido a construição em modo multstage.
+#### Aviso
 
-Pré condição:
-  - Ter a instância do database inciaida
-  - Configurar o arquivo dev.properties com as propriedades de banco de dados.
+Para subir a Plataforma-For por completo  utilize o docker-compose na raiz do projeto.
 
-Execute os seguintes comandos na pasta onde fica o projeto:
-	- docker build -t forpdi-backend .
-  - docker run -it --name forpdi-backend -p 8072:8080 -p 9590:9990 -p 8909:8009 forpdi-backend
+#### Construindo somente a imagem Docker do Backend
+Para construir o projeto com o Docker, se faz necessário ter no mínimo a versão 18.06 ou superior. 
 
-Pronto! Seu container com a aplicação referente ao frontent estará disponivel para acesso em: http://host:8072/forpdi
+Pré condição para iniciar o container:
+  - Ter a instância do database iniciada
+  - Configurar o arquivo conf/docker.dev.properties com as propriedades de banco de dados.
+
+Execute os seguintes comandos dentro da pasta backend-java/ :
+ - docker build -t platfor-backend .
+ - docker run -it --name platfor-backend -p 8080:8080 -p 8009:8009 platfor-backend
+
+Pronto! Seu container com a aplicação referente ao backend esta disponivel.
+Para testar acesse em: http://localhost:8080/forpdi/environment

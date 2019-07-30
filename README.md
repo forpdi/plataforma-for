@@ -12,6 +12,7 @@ Website ForRisco: [http://www.forrisco.org/](http://www.forrisco.org/)
 
 **Table of Contents**
 
+- [Instalação Rápida - Docker](#instalacao-rapida-com-docker)
 - [Stack de tecnologias utilizadas](#stack-de-tecnologias-utilizadas)
 - [Pré-requisitos](#pr%C3%A9-requisitos)
 	- [Build](#build)
@@ -21,6 +22,17 @@ Website ForRisco: [http://www.forrisco.org/](http://www.forrisco.org/)
 	- [Configurando o Eclipse para desenvolvimento](#configurando-o-eclipse-para-desenvolvimento)
 - [Licença](#licen%C3%A7a)
 - [Documentos e Capacitação](#documentos-e-capacitação)
+
+## Instalação Rápida Com Docker
+
+Instale na sua máquina o Docker-Compose e o Docker 18.06 (ou superior).
+Execute o comando:
+```properties
+git clone https://github.com/forpdi/plataforma-for.git
+cd plataforma-for
+docker-compose up
+```
+
 
 
 ## Stack de tecnologias utilizadas
