@@ -7,8 +7,8 @@ RUN git clone https://github.com/forpdi/plataforma-for.git /usr/app/repo
 WORKDIR /usr/app/repo/backend-java
 RUN git checkout ${FOR_BRANCH}
 
-COPY ./conf/docker.dev.properties /usr/app/repo/backend-java/dev.properties
-RUN mvn clean package -P dev
+COPY ./conf/docker.dev.properties /usr/app/repo/backend-java/prd.properties
+RUN mvn clean package -P prd
 
 
 FROM jboss/wildfly:9.0.2.Final AS runtime
