@@ -5,7 +5,7 @@ services:
                 image: mysql:5.7
                 environment:
                         MYSQL_ROOT_PASSWORD: docker12345
-                        MYSQL_DATABASE: forpdi_db
+                        MYSQL_DATABASE: plataformafor
         forpdi-backend:
                 build: ./backend-java
                 image: platfor-backend
