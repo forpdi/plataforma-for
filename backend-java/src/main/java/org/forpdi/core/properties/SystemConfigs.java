@@ -20,6 +20,8 @@ public final class SystemConfigs {
 
 	public static String getConfig(String key) {
 		try {
+			if(System.getenv().containsKey(key))
+				return System.getenv(key);
 			if(System.getProperties().containsKey(key))
 				return System.getProperty(key);
 			return SystemConfigs.BUNDLE.getString(key);
