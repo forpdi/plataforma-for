@@ -90,12 +90,14 @@ export default React.createClass({
 	getInputNode() {
 		return this.refs[this.state.fieldId];
 	},
-	onKeyUp(evt) {
+	onKeyUp(evt, preventEnter = true) {
 		this.maxLengthMask();
-		var key = evt.which;
-		if (key == 13) {
-			evt.preventDefault();
-			return;
+		if (preventEnter) {
+			var key = evt.which;
+			if (key == 13) {
+				evt.preventDefault();
+				return;
+			}
 		}
 		if (this.refs[this.state.fieldId].value.length + 1 > this.refs[this.state.fieldId].maxLength) {
 			this.refs[this.state.fieldId].value = this.refs[this.state.fieldId].value.substr(0, this.refs[this.state.fieldId].maxLength - 1);
@@ -242,15 +244,15 @@ export default React.createClass({
 					<StrategicObjective fieldId={this.state.fieldId} fieldDef={this.props.fieldDef} strategicObjectivesPlansParam={this.state.strategicObjectivesPlansParam} />
 				);
 			} else {
-				if (this.props.fieldDef.description != null) {
-					fieldEl = (
-						<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{ __html: this.props.fieldDef.description }} /></div>
-					);
-				} else {
-					fieldEl = (
-						<div><span className="pdi-normal-text" dangerouslySetInnerHTML={{ __html: this.props.fieldDef.value }} /></div>
-					);
-				}
+				var text = this.props.fieldDef.description != null
+					? this.props.fieldDef.description
+					: this.props.fieldDef.value;
+				var element = this.props.fieldDef.type === AttributeTypes.TEXT_AREA_FIELD
+					? <pre className="pre-info" dangerouslySetInnerHTML={{ __html: text }} />
+					: <span>{text}</span>;
+				fieldEl = (
+					<span className="pdi-normal-text">{element}</span>
+				);
 			}
 		} else if (this.props.fieldDef.type == AttributeTypes.STRATEGIC_OBJECTIVE_FIELD) {
 			fieldEl = (
@@ -293,7 +295,7 @@ export default React.createClass({
 								id={this.state.fieldId}
 								ref={this.state.fieldId}
 								onChange={this.props.fieldDef.onChange || _.noop}
-								onKeyPress={this.onKeyUp}
+								onKeyPress={evt => this.onKeyUp(evt, false)}
 								onPaste={this.onKeyUp}
 								disabled
 								title={Messages.get("label.haveNoPermissionToEdit")}
@@ -317,7 +319,7 @@ export default React.createClass({
 								id={this.state.fieldId}
 								ref={this.state.fieldId}
 								onChange={this.props.fieldDef.onChange || _.noop}
-								onKeyPress={this.onKeyUp}
+								onKeyPress={evt => this.onKeyUp(evt, false)}
 								onPaste={this.onKeyUp}
 							/>
 							<div className="textAreaMaxLenght">
