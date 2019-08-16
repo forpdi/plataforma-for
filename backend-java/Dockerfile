@@ -20,7 +20,7 @@ COPY --from=build /usr/app/repo/backend-java/target/forpdi.war /opt/jboss/wildfl
 COPY ./conf/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 COPY ./conf/standalone.xml /opt/jboss/wildfly/standalone/configuration/
 
-ENV crypt.key=Dn9$dO-?2Xl3L~5@
+ENV crypt.key=Dn9\$dO-?2Xl3L~5@
 ENV smtp.from.name ForPDI
 ENV smtp.from.email noreply@forpdi.org
 ENV smtp.host localhost
