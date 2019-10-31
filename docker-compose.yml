@@ -9,6 +9,9 @@ services:
         forpdi-backend:
                 build: ./backend-java
                 image: platfor-backend
+                volumes:
+                        - pdfs:/var/forpdi/pdfs
+                        - arquivos:/var/forpdi/files
                 depends_on:
                         - forpdi-database
                 ports:
@@ -21,3 +24,6 @@ services:
                         - forpdi-backend
                 ports:
                         - 80:80
+volumes:
+    pdfs:
+    arquivos:
