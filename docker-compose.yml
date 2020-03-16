@@ -3,6 +3,8 @@ version: "3.5"
 services:
         forpdi-database:
                 image: mysql:5.7
+                volumes:
+                        - mysql:/var/lib/mysql
                 environment:
                         MYSQL_ROOT_PASSWORD: docker12345
                         MYSQL_DATABASE: plataformafor
@@ -27,3 +29,4 @@ services:
 volumes:
     pdfs:
     arquivos:
+    mysql:
