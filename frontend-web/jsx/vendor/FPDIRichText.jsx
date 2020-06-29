@@ -84,8 +84,7 @@ export default React.createClass({
 				value: content,
 			});
 		}
-
-		this.props.changeValue(content)
+		//this.props.changeValue(content)
     },
     render(){
 
