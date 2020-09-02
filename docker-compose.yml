@@ -11,6 +11,8 @@ services:
         forpdi-backend:
                 build: ./backend-java
                 image: platfor-backend
+				environment:
+				    - "JAVA_OPTS=-Djava.net.preferIPv4Stack=true"
                 volumes:
                         - pdfs:/var/forpdi/pdfs
                         - arquivos:/var/forpdi/files
