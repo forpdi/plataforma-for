@@ -6,9 +6,7 @@ Plataforma Open Source para:
 - Criação, gerenciamento, acompanhamento e divulgação de Planos de Desenvolvimento Institucional (PDI).
 - Criação, gerenciamento, acompanhamento e divulgação de Planos de Gestão de  Riscos.
 
-Website ForPDI: [http://www.forpdi.org/](http://www.forpdi.org/)
-
-Website ForRisco: [http://www.forrisco.org/](http://www.forrisco.org/)
+Website Plataforma FOR: [https://www.unifal-mg.edu.br/plataformafor/](https://www.unifal-mg.edu.br/plataformafor/)
 
 **Table of Contents**
 
