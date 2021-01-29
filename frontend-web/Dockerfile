@@ -1,7 +1,7 @@
 
 FROM node:10-stretch AS build
 
-RUN npm i -g yarn node-gyp
+RUN npm i -g yarn node-gyp --force
 RUN mkdir /usr/app
 
 ARG FOR_BRANCH=master
