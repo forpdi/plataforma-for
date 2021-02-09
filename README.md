@@ -367,5 +367,5 @@ O ForPDI/ForRisco é disponibilizado sob a licença Apache License 2.0.
 - [Dicionário de Dados ForPDI + ForRisco](https://github.com/forpdi/plataforma-for/blob/master/doc/dictionary.html)
 - [Documentação do Sistema (ForPDI)](https://github.com/forpdi/plataforma-for/blob/master/doc/FORPDI_documentacao_do_sistema.pdf)
 - [Documentação da Interface (ForPDI)](https://github.com/forpdi/plataforma-for/blob/master/doc/FORPDI_documentacao_da_interface.pdf)
-- [Manual ForPDI](http://forpdi.org/manual.pdf)
+- [Manual ForPDI](https://github.com/forpdi/plataforma-for/blob/master/doc/manual.pdf)
 - [Manual ForRisco]()
