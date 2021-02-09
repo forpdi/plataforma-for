@@ -82,7 +82,7 @@ Após executar este comando seu frontend pronto para publicação estará dispon
 
 #### Construindo o .war do backend
 O ForPDI utiliza o Apache Maven para realizar o processo de packaging do backend da aplicação em um arquivo `.war` que pode ser implantado em um servidor de aplicação que suporta Java.
-Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do [Maven 3.x](http://ftp.unicamp.br/pub/apache/maven/maven-3/3.5.0/binaries/apache-maven-3.5.0-bin.zip).
+Para esta etapa, considera-se que você já instalou o JDK 1.8 e configurou corretamente a variável de ambiente `JAVA_HOME`. A próxima etapa é realizar o download do [Maven 3.x](https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.5.0/apache-maven-3.5.0-bin.zip).
 Após o download do Maven, descompacte o arquivo em uma pasta. Neste passo a passo será considerado que o Maven foi descompactado na pasta `/opt/maven`.
 Em seguida, configure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
 
