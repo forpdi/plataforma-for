@@ -90,6 +90,9 @@ var PlanMacroStore = Fluxbone.Store.extend({
 			dataType: 'json',
 			contentType: 'application/json',
 			success(model) {
+				me.add(model.data, {
+					merge: true
+				});
 				me.trigger("archivedplanmacrolisted", model);
 			},
 			error(opts, status, errorMsg) {
