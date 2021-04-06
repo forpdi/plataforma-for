@@ -57,10 +57,7 @@ export default React.createClass({
         }, me);
       
         PlanMacroStore.on("archivedplanmacrolisted", (store) => {
-            var listofPlans = this.state.plans;
-            store.data.forEach(function(element) {
-                listofPlans.push(element);
-            }, this);
+            var listofPlans = this.state.plans;            
             this.setState({
                 plans: listofPlans
             });
