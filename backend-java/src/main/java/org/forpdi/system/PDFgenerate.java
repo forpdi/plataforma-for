@@ -1,8 +1,10 @@
 package org.forpdi.system;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -31,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
+import javax.imageio.ImageIO;
 
 import org.forpdi.core.company.CompanyDomain;
 import org.forpdi.core.event.Current;
@@ -1732,11 +1735,16 @@ public InputStream exportLevelAttributes(Long levelId)
 	// CABEÇALHO
 	String companyLogoUrl = domain.getCompany().getLogo();
 	//String fpdiLogoUrl2 = "http://cloud.progolden.com.br/file/8345";// new		
-	String fpdiLogoUrl =new File(classLoader.getResource("logo.png").getFile()).getPath();
+	//String fpdiLogoUrl =new File(classLoader.getResource("logo.png").getFile()).getPath();
+	
+	// carregamento de resource da forma correta
+	 BufferedImage buff = ImageIO.read(classLoader.getResourceAsStream("logo.png"));
+     ByteArrayOutputStream bos = new ByteArrayOutputStream();
+     ImageIO.write(buff, "png", bos);
 	
 	if (!companyLogoUrl.trim().isEmpty()) {
 		Image companyLogo = Image.getInstance(new URL(companyLogoUrl));
-		Image fpdiLogo = Image.getInstance(fpdiLogoUrl);
+		Image fpdiLogo = Image.getInstance(bos.toByteArray());
 		// image.scaleAbsolute(150f, 150f);
 		float companyLogoScaler = ((document.getPageSize().getWidth() - document.leftMargin()
 				- document.rightMargin()) / companyLogo.getWidth()) * 100;
