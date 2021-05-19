@@ -5,6 +5,14 @@
     <session-timeout>120</session-timeout>
     <tracking-mode>COOKIE</tracking-mode>
   </session-config>
+	 <context-param>
+       <param-name>ARQUIVO_UPLOAD_FORPDI</param-name>
+       <param-value>/var/www/html/forpdi/upload</param-value>
+    </context-param>
+   <context-param>
+       <param-name>ARQUIVO_DOWNLOAD_FORPDI</param-name>
+       <param-value>/upload</param-value>
+   </context-param>
   <context-param>
     <param-name>javax.servlet.jsp.jstl.fmt.localizationContext</param-name>
     <param-value>properties.messages</param-value>
