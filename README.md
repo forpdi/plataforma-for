@@ -87,7 +87,7 @@ Após o download do Maven, descompacte o arquivo em uma pasta. Neste passo a pas
 Em seguida, configure a variável de ambiente `MAVEN_HOME` para o caminho onde você descompactou o arquivo. Também coloque na sua variável `PATH` o caminho da pasta `bin` do Maven (ex: `/opt/maven/bin`).
 
 Configurar as variaveis dos caminho de download/uploads de arquivos, incluir no arquivo ../backend-java/src/main/webapp/WEB-INF/web.xml as duas variaveis de ambientes 
-  <context-param>
+ ``` <context-param>
         <param-name>ARQUIVO_UPLOAD_FORPDI</param-name>
         <param-value>/var/www/html/forpdi/upload</param-value>
     </context-param>
@@ -95,6 +95,7 @@ Configurar as variaveis dos caminho de download/uploads de arquivos, incluir no 
         <param-name>ARQUIVO_DOWNLOAD_FORPDI</param-name>
         <param-value>/upload</param-value>
     </context-param>
+	```
 
 Com os procedimentos de instalação prontos, você já pode realizar o build e packaging da aplicação. O arquivo `backend-java/pom.xml` descreve todas as configurações do Maven para o projeto.
 O ForPDI está configurado com alguns *profiles* iniciais, o profile de desenvolvimento (perfil padrão) já vem pronto para uso, com as configurações no arquivo `backend-java/dev.properties`:
