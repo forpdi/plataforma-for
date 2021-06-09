@@ -131,7 +131,7 @@ export default React.createClass({
 								this.state.plans.map((attr, idy) => {
 									return (
 										<option
-											key={attr.get('id')}
+											key={ attr.id || attr.get('id')}
 											value={idy}
 											data-placement="right"
 											title={attr.get("name")}
