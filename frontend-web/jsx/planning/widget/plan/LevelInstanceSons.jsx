@@ -1376,7 +1376,7 @@ export default React.createClass({
 					</div>
 				</div>
 					{!this.state.hide ?
-						<div>
+						<div className="table-responsive">
 							<table className="budget-field-table table">
 								<tbody>
 									<tr>
