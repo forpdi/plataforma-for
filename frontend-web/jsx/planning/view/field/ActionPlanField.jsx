@@ -542,7 +542,7 @@ export default React.createClass({
 
 				</div>
 				{!this.state.hide ?
-					(<div>
+					(<div className="table-responsive">
 						{this.state.loading ? <LoadingGauge/> :
 						<table className="budget-field-table table">
 							<thead>
