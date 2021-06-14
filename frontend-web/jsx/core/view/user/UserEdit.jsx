@@ -464,7 +464,9 @@ export default React.createClass({
 	uploadFile() {
 		var formatsBlocked = "(exe*)";
 		var me = this;
+		var param = {nome:'imageicon',chave:me.props.params.modelId};
 		Modal.uploadFile(
+			param,
 			Messages.get("label.submitDocument"),
 			(<div>
 				<p>
