@@ -176,7 +176,7 @@ export default React.createClass({
 				<span className="fpdi-fill" />
 				<Link  to = {"/users/profilerUser/" +this.state.user.id}>
 					<span><img className="fpdi-userPicture" src={(!this.state.user.picture || this.state.user.picture == "" ) ?
-						"http://cloud.progolden.com.br/file/8352" : this.state.user.picture} /></span>
+						"/images/iconedefault.png" : this.state.user.picture} /></span>
 					{this.state.model == null ? (this.state.user.name.length>25)?(string(this.state.user.name).trim().substr(0,25).concat("...").toString()):(this.state.user.name)   : (this.state.model.name.length>25)?(string(this.state.model.name).trim().substr(0,25).concat("...").toString()):(this.state.model.name)}
 				</Link>
 
