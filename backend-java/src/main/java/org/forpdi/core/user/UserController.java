@@ -1,11 +1,10 @@
 package org.forpdi.core.user;
 
 import java.net.UnknownHostException;
-
+import com.controladora.base.Controladora;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-
 import org.apache.commons.mail.EmailException;
 import org.forpdi.core.abstractions.AbstractController;
 import org.forpdi.core.bean.SessionInfo;
@@ -1136,6 +1135,17 @@ public class UserController extends AbstractController {
 	@NoCache
 	public void uploadFile() {
 
+		try {			
+			Controladora control = new Controladora(this.request.getServletContext());
+			String fileUrl = control.enviaArquivo(this.request,this.response);
+			this.success(fileUrl);
+		} catch (Throwable ex) {
+			LOGGER.error("Error while proxying the file upload.", ex);
+			 this.fail(ex.getMessage());
+		} finally {
+			this.result.nothing(); 
+		}
+		/**
 		try {
 			String fileUrl = StoragerUtils.pipeMultipartFile(this.request.getInputStream(),
 					this.request.getContentType(), this.response);
@@ -1145,7 +1155,7 @@ public class UserController extends AbstractController {
 			// this.fail(ex.getMessage());
 		} finally {
 			this.result.nothing();
-		}
+		}**/
 	}
 
 	/**
