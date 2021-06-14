@@ -457,7 +457,7 @@ public class FieldsBS extends HibernateBusiness {
 	public PaginatedList<ActionPlan> listActionPlansByInstance(StructureLevelInstance instance) {
 		PaginatedList<ActionPlan> list = new PaginatedList<ActionPlan>();
 		Criteria criteria = this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("levelInstance", instance)).addOrder(Order.asc("id"));
+				.add(Restrictions.eq("levelInstance", instance)).addOrder(Order.asc("description"));
 		;
 		list.setList(this.dao.findByCriteria(criteria, ActionPlan.class));
 		return list;
@@ -482,7 +482,7 @@ public class FieldsBS extends HibernateBusiness {
 		PaginatedList<ActionPlan> list = new PaginatedList<ActionPlan>();
 		Criteria criteria = this.dao.newCriteria(ActionPlan.class).setFirstResult((page - 1) * pageSize)
 				.setMaxResults(pageSize).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("levelInstance", instance)).addOrder(Order.asc("id"));
+				.add(Restrictions.eq("levelInstance", instance)).addOrder(Order.asc("description"));
 		;
 		Criteria counting = this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("deleted", false))
 				.add(Restrictions.eq("levelInstance", instance)).setProjection(Projections.countDistinct("id"));
