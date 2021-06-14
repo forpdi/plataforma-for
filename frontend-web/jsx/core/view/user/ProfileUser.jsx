@@ -252,7 +252,9 @@ export default React.createClass({
 	uploadFile() {
 		var me = this;
 		var formatsBlocked = "(exe*)";
+		var param = {nome:'imageicon',chave:me.props.params.modelId};
 		Modal.uploadFile(
+			param,
 			Messages.get("label.sendPicture"),
 			(<div>
 				<p>
@@ -275,6 +277,7 @@ export default React.createClass({
 			},
 			(resp) => {
 				Modal.hide();
+				alert(resp.message);
 				me.setState({error: resp.message});
 			},
 			"jpg, jpeg, gif, png, svg."
