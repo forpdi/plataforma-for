@@ -177,7 +177,7 @@ export default React.createClass({
 							className="fpdi-userPicture"
 							src={
 								(!this.state.user.picture || this.state.user.picture == "" )
-								? "http://cloud.progolden.com.br/file/8352"
+								? "/images/iconedefault.png"
 								: this.state.user.picture
 							}
 						/>
