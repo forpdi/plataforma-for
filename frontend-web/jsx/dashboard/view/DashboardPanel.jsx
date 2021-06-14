@@ -134,7 +134,7 @@ export default React.createClass({
 											key={ attr.id || attr.get('id')}
 											value={idy}
 											data-placement="right"
-											title={attr.get("name")}
+											title={attr.name || attr.get("name")}
 										>
 											{
 												(attr.get("name").length > 20)
