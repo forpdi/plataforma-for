@@ -326,7 +326,7 @@ export default React.createClass({
 				ref='descricaoEdit'
 				className='budget-field-table'
 				defaultValue={action.description}
-				maxLength="255"
+				maxLength="3900"
 				onKeyUp={function(evt){
 					me.ref = desc;
 					if (evt.which != 17) {
@@ -463,7 +463,7 @@ export default React.createClass({
 				type='text'
 				ref="descricao"
 				className='budget-field-table'
-				maxLength="255"
+				maxLength="3900"
 				onKeyUp={function(evt){
 					me.ref = desc;
 					if (evt.which != 17) {
