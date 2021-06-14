@@ -121,8 +121,8 @@ export default React.createClass({
 			"Vídeos: avi, mov, wmv, mp4, flv, mkv\n"+
 			"Arquivos: zip, rar, 7z, tar, tar.gz, tar.bz2\n";
 		var maxSize = 2;
-
-		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		var param ={nome:'levelinstance',chave:me.props.levelInstanceId + "_" + me.state.total}; 
+		Modal.uploadFile(param,title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 	getAttachments(page, pageSize){
