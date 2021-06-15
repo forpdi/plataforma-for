@@ -119,7 +119,7 @@ export default React.createClass({
 			//Toastr.success("Meta editado com sucesso");
 			this.context.toastr.addAlertSuccess(Messages.get("label.successEditedGoal"));
 			this.cancelEditGoal();
-			window.location.reload(false);	
+			this.props.forceUp();	
 		}, me);
 
 		StructureStore.on('deleteLevelInstanceByTable', store => {
