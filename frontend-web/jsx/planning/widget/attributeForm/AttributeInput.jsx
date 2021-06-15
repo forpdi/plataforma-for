@@ -610,7 +610,7 @@ export default React.createClass({
 				disabled={true}
 			/>);
 		} else {
-			let tamMaximo = this.props.id && this.props.id.indexOf("tabValue1") >0 ? 3000:255;
+			let tamMaximo = this.props.id && this.props.id.indexOf("tabValue") >0 ? 3000:255;
 			fieldEl = (<input
 				//className="budget-field-table"
 				className="form-control"
