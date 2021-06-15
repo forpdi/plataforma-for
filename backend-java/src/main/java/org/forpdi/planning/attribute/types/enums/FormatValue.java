@@ -55,25 +55,27 @@ public enum FormatValue {
 		return name;
 	}
 
+	
 	public String format(String value) {
 		if (value != null) {
+			Double valor = value.length() == 0 ? 0.0d:Double.valueOf(value);
 			switch (this.value) {
 			case 1:
-				return decimalFormatDbl.format(Double.valueOf(value)) + "%";
+				return decimalFormatDbl.format( valor) + "%";
 			case 2:
-				return decimalFormatDbl.format(Double.valueOf(value));
+				return decimalFormatDbl.format(valor);
 			case 3:
-				return moedaFormat.format(Double.valueOf(value));
+				return moedaFormat.format(valor);
 			case 4:
-				return decimalFormatInt.format(Double.valueOf(value)) + " hrs";
+				return decimalFormatInt.format(valor) + " hrs";
 			case 5:
-				if (Double.valueOf(value) > 1) {
-					return decimalFormatInt.format(Double.valueOf(value)) + " dias";
+				if (valor > 1) {
+					return decimalFormatInt.format(valor) + " dias";
 				} else {
-					return decimalFormatInt.format(Double.valueOf(value)) + " dia";
+					return decimalFormatInt.format(valor) + " dia";
 				}
 			case 6:
-				return decimalFormatInt.format(Double.valueOf(value)) + " meses";
+				return decimalFormatInt.format(valor) + " meses";
 			default:
 				return "valor inválido";
 			}
