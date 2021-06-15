@@ -130,18 +130,19 @@ export default React.createClass({
 							{
 								this.state.plans.map((attr, idy) => {
 									return (
+										let name = attr.name || attr.get("name");
 										<option
 											key={ attr.id || attr.get('id')}
 											value={idy}
 											data-placement="right"
-											title={attr.name || attr.get("name")}
+											title={name}
 										>
 											{
-												(attr.get("name").length > 20)
+												(name.length > 20)
 													?
-													(string(attr.get("name")).trim().substr(0, 20).concat("...").toString())
+													(string(name).trim().substr(0, 20).concat("...").toString())
 													:
-													(attr.get("name"))
+													(name)
 											}
 										</option>
 									);
