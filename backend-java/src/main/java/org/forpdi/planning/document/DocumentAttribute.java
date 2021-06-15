@@ -3,6 +3,7 @@ package org.forpdi.planning.document;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Lob;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +36,8 @@ public class DocumentAttribute extends SimpleLogicalDeletableEntity {
 	@Column(nullable = false)
 	private String type;
 
-	@Column(nullable = true, length = 12000)
+	@Lob
+	@Column(nullable = true)
 	private String value;
 
 	@Column(nullable = true)
