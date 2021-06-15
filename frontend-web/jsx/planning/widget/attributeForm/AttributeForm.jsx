@@ -213,6 +213,20 @@ var VerticalForm =  React.createClass({
 							onChage={this.props.onChage}
 							/>
 						);
+				} else if(field.type == AttributeTypes.BUDGET_FIELD && (EnvInfo.company && EnvInfo.company.showBudgetElement == true)){
+					return(<BudgetField key={field.name} data={field.budgets} newFunc={field.extra}/>);
+				} else if(field.type == AttributeTypes.ACTION_PLAN_FIELD){
+					return(<ActionPlanField key={field.name} responsible={this.props.userResponsible}
+						newFunc={field.extraActionPlans} dateBegin={this.props.dateBegin} dateEnd={this.props.dateEnd} levelInstanceId = {this.props.levelInstanceIdActionPlan}/>);
+				} else if(field.type == AttributeTypes.SCHEDULE_FIELD){
+					return(<ScheduleField key={field.name} data={field.schedule} newFunc={field.extraSchedule} title={field.label}
+						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument}/>);
+				} else if(field.type == AttributeTypes.TABLE_FIELD){
+					return(<TableField key={field.name} data={field.tableFields} newFunc={field.extraTableFields} title={field.label}
+						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument} deleteFunc={this.props.deleteFunc}/>);
+				} else if(field.type == AttributeTypes.ATTACHMENT_FIELD){
+					return(<AttachmentField key={field.name} responsible={this.props.userResponsible}
+						levelInstanceId={this.props.levelInstanceId}/>);
 				}
 				if (field.required)
 					requiredFields = true;
@@ -244,23 +258,7 @@ var VerticalForm =  React.createClass({
 					</div>)
 				)
 			: ""}
-			{this.props.fields.map((field,idx) => {
-				if(field.type == AttributeTypes.BUDGET_FIELD && (EnvInfo.company && EnvInfo.company.showBudgetElement == true)){
-					return(<BudgetField key={field.name} data={field.budgets} newFunc={field.extra}/>);
-				} else if(field.type == AttributeTypes.ACTION_PLAN_FIELD){
-					return(<ActionPlanField key={field.name} responsible={this.props.userResponsible}
-						newFunc={field.extraActionPlans} dateBegin={this.props.dateBegin} dateEnd={this.props.dateEnd} levelInstanceId = {this.props.levelInstanceIdActionPlan}/>);
-				} else if(field.type == AttributeTypes.SCHEDULE_FIELD){
-					return(<ScheduleField key={field.name} data={field.schedule} newFunc={field.extraSchedule} title={field.label}
-						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument}/>);
-				} else if(field.type == AttributeTypes.TABLE_FIELD){
-					return(<TableField key={field.name} data={field.tableFields} newFunc={field.extraTableFields} title={field.label}
-						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument} deleteFunc={this.props.deleteFunc}/>);
-				} else if(field.type == AttributeTypes.ATTACHMENT_FIELD){
-					return(<AttachmentField key={field.name} responsible={this.props.userResponsible}
-						levelInstanceId={this.props.levelInstanceId}/>);
-				}
-			})}
+			
 		</form>);
 	}
 });
