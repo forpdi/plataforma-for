@@ -942,7 +942,10 @@ export default React.createClass({
 		);
 
 	},
+	handleUpdate () {
+		this.forceUpdate();	
 
+	},
 	renderDeleteLevelAttributeDisable() {
 		return (
 			<ul id="level-menu" className="dropdown-menu">
@@ -1061,6 +1064,7 @@ export default React.createClass({
 					isParent={this.isParent}
 					users={this.state.users}
 					enabled={!this.state.aggregate && this.state.vizualization}
+				 	forceUp={this.handleUpdate}
 				/>
 			</div>);
 	}
