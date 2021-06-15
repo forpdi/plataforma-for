@@ -31,7 +31,7 @@ import org.forpdi.planning.fields.table.TableStructure;
 import org.forpdi.planning.structure.StructureBS;
 import org.forpdi.planning.structure.StructureLevelInstance;
 import org.hibernate.validator.constraints.NotEmpty;
-
+import com.controladora.base.Controladora;
 import br.com.caelum.vraptor.Consumes;
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -773,7 +773,16 @@ public class FieldsController extends AbstractController {
 	public void deleteAttachment(@NotNull Long id) {
 		try {
 			Attachment attachment = this.bs.retrieveById(id);
-			if (this.bs.deleteAttachment(attachment)) {
+			String nomeArquivo = attachment.getFileLink().substring(attachment.getFileLink().lastIndexOf("/")+1);
+			if (this.bs.deleteAttachment(attachment)) {				
+				Controladora control = new Controladora(this.request.getServletContext());
+				boolean tst = control.removeArquivo(nomeArquivo);
+				if(!tst) {
+					this.fail("Erro ao remover o anexo do arquivo");	
+					LOGGER.error("Unexpected runtime error");					
+					return;
+				}
+				
 				this.success(attachment);
 			} else {
 				this.fail("Não foi possível excluir o anexo.");
