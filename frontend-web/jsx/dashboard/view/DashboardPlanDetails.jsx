@@ -4,6 +4,7 @@ import Progress from 'react-progressbar';
 import DashboardStore from "forpdi/jsx/dashboard/store/Dashboard.jsx";
 import LoadingGaugeWhite from "forpdi/jsx/core/widget/LoadingGaugeWhite.jsx";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
+const tipoVisMetas = {1:DashboardStore.ACTION_GET_PLAN_DETAILS_COMMUNITY,2:DashboardStore.ACTION_GET_PLAN_DETAILS};
 
 export default React.createClass({
 
@@ -11,6 +12,7 @@ export default React.createClass({
 		return {
 			plan: this.props.plan,
 			subplan: this.props.subplan,
+			visMetas: 1,
 			loading: true
 		};
 	},
@@ -20,7 +22,7 @@ export default React.createClass({
 
 		if (this.props.plan.id != newProps.plan.id || this.props.subPlan.id != newProps.subPlan.id) {
 			DashboardStore.dispatch({
-				action: DashboardStore.ACTION_GET_PLAN_DETAILS,
+				action: tipoVisMetas[this.state.visMetas],
 				data: {
 					plan: newProps.subPlan.id,
 					macro: newProps.plan.id
@@ -32,6 +34,20 @@ export default React.createClass({
 				loading: true
 			});
 		}
+	},mudarVisMetas (event) {
+		var me = this;	
+		DashboardStore.dispatch({
+			action: tipoVisMetas[event.target.value],
+			data: {
+				plan: this.props.subPlan == -1 ? undefined:this.props.subPlan,
+				macro: this.props.plan == -1 ? undefined:this.props.plan
+			}
+		});	
+
+		me.setState({
+			visMetas:event.target.value
+		});
+		
 	},
 
 	componentDidMount() {
@@ -48,7 +64,7 @@ export default React.createClass({
 
 	refreshComponent(planId, subPlanId) {
 		DashboardStore.dispatch({
-			action: DashboardStore.ACTION_GET_PLAN_DETAILS,
+			action: tipoVisMetas[this.state.visMetas],
 			data: {
 				plan: subPlanId,
 				macro: planId
@@ -83,6 +99,10 @@ export default React.createClass({
 							)
 						}
 						</span>
+						<select onChange={this.mudarVisMetas} className="form-control dashboard-select-box-graphs marginLeft10">
+                            <option value={1} data-placement="right" title={Messages.get("label.viewAll")}> {Messages.get("label.viewAll")} </option>                            
+							<option value={2} data-placement="right" title={Messages.get("label.minhas")}> {Messages.get("label.minhas")} </option> 
+                        </select>
 						<div className="performance-strategic-btns floatRight">
 							<span className={(this.state.hide) ? ("mdi mdi-chevron-right marginLeft15") : ("mdi mdi-chevron-down marginLeft15")} onClick={this.hideFields} />
 						</div>
