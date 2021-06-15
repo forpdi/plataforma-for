@@ -610,11 +610,11 @@ export default React.createClass({
 				disabled={true}
 			/>);
 		} else {
+			let tamMaximo = this.props.id && this.props.id.indexOf("tabValue1") >0 ? 3000:255;
 			fieldEl = (<input
 				//className="budget-field-table"
 				className="form-control"
-				type={this.props.fieldDef.type}
-				maxLength='100'
+				type={this.props.fieldDef.type}				
 				onKeyPress={this.onKeyUp}
 				onPaste={this.onKeyUp}
 				name={this.props.fieldDef.name}
@@ -624,7 +624,7 @@ export default React.createClass({
 				placeholder={this.props.fieldDef.placeholder}
 				onChange={this.props.fieldDef.onChange || _.noop}
 				onKeyPress={this.onKeyUp}
-				maxLength='255'
+				maxLength={tamMaximo}
 				disabled={this.props.fieldDef.disabled}
 				title={this.props.fieldDef.disabled ? Messages.get("label.haveNoPermissionToEdit") : ""}
 			/>);
