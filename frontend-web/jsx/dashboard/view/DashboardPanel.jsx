@@ -129,8 +129,8 @@ export default React.createClass({
 							</option>
 							{
 								this.state.plans.map((attr, idy) => {
-									return (
-										let name = attr.name || attr.get("name");
+									let name = attr.name || attr.get("name");
+									return (										
 										<option
 											key={ attr.id || attr.get('id')}
 											value={idy}
