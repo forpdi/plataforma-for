@@ -33,12 +33,6 @@ export default React.createClass({
 		}
 		this.state.buttonsErrorMark = newProps.buttonsErrorMark;
 	},
-
-	changeRichText(value){
-		this.setState({
-			description: value
-		})
-	},
 	onSelectFieldType(){
 		var me = this;
 			me.setState({
@@ -111,7 +105,7 @@ export default React.createClass({
 
 	addNewField(extra, periodicity, evt) {
 		var me = this;
-		var validation = Validate.validationNewFieldItem(this.refs, this.state.description);
+		var validation = Validate.validationNewFieldItem(this.refs);
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
@@ -306,7 +300,7 @@ export default React.createClass({
 								className="form-control minHeight170"
 								id="newfield-description"
 								placeholder="Insira seu texto..."
-								changeValue={this.changeRichText}
+								ref="newfield-description"
 								defaultValue ={this.props.field? this.props.field.description:null}
 							/>
 							:
