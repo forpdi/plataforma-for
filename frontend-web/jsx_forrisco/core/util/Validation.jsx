@@ -259,8 +259,10 @@ var Validate = {
 		return msg;
 	},
 
-	validationNewFieldItem: function (newfield, description) {
+	validationNewFieldItem: function (newfield) {
 		var name, type;
+		const description = newfield['newfield-description'].state.value; 
+
 		name = S(newfield['newfield-name'].value);
 		type = S(newfield['newfield-type'].value);
 
