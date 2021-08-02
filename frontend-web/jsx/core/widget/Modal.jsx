@@ -560,7 +560,7 @@ var Modal = {
 		$(this.$el).modal('show');
 	},
 
-	uploadFile(param,title, msg, url, fileType, typesBlocked, onSuccess, onFailure, validSamples, maxSize) {
+	uploadFile(title, msg, url, fileType, typesBlocked, onSuccess, onFailure, validSamples, maxSize) {
 		var me = this;
 		var format = "";
 		var sizeExceeded = false;
@@ -575,10 +575,9 @@ var Modal = {
 		this.show();
 
 		var uploadOptions = {
-	        url: url,
-	        dataType: 'json',
-			formData: param,
-	        beforeSend : function(xhr, opts) {
+			url: url,
+			dataType: 'json',
+			beforeSend : function(xhr, opts) {
 				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length);
 	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType)))
 	        			|| format.toLowerCase().match(typesBlocked)) { //|| this.files[0].type.toLowerCase().match(typesBlocked)
@@ -594,20 +593,20 @@ var Modal = {
 					xhr.abort();
 				}
 				me.fileName = this.files[0].name;
-	        },
-	        done: function (evt, opts) {
-	            if (evt.type == 'fileuploaddone') {
-	            	if (typeof onSuccess == 'function') {
-	            		onSuccess.call(me,opts.jqXHR.responseJSON);
+	    },
+			done: function (evt, opts) {
+				if (evt.type == 'fileuploaddone') {
+					if (typeof onSuccess == 'function') {
+						onSuccess.call(me,opts.jqXHR.responseJSON);
 					}
-	            	else {
-	            		console.warn("No success callback passed for file upload window.");
+					else {
+						console.warn("No success callback passed for file upload window.");
 					}
-	            }
-	            else if (typeof onFailure == 'function') {
-	            	onFailure.call(me,opts.jqXHR.responseJSON);
 				}
-	        },
+				else if (typeof onFailure == 'function') {
+					onFailure.call(me,opts.jqXHR.responseJSON);
+				}
+			},
 			fail: function (evt,opts) {
 				if(typeViolation){
 					document.getElementById('upload-error-span').innerHTML =
@@ -619,17 +618,17 @@ var Modal = {
 	            	onFailure.call(me,opts.jqXHR.responseJSON);
 				}
 			},
-	        progressall: function (e, data) {
-	            var progress = parseInt(data.loaded / data.total * 100, 10);
-	            $('#file-upload-progress .progress-bar').css(
-	                'width',
-	                progress + '%'
-	            );
-	        }
-	    }
+			progressall: function (e, data) {
+					var progress = parseInt(data.loaded / data.total * 100, 10);
+					$('#file-upload-progress .progress-bar').css(
+							'width',
+							progress + '%'
+					);
+			}
+	  }
 
-	    $('#file-upload-field').fileupload(uploadOptions).prop('disabled', !$.support.fileInput)
-			        .parent().addClass($.support.fileInput ? undefined : 'disabled');
+		$('#file-upload-field').fileupload(uploadOptions).prop('disabled', !$.support.fileInput)
+						.parent().addClass($.support.fileInput ? undefined : 'disabled');
 	},
 
 	readFile(title, msg, fileType, onSuccess) {
