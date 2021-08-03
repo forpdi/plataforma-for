@@ -1,7 +1,7 @@
 import React from "react";
 import Messages from "forpdi/jsx/core/util/Messages.jsx";
 import AttributeTypes from 'forpdi/jsx/planning/enum/AttributeTypes.json';
-import FPDIRichText from 'forpdi/jsx/vendor/FPDIRichText';
+import RichText from 'forpdi/jsx/vendor/FPDIRichText';
 import Validation from 'forpdi/jsx_forrisco/core/util/Validation.jsx';
 import FileStore from "forpdi/jsx/core/store/File.jsx"
 import Modal from "forpdi/jsx/core/widget/Modal.jsx";
@@ -71,7 +71,7 @@ export default React.createClass({
 				fileData:{
 					file: file
 				},
-				description:Modal.fileName
+				description:this.fileName
 			});
 			/*AttachmentStore.dispatch({
 				action: AttachmentStore.ACTION_CREATE,
@@ -98,8 +98,8 @@ export default React.createClass({
 		//"mp3|wav|wma|ogg|aac|"+
 		//"avi|mov|wmv|mp4|flv|mkv|"+
 		//"zip|rar|7z|tar|targz|tar.bz2";
-
-		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+	
+		Modal.uploadFile(null,title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 
@@ -159,7 +159,7 @@ export default React.createClass({
 					name: "attribute-"+me.props.getLength(),
 					type: validation.type.s,
 					value: validation.name.s,
-					description: validation.description,
+					description: me.state.description,
 					edit:false,
 					fileLink: this.state.fileData.file.fileLink
 				});
@@ -295,12 +295,12 @@ export default React.createClass({
 					{this.state.newFieldType || this.props.field ?
 					<div>
 						{this.state.newFieldType == this.state.types[0].id ?
-							<FPDIRichText
+							<RichText
 								maxLength='6500'
 								className="form-control minHeight170"
 								id="newfield-description"
 								placeholder="Insira seu texto..."
-								ref="newfield-description"
+								ref="newfield-description"								
 								defaultValue ={this.props.field? this.props.field.description:null}
 							/>
 							:
