@@ -261,8 +261,7 @@ var Validate = {
 
 	validationNewFieldItem: function (newfield) {
 		var name, type;
-		const description = newfield['newfield-description'].state.value; 
-
+		const description = (newfield['newfield-description']) ? newfield['newfield-description'].state.value:null; 
 		name = S(newfield['newfield-name'].value);
 		type = S(newfield['newfield-type'].value);
 
