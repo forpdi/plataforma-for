@@ -167,7 +167,8 @@ public class PDFgenerate {
 	private ProcessBS processBS;
 	@Inject
 	private PlanRiskItemBS planRiskItemBS;
-	
+	@Inject
+	private PDFGenerateHelper pdfGenerateHelper;
 	
 
 	protected final Logger LOGGER = Logger.getLogger(this.getClass());
@@ -534,16 +535,7 @@ public InputStream exportDocument(String author, String title, String lista)
 								if (att.getContent().contains("||IMAGE||")) {
 									String img = allMatches.poll();
 									if (img != null) {
-										try {
-											// LOGGER.info("IMG------->"+img);
-											Image image = Image.getInstance(
-													new URL(img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-											float scaler = ((document.getPageSize().getWidth() - document.leftMargin()
-													- document.rightMargin()) / image.getWidth()) * 100;
-											image.scalePercent(scaler * 0.4f);
-											image.setAlignment(Element.ALIGN_CENTER);
-											document.add(image);
-										}catch(UnknownHostException ex) {}
+										document.add(pdfGenerateHelper.getImageFromTextArea(img));
 									}
 								} else {
 									att.setFirstLineIndent(firstLineIndent);
@@ -773,17 +765,7 @@ public InputStream exportDocument(String author, String title, String lista)
 										if (att.getContent().contains("||IMAGE||")) {
 											String img = allMatches.poll();
 											if (img != null) {
-												try {
-													Image image = Image.getInstance(new URL(
-															img.replaceAll("<img src=\"", "").replaceAll("\">", "")));
-													
-													float scaler = ((document.getPageSize().getWidth()
-															- document.leftMargin() - document.rightMargin())
-															/ image.getWidth()) * 100;
-													image.scalePercent(scaler * 0.4f);
-													image.setAlignment(Element.ALIGN_CENTER);
-													document.add(image);
-												}catch(UnknownHostException ex) {}
+												document.add(pdfGenerateHelper.getImageFromTextArea(img));
 											}
 										} else {
 											att.setFirstLineIndent(firstLineIndent);
