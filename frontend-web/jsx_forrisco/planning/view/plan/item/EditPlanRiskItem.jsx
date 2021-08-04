@@ -217,7 +217,7 @@ export default React.createClass({
 			return;
 		}
 
-		const formData = new FormData(event.target);
+		const formData = new FormData(event.target.form);
 
 		if (formData.get('description') === '') {
 			this.context.toastr.addAlertError(Messages.get("label.error.form"));
