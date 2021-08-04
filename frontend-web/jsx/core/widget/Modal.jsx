@@ -560,7 +560,7 @@ var Modal = {
 		$(this.$el).modal('show');
 	},
 
-	uploadFile(title, msg, url, fileType, typesBlocked, onSuccess, onFailure, validSamples, maxSize) {
+	uploadFile(param,title, msg, url, fileType, typesBlocked, onSuccess, onFailure, validSamples, maxSize) {
 		var me = this;
 		var format = "";
 		var sizeExceeded = false;
@@ -577,6 +577,7 @@ var Modal = {
 		var uploadOptions = {
 			url: url,
 			dataType: 'json',
+				formData: param,
 			beforeSend : function(xhr, opts) {
 				format = this.files[0].name.substring(this.files[0].name.lastIndexOf(".")+1, this.files[0].name.length);
 	        	if ((!(this.files[0].type.toLowerCase().match(fileType)) && !(format.toLowerCase().match(fileType)))
