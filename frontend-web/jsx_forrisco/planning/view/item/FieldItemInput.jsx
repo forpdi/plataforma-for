@@ -99,7 +99,7 @@ export default React.createClass({
 		//"avi|mov|wmv|mp4|flv|mkv|"+
 		//"zip|rar|7z|tar|targz|tar.bz2";
 
-		Modal.uploadFile(title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile({}, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 

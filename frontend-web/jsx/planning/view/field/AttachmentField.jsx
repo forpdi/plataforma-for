@@ -122,7 +122,7 @@ export default React.createClass({
 			"Arquivos: zip, rar, 7z, tar, tar.gz, tar.bz2\n";
 		var maxSize = 2;
 		var param ={nome:'levelinstance',chave:me.props.levelInstanceId + "_" + me.state.total}; 
-		Modal.uploadFile(param,title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile(param, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 	getAttachments(page, pageSize){

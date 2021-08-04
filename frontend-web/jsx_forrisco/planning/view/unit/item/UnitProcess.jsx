@@ -389,6 +389,7 @@ export default React.createClass({
 		const formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf";
 
 		Modal.uploadFile(
+			{},
 			title,
 			msg,
 			url,

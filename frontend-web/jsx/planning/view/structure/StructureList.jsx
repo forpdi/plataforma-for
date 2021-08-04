@@ -89,6 +89,7 @@ export default React.createClass({
 
 
 		Modal.uploadFile(
+			null,
 			Messages.get("label.importEstructure"),
 			<p>{Messages.get("label.uploadXml")}</p>,
 			StructureStore.url+"/import",

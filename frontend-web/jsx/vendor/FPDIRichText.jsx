@@ -72,7 +72,7 @@ export default React.createClass({
         }
         var validSamples = "jpg, jpeg, gif, png, svg.";
         var maxSize = 2;
-        Modal.uploadFile(title, msg, url, fileType, typesBlocked, onSuccess.bind(this), onFailure, validSamples, maxSize);
+        Modal.uploadFile(null, title, msg, url, fileType, typesBlocked, onSuccess.bind(this), onFailure, validSamples, maxSize);
     },
 
     onChange(content, delta, source, editor){
