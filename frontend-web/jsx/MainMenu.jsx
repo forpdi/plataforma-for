@@ -210,7 +210,7 @@ export default React.createClass({
 
 
 		Modal.uploadFile(
-            {},
+            null,
 			Messages.get("label.importPlans"),
 			<p id="fbkupload">{Messages.get("label.uploadFbk")}</p>,
 			"/forpdi/api/company/fbkupload",

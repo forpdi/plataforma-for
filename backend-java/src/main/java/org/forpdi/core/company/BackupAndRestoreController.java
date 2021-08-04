@@ -1,11 +1,15 @@
 package org.forpdi.core.company;
 
+
+import com.controladora.base.Controladora;
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.FileUtils;
@@ -30,6 +34,8 @@ public class BackupAndRestoreController extends AbstractController  {
 
 	@Inject private BackupAndRestoreHelper dbbackup;
 	@Inject @Current private CompanyDomain domain;
+	@Inject
+	private HttpServletRequest request;
 	
 	private static UploadedFile file = null;
 	
@@ -187,7 +193,7 @@ public class BackupAndRestoreController extends AbstractController  {
 
 			archive = new Archive();
 			archive.setName(file.getFileName());
-			File targetFile = new File(SystemConfigs.getConfig("store.files")+archive.getName());
+			File targetFile = new File(this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator+archive.getName());
 			FileUtils.copyInputStreamToFile(file.getFile(), targetFile);
 
 			this.dbbackup.persist(archive);
@@ -215,10 +221,10 @@ public class BackupAndRestoreController extends AbstractController  {
 			this.fail("(No such file or directory)");
 			return;
 		}
-		LOGGER.error("arquivo: "+SystemConfigs.getConfig("store.files")+file.getName());
+		LOGGER.error("arquivo: "+ this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator +file.getName());
 		
 		try{
-			File initialFile = new File(SystemConfigs.getConfig("store.files")+file.getName());
+			File initialFile = new File(this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator+file.getName());
 			
 			byte[] bytes = new byte[(int)initialFile.length()];
 			
@@ -230,12 +236,12 @@ public class BackupAndRestoreController extends AbstractController  {
 				response.getOutputStream().close();
 				this.result.nothing();
 			}else {
-				this.fail("(No such file or directory):"+SystemConfigs.getConfig("store.files")+file.getName() );
-				this.fail("arquivo: "+SystemConfigs.getConfig("store.files")+file.getName());
+				this.fail("(No such file or directory):"+this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator+file.getName() );
+				this.fail("arquivo: "+this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator+file.getName());
 			}
 		} catch (Throwable ex) {
 			LOGGER.error("Error while proxying the file upload.", ex);
-			this.fail("(No such file or directory): "+SystemConfigs.getConfig("store.files")+file.getName() );
+			this.fail("(No such file or directory): "+this.request.getServletContext().getInitParameter(Controladora.URL_UPLOAD_FILE)+File.separator+file.getName() );
 		}
 	}
 

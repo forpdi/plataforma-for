@@ -106,7 +106,7 @@ export default React.createClass({
 	},
 
 	addField() {
-		var validation = Validate.validationNewFieldType(this.refs, this.state.description);
+		var validation = Validate.validationNewFieldType(this.refs);
 
 		if (validation.errorField) {
 			this.context.toastr.addAlertError(Messages.get("label.error.form")); //Validação dos campos
@@ -134,7 +134,7 @@ export default React.createClass({
 					fieldName: validation.name.s,
 					type: validation.type.s,
 					value: validation.name.s,
-					fieldContent: validation.description,
+					fieldContent:  this.state.fileData.description,
 					editInstance: false,
 					fileLink: this.state.fileData.fileLink
 				});
@@ -203,6 +203,7 @@ export default React.createClass({
 			Modal.hide();
 			var file = {
 				fieldName: Modal.fileName,
+				description: Modal.fileName,
 				id: resp.data.id,
 				fieldContent: Modal.fileName,
 				fileLink: BACKEND_URL + "file/" + (resp.data.id),
@@ -230,7 +231,7 @@ export default React.createClass({
 		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz, Documentos: pdf\n";
 		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf";
 
-		Modal.uploadFile({}, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile(null,title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 	attachFile() {
@@ -273,7 +274,7 @@ export default React.createClass({
 		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz, Documentos: pdf\n";
 		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf";
 
-		Modal.uploadFile({}, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile(null, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 	render() {
@@ -460,8 +461,7 @@ export default React.createClass({
 																		className="form-control minHeight170"
 																		id={this.props.field.isText}
 																		placeholder="Insira seu texto..."
-																		changeValue={this.setRichTextValueOnEdit}
-																		defaultValue={this.props.field.fieldContent}
+																		ref="newfield-description"																										defaultValue={this.props.field.fieldContent}
 																		required={true}
 																	/>
 
@@ -558,8 +558,8 @@ export default React.createClass({
 												className="form-control minHeight170"
 												id="newfield-description"
 												placeholder="Insira seu texto..."
-												changeValue={this.setRichTextValue}
-												defaultValue={null}
+												ref="newfield-description"
+											    defaultValue={null}
 											/>
 
 											:

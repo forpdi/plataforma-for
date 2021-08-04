@@ -104,7 +104,6 @@ export default React.createClass({
 	},
 
 	importStructure(evt) {
-		var me = this;
 		evt.preventDefault();
 		Modal.uploadFile(
 			null,

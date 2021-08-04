@@ -131,7 +131,7 @@ export default React.createClass({
 		var formats = "Imagens: gif, jpg, jpeg, jpg2, jp2, bmp, tiff, png, ai, psd, svg, svgz, Documentos: pdf\n";
 		var formatsRegex = "gif|jpg|jpeg|jpg2|jp2|bmp|tiff|png|ai|psd|svg|svgz|pdf";
 
-		Modal.uploadFile({}, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
+		Modal.uploadFile(null, title, msg, url, formatsRegex, formatsBlocked, onSuccess, onFailure, formats, maxSize);
 	},
 
 	render() {

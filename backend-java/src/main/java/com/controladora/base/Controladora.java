@@ -19,8 +19,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 public class Controladora {
 
 	
-	private final static  String URL_UPLOAD_FILE = "ARQUIVO_UPLOAD_FORPDI";
-	private final static  String URL_DOWNLOAD_FILE = "ARQUIVO_DOWNLOAD_FORPDI";
+	public final static  String URL_UPLOAD_FILE = "ARQUIVO_UPLOAD_FORPDI";
+	public final static  String URL_DOWNLOAD_FILE = "ARQUIVO_DOWNLOAD_FORPDI";
 	private final Integer MAX_FILE_SIZE  = 2 * 1024 * 1024;
 	private String caminhoArquivo = "";
 	private String caminhoDownArquivo = "";
