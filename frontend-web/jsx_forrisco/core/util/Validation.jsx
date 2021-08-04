@@ -302,9 +302,9 @@ var Validate = {
 		return aux;
 	},
 
-	validationNewFieldType: function (newfield, description) {
+	validationNewFieldType: function (newfield) {
 		var type, name;
-
+		const description = (newfield['newfield-description']) ? newfield['newfield-description'].state.value:null; 
 		name = S(newfield['newfield-name'].value);
 		type = S(newfield['newfield-type'].value);
 
