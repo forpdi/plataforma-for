@@ -1,5 +1,5 @@
 
-![PlataformaFor_logo](http://teste.forpdi.org/images/plataforma-for-logo.svg)
+![PlataformaFor_logo](https://raw.githubusercontent.com/forpdi/plataforma-for/master/frontend-web/img/plataforma-for-logo.svg)
 
 Plataforma Open Source para:
 
