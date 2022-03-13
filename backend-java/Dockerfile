@@ -16,7 +16,7 @@ FROM jboss/wildfly:9.0.2.Final AS runtime
 USER root
 RUN cp /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 USER jboss
-COPY --from=build /usr/app/repo/backend-java/target/forpdi.war /opt/jboss/wildfly/standalone/deployments/
+COPY --from=build /usr/app/repo/backend-java/target/plataforma-for.war /opt/jboss/wildfly/standalone/deployments/
 COPY ./conf/standalone.conf /opt/jboss/wildfly/bin/standalone.conf
 COPY ./conf/standalone.xml /opt/jboss/wildfly/standalone/configuration/
 

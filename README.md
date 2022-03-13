@@ -102,7 +102,7 @@ O ForPDI está configurado com alguns *profiles* iniciais, o profile de desenvol
 
 ```properties
 # dev.properties
-backendUrl=http://localhost:8080/forpdi/
+backendUrl=http://localhost:8080/plataforma-for/
 
 db.host=localhost
 db.port=3306
@@ -231,7 +231,7 @@ cd /opt/wildfly
 exit
 ```
 
-Por padrão o backend do sistema estará disponível em: `http://ip-do-seu-servidor:8080/forpdi/`.
+Por padrão o backend do sistema estará disponível em: `http://ip-do-seu-servidor:8080/plataforma-for/`.
 Após a publicação do backend, é necessário configurar um servidor web para servir os arquivos de frontend
 e para atuar como um proxy reverso para as chamadas ao backend. Você pode usar o Apache HTTPD ou o NGINX.
 Neste tutorial iremos utilizar o Apache HTTPD, porém se você preferir o NGINX é só realizar a configuração

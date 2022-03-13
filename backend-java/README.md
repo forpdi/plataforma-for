@@ -14,4 +14,4 @@ Execute os seguintes comandos dentro da pasta backend-java/ :
  - docker run -it --name platfor-backend -p 8080:8080 -p 8009:8009 platfor-backend
 
 Pronto! Seu container com a aplicação referente ao backend esta disponivel.
-Para testar acesse em: http://localhost:8080/forpdi/environment
+Para testar acesse em: http://localhost:8080/plataforma-for/environment

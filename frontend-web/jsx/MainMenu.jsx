@@ -213,7 +213,7 @@ export default React.createClass({
             null,
 			Messages.get("label.importPlans"),
 			<p id="fbkupload">{Messages.get("label.uploadFbk")}</p>,
-			"/forpdi/api/company/fbkupload",
+			"/plataforma-for/api/company/fbkupload",
 			"fbk",
 			formatsBlocked,
 			(response) => {

@@ -13,7 +13,7 @@ public class StructureImporterTest {
 	@Test
 	public void testStructureXMLParsing() throws Exception {
 		InputStream xmlIN = new FileInputStream(
-				"/home/renato/development/forpdi/forpdi-repo/backend-java/src/main/resources/readedStructure-unifal.xml");
+				"/plataforma-for/backend-java/src/main/resources/readedStructure-unifal.xml");
 		Assert.assertNotNull("Input stream do XML", xmlIN);
 		StructureImporter importer = new StructureImporter(xmlIN, StructureBS.SCHEMA);
 		Assert.assertNotNull("Structure not null.", importer.readedStructure);

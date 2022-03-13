@@ -15,18 +15,18 @@ import br.com.caelum.vraptor.validator.Validator;
 
 @Specializes
 public class MultipartInterceptor extends CommonsUploadMultipartObserver {
-	
+
 	@Override
 	public void upload(@Observes ControllerFound event, MutableRequest request,
 			MultipartConfig config, Validator validator) {
-		
-		
-		if(request.getRequestURI().equals("/forpdi/api/file/upload")) {
+
+
+		if(request.getRequestURI().endsWith("/api/file/upload")) {
 			if (!event.getMethod().containsAnnotation(ParseMultipartData.class))
 				return;
 		}
-		
-		
+
+
 		super.upload(event, request, config, validator);
 	}
 }

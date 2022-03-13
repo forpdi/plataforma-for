@@ -1,25 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.forpdi</groupId>
-	<artifactId>forpdi</artifactId>
-	<version>2.0.0.beta1-SNAPSHOT</version>
+	<artifactId>plataforma-for</artifactId>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<parent>
-		<groupId>br.com.progolden</groupId>
-		<artifactId>webapp-parent</artifactId>
-		<version>1.3</version>
-	</parent>
-
-	<name>ForPDI</name>
-	<description>Ferramenta para gestão e controle de Planos de Desenvolvimento Institucional.</description>
+	<name>Plataforma FOR</name>
+	<description>Ferramenta para gestão de riscos e controle de Planos de Desenvolvimento Institucional.</description>
 	<url>https://forpdi.org/</url>
 	<scm>
-		<connection>scm:git:git@github.com:forpdi/forpdi.git</connection>
-		<developerConnection>scm:git:git@github.com:forpdi/forpdi.git</developerConnection>
-		<url>https://github.com/forpdi/forpdi</url>
+		<connection>scm:git:git@github.com:forpdi/plataforma-for.git</connection>
+		<developerConnection>scm:git:git@github.com:forpdi/plataforma-for.git</developerConnection>
+		<url>https://github.com/forpdi/plataforma-for</url>
 	</scm>
 
 	<licenses>
@@ -29,7 +22,17 @@
 	</licenses>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<version.wildfly.maven.plugin>1.2.0.Final</version.wildfly.maven.plugin>
+		<version.jboss.bom>9.0.2.Final</version.jboss.bom>
+		<version.lucene>4.10.4</version.lucene>
+		<version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
+		<version.weld>2.2.16.SP1</version.weld>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
 		<version.vraptor.boilerplate>1.0.0</version.vraptor.boilerplate>
+
 		<dbConfigFile>hibernate.cfg.xml</dbConfigFile>
 		<propertiesfile>dev.properties</propertiesfile>
 		<war.frontenddir>development</war.frontenddir>
@@ -83,6 +86,66 @@
 				</excludes>
 			</resource>
 		</resources>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.6.2</version>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.20</version>
+					<configuration>
+						<skip>true</skip>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.0.2</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.0.2</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.wildfly.plugins</groupId>
+					<artifactId>wildfly-maven-plugin</artifactId>
+					<version>${version.wildfly.maven.plugin}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.3</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.sonatype.plugins</groupId>
+					<artifactId>nexus-staging-maven-plugin</artifactId>
+					<version>1.6.8</version>
+					<extensions>true</extensions>
+					<configuration>
+						<serverId>ossrh</serverId>
+						<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+						<autoReleaseAfterClose>true</autoReleaseAfterClose>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
@@ -116,6 +179,202 @@
 		</plugins>
 	</build>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.wildfly.bom</groupId>
+				<artifactId>jboss-javaee-7.0-wildfly-with-tools</artifactId>
+				<version>${version.jboss.bom}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>br.com.progolden</groupId>
+				<artifactId>dne-utils</artifactId>
+				<version>1.0.0-RC4</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>hibernate-jpa-2.0-api</artifactId>
+						<groupId>org.hibernate.javax.persistence</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>5.1.44</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mockito</groupId>
+				<artifactId>mockito-all</artifactId>
+				<version>1.10.19</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${version.javax.servlet.jstl}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.el</groupId>
+				<artifactId>el-api</artifactId>
+				<version>2.2</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>br.com.caelum</groupId>
+				<artifactId>vraptor</artifactId>
+				<version>4.2.0.Final</version>
+			</dependency>
+			<dependency>
+				<groupId>br.com.prixma</groupId>
+				<artifactId>vraptor-tasks</artifactId>
+				<version>4.2.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>2.2.2</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>2.8.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.weld.servlet</groupId>
+				<artifactId>weld-servlet-core</artifactId>
+				<version>${version.weld}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.weld</groupId>
+				<artifactId>weld-core-impl</artifactId>
+				<version>${version.weld}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator-cdi</artifactId>
+				<version>5.1.3.Final</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-analyzers-common</artifactId>
+				<version>${version.lucene}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-core</artifactId>
+				<version>${version.lucene}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-analyzers-icu</artifactId>
+				<version>${version.lucene}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>3.16</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.14</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-crypto</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-csv</artifactId>
+				<version>1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-email</artifactId>
+				<version>1.5</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.3.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>2.5</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-math3</artifactId>
+				<version>3.6.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-cli</groupId>
+				<artifactId>commons-cli</artifactId>
+				<version>1.2</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.uadetector</groupId>
+				<artifactId>uadetector-resources</artifactId>
+				<version>2014.10</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mcavallo</groupId>
+				<artifactId>opencloud</artifactId>
+				<version>0.3</version>
+			</dependency>
+			<dependency>
+				<groupId>oauth.signpost</groupId>
+				<artifactId>signpost-core</artifactId>
+				<version>1.2.1.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.kxml</groupId>
+				<artifactId>kxml2</artifactId>
+				<version>2.3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.brickred</groupId>
+				<artifactId>socialauth</artifactId>
+				<version>4.8</version>
+			</dependency>
+			<dependency>
+				<groupId>com.restfb</groupId>
+				<artifactId>restfb</artifactId>
+				<version>1.45.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>br.com.progolden</groupId>
@@ -134,21 +393,157 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.1-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>el-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>br.com.caelum</groupId>
+			<artifactId>vraptor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>br.com.prixma</groupId>
+			<artifactId>vraptor-tasks</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld.servlet</groupId>
+			<artifactId>weld-servlet-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.weld</groupId>
+			<artifactId>weld-core-impl</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator-cdi</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-c3p0</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-ehcache</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-email</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.uadetector</groupId>
+			<artifactId>uadetector-resources</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.10</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.itextpdf.tool</groupId>
-		    <artifactId>xmlworker</artifactId>
-		    <version>5.5.13</version>
+			<artifactId>xmlworker</artifactId>
+			<version>5.5.13</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.googlecode.json-simple</groupId>
-		    <artifactId>json-simple</artifactId>
-		    <version>1.1</version>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.quartz-scheduler</groupId>
@@ -162,9 +557,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.rholder/snowball-stemmer -->
 		<dependency>
-		    <groupId>com.github.rholder</groupId>
-		    <artifactId>snowball-stemmer</artifactId>
-		    <version>1.3.0.581.1</version>
+			<groupId>com.github.rholder</groupId>
+			<artifactId>snowball-stemmer</artifactId>
+			<version>1.3.0.581.1</version>
 		</dependency>
 	</dependencies>
 

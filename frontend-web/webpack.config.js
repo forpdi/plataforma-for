@@ -21,7 +21,7 @@ module.exports = {
     },
     compress: true,
     proxy: {
-      '/forpdi/**': {
+      '/plataforma-for/**': {
         target: 'http://localhost:8080',
         secure: false,
       },

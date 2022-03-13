@@ -1,6 +1,6 @@
 {
-	"name": "forpdi-web",
-	"version": "2.0.0-beta1",
+	"name": "plataforma-for-web",
+	"version": "3.0.0",
 	"description": "ForPDI web client.",
 	"scripts": {
 		"dev": "webpack-dev-server --colors --compress --progress --port 8081 --inline -w",
@@ -71,7 +71,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/forpdi/forpdi"
+		"url": "https://github.com/forpdi/plataforma-for"
 	},
 	"license": "Apache-2.0",
 	"readme": "../../../../README.md"
