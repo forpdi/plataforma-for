@@ -250,7 +250,11 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 				final AttributeInstance responsible = this.structureBS.listResponsibleAttributeByLevel(sli);
 				if (responsible != null) {
 					User user = this.userBS.existsByUser(Long.parseLong(responsible.getValue()));
-					sli.setExportResponsibleMail(user.getEmail());
+					if (user != null) {
+						sli.setExportResponsibleMail(user.getEmail());
+					} else {
+						LOGGER.warn("User not found: id = " + responsible.getValue());
+					}
 				}
 			}
 			zipAdd(zos, StructureLevelInstance.class.getSimpleName(), this.gson.toJson(structureLevelInstances));
