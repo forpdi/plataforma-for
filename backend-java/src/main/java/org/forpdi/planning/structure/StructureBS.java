@@ -503,7 +503,8 @@ public class StructureBS extends HibernateBusiness {
 	 */
 	public List<Attribute> retrieveLevelAttributes(StructureLevel level) {
 		Criteria criteria = this.dao.newCriteria(Attribute.class);
-		criteria.add(Restrictions.eq("level", level));
+		criteria.add(Restrictions.eq("level", level))
+		.addOrder(Order.asc("description"));
 		List<Attribute> attributes = this.dao.findByCriteria(criteria, Attribute.class);
 		return attributes;
 	}
