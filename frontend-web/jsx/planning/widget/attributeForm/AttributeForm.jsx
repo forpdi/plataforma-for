@@ -217,7 +217,7 @@ var VerticalForm =  React.createClass({
 					return(<BudgetField key={field.name} data={field.budgets} newFunc={field.extra}/>);
 				} else if(field.type == AttributeTypes.ACTION_PLAN_FIELD){
 					return(<ActionPlanField key={field.name} responsible={this.props.userResponsible}
-						newFunc={field.extraActionPlans} dateBegin={this.props.dateBegin} dateEnd={this.props.dateEnd} levelInstanceId = {this.props.levelInstanceIdActionPlan}/>);
+						newFunc={field.extraActionPlans} dataIniPlan={this.props.dataIniPlan} dataFimPlan={this.props.dataFimPlan} dateBegin={this.props.dateBegin} dateEnd={this.props.dateEnd} levelInstanceId = {this.props.levelInstanceIdActionPlan}/>);
 				} else if(field.type == AttributeTypes.SCHEDULE_FIELD){
 					return(<ScheduleField key={field.name} data={field.schedule} newFunc={field.extraSchedule} title={field.label}
 						editFunc={this.props.editFunc} index={idx} isDocument={this.props.isDocument}/>);

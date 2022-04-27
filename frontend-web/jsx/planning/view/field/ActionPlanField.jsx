@@ -26,11 +26,19 @@ export default React.createClass({
 	},
 
 	getInitialState() {
+		var datatual = new Date();
+		var ano = datatual.getFullYear();
+		if(!(this.props.dataIniPlan<= ano && 
+			this.props.dataFimPlan>=ano)){
+				ano = '';
+				
+			}
 		return {
 			error: false,
 			errorMessage: "",
 			actionPlans: null,
 			editingActionID: 0,
+			dataFiltro: ano,
 			editingActionIdx: null,
 			checked: false,
 			hide: false,
@@ -269,7 +277,8 @@ export default React.createClass({
 						(_.contains(this.context.permissions,PermissionsTypes.MANAGE_PLAN_PERMISSION) ||
 						this.props.responsible && UserSession.get("user").id == this.props.responsible.id) ?
 						<td className="textAlignCenter" >
-							<input type='checkbox' name='checkbox' defaultChecked={action.checked} ref={"checkbox-action-"+action.id}
+							<input type='checkbox' name={"checkbox"+action.id} key={action.id}
+							defaultChecked={action.checked} ref={"checkbox-action-"+action.id}
 							onChange={this.sendCheckBox.bind(this, action.id, action)} defaultValue={action.checked}/>
 						</td>
 					:<td/>}
@@ -439,14 +448,18 @@ export default React.createClass({
 		});
    		this.getActionPlans(this.state.levelInstanceId,page,pageSize);
   	},
-
-	getActionPlans(levelInstanceId,page,pageSize) {
+	eventoAlteraFiltroData (data){
+			this.getActionPlans(this.state.levelInstanceId,1,5,data);
+			this.setState({dataFiltro:data});
+		},
+	getActionPlans(levelInstanceId,page,pageSize,dt = this.state.dataFiltro) {
 		ActionPlanStore.dispatch({
 			action: ActionPlanStore.ACTION_RETRIVE_ACTION_PLAN_ATTRIBUTE,
 			data: {
 				id: levelInstanceId,
 				page: page,
-				pageSize: pageSize
+				pageSize: pageSize,
+				dtFiltro:dt
 			}
 		});
 	},
@@ -544,6 +557,24 @@ export default React.createClass({
 				{!this.state.hide ?
 					(<div className="table-responsive">
 						{this.state.loading ? <LoadingGauge/> :
+						<div>
+							<section style={{display: 'flex',flexDirection: 'row',margin: '10px',
+							justifyContent: 'flex-start',
+						alignItems: 'baseline',gap:'5px'}}>
+								<label htmlFor="dtfiltro">{Messages.get("label.ano")}</label> 
+								<select value={this.state.dataFiltro} id="dtfiltro"
+									onChange={date => this.eventoAlteraFiltroData(date.target.value)}
+								>
+									<option value=''>Todos</option>
+									{ Array.from({length:(this.props.dataFimPlan
+									-this.props.dataIniPlan)+1},(_,x) => this.props.dataIniPlan+x )
+									.map((x) => 
+										<option value={x} key={x}>{x}</option> 
+									)
+
+									}
+								</select>
+							</section>
 						<table className="budget-field-table table">
 							<thead>
 								<tr>
@@ -564,7 +595,8 @@ export default React.createClass({
 										return this.renderActionField((model.id == this.state.editingActionID),model,idx);
 									})}
 								</tbody>
-						</table>}
+						</table>
+						</div>}
 
 						<TablePagination
 							total={this.state.totalPlans}

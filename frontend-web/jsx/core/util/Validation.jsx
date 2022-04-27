@@ -44,6 +44,8 @@ var Validate = {
 		var begin;
 		var end;
 
+		let atributos = model.data.level.attributes;
+		
 		var attributes = [];
 		var cmpTxtArea;
 		var nome = levelForm.refs['name'].getValue();
@@ -71,103 +73,120 @@ var Validate = {
 			}
 		}
 
+		atributos = atributos.filter((e) => e.type != AttributeTypes.BUDGET_FIELD &&
+		e.type != AttributeTypes.ACTION_PLAN_FIELD &&
+		e.type != AttributeTypes.SCHEDULE_FIELD &&
+		e.type != AttributeTypes.TABLE_FIELD &&
+		e.type != AttributeTypes.ATTACHMENT_FIELD);
+	
 		var init = 1;
+		
 		if(model.data.level.indicator){
 			init = 2 ;
-		}
+			//ajuste o indice dos atributos em sequencia numerica para atualização do indicado
+		} 
+		let contadorAtributo;
 
 		for (var i=init; i<Object.keys(data).length; i++) {
+			
+			contadorAtributo = i-init;
+			
+			while(!levelForm.refs.hasOwnProperty("attribute"+(contadorAtributo))){
+				++contadorAtributo;
+			}
+
 			//var tr = (data[Object.keys(data)[i]] ? data[Object.keys(data)[i]].trim() : "");
 			var tr = (levelForm.refs[Object.keys(data)[i]].getValue() == undefined ? data[Object.keys(data)[i]] :
 					levelForm.refs[Object.keys(data)[i]].getValue());
 			//se o campo nao é obrigatório e está vazio nenhuma validação é feita
-
-			if(model.data.level.attributes[i-init].required){
-				if ((tr.trim() == "" || tr == null) && model.data.level.attributes[i-init].type != AttributeTypes.NUMBER_FIELD) {
+			
+			
+			if(atributos[i-init].required){
+				if ((tr.trim() == "" || tr == null) && atributos[i-init].type != AttributeTypes.NUMBER_FIELD) {
 					boolMsg = true;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError"
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className += " borderError"
 				} else {
-				//if(levelForm.refs["attribute"+(i-init)].className && levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className.indexOf('borderError')){
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className = "form-control";
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "";
+				//if(levelForm.refs["attribute"+(contadorAtributo)].className && levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className.indexOf('borderError')){
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className = "form-control";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = "";
 				//}
 				}
 
-				if (model.data.level.attributes[i-init].type == AttributeTypes.NUMBER_FIELD) {
+				if (atributos[i-init].type == AttributeTypes.NUMBER_FIELD) {
 
 
 					if (tr == "") {
 						boolMsg = true;
-						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
-						levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
+						levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+						levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className += " borderError";
 					}
 					else if (isNaN(data[Object.keys(data)[i]].replace(",","."))) {
 						boolMsg = true;
-						levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.fillFieldNumbersOnly");
-						levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
+						levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.fillFieldNumbersOnly");
+						levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className += " borderError";
 					}
 					else {
-						if(levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className && levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className.indexOf('borderError')){
-							levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className = "form-control";
-							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "";
+						if(levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className && levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className.indexOf('borderError')){
+							levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className = "form-control";
+							levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = "";
 						}
 					}
 				}
 			}
 			var value = (levelForm.refs[Object.keys(data)[i]].getValue() == undefined ? data[Object.keys(data)[i]] :
 				levelForm.refs[Object.keys(data)[i]].getValue());
-			if (model.data.level.attributes[i-init].type == AttributeTypes.NUMBER_FIELD) {
+			if (atributos[i-init].type == AttributeTypes.NUMBER_FIELD) {
 				value = value.replace(",",".");
 			}
 			attributes.push({
-				id: model.data.level.attributes[i-init].id,
+				id: atributos[i-init].id,
 				attributeInstance: {
 					value: (value == "" ? null : value)
 				}
 			});
 
-			if(levelForm.refs["attribute"+(i-init)].props.fieldDef.type.trim().localeCompare(AttributeTypes.DATE_FIELD) == 0 && levelForm.refs["attribute"+(i-init)].props.fieldDef.label.trim().localeCompare("Início") == 0){
-				begin = levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ");
+			if(levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.type.trim().localeCompare(AttributeTypes.DATE_FIELD) == 0 && levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.label.trim().localeCompare("Início") == 0){
+				begin = levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.value.split(" ");
 				begin = moment(begin,"DD/MM/YYYY").toDate();
-				if (levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ") == "") {
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className = " form-control borderError";
+				if (levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.value.split(" ") == "") {
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className = " form-control borderError";
 				} else if(begin < planMacroDateBegin) {
 					boolMsg = true;
 					var month=planMacroDateBegin.getMonth() + 1;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeEarlierThanTargetDateOfGoalPlan") +" " + planMacroDateBegin.getDate() + "/" + month + "/" + planMacroDateBegin.getFullYear();
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeEarlierThanTargetDateOfGoalPlan") +" " + planMacroDateBegin.getDate() + "/" + month + "/" + planMacroDateBegin.getFullYear();
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className += " borderError";
 				} else {
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className= "form-control";
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "";
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className= "form-control";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = "";
 					//dateBegin = begin;
 				}
 			}
-			if(levelForm.refs["attribute"+(i-init)].props.fieldDef.type.trim().localeCompare(AttributeTypes.DATE_FIELD) == 0 && levelForm.refs["attribute"+(i-init)].props.fieldDef.label.trim().localeCompare("Fim") == 0){
-				end = levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ");
+			if(levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.type.trim().localeCompare(AttributeTypes.DATE_FIELD) == 0 && levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.label.trim().localeCompare("Fim") == 0){
+				end = levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.value.split(" ");
 				end = moment(end,"DD/MM/YYYY").toDate();
-				if (levelForm.refs["attribute"+(i-init)].props.fieldDef.value.split(" ") == "") {
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className+= " borderError";
+				if (levelForm.refs["attribute"+(contadorAtributo)].props.fieldDef.value.split(" ") == "") {
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.alert.fieldEmpty");
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className+= " borderError";
 				} else if(end > planMacroDateEnd) {
 					boolMsg = true;
 					var month=planMacroDateEnd.getMonth() + 1;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeLaterThanEndDateOfGoalPlan") +" " + planMacroDateEnd.getDate() + "/" + month + "/" + planMacroDateEnd.getFullYear();
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.dateCantBeLaterThanEndDateOfGoalPlan") +" " + planMacroDateEnd.getDate() + "/" + month + "/" + planMacroDateEnd.getFullYear();
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className += " borderError";
 				} else if (end < begin) {
 					boolMsg = true;
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.dateBeginAfterDateEnd");
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className += " borderError";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.dateBeginAfterDateEnd");
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className += " borderError";
 				} else {
-					levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].refs.input.refs.input.className = "form-control";
-					levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = "";
+					levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].refs.input.refs.input.className = "form-control";
+					levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = "";
 					//dateEnd = end;
 				}
 			}
 
 
-			if (model.data.level.attributes[i-1] && model.data.level.attributes[i-1].expectedField) {
+			if (atributos[i-1] && atributos[i-1].expectedField) {
 
 				expec = data[Object.keys(data)[i]].replace(",",".");
 				if (this.validateNumber(expec.replace(",","."))) {
@@ -183,7 +202,7 @@ var Validate = {
 				}
 			}
 
-			if (model.data.level.attributes[i-1] && model.data.level.attributes[i-1].minimumField) {
+			if (atributos[i-1] && atributos[i-1].minimumField) {
 				min =(data[Object.keys(data)[i]]).replace(",",".");
 				if (this.validateNumber(min.replace(",","."))) {
 					min = parseFloat(data[Object.keys(data)[i]]);
@@ -199,7 +218,7 @@ var Validate = {
 			}
 
 
-			if (model.data.level.attributes[i-1] && model.data.level.attributes[i-1].maximumField) {
+			if (atributos[i-1] && atributos[i-1].maximumField) {
 				max = data[Object.keys(data)[i]].replace(",",".");
 				if (this.validateNumber(max)) {
 					positionMax = i-1;
@@ -214,12 +233,12 @@ var Validate = {
 				}
 			}
 
-			if (model.data.level.attributes[i-1] && model.data.level.attributes[i-1].reachedField) {
+			if (atributos[i-1] && atributos[i-1].reachedField) {
 				if (tr != ""){
 					if (isNaN(data[Object.keys(data)[i]].replace(",","."))) {
 							boolMsg = true;
-							levelForm.refs["attribute"+(i-init)].refs.formAlertError.innerHTML = Messages.get("label.reachedFieldCantContainLetters");
-							levelForm.refs["attribute"+(i-init)].refs["field-attribute"+(i-init)].className += " borderError";
+							levelForm.refs["attribute"+(contadorAtributo)].refs.formAlertError.innerHTML = Messages.get("label.reachedFieldCantContainLetters");
+							levelForm.refs["attribute"+(contadorAtributo)].refs["field-attribute"+(contadorAtributo)].className += " borderError";
 					}
 				}
 			}

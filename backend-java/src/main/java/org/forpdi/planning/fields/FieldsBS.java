@@ -1,9 +1,15 @@
 package org.forpdi.planning.fields;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -471,7 +477,7 @@ public class FieldsBS extends HibernateBusiness {
 	 * @return PaginatedList<ActionPlan> Lista de planos de ação.
 	 */
 	public PaginatedList<ActionPlan> listActionPlansByInstancePagined(StructureLevelInstance instance, Integer page,
-			Integer pageSize) {
+			Integer pageSize,String dtFiltro) throws ParseException {
 		if (page == null || page < 1) {
 			page = 1;
 		}
@@ -479,13 +485,33 @@ public class FieldsBS extends HibernateBusiness {
 			pageSize = PAGESIZE;
 		}
 
+		
+
 		PaginatedList<ActionPlan> list = new PaginatedList<ActionPlan>();
 		Criteria criteria = this.dao.newCriteria(ActionPlan.class).setFirstResult((page - 1) * pageSize)
 				.setMaxResults(pageSize).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("levelInstance", instance)).addOrder(Order.asc("description"));
-		;
+				.add(Restrictions.eq("levelInstance", instance));
+	
+		
 		Criteria counting = this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("deleted", false))
-				.add(Restrictions.eq("levelInstance", instance)).setProjection(Projections.countDistinct("id"));
+				.add(Restrictions.eq("levelInstance", instance));
+				
+		//filtrando por ano
+		if(dtFiltro != null && !dtFiltro.isEmpty()){
+			int ano = Integer.parseInt(dtFiltro);
+			Date dtIni = (new GregorianCalendar(ano,0,1)).getTime();
+			Date dtFim = (new GregorianCalendar(ano,11,31)).getTime();
+
+			criteria.add(Restrictions.between("end",dtIni,dtFim ))
+					.add(Restrictions.between("begin",dtIni,dtFim ));
+
+			counting.add(Restrictions.between("end",dtIni,dtFim ))
+			.add(Restrictions.between("begin",dtIni,dtFim ));
+		
+		}
+
+		criteria.addOrder(Order.asc("description"));
+		counting.setProjection(Projections.countDistinct("id"));
 
 		list.setList(this.dao.findByCriteria(criteria, ActionPlan.class));
 		list.setTotal((Long) counting.uniqueResult());
@@ -502,7 +528,7 @@ public class FieldsBS extends HibernateBusiness {
 		PaginatedList<ActionPlan> list = new PaginatedList<ActionPlan>();
 		Criteria criteria = this.dao.newCriteria(ActionPlan.class).add(Restrictions.eq("deleted", false))
 				.addOrder(Order.asc("id"));
-		;
+		
 		list.setList(this.dao.findByCriteria(criteria, ActionPlan.class));
 		return list;
 	}

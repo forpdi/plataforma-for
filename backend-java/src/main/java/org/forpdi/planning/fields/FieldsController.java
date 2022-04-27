@@ -681,7 +681,7 @@ public class FieldsController extends AbstractController {
 	@Consumes
 	@NoCache
 	@Permissioned
-	public void listActionPlanAttribute(Long id, Integer page, Integer pageSize) {
+	public void listActionPlanAttribute(Long id, Integer page, Integer pageSize,String dtFiltro) {
 
 		PaginatedList<ActionPlan> actionPlansPaginated = new PaginatedList<ActionPlan>();
 		ArrayList<ActionPlan> actionPlans = new ArrayList<>();
@@ -697,7 +697,7 @@ public class FieldsController extends AbstractController {
 				attributeListPagined.setList(attributeList);
 
 				attributeListPagined = this.structureBs.setActionPlansAttributes(levelInstance, attributeListPagined,
-						page, pageSize);
+						page, pageSize,dtFiltro);
 
 				for (Attribute attribute : attributeListPagined.getList()) {
 					if (attribute.getActionPlans() != null) {

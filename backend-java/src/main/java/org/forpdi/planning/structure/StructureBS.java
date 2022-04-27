@@ -652,14 +652,14 @@ public class StructureBS extends HibernateBusiness {
 	 * @return
 	 */
 	public PaginatedList<Attribute> setActionPlansAttributes(StructureLevelInstance levelInstance,
-			PaginatedList<Attribute> attributes, Integer page, Integer pageSize) {
+			PaginatedList<Attribute> attributes, Integer page, Integer pageSize,String dtFiltro) throws ParseException {
 
 		Long total = 0L;
 
 		for (Attribute attribute : attributes.getList()) {
 			if (attribute.getType().equals(ActionPlanField.class.getCanonicalName())) {
 				PaginatedList<ActionPlan> actionPlans = this.fieldsBS.listActionPlansByInstancePagined(levelInstance,
-						page, pageSize);
+						page, pageSize,dtFiltro);
 				attribute.setActionPlans(actionPlans.getList());
 				total = total + actionPlans.getTotal();
 			}

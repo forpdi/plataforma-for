@@ -1047,6 +1047,8 @@ export default React.createClass({
 					store={StructureStore}
 					onChange={this.onChange}
 					submitLabel="Salvar"
+					dataIniPlan={parseInt(this.state.model.data.plan.begin.substring(6,10))}
+					dataFimPlan={parseInt(this.state.model.data.plan.end.substring(6,10))}
 					dateBegin={dateBegin}
 					dateEnd={dateEnd}
 					userResponsible={userResponsible}
