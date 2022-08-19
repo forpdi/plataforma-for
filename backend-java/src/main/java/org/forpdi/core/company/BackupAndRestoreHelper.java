@@ -103,7 +103,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 	 * @throws IOException
 	 *
 	 */
-	public void export(Company company, OutputStream output) throws IOException {
+	public void export(Company company, OutputStream output, List<Long> planMacroIds) throws IOException {
 		
 		final ZipOutputStream zos = new ZipOutputStream(output);
 		zipAdd(zos, Company.class.getSimpleName(), this.gson.toJson(company));
@@ -132,7 +132,7 @@ public class BackupAndRestoreHelper extends HibernateBusiness {
 		}
 
 		//Exportando os Planos Macro
-		final List<PlanMacro> plansMacro = this.planBS.listAllMacros(company);
+		final List<PlanMacro> plansMacro = this.planBS.listPlanMacrosByIds(planMacroIds);
 		if(!GeneralUtils.isEmpty(plansMacro)) {
 			for(final PlanMacro planMacro : plansMacro) {
 				planMacro.setCompany(null);

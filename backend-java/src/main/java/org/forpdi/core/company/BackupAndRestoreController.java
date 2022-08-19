@@ -1,25 +1,26 @@
 package org.forpdi.core.company;
 
 
-import com.controladora.base.Controladora;
 import java.io.File;
 import java.io.FileInputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.FileUtils;
 import org.forpdi.core.event.Current;
-import org.forpdi.core.properties.SystemConfigs;
 import org.forpdi.core.user.authz.AccessLevels;
 import org.forpdi.core.user.authz.Permissioned;
 import org.forpdi.core.user.authz.permission.ExportDataPermission;
 import org.forpdi.core.user.authz.permission.RestoreDataPermission;
+import org.forpdi.core.utils.Util;
 import org.forpdi.system.Archive;
+
+import com.controladora.base.Controladora;
 
 import br.com.caelum.vraptor.Controller;
 import br.com.caelum.vraptor.Get;
@@ -63,17 +64,22 @@ public class BackupAndRestoreController extends AbstractController  {
 		}
 	}
 	
-	@Get("company/export")
-	@Permissioned(value=AccessLevels.COMPANY_ADMIN, permissions= {ExportDataPermission.class})
-	public void export() {
+	@Get("api/company/export-plans")
+	public void export(String ids) {
 		try {
+			List<Long> planMacroIds = Util.stringListToLongList(ids);
 			
+			if (planMacroIds.isEmpty()) {
+				this.fail("Não há planos selecionados");
+				return;
+			}
+
 			LOGGER.infof("Starting export company '%s'...", this.domain.getCompany().getName());
 			this.response.setHeader("Content-Disposition", String.format("attachment; filename=plans-%d-%s.fbk",
 					domain.getCompany().getId(), LocalDateTime.now().toString()));
 			this.response.setContentType("application/octet-stream");
 		
-			this.dbbackup.export(this.domain.getCompany(), this.response.getOutputStream());
+			this.dbbackup.export(this.domain.getCompany(), this.response.getOutputStream(), planMacroIds);
 		} catch (Throwable ex) {
 			LOGGER.error("Unexpected runtime error", ex);
 			this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

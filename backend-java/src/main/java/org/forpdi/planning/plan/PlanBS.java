@@ -91,6 +91,26 @@ public class PlanBS extends HibernateBusiness {
 		;
 		return this.dao.findByCriteria(criteria, PlanMacro.class);
 	}
+	
+
+	/**
+	 * Retorna umna lista de planos macro pelos ids.
+	 * @param ids
+	 * 			Ids do planos macro a serem retornados
+	 * @return plans
+	 * 			Planos macro.
+	 */
+	public List<PlanMacro> listPlanMacrosByIds(List<Long> ids) {
+		if (GeneralUtils.isEmpty(ids)) {
+			return Collections.emptyList();
+		}
+		
+		Criteria criteria = this.dao.newCriteria(PlanMacro.class);
+		criteria.add(Restrictions.in("id", ids))
+			.add(Restrictions.eq("deleted", false));
+		
+		return dao.findByCriteria(criteria, PlanMacro.class);
+	}
 
 	/**
 	 * Lista planos de meta de um plano macro.

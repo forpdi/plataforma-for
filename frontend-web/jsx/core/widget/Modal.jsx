@@ -453,6 +453,117 @@ var GraphHistory= React.createClass({
 	}
 });
 
+var ExportPlansModal = React.createClass({
+	getInitialState() {
+		return {
+			selectedPlanIds: [],
+			errorMsg: null,
+		}
+	},
+
+	onCheckboxChange(planId) {
+		const { selectedPlanIds } = this.state;
+		const newSelectedPlanIds = selectedPlanIds.includes(planId)
+				? _.filter(selectedPlanIds, id => planId !== id)
+				: [...selectedPlanIds, planId];
+		
+		this.setState({
+				selectedPlanIds: newSelectedPlanIds,
+		})
+	},
+
+	onSelectAll() {
+		const { selectedPlanIds } = this.state;
+		const { plans } = this.props;
+
+		const newSelectedPlanIds = selectedPlanIds.length < plans.length
+			? _.map(plans, ({ id }) => id)
+			: [];
+
+		this.setState({ selectedPlanIds: newSelectedPlanIds });
+	},
+
+	onConfirmHandle() {
+		const { selectedPlanIds } = this.state;
+
+		if (selectedPlanIds.length === 0) {
+			this.setState({
+				errorMsg: Messages.get('label.error.mustSelectPlansToExport'),
+			});
+		} else {
+			this.setState({ errorMsg: null });
+			this.props.onConfirm(selectedPlanIds);
+		}
+	},
+
+	render() {
+		const { selectedPlanIds, errorMsg } = this.state;
+		const { plans } = this.props;
+
+		return (
+			<div className="modal-dialog modal-md">
+				<div className="modal-content">
+					<div className="modal-header fpdi-modal-header">
+						<button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 className="modal-title" id="myModalLabel">{Messages.get('label.exportPlansConfirmation')}</h4>
+					</div>
+					<hr className="divider"></hr>
+					<div className="modal-body fpdi-modal-body">
+						<form>
+							<div className="col-md-12" >
+								<label htmlFor="container"> {Messages.get("label.selectPlansToExport")} <span className="fpdi-required">&nbsp;</span></label>
+								<div className="container" id="container">
+									<div className="row">
+										<div key="rootSection-selectall">
+											<div className="checkbox marginLeft5 col-md-10">
+												<label>
+													<input
+														type="checkbox"
+														onChange={this.onSelectAll}
+														checked={selectedPlanIds.length === plans.length}
+													/>
+													Selecionar todos
+												</label>
+											</div>
+										</div>
+										{
+											plans.map(({ id, name }) => (
+												<div key={"rootSection-filled" + id}>
+													<div className="checkbox marginLeft5 col-md-10">
+														<label>
+															<input
+																type="checkbox"
+																checked={selectedPlanIds.includes(id)}
+																onChange={() => this.onCheckboxChange(id)}
+															/>
+															{name}
+														</label>
+													</div>
+												</div>
+											))
+										}
+										<br />
+										<br />
+									</div>
+								</div>
+							</div>
+							<br/>
+							<div className="col-md-12" style={{ marginBottom: '2rem' }}>
+								<label className="paddingTop5">{Messages.get("label.emptySectionNoExported")}</label>
+								<p id="paramError" className="exportDocumentError">{errorMsg}</p>
+							</div>
+							<div id="exportDocumentModalFooter" name="exportDocumentModalFooter">
+								<button type="button" className="btn btn-sm btn-success"  onClick={this.onConfirmHandle}>{Messages.get("label.export")}</button>
+								<button type="button" className="btn btn-sm btn-default" data-dismiss="modal">{Messages.get("label.cancel")}</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		);
+	}
+});
+
 var Modal = {
 	$el: EL,
 	$init() {
@@ -687,7 +798,15 @@ var Modal = {
 			<IncidentsList incidents={incidents} redirect={this.hide.bind(this)}/>
 		), this.$el);
 		this.show();
-	}
+	},
+
+	exportPlanMacros(plans, onConfirm) {
+		var me = this;
+		ReactDOM.render((
+			<ExportPlansModal plans={plans} onConfirm={onConfirm}/>
+		),this.$el);
+		this.show();
+	},
 };
 
 $(() => {

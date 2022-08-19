@@ -273,22 +273,29 @@ export default React.createClass({
 		);
 	},
 
-	exportPlans(){
-		jQuery.ajax({
-			method: "GET",
-			url: BACKEND_URL + "company/export",
-			success(data, status, opts) {
-				if (data.success) {
-					window.location.href = "forpdi/company/export"
-				}else{
-					Toastr.error("Exportação falhou, verifique se há instituição cadastrada");
-				}
-			},
-			error(opts, status, errorMsg) {
-				console.log(opts)
-				Toastr.error(JSON.parse(opts.responseText).message);
-			}
-		});
+    showExportPlansModal() {
+		Modal.exportPlanMacros(this.state.plans, this.exportPlans);
+	},
+
+    exportPlans(selectedPlanIds) {
+        const params = selectedPlanIds.join(',');
+        jQuery.ajax({
+            method: "GET",
+            url: BACKEND_URL + "company/export",
+            success(data, status, opts) {
+                Modal.hide();
+                console.log(BACKEND_URL)
+                if (data.success) {
+                    window.location.href =  `${BACKEND_URL}company/export-plans?ids=${params}`
+                }else{
+                    Toastr.error("Exportação falhou, verifique se há instituição cadastrada");
+                }
+            },
+            error(opts, status, errorMsg) {
+                console.log(opts)
+                Toastr.error(JSON.parse(opts.responseText).message);
+            }
+        });
 	},
 
     render() {
@@ -387,7 +394,7 @@ export default React.createClass({
             </div>
             <div className="fpdi-tabs-nav fpdi-nav-hide-btn">
 			{this.state.user.accessLevel >=50?
-				<a onClick={this.exportPlans}>
+				<a onClick={this.showExportPlansModal}>
                     <span className="fpdi-nav-icon mdi mdi-file-export icon-link"/>
 					<span className="fpdi-nav-label">
                         {Messages.getEditable("label.exportPlans","fpdi-nav-label")}
